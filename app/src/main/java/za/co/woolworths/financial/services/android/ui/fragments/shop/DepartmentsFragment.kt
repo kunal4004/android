@@ -5,10 +5,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
@@ -32,6 +30,7 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
@@ -42,7 +41,6 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
@@ -106,13 +104,13 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                     this@DepartmentsFragment.location = it
                     initializeRootCategoryList()
                 }
-            } else  {
+            } else {
                 // when permission granted and location is not enabled
-                if(isPermissionGranted) {
+                if (isPermissionGranted) {
                     initializeRootCategoryList()
                 }
                 //When Location permission not granted.
-                else if(!checkLocationPermission() && !isLocationModalShown) {
+                else if (!checkLocationPermission() && !isLocationModalShown) {
                     initializeRootCategoryList()
                 }
             }
@@ -134,7 +132,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
         if (context != null && !Utils.isLocationEnabled(context)) {
             onProviderDisabled()
-            if(isFirstCallToLocationModal) {
+            if (isFirstCallToLocationModal) {
                 executeDepartmentRequest()
             }
         } else {
@@ -327,7 +325,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
+            if (Utils.getPreferredDeliveryLocation() != null) {
+                activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
+            } else {
+                requestCartSummary()
+            }
         } else if (requestCode == REQUEST_CODE_FINE_GPS) {
             when (resultCode) {
                 RESULT_OK -> {
@@ -351,6 +353,25 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         }
     }
 
+    private fun requestCartSummary() {
+        GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
+            override fun onSuccess(response: CartSummaryResponse?) {
+                when (response?.httpCode) {
+                    AppConstant.HTTP_OK -> {
+                        if (Utils.getPreferredDeliveryLocation() != null) {
+                            activity?.apply {
+                                KotlinUtils.presentEditDeliveryLocationActivity(this, ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE)
+                            }
+                        }
+                    }
+                }
+            }
+            override fun onFailure(error: Throwable?) {
+            }
+
+        })
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -371,7 +392,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             if (it == null) {
                 mDepartmentAdapter?.hideDeliveryDates()
             } else {
-                val storeOrSuburbId = if(it.storePickup) it.store.id else it.suburb.id
+                val storeOrSuburbId = if (it.storePickup) it.store.id else it.suburb.id
                 if (storeOrSuburbId.equals(WoolworthsApplication.getValidatedSuburbProducts()?.suburbId, true)) {
                     updateDeliveryDates()
                 } else {
