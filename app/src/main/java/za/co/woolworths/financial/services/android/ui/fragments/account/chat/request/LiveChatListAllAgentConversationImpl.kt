@@ -6,8 +6,11 @@ import com.amplifyframework.api.graphql.GraphQLRequest
 import com.amplifyframework.api.graphql.SimpleGraphQLRequest
 import com.amplifyframework.core.Amplify.API
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.GetMessagesByConversation
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.IListAllAgentMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.util.Assets
 import java.util.HashMap
 
@@ -29,14 +32,33 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
         )
     }
 
+
     override fun list(
-        onSuccess: (GetMessagesByConversation?) -> Unit,
+        onSuccess: (MutableList<ChatMessage>?) -> Unit,
         onFailure: (ApiException) -> Unit
     ) {
         val conversationId = liveChatDBRepository.getConversationMessageId()
         API.query(
             request(conversationId),
-            { response -> onSuccess(response.data) },
+            { messagesByConversationList ->
+
+                val defaultMessageList = ChatAWSAmplify.getChatMessageList()
+                val agentConversationList: GetMessagesByConversation? =
+                    messagesByConversationList.data
+                val agentMessageList: MutableList<SendMessageResponse>? =
+                    agentConversationList?.items
+
+                val chatMessageAgent = mutableListOf<ChatMessage>()
+                agentMessageList?.forEach { chatMessageAgent.add(it) }
+                /**
+                 * filter messageByConversation List and list of message from adapter, and remove duplicates
+                 * groupBy creates a Map with a key as defined in the Lambda (id in this case), and a List of the items
+                 */
+
+                val messages = defaultMessageList?.union(chatMessageAgent)?.toMutableList()
+
+                onSuccess(messages)
+            },
             { apiException ->
                 onFailure(apiException)
             })

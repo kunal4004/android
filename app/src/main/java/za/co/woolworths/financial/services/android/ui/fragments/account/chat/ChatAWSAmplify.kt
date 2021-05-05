@@ -11,6 +11,8 @@ import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.EncryptChat
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -68,5 +70,25 @@ object ChatAWSAmplify {
                 )
             )
         )
+    }
+
+    fun getChatMessageList(): MutableList<ChatMessage> {
+        val chatMessageList: MutableList<ChatMessage> = mutableListOf()
+        sendMessageMutableList?.forEach { encryptedMessage ->
+            val encryptedData = encryptedMessage as? EncryptChat
+            val decryptMessage = Utils.aes256DecryptBase64EncryptedString(encryptedData?.message)
+            try {
+                val userMessage = Gson().fromJson(decryptMessage, UserMessage::class.java)
+                chatMessageList.add(userMessage)
+            } catch (ex: Exception) {
+            }
+            try {
+                val sendMessageResponse =
+                    Gson().fromJson(decryptMessage, SendMessageResponse::class.java)
+                chatMessageList.add(sendMessageResponse)
+            } catch (ex: Exception) {
+            }
+        }
+        return chatMessageList
     }
 }
