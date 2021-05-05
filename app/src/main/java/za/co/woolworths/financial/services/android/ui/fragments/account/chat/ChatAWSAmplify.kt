@@ -17,7 +17,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 object ChatAWSAmplify {
 
-    var sendMessageMutableList: MutableList<ChatMessage?>? = mutableListOf()
+    private var sendMessageMutableList: MutableList<ChatMessage?>? = mutableListOf()
     var isUserSubscriptionActive: Boolean = false
 
     init {

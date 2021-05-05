@@ -161,7 +161,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                     showAgentsMessage(result)
                     isChatButtonEnabled(true)
                     isUserOnline(true)
-                    ChatAWSAmplify.sendMessageMutableList?.add(result)
+                    ChatAWSAmplify.addChatMessageToList(result)
                 }
 
                 SessionStateType.QUEUEING -> {
@@ -169,7 +169,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                     showAgentsMessage(result)
                     isChatButtonEnabled(false)
                     isUserOnline(true)
-                    ChatAWSAmplify.sendMessageMutableList?.add(result)
+                    ChatAWSAmplify.addChatMessageToList(result)
                 }
 
                 SessionStateType.DISCONNECT -> {
@@ -177,7 +177,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                     showAgentsMessage(result)
                     isChatButtonEnabled(false)
                     isUserOnline(true)
-                    ChatAWSAmplify.sendMessageMutableList?.add(result)
+                    ChatAWSAmplify.addChatMessageToList(result)
                 }
 
                 else -> {

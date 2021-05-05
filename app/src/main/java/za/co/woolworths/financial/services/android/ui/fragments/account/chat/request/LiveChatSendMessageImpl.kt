@@ -28,7 +28,7 @@ class LiveChatSendMessageImpl : ILiveChatSendMessage {
             return
         }
         API.mutate(request(sessionState, content), {
-            ChatAWSAmplify.sendMessageMutableList?.add(UserMessage(content))
+            ChatAWSAmplify.addChatMessageToList(UserMessage(content))
         }, {})
     }
 
