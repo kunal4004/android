@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 public class ToastUtils {
 
 	private boolean allCapsUpperCase = true;
+	private boolean isButtonClicked = false;
 
 	public interface ToastInterface {
 		void onToastButtonClicked(String currentState);
@@ -105,6 +106,14 @@ public class ToastUtils {
 
 	public String getCurrentState() {
 		return currentState;
+	}
+
+	public boolean isButtonClicked(){
+		return isButtonClicked;
+	}
+
+	public void setButtonClicked(boolean click) {
+		isButtonClicked = click;
 	}
 
 	public String getCartText() {

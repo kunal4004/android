@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import androidx.annotation.VisibleForTesting
 import com.awfs.coordination.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,7 +33,11 @@ abstract class RetrofitConfig : NetworkConfig() {
             interceptors().add(logging)
         }
 
-        mApiInterface = Retrofit.Builder()
+        mApiInterface = getRetrofit(httpBuilder)
+    }
+
+    private fun getRetrofit(httpBuilder: OkHttpClient.Builder): ApiInterface {
+        return Retrofit.Builder()
                 .baseUrl(BuildConfig.HOST + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -42,4 +47,9 @@ abstract class RetrofitConfig : NetworkConfig() {
     }
 
     fun cancelRequest(call: Call<*>?) = call?.apply { if (!isCanceled) cancel() }
+
+    @VisibleForTesting
+    fun testGetRetrofit(httpBuilder: OkHttpClient.Builder): ApiInterface {
+        return getRetrofit(httpBuilder)
+    }
 }

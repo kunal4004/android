@@ -16,7 +16,7 @@ class ResendOTPBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-           otpNumber = it[OTP_NUMBER] as String
+           otpNumber = it[OTP_NUMBER] as? String
         }
     }
 

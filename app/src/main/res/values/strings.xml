@@ -897,8 +897,8 @@
     <string name="temp_card_how_to_use2">Your temp store card can only be used for in-store purchases and not on-line purchases.</string>
     <string name="temp_card_how_to_use3">Your temp store card will be removed after your first in-store purchase with your plastic Store Card</string>
     <string name="temp_card_how_to_use4">Unfortunately, you will not be able to pay your account in-store using a virtual card. Online payments, like EFT, are available.</string>
-    <string name="temp_card_how_to_use5">The Woolworths Virtual Temp Store Card is currently being trialed in the Western Cape and will only be usable within Western Cape Woolies Stores.  You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
-    <string name="temp_card_how_to_use6">For WRewards we have provided you with a digital WRewards card, accessible by tapping the WRewards icon.  Scan this upfront, before your shopping and payment, to get great rewards and benefits.</string>
+    <string name="temp_card_how_to_use5">The Woolworths Virtual Temp Store Card is currently being trialed in selected Woolies Stores.  You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
+    <string name="temp_card_how_to_use6">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
     <string name="dialog_scan_barcode_to_pay_title">Scan the Barcode to Pay</string>
     <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. to the cashier to use your temporary card.</string>
     <string name="card_details">card details</string>
@@ -924,8 +924,9 @@
     <string name="product_information">Product Information</string>
     <string name="product_details">Product Details</string>
     <string name="nutritional_information">Nutritional Information</string>
-    <string name="get_temp_sc_title">Your Woolies Store Card is on it\'s on way. Start shopping today with your temporary store card.</string>
-    <string name="get_temp_sc_description">To shop with your temporary card in store, bring along your ID. Your temporary card is valid for 30 days.</string>
+    <string name="get_temp_sc_title">Congrats, you have been selected to trial our new Woolies Virtual Temp Card at selected Woolies’ stores.</string>
+   <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
+   <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
     <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
@@ -1220,7 +1221,7 @@
 
     <string name="blackCreditCardQualify_row_1">Be 18 years of age, or older</string>
     <string name="blackCreditCardQualify_row_2">Have a valid RSA ID Number</string>
-    <string name="blackCreditCardQualify_row_3">Earn in excess of R3,000 per month</string>
+    <string name="blackCreditCardQualify_row_3">Earn in excess of R41,666 per month</string>
 
     <string name="blackCreditCardCollection_row_1">A valid RSA ID number</string>
     <string name="blackCreditCardCollection_row_2">Latest three payslips or the last three months\' bank statements</string>
@@ -1736,6 +1737,7 @@
     <string name="card_number_label">Card Number:</string>
     <string name="payment_successful_title">Payment Successful</string>
     <string name="ccv_number_label">Enter your CVV Number:</string>
+    <string name="pma_payment_delay_label">* Payments may take up to 5 business days to reflect.</string>
     <string name="confirm_payment">CONFIRM PAYMENT</string>
     <string name="change_label">Change</string>
     <string name="atm_payment_steps_desc"> Follow the steps below when making a payment at an ATM.</string>
@@ -2013,6 +2015,7 @@
     <string name="link_device_this_is_linked">This device is linked</string>
 
     <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
+    <string name="unable_to_process_502">We are unable to process your request at the moment. Please Try Again Later.</string>
 
     <!-- View All Linked Devices -->
     <string name="view_all_device_title">My Linked Devices</string>
@@ -2021,4 +2024,6 @@
     <string name="view_all_other_device_title">Other Linked Devices</string>
     <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
+    <string name="payment_delay_note_label">Please note that payments may take up to 5 business days to reflect on your account.</string>
+    <string name="internet_waiting_subtitle">Waiting for internet connection...</string>
 </resources>

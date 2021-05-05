@@ -8,11 +8,9 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -145,7 +143,7 @@
         <!-- ./Firebase Notifications -->
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.StartupActivity"
+            android:name="za.co.woolworths.financial.services.android.startup.view.StartupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -344,9 +342,28 @@
             android:theme="@style/FaqStyle"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <!--Deep link to PDP disabled-->
+           <!-- <intent-filter
+                android:autoVerify="true"
+                android:order="1">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="${app_links_host}" />
+                <data android:pathPattern="/prod.*" />
+            </intent-filter>-->
+        </activity>
+        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />

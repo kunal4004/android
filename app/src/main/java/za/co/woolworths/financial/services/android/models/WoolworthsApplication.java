@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Lifecycle;
@@ -683,5 +684,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
         this.creditLimitIncrease = creditLimitIncrease;
     }
 
+    @VisibleForTesting
+    public static void testSetInstance(WoolworthsApplication application) {
+        mInstance = application;
+    }
 
+    @VisibleForTesting
+    public static void testSetContext(Context context) {
+        mContextApplication = context;
+    }
 }
