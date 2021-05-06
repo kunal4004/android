@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -264,6 +265,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 WButton mHighLoanAmount = findViewById(R.id.btnLoanHighOk);
                 WTextView wTextTitle = findViewById(R.id.title);
                 WTextView wTextProofIncome = findViewById(R.id.textProofIncome);
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.personalLoanDrawdownAmountHigh);
                 wTextTitle.setText(getString(R.string.loan_request_high));
 //              Fix for all letters are capitalized
                 wTextTitle.setAllCaps(false);
@@ -293,6 +295,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 mTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
 //              Fix for all letters are capitalized
                 mTextTitle.setAllCaps(false);
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.personalLoanDrawdownAmountLow);
                 mTextDesc.setText(getString(R.string.loan_request_low_desc));
                 if (description != null && TextUtils.isEmpty(description)) {
                     mTextDesc.setText(getString(R.string.loan_request_low_desc).replace

@@ -346,7 +346,8 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
-            <intent-filter
+            <!--Deep link to PDP disabled-->
+           <!-- <intent-filter
                 android:autoVerify="true"
                 android:order="1">
                 <action android:name="android.intent.action.VIEW" />
@@ -357,7 +358,7 @@
                 <data android:scheme="https" />
                 <data android:host="${app_links_host}" />
                 <data android:pathPattern="/prod.*" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity"

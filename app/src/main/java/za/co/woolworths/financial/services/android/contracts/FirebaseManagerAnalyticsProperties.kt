@@ -85,23 +85,19 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOPQS_ADD_TO_CART = "shopqs_add_to_cart"
         const val SHOP_SCAN_CODE = "shop_scan_code"
 
-        const val MY_ACCOUNTS_VTC_GET = "MYACCOUNTS_VTC_GET"
-        const val MY_ACCOUNTS_VTC_PAY = "MYACCOUNTS_VTC_PAY"
-        const val MY_ACCOUNTS_VTC_HOW_TO = "MYACCOUNTS_VTC_HOWTO"
+        const val MY_ACCOUNTS_VTC_GET = "myaccounts_vtc_get"
+        const val MY_ACCOUNTS_VTC_PAY = "myaccounts_vtc_pay"
+        const val MY_ACCOUNTS_VTC_HOW_TO = "my_accounts_vtc_howto"
 
-        const val MYACCOUNTS_ICR_GET_CARD = "MYACCOUNTS_ICR_GET_CARD"
-        const val MYACCOUNTS_ICR_STORES = "MYACCOUNTS_ICR_STORES"
-        const val MYACCOUNTS_ICR_LINK_START = "MYACCOUNTS_ICR_LINK_START"
-        const val MYACCOUNTS_ICR_LINK_CARD = "MYACCOUNTS_ICR_LINK_CARD"
-        const val MYACCOUNTS_ICR_LINK_CONFIRM = "MYACCOUNTS_ICR_LINK_CONFIRM"
-        const val SHOP_MY_ORDERS_CANCEL_ORDER = "SHOP_MY_ORDERS_CANCEL_ORDER"
-        const val MYACCOUNTS_BLK_CC_DELIVERY = "MyAcc_Blk_CC_Delivery"
-        const val MYACCOUNTS_BLK_CC_DELIVERY_CONFIRM = "MyAcc_Blk_CC_Delivery_Confirm"
-        const val MYACCOUNTS_BLK_CC_MANAGE_DELIVERY = "MyAcc_Blk_CC_Manage_Delivery"
-        const val MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL = "MyAcc_Blk_CC_Manage_Delivery_Cancel"
-        const val WHATSAPP_PAYMENT_OPTION = "WHATSAPP_PAYMENT_OPTION"
-        const val WHATSAPP_CONTACT_US = "WHATSAPP_CONTACT_US"
-        const val WHATSAPP_CHAT_WITH_US = "WHATSAPP_CHAT_WITH_US"
+        const val MYACCOUNTS_ICR_GET_CARD = "myaccounts_icr_get_card"
+        const val MYACCOUNTS_ICR_STORES = "myaccounts_icr_stores"
+        const val MYACCOUNTS_ICR_LINK_START = "myaccounts_icr_link_start"
+        const val MYACCOUNTS_ICR_LINK_CARD = "myaccounts_icr_link_card"
+        const val MYACCOUNTS_ICR_LINK_CONFIRM = "myaccounts_icr_link_confirm"
+        const val SHOP_MY_ORDERS_CANCEL_ORDER = "shop_my_orders_cancel_order"
+        const val WHATSAPP_PAYMENT_OPTION = "whatsapp_payment_option"
+        const val WHATSAPP_CONTACT_US = "whatsapp_contact_us"
+        const val WHATSAPP_CHAT_WITH_US = "whattsapp_chat_with_us"
 
         const val SHOP_SEARCH = "SHOP_Search"
 
@@ -210,6 +206,83 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
 
+        //PLDD
+        const val personalLoanDrawdownStart = "pldd_start"
+        const val personalLoanDrawdownComplete = "pldd_complete"
+        const val personalLoanDrawdownAmountLow = "pldd_amountlow"
+        const val personalLoanDrawdownAmountHigh = "pldd_amounthigh"
+        const val personalLoanDrawdownAmountNoFunds = "pldd_nofunds"
+
+        //Black Credit Card Delivery
+        const val loginBlackCreditCardDelivery = "login_blk_cc_delivery"
+        const val loginBlackCreditCardDeliveryLater = "login_blk_cc_delivery_later"
+        const val myAccountBlackCreditCardDelivery = "myacc_blk_cc_delivery"
+        const val blackCreditCardDeliveryConfirm = "myacc_blk_cc_delivery_confirm"
+        const val blackCreditCardDeliveryScheduled = "blk_cc_delivery_scheduled"
+        const val blackCreditCardManageDelivery = "myacc_blk_cc_manage_delivery"
+        const val blackCreditCardDeliveryCancel = "blk_cc_manage_delivery_cancel"
+
+        //Gold Credit Card Delivery
+        const val loginGoldCreditCardDelivery = "login_gold_cc_delivery"
+        const val loginGoldCreditCardDeliveryLater = "login_gold_cc_delivery_later"
+        const val myAccountGoldCreditCardDelivery = "myacc_gold_cc_delivery"
+        const val goldCreditCardDeliveryConfirm = "gold_cc_delivery_confirm"
+        const val goldCreditCardDeliveryScheduled = "gold_cc_delivery_scheduled"
+        const val goldCreditCardManageDelivery = "gold_cc_manage_delivery"
+        const val goldCreditCardDeliveryCancel = "gold__cc_delivery_cancel"
+
+        //silver Credit Card Delivery
+        const val loginSilverCreditCardDelivery = "login_slvr_cc_delivery"
+        const val loginSilverCreditCardDeliveryLater = "login_slvr_cc_delivery_later"
+        const val myAccountSilverCreditCardDelivery = "myacc_slvr_cc_delivery"
+        const val silverCreditCardDeliveryConfirm = "slvr_cc_delivery_confirm"
+        const val silverCreditCardDeliveryScheduled = "slvr_cc_delivery_scheduled"
+        const val silverCreditCardManageDelivery = "slvr_cc_manage_delivery"
+        const val silverCreditCardDeliveryCancel = "slvr_cc_delivery_cancel"
+
+        //Credit Limit Increase
+        //start
+        const val storeCardCreditLimitIncreaseStart = "sc_cli_start"
+        const val personalLoanCreditLimitIncreaseStart = "pl_cli_start"
+        const val blackCreditCardCreditLimitIncreaseStart = "blkcc_cli_start"
+        const val goldCreditCardCreditLimitIncreaseStart = "goldcc_cli_start"
+        const val silverCreditCardCreditLimitIncreaseStart = "slvrcc_cli_start"
+
+        //Maritalstatus
+        const val storeCardCreditLimitIncreaseMaritalstatus = "sc_cli_maritalstatus"
+        const val personalLoanCreditLimitIncreaseMaritalstatus = "pl_cli_maritalstatus"
+        const val blackCreditCardCreditLimitIncreaseMaritalstatus = "blkcc_cli_maritalstatus"
+        const val goldCreditCardCreditLimitIncreaseMaritalstatus = "goldcc_cli_maritalstatus"
+        const val silverCreditCardCreditLimitIncreaseMaritalstatus = "slvrcc_cli_maritalstatus"
+
+        //income expense
+        const val storeCardCreditLimitIncreaseIncomeExpense = "sc_cli_income_expense"
+        const val personalLoanCreditLimitIncreaseIncomeExpense = "pl_cli_income_expense"
+        const val blackCreditCardCreditLimitIncreaseIncomeExpense = "blkcc_cli_income_expense"
+        const val goldCreditCardCreditLimitIncreaseIncomeExpense = "goldcc_cli_income_expense"
+        const val silverCreditCardCreditLimitIncreaseIncomeExpense = "slvrcc_cli_income_expense"
+
+        //accept offer
+        const val storeCardCreditLimitIncreaseAcceptOffer = "sc_cli_accept_offer"
+        const val personalLoanCreditLimitIncreaseAcceptOffer = "pl_cli_accept_offer"
+        const val blackCreditCardCreditLimitIncreaseAcceptOffer = "blkcc_cli_accept_offer"
+        const val goldCreditCardCreditLimitIncreaseAcceptOffer = "goldcc_cli_accept_offer"
+        const val silverCreditCardCreditLimitIncreaseAcceptOffer = "slvrcc_cli_accept_offer"
+
+        //dea option
+        const val storeCardCreditLimitIncreaseDeaOption = "sc_cli_dea_optin"
+        const val personalLoanCreditLimitIncreaseDeaOption = "pl_cli_dea_optin"
+        const val blackCreditCardCreditLimitIncreaseDeaOption = "blkcc_cli_dea_optin"
+        const val goldCreditCardCreditLimitIncreaseDeaOption = "goldcc_cli_dea_optin"
+        const val silverCreditCardCreditLimitIncreaseDeaOption = "slvrcc_cli_dea_optin"
+
+        //poi confirm
+        const val storeCardCreditLimitIncreasePoiConfirm = "sc_cli_poi_confirm"
+        const val personalLoanCreditLimitIncreasePoiConfirm = "pl_cli_poi_confirm"
+        const val blackCreditCardCreditLimitIncreasePoiConfirm = "blkcc_cli_poi_confirm"
+        const val goldCreditCardCreditLimitIncreasePoiConfirm = "goldcc_cli_poi_confirm"
+        const val silverCreditCardCreditLimitIncreasePoiConfirm = "slvrcc_cli_poi_confirm"
+
         const val DEVICESECURITY_LINK_START = "devicesecurity_link_start"
         const val DEVICESECURITY_LINK_SKIP = "devicesecurity_link_skip"
         const val DEVICESECURITY_LINK_CONFIRMED = "devicesecurity_OTP"
@@ -275,7 +348,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val NETWORK: String = "network"
             const val OTHER_HTTP_CODE: String = "other http code"
             const val PIN: String = "pin"
-            const val TIMEOUT:String = "timeout"
+            const val TIMEOUT: String = "timeout"
             const val UNDEFINED: String = "undefined"
             const val FAILED: String = "failed"
             const val SUCCESSFUL: String = "successful"
