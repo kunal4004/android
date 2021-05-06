@@ -51,11 +51,19 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                 val chatMessageAgent = mutableListOf<ChatMessage>()
                 agentMessageList?.forEach { chatMessageAgent.add(it) }
                 /**
-                 * filter messageByConversation List and list of message from adapter, and remove duplicates
-                 * groupBy creates a Map with a key as defined in the Lambda (id in this case), and a List of the items
+                 * filter messageByConversation List and list of message from adapter,
+                 * and remove duplicates
+                 * groupBy creates a Map with a key as defined in the Lambda (id in this case),
+                 * and a List of the items
                  */
 
-                val messages = defaultMessageList?.union(chatMessageAgent)?.toMutableList()
+                /**
+                 * To do:: test null pointer occurance
+                 */
+                val messages: MutableList<ChatMessage> =
+                    defaultMessageList.union(chatMessageAgent).toMutableList()
+
+                ChatAWSAmplify.listAllChatMessages = messages
 
                 onSuccess(messages)
             },

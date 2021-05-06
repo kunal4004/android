@@ -7,10 +7,12 @@ import com.amplifyframework.core.Amplify.Auth
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.ILiveChatAuth
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 
 class LiveChatAuthImpl : ILiveChatAuth {
 
     private val sendMessage = LiveChatSendMessageImpl()
+    private val liveChatListAllAgentConversation = LiveChatDBRepository()
 
     override fun signIn(onSuccess: (AuthSignInResult) -> Unit, onFailure: (AuthException) -> Unit) {
         val networkConfig = NetworkConfig()
@@ -28,7 +30,10 @@ class LiveChatAuthImpl : ILiveChatAuth {
         sendMessage.send(SessionStateType.DISCONNECT, "")
         Auth.signOut(
             AuthSignOutOptions.builder().globalSignOut(true).build(),
-            { result() },
+            {
+                liveChatListAllAgentConversation.clearData()
+                result()
+            },
             { result() })
     }
 }

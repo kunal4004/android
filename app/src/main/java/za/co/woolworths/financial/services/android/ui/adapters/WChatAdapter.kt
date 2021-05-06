@@ -17,7 +17,6 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.received_message_item.view.*
 import kotlinx.android.synthetic.main.sent_message_item.view.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.EncryptChat
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
@@ -41,7 +40,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
             for (i in 1..messagesSize) {
                 val chatMessage: ChatMessage = chatMessageList[i]
                 if (chatMessage is SendMessageResponse) {
-                    if (chatMessage?.javaClass == chatMessageList[i - 1]?.javaClass) {
+                    if (chatMessage.javaClass == chatMessageList[i - 1].javaClass) {
                         chatMessage.isWoolworthIconVisible = false
                     }
                 }
@@ -78,7 +77,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         return when (chatMessageList[position]) {
             is SendMessageResponse -> VIEW_TYPE_RECEIVED_MESSAGE
             is UserMessage -> VIEW_TYPE_SENT_MESSAGE
-            is EncryptChat -> 0
+            else -> 0
         }
     }
 

@@ -19,7 +19,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 object ChatAWSAmplify {
 
-    private var sendMessageMutableList: MutableList<ChatMessage?>? = mutableListOf()
+    var isChatActivityInForeground = false
+    var listAllChatMessages: MutableList<ChatMessage>? = mutableListOf()
     var isUserSubscriptionActive: Boolean = false
 
     init {
@@ -61,7 +62,7 @@ object ChatAWSAmplify {
     fun init() {}
 
     fun addChatMessageToList(chatMessage: ChatMessage) {
-        sendMessageMutableList?.add(
+        listAllChatMessages?.add(
             EncryptChat(
                 Utils.aes256EncryptStringAsBase64String(
                     Gson().toJson(
@@ -74,19 +75,25 @@ object ChatAWSAmplify {
 
     fun getChatMessageList(): MutableList<ChatMessage> {
         val chatMessageList: MutableList<ChatMessage> = mutableListOf()
-        sendMessageMutableList?.forEach { encryptedMessage ->
+        listAllChatMessages?.forEach { encryptedMessage ->
             val encryptedData = encryptedMessage as? EncryptChat
             val decryptMessage = Utils.aes256DecryptBase64EncryptedString(encryptedData?.message)
+
             try {
-                val userMessage = Gson().fromJson(decryptMessage, UserMessage::class.java)
-                chatMessageList.add(userMessage)
+                val chatMsg: ChatMessage? = when {
+                    decryptMessage.contains(UserMessage::class.java.simpleName) -> {
+                        Gson().fromJson(decryptMessage, UserMessage::class.java)
+                    }
+                    decryptMessage.contains(SendMessageResponse::class.java.simpleName) -> {
+                        Gson().fromJson(decryptMessage, SendMessageResponse::class.java)
+                    }
+                    else -> null
+                }
+
+
+                chatMsg?.let { chatMessageList.add(it) }
             } catch (ex: Exception) {
-            }
-            try {
-                val sendMessageResponse =
-                    Gson().fromJson(decryptMessage, SendMessageResponse::class.java)
-                chatMessageList.add(sendMessageResponse)
-            } catch (ex: Exception) {
+                FirebaseManager.logException("${ChatAWSAmplify::class.java.simpleName} $ex")
             }
         }
         return chatMessageList

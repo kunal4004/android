@@ -20,7 +20,8 @@ class LiveChatDBRepository : DatabaseManager() {
         private val KEY_LIVE_CHAT_DB = SessionDao.KEY.LIVE_CHAT_EXTRAS
     }
 
-    fun saveLiveChatParams(liveChatExtraParams: LiveChatExtraParams?) = saveToDB(KEY_LIVE_CHAT_DB, liveChatExtraParams)
+    fun saveLiveChatParams(liveChatExtraParams: LiveChatExtraParams?) =
+        saveToDB(KEY_LIVE_CHAT_DB, liveChatExtraParams)
 
     fun saveConversation(conversation: Conversation) {
         val liveChatParams = getLiveChatParams()
@@ -34,8 +35,15 @@ class LiveChatDBRepository : DatabaseManager() {
         saveLiveChatParams(liveChatParams)
     }
 
-    fun saveChatUnReadMessageCount(count: Int) {
+    fun resetUnReadMessageCount() {
         val liveChatParams = getLiveChatParams()
+        liveChatParams?.unReadMessageCount = 0
+        saveLiveChatParams(liveChatParams)
+    }
+
+    fun updateUnreadMessageCount() {
+        val liveChatParams = getLiveChatParams()
+        val count = liveChatParams?.unReadMessageCount?.plus(1) ?: 0
         liveChatParams?.unReadMessageCount = count
         saveLiveChatParams(liveChatParams)
     }
@@ -49,9 +57,13 @@ class LiveChatDBRepository : DatabaseManager() {
 
     fun getSessionType() = getLiveChatParams()?.sessionType ?: SessionType.Collections
 
-    fun getAccount(): Account? = Gson().fromJson(getLiveChatParams()?.chatAccountProductLandingPage, Account::class.java)
+    fun getAccount(): Account? =
+        Gson().fromJson(getLiveChatParams()?.chatAccountProductLandingPage, Account::class.java)
 
-    fun isCreditCardAccount(): Boolean = getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true)
+    fun isCreditCardAccount(): Boolean = getAccount()?.productGroupCode.equals(
+        AccountsProductGroupCode.CREDIT_CARD.groupCode,
+        ignoreCase = true
+    )
 
     @SuppressLint("DefaultLocale")
     fun getSessionVars(): String {
@@ -61,33 +73,40 @@ class LiveChatDBRepository : DatabaseManager() {
 
         val prsAccountNumber = account?.accountNumber ?: ""
         val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
-        val isCreditCard = productGroupCode == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
+        val isCreditCard =
+            productGroupCode == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
         val prsCardNumber = if (isCreditCard) getABSACardToken() else "0"
         val prsC2id = customerInfo.getCustomerC2ID()
         val prsFirstname = customerInfo.getCustomerUsername()
         val prsSurname = customerInfo.getCustomerFamilyName()
         val prsProductOfferingId = account?.productOfferingId?.toString() ?: "0"
-        val prsProductOfferingDescription = when (productGroupCode?.let { AccountsProductGroupCode.getEnum(it) }) {
-            AccountsProductGroupCode.STORE_CARD -> "StoreCard"
-            AccountsProductGroupCode.PERSONAL_LOAN -> "PersonalLoan"
-            AccountsProductGroupCode.CREDIT_CARD -> "CreditCard"
-            else -> ""
-        }
+        val prsProductOfferingDescription =
+            when (productGroupCode?.let { AccountsProductGroupCode.getEnum(it) }) {
+                AccountsProductGroupCode.STORE_CARD -> "StoreCard"
+                AccountsProductGroupCode.PERSONAL_LOAN -> "PersonalLoan"
+                AccountsProductGroupCode.CREDIT_CARD -> "CreditCard"
+                else -> ""
+            }
 
-        return bindString(R.string.chat_send_message_session_var_params,
-                prsAccountNumber,
-                prsCardNumber,
-                prsC2id,
-                prsFirstname,
-                prsSurname,
-                prsProductOfferingId,
-                prsProductOfferingDescription)
+        return bindString(
+            R.string.chat_send_message_session_var_params,
+            prsAccountNumber,
+            prsCardNumber,
+            prsC2id,
+            prsFirstname,
+            prsSurname,
+            prsProductOfferingId,
+            prsProductOfferingDescription
+        )
     }
 
     fun getABSACardToken(): String {
         val account = getAccount()
         val absaCardList = getLiveChatParams()?.absaCardList
-        val absaCard = if (!absaCardList.isNullOrEmpty()) Gson().fromJson(absaCardList, object : TypeToken<List<Card>>() {}.type) else null
+        val absaCard = if (!absaCardList.isNullOrEmpty()) Gson().fromJson(
+            absaCardList,
+            object : TypeToken<List<Card>>() {}.type
+        ) else null
         val result: List<Card>? = account?.cards ?: absaCard
         return result?.get(0)?.absaCardToken ?: "0"
     }
@@ -95,7 +114,6 @@ class LiveChatDBRepository : DatabaseManager() {
     fun clearData() {
         var liveChatParams = getLiveChatParams()
         liveChatParams?.conversation = null
-        liveChatParams?.userShouldSignIn = true
         liveChatParams = null
         saveLiveChatParams(liveChatParams)
     }

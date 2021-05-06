@@ -32,7 +32,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.*
-import za.co.woolworths.financial.services.android.util.ServiceTool
+import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -74,7 +74,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
                                 GlobalScope.doAfterDelay(DELAY) {
                                     liveChatAuthentication.signOut {
-                                        ServiceTool.stop(
+                                        ServiceTools.stop(
                                             this@WChatActivity,
                                             LiveChatFollowMeService::class.java
                                         )
@@ -177,6 +177,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     override fun onResume() {
         super.onResume()
         //  when user closes chat to go to WhatsApp or Email, dismiss Chat Navigation Modal and then jump out of the app
+        ChatAWSAmplify.isChatActivityInForeground = true
         if (chatScreenType != ChatType.WHATSAPP_ONBOARDING && shouldDismissChatNavigationModel) {
             finish()
             overridePendingTransition(0, 0)
@@ -269,6 +270,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
     override fun onDestroy() {
         super.onDestroy()
+        ChatAWSAmplify.isChatActivityInForeground = false
         mSubscribeToMessageReceiver?.let { unregisterReceiver(it) }
     }
 

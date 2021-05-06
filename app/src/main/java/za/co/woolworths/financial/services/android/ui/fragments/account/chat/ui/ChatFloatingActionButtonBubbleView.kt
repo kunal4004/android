@@ -32,11 +32,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 
-class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
-                                         var chatBubbleVisibility: ChatBubbleVisibility? = null,
-                                         var floatingActionButtonBadgeCounter: FloatingActionButtonBadgeCounter? = null,
-                                         var applyNowState: ApplyNowState,
-                                         var scrollableView: Any? = null) {
+class ChatFloatingActionButtonBubbleView(
+    var activity: Activity? = null,
+    var chatBubbleVisibility: ChatBubbleVisibility? = null,
+    var floatingActionButtonBadgeCounter: FloatingActionButtonBadgeCounter? = null,
+    var applyNowState: ApplyNowState,
+    var scrollableView: Any? = null
+) {
 
     private var mUnReadMessageCountReceiver: BroadcastReceiver? = null
     private var chatBubbleToolTip: Dialog? = null
@@ -54,14 +56,20 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
         chatBubbleToolTip?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.inapp_chat_tip_acknowledgement_dialog, null)
-            val dismissChatTipImageView = view.findViewById<ImageButton>(R.id.dismissChatTipImageView)
+            val dismissChatTipImageView =
+                view.findViewById<ImageButton>(R.id.dismissChatTipImageView)
             val greetingTextView = view.findViewById<TextView>(R.id.greetingTextView)
             val chatToUsNowTextView = view.findViewById<TextView>(R.id.chatToUsNowTextView)
             AnimationUtilExtension.animateViewPushDown(chatToUsNowTextView)
-            val chatAccountProductLandingPage = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
+            val chatAccountProductLandingPage =
+                if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(
+                    applyNowState
+                )
             activity?.apply {
-                greetingTextView?.text = bindString(R.string.chat_greeting_label, chatBubbleVisibility?.getUsername()
-                        ?: "")
+                greetingTextView?.text = bindString(
+                    R.string.chat_greeting_label, chatBubbleVisibility?.getUsername()
+                        ?: ""
+                )
                 dismissChatTipImageView?.setOnClickListener {
                     chatBubbleVisibility?.saveInAppChatTooltip(applyNowState)
                     dismiss()
@@ -80,15 +88,20 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
                 val dm = DisplayMetrics()
                 windowManager.defaultDisplay.getMetrics(dm)
 
-                val dialogPosition = dm.heightPixels.div(when (activity) {
-                    is BottomNavigationActivity -> 4.2f
-                    else -> 7.0f
-                })
+                val dialogPosition = dm.heightPixels.div(
+                    when (activity) {
+                        is BottomNavigationActivity -> 4.2f
+                        else -> 7.0f
+                    }
+                )
 
                 val windowManagerLayoutParams: WindowManager.LayoutParams = attributes
                 windowManagerLayoutParams.y = dialogPosition.toInt()
 
-                setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+                setLayout(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT
+                )
                 setBackgroundDrawableResource(R.color.transparent)
                 setGravity(Gravity.BOTTOM)
             }
@@ -111,7 +124,8 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
             is NestedScrollView -> {
                 (scrollableView as? NestedScrollView)?.apply {
                     viewTreeObserver?.addOnScrollChangedListener {
-                        val scrollViewHeight: Double = getChildAt(0)?.bottom?.minus(height.toDouble())
+                        val scrollViewHeight: Double =
+                            getChildAt(0)?.bottom?.minus(height.toDouble())
                                 ?: 0.0
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
@@ -127,7 +141,8 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
             }
 
             is RecyclerView -> {
-                (scrollableView as? RecyclerView)?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                (scrollableView as? RecyclerView)?.addOnScrollListener(object :
+                    RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         if (dy > 0 || dy < 0 && floatingActionButtonBadgeCounter?.isShown == true) floatingActionButtonBadgeCounter?.hide()
                     }
@@ -143,16 +158,20 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
 
     private fun floatingButtonListener() {
         activity?.apply {
-            val chatAccountProductLandingPage: Account? = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
+            val chatAccountProductLandingPage: Account? =
+                if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(
+                    applyNowState
+                )
             AnimationUtilExtension.animateViewPushDown(floatingActionButtonBadgeCounter)
 
             mUnReadMessageCountReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent) {
                     val liveChatDBRepository = LiveChatDBRepository()
-                    floatingActionButtonBadgeCounter?.count = liveChatDBRepository.getUnReadMessageCount()
+                    floatingActionButtonBadgeCounter?.count =
+                        liveChatDBRepository.getUnReadMessageCount()
                 }
             }
-            //startLiveChatMessageCountReceiver(this)
+            startLiveChatMessageCountReceiver(this)
             floatingActionButtonBadgeCounter?.setOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
             }
@@ -161,20 +180,23 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
 
     fun navigateToChatActivity(activity: Activity?, account: Account?) {
         activity ?: return
-        val initChatDetails = chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
+        val initChatDetails =
+            chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
         val liveChatDBRepository = LiveChatDBRepository()
         val liveChatParams = liveChatDBRepository.getLiveChatParams()
-
-
-        liveChatDBRepository.saveLiveChatParams(LiveChatExtraParams(
+        liveChatDBRepository.resetUnReadMessageCount()
+        floatingActionButtonBadgeCounter?.count = 0
+        liveChatDBRepository.saveLiveChatParams(
+            LiveChatExtraParams(
                 initChatDetails?.first,
                 initChatDetails?.second,
                 chatBubbleVisibility?.getSessionType(),
                 activity::class.java.simpleName,
                 Gson().toJson(account),
                 true,
-                liveChatParams?.userShouldSignIn ?: true,
-                liveChatParams?.conversation))
+                liveChatParams?.conversation
+            )
+        )
 
         activity.startActivity(Intent(activity, WChatActivity::class.java))
     }
@@ -192,8 +214,10 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
         activity ?: return
         // handler for received Intents for the "UnreadMessageCount" event
         mUnReadMessageCountReceiver?.let { receiver ->
-            LocalBroadcastManager.getInstance(activity).registerReceiver(receiver,
-                    IntentFilter(UNREAD_MESSAGE_COUNT))
+            LocalBroadcastManager.getInstance(activity).registerReceiver(
+                receiver,
+                IntentFilter(UNREAD_MESSAGE_COUNT)
+            )
         }
     }
 
@@ -206,9 +230,9 @@ class ChatFloatingActionButtonBubbleView(var activity: Activity? = null,
     }
 
     companion object {
-        const val UNREAD_MESSAGE_COUNT = "UNREAD_MESSAGE_COUNT"
-        const val LIVE_CHAT_SUBSCRIPTION_RESULT = "LIVE_CHAT_SUBSCRIPTION_RESULT"
-        const val LIVE_CHAT_PACKAGE= "live.chat.subscription.result.SUBSCRIBE.DATA"
+        const val UNREAD_MESSAGE_COUNT = "unread_message_count"
+        const val LIVE_CHAT_SUBSCRIPTION_RESULT = "live_chat_subscription_result"
+        const val LIVE_CHAT_PACKAGE = "live.chat.subscription.result.SUBSCRIBE.DATA"
     }
 
 }

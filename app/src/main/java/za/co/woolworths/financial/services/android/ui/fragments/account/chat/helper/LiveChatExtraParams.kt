@@ -12,7 +12,6 @@ data class LiveChatExtraParams(val productOfferingId: String?,
                                var fromActivity: String,
                                var chatAccountProductLandingPage: String,
                                var chatCollectionAgent: Boolean = false,
-                               var userShouldSignIn: Boolean = true,
                                var conversation: Conversation?,
                                var absaCardList: String? = null,
                                var unReadMessageCount: Int = 0) : Parcelable

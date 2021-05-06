@@ -3,9 +3,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 import android.app.Activity
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
@@ -24,6 +26,8 @@ import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendEmailIntentInfo
@@ -71,20 +75,26 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         chatNavController =
             (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
         initView()
-        onChatStart()
+
     }
 
     private fun onChatStart() {
         with(chatViewModel) {
             if (!isChatServiceRunning(activity)) {
-                activity?.let { act -> ServiceTool.start(act, LiveChatFollowMeService::class.java) }
+                activity?.let { act ->
+                    ServiceTools.start(
+                        act,
+                        LiveChatFollowMeService::class.java
+                    )
+                }
                 return@with
             }
 
-            liveChatListAllAgentConversation.list({
-
-            }, {
-
+            liveChatListAllAgentConversation.list({ chatList ->
+                chatList?.forEach { item -> updateMessageList(item) }
+                chatLoaderProgressBar?.visibility = GONE
+            }, { exp ->
+                Log.e("apiException", "apiException $exp")
             })
         }
     }
@@ -94,7 +104,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         isChatButtonEnabled(false)
         onClickListener()
         autoConnectToNetwork()
-        //  setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
+        setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
         detectKeyboardVisibilityState()
     }
 
@@ -114,36 +124,22 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         sendMessageButton?.setOnClickListener(this)
     }
 
-//    private fun getUserTokenAndSignIn() {
-//        with(chatViewModel) {
-//            val absaCardToken = liveChatDBRepository.getABSACardToken()
-//            if (absaCardToken.isEmpty()) {
-//                // show retrieve ABSA card token retry screen
-//                chatNavController?.navigate(R.id.chatRetrieveABSACardTokenFragment)
-//            } else {
-//              //  amplifyListener()
-//            }
-//        }
-//    }
+    private fun getUserTokenAndSignIn() {
+        with(chatViewModel) {
+            val absaCardToken = liveChatDBRepository.getABSACardToken()
+            if (absaCardToken.isEmpty()) {
+                // show retrieve ABSA card token retry screen
+                chatNavController?.navigate(R.id.chatRetrieveABSACardTokenFragment)
+            } else {
+                amplifyListener()
+            }
+        }
+    }
 
-//    private fun amplifyListener() {
-//        chatLoaderProgressBar?.visibility = VISIBLE
-//        with(chatViewModel) {
-//            signIn({
-//                subscribeToMessageByConversationId({ result ->
-//                    subscribeResult(result)
-//                }, {
-//                    chatLoaderProgressBar?.visibility = GONE
-//                })
-//            }, {
-//                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-//                    val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
-//                    showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
-//                    chatLoaderProgressBar?.visibility = GONE
-//                }
-//            })
-//        }
-//    }
+    private fun amplifyListener() {
+        chatLoaderProgressBar?.visibility = VISIBLE
+        onChatStart()
+    }
 
     fun subscribeResult(result: SendMessageResponse?) {
         activity?.runOnUiThread {
@@ -227,20 +223,23 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         }
     }
 
-    //    private fun setAgentAvailableState(isOnline: Boolean) {
-//        activity?.apply {
-//            when (isOnline) {
-//                true -> if (chatViewModel.isCreditCardAccount()) getUserTokenAndSignIn() else amplifyListener()
-//                else -> {
-//                    val bundle = Bundle()
-//                    bundle.putString(WhatsAppChatToUsVisibility.FEATURE_NAME, WhatsAppChatToUsVisibility.FEATURE_WHATSAPP)
-//                    bundle.putString(APP_SCREEN, appScreen)
-//                    chatNavController?.navigate(R.id.chatToCollectionAgentOfflineFragment, bundle)
-//                }
-//            }
-//        }
-//    }
-//
+    private fun setAgentAvailableState(isOnline: Boolean) {
+        activity?.apply {
+            when (isOnline) {
+                true -> if (chatViewModel.isCreditCardAccount()) getUserTokenAndSignIn() else amplifyListener()
+                else -> {
+                    val bundle = Bundle()
+                    bundle.putString(
+                        FEATURE_NAME,
+                        FEATURE_WHATSAPP
+                    )
+                    bundle.putString(APP_SCREEN, appScreen)
+                    chatNavController?.navigate(R.id.chatToCollectionAgentOfflineFragment, bundle)
+                }
+            }
+        }
+    }
+
     private fun autoConnectToNetwork() {
         activity?.let { activity ->
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
@@ -251,7 +250,6 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                         if (hasConnection) {
                             with(chatViewModel) {
                                 liveChatListAllAgentConversation.list({ messagesByConversation ->
-
 
                                 }, { apiException ->
 
@@ -267,11 +265,11 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
     }
 
     fun subscribeErrorResponse() {
-        GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-            val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
-            //showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
-            chatLoaderProgressBar?.visibility = GONE
-        }
+//        GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+//            val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
+//            showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
+//            chatLoaderProgressBar?.visibility = GONE
+//        }
     }
 
     private fun updateMessageList(message: ChatMessage) {

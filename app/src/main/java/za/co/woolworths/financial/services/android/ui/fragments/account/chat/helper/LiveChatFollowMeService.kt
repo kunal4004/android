@@ -3,12 +3,16 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat.he
 import android.app.*
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.LiveChat
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatAuthImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatConversationImpl
@@ -16,9 +20,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.req
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatSubscribeImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.UNREAD_MESSAGE_COUNT
+
 
 class LiveChatFollowMeService : Service() {
 
+    private val liveChatDBRepository = LiveChatDBRepository()
     private val liveChat = LiveChat(
         LiveChatAuthImpl(),
         LiveChatConversationImpl(),
@@ -50,7 +57,20 @@ class LiveChatFollowMeService : Service() {
                     // conversation success
                     onSubscribe({ message ->
                         Log.e("authLogin", "message ${Gson().toJson(message)}")
-                        postResult(Gson().toJson(message))
+                        if (ChatAWSAmplify.isChatActivityInForeground) {
+                            postResult(Gson().toJson(message))
+                        } else {
+                            val handler = Handler(Looper.getMainLooper())
+                            handler.post {
+                                liveChatDBRepository.updateUnreadMessageCount()
+                                postMessageCount()
+                                Toast.makeText(
+                                    applicationContext,
+                                    message?.content ?: "N/A",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
 
                     }, { apiException ->
                         Log.e("authLogin", "apiException subscribe ${Gson().toJson(apiException)}")
@@ -73,6 +93,12 @@ class LiveChatFollowMeService : Service() {
         postChatDataIntent.action = LIVE_CHAT_PACKAGE
         postChatDataIntent.putExtra(LIVE_CHAT_SUBSCRIPTION_RESULT, result)
         sendBroadcast(postChatDataIntent)
+    }
+
+    private fun postMessageCount() {
+        val postMessageCount = Intent()
+        postMessageCount.action = UNREAD_MESSAGE_COUNT
+        sendBroadcast(postMessageCount)
     }
 
     private fun createNotificationChannel() {

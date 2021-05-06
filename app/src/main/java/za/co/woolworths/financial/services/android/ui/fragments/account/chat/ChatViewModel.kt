@@ -31,7 +31,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatAuthImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatListAllAgentConversationImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.ServiceTool
+import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.ActivityType
 
@@ -284,7 +284,7 @@ class ChatViewModel : ViewModel() {
 
     fun isChatServiceRunning(activity: Activity?): Boolean {
         activity ?: return false
-        return ServiceTool.checkServiceRunning(
+        return ServiceTools.checkServiceRunning(
             activity,
             LiveChatFollowMeService::class.java
         )
