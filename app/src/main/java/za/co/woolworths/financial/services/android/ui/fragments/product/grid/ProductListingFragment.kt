@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.ui.activities.WStockFinderAct
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.TAG
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
@@ -70,7 +69,6 @@ import java.net.UnknownHostException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.collections.LinkedHashSet
 
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator,
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
@@ -111,15 +109,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 mNavigationState = getString(NAVIGATION_STATE, "")
                 mSortOption = getString(SORT_OPTION, "")
             }
-            var localBody: HashMap<String, Any> = HashMap()
-            localBody.put("subCategory", mSubCategoryName!!)
-            localBody.put("searchType", mSearchType!!)
-            localBody.put("searchTerm", mSearchTerm!!)
-            localBody.put("navigationState", mNavigationState!!)
-            localBody.put("sortOption", mSortOption)
-
+            val localBody: HashMap<String, Any> = HashMap()
+            localBody.apply {
+                put("subCategory", mSubCategoryName!!)
+                put("searchType", mSearchType!!)
+                put("searchTerm", mSearchTerm!!)
+                put("navigationState", mNavigationState!!)
+                put("sortOption", mSortOption)
+            }
             localProductBody.add(localBody)
             setProductBody()
+            isReloadNeeded = true
         }
     }
 
@@ -174,47 +174,42 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
             localStoreId = currentStoreId
             localSuburbId = null
-            updateRequestAndReload()
-            (activity as? BottomNavigationActivity)?.apply {
-                popFragmentNoAnim()
-                pushFragment(
-                    newInstance(
-                        mSearchType,
-                        mSubCategoryName,
-                        mSearchTerm,
-                        mNavigationState,
-                        productRequestBody.sortOption
-                    )
-                )
-            }
+            isReloadNeeded = false
+            updateRequestForReload()
+            pushFragment()
         } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
             localSuburbId = currentSuburbId
             localStoreId = null
-            updateRequestAndReload()
-            (activity as? BottomNavigationActivity)?.apply {
-                popFragmentNoAnim()
-                pushFragment(
-                    newInstance(
-                        mSearchType,
-                        mSubCategoryName,
-                        mSearchTerm,
-                        mNavigationState,
-                        productRequestBody.sortOption
-                    )
-                )
-            }
+            isReloadNeeded = false
+            updateRequestForReload()
+            pushFragment()
         }
     }
 
-    private fun updateRequestAndReload() {
+    private fun pushFragment() {
+        (activity as? BottomNavigationActivity)?.apply {
+            popFragmentNoAnim()
+            pushFragment(
+                newInstance(
+                    mSearchType,
+                    mSubCategoryName,
+                    mSearchTerm,
+                    mNavigationState,
+                    productRequestBody.sortOption
+                )
+            )
+        }
+    }
+
+    private fun updateRequestForReload() {
         if (!localProductBody.isEmpty()) {
             val list: HashMap<String, Any> =
                 (localProductBody.get(localProductBody.lastIndex) as HashMap<String, Any>)
-            mSubCategoryName = list.get("subCategory") as String?
-            mSearchType = list.get("searchType") as ProductsRequestParams.SearchType?
-            mSearchTerm = list.get("searchTerm") as String?
-            mNavigationState = list.get("navigationState") as String?
-            mSortOption = list.get("sortOption") as String
+            mSubCategoryName = list["subCategory"] as String?
+            mSearchType = list["searchType"] as? ProductsRequestParams.SearchType
+            mSearchTerm = list["searchTerm"] as? String
+            mNavigationState = list["navigationState"] as? String
+            mSortOption = list["sortOption"] as String
             setProductBody()
         }
         updateProductRequestBodyForRefinement(mNavigationState)
@@ -230,16 +225,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
         mProductList = ArrayList()
-
-        response?.history?.apply {
+        response.history?.apply {
             if (categoryDimensions.isNotEmpty()) {
-                val categoryLable = categoryDimensions.get(categoryDimensions.size - 1).label
-                if (!navigationStackTitleList.contains(categoryLable))
-                    navigationStackTitleList.add(categoryLable)
+                mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
             } else if (searchCrumbs.isNotEmpty()) {
-                val scrumbLable = searchCrumbs.get(searchCrumbs.size - 1).terms
-                if (!navigationStackTitleList.contains(scrumbLable))
-                    navigationStackTitleList.add(scrumbLable)
+                mSubCategoryName = searchCrumbs.get(searchCrumbs.size - 1).terms
             }
         }
 
@@ -288,14 +278,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun getCategoryNameAndSetTitle() {
-        productView?.history?.apply {
-            if (navigationStackTitleList.isNullOrEmpty()) {
-                navigationStackTitleList.add(mSubCategoryName!!)
-            } else
-                mSubCategoryName = navigationStackTitleList.last()
-            if (!mSubCategoryName.isNullOrEmpty())
-                setTitle()
-        }
+        if (!mSubCategoryName.isNullOrEmpty())
+            setTitle()
     }
 
     override fun unhandledResponseCode(response: Response) {
@@ -352,10 +336,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             headerProduct.numberOfItems = numItemsInTotal
             mProductList?.add(0, headerProduct)
         }
-        var mRecyclerViewLayoutManager: GridLayoutManager?
+        val mRecyclerViewLayoutManager: GridLayoutManager?
         mRecyclerViewLayoutManager = GridLayoutManager(activity, 2)
         // Set up a GridLayoutManager to change the SpanSize of the header and footer
-        mRecyclerViewLayoutManager?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+        mRecyclerViewLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 if (position > mProductList!!.size - 1) {
                     //this is a fail safe to prevent ever getting
@@ -582,12 +566,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showToolbar()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                    if (navigationStackTitleList.isNotEmpty())
-                        navigationStackTitleList.remove(navigationStackTitleList.last())
                     if (!localProductBody.isEmpty())
                         localProductBody.removeLast()
-                    updateRequestAndReload()
-                    reloadProductsWithSortAndFilter()
+                    if (isReloadNeeded) {
+                        updateRequestForReload()
+                        reloadProductsWithSortAndFilter()
+                    }
+                    isReloadNeeded = true
                     if (productView?.navigation?.isNullOrEmpty() != true)
                         unLockDrawerFragment()
                 }
@@ -1114,11 +1099,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     companion object {
+        private var isReloadNeeded = true
         private var localProductBody: ArrayList<Any> = ArrayList()
-        private var navigationStackTitleList: LinkedHashSet<String> = LinkedHashSet()
         private var localSuburbId: String? = null
         private var localStoreId: String? = null
-        const val REFINEMENT_DATA = "REFINEMENT_DATA"
+
+        /*const val REFINEMENT_DATA = "REFINEMENT_DATA"*/
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
         private const val SUB_CATEGORY_NAME = "SUB_CATEGORY_NAME"
 
