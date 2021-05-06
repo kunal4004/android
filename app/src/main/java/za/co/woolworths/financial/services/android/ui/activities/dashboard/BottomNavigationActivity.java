@@ -393,11 +393,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    public String getToolBarTitle() {
-        return getToolBarText();
-    }
-
-    @Override
     public void setTitle(String title, int color) {
         setToolbarTitle(title, color);
         getToolbarTitle().setTextColor(ContextCompat.getColor(BottomNavigationActivity.this, R.color.white));

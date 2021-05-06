@@ -36,8 +36,6 @@ public interface BottomNavigator {
 
 	void setTitle(String title);
 
-	String getToolBarTitle();
-
 	void setTitle(String title, int color);
 
 	void slideUpBottomView();
