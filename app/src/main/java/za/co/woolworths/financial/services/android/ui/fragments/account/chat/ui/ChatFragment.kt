@@ -103,7 +103,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         setupRecyclerview()
         isChatButtonEnabled(false)
         onClickListener()
-        autoConnectToNetwork()
+//        autoConnectToNetwork()
         setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
         detectKeyboardVisibilityState()
     }
