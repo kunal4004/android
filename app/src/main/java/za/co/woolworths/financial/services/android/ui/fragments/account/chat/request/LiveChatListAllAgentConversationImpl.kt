@@ -60,8 +60,8 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                 /**
                  * To do:: test null pointer occurance
                  */
-                val messages: MutableList<ChatMessage> =
-                    defaultMessageList.union(chatMessageAgent).toMutableList()
+                val messages: MutableList<ChatMessage>? =
+                    defaultMessageList?.union(chatMessageAgent)?.toMutableList()
 
                 ChatAWSAmplify.listAllChatMessages = messages
 

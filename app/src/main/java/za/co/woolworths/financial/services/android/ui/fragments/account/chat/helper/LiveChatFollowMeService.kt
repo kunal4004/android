@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper
 
 import android.app.*
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -9,6 +11,7 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
@@ -56,9 +59,9 @@ class LiveChatFollowMeService : Service() {
                 conversation({
                     // conversation success
                     onSubscribe({ message ->
-                        Log.e("authLogin", "message ${Gson().toJson(message)}")
                         if (ChatAWSAmplify.isChatActivityInForeground) {
                             postResult(Gson().toJson(message))
+                            sendNotification()
                         } else {
                             val handler = Handler(Looper.getMainLooper())
                             handler.post {
@@ -127,7 +130,67 @@ class LiveChatFollowMeService : Service() {
     }
 
     override fun onDestroy() {
+        ChatAWSAmplify.listAllChatMessages?.clear()
         liveChat.onCancel()
         super.onDestroy()
+    }
+
+    private fun sendNotification() {
+        var notifyManager: NotificationManager? = null
+        val NOTIFY_ID = 1002
+
+        val name = "KotlinApplication"
+        val id = "kotlin_app"
+        val description = "kotlin_app_first_channel"
+
+        if (notifyManager == null) {
+            notifyManager = applicationContext?.getSystemService(Context.NOTIFICATION_SERVICE)
+                    as NotificationManager
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            var mChannel = notifyManager.getNotificationChannel(id)
+            if (mChannel == null) {
+                mChannel = NotificationChannel(id, name, importance)
+                mChannel.description = description
+                mChannel.enableVibration(true)
+                mChannel.lightColor = Color.GREEN
+                mChannel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+                notifyManager.createNotificationChannel(mChannel)
+            }
+        }
+
+        val builder: NotificationCompat.Builder = NotificationCompat.Builder(applicationContext, id)
+
+        val intent: Intent = Intent(applicationContext, WChatActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(applicationContext, 0, intent, 0)
+
+        builder.setContentTitle("Heads Up Notification")  // required
+            .setSmallIcon(android.R.drawable.ic_popup_reminder) // required
+            .setContentText(getString(R.string.app_name))  // required
+            .setDefaults(Notification.DEFAULT_ALL)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .setTicker("Notification")
+            .setVibrate(longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400))
+
+        val dismissIntent = Intent(applicationContext, WChatActivity::class.java)
+        dismissIntent.action = "DISMISS"
+        dismissIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        val pendingDismissIntent = PendingIntent.getActivity(
+            applicationContext, 0, dismissIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val dismissAction = NotificationCompat.Action(
+            R.drawable.auto_icon,
+            "DISMISS", pendingDismissIntent
+        )
+        builder.addAction(dismissAction)
+
+        val notification = builder.build()
+        notifyManager.notify(NOTIFY_ID, notification)
     }
 }

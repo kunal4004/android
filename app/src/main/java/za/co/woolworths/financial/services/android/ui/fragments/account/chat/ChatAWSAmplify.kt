@@ -7,15 +7,10 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.devmenu.DeveloperMenu
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.EncryptChat
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.Utils
 
 object ChatAWSAmplify {
 
@@ -62,40 +57,10 @@ object ChatAWSAmplify {
     fun init() {}
 
     fun addChatMessageToList(chatMessage: ChatMessage) {
-        listAllChatMessages?.add(
-            EncryptChat(
-                Utils.aes256EncryptStringAsBase64String(
-                    Gson().toJson(
-                        chatMessage
-                    )
-                )
-            )
-        )
+        listAllChatMessages?.add(chatMessage)
     }
 
-    fun getChatMessageList(): MutableList<ChatMessage> {
-        val chatMessageList: MutableList<ChatMessage> = mutableListOf()
-        listAllChatMessages?.forEach { encryptedMessage ->
-            val encryptedData = encryptedMessage as? EncryptChat
-            val decryptMessage = Utils.aes256DecryptBase64EncryptedString(encryptedData?.message)
-
-            try {
-                val chatMsg: ChatMessage? = when {
-                    decryptMessage.contains(UserMessage::class.java.simpleName) -> {
-                        Gson().fromJson(decryptMessage, UserMessage::class.java)
-                    }
-                    decryptMessage.contains(SendMessageResponse::class.java.simpleName) -> {
-                        Gson().fromJson(decryptMessage, SendMessageResponse::class.java)
-                    }
-                    else -> null
-                }
-
-
-                chatMsg?.let { chatMessageList.add(it) }
-            } catch (ex: Exception) {
-                FirebaseManager.logException("${ChatAWSAmplify::class.java.simpleName} $ex")
-            }
-        }
-        return chatMessageList
+    fun getChatMessageList(): MutableList<ChatMessage>? {
+        return listAllChatMessages
     }
 }

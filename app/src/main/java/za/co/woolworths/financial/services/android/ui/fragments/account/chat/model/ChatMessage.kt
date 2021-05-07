@@ -18,9 +18,6 @@ sealed class ChatMessage
         Parcelable
 
     @Parcelize
-    data class EncryptChat(val message: String?) : ChatMessage(), Parcelable
-
-    @Parcelize
     data class SendMessageResponse(
         val caption: String? = null,
         val content: String? = null,
