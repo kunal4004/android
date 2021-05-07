@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        app:layout_constraintBottom_toTopOf="@+id/resendDialogTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/resendDialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_eight_dp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/resend_otp_title"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twenty_sp"
+        android:layout_marginBottom="@dimen/fifty_dp"
+        app:layout_constraintBottom_toTopOf="@id/resendSMSto"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+    <ImageView
+        android:id="@+id/resendSMStoIcon"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:src="@drawable/icon_mobile_phone"
+        android:padding="@dimen/two_dp"
+        app:layout_constraintBottom_toBottomOf="@id/resendSMSto"
+        app:layout_constraintStart_toStartOf="@id/start_guideline"
+        app:layout_constraintTop_toTopOf="@id/resendSMSto" />
+
+    <TextView
+        android:id="@+id/resendSMSto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_caret_black"
+        android:drawablePadding="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:gravity="start|center"
+        android:paddingVertical="@dimen/twenty_dp"
+        android:paddingStart="@dimen/fifteen_dp"
+        android:textColor="@color/color_222222"
+        android:textSize="@dimen/seventeen_sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/resendSeparator1"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toEndOf="@id/resendSMStoIcon"
+        tools:text="SMS to *** **** 1234" />
+
+    <View
+        android:id="@+id/resendSeparator1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_0_5dp"
+        android:background="@color/color_D8D8D8"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/resendEmailOTP"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+    <ImageView
+        android:id="@+id/resendEmailOTPIcon"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:src="@drawable/icon_email"
+        android:padding="@dimen/two_dp"
+        app:layout_constraintBottom_toBottomOf="@id/resendEmailOTP"
+        app:layout_constraintStart_toStartOf="@id/start_guideline"
+        app:layout_constraintTop_toTopOf="@id/resendEmailOTP" />
+
+    <TextView
+        android:id="@+id/resendEmailOTP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_caret_black"
+        android:drawablePadding="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:gravity="center|start"
+        android:paddingVertical="@dimen/twenty_dp"
+        android:paddingStart="@dimen/fifteen_dp"
+        android:text="Send to your email address"
+        android:textColor="@color/color_222222"
+        android:textSize="@dimen/seventeen_sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/resendSeparator2"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toEndOf="@id/resendEmailOTPIcon"
+        tools:text="Send to your email address" />
+
+    <View
+        android:id="@+id/resendSeparator2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_0_5dp"
+        android:background="@color/color_D8D8D8"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/resendCallCenter"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+    <ImageView
+        android:id="@+id/resendCallCenterIcon"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:padding="@dimen/two_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:src="@drawable/icon_mobile_call"
+        app:layout_constraintBottom_toBottomOf="@id/resendCallCenter"
+        app:layout_constraintStart_toStartOf="@id/start_guideline"
+        app:layout_constraintTop_toTopOf="@id/resendCallCenter" />
+
+    <TextView
+        android:id="@+id/resendCallCenter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_caret_black"
+        android:drawablePadding="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:gravity="center|start"
+        android:paddingVertical="@dimen/twenty_dp"
+        android:paddingStart="@dimen/fifteen_dp"
+        android:text="Call Centre 0861 50 20 20"
+        android:textAlignment="viewStart"
+        android:textColor="@color/color_222222"
+        android:textSize="@dimen/seventeen_sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/resendSeparator3"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toEndOf="@id/resendCallCenterIcon"
+        tools:text="Call Centre 0861 50 20 20" />
+
+    <View
+        android:id="@+id/resendSeparator3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_0_5dp"
+        android:background="@color/color_D8D8D8"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/resendDialogCancel"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+    <TextView
+        android:id="@+id/resendDialogCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:background="@color/white"
+        android:enabled="true"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="@integer/point_two"
+        android:padding="@dimen/thirty_two_dp"
+        android:text="@string/cancel"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline"
+        tools:ignore="UnusedAttribute" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/end_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/start_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,6 +41,7 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
         init()
         setupToolbar()
         setUpDeliveryNow?.setOnClickListener {
+            (activity as? CreditCardDeliveryActivity)?.mFirebaseCreditCardDeliveryEvent?.forMyAccountCreditCardDelivery()
             navController?.navigate(R.id.action_to_creditCardDeliveryRecipientDetailsFragment, bundleOf("bundle" to bundle))
         }
         activateNow?.setOnClickListener {
@@ -50,23 +51,24 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
 
     private fun init() {
         var creditCardName: String = bindString(R.string.blackCreditCard_title)
-        val formattedCardDeliveryFee: String = WoolworthsApplication.getCreditCardDelivery()?.formattedCardDeliveryFee ?: ""
+        val formattedCardDeliveryFee: String = WoolworthsApplication.getCreditCardDelivery()?.formattedCardDeliveryFee
+                ?: ""
         when {
             accountBinNumber.equals(Utils.GOLD_CARD, true) -> {
-                imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
+                imgCreditCard?.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
                 creditCardName = bindString(R.string.goldCreditCard_title)
                 descriptionNoteTextView?.visibility = View.VISIBLE
-                descriptionNoteTextView?.text = KotlinUtils.highlightText(bindString(R.string.setup_credit_card_delivery_desc_please_note,bindString(R.string.goldCreditCard_title_small),formattedCardDeliveryFee), mutableListOf("Please note:","R${formattedCardDeliveryFee}"))
+                descriptionNoteTextView?.text = KotlinUtils.highlightText(bindString(R.string.setup_credit_card_delivery_desc_please_note, bindString(R.string.goldCreditCard_title_small), formattedCardDeliveryFee), mutableListOf("Please note:", "R${formattedCardDeliveryFee}"))
             }
             accountBinNumber.equals(Utils.SILVER_CARD, true) -> {
-                imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
+                imgCreditCard?.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
                 creditCardName = bindString(R.string.silverCreditCard_title)
 
                 descriptionNoteTextView?.visibility = View.VISIBLE
-                descriptionNoteTextView?.text = KotlinUtils.highlightText(bindString(R.string.setup_credit_card_delivery_desc_please_note,bindString(R.string.silver_credit_card),formattedCardDeliveryFee), mutableListOf("Please note:","R${formattedCardDeliveryFee}"))
+                descriptionNoteTextView?.text = KotlinUtils.highlightText(bindString(R.string.setup_credit_card_delivery_desc_please_note, bindString(R.string.silver_credit_card), formattedCardDeliveryFee), mutableListOf("Please note:", "R${formattedCardDeliveryFee}"))
             }
             accountBinNumber.equals(Utils.BLACK_CARD, true) -> {
-                imgCreditCard.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
+                imgCreditCard?.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
                 creditCardName = bindString(R.string.blackCreditCard_title)
             }
         }

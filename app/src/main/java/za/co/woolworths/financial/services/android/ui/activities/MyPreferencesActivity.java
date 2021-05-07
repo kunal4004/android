@@ -1,234 +1,146 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.TextUtils;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.LinkDeviceOTPFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
-import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MyPreferencesActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
+import static za.co.woolworths.financial.services.android.ui.activities.WStoreLocatorActivity.mToolbar;
 
-	private Toolbar mToolbar;
-	private Switch authenticateSwitch;
-	private static final int LOCK_REQUEST_CODE_TO_ENABLE = 222;
-	private static final int LOCK_REQUEST_CODE_TO_DISABLE = 333;
-	private static final int SECURITY_SETTING_REQUEST_CODE = 232;
-	public static final int SECURITY_SETTING_REQUEST_DIALOG = 234;
-	public static final int SECURITY_INFO_REQUEST_DIALOG = 235;
-	private LinearLayout biometricsLayout;
-	private RelativeLayout rlLocationSelectedLayout;
-	private WTextView tvDeliveryLocation;
-	private WTextView tvDeliveringToText;
-	private String mSuburbName, mProvinceName;
-	private static final int REQUEST_SUBURB_CHANGE = 143;
-	private ImageView imRightArrow;
-	private ImageView imDeliveryLocationIcon;
-	private WTextView tvEditDeliveryLocation;
+public class MyPreferencesActivity extends AppCompatActivity implements MyPreferencesInterface {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Utils.updateStatusBarBackground(this);
-		setContentView(R.layout.my_preferences_activity);
-		init();
-		setActionBar();
-		bindDataWithUI();
-	}
+    private NavController navigationHost = null;
+    private Toolbar mPrefsToolbar;
 
-	private void setActionBar() {
-		setSupportActionBar(mToolbar);
-		ActionBar mActionBar = getSupportActionBar();
-		if (mActionBar != null) {
-			mActionBar.setDisplayHomeAsUpEnabled(true);
-			mActionBar.setDisplayShowTitleEnabled(false);
-			mActionBar.setDisplayUseLogoEnabled(false);
-			mActionBar.setHomeAsUpIndicator(R.drawable.back24);
-		}
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Utils.updateStatusBarBackground(this);
+        setContentView(R.layout.my_preferences_activity);
 
-	private void init() {
-		mToolbar = findViewById(R.id.mToolbar);
-		authenticateSwitch = findViewById(R.id.auSwitch);
-		biometricsLayout = findViewById(R.id.biometricsLayout);
-		tvDeliveryLocation = findViewById(R.id.tvDeliveryLocation);
-		tvDeliveringToText = findViewById(R.id.tvDeliveringTo);
-		rlLocationSelectedLayout = findViewById(R.id.locationSelectedLayout);
-		tvEditDeliveryLocation = findViewById(R.id.editLocation);
-		imRightArrow = findViewById(R.id.iconCaretRight);
-		imDeliveryLocationIcon = findViewById(R.id.deliverLocationIcon);
-		authenticateSwitch.setOnClickListener(this);
-		rlLocationSelectedLayout.setOnClickListener(this);
-		authenticateSwitch.setOnTouchListener(this);
-	}
+        NavHostFragment myPreferencesNavHostFrag = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.myPreferencesNavHostFrag);
+        if (myPreferencesNavHostFrag != null) {
+            navigationHost = myPreferencesNavHostFrag.getNavController();
+        }
+        mPrefsToolbar = findViewById(R.id.mPrefsToolbar);
+        setActionBar();
+        setNavHostStartDestination();
+    }
 
-	public void bindDataWithUI() {
+    private void setActionBar() {
+        setSupportActionBar(mPrefsToolbar);
+        ActionBar mActionBar = getSupportActionBar();
+        if (mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            mActionBar.setDisplayShowTitleEnabled(false);
+            mActionBar.setDisplayUseLogoEnabled(false);
+            mActionBar.setHomeAsUpIndicator(R.drawable.back24);
+        }
+    }
 
-		if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isAppSupportsAuthentication()) {
-			if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isDeviceSecure())
-				authenticateSwitch.setChecked(AuthenticateUtils.getInstance(MyPreferencesActivity.this).isAuthenticationEnabled());
-			else
-				setUserAuthentication(false);
-		} else {
-			biometricsLayout.setVerticalGravity(View.GONE);
-		}
+    private void setNavHostStartDestination() {
+        if (navigationHost == null) {
+            return;
+        }
+        NavGraph graph = navigationHost.getGraph();
+        graph.setStartDestination(R.id.myPreferencesFragment);
 
-		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-		if (lastDeliveryLocation != null) {
-			setDeliveryLocation(lastDeliveryLocation);
-		}
+        navigationHost.setGraph(graph, getIntent() != null ? getIntent().getExtras() : null);
+    }
 
-	}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-	@Override
-	public void onClick(View view) {
-		switch (view.getId()) {
-			case R.id.auSwitch:
-				if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isDeviceSecure()) {
-					if (authenticateSwitch.isChecked()) {
-						startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE);
-					} else {
-						Utils.displayValidationMessageForResult(MyPreferencesActivity.this, CustomPopUpWindow.MODAL_LAYOUT.BIOMETRICS_SECURITY_INFO, getString(R.string.biometrics_security_info), SECURITY_INFO_REQUEST_DIALOG);
-					}
-				} else
-					openDeviceSecuritySettings();
-				break;
-			case R.id.locationSelectedLayout:
-				locationSelectionClicked();
-				break;
-			default:
-				break;
-		}
-	}
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().getFragments().get(0);
+        if (navHostFragment != null) {
+            List<Fragment> childFragments = navHostFragment.getChildFragmentManager().getFragments();
+            for (Fragment fragment : childFragments) {
+                fragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
-			case LOCK_REQUEST_CODE_TO_ENABLE:
-				setUserAuthentication(resultCode == RESULT_OK ? true : false);
-				if (resultCode == RESULT_OK) {
-					AuthenticateUtils.getInstance(MyPreferencesActivity.this).enableBiometricForCurrentSession(false);
-				}
-				break;
-			case LOCK_REQUEST_CODE_TO_DISABLE:
-				setUserAuthentication(resultCode == RESULT_OK ? false : true);
-				break;
-			case SECURITY_SETTING_REQUEST_CODE:
-				if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isDeviceSecure()) {
-					startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE);
-				} else {
-					setUserAuthentication(false);
-				}
-				break;
-			case REQUEST_SUBURB_CHANGE:
-				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-				if (lastDeliveryLocation != null) {
-					setDeliveryLocation(lastDeliveryLocation);
-				}
-				break;
-			case SECURITY_SETTING_REQUEST_DIALOG:
-				if (resultCode == RESULT_OK) {
-					try {
-						Intent intent = new Intent(Settings.ACTION_SETTINGS);
-						startActivityForResult(intent, SECURITY_SETTING_REQUEST_CODE);
-					} catch (Exception ex) {
-						setUserAuthentication(false);
-					}
-				} else {
-					setUserAuthentication(false);
-				}
-				break;
-			case SECURITY_INFO_REQUEST_DIALOG:
-				startBiometricAuthentication(LOCK_REQUEST_CODE_TO_DISABLE);
-				break;
-			default:
-				break;
-		}
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return false;
+    }
 
-	public void startBiometricAuthentication(int requestCode) {
-		try {
-			AuthenticateUtils.getInstance(MyPreferencesActivity.this).startAuthenticateApp(requestCode);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void onBackPressed() {
+        if (navigationHost.getCurrentDestination() == null) {
+            return;
+        }
 
-	public void setUserAuthentication(boolean isAuthenticated) {
-		AuthenticateUtils.getInstance(MyPreferencesActivity.this).setUserAuthenticate(isAuthenticated ? SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON : SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF);
-		authenticateSwitch.setChecked(isAuthenticated);
-	}
+        switch (navigationHost.getCurrentDestination().getId()) {
+            case R.id.myPreferencesFragment:
+                finishActivity();
+                break;
+            default:
+                navigationHost.popBackStack();
+                break;
+        }
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				finishActivity();
-				return true;
-		}
-		return false;
-	}
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // permission was granted, yay! Do the
+        // contacts-related task you need to do.
+        getCurrentFragment().onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
-	@Override
-	public void onBackPressed() {
-		finishActivity();
-	}
+    private Fragment getCurrentFragment() {
+        Fragment navHostFragment = getSupportFragmentManager().findFragmentById(R.id.myPreferencesNavHostFrag);
+        return navHostFragment == null ? null : navHostFragment.getChildFragmentManager().getFragments().get(0);
+    }
 
-	private void finishActivity() {
-		finish();
-		overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
-	}
+    private void finishActivity() {
+        finish();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
 
-	public void openDeviceSecuritySettings() {
-		Utils.displayValidationMessageForResult(MyPreferencesActivity.this, CustomPopUpWindow.MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE, "", SECURITY_SETTING_REQUEST_DIALOG);
-	}
+    @Override
+    public void setToolbarTitle(@NotNull String titleTxt) {
+        if (mPrefsToolbar == null) {
+            return;
+        }
+        TextView title = mPrefsToolbar.findViewById(R.id.toolbarText);
+        title.setText(titleTxt);
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PREFERENCES);
-		bindDataWithUI();
-	}
-
-	private void locationSelectionClicked() {
-		KotlinUtils.Companion.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE, null);
-	}
-
-	@Override
-	public boolean onTouch(View view, MotionEvent motionEvent) {
-		switch (view.getId()) {
-			case R.id.auSwitch:
-				return motionEvent.getActionMasked() == MotionEvent.ACTION_MOVE;
-			default:
-				break;
-		}
-		return false;
-	}
-
-	public void setDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
-		imRightArrow.setVisibility(View.GONE);
-		tvEditDeliveryLocation.setVisibility(View.VISIBLE);
-		imDeliveryLocationIcon.setBackgroundResource(R.drawable.tick_cli_active);
-		KotlinUtils.Companion.setDeliveryAddressView(this, shoppingDeliveryLocation, tvDeliveringToText, tvDeliveryLocation, null);
-	}
+    @Override
+    public void setToolbarTitleGravity(int gravity) {
+        if (mPrefsToolbar == null) {
+            return;
+        }
+        TextView title = mPrefsToolbar.findViewById(R.id.toolbarText);
+        title.setGravity(gravity);
+    }
 }

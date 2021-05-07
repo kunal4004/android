@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -86,6 +87,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
             if (fiveDigitPin.toInt() == mBundleFiveDigitCodePinCode) {
                 navigateToAbsaPinCodeSuccessFragment(mAliasId, fiveDigitPin)
             } else {
+                FirebaseEventDetailManager.passcode(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
                 ErrorHandlerView(activity).showToast(getString(R.string.passcode_not_match_alert))
                 clearPin()
             }

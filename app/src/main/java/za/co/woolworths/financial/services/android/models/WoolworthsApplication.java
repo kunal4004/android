@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Lifecycle;
@@ -306,16 +307,16 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 
     //#region ShowServerMessage
-    public void showServerMessageOrProceed(Activity activity){
-        String passphrase = BuildConfig.VERSION_NAME+", "+BuildConfig.SHA1;
+    public void showServerMessageOrProceed(Activity activity) {
+        String passphrase = BuildConfig.VERSION_NAME + ", " + BuildConfig.SHA1;
         byte[] hash = null;
         try {
-            hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase,Integer.toString(BuildConfig.VERSION_CODE),1007,256);
+            hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase, Integer.toString(BuildConfig.VERSION_CODE), 1007, 256);
         } catch (KeyGenerationFailureException | UnsupportedEncodingException e) {
-            Log.e(TAG,e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
-        String hashB64 = Base64.encodeToString(hash,Base64.NO_WRAP);
-        if(!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)){
+        String hashB64 = Base64.encodeToString(hash, Base64.NO_WRAP);
+        if (!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(getString(R.string.update_title));
             builder.setMessage(TextUtils.isEmpty(getAuthenticVersionReleaseNote()) ? getString(R.string.update_desc) : getAuthenticVersionReleaseNote());
@@ -336,7 +337,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         setCurrentActivity(activity);
-        if(activity.getClass().equals(OnBoardingActivity.class) || activity.getClass().equals(BottomNavigationActivity.class) && shouldDisplayServerMessage){
+        if (activity.getClass().equals(OnBoardingActivity.class) || activity.getClass().equals(BottomNavigationActivity.class) && shouldDisplayServerMessage) {
             showServerMessageOrProceed(activity);
             shouldDisplayServerMessage = false;
         }
@@ -452,6 +453,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public static String getCartCheckoutLink() {
         return cartCheckoutLink;
     }
+
     public static String getAuthenticVersionStamp() {
         return authenticVersionStamp;
     }
@@ -460,7 +462,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.authenticVersionStamp = authenticVersionStamp;
     }
 
-    public static boolean isApplicationInForeground(){
+    public static boolean isApplicationInForeground() {
         return isApplicationInForeground;
     }
 
@@ -508,10 +510,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return quickShopDefaultValues;
     }
 
-    public Activity getCurrentActivity(){
+    public Activity getCurrentActivity() {
         return mCurrentActivity;
     }
-    public void setCurrentActivity(Activity mCurrentActivity){
+
+    public void setCurrentActivity(Activity mCurrentActivity) {
         this.mCurrentActivity = mCurrentActivity;
     }
 
@@ -581,14 +584,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return clickAndCollect;
     }
 
-	public static void setPayMyAccountOption(@Nullable PayMyAccount payMyAccount) {
-		mPayMyAccount = payMyAccount;
-	}
+    public static void setPayMyAccountOption(@Nullable PayMyAccount payMyAccount) {
+        mPayMyAccount = payMyAccount;
+    }
 
-	@Nullable
-	public static PayMyAccount getPayMyAccountOption() {
-		return mPayMyAccount;
-	}
+    @Nullable
+    public static PayMyAccount getPayMyAccountOption() {
+        return mPayMyAccount;
+    }
 
     public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
         WoolworthsApplication.clickAndCollect = clickAndCollect;
@@ -658,5 +661,15 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public void setCreditLimitsIncrease(CreditLimitIncrease creditLimitIncrease) {
         this.creditLimitIncrease = creditLimitIncrease;
+    }
+
+    @VisibleForTesting
+    public static void testSetInstance(WoolworthsApplication application) {
+        mInstance = application;
+    }
+
+    @VisibleForTesting
+    public static void testSetContext(Context context) {
+        mContextApplication = context;
     }
 }
