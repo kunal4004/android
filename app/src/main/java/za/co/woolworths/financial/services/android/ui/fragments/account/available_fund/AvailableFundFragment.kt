@@ -27,8 +27,8 @@ import za.co.woolworths.financial.services.android.contracts.IAvailableFundsCont
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
+import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
@@ -39,8 +39,10 @@ import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdr
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
@@ -149,7 +151,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                             if (!isAdded) return@queryServicePayUPaymentMethod
                             stopProgress()
                             payMyAccountViewModel.isQueryPayUPaymentMethodComplete = true
-
+                            navigateToDeepLinkView(DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT, incPayMyAccountButton)
                         }, { onSessionExpired ->
                     if (!isAdded) return@queryServicePayUPaymentMethod
                     activity?.let {
@@ -318,7 +320,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
     override fun navigateToABSAStatementActivity() {
         activity?.apply {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+            FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
             if (NetworkManager().isConnectedToNetwork(this)) {
                 mAvailableFundPresenter?.queryABSAServiceGetUserCreditCardToken()
             } else {
@@ -359,10 +361,30 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     fun navigateToDeepLinkView() {
         if (activity is AccountSignedInActivity) {
             GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-                val deepLinkingObject = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.getDeepLinkData()
-                when (deepLinkingObject?.get("feature")?.asString) {
-                    DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
-                        incViewStatementButton?.performClick()
+                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
+                    val deepLinkingObject = getDeepLinkData()
+                    when (deepLinkingObject?.get("feature")?.asString) {
+                        DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT -> {
+                            deleteDeepLinkData()
+                            incViewStatementButton?.performClick()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToDeepLinkView(destination: String, view: View?) {
+        if (activity is AccountSignedInActivity) {
+            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
+                    val deepLinkingObject = getDeepLinkData()
+                    when (deepLinkingObject?.get("feature")?.asString) {
+                        destination -> {
+                            deleteDeepLinkData()
+                            if (isProductInGoodStanding())
+                                view?.performClick()
+                        }
                     }
                 }
             }

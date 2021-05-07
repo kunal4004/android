@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.credit_card_delivery_no_time_slots_availab
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_failure_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.*
 import kotlinx.android.synthetic.main.npc_processing_request_layout.*
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
@@ -72,7 +71,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.confirmAddress -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_DELIVERY_CONFIRM)
+                (activity as? CreditCardDeliveryActivity)?.mFirebaseCreditCardDeliveryEvent?.forCreditCardDeliveryConfirm()
                 updateAddressDetails()
                 getAvailableTimeSlots()
             }

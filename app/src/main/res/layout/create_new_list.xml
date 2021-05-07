@@ -28,11 +28,13 @@
             android:gravity="center"
             android:letterSpacing="0.2"
             android:maxLines="1"
+            android:paddingTop="@dimen/three_dp"
+            android:paddingBottom="@dimen/three_dp"
             android:singleLine="true"
             android:text="@string/new_list"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            android:textSize="@dimen/twenty_sp" />
+            android:textSize="@dimen/twelve_sp" />
 
         <ImageView
             android:id="@+id/imCloseIcon"

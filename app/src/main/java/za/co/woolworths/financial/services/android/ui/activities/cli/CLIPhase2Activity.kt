@@ -16,14 +16,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.cli_phase2_activity.*
+import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitIncreaseEvent
 import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecrease
 import za.co.woolworths.financial.services.android.contracts.IEditAmountSlider
 import za.co.woolworths.financial.services.android.contracts.MaritalStatusListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.MaritalStatus
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.cli.SupplyIncomeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.cli.*
@@ -36,12 +39,14 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 
 class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimitDecrease, DeclineOfferInterface, IEditAmountSlider, MaritalStatusListener {
 
+    private var mFirebaseCreditLimitIncreaseEvent: FirebaseCreditLimitIncreaseEvent? = null
     private var maritalStatus: MaritalStatus? = null
     private var mCLICreateOfferResponse: OfferActive? = null
     private var mOfferActivePayload: String? = null
     private var mOfferActive = false
     private var mCloseButtonEnabled = false
     private var mNextStep: String? = null
+    var applyNowState: ApplyNowState? = ApplyNowState.STORE_CARD
     var eventStatus = EventStatus.NONE
 
     companion object {
@@ -65,7 +70,9 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
         intent?.extras?.apply {
             mOfferActivePayload = getString("OFFER_ACTIVE_PAYLOAD")
             mOfferActive = getBoolean("OFFER_IS_ACTIVE")
+            applyNowState = getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
             mCLICreateOfferResponse = offerActiveObject()
+            mFirebaseCreditLimitIncreaseEvent = FirebaseCreditLimitIncreaseEvent(applyNowState)
             mCLICreateOfferResponse?.apply {
                 mNextStep = nextStep
                 loadFragment(mNextStep)
@@ -338,6 +345,8 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     }
 
     override fun getMaritalStatus(): MaritalStatus {
-        return maritalStatus ?: MaritalStatus(0,bindString(R.string.please_select))
+        return maritalStatus ?: MaritalStatus(0, bindString(R.string.please_select))
     }
+
+    fun getFirebaseEvent() = mFirebaseCreditLimitIncreaseEvent
 }
