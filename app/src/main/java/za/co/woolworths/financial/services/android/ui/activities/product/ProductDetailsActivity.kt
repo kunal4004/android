@@ -30,6 +30,7 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
 
     companion object {
         const val DEEP_LINK_REQUEST_CODE = 123
+        const val SHARE_LINK_REQUEST_CODE = 321
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,16 +59,9 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
             walkThroughPromtView.hide()
             return
         }
-        val mngr = getSystemService(ACTIVITY_SERVICE) as ActivityManager?
-        val taskList = mngr!!.getRunningTasks(10)
-        if (taskList[0].numActivities == 2 && taskList[0].topActivity!!.className == this.localClassName
-                && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name) {
-            restartApp()
-        } else {
-            setResult(DEEP_LINK_REQUEST_CODE)
-            finish()
-            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-        }
+        finish()
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
