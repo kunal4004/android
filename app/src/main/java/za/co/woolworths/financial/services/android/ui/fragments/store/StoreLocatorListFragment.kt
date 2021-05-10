@@ -12,7 +12,8 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.store_locator_list_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity
-import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity
+import za.co.woolworths.financial.services.android.ui.activities.vtc.SelectStoreDetailsActivity
+import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.adapters.StoreLocatorCardListAdapter
 
 class StoreLocatorListFragment : Fragment() {
@@ -38,7 +39,7 @@ class StoreLocatorListFragment : Fragment() {
 
     private fun storeDetailItemClick(storeDetails: StoreDetails) {
         activity?.apply {
-            with(Intent(this, StoreDetailsActivity::class.java)) {
+            with(Intent(this, SelectStoreDetailsActivity::class.java)) {
                 putExtra("store", Gson().toJson(storeDetails))
                 putExtra("FromStockLocator", false)
                 putExtra("SHOULD_DISPLAY_BACK_ICON", true)

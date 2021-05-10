@@ -86,6 +86,7 @@ interface IAccountCardDetailsContract {
         fun isVirtualCardEnabled(): Boolean
         fun isVirtualCardObjectNotNull(): Boolean
         fun isReplacementCardAndVirtualCardViewEnabled(): Boolean
+        fun isActivateVirtualTempCard(): Boolean
         fun onStartCreditLimitIncreaseFirebaseEvent()
     }
 

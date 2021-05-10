@@ -1,25 +1,35 @@
-package za.co.woolworths.financial.services.android.ui.activities
+package za.co.woolworths.financial.services.android.ui.activities.vtc
 
+import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
 import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
 import android.text.method.LinkMovementMethod
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
+import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.awfs.coordination.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.store_locator_activity.*
+import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorListFragment
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.Utils
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import za.co.woolworths.financial.services.android.models.dto.StoreDetails
-import za.co.woolworths.financial.services.android.util.KotlinUtils
+
 
 class StoreLocatorActivity : AppCompatActivity() {
 
@@ -33,7 +43,6 @@ class StoreLocatorActivity : AppCompatActivity() {
         const val MAP_LOCATION = "MAP_LOCATION"
         private const val UNSELECTED_TAB_ALPHA_VIEW = 0.3f
         private const val SELECTED_TAB_ALPHA_VIEW = 1.0f
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,12 +61,44 @@ class StoreLocatorActivity : AppCompatActivity() {
 
         ivNavigateBack?.setOnClickListener { onBackPressed() }
 
-        val participatingStoreDescription = KotlinUtils.highlightTextInDesc(this, SpannableString(getString(R.string.npc_participating_store)), "here")
+        val participatingStoreDescription = highlightTextInDesc(this, SpannableString(getString(R.string.npc_participating_store)), "here", true)
         tvStoreContactInfo?.apply {
             text = participatingStoreDescription
             movementMethod = LinkMovementMethod.getInstance()
             highlightColor = Color.TRANSPARENT
         }
+    }
+
+    private fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, textIsClickable: Boolean = true): SpannableString {
+        var start = spannableTitle.indexOf(searchTerm)
+        if (start == -1) {
+            start = 0
+        }
+
+        val end = start + searchTerm.length
+        val clickableSpan: ClickableSpan = object : ClickableSpan() {
+            override fun onClick(textView: View) {
+
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+                ds.isUnderlineText = false
+            }
+        }
+
+        val typeface: Typeface? = context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+
+        if (textIsClickable) spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        val dimenPix =
+                context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
+        typeface?.style?.let { style -> spannableTitle.setSpan(StyleSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
+        spannableTitle.setSpan(StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableTitle.setSpan(AbsoluteSizeSpan(dimenPix?.toInt()
+                ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableTitle.setSpan(AbsoluteSizeSpan(dimenPix?.toInt()
+                ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannableTitle
     }
 
     fun getLocation(): MutableList<StoreDetails>? = mLocations

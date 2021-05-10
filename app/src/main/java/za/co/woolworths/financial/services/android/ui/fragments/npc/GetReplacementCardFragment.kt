@@ -24,10 +24,10 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity
-import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.CONTACT_INFO
-import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.MAP_LOCATION
-import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.PRODUCT_NAME
+import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity
+import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.CONTACT_INFO
+import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.MAP_LOCATION
+import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.PRODUCT_NAME
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment

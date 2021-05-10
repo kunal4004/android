@@ -32,14 +32,14 @@
             android:focusableInTouchMode="true"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="center"
-            android:paddingStart="32dp"
+            android:paddingStart="@dimen/twenty_five_dp"
             android:paddingTop="@dimen/eight_dp"
-            android:paddingEnd="32dp"
+            android:paddingEnd="@dimen/twenty_five_dp"
             android:paddingBottom="@dimen/ten_dp"
             android:text="@string/npc_participating_store"
             android:textColor="@color/white"
             android:textColorLink="@color/white"
-            android:textSize="16sp" />
+            android:textSize="@dimen/sixteen_sp" />
 
     </FrameLayout>
 
@@ -84,7 +84,7 @@
                     android:gravity="center"
                     android:letterSpacing="0.17"
                     android:lineSpacingExtra="4dp"
-                    android:text="PARTICIPATING stores"
+                    android:text="@string/participating_stores"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textFontWeight="300"

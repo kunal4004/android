@@ -321,4 +321,15 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     override fun onStartCreditLimitIncreaseFirebaseEvent() {
         FirebaseCreditLimitIncreaseEvent(mApplyNowAccountKeyPair?.first).forCLIStart()
     }
+
+    override fun isActivateVirtualTempCard(): Boolean {
+        val storeCardResponse = getStoreCardResponse()
+        val storeCardsData = storeCardResponse?.storeCardsData
+        if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
+            return false
+        }
+        val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
+        val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
+        return (blockType == TemporaryFreezeStoreCard.PERMANENT && storeCardsData.generateVirtualCard && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+    }
 }
