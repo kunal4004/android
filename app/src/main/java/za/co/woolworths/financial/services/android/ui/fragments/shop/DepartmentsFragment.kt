@@ -48,7 +48,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.Depart
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.util.*
 
-class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
+class DepartmentsFragment : DepartmentExtensionFragment(),
+    DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
 
     private var isFirstCallToLocationModal: Boolean = false
     private var isLocationModalShown: Boolean = false
@@ -72,17 +73,26 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
 
     init {
-        isDashEnabled = Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber?.toString())
+        isDashEnabled =
+            Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber?.toString())
                 ?: false
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_shop_department, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.viewTreeObserver?.addOnWindowFocusChangeListener { hasFocus -> onWindowFocusChanged(hasFocus) }
+        view.viewTreeObserver?.addOnWindowFocusChangeListener { hasFocus ->
+            onWindowFocusChanged(
+                hasFocus
+            )
+        }
         activity?.apply {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         }
@@ -95,7 +105,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
         var isPermissionGranted: Boolean = false
         activity?.apply {
-            isPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            isPermissionGranted = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
         }
 
         if (isDashEnabled && isFragmentVisible) {
@@ -191,15 +204,23 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()?.rootCategories)
         // Add dash banner if only present
         if (isDashEnabled && isFragmentVisible && context != null && Utils.isLocationEnabled(context)) {
-            mDepartmentAdapter?.setDashBanner(parentFragment?.getCategoryResponseData()?.dash, parentFragment?.getCategoryResponseData()?.rootCategories,
-                    getUpdatedBannerText())
+            mDepartmentAdapter?.setDashBanner(
+                parentFragment?.getCategoryResponseData()?.dash,
+                parentFragment?.getCategoryResponseData()?.rootCategories,
+                getUpdatedBannerText()
+            )
         }
         mDepartmentAdapter?.notifyDataSetChanged()
         executeValidateSuburb()
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
-        mDepartmentAdapter = DepartmentAdapter(categories, ::departmentItemClicked, ::onEditDeliveryLocation, ::onDashBannerClicked) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
+        mDepartmentAdapter = DepartmentAdapter(
+            categories,
+            ::departmentItemClicked,
+            ::onEditDeliveryLocation,
+            ::onDashBannerClicked
+        ) //{ rootCategory: RootCategory -> departmentItemClicked(rootCategory)}
         activity?.let {
             rclDepartment?.apply {
                 layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
@@ -217,7 +238,12 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             /* if (Utils.getPreferredDeliveryLocation() != null) {
                  activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
              } else*/
-            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE) }
+            activity?.apply {
+                KotlinUtils.presentEditDeliveryLocationActivity(
+                    this,
+                    EditDeliveryLocationActivity.REQUEST_CODE
+                )
+            }
         } else {
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
         }
@@ -226,7 +252,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     private fun getUpdatedBannerText(): String {
         context?.apply {
-            return if (KotlinUtils.isAppInstalled(activity, WoolworthsApplication.getInstance()?.dashConfig?.appURI))
+            return if (KotlinUtils.isAppInstalled(
+                    activity,
+                    WoolworthsApplication.getInstance()?.dashConfig?.appURI
+                )
+            )
                 this.getString(R.string.dash_banner_text_open_app) else this.getString(R.string.dash_banner_text_download_app)
         }
         return ""
@@ -234,12 +264,20 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     private fun onDashBannerClicked() {
         activity?.apply {
-            KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
+            KotlinUtils.postOneAppEvent(
+                OneAppEvents.AppScreen.DASH_BANNER_SCREEN_NAME,
+                OneAppEvents.FeatureName.DASH_FEATURE_NAME
+            )
 
-            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(WoolworthsApplication.getInstance()?.dashConfig?.appURI
-                    ?: "")
+            val intent: Intent? = this.packageManager.getLaunchIntentForPackage(
+                WoolworthsApplication.getInstance()?.dashConfig?.appURI
+                    ?: ""
+            )
             if (intent == null) {
-                presentDashDetailsActivity(this, parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink)
+                presentDashDetailsActivity(
+                    this,
+                    parentFragment?.getCategoryResponseData()?.dash?.dashBreakoutLink
+                )
             } else {
                 // Launch the woolies dash if already downloaded/installed
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -251,9 +289,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     fun presentDashDetailsActivity(activity: Activity, link: String?) {
         activity.apply {
             val mIntent = Intent(this, DashDetailsActivity::class.java)
-            mIntent.putExtra("bundle", bundleOf(
+            mIntent.putExtra(
+                "bundle", bundleOf(
                     AppConstant.KEY_DASH_WOOLIES_DOWNLOAD_LINK to link
-            ))
+                )
+            )
             startActivity(mIntent)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
@@ -270,7 +310,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }
-            else -> ProductListingFragment.newInstance(ProductsRequestParams.SearchType.NAVIGATE, rootCategory.categoryName, rootCategory.dimValId)
+            else -> ProductListingFragment.newInstance(
+                ProductsRequestParams.SearchType.NAVIGATE,
+                rootCategory.categoryName,
+                rootCategory.dimValId
+            )
         }
     }
 
@@ -278,7 +322,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
         incConnectionLayout?.visibility = if (isVisible) VISIBLE else GONE
     }
 
-    fun networkConnectionStatus(): Boolean = activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) }
+    fun networkConnectionStatus(): Boolean =
+        activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) }
             ?: false
 
     override fun onDestroy() {
@@ -315,7 +360,13 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
+            activity?.apply {
+                KotlinUtils.presentEditDeliveryLocationActivity(
+                    this,
+                    EditDeliveryLocationActivity.REQUEST_CODE,
+                    deliveryType
+                )
+            }
         } else {
             this.deliveryType = deliveryType
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
@@ -325,14 +376,27 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
+            if (Utils.getPreferredDeliveryLocation() != null) {
+                activity?.apply {
+                    KotlinUtils.presentEditDeliveryLocationActivity(
+                        this,
+                        EditDeliveryLocationActivity.REQUEST_CODE,
+                        deliveryType
+                    )
+                }
+            } else {
+                requestCartSummary()
+            }
         } else if (requestCode == REQUEST_CODE_FINE_GPS) {
             when (resultCode) {
                 RESULT_OK -> {
                     activity?.apply {
                         if (!Utils.isLocationEnabled(context)) {
                             val locIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                            startActivityForResult(locIntent, StoresNearbyFragment1.REQUEST_CHECK_SETTINGS)
+                            startActivityForResult(
+                                locIntent,
+                                StoresNearbyFragment1.REQUEST_CHECK_SETTINGS
+                            )
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                         }
                         isFirstCallToLocationModal = true
@@ -354,14 +418,16 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
             override fun onSuccess(response: CartSummaryResponse?) {
                 when (response?.httpCode) {
                     AppConstant.HTTP_OK -> {
-                        if (Utils.getPreferredDeliveryLocation() != null) {
-                            activity?.apply {
-                                KotlinUtils.presentEditDeliveryLocationActivity(this, ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE)
-                            }
+                        activity?.apply {
+                            KotlinUtils.presentEditDeliveryLocationActivity(
+                                this,
+                                ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE
+                            )
                         }
                     }
                 }
             }
+
             override fun onFailure(error: Throwable?) {
             }
 
@@ -379,7 +445,13 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     private fun showDeliveryOptionDialog() {
         if (!Utils.isDeliverySelectionModalShown()) {
-            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
+                ?.let { fragmentTransaction ->
+                    DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(
+                        fragmentTransaction,
+                        DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName
+                    )
+                }
         }
     }
 
@@ -389,27 +461,33 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
                 mDepartmentAdapter?.hideDeliveryDates()
             } else {
                 val storeOrSuburbId = if (it.storePickup) it.store.id else it.suburb.id
-                if (storeOrSuburbId.equals(WoolworthsApplication.getValidatedSuburbProducts()?.suburbId, true)) {
+                if (storeOrSuburbId.equals(
+                        WoolworthsApplication.getValidatedSuburbProducts()?.suburbId,
+                        true
+                    )
+                ) {
                     updateDeliveryDates()
                 } else {
                     mDepartmentAdapter?.showDeliveryDatesProgress(true)
                     storeOrSuburbId?.let { it1 ->
-                        OneAppService.validateSelectedSuburb(it1, it.storePickup).enqueue(CompletionHandler(object : IResponseListener<ValidateSelectedSuburbResponse> {
-                            override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
-                                when (response?.httpCode) {
-                                    200 -> response.validatedSuburbProducts?.let { it1 ->
-                                        it1.suburbId = storeOrSuburbId
-                                        WoolworthsApplication.setValidatedSuburbProducts(it1)
-                                        updateDeliveryDates()
+                        OneAppService.validateSelectedSuburb(it1, it.storePickup)
+                            .enqueue(CompletionHandler(object :
+                                IResponseListener<ValidateSelectedSuburbResponse> {
+                                override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
+                                    when (response?.httpCode) {
+                                        200 -> response.validatedSuburbProducts?.let { it1 ->
+                                            it1.suburbId = storeOrSuburbId
+                                            WoolworthsApplication.setValidatedSuburbProducts(it1)
+                                            updateDeliveryDates()
+                                        }
+                                        else -> mDepartmentAdapter?.hideDeliveryDates()
                                     }
-                                    else -> mDepartmentAdapter?.hideDeliveryDates()
                                 }
-                            }
 
-                            override fun onFailure(error: Throwable?) {
-                                mDepartmentAdapter?.hideDeliveryDates()
-                            }
-                        }, ValidateSelectedSuburbResponse::class.java))
+                                override fun onFailure(error: Throwable?) {
+                                    mDepartmentAdapter?.hideDeliveryDates()
+                                }
+                            }, ValidateSelectedSuburbResponse::class.java))
                     }
                 }
             }
@@ -452,10 +530,16 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
         activity?.apply {
             val perms =
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            return if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            return if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     //Asking only once.
 //                    ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_FINE_GPS)
@@ -474,12 +558,18 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
 
     private fun startLocationUpdates() {
         context?.apply {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 return
             }
-            fusedLocationClient?.requestLocationUpdates(locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper())
+            fusedLocationClient?.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
         }
     }
 
