@@ -18,7 +18,6 @@
         android:layout_marginBottom="@dimen/two_dp"
         android:adjustViewBounds="true"
         android:maxHeight="@dimen/twenty_four_dp"
-        android:scaleType="fitStart"
         tools:ignore="ContentDescription" />
 
     <ImageView
