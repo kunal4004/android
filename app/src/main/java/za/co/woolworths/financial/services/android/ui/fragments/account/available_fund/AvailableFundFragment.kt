@@ -58,7 +58,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAvailableFundPresenter = AvailableFundsPresenterImpl(this, AvailableFundsModelImpl())
-        mAvailableFundPresenter?.setBundle(arguments)
+        mAvailableFundPresenter.setBundle(arguments)
     }
 
     @Throws(RuntimeException::class)

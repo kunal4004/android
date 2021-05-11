@@ -7,6 +7,9 @@ import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.AmplifyConfiguration
 import com.amplifyframework.devmenu.DeveloperMenu
 import com.awfs.coordination.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.util.FirebaseManager
@@ -19,38 +22,40 @@ object ChatAWSAmplify {
     var isUserSubscriptionActive: Boolean = false
 
     init {
-        try {
-            val context = WoolworthsApplication.getAppContext()
-            val awsConfigurationJSONObject =
-                KotlinUtils.getJSONFileFromRAWResFolder(context, R.raw.awsconfiguration)
-            val inAppChat = WoolworthsApplication.getInAppChat()
-            val auth = awsConfigurationJSONObject
-                .getJSONObject("auth")
-                .getJSONObject("plugins")
-                .getJSONObject("awsCognitoAuthPlugin")
-                .getJSONObject("CognitoUserPool")
-                .getJSONObject("Default")
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val context = WoolworthsApplication.getAppContext()
+                val awsConfigurationJSONObject =
+                    KotlinUtils.getJSONFileFromRAWResFolder(context, R.raw.awsconfiguration)
+                val inAppChat = WoolworthsApplication.getInAppChat()
+                val auth = awsConfigurationJSONObject
+                    .getJSONObject("auth")
+                    .getJSONObject("plugins")
+                    .getJSONObject("awsCognitoAuthPlugin")
+                    .getJSONObject("CognitoUserPool")
+                    .getJSONObject("Default")
 
-            auth.put("PoolId", inAppChat.userPoolId)
-            auth.put("AppClientId", inAppChat.userPoolWebClientId)
+                auth.put("PoolId", inAppChat.userPoolId)
+                auth.put("AppClientId", inAppChat.userPoolWebClientId)
 
-            val api = awsConfigurationJSONObject
-                .getJSONObject("api")
-                .getJSONObject("plugins")
-                .getJSONObject("awsAPIPlugin")
-                .getJSONObject("api")
+                val api = awsConfigurationJSONObject
+                    .getJSONObject("api")
+                    .getJSONObject("plugins")
+                    .getJSONObject("awsAPIPlugin")
+                    .getJSONObject("api")
 
-            api.put("endpoint", inAppChat.apiURI)
+                api.put("endpoint", inAppChat.apiURI)
 
-            val awsConfiguration = AmplifyConfiguration.fromJson(awsConfigurationJSONObject)
-            Amplify.addPlugin(AWSCognitoAuthPlugin())
-            Amplify.addPlugin(AWSApiPlugin())
-            Amplify.configure(awsConfiguration, context)
-            DeveloperMenu.singletonInstance(context).setVisible(false)
-            Log.e("awsException", "successful")
-        } catch (ex: Exception) {
-            Log.e("awsException", ex.toString())
-            FirebaseManager.logException(ex)
+                val awsConfiguration = AmplifyConfiguration.fromJson(awsConfigurationJSONObject)
+                Amplify.addPlugin(AWSCognitoAuthPlugin())
+                Amplify.addPlugin(AWSApiPlugin())
+                Amplify.configure(awsConfiguration, context)
+                DeveloperMenu.singletonInstance(context).setVisible(false)
+                Log.e("awsException", "successful")
+            } catch (ex: Exception) {
+                Log.e("awsException", ex.toString())
+               // FirebaseManager.logException(ex)
+            }
         }
     }
 
@@ -60,7 +65,5 @@ object ChatAWSAmplify {
         listAllChatMessages?.add(chatMessage)
     }
 
-    fun getChatMessageList(): MutableList<ChatMessage>? {
-        return listAllChatMessages
-    }
+    fun getChatMessageList(): MutableList<ChatMessage>? = listAllChatMessages
 }

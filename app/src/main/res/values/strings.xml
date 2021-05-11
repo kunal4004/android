@@ -2025,5 +2025,7 @@
     <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
     <string name="payment_delay_note_label">Please note that payments may take up to 5 business days to reflect on your account.</string>
-    <string name="internet_waiting_subtitle">Waiting for internet connection...</string>
+    <string name="internet_waiting_subtitle">Waiting for internet connection…</string>
+    <string name="chat_title">chat</string>
+    <string name="chat_notification_title">You have received a message.</string>
 </resources>

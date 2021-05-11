@@ -6,12 +6,14 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conve
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 
 @Parcelize
-data class LiveChatExtraParams(val productOfferingId: String?,
-                               val accountNumber: String?,
-                               var sessionType: SessionType?,
-                               var fromActivity: String,
-                               var chatAccountProductLandingPage: String,
-                               var chatCollectionAgent: Boolean = false,
-                               var conversation: Conversation?,
-                               var absaCardList: String? = null,
-                               var unReadMessageCount: Int = 0) : Parcelable
+data class LiveChatExtraParams(
+    val productOfferingId: String?,
+    val accountNumber: String?,
+    var sessionType: SessionType?,
+    var fromActivity: String,
+    var chatAccountProductLandingPage: String,
+    var chatCollectionAgent: Boolean = false,
+    var conversation: Conversation?,
+    var absaCardList: String? = null,
+    var unReadMessageCount: Int = 0
+) : Parcelable

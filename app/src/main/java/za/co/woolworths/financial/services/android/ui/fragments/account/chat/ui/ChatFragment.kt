@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.text.TextUtils
@@ -16,14 +17,12 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.android.synthetic.main.chat_fragment.*
-import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
-import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
@@ -75,7 +74,6 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         chatNavController =
             (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
         initView()
-
     }
 
     private fun onChatStart() {
@@ -91,8 +89,15 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
             }
 
             liveChatListAllAgentConversation.list({ chatList ->
-                chatList?.forEach { item -> updateMessageList(item) }
-                chatLoaderProgressBar?.visibility = GONE
+                chatList.first?.forEach { item -> updateMessageList(item) }
+                activity?.runOnUiThread {
+                    if (isAdded) {
+                        chatLoaderProgressBar?.visibility = GONE
+                        subscribeResult(chatList.second, false)
+                    }
+                }
+
+
             }, { exp ->
                 Log.e("apiException", "apiException $exp")
             })
@@ -103,7 +108,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         setupRecyclerview()
         isChatButtonEnabled(false)
         onClickListener()
-//        autoConnectToNetwork()
+        //autoConnectToNetwork()
         setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
         detectKeyboardVisibilityState()
     }
@@ -136,44 +141,35 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         }
     }
 
+    @SuppressLint("ResourceType")
     private fun amplifyListener() {
+        (activity as? WChatActivity)?.updateTitle(R.string.chat_title)
         chatLoaderProgressBar?.visibility = VISIBLE
         onChatStart()
     }
 
-    fun subscribeResult(result: SendMessageResponse?) {
+    fun subscribeResult(result: SendMessageResponse?, isAgentMessageVisible: Boolean = true) {
         activity?.runOnUiThread {
+            // do not allow null messages
+            if (result?.content?.isEmpty() == true && result.sessionState == SessionStateType.ONLINE) return@runOnUiThread
+
+            chatLoaderProgressBar?.visibility = GONE
+
+            if (isAgentMessageVisible)
+                result?.let { showAgentsMessage(it) }
+
             when (result?.sessionState) {
 
-                SessionStateType.CONNECT -> {
-                    chatLoaderProgressBar?.visibility = GONE
-                    showAgentsMessage(result)
+                SessionStateType.CONNECT,
+                SessionStateType.QUEUEING,
+                SessionStateType.DISCONNECT -> {
                     isChatButtonEnabled(false)
                     isUserOnline(true)
                 }
 
                 SessionStateType.ONLINE -> {
-                    chatLoaderProgressBar?.visibility = GONE
-                    showAgentsMessage(result)
                     isChatButtonEnabled(true)
                     isUserOnline(true)
-                    ChatAWSAmplify.addChatMessageToList(result)
-                }
-
-                SessionStateType.QUEUEING -> {
-                    chatLoaderProgressBar?.visibility = GONE
-                    showAgentsMessage(result)
-                    isChatButtonEnabled(false)
-                    isUserOnline(true)
-                    ChatAWSAmplify.addChatMessageToList(result)
-                }
-
-                SessionStateType.DISCONNECT -> {
-                    chatLoaderProgressBar?.visibility = GONE
-                    showAgentsMessage(result)
-                    isChatButtonEnabled(false)
-                    isUserOnline(true)
-                    ChatAWSAmplify.addChatMessageToList(result)
                 }
 
                 else -> {

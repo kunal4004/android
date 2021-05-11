@@ -34,7 +34,7 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
 
 
     override fun list(
-        onSuccess: (MutableList<ChatMessage>?) -> Unit,
+        onSuccess: (Pair<MutableList<ChatMessage>?, SendMessageResponse?>) -> Unit,
         onFailure: (ApiException) -> Unit
     ) {
         val conversationId = liveChatDBRepository.getConversationMessageId()
@@ -42,11 +42,11 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
             request(conversationId),
             { messagesByConversationList ->
 
-                val defaultMessageList = ChatAWSAmplify.getChatMessageList()
+                val defaultMessageList = ChatAWSAmplify.getChatMessageList()?.toMutableList()
                 val agentConversationList: GetMessagesByConversation? =
                     messagesByConversationList.data
                 val agentMessageList: MutableList<SendMessageResponse>? =
-                    agentConversationList?.items
+                    agentConversationList?.items?.toMutableList()
 
                 val chatMessageAgent = mutableListOf<ChatMessage>()
                 agentMessageList?.forEach { chatMessageAgent.add(it) }
@@ -57,15 +57,13 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                  * and a List of the items
                  */
 
-                /**
-                 * To do:: test null pointer occurance
-                 */
-                val messages: MutableList<ChatMessage>? =
-                    defaultMessageList?.union(chatMessageAgent)?.toMutableList()
+                val messages: MutableList<ChatMessage>? = defaultMessageList?.plus(chatMessageAgent)?.toMutableList()?.distinct()?.toMutableList()
 
                 ChatAWSAmplify.listAllChatMessages = messages
+                val lastAgentMessage =
+                    messages?.groupBy { it as? SendMessageResponse }?.keys?.last()
 
-                onSuccess(messages)
+                onSuccess(Pair(messages, lastAgentMessage))
             },
             { apiException ->
                 onFailure(apiException)

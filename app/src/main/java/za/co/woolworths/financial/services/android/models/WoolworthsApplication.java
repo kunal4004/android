@@ -352,7 +352,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Override
     public void onActivityStarted(Activity activity) {
         setCurrentActivity(activity);
-
     }
 
     @Override
@@ -362,7 +361,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     @Override
     public void onActivityPaused(Activity activity) {
-        setCurrentActivity(activity);
     }
 
     @Override

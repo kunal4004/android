@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat.mo
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 sealed class ChatMessage
 

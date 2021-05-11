@@ -10,6 +10,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
+import androidx.annotation.IntegerRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -20,6 +21,7 @@ import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
@@ -274,4 +276,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         mSubscribeToMessageReceiver?.let { unregisterReceiver(it) }
     }
 
+    fun updateTitle(@IntegerRes title: Int?) {
+        agentNameTextView?.text = title?.let { name -> bindString(name) }
+    }
 }

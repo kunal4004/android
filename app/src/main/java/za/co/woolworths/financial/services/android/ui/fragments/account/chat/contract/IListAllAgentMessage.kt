@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.chat.co
 
 import com.amplifyframework.api.ApiException
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 
 interface IListAllAgentMessage {
-    fun list(onSuccess: (MutableList<ChatMessage>?) -> Unit, onFailure: (ApiException) -> Unit)
+    fun list(onSuccess:(Pair<MutableList<ChatMessage>?, SendMessageResponse?>) -> Unit, onFailure: (ApiException) -> Unit)
+
 }

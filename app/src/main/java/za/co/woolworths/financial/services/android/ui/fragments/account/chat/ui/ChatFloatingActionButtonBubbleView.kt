@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Gravity
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -40,13 +41,15 @@ class ChatFloatingActionButtonBubbleView(
     var scrollableView: Any? = null
 ) {
 
-    private var mUnReadMessageCountReceiver: BroadcastReceiver? = null
     private var chatBubbleToolTip: Dialog? = null
     private var isLiveChatEnabled = false
+    private var broadcaster: LocalBroadcastManager? = null
 
     init {
         isLiveChatEnabled = chatBubbleVisibility?.isChatBubbleVisible(applyNowState) == true
         floatingActionButtonBadgeCounter?.visibility = if (isLiveChatEnabled) VISIBLE else GONE
+
+        broadcaster = activity?.let { LocalBroadcastManager.getInstance(it) }
     }
 
     @SuppressLint("InflateParams")
@@ -61,10 +64,7 @@ class ChatFloatingActionButtonBubbleView(
             val greetingTextView = view.findViewById<TextView>(R.id.greetingTextView)
             val chatToUsNowTextView = view.findViewById<TextView>(R.id.chatToUsNowTextView)
             AnimationUtilExtension.animateViewPushDown(chatToUsNowTextView)
-            val chatAccountProductLandingPage =
-                if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(
-                    applyNowState
-                )
+            val chatAccountProductLandingPage = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
             activity?.apply {
                 greetingTextView?.text = bindString(
                     R.string.chat_greeting_label, chatBubbleVisibility?.getUsername()
@@ -87,7 +87,6 @@ class ChatFloatingActionButtonBubbleView(
 
                 val dm = DisplayMetrics()
                 windowManager.defaultDisplay.getMetrics(dm)
-
                 val dialogPosition = dm.heightPixels.div(
                     when (activity) {
                         is BottomNavigationActivity -> 4.2f
@@ -163,14 +162,6 @@ class ChatFloatingActionButtonBubbleView(
                     applyNowState
                 )
             AnimationUtilExtension.animateViewPushDown(floatingActionButtonBadgeCounter)
-
-            mUnReadMessageCountReceiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context?, intent: Intent) {
-                    val liveChatDBRepository = LiveChatDBRepository()
-                    floatingActionButtonBadgeCounter?.count =
-                        liveChatDBRepository.getUnReadMessageCount()
-                }
-            }
             startLiveChatMessageCountReceiver(this)
             floatingActionButtonBadgeCounter?.setOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
@@ -178,7 +169,7 @@ class ChatFloatingActionButtonBubbleView(
         }
     }
 
-    fun navigateToChatActivity(activity: Activity?, account: Account?) {
+    fun navigateToChatActivity(activity: Activity?, chatAccountProductLandingPage: Account?) {
         activity ?: return
         val initChatDetails =
             chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
@@ -192,7 +183,7 @@ class ChatFloatingActionButtonBubbleView(
                 initChatDetails?.second,
                 chatBubbleVisibility?.getSessionType(),
                 activity::class.java.simpleName,
-                Gson().toJson(account),
+                Gson().toJson(chatAccountProductLandingPage),
                 true,
                 liveChatParams?.conversation
             )
@@ -210,29 +201,39 @@ class ChatFloatingActionButtonBubbleView(
         }
     }
 
+    val messageCountBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            activity?.runOnUiThread {
+                val liveChatDBRepository = LiveChatDBRepository()
+                Log.e("messageCountReceiver", "messageCountReceiver")
+                floatingActionButtonBadgeCounter?.count =
+                    liveChatDBRepository.getUnReadMessageCount()
+            }
+        }
+    }
+
     private fun startLiveChatMessageCountReceiver(activity: Activity?) {
         activity ?: return
         // handler for received Intents for the "UnreadMessageCount" event
-        mUnReadMessageCountReceiver?.let { receiver ->
-            LocalBroadcastManager.getInstance(activity).registerReceiver(
-                receiver,
-                IntentFilter(UNREAD_MESSAGE_COUNT)
-            )
-        }
+        broadcaster?.registerReceiver(
+            messageCountBroadcastReceiver,
+            IntentFilter(LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE)
+        )
     }
 
     fun endChatMessageCountEnd(activity: Activity?) {
         activity ?: return
         // Unregister since the activity is not visible
-        mUnReadMessageCountReceiver?.let { receiver ->
-            LocalBroadcastManager.getInstance(activity).unregisterReceiver(receiver)
-        }
+        broadcaster?.unregisterReceiver(messageCountBroadcastReceiver)
     }
 
     companion object {
         const val UNREAD_MESSAGE_COUNT = "unread_message_count"
         const val LIVE_CHAT_SUBSCRIPTION_RESULT = "live_chat_subscription_result"
         const val LIVE_CHAT_PACKAGE = "live.chat.subscription.result.SUBSCRIBE.DATA"
+        const val LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE = "live.chat.message.COUNT.DATA"
+
     }
+
 
 }
