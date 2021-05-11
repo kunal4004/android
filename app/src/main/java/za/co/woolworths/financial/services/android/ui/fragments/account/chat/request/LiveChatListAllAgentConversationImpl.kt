@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.IListAllAgentMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
 import za.co.woolworths.financial.services.android.util.Assets
 import java.util.HashMap
 
@@ -43,6 +44,10 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
             { messagesByConversationList ->
 
                 val defaultMessageList = ChatAWSAmplify.getChatMessageList()?.toMutableList()
+                defaultMessageList?.forEach {
+                    (it as? UserMessage)?.isWoolworthIconVisible = true
+                    (it as? SendMessageResponse)?.isWoolworthIconVisible = true
+                }
                 val agentConversationList: GetMessagesByConversation? =
                     messagesByConversationList.data
                 val agentMessageList: MutableList<SendMessageResponse>? =
@@ -57,13 +62,14 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                  * and a List of the items
                  */
 
-                val messages: MutableList<ChatMessage>? = defaultMessageList?.plus(chatMessageAgent)?.toMutableList()?.distinct()?.toMutableList()
+                val messages: MutableList<ChatMessage>? =
+                    defaultMessageList?.plus(chatMessageAgent)?.distinct()?.toMutableList()
 
                 ChatAWSAmplify.listAllChatMessages = messages
-                val lastAgentMessage =
+                val lastestAgentMessage =
                     messages?.groupBy { it as? SendMessageResponse }?.keys?.last()
 
-                onSuccess(Pair(messages, lastAgentMessage))
+                onSuccess(Pair(messages, lastestAgentMessage))
             },
             { apiException ->
                 onFailure(apiException)

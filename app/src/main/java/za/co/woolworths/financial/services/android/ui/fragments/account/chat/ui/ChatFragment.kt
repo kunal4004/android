@@ -96,8 +96,6 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                         subscribeResult(chatList.second, false)
                     }
                 }
-
-
             }, { exp ->
                 Log.e("apiException", "apiException $exp")
             })

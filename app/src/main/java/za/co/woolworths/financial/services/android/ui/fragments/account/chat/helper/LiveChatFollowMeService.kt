@@ -8,8 +8,6 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.OnLifecycleEvent
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -68,18 +66,13 @@ class LiveChatFollowMeService : Service() {
                         } else {
                             val handler = Handler(Looper.getMainLooper())
                             handler.post {
-                                val woolworthsApplication =
-                                    applicationContext as? WoolworthsApplication
-
+                                val woolworthsApplication = applicationContext as? WoolworthsApplication
+                                Log.e("authMessage","authMessageBun")
                                 liveChatDBRepository.updateUnreadMessageCount()
                                 postMessageCount()
                                 val currentActivity = woolworthsApplication?.currentActivity
                                 currentActivity?.let {
-                                    ToastFactory.chatFollowMeBubble(
-                                        it.window?.decorView?.rootView,
-                                        it,
-                                        message
-                                    )
+                                    ToastFactory.chatFollowMeBubble(it.window?.decorView?.rootView, it, message)
                                 }
                             }
                         }

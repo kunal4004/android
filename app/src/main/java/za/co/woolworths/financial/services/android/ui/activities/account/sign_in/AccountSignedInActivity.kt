@@ -85,15 +85,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         accountInArrearsTextView?.setOnClickListener(this)
         infoIconImageView?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
-
-        postMessageCount()
-    }
-
-    private fun postMessageCount() {
-        runOnUiThread {
-            val postMessageCount = Intent(ChatFloatingActionButtonBubbleView.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE)
-            sendBroadcast(postMessageCount)
-        }
     }
 
     private fun setToolbarTopMargin() {
