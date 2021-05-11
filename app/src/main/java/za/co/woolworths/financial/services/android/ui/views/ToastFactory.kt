@@ -30,11 +30,11 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.util.ScreenManager
 
-
 class ToastFactory {
 
     companion object {
         private const val POPUP_DELAY_MILLIS = 3000
+        private const val POPUP_10000_DELAY_MILLIS: Long = 10000
 
         fun buildShoppingListToast(
             activity: Activity,
@@ -373,17 +373,14 @@ class ToastFactory {
                 popupWindow.dismiss() // dismiss the window
             }
             popupWindow.isFocusable = false
-            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
-            activity?.let { getDeviceHeight(it) }?.let { convertDpToPixel(it, context) }?.let {
-                popupWindow.showAtLocation(
-                    viewLocation,
-                    Gravity.TOP,
-                    0,
-                    it
-                )
-            }
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_10000_DELAY_MILLIS)
+            popupWindow.showAtLocation(
+                viewLocation,
+                Gravity.TOP,
+                0,
+                16
+            )
             return popupWindow
         }
     }
-
 }
