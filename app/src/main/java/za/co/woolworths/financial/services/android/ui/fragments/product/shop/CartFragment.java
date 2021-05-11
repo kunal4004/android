@@ -185,6 +185,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public ConstraintLayout itemLimitsBanner;
     public TextView itemLimitsMessage;
     public TextView itemLimitsCounter;
+    private static String localSuburbId = null;
+    private static String localStoreId = null;
 
     public CartFragment() {
         // Required empty public constructor
@@ -250,7 +252,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             CartActivity cartActivity = (CartActivity) activity;
             cartActivity.hideEditCart();
         }
-
+        ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
+        if (location.suburb != null)
+            localSuburbId = location.suburb.id;
+        if (location.store != null)
+            localStoreId = location.store.getId();
         loadShoppingCart(false);
         mToastUtils = new ToastUtils(this);
         mDisposables.add(WoolworthsApplication.getInstance()
@@ -1132,9 +1138,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             } else {
                 getActivity().onBackPressed();
             }
-        } else if (requestCode == CART_BACK_PRESSED_CODE || requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE) {
+        } else if (requestCode == CART_BACK_PRESSED_CODE) {
             reloadFragment();
             return;
+        } else if (requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE) {
+            checkLocationChangeAndReload();
         }
 
         if (resultCode == RESULT_OK) {
@@ -1169,6 +1177,30 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 default:
                     break;
             }
+        }
+    }
+
+    private void checkLocationChangeAndReload() {
+        ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
+        String currentSuburbId = null;
+        String currentStoreId = null;
+        if (deliveryLocation.suburb != null)
+            currentSuburbId = deliveryLocation.suburb.id;
+        if (deliveryLocation.store != null)
+            currentStoreId = deliveryLocation.store.getId();
+        if (currentStoreId == null && currentSuburbId == null) {
+            //Fresh install with no location selection.
+        } else if (currentSuburbId == null && !(currentStoreId.equals(localStoreId))) {
+            localStoreId = currentStoreId;
+            localSuburbId = null;
+            reloadFragment();
+            return;
+
+        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
+            localSuburbId = currentSuburbId;
+            localStoreId = null;
+            reloadFragment();
+            return;
         }
     }
 
