@@ -325,11 +325,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(), DeliveryOrClickAndCol
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            if (Utils.getPreferredDeliveryLocation() != null) {
-                activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
-            } else {
-                requestCartSummary()
-            }
+            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, EditDeliveryLocationActivity.REQUEST_CODE, deliveryType) }
         } else if (requestCode == REQUEST_CODE_FINE_GPS) {
             when (resultCode) {
                 RESULT_OK -> {
