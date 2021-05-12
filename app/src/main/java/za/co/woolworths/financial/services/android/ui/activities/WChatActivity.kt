@@ -73,7 +73,6 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                     is ChatFragment -> {
                         when (isSignOut) {
                             true ->
-
                                 GlobalScope.doAfterDelay(DELAY) {
                                     liveChatAuthentication.signOut {
                                         ServiceTools.stop(

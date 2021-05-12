@@ -33,7 +33,6 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
         )
     }
 
-
     override fun list(
         onSuccess: (Pair<MutableList<ChatMessage>?, SendMessageResponse?>) -> Unit,
         onFailure: (ApiException) -> Unit

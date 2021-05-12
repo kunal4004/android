@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
@@ -48,11 +49,23 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 
         setFragmentResultListener(AccountInArrearsDialogFragment::class.java.simpleName) { _, bundle ->
             GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-                when (bundle.getString(AccountInArrearsDialogFragment::class.java.simpleName, "N/A")) {
+                when (bundle.getString(
+                    AccountInArrearsDialogFragment::class.java.simpleName,
+                    "N/A"
+                )) {
                     ARREARS_PAY_NOW_BUTTON -> onPayMyAccountButtonTap()
                     ARREARS_CHAT_TO_US_BUTTON -> {
-                        val chatBubble = payMyAccountViewModel.getApplyNowState()?.let { applyNowState -> ChatFloatingActionButtonBubbleView(activity = activity, applyNowState = applyNowState) }
-                        chatBubble?.navigateToChatActivity(activity, payMyAccountViewModel.getCardDetail()?.account?.second)
+                        val chatBubble = payMyAccountViewModel.getApplyNowState()
+                            ?.let { applyNowState ->
+                                ChatFloatingActionButtonBubbleView(
+                                    activity = activity as? AccountSignedInActivity,
+                                    applyNowState = applyNowState
+                                )
+                            }
+                        chatBubble?.navigateToChatActivity(
+                            activity,
+                            payMyAccountViewModel.getCardDetail()?.account?.second
+                        )
                     }
                 }
             }

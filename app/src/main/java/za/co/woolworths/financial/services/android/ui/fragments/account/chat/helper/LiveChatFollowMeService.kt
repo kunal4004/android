@@ -24,7 +24,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 
-
 class LiveChatFollowMeService : Service() {
 
     private val liveChatDBRepository = LiveChatDBRepository()
@@ -66,13 +65,18 @@ class LiveChatFollowMeService : Service() {
                         } else {
                             val handler = Handler(Looper.getMainLooper())
                             handler.post {
-                                val woolworthsApplication = applicationContext as? WoolworthsApplication
-                                Log.e("authMessage","authMessageBun")
+                                val woolworthsApplication =
+                                    applicationContext as? WoolworthsApplication
+                                Log.e("authMessage", "authMessageBun")
                                 liveChatDBRepository.updateUnreadMessageCount()
                                 postMessageCount()
                                 val currentActivity = woolworthsApplication?.currentActivity
                                 currentActivity?.let {
-                                    ToastFactory.chatFollowMeBubble(it.window?.decorView?.rootView, it, message)
+                                    ToastFactory.chatFollowMeBubble(
+                                        it.window?.decorView?.rootView,
+                                        it,
+                                        message
+                                    )
                                 }
                             }
                         }
@@ -101,9 +105,7 @@ class LiveChatFollowMeService : Service() {
     }
 
     private fun postMessageCount() {
-        val postMessageCount = Intent()
-        postMessageCount.action = LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
-        sendBroadcast(postMessageCount)
+        sendBroadcast(Intent(LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE))
     }
 
     private fun createNotificationChannel() {

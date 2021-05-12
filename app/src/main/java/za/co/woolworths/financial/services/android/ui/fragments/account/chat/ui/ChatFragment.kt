@@ -157,14 +157,16 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 result?.let { showAgentsMessage(it) }
 
             when (result?.sessionState) {
-
                 SessionStateType.CONNECT,
-                SessionStateType.QUEUEING,
-                SessionStateType.DISCONNECT -> {
+                SessionStateType.QUEUEING -> {
                     isChatButtonEnabled(false)
                     isUserOnline(true)
                 }
-
+                SessionStateType.DISCONNECT -> {
+                    isChatButtonEnabled(false)
+                    isUserOnline(false)
+                    ServiceTools.stop(activity, LiveChatFollowMeService::class.java)
+                }
                 SessionStateType.ONLINE -> {
                     isChatButtonEnabled(true)
                     isUserOnline(true)

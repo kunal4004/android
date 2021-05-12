@@ -16,40 +16,50 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
+import za.co.woolworths.financial.services.android.util.DelayConstant
+import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-
 class ChatFloatingActionButtonBubbleView(
-    var activity: Activity? = null,
+    var activity: AppCompatActivity? = null,
     var chatBubbleVisibility: ChatBubbleVisibility? = null,
     var floatingActionButtonBadgeCounter: FloatingActionButtonBadgeCounter? = null,
     var applyNowState: ApplyNowState,
-    var scrollableView: Any? = null
-) {
+    var scrollableView: Any? = null,
+) : LifecycleObserver {
 
     private var chatBubbleToolTip: Dialog? = null
     private var isLiveChatEnabled = false
-    private var broadcaster: LocalBroadcastManager? = null
+    private var activityLifeCycle: Lifecycle? = null
+    private var receiverManager: ReceiverManager? = null
 
     init {
         isLiveChatEnabled = chatBubbleVisibility?.isChatBubbleVisible(applyNowState) == true
         floatingActionButtonBadgeCounter?.visibility = if (isLiveChatEnabled) VISIBLE else GONE
 
-        broadcaster = activity?.let { LocalBroadcastManager.getInstance(it) }
+        receiverManager = activity?.let { ReceiverManager.init(it) }
+        activity?.apply {
+            activityLifeCycle = lifecycle
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -64,7 +74,10 @@ class ChatFloatingActionButtonBubbleView(
             val greetingTextView = view.findViewById<TextView>(R.id.greetingTextView)
             val chatToUsNowTextView = view.findViewById<TextView>(R.id.chatToUsNowTextView)
             AnimationUtilExtension.animateViewPushDown(chatToUsNowTextView)
-            val chatAccountProductLandingPage = if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(applyNowState)
+            val chatAccountProductLandingPage =
+                if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(
+                    applyNowState
+                )
             activity?.apply {
                 greetingTextView?.text = bindString(
                     R.string.chat_greeting_label, chatBubbleVisibility?.getUsername()
@@ -162,7 +175,6 @@ class ChatFloatingActionButtonBubbleView(
                     applyNowState
                 )
             AnimationUtilExtension.animateViewPushDown(floatingActionButtonBadgeCounter)
-            startLiveChatMessageCountReceiver(this)
             floatingActionButtonBadgeCounter?.setOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
             }
@@ -176,7 +188,9 @@ class ChatFloatingActionButtonBubbleView(
         val liveChatDBRepository = LiveChatDBRepository()
         val liveChatParams = liveChatDBRepository.getLiveChatParams()
         liveChatDBRepository.resetUnReadMessageCount()
-        floatingActionButtonBadgeCounter?.count = 0
+        GlobalScope.doAfterDelay(DelayConstant.DELAY_300_MS) {
+            floatingActionButtonBadgeCounter?.count = 0
+        }
         liveChatDBRepository.saveLiveChatParams(
             LiveChatExtraParams(
                 initChatDetails?.first,
@@ -198,6 +212,15 @@ class ChatFloatingActionButtonBubbleView(
             animateChatIcon()
             showChatToolTip()
             floatingButtonListener()
+            messageCountObserver()
+        }
+    }
+
+    private fun messageCountObserver() {
+        activityLifeCycle?.addObserver(this@ChatFloatingActionButtonBubbleView)
+        if (activityLifeCycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == true) {
+            // connect if not connected
+            onResume()
         }
     }
 
@@ -212,19 +235,23 @@ class ChatFloatingActionButtonBubbleView(
         }
     }
 
-    private fun startLiveChatMessageCountReceiver(activity: Activity?) {
-        activity ?: return
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    private fun onResume() {
         // handler for received Intents for the "UnreadMessageCount" event
-        broadcaster?.registerReceiver(
+        receiverManager?.registerReceiver(
             messageCountBroadcastReceiver,
             IntentFilter(LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE)
         )
     }
 
-    fun endChatMessageCountEnd(activity: Activity?) {
-        activity ?: return
-        // Unregister since the activity is not visible
-        broadcaster?.unregisterReceiver(messageCountBroadcastReceiver)
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop() {
+        unregisterReceiver()
+    }
+
+    // Unregister since the activity is not visible
+    private fun unregisterReceiver() {
+        receiverManager?.unregisterReceiver(messageCountBroadcastReceiver)
     }
 
     companion object {
@@ -234,6 +261,4 @@ class ChatFloatingActionButtonBubbleView(
         const val LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE = "live.chat.message.COUNT.DATA"
 
     }
-
-
 }

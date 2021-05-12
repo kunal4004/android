@@ -41,10 +41,6 @@ class ServiceTools {
                 activity.stopService(Intent(activity, serviceClass))
         }
 
-        fun broadcast() {
-
-        }
-
         fun postResult(context: Context?, action: String, result: String?) {
             val postChatDataIntent = Intent()
             postChatDataIntent.action = action

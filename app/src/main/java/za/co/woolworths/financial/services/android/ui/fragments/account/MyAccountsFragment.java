@@ -32,6 +32,7 @@ import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.awfs.coordination.R;
+import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -1771,7 +1772,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (!isAdded() || activity == null || mAccountResponse == null || mAccountResponse.accountList == null)
             return;
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account) {
-            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
+            AppCompatActivity act;
+            if (activity instanceof BottomNavigationActivity)
+                act = (BottomNavigationActivity) activity;
+            else
+                act = (MyAccountActivity) activity;
+
+            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
             inAppChatTipAcknowledgement.build();
         }
     }

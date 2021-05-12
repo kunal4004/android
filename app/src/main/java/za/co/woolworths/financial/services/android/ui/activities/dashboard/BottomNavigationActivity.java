@@ -168,9 +168,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        SavedInstanceFragment.getInstance(getFragmentManager()).pushData((Bundle) outState.clone());
-        outState.clear();
+        try {
+            super.onSaveInstanceState(outState);
+            SavedInstanceFragment.getInstance(getFragmentManager()).pushData((Bundle) outState.clone());
+            outState.clear();
+        }catch (Exception ex){
+            FirebaseManager.Companion.logException(ex);
+        }
     }
 
     @Override

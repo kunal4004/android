@@ -24,10 +24,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.util.ScreenManager
 
 class ToastFactory {
@@ -77,7 +81,7 @@ class ToastFactory {
 
             tvButtonClick?.visibility = if (buttonIsVisible) VISIBLE else GONE
             tvBoldTitle?.visibility = VISIBLE
-            tvAddedTo?.setAllCaps(true)
+            tvAddedTo?.isAllCaps = true
 
             shoppingListObject?.let {
                 when (it.size()) {
@@ -369,11 +373,15 @@ class ToastFactory {
 
             toastContainerConstraintLayout?.setOnClickListener {
                 activity ?: return@setOnClickListener
+                LiveChatDBRepository().resetUnReadMessageCount()
+                activity.sendBroadcast(Intent(ChatFloatingActionButtonBubbleView.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE))
                 activity.startActivity(Intent(activity, WChatActivity::class.java))
                 popupWindow.dismiss() // dismiss the window
             }
             popupWindow.isFocusable = false
-            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_10000_DELAY_MILLIS)
+            GlobalScope.doAfterDelay(POPUP_10000_DELAY_MILLIS) {
+                popupWindow.dismiss()
+            }
             popupWindow.showAtLocation(
                 viewLocation,
                 Gravity.TOP,

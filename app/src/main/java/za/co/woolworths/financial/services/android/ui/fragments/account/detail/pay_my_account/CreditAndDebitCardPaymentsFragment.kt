@@ -296,7 +296,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
         activity?.apply {
             mChatFloatingActionButtonBubbleView = ChatFloatingActionButtonBubbleView(
-                    activity = this,
+                    activity = this as? PayMyAccountActivity,
                     chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
                     floatingActionButtonBadgeCounter = chatBubbleFloatingButton,
                     applyNowState = applyNowState,

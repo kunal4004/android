@@ -451,7 +451,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         Pair<ApplyNowState, Account> account = ((StatementActivity) activity).getAccountWithApplyNowState();
         ArrayList<Account> accountList = new ArrayList<>();
         accountList.add(account.second);
-        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement);
+        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity)activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement);
         inAppChatTipAcknowledgement.build();
     }
 }
