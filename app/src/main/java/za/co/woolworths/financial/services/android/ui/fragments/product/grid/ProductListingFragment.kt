@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.content.Intent
@@ -38,11 +39,13 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
@@ -166,23 +169,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 activity,
                 FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS
             )
-        }
-        val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-        val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-        if (currentStoreId == null && currentSuburbId == null) {
-            //Fresh install with no location selection.
-        } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
-            localStoreId = currentStoreId
-            localSuburbId = null
-            isReloadNeeded = false
-            updateRequestForReload()
-            pushFragment()
-        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
-            localSuburbId = currentSuburbId
-            localStoreId = null
-            isReloadNeeded = false
-            updateRequestForReload()
-            pushFragment()
         }
     }
 
@@ -657,6 +643,27 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             SSOActivity.SSOActivityResult.LAUNCH.rawValue() -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
                     addFoodProductTypeToCart(mAddItemsToCart?.get(0))
+                }
+            }
+            PDP_REQUEST_CODE, OPEN_CART_REQUEST -> {
+                if (resultCode == Activity.RESULT_CANCELED || resultCode == DISMISS_POP_WINDOW_CLICKED){
+                    val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
+                    val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
+                    if (currentStoreId == null && currentSuburbId == null) {
+                        //Fresh install with no location selection.
+                    } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
+                        localStoreId = currentStoreId
+                        localSuburbId = null
+                        isReloadNeeded = false
+                        updateRequestForReload()
+                        pushFragment()
+                    } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
+                        localSuburbId = currentSuburbId
+                        localStoreId = null
+                        isReloadNeeded = false
+                        updateRequestForReload()
+                        pushFragment()
+                    }
                 }
             }
 
