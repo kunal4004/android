@@ -299,7 +299,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun isVirtualCardObjectNotNull(): Boolean {
         val response = getStoreCardResponse()
-        return (response?.storeCardsData?.generateVirtualCard == true || response?.storeCardsData?.virtualCard != null) && WoolworthsApplication.getVirtualTempCard()?.isEnabled ?: false
+        return response?.storeCardsData?.virtualCard != null
     }
 
     override fun isVirtualCardObjectBlockTypeNull(): Boolean {

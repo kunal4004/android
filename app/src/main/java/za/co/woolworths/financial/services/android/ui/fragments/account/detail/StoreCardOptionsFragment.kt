@@ -154,9 +154,9 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         when {
 
             // Activate Virtual Temporary card
-            (mCardPresenterImpl?.isVirtualCardObjectNotNull() == true) -> {
-                storeCardTagTextView?.text = bindString(R.string.temp_card)
-                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
+            (mCardPresenterImpl?.isActivateVirtualTempCard() == true) -> {
+                storeCardTagTextView?.text = bindString(R.string.inactive)
+                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.red_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
                 manageLinkNewCardGroup?.visibility = VISIBLE
