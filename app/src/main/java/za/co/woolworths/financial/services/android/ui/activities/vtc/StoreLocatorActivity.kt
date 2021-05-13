@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.vtc
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -25,11 +26,11 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.store_locator_activity.*
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorListFragment
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.Utils
-
 
 class StoreLocatorActivity : AppCompatActivity() {
 
@@ -41,6 +42,7 @@ class StoreLocatorActivity : AppCompatActivity() {
         const val PRODUCT_NAME = "PRODUCT_NAME"
         const val CONTACT_INFO = "CONTACT_INFO"
         const val MAP_LOCATION = "MAP_LOCATION"
+        const val SHOW_GEOFENCING = "SHOW_GEOFENCING"
         private const val UNSELECTED_TAB_ALPHA_VIEW = 0.3f
         private const val SELECTED_TAB_ALPHA_VIEW = 1.0f
     }
@@ -53,6 +55,7 @@ class StoreLocatorActivity : AppCompatActivity() {
         intent?.apply {
             mTitle = getStringExtra(PRODUCT_NAME)
             mDescription = getStringExtra(CONTACT_INFO)
+
             val mLocationOnMap = getStringExtra(MAP_LOCATION)
             mLocations = Gson().fromJson(mLocationOnMap, object : TypeToken<List<StoreDetails>>() {}.type)
         }
@@ -63,6 +66,8 @@ class StoreLocatorActivity : AppCompatActivity() {
 
         val participatingStoreDescription = highlightTextInDesc(this, SpannableString(getString(R.string.npc_participating_store)), "here", true)
         tvStoreContactInfo?.apply {
+            val boolean = intent?.getBooleanExtra(SHOW_GEOFENCING, true)
+            visibility = if(boolean == false) View.GONE else View.VISIBLE
             text = participatingStoreDescription
             movementMethod = LinkMovementMethod.getInstance()
             highlightColor = Color.TRANSPARENT
@@ -79,6 +84,10 @@ class StoreLocatorActivity : AppCompatActivity() {
         val clickableSpan: ClickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
 
+                val intentInStoreFinder = Intent(this@StoreLocatorActivity, StoreSelectAddressActivity::class.java)
+                intentInStoreFinder.putExtra(PRODUCT_NAME, bindString(R.string.participating_stores))
+                startActivity(intentInStoreFinder)
+//                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             }
 
             override fun updateDrawState(ds: TextPaint) {

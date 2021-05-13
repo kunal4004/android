@@ -302,6 +302,27 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return (response?.storeCardsData?.generateVirtualCard == true || response?.storeCardsData?.virtualCard != null) && WoolworthsApplication.getVirtualTempCard()?.isEnabled ?: false
     }
 
+    override fun isVirtualCardObjectBlockTypeNull(): Boolean {
+        val response = getStoreCardResponse()
+        return response?.storeCardsData?.virtualCard != null && !TextUtils.isEmpty(response?.storeCardsData?.virtualCard?.blockType)
+    }
+
+    override fun isGeneterateVTC(): Boolean {
+        val response = getStoreCardResponse()
+        return response?.storeCardsData?.generateVirtualCard ?: false
+    }
+
+    override fun getPrimaryStoreCardBlockType(): String {
+        val storeCardResponse = getStoreCardResponse()
+        val storeCardsData = storeCardResponse?.storeCardsData
+        if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
+            return ""
+        }
+        val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
+        val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
+        return  blockType ?: ""
+    }
+
     // Determine if card is blocked: if blockCode is not null, card is blocked.
     override fun isReplacementCardAndVirtualCardViewEnabled(): Boolean {
         val storeCardResponse = getStoreCardResponse()
@@ -324,12 +345,11 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun isActivateVirtualTempCard(): Boolean {
         val storeCardResponse = getStoreCardResponse()
-        val storeCardsData = storeCardResponse?.storeCardsData
-        if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
-            return false
-        }
-        val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
-        val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
-        return (blockType == TemporaryFreezeStoreCard.PERMANENT && storeCardsData.generateVirtualCard && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+        val storeCardsData = storeCardResponse?.storeCardsData ?: return false
+
+        //Conditions to Activate VTC
+        //generateVirtualCard = true && vtc enabled from config.
+        return (storeCardsData.generateVirtualCard
+                && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
     }
 }

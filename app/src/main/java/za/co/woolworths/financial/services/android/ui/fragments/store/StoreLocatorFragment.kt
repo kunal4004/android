@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.store_locator_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
+import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.vtc.SelectStoreDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter

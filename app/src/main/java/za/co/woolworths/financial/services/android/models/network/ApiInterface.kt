@@ -1117,7 +1117,7 @@ interface ApiInterface {
             @Query("lat") lat: String,
             @Query("lon") lon: String,
             @Query("searchString") searchString: String,
-            @Query("npc") npc: Boolean
+            @Query("npc") npc: Boolean?
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")

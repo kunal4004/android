@@ -1,12 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card
 
 import android.content.Intent
-import android.graphics.Paint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -60,11 +56,10 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         getTempStoreCardButton.setOnClickListener(this)
         (activity as? MyCardActivityExtension)?.apply {
-            showBackIcon()
-        }
-        howItWorks?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener(this@GetTemporaryStoreCardPopupFragment)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                setHomeAsUpIndicator(R.drawable.icon_info)
+            }
         }
     }
 
@@ -77,16 +72,6 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
                     else -> navigateToLinkCardFragment()
                 }
             }
-            R.id.howItWorks -> {
-                activity?.apply {
-                    Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
-                        it.putExtra(HowToUseTemporaryStoreCardActivity.TRANSACTION_TYPE, Transition.SLIDE_UP)
-                        startActivity(it)
-                    }
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                }
-            }
-
         }
     }
 
@@ -116,10 +101,26 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
         )
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.close_menu_item, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> {
+            R.id.closeIcon -> {
                 activity?.onBackPressed()
+                super.onOptionsItemSelected(item)
+            }
+            android.R.id.home ->{
+                activity?.apply {
+
+                    Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
+                        it.putExtra(HowToUseTemporaryStoreCardActivity.TRANSACTION_TYPE, Transition.SLIDE_UP)
+                        startActivity(it)
+                    }
+                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                }
                 super.onOptionsItemSelected(item)
             }
             else -> super.onOptionsItemSelected(item)

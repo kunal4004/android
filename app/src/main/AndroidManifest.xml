@@ -196,10 +196,10 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.vtc.SelectStoreDetailsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StoreDetails" />
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.vtc.ConfirmStoreActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.vtc.ConfirmStoreActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ConfirmStoreStyle"/>
-
+            android:theme="@style/ConfirmStoreStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity"
             android:screenOrientation="portrait"
@@ -426,6 +426,10 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StoreLocatorActivityStyle" />
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.vtc.StoreSelectAddressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StoreAddressStyle" />
 
         <provider
             android:name="za.co.woolworths.financial.services.android.util.WFileProvider"

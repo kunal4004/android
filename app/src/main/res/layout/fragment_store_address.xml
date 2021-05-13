@@ -1,0 +1,132 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <ScrollView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context="za.co.woolworths.financial.services.android.ui.fragments.vtc.StoreAddressFragment">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/startGuideLine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/endGuideLine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+            <TextView
+                android:id="@+id/storeAddressHeaderTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/twenty_five_dp"
+                android:fontFamily="@font/futura_semi_bold"
+                android:text="@string/store_address_header"
+                android:textColor="@color/color_222222"
+                android:textSize="@dimen/twenty_sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="@id/endGuideLine"
+                app:layout_constraintStart_toStartOf="@id/startGuideLine"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/viewFlipperTab"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fifty_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:background="@drawable/border_quantity_dropdown"
+                android:minHeight="@dimen/fifty_dp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="@id/endGuideLine"
+                app:layout_constraintStart_toStartOf="@id/startGuideLine"
+                app:layout_constraintTop_toBottomOf="@id/storeAddressHeaderTextView" />
+
+            <View
+                android:id="@+id/viewFlipperTabSeparator"
+                android:layout_width="@dimen/one_dp"
+                android:layout_height="@dimen/fifty_dp"
+                android:background="@color/color_cccccc"
+                app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab"
+                app:layout_constraintEnd_toEndOf="@id/endGuideLine"
+                app:layout_constraintHorizontal_bias="@integer/point_five"
+                app:layout_constraintStart_toStartOf="@id/startGuideLine"
+                app:layout_constraintTop_toTopOf="@id/viewFlipperTab" />
+
+            <TextView
+                android:id="@+id/tabTome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/myriad_pro_regular"
+                android:gravity="center"
+                android:minHeight="@dimen/fifty_dp"
+                android:text="@string/store_address_left_tab"
+                android:textSize="@dimen/sixteen_sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab"
+                app:layout_constraintEnd_toStartOf="@id/viewFlipperTabSeparator"
+                app:layout_constraintStart_toStartOf="@id/startGuideLine"
+                app:layout_constraintTop_toTopOf="@id/viewFlipperTab" />
+
+            <TextView
+                android:id="@+id/tabToWooliesStore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/myriad_pro_regular"
+                android:gravity="center"
+                android:minHeight="@dimen/fifty_dp"
+                android:text="@string/store_address_right_tab"
+                android:textSize="@dimen/sixteen_sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab"
+                app:layout_constraintEnd_toEndOf="@id/endGuideLine"
+                app:layout_constraintStart_toEndOf="@id/viewFlipperTabSeparator"
+                app:layout_constraintTop_toTopOf="@id/viewFlipperTab" />
+
+            <include
+                android:id="@+id/tomeLayout"
+                layout="@layout/layout_address_residential_or_business"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/hundred_dp"
+                android:visibility="gone"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="@id/endGuideLine"
+                app:layout_constraintStart_toStartOf="@id/startGuideLine"
+                app:layout_constraintTop_toBottomOf="@id/viewFlipperTab" />
+
+            <View
+                android:id="@+id/businessLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/viewFlipperTab" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/nextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@drawable/next_button_inactive"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

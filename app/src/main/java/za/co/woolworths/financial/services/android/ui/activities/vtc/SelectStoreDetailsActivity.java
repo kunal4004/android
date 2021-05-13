@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.Group;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,6 +38,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -66,6 +68,7 @@ public class SelectStoreDetailsActivity extends AppCompatActivity implements OnM
     TextView storeDistance;
     TextView storeNumber;
     TextView selectStoreBtn;
+    private Group progressViewGroup;
     WTextView nativeMap;
     WTextView cancel;
     ImageView closePage;
@@ -111,6 +114,7 @@ public class SelectStoreDetailsActivity extends AppCompatActivity implements OnM
         makeCall = findViewById(R.id.call);
         relBrandLayout = findViewById(R.id.relBrandLayout);
         selectStoreBtn = findViewById(R.id.selectStoreTextViewBtn);
+        progressViewGroup = findViewById(R.id.processingViewGroup);
         AnimationUtilExtension.Companion.animateViewPushDown(selectStoreBtn);
 
         Gson gson = new Gson();
@@ -282,9 +286,8 @@ public class SelectStoreDetailsActivity extends AppCompatActivity implements OnM
     }
 
     private void navigateToConfirmStore() {
-        Intent confirmStore = new Intent(this, ConfirmStoreActivity.class);
-        confirmStore.putExtra("store", new Gson().toJson(storeDetails));
-        startActivity(confirmStore);
+        progressViewGroup.setVisibility(View.VISIBLE);
+
     }
 
     @Override
@@ -317,6 +320,4 @@ public class SelectStoreDetailsActivity extends AppCompatActivity implements OnM
         }
         return list;
     }
-
-
 }

@@ -150,29 +150,17 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     }
 
     private fun setStoreCardTag() {
+
         when {
 
-            // activate virtual temp card
-            mCardPresenterImpl?.isActivateVirtualTempCard() == true -> {
-                storeCardTagTextView?.text = bindString(R.string.inactive)
-                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.red_tag)) }
-                storeCardTagTextView?.visibility = VISIBLE
-                myCardDetailTextView?.visibility = GONE
-                manageLinkNewCardGroup?.visibility = VISIBLE
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_activate_vtc_grey)) }
-                manageMyCardTextView?.text = bindString(R.string.activate_vtc_title)
-                cardDetailImageView?.alpha = 0.3f
-            }
-
-            // Temporary card
+            // Activate Virtual Temporary card
             (mCardPresenterImpl?.isVirtualCardObjectNotNull() == true) -> {
                 storeCardTagTextView?.text = bindString(R.string.temp_card)
                 storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
-                manageLinkNewCardGroup?.visibility = GONE
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
-                manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
+                manageLinkNewCardGroup?.visibility = VISIBLE
+                manageMyCardTextView?.text = bindString(R.string.activate_vtc_title)
                 cardDetailImageView?.alpha = 0.3f
             }
 
@@ -183,7 +171,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
                 manageLinkNewCardGroup?.visibility = VISIBLE
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
                 manageMyCardTextView?.text = bindString(R.string.replacement_card_label)
                 cardDetailImageView?.alpha = 0.3f
             }
@@ -193,7 +180,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 if (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == false) {
                     storeCardTagTextView?.visibility = GONE
                     myCardDetailTextView?.visibility = VISIBLE
-                    context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
                     manageLinkNewCardGroup?.visibility = GONE
                     manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
                     cardDetailImageView?.alpha = 1.0f
@@ -203,12 +189,10 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                     storeCardTagTextView?.visibility = GONE
                     myCardDetailTextView?.visibility = VISIBLE
                     manageLinkNewCardGroup?.visibility = GONE
-                    context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
                     manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
                     cardDetailImageView?.alpha = 1.0f
                     return
                 }
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
                 storeCardTagTextView?.text = bindString(R.string.temp_card)
                 storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE
@@ -219,7 +203,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             }
             else -> {
                 // Manage your card
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
                 storeCardTagTextView?.visibility = GONE
                 myCardDetailTextView?.visibility = VISIBLE
                 manageLinkNewCardGroup?.visibility = GONE
@@ -302,7 +285,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                             getStoreCardResponse()?.let { MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, it, screenType = StoreCardViewType.GET_REPLACEMENT_CARD) }
                         }
                         bindString(R.string.activate_vtc_title) -> {
-
+                            navigateToTemporaryStoreCard()
                         }
                         else -> navigateToTemporaryStoreCard()
 

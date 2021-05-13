@@ -17,6 +17,9 @@ class ErrorHandlerActivity : AppCompatActivity() {
       private var errorType: Int = 0
       private lateinit var errorMessage: String
 
+      const val ERROR_TYPE = "errorType"
+      const val ERROR_MESSAGE = "errorMessage"
+
         // Error Types
         const val COMMON: Int = 0
         const val ATM_PIN_LOCKED: Int = 1

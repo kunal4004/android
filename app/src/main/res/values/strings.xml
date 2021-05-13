@@ -924,10 +924,10 @@
     <string name="product_information">Product Information</string>
     <string name="product_details">Product Details</string>
     <string name="nutritional_information">Nutritional Information</string>
-    <string name="get_temp_sc_title">Congrats, you have been selected to trial our new Woolies Virtual Temp Card at selected Woolies’ stores.</string>
-    <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
+    <string name="get_temp_sc_title">Would you like a virtual temporary card to start shopping in store today?</string>
+    <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies store card is being sent to you. Your card is valid for 30 days.</string>
     <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
-    <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
+    <string name="get_temp_sc_action">ACTIVATE VIRTUAL TEMP CARD</string>
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
     <string name="dialog_temp_store_card_expire_info_desc">Your temporary card is only valid for 30 days and will automatically expire after this time or on your first swipe of your store card, in store.</string>
@@ -2037,4 +2037,18 @@
     <string name="select_store">Select Store</string>
     <string name="confirm_store_header_title">Collection Details</string>
     <string name="confirm_store_header_desc">Please confirm your collection store details below.</string>
+    <string name="store_address_header">Where would you like your card to be delivered?</string>
+    <string name="store_address_left_tab">To Me</string>
+    <string name="store_address_right_tab">To Woolies Store</string>
+    <string name="store_address_delivery_details">Please complete your delivery details below. A delivery charge of R50 will be charged to your Store card account.</string>
+    <string name="hint_complex_building">Building name, unit or floor number</string>
+    <string name="hint_business_name">Enter business name</string>
+    <string name="business_name">Business name</string>
+    <string name="hint_street_address">E.g. 123 Ocean View Drive</string>
+    <string name="hint_suburb">Select Suburb</string>
+    <string name="hint_city_town">Select City / Town</string>
+    <string name="hint_province">Select Province</string>
+    <string name="hint_postal_code">Suburb Postal Code</string>
+    <string name="confirm_selected_store_title">Please Confirm Your Selected Store</string>
+    <string name="edit_store">Edit Store</string>
 </resources>

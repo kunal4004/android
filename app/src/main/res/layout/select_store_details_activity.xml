@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -69,20 +70,61 @@
         android:id="@+id/selectStoreTextViewBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/twenty_five_dp"
         android:layout_marginBottom="@dimen/twenty_five_dp"
         android:background="@color/black"
         android:fontFamily="@font/futura_semi_bold"
         android:gravity="center"
+        android:letterSpacing="@integer/point_two"
         android:minHeight="@dimen/fifty_dp"
         android:text="@string/select_store"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        android:letterSpacing="@integer/point_two"
         android:textSize="@dimen/twelve_sp"
-        android:layout_marginHorizontal="@dimen/twenty_five_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/processingViewGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="processingBackgroundView, processingView, progressBar"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/processingBackgroundView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="@dimen/eighty_dp"
+        android:layout_height="@dimen/eighty_dp"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/processingView"
+        layout="@layout/npc_processing_request_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/progressBar" />
+
+
+    <include
+        android:id="@+id/processingView"
+        layout="@layout/layout_confirmation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/progressBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1602,7 +1602,7 @@ public class Utils {
 	public static String getToken() {
 		String token = "";
 		try {
-			token = Utils.getSessionDaoValue(FCM_TOKEN);
+			token = Utils.getSessionDaoValue(FCM_TOKEN) != null ? Utils.getSessionDaoValue(FCM_TOKEN) : "" ;
 		} catch (NullPointerException ignored) {
 		}
 
