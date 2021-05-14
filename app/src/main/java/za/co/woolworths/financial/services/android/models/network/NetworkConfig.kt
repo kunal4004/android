@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.models.network
 import android.content.Context
 import android.location.Location
 import android.os.Build
-import android.text.TextUtils
 import com.awfs.coordination.BuildConfig
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -31,7 +30,7 @@ open class NetworkConfig {
 
     fun getOsVersion(): String {
         var osVersion = Util.getOsVersion()
-        if (TextUtils.isEmpty(osVersion)) {
+        if (osVersion == null || osVersion.isEmpty()) {
             val sdkVersion = Build.VERSION.SDK_INT // e.g. sdkVersion := 8;
             osVersion = sdkVersion.toString()
         }

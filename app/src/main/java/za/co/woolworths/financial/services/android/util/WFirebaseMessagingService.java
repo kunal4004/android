@@ -13,7 +13,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.awfs.coordination.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -25,7 +24,10 @@ import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
-import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
+import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity;
+
+import static za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.DEEP_LINK_REQUEST_CODE;
 
 public class WFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -50,7 +52,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             NotificationUtils.createNotificationChannelIfNeeded(this);
         }
 
-        if (!WoolworthsApplication.isApplicationInForeground()){
+        if (WoolworthsApplication.isApplicationInForeground()){
             Log.i(TAG, remoteMessage.getData().toString());
             sendNotification(remoteMessage.getNotification(), remoteMessage.getData());
 
@@ -78,16 +80,24 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent = null;
         if (payload.get("feature").equals("Product Listing")){
             String json = payload.get("parameters").replaceAll("\\\\", "");
-            Log.d(TAG, String.format("About to parse JSON: %s", json));
             JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
             intent = new Intent(this, StartupActivity.class);
             intent.setData(Uri.parse(parameters.get("url").getAsString()));
             intent.setAction(Intent.ACTION_VIEW);
         }
+        /*Deep link to PDP disabled*/
+        /*else if (payload.get("feature").equals("Product Detail")){
+            String json = payload.get("parameters").replaceAll("\\\\", "");
+            JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
+
+            intent = new Intent(this, ProductDetailsDeepLinkActivity.class);
+            intent.setData(Uri.parse(parameters.get("url").getAsString()));
+            intent.setAction(Intent.ACTION_VIEW);
+        }*/
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, DEEP_LINK_REQUEST_CODE, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         String contentTitle = null;

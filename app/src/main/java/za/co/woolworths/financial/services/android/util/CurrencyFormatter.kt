@@ -36,7 +36,7 @@ class CurrencyFormatter {
                 val amountOnly = amountStr.substring(0, indexOfDot)
                 amountStr = when {
                     cent.isEmpty() -> "${amountOnly}00"
-                    cent.length == 1 -> "${amountOnly}0$cent"
+                    cent.length == 1 -> "${amountOnly}${cent}0"
                     cent.length > decimalPlaces -> "${amountStr.substring(0, indexOfDot)}${amountStr.substring(indexOfDot, indexOfDot + decimalPlaces)}"
                     else -> amountStr
                 }
@@ -46,7 +46,7 @@ class CurrencyFormatter {
 
             val amountLength = amountStr.length
             var cents: String = amountStr.takeLast(decimalPlaces)
-            cents = if (cents.length == 1) "0$cents" else cents
+            cents = if (cents.length == 1) "0${cents}" else cents
             cents = if (cents.length == 2 && cents.contains(NEGATIVE_SYMBOL)) "-0${cents.replace(NEGATIVE_SYMBOL.toRegex(), "")}" else cents
             val randMaxRange = amountLength - decimalPlaces
             var rand = 0

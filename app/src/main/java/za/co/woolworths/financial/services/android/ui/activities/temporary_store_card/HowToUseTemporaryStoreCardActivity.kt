@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.*
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
 import za.co.woolworths.financial.services.android.util.wenum.LinkType
@@ -87,8 +88,7 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
 
     private fun setUniqueIds() {
         resources?.apply {
-            toolbarText?.contentDescription = getString(R.string.how_to_pay_toolbar_title)
-            imTempCard?.contentDescription = getString(R.string.store_card_image)
+        howItWorksTitleTextView?.contentDescription = bindString(R.string.how_to_pay_toolbar_title)
         }
     }
 }

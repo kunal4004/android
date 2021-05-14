@@ -36,6 +36,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
+import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitIncreaseEvent;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -52,7 +53,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
+import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -538,6 +539,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.btnContinue:
+				Activity activity = getActivity();
+				if (activity != null) {
+					FirebaseCreditLimitIncreaseEvent firebaseEvent = ((CLIPhase2Activity) activity).getFirebaseEvent();
+					if (firebaseEvent != null)
+						firebaseEvent.forAcceptOffer();
+				}
 				onAcceptOfferLoad();
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CLIOfferDecision createOfferDecision = new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, true);
