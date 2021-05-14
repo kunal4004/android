@@ -1070,10 +1070,12 @@ public class Utils {
                     JsonObject fulfillmentObj = jsonElement.getAsJsonObject();
                     JsonElement fulFillmentTypeId = fulfillmentObj.get("fulFillmentTypeId");
                     if (!fulFillmentTypeId.isJsonNull()) {
-                        if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
-                            JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
-                            if (fulFillmentStoreId != null)
-                                storeId = fulfillmentObj.get("fulFillmentStoreId").getAsString();
+                        if (!TextUtils.isEmpty(fulFillmentTypeId.getAsString()) && !TextUtils.isEmpty(fulFillmentType)) {
+                            if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
+                                JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
+                                if (fulFillmentStoreId != null)
+                                    storeId = fulfillmentObj.get("fulFillmentStoreId").getAsString();
+                            }
                         }
                     }
                 }
