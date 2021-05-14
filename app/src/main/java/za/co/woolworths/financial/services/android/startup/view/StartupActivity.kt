@@ -35,7 +35,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDe
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
-class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, View.OnClickListener {
+class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
+    View.OnClickListener {
 
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var deeplinkIntent: Intent
@@ -45,11 +46,15 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         setContentView(R.layout.activity_startup)
         setSupportActionBar(mToolbar)
         setupViewModel()
-        window?.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        supportActionBar?.hide()
+        window?.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+        if (supportActionBar?.isShowing == true)
+            supportActionBar?.hide()
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         retry?.setOnClickListener(this@StartupActivity)
-        deeplinkIntent = getIntent()
+        deeplinkIntent = intent
         init()
     }
 
@@ -88,7 +93,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         videoViewLayout?.visibility = View.VISIBLE
 
         val randomVideo = startupViewModel.randomVideoPath
-        if (randomVideo.isNotEmpty() == true) {
+        if (randomVideo.isNotEmpty()) {
             val videoUri = Uri.parse(randomVideo)
             activity_wsplash_screen_videoview?.apply {
                 setVideoURI(videoUri)
@@ -132,7 +137,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         }
     }
 
-     fun getConfig() {
+    fun getConfig() {
         startupViewModel.queryServiceGetConfig().observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
@@ -184,7 +189,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         errorLayout?.visibility = View.GONE
         splashNoVideoView?.visibility = View.GONE
         messageLabel?.setText(startupViewModel.splashScreenText)
-        if (startupViewModel.isSplashScreenPersist == true) {
+        if (startupViewModel.isSplashScreenPersist) {
             proceedButton?.visibility = View.GONE
         } else {
             proceedButton?.visibility = View.VISIBLE
@@ -199,21 +204,21 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
     private fun setupViewModel() {
         startupViewModel = ViewModelProviders.of(
-                this,
-                ViewModelFactory(StartUpRepository(StartupApiHelper()), StartupApiHelper())
+            this,
+            ViewModelFactory(StartUpRepository(StartupApiHelper()), StartupApiHelper())
         ).get(StartupViewModel::class.java)
     }
 
     fun presentNextScreen() {
         val isFirstTime = startupViewModel.getSessionDao(SessionDao.KEY.ON_BOARDING_SCREEN)
-        var appLinkData: Any? = deeplinkIntent?.data
+        var appLinkData: Any? = deeplinkIntent.data
 
-        if (appLinkData == null && deeplinkIntent?.extras != null) {
-            appLinkData = deeplinkIntent!!.extras!!
-            deeplinkIntent?.action = Intent.ACTION_VIEW
+        if (appLinkData == null && deeplinkIntent.extras != null) {
+            appLinkData = deeplinkIntent.extras
+            deeplinkIntent.action = Intent.ACTION_VIEW
         }
 
-        if (Intent.ACTION_VIEW == deeplinkIntent?.action && appLinkData != null) {
+        if (Intent.ACTION_VIEW == deeplinkIntent.action && appLinkData != null) {
             handleAppLink(appLinkData)
         } else {
             val activity = this as Activity
@@ -232,8 +237,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
         //2. navigate to facet that URL corresponds to
         if (appLinkData is Uri) {
             val bundle = bundleOf(
-                    "feature" to AppConstant.DP_LINKING_PRODUCT_LISTING,
-                    "parameters" to "{\"url\": \"${appLinkData}\"}"
+                "feature" to AppConstant.DP_LINKING_PRODUCT_LISTING,
+                "parameters" to "{\"url\": \"${appLinkData}\"}"
             )
             ScreenManager.presentMain(this@StartupActivity, bundle)
         } else {
@@ -243,10 +248,19 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener, V
 
     override fun onStart() {
         super.onStart()
-        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(WoolworthsApplication.getAppContext())) {
-            Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP)
+        if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && !Util.isDebug(
+                WoolworthsApplication.getAppContext()
+            )
+        ) {
+            Utils.setScreenName(
+                this,
+                FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP
+            )
             val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
-            rootedDeviceInfoFragment.show(supportFragmentManager, RootedDeviceInfoFragment::class.java.simpleName)
+            rootedDeviceInfoFragment.show(
+                supportFragmentManager,
+                RootedDeviceInfoFragment::class.java.simpleName
+            )
             return
         }
         onStartInit()

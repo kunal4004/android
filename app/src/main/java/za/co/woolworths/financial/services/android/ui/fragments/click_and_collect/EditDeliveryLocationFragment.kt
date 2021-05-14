@@ -103,25 +103,24 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         tvSelectedSuburb?.keyListener = null
         delivery?.setOnClickListener(this)
         clickAndCollect?.setOnClickListener(this)
-        confirmLocation?.setOnClickListener(this)
         WoolworthsApplication.getClickAndCollect()?.maxItemsAllowedText?.let {
             maxItemsInfoMessage?.text = it
         }
         setDeliveryOption(deliveryType)
 
-        if(selectedProvince == null) {
+        if (selectedProvince == null) {
             setUsersCurrentDeliveryDetails()
         }
     }
 
     override fun onClick(v: View?) {
-        if(progressGetProvinces.visibility == View.VISIBLE || progressGetSuburb.visibility == View.VISIBLE ) return
+        if (progressGetProvinces.visibility == View.VISIBLE || progressGetSuburb.visibility == View.VISIBLE) return
         when (v?.id) {
             R.id.confirmLocation -> {
                 if (selectedSuburb != null || selectedStore != null) {
                     when (deliveryType) {
                         DeliveryType.STORE_PICKUP -> {
-                           validatedSuburbProductsForStore.let {
+                            validatedSuburbProductsForStore.let {
                                 when (it) {
                                     null -> executeSetSuburb()
                                     else -> if (it.unSellableCommerceItems.isNullOrEmpty()) executeSetSuburb() else navigateToUnsellableItemsFragment()
@@ -255,6 +254,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     private fun onProvinceSelected(province: Province?) {
         this.selectedProvince = province
+        resetSuburbSelection()
         tvSelectedProvince?.setText(province?.name)
         tvSelectedProvince?.dismissDropDown()
     }
@@ -323,9 +323,9 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     override fun validateConfirmLocationButtonAvailability() {
         if (deliveryType == DeliveryType.DELIVERY)
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedSuburb != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE && !tvSelectedSuburb.text.isNullOrEmpty())
         else
-            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE)
+            confirmLocation?.isEnabled = (selectedProvince != null && selectedStore != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE && !tvSelectedSuburb.text.isNullOrEmpty())
     }
 
     override fun hideSetSuburbProgressBar() {
@@ -371,14 +371,13 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             selectedProvince = province
             tvSelectedProvince?.setText(selectedProvince?.name)
             if (storePickup) {
-                selectedStore =  Suburb().apply {
+                selectedStore = Suburb().apply {
                     id = store.id
                     name = store.name
                     fulfillmentStores = store.fulfillmentStores
                     storeAddress = StoreAddress(store.storeAddress)
                 }
-            }
-            else
+            } else
                 selectedSuburb = suburb
             setDeliveryOption(deliveryType)
 
@@ -473,7 +472,6 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         bundle?.apply {
             putString(DELIVERY_TYPE, deliveryType.name)
             putString("SUBURB", Utils.toJson(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore))
-            putString("PROVINCE", Utils.toJson(selectedProvince))
             putString("PROVINCE", Utils.toJson(selectedProvince))
             putString("UnSellableCommerceItems", Utils.toJson((if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.unSellableCommerceItems))
         }

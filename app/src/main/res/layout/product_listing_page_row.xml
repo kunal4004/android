@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/card_shadow">
+    android:layout_margin="@dimen/five_dp"
+    android:background="@color/white">
 
     <FrameLayout
         android:id="@+id/mainImgLayout"
