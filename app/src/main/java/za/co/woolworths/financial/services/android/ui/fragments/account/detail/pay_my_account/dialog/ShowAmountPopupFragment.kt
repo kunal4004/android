@@ -95,7 +95,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 initPaymentMethod()
 
 
-                    cvvFieldEnableState(pmaAmountEnteredTextView?.text?.toString())
+                cvvFieldEnableState(pmaAmountEnteredTextView?.text?.toString())
 
 
                 // Dismiss popup when payment method list is empty
