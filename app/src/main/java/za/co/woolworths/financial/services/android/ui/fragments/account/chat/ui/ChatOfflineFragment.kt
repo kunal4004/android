@@ -47,7 +47,7 @@ class ChatOfflineFragment : Fragment() {
 
         (activity as? WChatActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            setChatState(false)
+            displayEndSessionButton(false)
         }
 
         hiClientTextView?.text = "Hi ${ChatCustomerInfo.getUsername()},"

@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Conversation
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.util.db.DatabaseManager
 import java.util.*
 
@@ -114,6 +115,7 @@ class LiveChatDBRepository : DatabaseManager() {
     fun clearData() {
         var liveChatParams = getLiveChatParams()
         liveChatParams?.conversation = null
+        ChatAWSAmplify.isLiveChatActivated = false
         liveChatParams = null
         saveLiveChatParams(liveChatParams)
     }

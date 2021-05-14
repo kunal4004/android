@@ -18,6 +18,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.chat_activity.*
+import kotlinx.android.synthetic.main.chat_fragment.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
@@ -31,7 +32,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.*
 import za.co.woolworths.financial.services.android.util.ServiceTools
@@ -69,7 +70,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
         with(chatViewModel) {
             isCustomerSignOut.observe(this@WChatActivity, { isSignOut ->
-                when (currentFragment) {
+                when (topVisibleFragment) {
                     is ChatFragment -> {
                         when (isSignOut) {
                             true ->
@@ -77,16 +78,16 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                                     liveChatAuthentication.signOut {
                                         ServiceTools.stop(
                                             this@WChatActivity,
-                                            LiveChatFollowMeService::class.java
+                                            LiveChatService::class.java
                                         )
-                                        closeChat()
+                                        closeChatWindow()
                                     }
                                 }
                         }
                     }
                     is ChatRetrieveABSACardTokenFragment -> {
                         when (isSignOut) {
-                            true -> GlobalScope.doAfterDelay(DELAY) { closeChat() }
+                            true -> GlobalScope.doAfterDelay(DELAY) { closeChatWindow() }
                         }
                     }
                 }
@@ -99,9 +100,9 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
                 val result: String? = extras.getString(LIVE_CHAT_SUBSCRIPTION_RESULT)
                 val sendMessage: SendMessageResponse? =
                     Gson().fromJson(result, SendMessageResponse::class.java)
-                when (currentFragment) {
+                when (topVisibleFragment) {
                     is ChatFragment -> {
-                        (currentFragment as? ChatFragment)?.apply {
+                        (topVisibleFragment as? ChatFragment)?.apply {
                             if (sendMessage == null) {
                                 subscribeErrorResponse()
                             } else {
@@ -195,28 +196,34 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         }
     }
 
-    fun setChatState(isOnline: Boolean) {
+    fun displayEndSessionButton(isOnline: Boolean) {
         runOnUiThread {
-            setEndSessionTextView(isOnline)
+            endSessionTextView?.visibility = if (isOnline) VISIBLE else GONE
         }
     }
 
-    private fun setEndSessionTextView(isOnline: Boolean) {
-        endSessionTextView?.visibility = if (isOnline) VISIBLE else GONE
+
+    fun chatDisconnectedByAgent(isDisconnected: Boolean) {
+        endSessionTextView?.apply {
+            visibility = VISIBLE
+            alpha = if (isDisconnected) 0.3f else 1.0f
+            isEnabled = !isDisconnected
+        }
     }
 
+
     override fun onBackPressed() {
-        when (currentFragment) {
+        when (topVisibleFragment) {
             is WhatsAppChatToUsFragment -> chatNavHostController?.popBackStack()
 
-            is ChatOfflineFragment -> finishActivity()
+            is ChatOfflineFragment -> closeChatWindow()
 
             is ChatRetrieveABSACardTokenFragment -> endSessionPopup()
 
             else -> {
                 when (chatNavHostController?.graph?.startDestination) {
 
-                    R.id.chatFragment -> finishActivity()
+                    R.id.chatFragment -> closeChatWindow()
 
                     else -> chatNavHostController?.popBackStack()
                 }
@@ -225,18 +232,17 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     }
 
     private fun endSessionPopup() {
-        val navigationId = when (currentFragment) {
+        val navigateResId = when (topVisibleFragment) {
             is ChatFragment -> R.id.action_chatFragment_to_chatCustomerServiceEndSessionDialogFragment
             is ChatRetrieveABSACardTokenFragment -> R.id.action_chatRetrieveABSACardTokenFragment_to_chatCustomerServiceEndSessionDialogFragment
             else -> return
         }
-        chatNavHostController?.navigate(navigationId)
+        chatNavHostController?.navigate(navigateResId)
     }
 
-    val currentFragment: Fragment?
-        get() = (supportFragmentManager.fragments.first() as? NavHostFragment)?.childFragmentManager?.findFragmentById(
-            R.id.chatNavHost
-        )
+    val topVisibleFragment: Fragment?
+        get() = (supportFragmentManager.fragments.first()
+                as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.chatNavHost)
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
@@ -248,11 +254,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         return super.onOptionsItemSelected(menuItem)
     }
 
-    private fun closeChat() {
-        finishActivity()
-    }
-
-    private fun finishActivity() {
+    private fun closeChatWindow() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
@@ -275,7 +277,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
         mSubscribeToMessageReceiver?.let { unregisterReceiver(it) }
     }
 
-    fun updateTitle(@IntegerRes title: Int?) {
+    fun updateToolbarTitle(@IntegerRes title: Int?) {
         agentNameTextView?.text = title?.let { name -> bindString(name) }
     }
 }

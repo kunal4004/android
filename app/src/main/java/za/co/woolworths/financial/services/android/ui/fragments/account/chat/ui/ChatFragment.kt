@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatFollowMeService
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendEmailIntentInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
@@ -82,7 +82,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 activity?.let { act ->
                     ServiceTools.start(
                         act,
-                        LiveChatFollowMeService::class.java
+                        LiveChatService::class.java
                     )
                 }
                 return@with
@@ -103,15 +103,15 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
     }
 
     private fun initView() {
-        setupRecyclerview()
-        isChatButtonEnabled(false)
+        configureRecyclerview()
+        toogleSendMessageButton(false)
         onClickListener()
-        //autoConnectToNetwork()
+       // autoConnectToNetwork()
         setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
-        detectKeyboardVisibilityState()
+        keyboardVisibilityState()
     }
 
-    private fun detectKeyboardVisibilityState() {
+    private fun keyboardVisibilityState() {
         activity?.let { activity ->
             SoftKeyboardObserver(activity)
                 .listen { isKeyboardVisible ->
@@ -141,7 +141,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
     @SuppressLint("ResourceType")
     private fun amplifyListener() {
-        (activity as? WChatActivity)?.updateTitle(R.string.chat_title)
+        (activity as? WChatActivity)?.updateToolbarTitle(R.string.chat_title)
         chatLoaderProgressBar?.visibility = VISIBLE
         onChatStart()
     }
@@ -159,17 +159,19 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
             when (result?.sessionState) {
                 SessionStateType.CONNECT,
                 SessionStateType.QUEUEING -> {
-                    isChatButtonEnabled(false)
-                    isUserOnline(true)
+                    toogleSendMessageButton(false)
+                    connectedUserState(true)
                 }
                 SessionStateType.DISCONNECT -> {
-                    isChatButtonEnabled(false)
-                    isUserOnline(false)
-                    ServiceTools.stop(activity, LiveChatFollowMeService::class.java)
+                    toogleSendMessageButton(false)
+                    connectedUserState(false)
+                    isAgentDisconnected(true)
+                    ServiceTools.stop(activity, LiveChatService::class.java)
                 }
                 SessionStateType.ONLINE -> {
-                    isChatButtonEnabled(true)
-                    isUserOnline(true)
+                    toogleSendMessageButton(true)
+                    isAgentDisconnected(false)
+                    connectedUserState(true)
                 }
 
                 else -> {
@@ -179,16 +181,20 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         }
     }
 
-    private fun isChatButtonEnabled(isEnabled: Boolean) {
+    private fun toogleSendMessageButton(isEnabled: Boolean) {
         sendMessageButton?.isEnabled = isEnabled
     }
 
-    private fun isUserOnline(isVisible: Boolean) {
-        (activity as? WChatActivity)?.setChatState(isVisible)
-        edittext_chatbox?.isEnabled = isVisible
+    private fun connectedUserState(isVisible: Boolean) {
+        (activity as? WChatActivity)?.displayEndSessionButton(isVisible)
+        chatBoxEditText?.isEnabled = isVisible
     }
 
-    private fun setupRecyclerview() {
+    private fun isAgentDisconnected(isDisconnected: Boolean) {
+        (activity as? WChatActivity)?.chatDisconnectedByAgent(isDisconnected)
+    }
+
+    private fun configureRecyclerview() {
         mChatAdapter = WChatAdapter()
         messageListRecyclerView?.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -200,11 +206,11 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         when (v?.id) {
             R.id.sendMessageButton -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                    val message = edittext_chatbox?.text?.toString() ?: ""
+                    val message = chatBoxEditText?.text?.toString() ?: ""
                     if (TextUtils.isEmpty(message)) return
                     updateMessageList(UserMessage(message))
                     sendMessageImpl.send(SessionStateType.ONLINE, message)
-                    edittext_chatbox?.setText("")
+                    chatBoxEditText?.setText("")
                     try {
                         val imm: InputMethodManager? =
                             activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager

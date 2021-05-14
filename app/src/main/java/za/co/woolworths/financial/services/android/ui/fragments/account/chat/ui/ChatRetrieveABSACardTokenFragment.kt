@@ -31,7 +31,7 @@ class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         (activity as? WChatActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            setChatState(true)
+            displayEndSessionButton(true)
         }
     }
 

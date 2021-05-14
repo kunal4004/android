@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 
-class LiveChatFollowMeService : Service() {
+class LiveChatService : Service() {
 
     private val liveChatDBRepository = LiveChatDBRepository()
     private val liveChat = LiveChat(
@@ -54,6 +54,7 @@ class LiveChatFollowMeService : Service() {
         with(liveChat) {
             signIn({
                 //sign in success
+                ChatAWSAmplify.isLiveChatActivated = true
                 conversation({
                     // conversation success
                     onSubscribe({ message ->

@@ -35,7 +35,7 @@ class WhatsAppChatToUsFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as? WChatActivity)?.setChatState(false)
+        (activity as? WChatActivity)?.displayEndSessionButton(false)
 
         (activity as? AppCompatActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)

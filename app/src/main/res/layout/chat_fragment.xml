@@ -62,7 +62,7 @@
         app:layout_constraintRight_toRightOf="parent">
 
         <za.co.woolworths.financial.services.android.ui.views.EmojiExcludeEditText
-            android:id="@+id/edittext_chatbox"
+            android:id="@+id/chatBoxEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

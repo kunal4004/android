@@ -19,6 +19,8 @@ object ChatAWSAmplify {
     var isChatActivityInForeground = false
     var listAllChatMessages: MutableList<ChatMessage>? = mutableListOf()
     var isUserSubscriptionActive: Boolean = false
+    var isLiveChatActivated: Boolean = false
+    var BOTTOM_NAVIGATION_BADGE_COUNT:Int = 100000
 
     init {
         GlobalScope.launch(Dispatchers.Main) {
@@ -53,7 +55,7 @@ object ChatAWSAmplify {
                 Log.e("awsException", "successful")
             } catch (ex: Exception) {
                 Log.e("awsException", ex.toString())
-               // FirebaseManager.logException(ex)
+                // FirebaseManager.logException(ex)
             }
         }
     }

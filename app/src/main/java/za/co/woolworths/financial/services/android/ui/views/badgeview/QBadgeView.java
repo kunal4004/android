@@ -32,6 +32,8 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
+
 /**
  * TODO::  JetPack offers native support for badge counter, this
  *  class should be replaced by JetPack solution
@@ -124,7 +126,6 @@ public class QBadgeView extends View implements Badge {
 		mBadgeBackgroundBorderPaint = new Paint();
 		mBadgeBackgroundBorderPaint.setAntiAlias(true);
 		mBadgeBackgroundBorderPaint.setStyle(Paint.Style.STROKE);
-		mColorBackground = ContextCompat.getColor(getContext(), R.color.black);
 		mColorBadgeText = ContextCompat.getColor(getContext(), R.color.white);
 		mBadgeTextSize = DisplayUtil.dp2px(getContext(), 11);
 		mBadgePadding = DisplayUtil.dp2px(getContext(), 5);
@@ -135,9 +136,7 @@ public class QBadgeView extends View implements Badge {
 		mFinalDragDistance = DisplayUtil.dp2px(getContext(), 90);
 		mShowShadow = true;
 		mDrawableBackgroundClip = false;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			setTranslationZ(1000);
-		}
+		setTranslationZ(1000);
 	}
 
 	@Override
@@ -307,9 +306,11 @@ public class QBadgeView extends View implements Badge {
 			mAnimator.draw(canvas);
 			return;
 		}
+
 		if (mBadgeText != null) {
 			initPaints();
 			float badgeRadius = getBadgeCircleRadius();
+
 			float startCircleRadius = mDefalutRadius * (1 - MathUtil.getPointDistance
 					(mRowBadgeCenter, mDragCenter) / mFinalDragDistance);
 			if (mDraggable && mDragging) {
@@ -317,12 +318,11 @@ public class QBadgeView extends View implements Badge {
 				showShadowImpl(mShowShadow);
 				if (mDragOutOfRange = startCircleRadius < DisplayUtil.dp2px(getContext(), 1.5f)) {
 					updataListener(OnDragStateChangedListener.STATE_DRAGGING_OUT_OF_RANGE);
-					drawBadge(canvas, mDragCenter, badgeRadius);
 				} else {
 					updataListener(OnDragStateChangedListener.STATE_DRAGGING);
 					drawDragging(canvas, startCircleRadius, badgeRadius);
-					drawBadge(canvas, mDragCenter, badgeRadius);
 				}
+				drawBadge(canvas, mDragCenter, badgeRadius);
 			} else {
 				findBadgeCenter();
 				drawBadge(canvas, mBadgeCenter, badgeRadius);
@@ -485,20 +485,14 @@ public class QBadgeView extends View implements Badge {
 			srcCanvas = new Canvas(mBitmapClip);
 			srcCanvas.drawCircle(srcCanvas.getWidth() / 2f, srcCanvas.getHeight() / 2f,
 					srcCanvas.getWidth() / 2f, mBadgeBackgroundPaint);
-			setVisibility(VISIBLE);
 		} else {
 			mBitmapClip = Bitmap.createBitmap((int) (mBadgeTextRect.width() + mBadgePadding * 2),
 					(int) (mBadgeTextRect.height() + mBadgePadding), Bitmap.Config.ARGB_4444);
 			srcCanvas = new Canvas(mBitmapClip);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				srcCanvas.drawRoundRect(0, 0, srcCanvas.getWidth(), srcCanvas.getHeight(), srcCanvas.getHeight() / 2f,
+			srcCanvas.drawRoundRect(0, 0, srcCanvas.getWidth(), srcCanvas.getHeight(), srcCanvas.getHeight() / 2f,
 						srcCanvas.getHeight() / 2f, mBadgeBackgroundPaint);
-			} else {
-				srcCanvas.drawRoundRect(new RectF(0, 0, srcCanvas.getWidth(), srcCanvas.getHeight()),
-						srcCanvas.getHeight() / 2f, srcCanvas.getHeight() / 2f, mBadgeBackgroundPaint);
-			}
-			setVisibility(VISIBLE);
 		}
+		setVisibility(VISIBLE);
 	}
 
 	private float getBadgeCircleRadius() {
@@ -514,8 +508,7 @@ public class QBadgeView extends View implements Badge {
 	}
 
 	private void findBadgeCenter() {
-		float rectWidth = mBadgeTextRect.height() > mBadgeTextRect.width() ?
-				mBadgeTextRect.height() : mBadgeTextRect.width();
+		float rectWidth = Math.max(mBadgeTextRect.height(), mBadgeTextRect.width());
 		switch (mBadgeGravity) {
 			case Gravity.START | Gravity.TOP:
 				mBadgeCenter.x = mGravityOffsetX + mBadgePadding + rectWidth / 2f;
@@ -619,7 +612,10 @@ public class QBadgeView extends View implements Badge {
 		mBadgeNumber = badgeNumber;
 		if (mBadgeNumber < 0) {
 			mBadgeText = "";
-		} else if (mBadgeNumber > 99) {
+		} else if (mBadgeNumber == ChatAWSAmplify.INSTANCE.getBOTTOM_NAVIGATION_BADGE_COUNT()){
+			mBadgeText = "1";
+		}
+		else if (mBadgeNumber > 99) {
 			mBadgeText = mExact ? String.valueOf(mBadgeNumber) : "99+";
 		} else if (mBadgeNumber > 0 && mBadgeNumber <= 99) {
 			mBadgeText = String.valueOf(mBadgeNumber);
@@ -678,7 +674,7 @@ public class QBadgeView extends View implements Badge {
 
 	@Override
 	public Badge setBadgeBackgroundColor(int color) {
-		mColorBackground = color;
+		mColorBackground = ContextCompat.getColor(getContext(), color);
 		if (mColorBackground == Color.TRANSPARENT) {
 			mBadgeTextPaint.setXfermode(null);
 		} else {
