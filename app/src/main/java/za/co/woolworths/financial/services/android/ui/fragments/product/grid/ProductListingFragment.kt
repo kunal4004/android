@@ -170,6 +170,26 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS
             )
         }
+
+        if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
+            val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
+            val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
+            if (currentStoreId == null && currentSuburbId == null) {
+                //Fresh install with no location selection.
+            } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
+                localStoreId = currentStoreId
+                localSuburbId = null
+                isReloadNeeded = false
+                updateRequestForReload()
+                pushFragment()
+            } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
+                localSuburbId = currentSuburbId
+                localStoreId = null
+                isReloadNeeded = false
+                updateRequestForReload()
+                pushFragment()
+            }
+        }
     }
 
     private fun pushFragment() {
@@ -552,8 +572,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showToolbar()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                    if (!localProductBody.isEmpty())
+                    if (!localProductBody.isEmpty() && isBackPressed) {
                         localProductBody.removeLast()
+                        isBackPressed = false
+                    }
                     if (isReloadNeeded) {
                         updateRequestForReload()
                         reloadProductsWithSortAndFilter()
@@ -566,6 +588,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             invalidateOptionsMenu()
         }
+    }
+
+    fun onBackPressed() {
+        isBackPressed = true
     }
 
     override fun onSortOptionSelected(sortOption: SortOption) {
@@ -646,27 +672,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 }
             }
             PDP_REQUEST_CODE, OPEN_CART_REQUEST -> {
-                if (resultCode == Activity.RESULT_CANCELED || resultCode == DISMISS_POP_WINDOW_CLICKED){
+                if (resultCode == Activity.RESULT_CANCELED || resultCode == DISMISS_POP_WINDOW_CLICKED) {
                     val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
                     val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-                    if (currentStoreId == null && currentSuburbId == null) {
-                        //Fresh install with no location selection.
-                    } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
-                        localStoreId = currentStoreId
-                        localSuburbId = null
-                        isReloadNeeded = false
-                        updateRequestForReload()
-                        pushFragment()
-                    } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
-                        localSuburbId = currentSuburbId
-                        localStoreId = null
-                        isReloadNeeded = false
-                        updateRequestForReload()
-                        pushFragment()
-                    }
+                    if ((currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) || (currentStoreId == null && !(localSuburbId.equals(
+                            currentSuburbId
+                        )))
+                    )
+                        isBackPressed =
+                            true // if PDP closes or cart fragment closed with location change.
                 }
             }
-
             else -> return
         }
     }
@@ -1110,6 +1126,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         private var localProductBody: ArrayList<Any> = ArrayList()
         private var localSuburbId: String? = null
         private var localStoreId: String? = null
+        private var isBackPressed: Boolean = false
 
         /*const val REFINEMENT_DATA = "REFINEMENT_DATA"*/
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
