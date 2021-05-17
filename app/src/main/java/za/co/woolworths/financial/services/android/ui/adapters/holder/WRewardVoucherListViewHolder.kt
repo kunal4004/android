@@ -8,11 +8,17 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.wrewards_vouchers_list_item.view.*
 
 import za.co.woolworths.financial.services.android.models.dto.Voucher
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.DateFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter
+import java.lang.IllegalArgumentException
 import java.text.ParseException
 
 class WRewardVoucherListViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    constructor(parent: ViewGroup) : this(LayoutInflater.from(parent.context).inflate(R.layout.wrewards_vouchers_list_item, parent, false))
+    constructor(parent: ViewGroup) : this(
+        LayoutInflater.from(parent.context)
+            .inflate(R.layout.wrewards_vouchers_list_item, parent, false)
+    )
 
     fun setItem(voucher: Voucher) {
         with(voucher) {
@@ -26,12 +32,14 @@ class WRewardVoucherListViewHolder constructor(itemView: View) : RecyclerView.Vi
 
                 context?.apply {
                     voucherExpireDate?.text = try {
-                        if (WFormatter.isDateExpired(validToDate))
-                            getString(R.string.expired) + WFormatter.formatDate(validToDate).toString()
+                        if (DateFormatter.isDateExpired(validToDate))
+                            bindString(R.string.expired) + DateFormatter.formatDate(validToDate)
                         else
-                            getString(R.string.expires) + WFormatter.formatDate(validToDate).toString()
+                            bindString(R.string.expires) + DateFormatter.formatDate(validToDate)
                     } catch (e: ParseException) {
-                        getString(R.string.expires) + validToDate?.toString()
+                        bindString(R.string.expires) + validToDate?.toString()
+                    } catch (e: IllegalArgumentException) {
+                        bindString(R.string.expires) + validToDate?.toString()
                     }
                 }
             }
