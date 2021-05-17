@@ -42,6 +42,7 @@ class StoreLocatorActivity : AppCompatActivity() {
         const val PRODUCT_NAME = "PRODUCT_NAME"
         const val CONTACT_INFO = "CONTACT_INFO"
         const val MAP_LOCATION = "MAP_LOCATION"
+        const val GEOFENCE_ENABLED = "GEOFENCE_ENABLED"
         const val SHOW_GEOFENCING = "SHOW_GEOFENCING"
         private const val UNSELECTED_TAB_ALPHA_VIEW = 0.3f
         private const val SELECTED_TAB_ALPHA_VIEW = 1.0f
@@ -64,7 +65,8 @@ class StoreLocatorActivity : AppCompatActivity() {
 
         ivNavigateBack?.setOnClickListener { onBackPressed() }
 
-        val participatingStoreDescription = highlightTextInDesc(this, SpannableString(getString(R.string.npc_participating_store)), "here", true)
+        val isInGeoFence = intent?.getBooleanExtra(GEOFENCE_ENABLED, false)
+        val participatingStoreDescription = highlightTextInDesc(this, SpannableString(if(isInGeoFence == true) getString(R.string.npc_participating_store)  else  getString(R.string.npc_participating_store_outside_geofence)), "here", true)
         tvStoreContactInfo?.apply {
             val boolean = intent?.getBooleanExtra(SHOW_GEOFENCING, true)
             visibility = if(boolean == false) View.GONE else View.VISIBLE

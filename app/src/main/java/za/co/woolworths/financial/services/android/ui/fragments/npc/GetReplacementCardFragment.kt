@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocato
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.MAP_LOCATION
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.PRODUCT_NAME
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.GEOFENCE_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
@@ -128,6 +129,7 @@ class GetReplacementCardFragment : MyCardExtension() {
                                     intentInStoreFinder.putExtra(PRODUCT_NAME, bindString(R.string.participating_stores))
                                     intentInStoreFinder.putExtra(CONTACT_INFO, bindString(R.string.participating_store_desc))
                                     intentInStoreFinder.putExtra(MAP_LOCATION, Gson().toJson(npcStores))
+                                    intentInStoreFinder.putExtra(GEOFENCE_ENABLED, locationResponse.inGeofence)
                                     startActivity(intentInStoreFinder)
                                     overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
                                 }

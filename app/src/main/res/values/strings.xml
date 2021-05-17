@@ -893,6 +893,7 @@
     <string name="no_of_items_added">%1$Item%2$</string>
     <string name="npc_already_have_your_card_link">ALREADY HAVE your card? LINK it NOW</string>
     <string name="npc_participating_store">Can’t find a participating store close to you? Tap here to arrange delivery and we will issue you a virtual temp card to get shopping today.</string>
+    <string name="npc_participating_store_outside_geofence">Can’t find participating store close to you? Tap here to arrange delivery.</string>
     <string name="temp_card_how_to_use1">This Virtual temporary In-Store Card (temp store card) is valid for 30 days.</string>
     <string name="temp_card_how_to_use2">Your temp store card can only be used for in-store purchases and not on-line purchases.</string>
     <string name="temp_card_how_to_use3">Your temp store card will be removed after your first in-store purchase with your plastic Store Card</string>
