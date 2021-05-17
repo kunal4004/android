@@ -68,7 +68,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
             bundle = Uri.parse(jsonLinkData.get("url").asString)
             intent?.action = Intent.ACTION_VIEW
         } else if (bundle == null && intent?.extras != null) {
-            bundle = intent!!.extras!!
+            bundle = intent.extras
             intent?.action = Intent.ACTION_VIEW
         }
         if (Intent.ACTION_VIEW == intent?.action && bundle != null && bundle.toString()
