@@ -160,7 +160,20 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
                 manageLinkNewCardGroup?.visibility = VISIBLE
+                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_activate_vtc_grey)) }
                 manageMyCardTextView?.text = bindString(R.string.activate_vtc_title)
+                cardDetailImageView?.alpha = 0.3f
+            }
+
+            // Temporary card
+            (mCardPresenterImpl?.isVirtualCardObjectNotNull() == true) -> {
+                storeCardTagTextView?.text = bindString(R.string.temp_card)
+                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
+                storeCardTagTextView?.visibility = VISIBLE
+                myCardDetailTextView?.visibility = GONE
+                manageLinkNewCardGroup?.visibility = GONE
+                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
+                manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
                 cardDetailImageView?.alpha = 0.3f
             }
 
@@ -172,10 +185,13 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 myCardDetailTextView?.visibility = GONE
                 manageLinkNewCardGroup?.visibility = VISIBLE
                 manageMyCardTextView?.text = bindString(R.string.replacement_card_label)
+                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
                 cardDetailImageView?.alpha = 0.3f
             }
             // Temporary card
             mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() == true -> {
+                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
+
                 //when virtual card is disabled on mobile config server
                 if (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == false) {
                     storeCardTagTextView?.visibility = GONE
@@ -207,6 +223,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 myCardDetailTextView?.visibility = VISIBLE
                 manageLinkNewCardGroup?.visibility = GONE
                 manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
+                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
                 cardDetailImageView?.alpha = 1.0f
             }
         }

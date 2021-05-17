@@ -1102,7 +1102,7 @@ interface ApiInterface {
             @Path("productOfferingId") productOfferingId: String,
             @Body requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse>
 
-    @GET("user/locations")
+    @GET("user/locations/geofence")
     fun getStoresForNPC(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -1115,7 +1115,7 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Query("lat") lat: String,
-            @Query("lon") lon: String,
+            @Query("long") lon: String,
             @Query("searchString") searchString: String,
             @Query("npc") npc: Boolean?
     ): Call<LocationResponse>
