@@ -54,7 +54,7 @@ public class IncreaseLimitController {
 				randAmount = Integer.parseInt(randValue.replaceAll("\\s+", ""));
 			}
 		}
-		return !TextUtils.isEmpty(value) && value.length() > 0 && randAmount > 0;
+		return !TextUtils.isEmpty(value) && value.length() > 0 && randAmount >= 100;
 	}
 
 	public static boolean validateExpenseAmount(String value) {
