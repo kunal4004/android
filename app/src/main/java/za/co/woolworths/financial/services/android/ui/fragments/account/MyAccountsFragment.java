@@ -208,6 +208,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private LinearLayout retryPersonalLoanLinearLayout;
     private ArrayList<UserDevice> deviceList;
     private NotificationBadge notificationBadge;
+    private ImageView onlineIndicatorImageView;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -292,6 +293,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
             RelativeLayout myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
             chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
+            onlineIndicatorImageView = view.findViewById(R.id.onlineIndicatorImageView);
             notificationBadge = view.findViewById(R.id.badge);
             creditReportView = view.findViewById(R.id.creditReport);
             creditReportIcon = view.findViewById(R.id.creditReportIcon);
@@ -1781,7 +1783,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             else
                 act = (MyAccountActivity) activity;
 
-            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView,notificationBadge);
+            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView,notificationBadge,onlineIndicatorImageView);
             inAppChatTipAcknowledgement.build();
         }
     }

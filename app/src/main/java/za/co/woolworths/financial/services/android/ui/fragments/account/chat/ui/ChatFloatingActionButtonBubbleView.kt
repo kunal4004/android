@@ -8,13 +8,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Gravity
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.view.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -36,9 +37,11 @@ import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.views.NotificationBadge
 import za.co.woolworths.financial.services.android.util.DelayConstant
 import za.co.woolworths.financial.services.android.util.ReceiverManager
+import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ChatFloatingActionButtonBubbleView(
@@ -47,7 +50,8 @@ class ChatFloatingActionButtonBubbleView(
     var floatingActionButton: FloatingActionButton? = null,
     var applyNowState: ApplyNowState,
     var scrollableView: Any? = null,
-    var notificationBadge: NotificationBadge? = null
+    var notificationBadge: NotificationBadge? = null,
+    var onlineIndicatorImageView: ImageView? = null
 
 ) : LifecycleObserver {
 
@@ -147,10 +151,12 @@ class ChatFloatingActionButtonBubbleView(
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
                             floatingActionButton?.hide()
+                            onlineIndicatorVisibility(false)
                             if (chatBubbleToolTip?.isShowing == true)
                                 chatBubbleToolTip?.dismiss()
                         } else {
                             floatingActionButton?.show()
+                            onlineIndicatorVisibility(true)
                         }
                     }
                 }
@@ -160,16 +166,43 @@ class ChatFloatingActionButtonBubbleView(
                 (scrollableView as? RecyclerView)?.addOnScrollListener(object :
                     RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        if (dy > 0 || dy < 0 && floatingActionButton?.isShown == true) floatingActionButton?.hide()
+                        if (dy > 0 || dy < 0 && floatingActionButton?.isShown == true) {
+                            floatingActionButton?.hide()
+                            onlineIndicatorVisibility(false)
+                        }
                     }
 
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                        if (newState == RecyclerView.SCROLL_STATE_IDLE) floatingActionButton?.show()
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            floatingActionButton?.show()
+                            onlineIndicatorVisibility(true)
+                        }
                         super.onScrollStateChanged(recyclerView, newState)
                     }
                 })
             }
         }
+    }
+
+    private fun onlineIndicatorVisibility() {
+        val liveChatDBRepository = LiveChatDBRepository()
+        val messageCount = liveChatDBRepository.getUnReadMessageCount()
+        if (ServiceTools.checkServiceRunning(activity, LiveChatService::class.java) && messageCount == 0) {
+            onlineIndicatorImageView?.visibility = VISIBLE
+            notificationBadge?.visibility = GONE
+        } else {
+            if (liveChatDBRepository.getUnReadMessageCount() > 0) {
+                notificationBadge?.visibility = VISIBLE
+            }
+                onlineIndicatorImageView?.visibility = GONE
+        }
+    }
+
+    private fun onlineIndicatorVisibility(isVisible: Boolean) {
+        val liveChatDBRepository = LiveChatDBRepository()
+        val messageCount = liveChatDBRepository.getUnReadMessageCount()
+        val isChatConnected = ServiceTools.checkServiceRunning(activity, LiveChatService::class.java) && messageCount == 0
+            onlineIndicatorImageView?.visibility = if (isVisible && isChatConnected) VISIBLE else GONE
     }
 
     private fun floatingButtonListener() {
@@ -232,7 +265,7 @@ class ChatFloatingActionButtonBubbleView(
         override fun onReceive(context: Context?, intent: Intent) {
             activity?.runOnUiThread {
                 val liveChatDBRepository = LiveChatDBRepository()
-                Log.e("messageCountReceiver", "messageCountReceiver")
+                onlineIndicatorVisibility()
                 notificationBadge?.setNumber(liveChatDBRepository.getUnReadMessageCount())
             }
         }
@@ -245,6 +278,8 @@ class ChatFloatingActionButtonBubbleView(
             messageCountBroadcastReceiver,
             IntentFilter(LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE)
         )
+
+        onlineIndicatorVisibility()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

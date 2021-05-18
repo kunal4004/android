@@ -298,9 +298,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
         mBundle = null;
-
-        LiveChatDBRepository liveChatDBRepository = new LiveChatDBRepository();
-        addAccountBadge(INDEX_ACCOUNT, liveChatDBRepository.getUnReadMessageCount());
     }
 
     @Override

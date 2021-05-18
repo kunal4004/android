@@ -293,14 +293,20 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         queryServicePaymentMethod()
     }
 
-    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+    private fun chatToCollectionAgent(
+        applyNowState: ApplyNowState,
+        accountList: MutableList<Account>?
+    ) {
         activity?.apply {
             mChatFloatingActionButtonBubbleView = ChatFloatingActionButtonBubbleView(
-                    activity = this as? PayMyAccountActivity,
-                    chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
-                    floatingActionButton = chatBubbleFloatingButton,
-                    applyNowState = applyNowState,
-                    scrollableView = creditDebitCardPaymentsScrollView)
+                activity = this as? PayMyAccountActivity,
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
+                floatingActionButton = chatBubbleFloatingButton,
+                applyNowState = applyNowState,
+                scrollableView = creditDebitCardPaymentsScrollView,
+                notificationBadge = badge,
+                onlineIndicatorImageView = onlineIndicatorImageView
+            )
 
             mChatFloatingActionButtonBubbleView?.build()
         }

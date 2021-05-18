@@ -260,22 +260,34 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         val accountList = account?.let { account -> mutableListOf(account) }
         chatAccountProductLandingPage?.first?.let {
             ChatFloatingActionButtonBubbleView(
-                    activity = this@AbsaStatementsActivity,
-                    chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
-                    floatingActionButton = chatBubbleFloatingButton,
-                    applyNowState = it,
-                    scrollableView = paymentOptionScrollView)
-                    .build()
+                activity = this@AbsaStatementsActivity,
+                chatBubbleVisibility = ChatBubbleVisibility(
+                    accountList,
+                    this@AbsaStatementsActivity
+                ),
+                floatingActionButton = chatBubbleFloatingButton,
+                applyNowState = it,
+                scrollableView = paymentOptionScrollView,
+                notificationBadge = badge,
+                onlineIndicatorImageView = onlineIndicatorImageView
+            )
+                .build()
         }
     }
 
-    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+    private fun chatToCollectionAgent(
+        applyNowState: ApplyNowState,
+        accountList: MutableList<Account>?
+    ) {
         ChatFloatingActionButtonBubbleView(
-                activity = this@AbsaStatementsActivity,
-                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
-                floatingActionButton = chatBubbleFloatingButton,
-                applyNowState = applyNowState,
-                scrollableView = paymentOptionScrollView)
-                .build()
+            activity = this@AbsaStatementsActivity,
+            chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
+            floatingActionButton = chatBubbleFloatingButton,
+            applyNowState = applyNowState,
+            scrollableView = paymentOptionScrollView,
+            notificationBadge = badge,
+            onlineIndicatorImageView = onlineIndicatorImageView
+        )
+            .build()
     }
 }

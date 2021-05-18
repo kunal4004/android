@@ -187,13 +187,18 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+    private fun chatToCollectionAgent(
+        applyNowState: ApplyNowState,
+        accountList: MutableList<Account>?
+    ) {
         ChatFloatingActionButtonBubbleView(
-                activity = this@WTransactionsActivity,
-                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@WTransactionsActivity),
-                floatingActionButton = chatBubbleFloatingButton,
-                applyNowState = applyNowState,
-                scrollableView = paymentOptionScrollView)
-                .build()
+            activity = this@WTransactionsActivity,
+            chatBubbleVisibility = ChatBubbleVisibility(accountList, this@WTransactionsActivity),
+            floatingActionButton = chatBubbleFloatingButton,
+            applyNowState = applyNowState,
+            scrollableView = paymentOptionScrollView,
+            onlineIndicatorImageView = onlineIndicatorImageView
+        )
+            .build()
     }
 }
