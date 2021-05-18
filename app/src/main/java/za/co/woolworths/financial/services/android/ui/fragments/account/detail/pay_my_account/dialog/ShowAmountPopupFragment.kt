@@ -33,9 +33,10 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
     private var navController: NavController? = null
     private val changeCardLabel = bindString(R.string.change_label)
     private val addCardLabel = bindString(R.string.add_card_label)
-    
+
     companion object {
         const val ONE_RAND = "R1.00"
+        const val RAND_AMOUNT_ZERO = "R 0.00"
     }
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -92,13 +93,27 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 // set payment method
                 initPaymentMethod()
 
+
+                cvvFieldEnableState(pmaAmountEnteredTextView?.text?.toString())
+
+
                 // Dismiss popup when payment method list is empty
                 if (isPaymentListEmpty(card?.paymentMethodList))
                     dismiss()
+
             })
         }
 
         initPaymentMethod()
+    }
+
+    private fun cvvFieldEnableState(amountPayable: String?) {
+        val isAmountPayableZero = amountPayable == RAND_AMOUNT_ZERO
+        cvvEditTextInput?.apply {
+            isEnabled = !isAmountPayableZero
+            isFocusable = !isAmountPayableZero
+            isFocusableInTouchMode = !isAmountPayableZero
+        }
     }
 
     private fun setupListener() {
