@@ -1115,7 +1115,7 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Query("lat") lat: String,
-            @Query("long") lon: String,
+            @Query("lon") lon: String,
             @Query("searchString") searchString: String,
             @Query("npc") npc: Boolean?
     ): Call<LocationResponse>
