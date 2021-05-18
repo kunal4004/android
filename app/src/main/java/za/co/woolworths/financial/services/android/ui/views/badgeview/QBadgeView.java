@@ -383,14 +383,9 @@ public class QBadgeView extends View implements Badge {
 			}
 			float startAngle = 360 - (float) MathUtil.radianToAngle(MathUtil.getTanRadian(Math.atan(startY / startX),
 					mDragQuadrant - 1 == 0 ? 4 : mDragQuadrant - 1));
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				mDragPath.addArc(mRowBadgeCenter.x - startRadius, mRowBadgeCenter.y - startRadius,
-						mRowBadgeCenter.x + startRadius, mRowBadgeCenter.y + startRadius, startAngle,
-						180);
-			} else {
-				mDragPath.addArc(new RectF(mRowBadgeCenter.x - startRadius, mRowBadgeCenter.y - startRadius,
-						mRowBadgeCenter.x + startRadius, mRowBadgeCenter.y + startRadius), startAngle, 180);
-			}
+			mDragPath.addArc(mRowBadgeCenter.x - startRadius, mRowBadgeCenter.y - startRadius,
+					mRowBadgeCenter.x + startRadius, mRowBadgeCenter.y + startRadius, startAngle,
+					180);
 			canvas.drawPath(mDragPath, mBadgeBackgroundBorderPaint);
 		}
 	}

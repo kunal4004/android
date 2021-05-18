@@ -66,6 +66,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawer
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
@@ -298,6 +299,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
         mBundle = null;
+
+        LiveChatDBRepository liveChatDBRepository = new LiveChatDBRepository();
+        addAccountBadge(INDEX_ACCOUNT, liveChatDBRepository.getUnReadMessageCount());
     }
 
     @Override
@@ -374,6 +378,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     public void addBadge(int position, int number) {
         runOnUiThread(() -> Utils.addBadgeAt(this, getBottomNavigationById(), position, number));
+    }
+
+    public void addAccountBadge(int position, int number) {
+        runOnUiThread(() -> Utils.addBadgeCountIndicator(this, getBottomNavigationById(), position, number));
     }
 
     @Override
