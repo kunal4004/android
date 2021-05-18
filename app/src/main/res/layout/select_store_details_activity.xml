@@ -112,6 +112,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
+        android:visibility="gone"
         android:id="@+id/processingView"
         layout="@layout/npc_processing_request_layout"
         android:layout_width="match_parent"
@@ -120,7 +121,8 @@
 
 
     <include
-        android:id="@+id/processingView"
+        android:visibility="gone"
+        android:id="@+id/confirmStoreLayout"
         layout="@layout/layout_confirmation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
