@@ -169,8 +169,8 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                     ServiceTools.stop(activity, LiveChatService::class.java)
                 }
                 SessionStateType.ONLINE -> {
-                    toogleSendMessageButton(true)
                     isAgentDisconnected(false)
+                    toogleSendMessageButton(true)
                     connectedUserState(true)
                 }
 

@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.LiveChat
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatAuthImpl
@@ -58,7 +59,7 @@ class LiveChatService : Service() {
                 conversation({
                     // conversation success
                     onSubscribe({ message ->
-                        if (message?.sessionState != SessionStateType.CONNECT || !message.content.isNullOrEmpty())
+                        if (message?.sessionState != SessionStateType.CONNECT || message.content?.isEmpty() != true)
                             message?.let { msg -> ChatAWSAmplify.addChatMessageToList(msg) }
 
                         if (ChatAWSAmplify.isChatActivityInForeground) {
@@ -66,9 +67,7 @@ class LiveChatService : Service() {
                         } else {
                             val handler = Handler(Looper.getMainLooper())
                             handler.post {
-                                val woolworthsApplication =
-                                    applicationContext as? WoolworthsApplication
-                                Log.e("authMessage", "authMessageBun")
+                                val woolworthsApplication = applicationContext as? WoolworthsApplication
                                 liveChatDBRepository.updateUnreadMessageCount()
                                 postMessageCount()
                                 val currentActivity = woolworthsApplication?.currentActivity
@@ -112,8 +111,7 @@ class LiveChatService : Service() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
-                CHANNEL_ID,
-                "Foreground Service Channel",
+                CHANNEL_ID, bindString(R.string.app_name),
                 NotificationManager.IMPORTANCE_LOW
             )
             serviceChannel.enableVibration(false)

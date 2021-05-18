@@ -12,6 +12,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 object ChatAWSAmplify {
@@ -20,7 +22,7 @@ object ChatAWSAmplify {
     var listAllChatMessages: MutableList<ChatMessage>? = mutableListOf()
     var isUserSubscriptionActive: Boolean = false
     var isLiveChatActivated: Boolean = false
-    var BOTTOM_NAVIGATION_BADGE_COUNT:Int = 100000
+    var BOTTOM_NAVIGATION_BADGE_COUNT: Int = 100000
 
     init {
         GlobalScope.launch(Dispatchers.Main) {
@@ -63,7 +65,12 @@ object ChatAWSAmplify {
     fun init() {}
 
     fun addChatMessageToList(chatMessage: ChatMessage) {
-        listAllChatMessages?.add(chatMessage)
+        val content = when (chatMessage) {
+            is UserMessage -> chatMessage.message
+            is SendMessageResponse -> chatMessage.content
+        }
+        if (content?.isNotEmpty() == true)
+            listAllChatMessages?.add(chatMessage)
     }
 
     fun getChatMessageList(): MutableList<ChatMessage>? = listAllChatMessages
