@@ -262,7 +262,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             ChatFloatingActionButtonBubbleView(
                     activity = this@AbsaStatementsActivity,
                     chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
-                    floatingActionButtonBadgeCounter = chatBubbleFloatingButton,
+                    floatingActionButton = chatBubbleFloatingButton,
                     applyNowState = it,
                     scrollableView = paymentOptionScrollView)
                     .build()
@@ -273,7 +273,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         ChatFloatingActionButtonBubbleView(
                 activity = this@AbsaStatementsActivity,
                 chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
-                floatingActionButtonBadgeCounter = chatBubbleFloatingButton,
+                floatingActionButton = chatBubbleFloatingButton,
                 applyNowState = applyNowState,
                 scrollableView = paymentOptionScrollView)
                 .build()

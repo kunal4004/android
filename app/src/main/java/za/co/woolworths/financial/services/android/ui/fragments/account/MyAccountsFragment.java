@@ -33,6 +33,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.awfs.coordination.R;
 import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -88,7 +89,6 @@ import za.co.woolworths.financial.services.android.ui.activities.credit_card_del
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.FloatingActionButtonBadgeCounter;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
@@ -97,6 +97,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSection
 import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
+import za.co.woolworths.financial.services.android.ui.views.NotificationBadge;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
@@ -184,7 +185,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private Call<MessageResponse> messageRequestCall;
     private Account mCreditCardAccount;
     private View linkedAccountBottomDivider;
-    private FloatingActionButtonBadgeCounter chatWithAgentFloatingButton;
+    private FloatingActionButton chatWithAgentFloatingButton;
     private ImageView creditReportIcon;
     private RelativeLayout creditReportView;
     private HashMap<Products, Account> mAccountsHashMap;
@@ -206,6 +207,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private LinearLayout retryCreditCardLinearLayout;
     private LinearLayout retryPersonalLoanLinearLayout;
     private ArrayList<UserDevice> deviceList;
+    private NotificationBadge notificationBadge;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -290,6 +292,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
             RelativeLayout myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
             chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
+            notificationBadge = view.findViewById(R.id.badge);
             creditReportView = view.findViewById(R.id.creditReport);
             creditReportIcon = view.findViewById(R.id.creditReportIcon);
 
@@ -1778,7 +1781,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             else
                 act = (MyAccountActivity) activity;
 
-            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
+            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView,notificationBadge);
             inAppChatTipAcknowledgement.build();
         }
     }

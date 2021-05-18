@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.text.TextUtils
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.awfs.coordination.R
@@ -59,24 +60,27 @@ class LiveChatService : Service() {
                 conversation({
                     // conversation success
                     onSubscribe({ message ->
-                        if (message?.sessionState != SessionStateType.CONNECT || message.content?.isEmpty() != true)
+                        if (message?.sessionState != SessionStateType.CONNECT || !TextUtils.isEmpty(message.content))
                             message?.let { msg -> ChatAWSAmplify.addChatMessageToList(msg) }
 
                         if (ChatAWSAmplify.isChatActivityInForeground) {
                             postResult(Gson().toJson(message))
                         } else {
-                            val handler = Handler(Looper.getMainLooper())
-                            handler.post {
-                                val woolworthsApplication = applicationContext as? WoolworthsApplication
-                                liveChatDBRepository.updateUnreadMessageCount()
-                                postMessageCount()
-                                val currentActivity = woolworthsApplication?.currentActivity
-                                currentActivity?.let {
-                                    ToastFactory.chatFollowMeBubble(
-                                        it.window?.decorView?.rootView,
-                                        it,
-                                        message
-                                    )
+                            if (!TextUtils.isEmpty(message?.content)) {
+                                val handler = Handler(Looper.getMainLooper())
+                                handler.post {
+                                    val woolworthsApplication =
+                                        applicationContext as? WoolworthsApplication
+                                    liveChatDBRepository.updateUnreadMessageCount()
+                                    postMessageCount()
+                                    val currentActivity = woolworthsApplication?.currentActivity
+                                    currentActivity?.let {
+                                        ToastFactory.chatFollowMeBubble(
+                                            it.window?.decorView?.rootView,
+                                            it,
+                                            message
+                                        )
+                                    }
                                 }
                             }
                         }

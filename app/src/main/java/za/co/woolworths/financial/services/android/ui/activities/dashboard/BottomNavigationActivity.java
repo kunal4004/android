@@ -380,7 +380,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     public void addAccountBadge(int position, int number) {
-        runOnUiThread(() -> Utils.addBadgeCountIndicator(this, getBottomNavigationById(), position, 4));
+        runOnUiThread(() -> Utils.addBadgeCountIndicator(this, getBottomNavigationById(), position, number));
     }
 
     @Override

@@ -224,7 +224,7 @@ class ToastFactory {
 
             tvButtonClick?.visibility = GONE
             tvBoldTitle?.visibility = VISIBLE
-            tvAddedTo?.setAllCaps(true)
+            tvAddedTo?.isAllCaps = true
             tvAddedTo?.setText("$count ITEM".plus(if (count > 1) "S" else "").plus(" ADDED TO"))
             tvBoldTitle?.setText(listName)
 

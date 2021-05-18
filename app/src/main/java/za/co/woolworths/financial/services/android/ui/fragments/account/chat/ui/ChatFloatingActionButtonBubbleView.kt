@@ -23,6 +23,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -35,6 +36,7 @@ import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
+import za.co.woolworths.financial.services.android.ui.views.NotificationBadge
 import za.co.woolworths.financial.services.android.util.DelayConstant
 import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -42,9 +44,11 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 class ChatFloatingActionButtonBubbleView(
     var activity: AppCompatActivity? = null,
     var chatBubbleVisibility: ChatBubbleVisibility? = null,
-    var floatingActionButtonBadgeCounter: FloatingActionButtonBadgeCounter? = null,
+    var floatingActionButton: FloatingActionButton? = null,
     var applyNowState: ApplyNowState,
     var scrollableView: Any? = null,
+    var notificationBadge: NotificationBadge? = null
+
 ) : LifecycleObserver {
 
     private var chatBubbleToolTip: Dialog? = null
@@ -54,7 +58,7 @@ class ChatFloatingActionButtonBubbleView(
 
     init {
         isLiveChatEnabled = chatBubbleVisibility?.isChatBubbleVisible(applyNowState) == true
-        floatingActionButtonBadgeCounter?.visibility = if (isLiveChatEnabled) VISIBLE else GONE
+        floatingActionButton?.visibility = if (isLiveChatEnabled) VISIBLE else GONE
 
         receiverManager = activity?.let { ReceiverManager.init(it) }
         activity?.apply {
@@ -142,11 +146,11 @@ class ChatFloatingActionButtonBubbleView(
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
-                            floatingActionButtonBadgeCounter?.hide()
+                            floatingActionButton?.hide()
                             if (chatBubbleToolTip?.isShowing == true)
                                 chatBubbleToolTip?.dismiss()
                         } else {
-                            floatingActionButtonBadgeCounter?.show()
+                            floatingActionButton?.show()
                         }
                     }
                 }
@@ -156,11 +160,11 @@ class ChatFloatingActionButtonBubbleView(
                 (scrollableView as? RecyclerView)?.addOnScrollListener(object :
                     RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        if (dy > 0 || dy < 0 && floatingActionButtonBadgeCounter?.isShown == true) floatingActionButtonBadgeCounter?.hide()
+                        if (dy > 0 || dy < 0 && floatingActionButton?.isShown == true) floatingActionButton?.hide()
                     }
 
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                        if (newState == RecyclerView.SCROLL_STATE_IDLE) floatingActionButtonBadgeCounter?.show()
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) floatingActionButton?.show()
                         super.onScrollStateChanged(recyclerView, newState)
                     }
                 })
@@ -174,8 +178,8 @@ class ChatFloatingActionButtonBubbleView(
                 if (chatBubbleVisibility?.isChatVisibleForAccountLanding() == true) chatBubbleVisibility?.getAccountInProductLandingPage() else chatBubbleVisibility?.getAccountForProductLandingPage(
                     applyNowState
                 )
-            AnimationUtilExtension.animateViewPushDown(floatingActionButtonBadgeCounter)
-            floatingActionButtonBadgeCounter?.setOnClickListener {
+            AnimationUtilExtension.animateViewPushDown(floatingActionButton)
+            floatingActionButton?.setOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
             }
         }
@@ -189,7 +193,7 @@ class ChatFloatingActionButtonBubbleView(
         val liveChatParams = liveChatDBRepository.getLiveChatParams()
         liveChatDBRepository.resetUnReadMessageCount()
         GlobalScope.doAfterDelay(DelayConstant.DELAY_300_MS) {
-            floatingActionButtonBadgeCounter?.count = 0
+            notificationBadge?.setNumber(0)
         }
         liveChatDBRepository.saveLiveChatParams(
             LiveChatExtraParams(
@@ -229,8 +233,7 @@ class ChatFloatingActionButtonBubbleView(
             activity?.runOnUiThread {
                 val liveChatDBRepository = LiveChatDBRepository()
                 Log.e("messageCountReceiver", "messageCountReceiver")
-                floatingActionButtonBadgeCounter?.count =
-                    liveChatDBRepository.getUnReadMessageCount()
+                notificationBadge?.setNumber(liveChatDBRepository.getUnReadMessageCount())
             }
         }
     }

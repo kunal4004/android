@@ -12,7 +12,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Parcelable;
 import androidx.core.content.ContextCompat;
 import android.text.TextPaint;
@@ -32,7 +31,6 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 
 /**
  * TODO::  JetPack offers native support for badge counter, this
@@ -607,8 +605,6 @@ public class QBadgeView extends View implements Badge {
 		mBadgeNumber = badgeNumber;
 		if (mBadgeNumber < 0) {
 			mBadgeText = "";
-		} else if (mBadgeNumber == ChatAWSAmplify.INSTANCE.getBOTTOM_NAVIGATION_BADGE_COUNT()){
-			mBadgeText = "1";
 		}
 		else if (mBadgeNumber > 99) {
 			mBadgeText = mExact ? String.valueOf(mBadgeNumber) : "99+";

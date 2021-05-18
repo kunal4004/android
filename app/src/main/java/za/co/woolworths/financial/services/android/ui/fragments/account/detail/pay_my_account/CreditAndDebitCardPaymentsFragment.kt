@@ -298,7 +298,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             mChatFloatingActionButtonBubbleView = ChatFloatingActionButtonBubbleView(
                     activity = this as? PayMyAccountActivity,
                     chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
-                    floatingActionButtonBadgeCounter = chatBubbleFloatingButton,
+                    floatingActionButton = chatBubbleFloatingButton,
                     applyNowState = applyNowState,
                     scrollableView = creditDebitCardPaymentsScrollView)
 
