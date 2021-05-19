@@ -1435,7 +1435,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun showProductNotAvailableForCollection() {
         activity?.apply {
-            ProductNotAvailableForCollectionDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager, ProductNotAvailableForCollectionDialog::class.java.simpleName)
+            if (!ProductNotAvailableForCollectionDialog.dialogInstance.isVisible)
+                 ProductNotAvailableForCollectionDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager, ProductNotAvailableForCollectionDialog::class.java.simpleName)
         }
     }
 
