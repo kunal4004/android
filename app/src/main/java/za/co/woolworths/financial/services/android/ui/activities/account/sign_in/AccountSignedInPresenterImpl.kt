@@ -159,6 +159,21 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     override fun isProductInGoodStanding(): Boolean  = getAccount()?.productOfferingGoodStanding == true
 
+    override fun removeBlockOnCollectionCustomer() {
+        val account = getAccount()
+
+        when(AccountsProductGroupCode.getEnum(account?.productGroupCode)){
+            AccountsProductGroupCode.CREDIT_CARD-> {
+
+            }
+            AccountsProductGroupCode.PERSONAL_LOAN ->{
+
+            }
+            AccountsProductGroupCode.STORE_CARD -> {
+
+            }
+        }
+    }
 
     private fun getAccount(): Account? {
         return mAccountResponse?.let { account -> getAccount(account) }

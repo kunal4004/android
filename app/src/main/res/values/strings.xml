@@ -2026,4 +2026,8 @@
     <string name="payment_options_label">Payment Options</string>
     <string name="payment_delay_note_label">Please note that payments may take up to 5 business days to reflect on your account.</string>
     <string name="internet_waiting_subtitle">Waiting for internet connection...</string>
+    <string name="your_account_in_arrears_title">Your Account Is In Arrears</string>
+    <string name="your_account_in_arrears_desc">Your account has been in arrears for more than 6 months and has been handled to a collections agency.</string>
+    <string name="need_help_for_your_account">Need help with your account?</string>
+    <string name="contact_the_call_centre_now">Contact the call centre now at 0861502020</string>
 </resources>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/personal_loan_background"
+    tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockDCFragment">
+
+    <TextView
+        android:id="@+id/accountInArrearstextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:text="@string/your_account_in_arrears_title"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_20sp"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/startGuide"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/accountInArrearsDesctextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:lineSpacingExtra="10sp"
+        android:text="@string/your_account_in_arrears_desc"
+        android:textColor="@color/white_desc"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintStart_toStartOf="@+id/startGuide"
+        app:layout_constraintTop_toBottomOf="@+id/accountInArrearstextview" />
+
+    <TextView
+        android:id="@+id/currentBalancetextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/info_current_balance_title"
+        android:textColor="@color/white_desc"
+        app:layout_constraintStart_toStartOf="@+id/startGuide"
+        app:layout_constraintTop_toBottomOf="@+id/accountInArrearsDesctextview" />
+
+    <TextView
+        android:id="@+id/currentBalanceAmounttextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="R 15,000.00"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/currentBalancetextView"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintTop_toTopOf="@+id/currentBalancetextView" />
+
+    <TextView
+        android:id="@+id/totalAmountDueLabeltextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/info_total_amount_due_title"
+        android:textColor="@color/white_desc"
+        app:layout_constraintStart_toStartOf="@+id/startGuide"
+        app:layout_constraintTop_toBottomOf="@+id/currentBalancetextView" />
+
+    <TextView
+        android:id="@+id/totalAmountDueDesctextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="R 15,000.00"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueLabeltextview"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintTop_toTopOf="@+id/totalAmountDueLabeltextview" />
+
+
+    <TextView
+        android:id="@+id/contactCallCenterNowtextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:text="@string/contact_the_call_centre_now"
+        android:textColor="@color/white_desc"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+    <include
+        android:id="@+id/incRecentTransactionButton"
+        layout="@layout/view_recent_transaction_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/available_fund_transaction_button_height"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/incViewStatementButton"
+        app:layout_constraintEnd_toStartOf="@+id/incViewStatementButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+    <include
+        android:id="@+id/incViewStatementButton"
+        layout="@layout/view_statement_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/available_fund_transaction_button_height"
+        android:layout_marginEnd="8dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toStartOf="@+id/incPayMyAccountButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/incRecentTransactionButton" />
+
+    <include
+        android:id="@+id/incPayMyAccountButton"
+        layout="@layout/view_pay_my_account_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/available_fund_transaction_button_height"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/incViewStatementButton" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.55" />
+
+    <TextView
+        android:id="@+id/needHelpWithYourAccounttextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="@string/need_help_for_your_account"
+        android:textColor="@color/white_desc"
+        app:layout_constraintBottom_toTopOf="@+id/contactCallCenterNowtextview"
+        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        app:layout_constraintStart_toStartOf="@+id/startGuide" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/nineteen_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,6 +41,7 @@ interface IAccountSignedInContract {
         fun getDeepLinkData(): JsonObject?
         fun deleteDeepLinkData()
         fun isProductInGoodStanding():Boolean
+        fun removeBlockOnCollectionCustomer()
     }
 
     interface MyAccountModel {

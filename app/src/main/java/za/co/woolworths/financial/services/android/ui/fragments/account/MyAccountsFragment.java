@@ -126,6 +126,7 @@ import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_400;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
+import static za.co.woolworths.financial.services.android.util.Utils.ACCOUNT_CHARGED_OFF;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
 
 public class MyAccountsFragment extends Fragment implements OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener, IAccountCardDetailsContract.AccountCardDetailView {
@@ -605,7 +606,27 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             hideView(retryPersonalLoanLinearLayout);
             imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
             pl_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-            pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+            setAvailableFund(account, pl_available_funds);
+        }
+    }
+
+
+    private void setAvailableFund(Account account, WTextView availableFundTextView) {
+        if (availableFundTextView == null || account == null) return;
+        /**
+         * FRS :: https://wigroup2.atlassian.net/wiki/spaces/WAPP/pages/2582478849/FRS+Lite+Remove+Blocks+on+Collections+Customers
+         */
+        String accountsProductGroupCode = AccountsProductGroupCode.Companion.getEnum(account.productGroupCode).getGroupCode();
+        if (accountsProductGroupCode.equalsIgnoreCase(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())
+                && account.productOfferingStatus.equalsIgnoreCase(ACCOUNT_CHARGED_OFF)) {
+            availableFundTextView.setVisibility(View.GONE);
+        } else if (account.productOfferingStatus.equalsIgnoreCase(ACCOUNT_CHARGED_OFF)
+                && (accountsProductGroupCode.equalsIgnoreCase(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode()) || accountsProductGroupCode.equalsIgnoreCase(AccountsProductGroupCode.STORE_CARD.getGroupCode()))) {
+            availableFundTextView.setVisibility(View.VISIBLE);
+            availableFundTextView.setText(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1));
+        } else {
+            availableFundTextView.setVisibility(View.VISIBLE);
+            availableFundTextView.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
         }
     }
 
@@ -637,7 +658,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
             imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
             cc_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-            cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+            setAvailableFund(account, cc_available_funds);
 
         }
     }
@@ -659,7 +680,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(sc_available_funds);
             hideView(retryStoreCardLinearLayout);
             imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-            sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+            setAvailableFund(account, sc_available_funds);
             sc_available_funds.setTextColor(activity.getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
         }
     }
@@ -692,7 +713,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         sc_available_funds.setVisibility(View.VISIBLE);
                         retryStoreCardLinearLayout.setVisibility(View.GONE);
                         imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                        sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+                        setAvailableFund(account, sc_available_funds);
                     }
                     break;
                 case CREDIT_CARD:
@@ -715,7 +736,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                             imgCreditCard.setBackgroundResource(R.drawable.small_3);
                         }
                         imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                        cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+                        setAvailableFund(account, cc_available_funds);
                     }
                     break;
                 case PERSONAL_LOAN:
@@ -731,7 +752,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         retryPersonalLoanLinearLayout.setVisibility(View.GONE);
                         imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
                         pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
-                        pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(account.availableFunds), 1)));
+                        setAvailableFund(account, pl_available_funds);
                     }
                     break;
             }

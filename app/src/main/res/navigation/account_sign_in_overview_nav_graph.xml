@@ -103,5 +103,10 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.dialog.CreditCardAccountInArrearsBottomSheetDialogFragment"
         android:label="AccountInArrearsDialogFragment"
         tools:layout="@layout/account_in_arrears_fragment_dialog" />
+    <fragment
+        android:id="@+id/removeBlockDCFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockDCFragment"
+        android:label="remove_block_d_c_fragment"
+        tools:layout="@layout/remove_block_dc_fragment" />
 
 </navigation>
