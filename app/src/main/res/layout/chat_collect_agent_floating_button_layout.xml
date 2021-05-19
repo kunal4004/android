@@ -16,15 +16,16 @@
         android:layout_marginTop="@dimen/five_dp"
         android:elevation="@dimen/seven_dp"
         android:src="@drawable/nb_badge_bg"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
 
     <za.co.woolworths.financial.services.android.ui.views.NotificationBadge
         android:id="@+id/badge"
-        android:layout_width="@dimen/twenty_six_dp"
-        android:layout_height="@dimen/twenty_six_dp"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
         android:layout_gravity="start|top"
         android:layout_marginStart="@dimen/five_dp"
-        android:layout_marginTop="@dimen/five_dp"
+        android:layout_marginTop="@dimen/four_dp"
         android:elevation="@dimen/seven_dp"
         android:visibility="gone"
         app:nbMaxTextLength="2" />

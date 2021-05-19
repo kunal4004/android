@@ -39,7 +39,7 @@ class ToastFactory {
 
     companion object {
         private const val POPUP_DELAY_MILLIS = 3000
-        private const val POPUP_10000_DELAY_MILLIS: Long = 10000
+        private const val POPUP_10000_DELAY_MILLIS: Long = 3000
 
         fun buildShoppingListToast(
             activity: Activity,

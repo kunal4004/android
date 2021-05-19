@@ -61,12 +61,10 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                  * and a List of the items
                  */
 
-                val messages: MutableList<ChatMessage>? =
-                    defaultMessageList?.plus(chatMessageAgent)?.distinct()?.toMutableList()
+                val messages: MutableList<ChatMessage>? = defaultMessageList?.plus(chatMessageAgent)?.distinct()?.toMutableList()
 
                 ChatAWSAmplify.listAllChatMessages = messages
-                val lastestAgentMessage =
-                    messages?.groupBy { it as? SendMessageResponse }?.keys?.last()
+                val lastestAgentMessage = messages?.groupBy { it as? SendMessageResponse }?.keys?.lastOrNull()
 
                 onSuccess(Pair(messages, lastestAgentMessage))
             },

@@ -771,24 +771,6 @@ public class Utils {
         }
     }
 
-
-    public static Badge addBadgeCountIndicator(Context context, WBottomNavigationView mBottomNav, int position, int number) {
-        BottomNavigationItemView bottomNavItem = mBottomNav.getBottomNavigationItemView(position);
-        String tagPosition = "BADGE_POSITION_" + position;
-        QBadgeView badge = ((ViewGroup) bottomNavItem.getParent()).findViewWithTag(tagPosition);
-        if (badge != null) {
-            return badge.setBadgeNumber(number);
-        } else {
-            badge = new QBadgeView(context);
-            badge.setTag(tagPosition);
-            return badge
-                    .setBadgeNumber(number)
-                    .setGravityOffset(15, 2, true)
-                    .setBadgeBackgroundColor(R.color.green)
-                    .bindTarget(mBottomNav.getBottomNavigationItemView(position));
-        }
-    }
-
 //	public static void updateStatusBar(Activity activity, int color) {
 //		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //			Window window = activity.getWindow();

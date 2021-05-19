@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.request
 
+import android.text.TextUtils
 import com.amplifyframework.api.aws.GsonVariablesSerializer
 import com.amplifyframework.api.graphql.GraphQLRequest
 import com.amplifyframework.api.graphql.SimpleGraphQLRequest
@@ -28,7 +29,7 @@ class LiveChatSendMessageImpl : ILiveChatSendMessage {
             return
         }
         API.mutate(request(sessionState, content), {
-            if (sessionState != SessionStateType.CONNECT)
+            if (sessionState != SessionStateType.CONNECT || !TextUtils.isEmpty(content))
                 ChatAWSAmplify.addChatMessageToList(UserMessage(content))
         }, {})
     }

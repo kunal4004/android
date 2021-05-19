@@ -10,9 +10,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -29,6 +32,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ActivityBottomNavigationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -65,7 +69,7 @@ import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
@@ -93,6 +97,7 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.ServiceTools;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -150,6 +155,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public WMaterialShowcaseView walkThroughPromtView = null;
     public RefinementDrawerFragment drawerFragment;
     public JsonObject appLinkData;
+    private BottomNavigationMenuView bottomNavigationMenu;
+    private BottomNavigationItemView accountNavigationView;
+    private View notificationBadgeOne;
 
     @Override
     public int getLayoutId() {
@@ -351,6 +359,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
 
+        bottomNavigationMenu = getBottomNavigationById().getBottomNavigationMenuView();
+        accountNavigationView = (BottomNavigationItemView) bottomNavigationMenu.getChildAt(INDEX_ACCOUNT);
+
+        notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.green_circle_icon, accountNavigationView, false);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
+        params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
+        notificationBadgeOne.setLayoutParams(params);
     }
 
     @Override
@@ -374,10 +390,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     public void addBadge(int position, int number) {
         runOnUiThread(() -> Utils.addBadgeAt(this, getBottomNavigationById(), position, number));
-    }
-
-    public void addAccountBadge(int position, int number) {
-        runOnUiThread(() -> Utils.addBadgeCountIndicator(this, getBottomNavigationById(), position, number));
     }
 
     @Override
@@ -575,6 +587,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
             switch (item.getItemId()) {
                 case R.id.navigation_today:
+                    replaceAccountIcon(item);
                     setCurrentSection(R.id.navigation_today);
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_TODAY);
@@ -583,18 +596,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     return true;
 
                 case R.id.navigate_to_shop:
+                    replaceAccountIcon(item);
                     setCurrentSection(R.id.navigate_to_shop);
                     switchTab(INDEX_PRODUCT);
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU);
                     return true;
 
                 case R.id.navigate_to_cart:
+                    replaceAccountIcon(item);
                     setCurrentSection(R.id.navigate_to_cart);
                     identifyTokenValidationAPI();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU);
                     return false;
 
                 case R.id.navigate_to_wreward:
+                    replaceAccountIcon(item);
                     currentSection = R.id.navigate_to_wreward;
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_REWARD);
@@ -603,6 +619,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 case R.id.navigate_to_account:
                     setCurrentSection(R.id.navigate_to_account);
+                    replaceAccountIcon(item);
                     if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
                         try {
                             AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
@@ -619,6 +636,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return false;
         }
     };
+
+    private void replaceAccountIcon(@NonNull MenuItem item) {
+        if (ServiceTools.Companion.checkServiceRunning(this, LiveChatService.class)
+                && item.getItemId() != R.id.navigate_to_account) {
+            accountNavigationView.removeView(notificationBadgeOne);
+            accountNavigationView.addView(notificationBadgeOne);
+        } else {
+            accountNavigationView.removeView(notificationBadgeOne);
+        }
+    }
 
     private BottomNavigationView.OnNavigationItemReselectedListener mOnNavigationItemReSelectedListener
             = new BottomNavigationView.OnNavigationItemReselectedListener() {
@@ -1161,12 +1188,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     public void cartSummaryInvalidToken() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                addBadge(INDEX_CART, 0);
-            }
-        });
+        runOnUiThread(() -> addBadge(INDEX_CART, 0));
     }
 
     @Override
@@ -1393,4 +1415,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         clearBadgeCount();
         ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
     }
+
+
 }

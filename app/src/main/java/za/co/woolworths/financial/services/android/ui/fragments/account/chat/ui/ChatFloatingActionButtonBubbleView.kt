@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.views.NotificationBadge
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.DelayConstant
 import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.ServiceTools
@@ -150,13 +151,15 @@ class ChatFloatingActionButtonBubbleView(
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
-                            floatingActionButton?.hide()
                             onlineIndicatorVisibility(false)
+                            notifycountVisibility(false)
+                            floatingActionButton?.hide()
                             if (chatBubbleToolTip?.isShowing == true)
                                 chatBubbleToolTip?.dismiss()
                         } else {
-                            floatingActionButton?.show()
                             onlineIndicatorVisibility(true)
+                            notifycountVisibility(true)
+                            floatingActionButton?.show()
                         }
                     }
                 }
@@ -167,20 +170,32 @@ class ChatFloatingActionButtonBubbleView(
                     RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         if (dy > 0 || dy < 0 && floatingActionButton?.isShown == true) {
-                            floatingActionButton?.hide()
                             onlineIndicatorVisibility(false)
+                            notifycountVisibility(false)
+                            floatingActionButton?.hide()
                         }
                     }
 
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                            floatingActionButton?.show()
                             onlineIndicatorVisibility(true)
+                            notifycountVisibility(true)
+                            floatingActionButton?.show()
                         }
                         super.onScrollStateChanged(recyclerView, newState)
                     }
                 })
             }
+        }
+    }
+
+    private fun notifycountVisibility(visible: Boolean) {
+        if (visible) {
+            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                notificationBadge?.visibility = VISIBLE
+            }
+        } else {
+            notificationBadge?.visibility = GONE
         }
     }
 
@@ -220,8 +235,7 @@ class ChatFloatingActionButtonBubbleView(
 
     fun navigateToChatActivity(activity: Activity?, chatAccountProductLandingPage: Account?) {
         activity ?: return
-        val initChatDetails =
-            chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
+        val initChatDetails = chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
         val liveChatDBRepository = LiveChatDBRepository()
         val liveChatParams = liveChatDBRepository.getLiveChatParams()
         liveChatDBRepository.resetUnReadMessageCount()
