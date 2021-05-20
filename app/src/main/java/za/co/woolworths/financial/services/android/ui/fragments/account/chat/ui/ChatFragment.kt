@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -29,7 +28,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_WHATSAPP
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendEmailIntentInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatSendMessageImpl
@@ -50,6 +48,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
     private var chatNavController: NavController? = null
     private var appScreen: String? = ChatFragment::class.java.simpleName
     private var sendMessageImpl = LiveChatSendMessageImpl()
+    var isConnectedToNetwork = true
 
     private val chatViewModel: ChatViewModel by activityViewModels()
 
@@ -89,24 +88,24 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
             }
 
             liveChatListAllAgentConversation.list({ chatList ->
-                chatList.first?.forEach { item -> updateMessageList(item) }
+                chatList.first?.forEach { item -> showAgentsMessage(item) }
                 activity?.runOnUiThread {
                     if (isAdded) {
                         chatLoaderProgressBar?.visibility = GONE
                         subscribeResult(chatList.second, false)
                     }
                 }
-            }, { exp ->
-                Log.e("apiException", "apiException $exp")
+            }, {
+                chatLoaderProgressBar?.visibility = GONE
             })
         }
     }
 
     private fun initView() {
         configureRecyclerview()
-        toogleSendMessageButton(false)
+        toggleSendMessageButton(false)
         onClickListener()
-       // autoConnectToNetwork()
+        autoConnectToNetwork()
         setAgentAvailableState(chatViewModel.isOperatingHoursForInAppChat())
         keyboardVisibilityState()
     }
@@ -159,19 +158,22 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
             when (result?.sessionState) {
                 SessionStateType.CONNECT,
                 SessionStateType.QUEUEING -> {
-                    toogleSendMessageButton(false)
-                    connectedUserState(true)
+                    toggleSendMessageButton(false)
+                    chatBoxEditText?.isEnabled = false
+                    displayEndSessionButton(true)
                 }
                 SessionStateType.DISCONNECT -> {
-                    toogleSendMessageButton(false)
-                    connectedUserState(false)
+                    chatBoxEditText?.isEnabled = false
+                    toggleSendMessageButton(false)
+                    displayEndSessionButton(false)
                     isAgentDisconnected(true)
                     ServiceTools.stop(activity, LiveChatService::class.java)
                 }
                 SessionStateType.ONLINE -> {
+                    chatBoxEditText?.isEnabled = true
                     isAgentDisconnected(false)
-                    toogleSendMessageButton(true)
-                    connectedUserState(true)
+                    toggleSendMessageButton(true)
+                    displayEndSessionButton(true)
                 }
 
                 else -> {
@@ -181,13 +183,12 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         }
     }
 
-    private fun toogleSendMessageButton(isEnabled: Boolean) {
+    private fun toggleSendMessageButton(isEnabled: Boolean) {
         sendMessageButton?.isEnabled = isEnabled
     }
 
-    private fun connectedUserState(isVisible: Boolean) {
-        (activity as? WChatActivity)?.displayEndSessionButton(isVisible)
-        chatBoxEditText?.isEnabled = isVisible
+    private fun displayEndSessionButton(state: Boolean) {
+        (activity as? WChatActivity)?.displayEndSessionButton(state)
     }
 
     private fun isAgentDisconnected(isDisconnected: Boolean) {
@@ -208,7 +209,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                     val message = chatBoxEditText?.text?.toString() ?: ""
                     if (TextUtils.isEmpty(message)) return
-                    updateMessageList(UserMessage(message))
+                    showAgentsMessage(UserMessage(message))
                     sendMessageImpl.send(SessionStateType.ONLINE, message)
                     chatBoxEditText?.setText("")
                     try {
@@ -249,18 +250,28 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 this,
                 object : ConnectionBroadcastReceiver() {
                     override fun onConnectionChanged(hasConnection: Boolean) {
-                        if (hasConnection) {
+                        if (hasConnection && !isConnectedToNetwork) {
+                            isConnectedToNetwork = true
                             with(chatViewModel) {
                                 liveChatListAllAgentConversation.list({ messagesByConversation ->
-
-                                }, { apiException ->
-
+                                    mChatAdapter?.clear()
+                                    messagesByConversation.first?.forEach { item ->
+                                        showAgentsMessage(item)
+                                    }
+                                    activity.runOnUiThread {
+                                        if (isAdded) {
+                                            chatLoaderProgressBar?.visibility = GONE
+                                            subscribeResult(messagesByConversation.second, false)
+                                        }
+                                    }
+                                }, {
+                                    chatLoaderProgressBar?.visibility = GONE
                                 })
                             }
-
-                            // ----
-
+                        } else {
+                            isConnectedToNetwork = false
                         }
+
                     }
                 })
         }
@@ -274,25 +285,18 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 //        }
     }
 
-    private fun updateMessageList(message: ChatMessage) {
+    private fun showAgentsMessage(message: ChatMessage) {
         activity?.runOnUiThread {
             mChatAdapter?.let {
-                it.addMessage(message)
-                messageListRecyclerView?.scrollToPosition(it.itemCount - 1)
+                val content = when (message) {
+                    is UserMessage -> message.message
+                    is SendMessageResponse -> message.content
+                }
+                if (!TextUtils.isEmpty(content)) {
+                    it.addMessage(message)
+                    messageListRecyclerView?.scrollToPosition(it.itemCount - 1)
+                }
             }
         }
-    }
-
-    private fun showAgentsMessage(agentDefaultMessage: ChatMessage) {
-        updateMessageList(agentDefaultMessage)
-    }
-
-    fun showAgentsMessage(agentDefaultMessage: String, emailIntentInfo: SendEmailIntentInfo) {
-        updateMessageList(
-            SendMessageResponse(
-                content = agentDefaultMessage,
-                sendEmailIntentInfo = emailIntentInfo
-            )
-        )
     }
 }

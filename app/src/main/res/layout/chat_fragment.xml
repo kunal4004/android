@@ -69,6 +69,7 @@
             android:layout_marginLeft="@dimen/sixteen_dp"
             android:layout_marginRight="@dimen/sixteen_dp"
             android:layout_weight="1"
+            android:enabled="false"
             android:background="@android:color/transparent"
             android:hint="@string/start_typing"
             android:imeOptions="actionDone"
@@ -87,7 +88,7 @@
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/sixteen_dp"
+            android:layout_marginEnd="@dimen/sixteen_dp"
             android:background="@drawable/ic_send_background"
             android:enabled="false"
             android:gravity="center" />

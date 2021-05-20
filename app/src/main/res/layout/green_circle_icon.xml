@@ -16,12 +16,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.6" />
+        app:layout_constraintGuide_percent="0.54" />
 
     <ImageView
         android:id="@+id/iv_badge_bg"
-        android:layout_width="@dimen/seven_dp"
-        android:layout_height="@dimen/seven_dp"
+        android:layout_width="@dimen/eight_dp"
+        android:layout_height="@dimen/eight_dp"
         android:contentDescription="@string/app_name"
         android:src="@drawable/nb_borderless_badge_bg"
         app:layout_constraintStart_toStartOf="@+id/vertical"

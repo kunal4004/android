@@ -5,6 +5,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 
 @Suppress("DEPRECATION")
@@ -26,7 +27,7 @@ class ServiceTools {
                     }
                 }
             }
-            return false
+            return ChatAWSAmplify.isLiveChatActivated
         }
 
         fun start(activity: Activity?, serviceClass: Class<*>) {

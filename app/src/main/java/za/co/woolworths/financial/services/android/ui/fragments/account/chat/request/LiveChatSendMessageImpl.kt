@@ -29,8 +29,9 @@ class LiveChatSendMessageImpl : ILiveChatSendMessage {
             return
         }
         API.mutate(request(sessionState, content), {
-            if (sessionState != SessionStateType.CONNECT || !TextUtils.isEmpty(content))
+            if (sessionState != SessionStateType.CONNECT && !TextUtils.isEmpty(content)) {
                 ChatAWSAmplify.addChatMessageToList(UserMessage(content))
+            }
         }, {})
     }
 

@@ -52,7 +52,7 @@ class ChatFloatingActionButtonBubbleView(
     var applyNowState: ApplyNowState,
     var scrollableView: Any? = null,
     var notificationBadge: NotificationBadge? = null,
-    var onlineIndicatorImageView: ImageView? = null
+    var onlineChatImageViewIndicator: ImageView? = null
 
 ) : LifecycleObserver {
 
@@ -152,13 +152,13 @@ class ChatFloatingActionButtonBubbleView(
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
                             onlineIndicatorVisibility(false)
-                            notifycountVisibility(false)
+                            notifyCountVisibility(false)
                             floatingActionButton?.hide()
                             if (chatBubbleToolTip?.isShowing == true)
                                 chatBubbleToolTip?.dismiss()
                         } else {
                             onlineIndicatorVisibility(true)
-                            notifycountVisibility(true)
+                            notifyCountVisibility(true)
                             floatingActionButton?.show()
                         }
                     }
@@ -171,7 +171,7 @@ class ChatFloatingActionButtonBubbleView(
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         if (dy > 0 || dy < 0 && floatingActionButton?.isShown == true) {
                             onlineIndicatorVisibility(false)
-                            notifycountVisibility(false)
+                            notifyCountVisibility(false)
                             floatingActionButton?.hide()
                         }
                     }
@@ -179,7 +179,7 @@ class ChatFloatingActionButtonBubbleView(
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                             onlineIndicatorVisibility(true)
-                            notifycountVisibility(true)
+                            notifyCountVisibility(true)
                             floatingActionButton?.show()
                         }
                         super.onScrollStateChanged(recyclerView, newState)
@@ -189,13 +189,15 @@ class ChatFloatingActionButtonBubbleView(
         }
     }
 
-    private fun notifycountVisibility(visible: Boolean) {
-        if (visible) {
-            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-                notificationBadge?.visibility = VISIBLE
+    private fun notifyCountVisibility(visible: Boolean) {
+        activity?.runOnUiThread {
+            if (visible) {
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                    notificationBadge?.visibility = VISIBLE
+                }
+            } else {
+                notificationBadge?.visibility = GONE
             }
-        } else {
-            notificationBadge?.visibility = GONE
         }
     }
 
@@ -203,13 +205,13 @@ class ChatFloatingActionButtonBubbleView(
         val liveChatDBRepository = LiveChatDBRepository()
         val messageCount = liveChatDBRepository.getUnReadMessageCount()
         if (ServiceTools.checkServiceRunning(activity, LiveChatService::class.java) && messageCount == 0) {
-            onlineIndicatorImageView?.visibility = VISIBLE
+            onlineChatImageViewIndicator?.visibility = VISIBLE
             notificationBadge?.visibility = GONE
         } else {
             if (liveChatDBRepository.getUnReadMessageCount() > 0) {
                 notificationBadge?.visibility = VISIBLE
             }
-                onlineIndicatorImageView?.visibility = GONE
+                onlineChatImageViewIndicator?.visibility = GONE
         }
     }
 
@@ -217,7 +219,7 @@ class ChatFloatingActionButtonBubbleView(
         val liveChatDBRepository = LiveChatDBRepository()
         val messageCount = liveChatDBRepository.getUnReadMessageCount()
         val isChatConnected = ServiceTools.checkServiceRunning(activity, LiveChatService::class.java) && messageCount == 0
-            onlineIndicatorImageView?.visibility = if (isVisible && isChatConnected) VISIBLE else GONE
+            onlineChatImageViewIndicator?.visibility = if (isVisible && isChatConnected) VISIBLE else GONE
     }
 
     private fun floatingButtonListener() {
@@ -227,6 +229,7 @@ class ChatFloatingActionButtonBubbleView(
                     applyNowState
                 )
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
+            onlineIndicatorVisibility()
             floatingActionButton?.setOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
             }

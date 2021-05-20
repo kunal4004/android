@@ -197,7 +197,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
             floatingActionButton = chatBubbleFloatingButton,
             applyNowState = applyNowState,
             scrollableView = paymentOptionScrollView,
-            onlineIndicatorImageView = onlineIndicatorImageView
+            onlineChatImageViewIndicator = onlineIndicatorImageView
         )
             .build()
     }

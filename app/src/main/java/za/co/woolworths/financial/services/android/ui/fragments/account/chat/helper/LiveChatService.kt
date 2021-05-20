@@ -13,7 +13,6 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
-import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.LiveChat
@@ -25,6 +24,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
+import za.co.woolworths.financial.services.android.util.FirebaseManager
+import java.lang.IllegalArgumentException
 
 class LiveChatService : Service() {
 
@@ -45,9 +46,12 @@ class LiveChatService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
         createNotificationChannel()
-        startLiveChat()
+        try {
+            startLiveChat()
+        }catch (ex: IllegalArgumentException){
+            FirebaseManager.logException(ex)
+        }
 
         return START_STICKY
     }
@@ -86,16 +90,19 @@ class LiveChatService : Service() {
                         }
 
                     }, { apiException ->
+                        ChatAWSAmplify.isLiveChatActivated = false
                         Log.e("authLogin", "apiException subscribe ${Gson().toJson(apiException)}")
                     })
 
                 }, { apiException ->
                     // conversation failure
+                    ChatAWSAmplify.isLiveChatActivated = false
                     Log.e("authLogin", "apiException conversation ${Gson().toJson(apiException)}")
 
                 })
             }, { authException ->
                 //sign in failure
+                ChatAWSAmplify.isLiveChatActivated = false
                 Log.e("authLogin", "authException signIn ${Gson().toJson(authException)}")
             })
         }
@@ -122,7 +129,7 @@ class LiveChatService : Service() {
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)
 
-            val notificationIntent = Intent(this, WChatActivity::class.java)
+            val notificationIntent = Intent()
             val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
             val notification: NotificationCompat.Builder =
                 NotificationCompat.Builder(this, CHANNEL_ID)

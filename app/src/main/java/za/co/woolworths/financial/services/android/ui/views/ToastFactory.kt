@@ -27,7 +27,6 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
@@ -39,7 +38,7 @@ class ToastFactory {
 
     companion object {
         private const val POPUP_DELAY_MILLIS = 3000
-        private const val POPUP_10000_DELAY_MILLIS: Long = 3000
+        private const val POPUP_3000_DELAY_MILLIS: Long = 3000
 
         fun buildShoppingListToast(
             activity: Activity,
@@ -298,7 +297,7 @@ class ToastFactory {
             activity: Activity,
             count: Int = 0,
             viewButtonVisible: Boolean = true
-        ): PopupWindow? {
+        ): PopupWindow {
             val context = WoolworthsApplication.getAppContext()
             // inflate your xml layout
             val inflater =
@@ -353,8 +352,7 @@ class ToastFactory {
             sendMessageResponse: SendMessageResponse?
         ): PopupWindow {
             val context = WoolworthsApplication.getAppContext()
-            val inflater =
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
             val view = inflater?.inflate(R.layout.items_live_chat_head_up_notification, null)
             val notificationTitleTextView =
                 view?.findViewById<TextView>(R.id.notificationTitleTextView)
@@ -380,9 +378,10 @@ class ToastFactory {
                 popupWindow.dismiss() // dismiss the window
             }
             popupWindow.isFocusable = false
-            GlobalScope.doAfterDelay(POPUP_10000_DELAY_MILLIS) {
+            GlobalScope.doAfterDelay(POPUP_3000_DELAY_MILLIS) {
                 popupWindow.dismiss()
             }
+
             popupWindow.showAtLocation(
                 viewLocation,
                 Gravity.TOP,

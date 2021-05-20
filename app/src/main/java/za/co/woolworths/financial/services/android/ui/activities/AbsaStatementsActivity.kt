@@ -269,7 +269,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                 applyNowState = it,
                 scrollableView = paymentOptionScrollView,
                 notificationBadge = badge,
-                onlineIndicatorImageView = onlineIndicatorImageView
+                onlineChatImageViewIndicator = onlineIndicatorImageView
             )
                 .build()
         }
@@ -286,7 +286,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             applyNowState = applyNowState,
             scrollableView = paymentOptionScrollView,
             notificationBadge = badge,
-            onlineIndicatorImageView = onlineIndicatorImageView
+            onlineChatImageViewIndicator = onlineIndicatorImageView
         )
             .build()
     }

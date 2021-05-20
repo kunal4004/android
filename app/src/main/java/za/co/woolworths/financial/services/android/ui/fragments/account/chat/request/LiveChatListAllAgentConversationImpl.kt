@@ -64,9 +64,9 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                 val messages: MutableList<ChatMessage>? = defaultMessageList?.plus(chatMessageAgent)?.distinct()?.toMutableList()
 
                 ChatAWSAmplify.listAllChatMessages = messages
-                val lastestAgentMessage = messages?.groupBy { it as? SendMessageResponse }?.keys?.lastOrNull()
+                val latestAgentMessage = messages?.groupBy { it as? SendMessageResponse }?.keys?.lastOrNull()
 
-                onSuccess(Pair(messages, lastestAgentMessage))
+                onSuccess(Pair(messages, latestAgentMessage))
             },
             { apiException ->
                 onFailure(apiException)

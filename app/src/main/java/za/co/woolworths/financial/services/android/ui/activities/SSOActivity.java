@@ -429,6 +429,7 @@ public class SSOActivity extends WebViewActivity {
 					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 						Intent intent = new Intent();
+						ServiceTools.Companion.stop(SSOActivity.this, LiveChatService.class);
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						Utils.setUserKMSIState(false);
 						clearAllCookies();

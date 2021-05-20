@@ -41,10 +41,7 @@ class LiveChatSubscribeImpl(
             {
                 sessionStateType?.let { state ->
                     message?.let { content ->
-                        messageRequest.send(
-                            state,
-                            content
-                        )
+                        messageRequest.send(state, content)
                     }
                 }
             },
