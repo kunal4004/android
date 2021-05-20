@@ -6,6 +6,14 @@
     app:startDestination="@id/getReplacementCardFragment">
 
     <fragment
+        android:id="@+id/storeAddressFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.vtc.StoreAddressFragment"
+        android:label="StoreAddressFragment">
+        <action
+            android:id="@+id/action_storeAddressFragment_to_participatingStoreFragment"
+            app:destination="@id/participatingStoreFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/getReplacementCardFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment"
         android:label="GetReplacementCardFragment"
@@ -18,6 +26,17 @@
         android:id="@+id/participatingStoreFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment"
         android:label="ParticipatingStoreFragment"
-        tools:layout="@layout/participating_store_fragment" />
+        tools:layout="@layout/participating_store_fragment" >
+        <action
+            android:id="@+id/action_participatingStoreFragment_to_selectStoreDetailsFragment"
+            app:destination="@id/selectStoreDetailsFragment" />
+        <action
+            android:id="@+id/action_participatingStoreFragment_to_storeAddressFragment"
+            app:destination="@id/storeAddressFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectStoreDetailsFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.vtc.SelectStoreDetailsFragment"
+        android:label="SelectStoreDetailsFragment" />
 
 </navigation>

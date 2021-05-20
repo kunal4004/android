@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph_replacement_vtc_card.xml"
-    app:startDestination="@id/storeAddressFragment">
-
-    <fragment
-        android:id="@+id/storeAddressFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.vtc.StoreAddressFragment"
-        android:label="StoreAddressFragment" >
-        <action
-            android:id="@+id/action_storeAddressFragment_to_storeLocatorActivity"
-            app:destination="@id/storeLocatorActivity" />
-    </fragment>
-    <activity
-        android:id="@+id/storeLocatorActivity"
-        android:name="za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity"
-        android:label="StoreLocatorActivity" />
-</navigation>
+    android:id="@+id/nav_graph_replacement_vtc_card.xml" />

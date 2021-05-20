@@ -10,14 +10,18 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.replace_card_fragment.*
+import kotlinx.android.synthetic.main.select_store_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
@@ -29,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocato
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.MAP_LOCATION
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.PRODUCT_NAME
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.GEOFENCE_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
@@ -57,16 +62,16 @@ class GetReplacementCardFragment : MyCardExtension() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.let { Utils.updateStatusBarBackground(it) }
-        updateToolbarBg()
+        setHasOptionsMenu(true)
+        setActionBar()
         tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         pbParticipatingStore?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
         locator = Locator(activity as AppCompatActivity)
 
-
         AnimationUtilExtension.animateViewPushDown(btnParticipatingStores)
         AnimationUtilExtension.animateViewPushDown(tvAlreadyHaveCard)
 
-        val storeCardResponse = (activity as? MyCardDetailActivity)?.getStoreCardDetail()
+        val storeCardResponse = arguments?.getString(SelectStoreActivity.STORE_DETAILS) /*(activity as? MyCardDetailActivity)?.getStoreCardDetail()*/
         tvAlreadyHaveCard?.setOnClickListener {
             (activity as? MyCardDetailActivity)?.apply {
                 navigateToLinkNewCardActivity(this, storeCardResponse)
@@ -85,11 +90,30 @@ class GetReplacementCardFragment : MyCardExtension() {
         tvAlreadyHaveCard?.contentDescription = bindString(R.string.link_alreadyHaveCard)
     }
 
-    private fun updateToolbarBg() {
-        (activity as? MyCardDetailActivity)?.apply {
-            hideToolbarTitle()
-            changeToolbarBackground(R.color.white)
+    private fun setActionBar() {
+        (activity as? SelectStoreActivity)?.apply {
+            vtcReplacementToolbarTextView?.text = ""
+            val mActionBar = supportActionBar
+            if (mActionBar != null) {
+                mActionBar.setDisplayHomeAsUpEnabled(true)
+                mActionBar.setDisplayShowTitleEnabled(false)
+                mActionBar.setDisplayUseLogoEnabled(false)
+                mActionBar.setHomeAsUpIndicator(R.drawable.back24)
+            }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item?.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun onBackPressed() {
+        view?.findNavController()?.navigateUp()
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -125,15 +149,21 @@ class GetReplacementCardFragment : MyCardExtension() {
                                 val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
                                         ?: mutableListOf()
                                 if (npcStores?.size ?: 0 > 0) {
-                                    val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
+                                    /*val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
                                     intentInStoreFinder.putExtra(PRODUCT_NAME, bindString(R.string.participating_stores))
                                     intentInStoreFinder.putExtra(CONTACT_INFO, bindString(R.string.participating_store_desc))
                                     intentInStoreFinder.putExtra(MAP_LOCATION, Gson().toJson(npcStores))
                                     intentInStoreFinder.putExtra(GEOFENCE_ENABLED, locationResponse.inGeofence)
                                     startActivity(intentInStoreFinder)
-                                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                                }
+                                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)*/
 
+                                    view?.findNavController()?.navigate(R.id.action_getReplacementCardFragment_to_participatingStoreFragment, bundleOf(
+                                            PRODUCT_NAME to bindString(R.string.participating_stores),
+                                            CONTACT_INFO to bindString(R.string.participating_store_desc),
+                                            MAP_LOCATION to Gson().toJson(npcStores),
+                                            GEOFENCE_ENABLED to locationResponse.inGeofence
+                                    ))
+                                }
                             }
                             else -> return
                         }

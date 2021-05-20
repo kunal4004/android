@@ -63,7 +63,7 @@ class StoreLocatorActivity : AppCompatActivity() {
 
         initViewPagerWithTabLayout()
 
-        ivNavigateBack?.setOnClickListener { onBackPressed() }
+//        ivNavigateBack?.setOnClickListener { onBackPressed() }
 
         val isInGeoFence = intent?.getBooleanExtra(GEOFENCE_ENABLED, false)
         val participatingStoreDescription = highlightTextInDesc(this, SpannableString(if(isInGeoFence == true) getString(R.string.npc_participating_store)  else  getString(R.string.npc_participating_store_outside_geofence)), "here", true)
@@ -118,8 +118,8 @@ class StoreLocatorActivity : AppCompatActivity() {
         vpStoreLocator?.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
-                    0 -> StoreLocatorFragment.newInstance()
-                    else -> StoreLocatorListFragment.newInstance()
+                    0 -> StoreLocatorFragment.newInstance(getLocation())
+                    else -> StoreLocatorListFragment.newInstance(getLocation())
                 }
             }
 
@@ -178,14 +178,14 @@ class StoreLocatorActivity : AppCompatActivity() {
                 imMapView?.alpha = SELECTED_TAB_ALPHA_VIEW
                 tvListView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 imListView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
-                tvTitle?.text = getString(R.string.participating_stores)
+//                tvTitle?.text = getString(R.string.participating_stores)
             }
             1 -> {
                 tvMapView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 imMapView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 tvListView?.alpha = SELECTED_TAB_ALPHA_VIEW
                 imListView?.alpha = SELECTED_TAB_ALPHA_VIEW
-                tvTitle?.text = getString(R.string.nearest_store)
+//                tvTitle?.text = getString(R.string.nearest_store)
             }
             else -> return
         }

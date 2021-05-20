@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -51,7 +53,7 @@ class MyCardBlockedFragment : MyCardExtension() {
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
         btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, mStoreCardDetail) } }
         btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
+3
         // Hide Replacement card if MC config is true
         when (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
             true -> {
@@ -86,7 +88,7 @@ class MyCardBlockedFragment : MyCardExtension() {
 
     private fun navigateToReplacementCard() {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD)
-        replaceFragment(
+        /*replaceFragment(
                 fragment = GetReplacementCardFragment.newInstance(),
                 tag = GetReplacementCardFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
@@ -95,6 +97,11 @@ class MyCardBlockedFragment : MyCardExtension() {
                 exitAnimation = R.anim.slide_to_left,
                 popEnterAnimation = R.anim.slide_from_left,
                 popExitAnimation = R.anim.slide_to_right
-        )
+        )*/
+        activity?.apply {
+            Intent(this, SelectStoreActivity::class.java).apply {
+                startActivity(this)
+            }
+        }
     }
 }

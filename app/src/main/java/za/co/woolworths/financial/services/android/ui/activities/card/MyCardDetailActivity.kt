@@ -86,16 +86,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
             }
             else -> {
                 when (mStoreCardScreenType) {
-                    StoreCardViewType.GET_REPLACEMENT_CARD -> {
-                        /*addFragment(
-                                fragment = GetReplacementCardFragment.newInstance(),
-                                tag = MyCardBlockedFragment::class.java.simpleName,
-                                containerViewId = R.id.flMyCard)*/
 
-                        Intent(this, SelectStoreActivity::class.java).apply {
-                            startActivity(this)
-                        }
-                    }
                     StoreCardViewType.DEFAULT -> {
                         addFragment(
                                 fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
@@ -139,10 +130,6 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
                 popBackStack()
                 when (getCurrentFragment()) {
                     // back pressed from replacement card
-                    is GetReplacementCardFragment -> {
-                        changeToolbarBackground(R.color.grey_bg)
-                        showToolbarTitle()
-                    }
                     is MyCardBlockedFragment, is MyCardDetailFragment -> {
                         finishActivity()
                     }

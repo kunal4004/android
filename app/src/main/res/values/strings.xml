@@ -2052,4 +2052,5 @@
     <string name="hint_postal_code">Suburb Postal Code</string>
     <string name="confirm_selected_store_title">Please Confirm Your Selected Store</string>
     <string name="edit_store">Edit Store</string>
+    <string name="please_confirm_your_nselected_store">Please Confirm Your \nSelected Store</string>
 </resources>

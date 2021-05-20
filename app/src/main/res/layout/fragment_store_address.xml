@@ -1,18 +1,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ScrollView
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:paddingBottom="@dimen/hundred_dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:context="za.co.woolworths.financial.services.android.ui.fragments.vtc.StoreAddressFragment">
@@ -46,7 +47,19 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <View
-                android:id="@+id/viewFlipperTab"
+                android:id="@+id/viewFlipperTab1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fifty_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:background="@drawable/border_quantity_dropdown"
+                android:minHeight="@dimen/fifty_dp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toStartOf="@id/viewFlipperTabSeparator"
+                app:layout_constraintStart_toStartOf="@id/startGuideLine"
+                app:layout_constraintTop_toBottomOf="@id/storeAddressHeaderTextView" />
+
+            <View
+                android:id="@+id/viewFlipperTab2"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/fifty_dp"
                 android:layout_marginTop="@dimen/twenty_four_dp"
@@ -54,19 +67,19 @@
                 android:minHeight="@dimen/fifty_dp"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="@id/endGuideLine"
-                app:layout_constraintStart_toStartOf="@id/startGuideLine"
+                app:layout_constraintStart_toStartOf="@id/viewFlipperTabSeparator"
                 app:layout_constraintTop_toBottomOf="@id/storeAddressHeaderTextView" />
 
             <View
                 android:id="@+id/viewFlipperTabSeparator"
                 android:layout_width="@dimen/one_dp"
                 android:layout_height="@dimen/fifty_dp"
-                android:background="@color/color_cccccc"
-                app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab"
+                android:background="@color/transparent"
+                app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab1"
                 app:layout_constraintEnd_toEndOf="@id/endGuideLine"
                 app:layout_constraintHorizontal_bias="@integer/point_five"
                 app:layout_constraintStart_toStartOf="@id/startGuideLine"
-                app:layout_constraintTop_toTopOf="@id/viewFlipperTab" />
+                app:layout_constraintTop_toTopOf="@id/viewFlipperTab1" />
 
             <TextView
                 android:id="@+id/tabTome"
@@ -76,12 +89,13 @@
                 android:gravity="center"
                 android:minHeight="@dimen/fifty_dp"
                 android:text="@string/store_address_left_tab"
+                android:textColor="@color/black"
                 android:textSize="@dimen/sixteen_sp"
                 app:layout_constrainedWidth="true"
-                app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab"
+                app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab1"
                 app:layout_constraintEnd_toStartOf="@id/viewFlipperTabSeparator"
                 app:layout_constraintStart_toStartOf="@id/startGuideLine"
-                app:layout_constraintTop_toTopOf="@id/viewFlipperTab" />
+                app:layout_constraintTop_toTopOf="@id/viewFlipperTab1" />
 
             <TextView
                 android:id="@+id/tabToWooliesStore"
@@ -91,31 +105,33 @@
                 android:gravity="center"
                 android:minHeight="@dimen/fifty_dp"
                 android:text="@string/store_address_right_tab"
+                android:textColor="@color/black"
                 android:textSize="@dimen/sixteen_sp"
                 app:layout_constrainedWidth="true"
-                app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab"
+                app:layout_constraintBottom_toBottomOf="@id/viewFlipperTab2"
                 app:layout_constraintEnd_toEndOf="@id/endGuideLine"
                 app:layout_constraintStart_toEndOf="@id/viewFlipperTabSeparator"
-                app:layout_constraintTop_toTopOf="@id/viewFlipperTab" />
+                app:layout_constraintTop_toTopOf="@id/viewFlipperTab2" />
 
             <include
                 android:id="@+id/tomeLayout"
                 layout="@layout/layout_address_residential_or_business"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/hundred_dp"
                 android:visibility="gone"
+                app:layout_constrainedHeight="true"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="@id/endGuideLine"
                 app:layout_constraintStart_toStartOf="@id/startGuideLine"
-                app:layout_constraintTop_toBottomOf="@id/viewFlipperTab" />
+                app:layout_constraintTop_toBottomOf="@id/viewFlipperTab1"
+                tools:visibility="visible" />
 
             <View
                 android:id="@+id/businessLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/viewFlipperTab" />
+                app:layout_constraintTop_toBottomOf="@id/viewFlipperTab1" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
@@ -126,7 +142,7 @@
         android:layout_marginEnd="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/thirty_two_dp"
         android:background="@drawable/next_button_inactive"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

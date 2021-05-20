@@ -13,21 +13,22 @@ import android.text.method.LinkMovementMethod
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.awfs.coordination.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.participating_store_fragment.*
+import kotlinx.android.synthetic.main.select_store_activity.*
 import kotlinx.android.synthetic.main.store_locator_activity.*
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
+import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreSelectAddressActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorFragment
@@ -73,17 +74,46 @@ class ParticipatingStoreFragment : Fragment() {
             Utils.updateStatusBarBackground(this, android.R.color.transparent)
         }
 
+        setHasOptionsMenu(true)
+
+        setupActionBar()
         initViewPagerWithTabLayout()
 
         val isInGeoFence = arguments?.getBoolean(GEOFENCE_ENABLED, false)
-        val participatingStoreDescription = highlightTextInDesc(context, SpannableString(if(isInGeoFence == true) getString(R.string.npc_participating_store)  else  getString(R.string.npc_participating_store_outside_geofence)), "here", true)
+        val participatingStoreDescription = highlightTextInDesc(context, SpannableString(if (isInGeoFence == true) getString(R.string.npc_participating_store) else getString(R.string.npc_participating_store_outside_geofence)), "here", true)
         tvStoreContactInfo?.apply {
             val boolean = arguments?.getBoolean(SHOW_GEOFENCING, true)
-            visibility = if(boolean == false) View.GONE else View.VISIBLE
+            visibility = if (boolean == false) View.GONE else View.VISIBLE
             text = participatingStoreDescription
             movementMethod = LinkMovementMethod.getInstance()
             highlightColor = Color.TRANSPARENT
         }
+    }
+
+    private fun setupActionBar() {
+        (activity as? SelectStoreActivity)?.apply {
+            val mActionBar = supportActionBar
+            mActionBar?.show()
+            mActionBar?.setDisplayHomeAsUpEnabled(false)
+            mActionBar?.setDisplayUseLogoEnabled(false)
+            mActionBar?.setHomeAsUpIndicator(null)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.close_menu_item, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item?.itemId) {
+            R.id.closeIcon -> {
+                view?.findNavController()?.navigateUp()
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, textIsClickable: Boolean = true): SpannableString {
@@ -96,9 +126,12 @@ class ParticipatingStoreFragment : Fragment() {
         val clickableSpan: ClickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
                 activity?.apply {
-                    val intentInStoreFinder = Intent(this, StoreSelectAddressActivity::class.java)
+                    /*val intentInStoreFinder = Intent(this, StoreSelectAddressActivity::class.java)
                     intentInStoreFinder.putExtra(PRODUCT_NAME, bindString(R.string.participating_stores))
-                    startActivity(intentInStoreFinder)
+                    startActivity(intentInStoreFinder)*/
+                    view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_storeAddressFragment, bundleOf(
+                            PRODUCT_NAME to bindString(R.string.participating_stores)
+                    ))
                 }
             }
 
@@ -128,8 +161,8 @@ class ParticipatingStoreFragment : Fragment() {
         vpStoreLocator?.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
-                    0 -> StoreLocatorFragment.newInstance()
-                    else -> StoreLocatorListFragment.newInstance()
+                    0 -> StoreLocatorFragment.newInstance(getLocation())
+                    else -> StoreLocatorListFragment.newInstance(getLocation())
                 }
             }
 
@@ -188,14 +221,19 @@ class ParticipatingStoreFragment : Fragment() {
                 imMapView?.alpha = SELECTED_TAB_ALPHA_VIEW
                 tvListView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 imListView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
-                tvTitle?.text = getString(R.string.participating_stores)
+                (activity as? SelectStoreActivity)?.apply {
+                    vtcReplacementToolbarTextView?.text = getString(R.string.participating_stores)
+                }
             }
             1 -> {
                 tvMapView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 imMapView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 tvListView?.alpha = SELECTED_TAB_ALPHA_VIEW
                 imListView?.alpha = SELECTED_TAB_ALPHA_VIEW
-                tvTitle?.text = getString(R.string.nearest_store)
+                (activity as? SelectStoreActivity)?.apply {
+                    vtcReplacementToolbarTextView?.text = getString(R.string.nearest_store)
+                }
+
             }
             else -> return
         }

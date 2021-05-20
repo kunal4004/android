@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -17,7 +20,6 @@ import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.store_locator_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
-import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.vtc.SelectStoreDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
@@ -35,12 +37,16 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private var markers: ArrayList<Marker>? = null
     private var mapFragment: SupportMapFragment? = null
     private var previousMarker: Marker? = null
-    private var storeDetailsList: MutableList<StoreDetails>? = null
+    private var storeDetailsList: MutableList<StoreDetails>? = ArrayList(0)
     private var unSelectedIcon: BitmapDescriptor? = null
     private var selectedIcon: BitmapDescriptor? = null
 
     companion object {
-        fun newInstance() = StoreLocatorFragment()
+        fun newInstance(location: MutableList<StoreDetails>?): StoreLocatorFragment {
+            val fragment = StoreLocatorFragment()
+            fragment.storeDetailsList = location ?: ArrayList(0)
+            return fragment
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -82,18 +88,16 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     }
 
     private fun onMapReady() {
-        (activity as? StoreLocatorActivity)?.apply {
 
-            selectedIcon = getSelectedIcon()
-            unSelectedIcon = getUnSelectedIcon()
+        selectedIcon = getSelectedIcon()
+        unSelectedIcon = getUnSelectedIcon()
 
+        activity?.apply {
             mGoogleMap?.setInfoWindowAdapter(MapWindowAdapter(this))
             mGoogleMap?.setOnMarkerClickListener(this@StoreLocatorFragment)
-
-            storeDetailsList = ArrayList()
-            storeDetailsList = getLocation()
-            storeDetailsList?.let { stores -> bindDataWithUI(stores) }
         }
+
+        storeDetailsList?.let { stores -> bindDataWithUI(stores) }
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
@@ -158,7 +162,7 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     }
 
     private fun showStoreDetails(position: Int) {
-        activity?.apply {
+        /*activity?.apply {
             with(Intent(this, SelectStoreDetailsActivity::class.java)) {
                 putExtra("store", Gson().toJson(storeDetailsList?.get(position)))
                 putExtra("FromStockLocator", false)
@@ -166,6 +170,12 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
                 startActivity(this)
                 overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
-        }
+        }*/
+
+        view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_selectStoreDetailsFragment, bundleOf(
+                "store" to Gson().toJson(storeDetailsList?.get(position)),
+                "FromStockLocator" to false,
+                "SHOULD_DISPLAY_BACK_ICON" to true
+        ))
     }
 }

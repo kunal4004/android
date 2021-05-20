@@ -15,11 +15,15 @@ import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_store_address.*
+import kotlinx.android.synthetic.main.fragment_store_address.view.*
+import kotlinx.android.synthetic.main.layout_address_residential_or_business.*
+import kotlinx.android.synthetic.main.select_store_activity.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -42,21 +46,42 @@ class StoreAddressFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setHasOptionsMenu(true)
+        setupActionBar()
 
-        locator = Locator(activity as AppCompatActivity)
+        initView()
+
+        residentialTextView?.setOnClickListener {
+            context?.let { context ->
+                residentialTextView?.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.checked_item), null, null, null)
+                businessTextView?.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.uncheck_item), null, null, null)
+            }
+        }
+
+        businessTextView?.setOnClickListener {
+            startLocationDiscoveryProcess()
+        }
 
         tabTome?.setOnClickListener {
             tomeLayout?.visibility = View.VISIBLE
             nextButton?.visibility = View.VISIBLE
             businessLayout?.visibility = View.GONE
-            context?.let { nextButton?.background = ContextCompat.getDrawable(it, R.drawable.next_button_inactive) }
+            context?.let {
+                viewFlipperTab1?.background = ContextCompat.getDrawable(it, R.drawable.onde_dp_black_border_bg)
+                viewFlipperTab2?.background = ContextCompat.getDrawable(it, R.drawable.border_quantity_dropdown)
+                nextButton?.background = ContextCompat.getDrawable(it, R.drawable.next_button_inactive)
+            }
         }
 
         tabToWooliesStore?.setOnClickListener {
             tomeLayout?.visibility = View.GONE
             nextButton?.visibility = View.VISIBLE
             businessLayout?.visibility = View.VISIBLE
-            context?.let { nextButton?.background = ContextCompat.getDrawable(it, R.drawable.next_button_icon) }
+            context?.let {
+                viewFlipperTab1?.background = ContextCompat.getDrawable(it, R.drawable.border_quantity_dropdown)
+                viewFlipperTab2?.background = ContextCompat.getDrawable(it, R.drawable.onde_dp_black_border_bg)
+                nextButton?.background = ContextCompat.getDrawable(it, R.drawable.next_button_icon)
+            }
         }
 
         nextButton?.setOnClickListener {
@@ -66,6 +91,26 @@ class StoreAddressFragment : Fragment() {
                 }
                 else -> startLocationDiscoveryProcess()
             }
+        }
+    }
+
+    private fun initView() {
+
+        locator = Locator(activity as AppCompatActivity)
+        tomeLayout?.visibility = View.VISIBLE
+        context?.let {
+            viewFlipperTab1?.background = ContextCompat.getDrawable(it, R.drawable.onde_dp_black_border_bg)
+            residentialTextView?.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(it, R.drawable.checked_item), null, null, null)
+        }
+
+    }
+
+    private fun setupActionBar() {
+        (activity as? SelectStoreActivity)?.apply {
+            vtcReplacementToolbarTextView?.text = ""
+            val mActionBar = supportActionBar
+            mActionBar?.setDisplayHomeAsUpEnabled(true)
+            mActionBar?.setHomeAsUpIndicator(R.drawable.back24)
         }
     }
 
@@ -116,7 +161,7 @@ class StoreAddressFragment : Fragment() {
                                     ?: mutableListOf()
                             if (npcStores?.size ?: 0 > 0) {
 
-                                findNavController()?.navigate(R.id.action_storeAddressFragment_to_storeLocatorActivity, bundleOf(
+                                findNavController()?.navigate(R.id.action_storeAddressFragment_to_participatingStoreFragment, bundleOf(
                                         StoreLocatorActivity.PRODUCT_NAME to bindString(R.string.participating_stores),
                                         StoreLocatorActivity.CONTACT_INFO to bindString(R.string.participating_store_desc),
                                         StoreLocatorActivity.MAP_LOCATION to Gson().toJson(npcStores),
@@ -134,6 +179,4 @@ class StoreAddressFragment : Fragment() {
             }, LocationResponse::class.java))
         }
     }
-
-
 }

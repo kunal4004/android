@@ -10,6 +10,7 @@ import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
@@ -21,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
@@ -299,7 +301,15 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
                     when (manageMyCardTextView?.text?.toString()) {
                         bindString(R.string.replacement_card_label) -> {
-                            getStoreCardResponse()?.let { MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, it, screenType = StoreCardViewType.GET_REPLACEMENT_CARD) }
+//                            getStoreCardResponse()?.let { MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, it, screenType = StoreCardViewType.GET_REPLACEMENT_CARD) }
+                            activity?.apply {
+                                getStoreCardResponse()?.let {
+                                    Intent(this, SelectStoreActivity::class.java).apply {
+                                        putExtra(SelectStoreActivity.STORE_DETAILS, Gson().toJson(it))
+                                        startActivity(this)
+                                    }
+                                }
+                            }
                         }
                         bindString(R.string.activate_vtc_title) -> {
                             navigateToTemporaryStoreCard()
