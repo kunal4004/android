@@ -1261,7 +1261,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 adjustViewBounds = true
                                 scaleType = ImageView.ScaleType.FIT_CENTER
                                 layoutParams?.width = width
-                                maxHeight = Utils.dp2px(18f)
                                 ImageManager.setPictureOverrideWidthHeight(view.promotionImage, image)
                                 promotionalImages?.addView(view)
                             }
@@ -1275,7 +1274,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 adjustViewBounds = true
                                 scaleType = ImageView.ScaleType.FIT_CENTER
                                 layoutParams?.width = width
-                                maxHeight = Utils.dp2px(18f)
                                 ImageManager.setPictureOverrideWidthHeight(view.promotionImage, image)
                                 promotionalImages?.addView(view)
                             }
