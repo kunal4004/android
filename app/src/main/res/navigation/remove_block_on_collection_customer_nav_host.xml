@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/accountInDelinquencyFragment">
+
+    <fragment
+        android:id="@+id/accountInDelinquencyFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountSixMonthArrearsFragment"
+        android:label="AccountCardDetailFragment"
+        tools:layout="@layout/account_card_detail_fragment" />
+
+    <fragment
+        android:id="@+id/removeBlockDCFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockOnCollectionFragment"
+        android:label="remove_block_d_c_fragment"
+        tools:layout="@layout/remove_block_dc_fragment" />
+
+    <dialog
+        android:id="@+id/removeBlockOnCollectionDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockOnCollectionDialogFragment"
+        android:label="AccountInArrearsDialogFragment"
+        tools:layout="@layout/account_in_arrears_alert_dialog_fragment" />
+</navigation>

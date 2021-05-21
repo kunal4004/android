@@ -13,6 +13,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -142,14 +144,25 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         this.mAccountHelpInformation = informationModelAccount
     }
 
-    override fun showAccountChargeOffForMoreThan6Months() {
-        window?.decorView?.fitsSystemWindows = true
-        Utils.updateStatusBarBackground(this)
-        frameLayout?.visibility = GONE
+    override fun removeBlocksOnCollectionCustomer() {
+        availableFundFragmentFrameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
-        sixMonthArrearsFrameLayout?.visibility = VISIBLE
-        val sixMonthArrearsNavHost = supportFragmentManager.findFragmentById(R.id.six_month_arrears_nav_host) as NavHostFragment
-        mAccountSignedInPresenter?.setAccountSixMonthInArrears(sixMonthArrearsNavHost.navController)
+        removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
+        val removeBlockOnCollectionFragmentContainerView = supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
+        val navigationController: NavController? = removeBlockOnCollectionFragmentContainerView?.navController
+        mAccountSignedInPresenter?.apply {
+            when (getMyAccountCardInfo()?.first) {
+                ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
+                    navigationController?.graph?.startDestination = R.id.removeBlockDCFragment
+                    navigationController?.setGraph(navigationController.graph, bundleOf())
+                }
+                else -> {
+                    window?.decorView?.fitsSystemWindows = true
+                    Utils.updateStatusBarBackground(this@AccountSignedInActivity)
+                    setAccountSixMonthInArrears(navigationController)
+                }
+            }
+        }
     }
 
     override fun bottomSheetIsExpanded(): Boolean {

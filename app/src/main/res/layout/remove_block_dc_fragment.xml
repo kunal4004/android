@@ -2,16 +2,27 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/removeBlockBackgroundConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/personal_loan_background"
-    tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockDCFragment">
+    tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockOnCollectionFragment">
 
-    <TextView
-        android:id="@+id/accountInArrearstextview"
+    <include
+        android:id="@+id/include"
+        layout="@layout/my_account_product_landing_toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/twelve_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/accountInArrearsTextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:text="@string/your_account_in_arrears_title"
@@ -20,64 +31,75 @@
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/include" />
 
     <TextView
-        android:id="@+id/accountInArrearsDesctextview"
+        android:id="@+id/accountInArrearsDescTextview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="10sp"
         android:text="@string/your_account_in_arrears_desc"
         android:textColor="@color/white_desc"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
-        app:layout_constraintTop_toBottomOf="@+id/accountInArrearstextview" />
+        app:layout_constraintTop_toBottomOf="@+id/accountInArrearsTextview" />
 
     <TextView
-        android:id="@+id/currentBalancetextView"
+        android:id="@+id/currentBalanceTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:includeFontPadding="true"
         android:text="@string/info_current_balance_title"
         android:textColor="@color/white_desc"
+        android:textSize="@dimen/email_text_size_15sp"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
-        app:layout_constraintTop_toBottomOf="@+id/accountInArrearsDesctextview" />
+        app:layout_constraintTop_toBottomOf="@+id/accountInArrearsDescTextview" />
 
     <TextView
-        android:id="@+id/currentBalanceAmounttextview"
+        android:id="@+id/currentBalanceAmountTextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="R 15,000.00"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/currentBalancetextView"
+        android:textSize="@dimen/email_text_size_15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/currentBalanceTextView"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
-        app:layout_constraintTop_toTopOf="@+id/currentBalancetextView" />
+        app:layout_constraintTop_toTopOf="@+id/currentBalanceTextView" />
 
     <TextView
-        android:id="@+id/totalAmountDueLabeltextview"
+        android:id="@+id/totalAmountDueLabelTextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/twenty_five_dp"
+        android:fontFamily="@font/myriad_pro_regular"
         android:text="@string/info_total_amount_due_title"
         android:textColor="@color/white_desc"
+        android:textSize="@dimen/email_text_size_15sp"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
-        app:layout_constraintTop_toBottomOf="@+id/currentBalancetextView" />
+        app:layout_constraintTop_toBottomOf="@+id/currentBalanceTextView" />
 
     <TextView
-        android:id="@+id/totalAmountDueDesctextview"
+        android:id="@+id/totalAmountDueAmountTextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="R 15,000.00"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueLabeltextview"
+        android:textSize="@dimen/email_text_size_15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueLabelTextview"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
-        app:layout_constraintTop_toTopOf="@+id/totalAmountDueLabeltextview" />
+        app:layout_constraintTop_toTopOf="@+id/totalAmountDueLabelTextview" />
 
 
     <TextView
-        android:id="@+id/contactCallCenterNowtextview"
+        android:id="@+id/contactCallCenterNowTextview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -129,17 +151,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.55" />
+        app:layout_constraintGuide_percent="0.66" />
 
     <TextView
-        android:id="@+id/needHelpWithYourAccounttextview"
+        android:id="@+id/needHelpWithYourAccountTextview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text="@string/need_help_for_your_account"
         android:textColor="@color/white_desc"
-        app:layout_constraintBottom_toTopOf="@+id/contactCallCenterNowtextview"
+        app:layout_constraintBottom_toTopOf="@+id/contactCallCenterNowTextview"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintStart_toStartOf="@+id/startGuide" />
 

@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -116,7 +115,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             return when {
                 (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
                     // account is in arrears for more than 6 months
-                    mainView?.showAccountChargeOffForMoreThan6Months()!!
+                    mainView?.removeBlocksOnCollectionCustomer()!!
                 }
                 !productOfferingGoodStanding -> { // account is in arrears
                     mainView?.showAccountInArrears(account)
@@ -158,22 +157,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     override fun isProductInGoodStanding(): Boolean  = getAccount()?.productOfferingGoodStanding == true
-
-    override fun removeBlockOnCollectionCustomer() {
-        val account = getAccount()
-
-        when(AccountsProductGroupCode.getEnum(account?.productGroupCode)){
-            AccountsProductGroupCode.CREDIT_CARD-> {
-
-            }
-            AccountsProductGroupCode.PERSONAL_LOAN ->{
-
-            }
-            AccountsProductGroupCode.STORE_CARD -> {
-
-            }
-        }
-    }
 
     private fun getAccount(): Account? {
         return mAccountResponse?.let { account -> getAccount(account) }
