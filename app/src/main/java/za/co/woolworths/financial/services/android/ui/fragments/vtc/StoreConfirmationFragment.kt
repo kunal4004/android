@@ -6,6 +6,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_store_confirmation.*
 import kotlinx.android.synthetic.main.layout_confirmation.*
 import kotlinx.android.synthetic.main.layout_store_card_confirmed.*
@@ -20,10 +21,13 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
 class StoreConfirmationFragment : Fragment() {
 
+    private var body: StoreCardEmailConfirmBody? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-
+        arguments?.apply {
+            val storeDetails = getString(STORE_DETAILS, null)
+            body = Gson().fromJson(storeDetails, StoreCardEmailConfirmBody::class.java)
         }
     }
 
@@ -105,7 +109,7 @@ class StoreConfirmationFragment : Fragment() {
     }
 
     private fun getEmailConfirmationBody(): StoreCardEmailConfirmBody {
-        return StoreCardEmailConfirmBody()
+        return body ?: StoreCardEmailConfirmBody()
     }
 
     companion object {

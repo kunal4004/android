@@ -36,7 +36,12 @@ import za.co.woolworths.financial.services.android.util.location.Logger
 
 class StoreAddressFragment : Fragment() {
 
+    companion object{
+        const val DELIVERY_TYPE_F2F: String = "f2f"
+        const val DELIVERY_TYPE_STORE: String = "store"
+    }
     private lateinit var locator: Locator
+    private var deliveryType: String = DELIVERY_TYPE_F2F
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,6 +58,7 @@ class StoreAddressFragment : Fragment() {
         initView()
 
         residentialTextView?.setOnClickListener {
+            deliveryType = DELIVERY_TYPE_F2F
             context?.let { context ->
                 residentialTextView?.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.checked_item), null, null, null)
                 businessTextView?.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.uncheck_item), null, null, null)
@@ -60,7 +66,11 @@ class StoreAddressFragment : Fragment() {
         }
 
         businessTextView?.setOnClickListener {
-            startLocationDiscoveryProcess()
+            deliveryType = DELIVERY_TYPE_STORE
+            context?.let { context ->
+                businessTextView?.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.checked_item), null, null, null)
+                residentialTextView?.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.uncheck_item), null, null, null)
+            }
         }
 
         tabTome?.setOnClickListener {
@@ -76,23 +86,32 @@ class StoreAddressFragment : Fragment() {
 
         tabToWooliesStore?.setOnClickListener {
             tomeLayout?.visibility = View.GONE
-            nextButton?.visibility = View.VISIBLE
+            /*nextButton?.visibility = View.VISIBLE
             businessLayout?.visibility = View.VISIBLE
             context?.let {
                 viewFlipperTab1?.background = ContextCompat.getDrawable(it, R.drawable.border_quantity_dropdown)
                 viewFlipperTab2?.background = ContextCompat.getDrawable(it, R.drawable.onde_dp_black_border_bg)
                 nextButton?.background = ContextCompat.getDrawable(it, R.drawable.next_button_icon)
-            }
+            }*/
+            startLocationDiscoveryProcess()
         }
 
         nextButton?.setOnClickListener {
             when (tomeLayout?.visibility) {
                 View.VISIBLE -> {
 
-//                    val storeCardEmailConfirmBody = StoreCardEmailConfirmBody(visionAccountNumber = , storeName = storeDetails?.name, storeAddress = storeDetails?.address)
+                    val storeCardEmailConfirmBody = StoreCardEmailConfirmBody(visionAccountNumber = "",
+                            deliveryMethod = deliveryType,
+                            province = provinceEdtTV?.text.toString(),
+                            city = cityTownEdtTV?.text.toString(),
+                            suburb = suburbEdtTV?.text.toString(),
+                            street = streetAddressEdtTV?.text.toString(),
+                            complexName = complexOrBuildingNameEdtTV?.text.toString(),
+                            businessName = businessNameEdtTV?.text.toString(),
+                            postalCode = postalCodeEdtTV?.text.toString())
 
                     view?.findNavController()?.navigate(R.id.action_storeAddressFragment_to_storeConfirmationFragment, bundleOf(
-
+                        StoreConfirmationFragment.STORE_DETAILS to Gson().toJson(storeCardEmailConfirmBody)
                     ))
                 }
                 else -> startLocationDiscoveryProcess()
