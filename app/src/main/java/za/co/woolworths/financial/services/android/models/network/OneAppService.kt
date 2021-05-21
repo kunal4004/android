@@ -428,5 +428,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.deleteOrUnlinkDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceIdentityId)
     }
 
-
+    fun confirmStoreCardEmail(body: StoreCardEmailConfirmBody): Call<GenericResponse> {
+        return mApiInterface.confirmStoreCardEmail(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),  body)
+    }
 }

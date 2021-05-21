@@ -8,8 +8,10 @@ import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -28,10 +30,10 @@ import kotlinx.android.synthetic.main.store_details_layout_common.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings
+import za.co.woolworths.financial.services.android.models.network.StoreCardEmailConfirmBody
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
-import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption
 import za.co.woolworths.financial.services.android.util.Utils
@@ -46,7 +48,6 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
 
     //    var toolbar: Toolbar? = null
     var storeDetails: StoreDetails? = null
-    private val TAG = this.javaClass.simpleName
 
     //Detail page Views
 //    var detailsLayout: LinearLayout? = null
@@ -79,19 +80,6 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        toolbar = findViewById<Toolbar>(R.id.toolbar)
-//        storeName = findViewById<TextView>(R.id.storeNameTextView)
-//        storeOfferings = findViewById<TextView>(R.id.offeringsTextView)
-//        storeDistance = findViewById<TextView>(R.id.distanceTextView)
-//        storeAddress = findViewById<TextView>(R.id.storeAddressTextView)
-//        timeingsLayout = findViewById<LinearLayout>(R.id.timeingsLayout)
-//        storeTimingView = findViewById<RelativeLayout>(R.id.storeTimingView)
-//        brandsLayout = findViewById<LinearLayout>(R.id.brandsLayout)
-//        mLayout = findViewById<SlidingUpPanelLayout>(R.id.selectStoreSlidingPane)
-//        mapLayout = findViewById<LinearLayout>(R.id.mapLayout)
-//        closePage = findViewById<ImageView>(R.id.closePage)
-
 
         arguments?.apply {
             storeDetails = Gson().fromJson(getString("store"), StoreDetails::class.java)
@@ -166,10 +154,6 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
             }
         })
         initMap()
-
-        nextActionTextView?.setOnClickListener {
-            callConfirmStoreAPI()
-        }
     }
 
     private fun setupActionBar() {
@@ -285,13 +269,11 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun navigateToConfirmStore() {
-        confirmStoreLayout?.visibility = View.VISIBLE
-        descTextView?.text = storeDetails?.address
-    }
 
-
-    private fun callConfirmStoreAPI() {
-
+        val storeCardEmailConfirmBody = StoreCardEmailConfirmBody(visionAccountNumber = storeDetails?.id?.toString(), storeName = storeDetails?.name, storeAddress = storeDetails?.address)
+        view?.findNavController()?.navigate(R.id.action_selectStoreDetailsFragment_to_storeConfirmationFragment, bundleOf(
+                StoreConfirmationFragment.STORE_DETAILS to Gson().toJson(storeCardEmailConfirmBody)
+        ))
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
@@ -300,13 +282,6 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
                 startActivity(callIntent)
             }
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     fun getOfferingByType(offerings: List<StoreOfferings>, type: String?): List<StoreOfferings>? {

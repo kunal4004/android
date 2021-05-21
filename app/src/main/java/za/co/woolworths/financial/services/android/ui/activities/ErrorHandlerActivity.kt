@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class ErrorHandlerActivity : AppCompatActivity() {
 
     companion object {
-      private var errorType: Int = 0
+        private var errorType: Int = 0
       private lateinit var errorMessage: String
 
       const val ERROR_TYPE = "errorType"
@@ -26,6 +26,8 @@ class ErrorHandlerActivity : AppCompatActivity() {
         const val PASSCODE_LOCKED: Int = 2
         const val WITH_NO_ACTION: Int = 3
         const val LINK_DEVICE_FAILED: Int = 4
+        const val ERROR_STORE_CARD_EMAIL_CONFIRMATION: Int = 5
+
 
         //RESULT_CODES
         const val RESULT_RETRY: Int = 153

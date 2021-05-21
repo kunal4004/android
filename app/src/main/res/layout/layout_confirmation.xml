@@ -60,7 +60,7 @@
         android:letterSpacing="@integer/point_two"
         android:textSize="@dimen/twelve_sp"
         android:fontFamily="@font/futura_semi_bold"
-        app:layout_constraintBottom_toBottomOf="@id/cancelActionTextView" />
+        app:layout_constraintBottom_toTopOf="@id/cancelActionTextView" />
 
     <TextView
         android:id="@+id/cancelActionTextView"

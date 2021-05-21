@@ -2053,4 +2053,10 @@
     <string name="confirm_selected_store_title">Please Confirm Your Selected Store</string>
     <string name="edit_store">Edit Store</string>
     <string name="please_confirm_your_nselected_store">Please Confirm Your \nSelected Store</string>
+
+    <string name="store_email_error_title">There was a Problem Selecting Your Collection Store</string>
+    <string name="store_email_error_desc">Try selecting your store again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="replacement_card_success_title">Your Replacement Card \nHas Been Ordered.</string>
+    <string name="replacement_card_success_desc">You will be notified when your \ncard is ready for collection.</string>
+
 </resources>

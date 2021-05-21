@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_storeAddressFragment_to_participatingStoreFragment"
             app:destination="@id/participatingStoreFragment" />
+        <action
+            android:id="@+id/action_storeAddressFragment_to_storeConfirmationFragment"
+            app:destination="@id/storeConfirmationFragment" />
     </fragment>
     <fragment
         android:id="@+id/getReplacementCardFragment"
@@ -37,6 +40,15 @@
     <fragment
         android:id="@+id/selectStoreDetailsFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.vtc.SelectStoreDetailsFragment"
-        android:label="SelectStoreDetailsFragment" />
+        android:label="SelectStoreDetailsFragment" >
+        <action
+            android:id="@+id/action_selectStoreDetailsFragment_to_storeConfirmationFragment"
+            app:destination="@id/storeConfirmationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/storeConfirmationFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.vtc.StoreConfirmationFragment"
+        android:label="fragment_store_confirmation"
+        tools:layout="@layout/fragment_store_confirmation" />
 
 </navigation>

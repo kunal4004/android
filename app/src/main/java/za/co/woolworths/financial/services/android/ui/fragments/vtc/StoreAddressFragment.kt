@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.network.StoreCardEmailConfirmBody
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -88,6 +89,11 @@ class StoreAddressFragment : Fragment() {
             when (tomeLayout?.visibility) {
                 View.VISIBLE -> {
 
+//                    val storeCardEmailConfirmBody = StoreCardEmailConfirmBody(visionAccountNumber = , storeName = storeDetails?.name, storeAddress = storeDetails?.address)
+
+                    view?.findNavController()?.navigate(R.id.action_storeAddressFragment_to_storeConfirmationFragment, bundleOf(
+
+                    ))
                 }
                 else -> startLocationDiscoveryProcess()
             }
