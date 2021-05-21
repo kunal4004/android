@@ -209,6 +209,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private ArrayList<UserDevice> deviceList;
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
+    private ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -513,6 +514,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode()));
         this.configureAndLayoutTopLayerView();
 
+
         //show content for all available products
         for (Map.Entry<Products, Account> item : mAccountsHashMap.entrySet()) {
             Account account = item.getValue();
@@ -587,6 +589,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
         allUserOptionsLayout.setVisibility(View.VISIBLE);
         showFeatureWalkthroughPrompts();
+
+        if (!SessionUtilities.getInstance().isUserAuthenticated()) {
+            chatWithAgentFloatingButton.hide();
+        }
     }
 
     private void showPersonalLoanContent(Account account) {
@@ -1783,7 +1789,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             else
                 act = (MyAccountActivity) activity;
 
-            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView,notificationBadge,onlineIndicatorImageView);
+            inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView,notificationBadge,onlineIndicatorImageView);
             inAppChatTipAcknowledgement.build();
         }
     }

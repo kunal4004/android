@@ -39,10 +39,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.views.NotificationBadge
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.DelayConstant
-import za.co.woolworths.financial.services.android.util.ReceiverManager
-import za.co.woolworths.financial.services.android.util.ServiceTools
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ChatFloatingActionButtonBubbleView(
@@ -145,6 +142,10 @@ class ChatFloatingActionButtonBubbleView(
             is NestedScrollView -> {
                 (scrollableView as? NestedScrollView)?.apply {
                     viewTreeObserver?.addOnScrollChangedListener {
+                        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+                            floatingActionButton?.visibility = GONE
+                            return@addOnScrollChangedListener
+                        }
                         val scrollViewHeight: Double =
                             getChildAt(0)?.bottom?.minus(height.toDouble())
                                 ?: 0.0
