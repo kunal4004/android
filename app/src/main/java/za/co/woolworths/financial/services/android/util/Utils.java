@@ -1601,6 +1601,7 @@ public class Utils {
                 Utils.sessionDaoSave(FCM_TOKEN, value);
             }
         } catch (Exception ignored) {
+            FirebaseManager.Companion.logException(ignored);
         }
     }
 
