@@ -1,11 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.method.LinkMovementMethod
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
@@ -21,10 +25,14 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
+import za.co.woolworths.financial.services.android.util.wenum.LinkType
 import java.util.*
 
 class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
@@ -66,6 +74,14 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
         setPushViewDownAnimation(incViewStatementButton)
         setPushViewDownAnimation(incPayMyAccountButton)
         setPushViewDownAnimation(accountInArrearsTextView)
+        setPushViewDownAnimation(navigateBackImageButton)
+        setPushViewDownAnimation(toolbarTitleTextView)
+        setPushViewDownAnimation(infoIconImageView)
+
+        val contactCallCenter = WSpannableStringBuilder(bindString(R.string.contact_the_call_centre_now))
+        contactCallCenter.makeStringInteractable("0861502020", LinkType.PHONE)
+        contactCallCenter.makeStringUnderlined("0861502020")
+        setUnderlineText(contactCallCenter.build(), contactCallCenterNowTextview)
     }
 
     override fun onClick(v: View?) {
@@ -74,7 +90,12 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
             R.id.incViewStatementButton -> navigateToStatementActivity()
             R.id.incPayMyAccountButton -> {
             }
-            R.id.accountInArrearsTextView -> {}
+            R.id.accountInArrearsTextView -> {
+            }
+            R.id.navigateBackImageButton -> activity?.onBackPressed()
+            R.id.toolbarTitleTextView -> {
+            }
+            R.id.infoIconImageView -> navigateToCardInformation()
         }
     }
 
@@ -135,4 +156,24 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+
+    private fun navigateToCardInformation() {
+        activity ?: return
+        val helpIcon = mAccountPresenter?.getCardProductInformation(true)
+
+        val cardInformationHelpActivity = Intent(activity, CardInformationHelpActivity::class.java)
+        cardInformationHelpActivity.putExtra(CardInformationHelpActivity.HELP_INFORMATION, Gson().toJson(helpIcon))
+        activity?.startActivityForResult(
+            cardInformationHelpActivity,
+            AccountSignedInActivity.REQUEST_CODE_ACCOUNT_INFORMATION
+        )
+        activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+    }
+
+    private fun setUnderlineText(howToUseSpannableContent: Spannable, textView: TextView?) {
+        textView?.text = howToUseSpannableContent
+        textView?.movementMethod = LinkMovementMethod.getInstance()
+        textView?.highlightColor = Color.TRANSPARENT
+    }
+
 }

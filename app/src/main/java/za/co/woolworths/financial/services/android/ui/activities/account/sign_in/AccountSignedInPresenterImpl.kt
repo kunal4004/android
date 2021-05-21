@@ -171,7 +171,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         deleteDeepLinkData()
     }
 
-    private fun getCardProductInformation(accountIsInArrearsState: Boolean): MutableList<AccountHelpInformation> {
+    fun getCardProductInformation(accountIsInArrearsState: Boolean): MutableList<AccountHelpInformation> {
         return model.getCardProductInformation(accountIsInArrearsState)
     }
 
