@@ -2028,4 +2028,5 @@
     <string name="internet_waiting_subtitle">Waiting for internet connection…</string>
     <string name="chat_title">chat</string>
     <string name="chat_notification_title">You have received a message.</string>
+    <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
 </resources>

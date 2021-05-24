@@ -30,7 +30,7 @@ sealed class ChatMessage
         val relatedMessageID: String? = null,
         val sender: String? = null,
         val sessionId: String? = null,
-        val sessionState: SessionStateType? = null,
+        var sessionState: SessionStateType? = null,
         val timestamp: String? = null,
         val updatedAt: String? = null,
         var sendEmailIntentInfo: SendEmailIntentInfo? = null,

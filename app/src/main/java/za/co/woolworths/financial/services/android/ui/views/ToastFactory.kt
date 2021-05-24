@@ -25,6 +25,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import kotlinx.coroutines.GlobalScope
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -352,7 +353,8 @@ class ToastFactory {
             sendMessageResponse: SendMessageResponse?
         ): PopupWindow {
             val context = WoolworthsApplication.getAppContext()
-            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val inflater =
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
             val view = inflater?.inflate(R.layout.items_live_chat_head_up_notification, null)
             val notificationTitleTextView =
                 view?.findViewById<TextView>(R.id.notificationTitleTextView)
@@ -360,10 +362,19 @@ class ToastFactory {
                 view?.findViewById<TextView>(R.id.notificationDescTextView)
             val toastContainerConstraintLayout =
                 view?.findViewById<ConstraintLayout>(R.id.toastView)
-
-            notificationTitleTextView?.text = bindString(R.string.chat_notification_title)
-            notificationDescTextView?.text = sendMessageResponse?.content
-
+            when (sendMessageResponse?.sessionState) {
+                SessionStateType.DISCONNECT -> {
+                    notificationTitleTextView?.text =
+                        bindString(R.string.chat_notification_ended_by_agent)
+                    notificationDescTextView?.text = sendMessageResponse?.content ?: ""
+                    notificationDescTextView?.visibility = GONE
+                }
+                else -> {
+                    notificationTitleTextView?.text = bindString(R.string.chat_notification_title)
+                    notificationDescTextView?.text = sendMessageResponse?.content
+                    notificationDescTextView?.visibility = VISIBLE
+                }
+            }
             val popupWindow = PopupWindow(
                 view,
                 LinearLayout.LayoutParams.MATCH_PARENT,

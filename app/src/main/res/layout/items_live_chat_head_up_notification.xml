@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@android:color/transparent"
     android:paddingLeft="@dimen/twelve_dp"
     android:paddingRight="@dimen/twelve_dp"
     android:paddingBottom="@dimen/eight_dp">
@@ -33,7 +33,7 @@
             style="@style/futura_semi_bold_black_12_text_style"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/eight_dp"
+            android:layout_marginStart="8dp"
             android:ellipsize="end"
             android:fontFamily="@font/futura_semi_bold_ttf"
             android:letterSpacing="0.1"
@@ -42,10 +42,9 @@
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp"
-            app:layout_constraintBottom_toTopOf="@id/notificationDescTextView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/notificationLogoTextView"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/notificationLogoTextView"
+            app:layout_constraintTop_toTopOf="@+id/notificationLogoTextView"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
@@ -54,6 +53,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/three_dp"
+            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:letterSpacing="0.1"
@@ -61,6 +61,7 @@
             android:text="I’m Helen. What issue are you having with…"
             android:textColor="@color/white"
             android:textSize="@dimen/twelve_sp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/notificationTitleTextView"

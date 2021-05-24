@@ -589,10 +589,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
         allUserOptionsLayout.setVisibility(View.VISIBLE);
         showFeatureWalkthroughPrompts();
-
-        if (!SessionUtilities.getInstance().isUserAuthenticated()) {
-            chatWithAgentFloatingButton.hide();
-        }
     }
 
     private void showPersonalLoanContent(Account account) {

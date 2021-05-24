@@ -88,6 +88,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
             }
 
             liveChatListAllAgentConversation.list({ chatList ->
+                mChatAdapter?.clear()
                 chatList.first?.forEach { item -> showAgentsMessage(item) }
                 activity?.runOnUiThread {
                     if (isAdded) {
@@ -163,11 +164,11 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                     displayEndSessionButton(true)
                 }
                 SessionStateType.DISCONNECT -> {
+                    ServiceTools.stop(activity, LiveChatService::class.java)
                     chatBoxEditText?.isEnabled = false
                     toggleSendMessageButton(false)
                     displayEndSessionButton(false)
                     isAgentDisconnected(true)
-                    ServiceTools.stop(activity, LiveChatService::class.java)
                 }
                 SessionStateType.ONLINE -> {
                     chatBoxEditText?.isEnabled = true
