@@ -26,6 +26,8 @@ class ProductListingAdapter(
 
     override fun onBindViewHolder(holder: RecyclerViewViewHolder, position: Int) {
         mProductListItems?.get(position)?.let { productList ->
+            holder.itemView.invalidate()
+            holder.itemView.requestLayout()
             when (productList.rowType) {
                 ProductListingViewType.HEADER -> (holder as? RecyclerViewViewHolderHeader)?.setNumberOfItems(
                     productList
