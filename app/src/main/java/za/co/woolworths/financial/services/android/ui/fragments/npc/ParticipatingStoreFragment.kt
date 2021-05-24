@@ -26,6 +26,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.select_store_activity.*
 import kotlinx.android.synthetic.main.store_locator_activity.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -79,14 +80,18 @@ class ParticipatingStoreFragment : Fragment() {
         setupActionBar()
         initViewPagerWithTabLayout()
 
+        //Fetch message from config and display geofencing toast
         val isInGeoFence = arguments?.getBoolean(GEOFENCE_ENABLED, false)
-        val participatingStoreDescription = highlightTextInDesc(context, SpannableString(if (isInGeoFence == true) getString(R.string.npc_participating_store) else getString(R.string.npc_participating_store_outside_geofence)), "here", true)
-        tvStoreContactInfo?.apply {
-            val boolean = arguments?.getBoolean(SHOW_GEOFENCING, true)
-            visibility = if (boolean == false) View.GONE else View.VISIBLE
-            text = participatingStoreDescription
-            movementMethod = LinkMovementMethod.getInstance()
-            highlightColor = Color.TRANSPARENT
+        val geofenceMessage = WoolworthsApplication.getInstantCardReplacement()?.geofencing?.outOfRangeMessages
+        geofenceMessage?.let {
+            val participatingStoreDescription = highlightTextInDesc(context, SpannableString(if (isInGeoFence == true) it.inRange else it.outOfRange), "here", true)
+            tvStoreContactInfo?.apply {
+                val boolean = arguments?.getBoolean(SHOW_GEOFENCING, true)
+                visibility = if (boolean == false) View.GONE else View.VISIBLE
+                text = participatingStoreDescription
+                movementMethod = LinkMovementMethod.getInstance()
+                highlightColor = Color.TRANSPARENT
+            }
         }
     }
 
