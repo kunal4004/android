@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -29,7 +28,6 @@ import kotlinx.android.synthetic.main.select_store_activity.*
 import kotlinx.android.synthetic.main.store_locator_activity.*
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
-import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreSelectAddressActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorListFragment
@@ -46,20 +44,24 @@ class ParticipatingStoreFragment : Fragment() {
         const val PRODUCT_NAME = "PRODUCT_NAME"
         const val CONTACT_INFO = "CONTACT_INFO"
         const val MAP_LOCATION = "MAP_LOCATION"
+        const val STORE_CARD = "STORE_CARD"
         const val GEOFENCE_ENABLED = "GEOFENCE_ENABLED"
         const val SHOW_GEOFENCING = "SHOW_GEOFENCING"
+        const val SHOW_BACK_BUTTON = "SHOW_BACK_BUTTON"
         private const val UNSELECTED_TAB_ALPHA_VIEW = 0.3f
         private const val SELECTED_TAB_ALPHA_VIEW = 1.0f
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
 
         arguments?.apply {
             mTitle = getString(PRODUCT_NAME)
             mDescription = getString(CONTACT_INFO)
 
             val mLocationOnMap = getString(MAP_LOCATION)
+
             mLocations = Gson().fromJson(mLocationOnMap, object : TypeToken<List<StoreDetails>>() {}.type)
         }
     }
@@ -73,8 +75,6 @@ class ParticipatingStoreFragment : Fragment() {
         activity?.apply {
             Utils.updateStatusBarBackground(this, android.R.color.transparent)
         }
-
-        setHasOptionsMenu(true)
 
         setupActionBar()
         initViewPagerWithTabLayout()
@@ -94,21 +94,28 @@ class ParticipatingStoreFragment : Fragment() {
         (activity as? SelectStoreActivity)?.apply {
             val mActionBar = supportActionBar
             mActionBar?.show()
-            mActionBar?.setDisplayHomeAsUpEnabled(false)
+            val showBackButton: Boolean = arguments?.getBoolean(SHOW_BACK_BUTTON, false) == true
+            mActionBar?.setDisplayHomeAsUpEnabled(showBackButton)
             mActionBar?.setDisplayUseLogoEnabled(false)
-            mActionBar?.setHomeAsUpIndicator(null)
+            if (showBackButton) {
+                mActionBar?.setHomeAsUpIndicator(R.drawable.back24)
+            } else {
+                mActionBar?.setHomeAsUpIndicator(null)
+            }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.close_menu_item, menu)
+        if (arguments?.getBoolean(SHOW_BACK_BUTTON) == false) {
+            inflater.inflate(R.menu.close_menu_item, menu)
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item?.itemId) {
-            R.id.closeIcon -> {
+            android.R.id.home, R.id.closeIcon -> {
                 view?.findNavController()?.navigateUp()
             }
             else -> return super.onOptionsItemSelected(item)
@@ -130,7 +137,8 @@ class ParticipatingStoreFragment : Fragment() {
                     intentInStoreFinder.putExtra(PRODUCT_NAME, bindString(R.string.participating_stores))
                     startActivity(intentInStoreFinder)*/
                     view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_storeAddressFragment, bundleOf(
-                            PRODUCT_NAME to bindString(R.string.participating_stores)
+                            PRODUCT_NAME to bindString(R.string.participating_stores),
+                            STORE_CARD to arguments?.getString(STORE_CARD)
                     ))
                 }
             }
@@ -161,8 +169,8 @@ class ParticipatingStoreFragment : Fragment() {
         vpStoreLocator?.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
-                    0 -> StoreLocatorFragment.newInstance(getLocation())
-                    else -> StoreLocatorListFragment.newInstance(getLocation())
+                    0 -> StoreLocatorFragment.newInstance(getLocation(), arguments?.getString(STORE_CARD), arguments?.getBoolean(SHOW_BACK_BUTTON, false) == true)
+                    else -> StoreLocatorListFragment.newInstance(getLocation(), arguments?.getString(STORE_CARD), arguments?.getBoolean(SHOW_BACK_BUTTON, false) == true)
                 }
             }
 

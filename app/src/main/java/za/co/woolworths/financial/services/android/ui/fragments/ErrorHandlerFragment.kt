@@ -133,6 +133,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                     ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
+                    ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION -> {
+                        setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
+                    }
                 }
             }
         }

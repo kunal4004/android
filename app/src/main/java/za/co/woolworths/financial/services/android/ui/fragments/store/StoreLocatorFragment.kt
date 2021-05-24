@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.store
 
-import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,11 +18,11 @@ import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.store_locator_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
-import za.co.woolworths.financial.services.android.ui.activities.vtc.SelectStoreDetailsActivity
-import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.STORE_CARD
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1.Companion.CAMERA_ANIMATION_SPEED
+import za.co.woolworths.financial.services.android.ui.fragments.vtc.SelectStoreDetailsFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.ArrayList
 import java.util.HashMap
@@ -40,11 +38,16 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private var storeDetailsList: MutableList<StoreDetails>? = ArrayList(0)
     private var unSelectedIcon: BitmapDescriptor? = null
     private var selectedIcon: BitmapDescriptor? = null
+    private var showStoreSelect: Boolean = false
 
     companion object {
-        fun newInstance(location: MutableList<StoreDetails>?): StoreLocatorFragment {
+        fun newInstance(location: MutableList<StoreDetails>?, storeCardDetails: String?, showStoreSelect: Boolean): StoreLocatorFragment {
             val fragment = StoreLocatorFragment()
+            fragment.arguments = bundleOf(
+                    STORE_CARD to storeCardDetails
+            )
             fragment.storeDetailsList = location ?: ArrayList(0)
+            fragment.showStoreSelect = showStoreSelect
             return fragment
         }
     }
@@ -55,6 +58,11 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initViews()
+    }
+
+    private fun initViews() {
         initCardPager()
         initMap()
     }
@@ -174,6 +182,8 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
         view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_selectStoreDetailsFragment, bundleOf(
                 "store" to Gson().toJson(storeDetailsList?.get(position)),
+                STORE_CARD to arguments?.getString(STORE_CARD),
+                 SelectStoreDetailsFragment.SHOW_STORE_SELECT to showStoreSelect,
                 "FromStockLocator" to false,
                 "SHOULD_DISPLAY_BACK_ICON" to true
         ))

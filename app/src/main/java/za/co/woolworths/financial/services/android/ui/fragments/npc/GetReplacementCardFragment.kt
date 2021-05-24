@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.Manifest
 import android.annotation.TargetApi
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
@@ -28,14 +29,16 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity
-import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.CONTACT_INFO
-import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.MAP_LOCATION
-import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.PRODUCT_NAME
+import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
-import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity.Companion.GEOFENCE_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.CONTACT_INFO
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.GEOFENCE_ENABLED
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.MAP_LOCATION
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.PRODUCT_NAME
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.STORE_CARD
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment.Companion.REQUEST_PERMISSION_LOCATION
@@ -55,6 +58,11 @@ class GetReplacementCardFragment : MyCardExtension() {
         fun newInstance() = GetReplacementCardFragment()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.replace_card_fragment, container, false)
     }
@@ -62,7 +70,7 @@ class GetReplacementCardFragment : MyCardExtension() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.let { Utils.updateStatusBarBackground(it) }
-        setHasOptionsMenu(true)
+
         setActionBar()
         tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         pbParticipatingStore?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
@@ -73,9 +81,7 @@ class GetReplacementCardFragment : MyCardExtension() {
 
         val storeCardResponse = arguments?.getString(SelectStoreActivity.STORE_DETAILS) /*(activity as? MyCardDetailActivity)?.getStoreCardDetail()*/
         tvAlreadyHaveCard?.setOnClickListener {
-            (activity as? MyCardDetailActivity)?.apply {
-                navigateToLinkNewCardActivity(this, storeCardResponse)
-            }
+            navigateToLinkNewCardActivity(activity, storeCardResponse)
         }
         btnParticipatingStores?.setOnClickListener { startLocationDiscoveryProcess() }
 
@@ -104,7 +110,7 @@ class GetReplacementCardFragment : MyCardExtension() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item?.itemId) {
+        when (item?.itemId) {
             android.R.id.home -> {
                 onBackPressed()
             }
@@ -113,7 +119,10 @@ class GetReplacementCardFragment : MyCardExtension() {
     }
 
     private fun onBackPressed() {
-        view?.findNavController()?.navigateUp()
+        activity?.apply {
+            finish()
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -129,6 +138,15 @@ class GetReplacementCardFragment : MyCardExtension() {
 
             // If location services enabled, extract latitude and longitude request v4/user/locations
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_PERMISSION_LOCATION)
+        }
+    }
+
+    fun navigateToLinkNewCardActivity(activity: Activity?, storeCard: String?) {
+        activity?.apply {
+            val openLinkNewCardActivity = Intent(this, InstantStoreCardReplacementActivity::class.java)
+            openLinkNewCardActivity.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, storeCard)
+            startActivityForResult(openLinkNewCardActivity, MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE)
+            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
 
@@ -156,11 +174,12 @@ class GetReplacementCardFragment : MyCardExtension() {
                                     intentInStoreFinder.putExtra(GEOFENCE_ENABLED, locationResponse.inGeofence)
                                     startActivity(intentInStoreFinder)
                                     overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)*/
-
+                                    val storeCardResponse = arguments?.getString(SelectStoreActivity.STORE_DETAILS)
                                     view?.findNavController()?.navigate(R.id.action_getReplacementCardFragment_to_participatingStoreFragment, bundleOf(
                                             PRODUCT_NAME to bindString(R.string.participating_stores),
                                             CONTACT_INFO to bindString(R.string.participating_store_desc),
                                             MAP_LOCATION to Gson().toJson(npcStores),
+                                            STORE_CARD to storeCardResponse,
                                             GEOFENCE_ENABLED to locationResponse.inGeofence
                                     ))
                                 }
@@ -223,7 +242,6 @@ class GetReplacementCardFragment : MyCardExtension() {
         }
     }
 
-
     private fun progressVisibility(state: Boolean) = activity?.runOnUiThread {
         pbParticipatingStore?.visibility = if (state) VISIBLE else GONE
         btnParticipatingStores?.setTextColor(if (state) Color.BLACK else Color.WHITE)
@@ -235,6 +253,12 @@ class GetReplacementCardFragment : MyCardExtension() {
         if (requestCode == ACCESS_MY_LOCATION_REQUEST_CODE) {
             activity?.runOnUiThread {
                 checkForLocationPermission()
+            }
+        } else if ((requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) ||
+                (requestCode == MyCardExtension.INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE && resultCode == ProcessBlockCardFragment.RESULT_CODE_BLOCK_CODE_SUCCESS)) { // close previous cart detail
+            activity?.apply {
+                setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
+                finish() // will close previous activity in stack
             }
         }
     }

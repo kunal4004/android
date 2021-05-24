@@ -307,6 +307,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                                     Intent(this, SelectStoreActivity::class.java).apply {
                                         putExtra(SelectStoreActivity.STORE_DETAILS, Gson().toJson(it))
                                         startActivity(this)
+                                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
                                     }
                                 }
                             }

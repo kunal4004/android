@@ -42,6 +42,7 @@ class StoreLocatorActivity : AppCompatActivity() {
         const val PRODUCT_NAME = "PRODUCT_NAME"
         const val CONTACT_INFO = "CONTACT_INFO"
         const val MAP_LOCATION = "MAP_LOCATION"
+        const val STORE_CARD = "STORE_CARD"
         const val GEOFENCE_ENABLED = "GEOFENCE_ENABLED"
         const val SHOW_GEOFENCING = "SHOW_GEOFENCING"
         private const val UNSELECTED_TAB_ALPHA_VIEW = 0.3f
@@ -118,8 +119,8 @@ class StoreLocatorActivity : AppCompatActivity() {
         vpStoreLocator?.adapter = object : FragmentStateAdapter(this) {
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
-                    0 -> StoreLocatorFragment.newInstance(getLocation())
-                    else -> StoreLocatorListFragment.newInstance(getLocation())
+                    0 -> StoreLocatorFragment.newInstance(getLocation(), null, false)
+                    else -> StoreLocatorListFragment.newInstance(getLocation(), null, false)
                 }
             }
 

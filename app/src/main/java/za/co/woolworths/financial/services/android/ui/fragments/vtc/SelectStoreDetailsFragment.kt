@@ -30,8 +30,10 @@ import kotlinx.android.synthetic.main.store_details_layout_common.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.network.StoreCardEmailConfirmBody
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.STORE_CARD
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout.PanelState
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage
@@ -48,6 +50,7 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
 
     //    var toolbar: Toolbar? = null
     var storeDetails: StoreDetails? = null
+    var showStoreSelect: Boolean = false
 
     //Detail page Views
 //    var detailsLayout: LinearLayout? = null
@@ -73,6 +76,10 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
 //    var mapLayout: LinearLayout? = null
 //    private var mLayout: SlidingUpPanelLayout? = null
 
+    companion object{
+        const val SHOW_STORE_SELECT = "SHOW_STORE_SELECT"
+    }
+
     var callIntent: Intent? = null
     private var mPopWindowValidationMessage: PopWindowValidationMessage? = null
     private var isFromStockLocator = false
@@ -85,6 +92,7 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
             storeDetails = Gson().fromJson(getString("store"), StoreDetails::class.java)
             isFromStockLocator = getBoolean("FromStockLocator", false)
             mShouldDisplayBackIcon = getBoolean("SHOULD_DISPLAY_BACK_ICON", false)
+            showStoreSelect = getBoolean(SHOW_STORE_SELECT, false)
         }
     }
 
@@ -118,6 +126,7 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
 //        selectStoreBtn = findViewById<TextView>(R.id.selectStoreTextViewBtn)
 //        progressViewGroup = findViewById<Group>(R.id.processingViewGroup)
         animateViewPushDown(selectStoreTextViewBtn)
+        selectStoreTextViewBtn?.visibility = if(showStoreSelect) View.VISIBLE else View.GONE
 
         initStoreDetailsView(storeDetails)
         if (mShouldDisplayBackIcon) {
@@ -269,8 +278,13 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun navigateToConfirmStore() {
+        var resp: StoreCardsResponse? = null
+        arguments?.apply {
+            val storeCardData = getString(STORE_CARD)
+            resp = Gson().fromJson(storeCardData, StoreCardsResponse::class.java)
+        }
 
-        val storeCardEmailConfirmBody = StoreCardEmailConfirmBody(visionAccountNumber = storeDetails?.id?.toString(), storeName = storeDetails?.name, storeAddress = storeDetails?.address)
+        val storeCardEmailConfirmBody = StoreCardEmailConfirmBody(visionAccountNumber = resp?.storeCardsData?.visionAccountNumber.toString(), storeName = storeDetails?.name, storeAddress = storeDetails?.address, deliveryMethod = "store")
         view?.findNavController()?.navigate(R.id.action_selectStoreDetailsFragment_to_storeConfirmationFragment, bundleOf(
                 StoreConfirmationFragment.STORE_DETAILS to Gson().toJson(storeCardEmailConfirmBody)
         ))

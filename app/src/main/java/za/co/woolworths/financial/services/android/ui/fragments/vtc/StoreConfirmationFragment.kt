@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.vtc
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -16,12 +18,14 @@ import za.co.woolworths.financial.services.android.models.network.GenericRespons
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.StoreCardEmailConfirmBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.Utils
 
 class StoreConfirmationFragment : Fragment() {
 
     private var body: StoreCardEmailConfirmBody? = null
+    private var menuBar: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +45,22 @@ class StoreConfirmationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
+        setActionBar()
+
+        if (!TextUtils.isEmpty(body?.storeAddress)) {
+            subTitleTextView?.text = body?.storeAddress
+        } else {
+            body?.let {
+//               address = street, complexName,businessName, city,postalCode,province
+                var address = it.street + ", " + it.complexName + ", "
+                address += if (TextUtils.isEmpty(it.businessName)) {
+                    it.city + ", " + it.postalCode + ", " + it.province
+                } else {
+                    it.businessName + ", " + it.city + ", " + it.postalCode + ", " + it.province
+                }
+                subTitleTextView?.text = address
+            }
+        }
 
         nextActionTextView?.setOnClickListener {
             callConfirmStoreAPI()
@@ -57,8 +77,19 @@ class StoreConfirmationFragment : Fragment() {
         }
     }
 
+    private fun setActionBar() {
+        (activity as? SelectStoreActivity)?.apply {
+            val mActionBar = supportActionBar
+            actionBar?.hide()
+            mActionBar?.setDisplayHomeAsUpEnabled(false)
+            mActionBar?.setDisplayUseLogoEnabled(false)
+            mActionBar?.setHomeAsUpIndicator(null)
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.close_menu_item, menu)
+        menuBar = menu
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -75,13 +106,23 @@ class StoreConfirmationFragment : Fragment() {
 
     private fun callConfirmStoreAPI() {
         processingViewGroup?.visibility = View.VISIBLE
+        confirmStoreLayout?.visibility = View.GONE
         val body = getEmailConfirmationBody()
+        if (TextUtils.isEmpty(body?.visionAccountNumber)) {
+            showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)
+            return
+        }
+
         val emailRequest = OneAppService.confirmStoreCardEmail(body)
         emailRequest.enqueue(CompletionHandler(object : IResponseListener<GenericResponse> {
             override fun onSuccess(response: GenericResponse?) {
                 processingViewGroup?.visibility = View.GONE
                 when (response?.response?.code) {
                     AppConstant.HTTP_OK.toString() -> {
+                        menuBar?.getItem(0)?.isVisible = menuBar?.getItem(0)?.itemId == R.id.closeIcon
+                        (activity as? SelectStoreActivity)?.apply {
+                            actionBar?.show()
+                        }
                         storeConfirmedLayout?.visibility = View.VISIBLE
                     }
                     else -> {
@@ -95,7 +136,6 @@ class StoreConfirmationFragment : Fragment() {
                 processingViewGroup?.visibility = View.GONE
                 showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)
             }
-
         }, GenericResponse::class.java))
     }
 
@@ -111,6 +151,28 @@ class StoreConfirmationFragment : Fragment() {
     private fun getEmailConfirmationBody(): StoreCardEmailConfirmBody {
         return body ?: StoreCardEmailConfirmBody()
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_CANCELED) {
+            processingViewGroup?.visibility = View.GONE
+        }
+
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
+                when (resultCode) {
+                    ErrorHandlerActivity.RESULT_RETRY -> {
+                        callConfirmStoreAPI()
+                    }
+                    ErrorHandlerActivity.RESULT_CALL_CENTER -> {
+                        Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
+                    }
+                }
+            }
+        }
+    }
+
 
     companion object {
         const val STORE_DETAILS = "STORE_DETAILS"

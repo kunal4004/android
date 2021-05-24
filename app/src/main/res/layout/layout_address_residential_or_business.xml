@@ -202,6 +202,7 @@
         android:contentDescription="@string/hint_postal_code"
         android:hint="@string/hint_postal_code"
         android:textColorHint="@color/black30"
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvPostalCode" />

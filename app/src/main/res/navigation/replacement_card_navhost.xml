@@ -11,11 +11,21 @@
         android:label="StoreAddressFragment">
         <action
             android:id="@+id/action_storeAddressFragment_to_participatingStoreFragment"
-            app:destination="@id/participatingStoreFragment" />
+            app:destination="@id/participatingStoreFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+
         <action
             android:id="@+id/action_storeAddressFragment_to_storeConfirmationFragment"
-            app:destination="@id/storeConfirmationFragment" />
+            app:destination="@id/storeConfirmationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
+
     <fragment
         android:id="@+id/getReplacementCardFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment"
@@ -23,19 +33,36 @@
         tools:layout="@layout/replace_card_fragment">
         <action
             android:id="@+id/action_getReplacementCardFragment_to_participatingStoreFragment"
-            app:destination="@id/participatingStoreFragment" />
+            app:destination="@id/participatingStoreFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_down_anim"/>
+        <action
+            android:id="@+id/action_getReplacementCardFragment_to_instantStoreCardReplacementActivity"
+            app:destination="@id/instantStoreCardReplacementActivity" />
     </fragment>
     <fragment
         android:id="@+id/participatingStoreFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment"
         android:label="ParticipatingStoreFragment"
         tools:layout="@layout/participating_store_fragment" >
+
         <action
             android:id="@+id/action_participatingStoreFragment_to_selectStoreDetailsFragment"
-            app:destination="@id/selectStoreDetailsFragment" />
+            app:destination="@id/selectStoreDetailsFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+
         <action
             android:id="@+id/action_participatingStoreFragment_to_storeAddressFragment"
-            app:destination="@id/storeAddressFragment" />
+            app:destination="@id/storeAddressFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
     <fragment
         android:id="@+id/selectStoreDetailsFragment"
@@ -50,5 +77,9 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.vtc.StoreConfirmationFragment"
         android:label="fragment_store_confirmation"
         tools:layout="@layout/fragment_store_confirmation" />
+    <activity
+        android:id="@+id/instantStoreCardReplacementActivity"
+        android:name="za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity"
+        android:label="InstantStoreCardReplacementActivity" />
 
 </navigation>

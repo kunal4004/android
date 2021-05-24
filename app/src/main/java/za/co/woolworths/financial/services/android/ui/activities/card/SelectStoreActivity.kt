@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -38,17 +39,8 @@ class SelectStoreActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun setNavHostStartDestination() {
-        val replacementCardNavHost = supportFragmentManager.findFragmentById(R.id.replacementCardNavHost) as NavHostFragment?
+        val replacementCardNavHost = supportFragmentManager.findFragmentById(R.id.replacementCardNavHost) as? NavHostFragment
         navController = replacementCardNavHost?.navController
         val graph = replacementCardNavHost?.navController?.graph
         graph?.startDestination = R.id.getReplacementCardFragment
@@ -62,6 +54,18 @@ class SelectStoreActivity : AppCompatActivity() {
                 finish()
             }
             else -> navController?.navigateUp()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val replacementCardNavHost = supportFragmentManager.findFragmentById(R.id.replacementCardNavHost) as NavHostFragment?
+        replacementCardNavHost?.childFragmentManager?.let{
+            if (it.backStackEntryCount < 1) {
+                return
+            }
+            val fragment = it.fragments?.get(0)
+            fragment?.onActivityResult(requestCode, resultCode, data)
         }
     }
 

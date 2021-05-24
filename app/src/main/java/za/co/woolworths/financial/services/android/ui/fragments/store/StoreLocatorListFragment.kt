@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.store
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,19 +12,22 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.store_locator_list_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
-import za.co.woolworths.financial.services.android.ui.activities.vtc.SelectStoreDetailsActivity
-import za.co.woolworths.financial.services.android.ui.activities.vtc.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.adapters.StoreLocatorCardListAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.STORE_CARD
 
 class StoreLocatorListFragment : Fragment() {
 
-
     private var storeDetailsList: MutableList<StoreDetails>? = ArrayList(0)
+    private var showStoreSelect: Boolean = false
 
     companion object {
-        fun newInstance(location: MutableList<StoreDetails>?): StoreLocatorListFragment {
+        fun newInstance(location: MutableList<StoreDetails>?, storeCardDetails: String?, showStoreSelect: Boolean): StoreLocatorListFragment {
             val fragment = StoreLocatorListFragment()
+            fragment.arguments = bundleOf(
+                    STORE_CARD to storeCardDetails
+            )
             fragment.storeDetailsList = location
+            fragment.showStoreSelect = showStoreSelect
             return fragment
         }
     }
@@ -57,6 +59,7 @@ class StoreLocatorListFragment : Fragment() {
         }*/
         view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_selectStoreDetailsFragment, bundleOf(
                 "store" to Gson().toJson(storeDetails),
+                STORE_CARD to arguments?.getString(STORE_CARD),
                 "FromStockLocator" to false,
                 "SHOULD_DISPLAY_BACK_ICON" to true
         ))
