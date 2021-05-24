@@ -118,7 +118,7 @@ class StoreConfirmationFragment : Fragment() {
             override fun onSuccess(response: GenericResponse?) {
                 processingViewGroup?.visibility = View.GONE
                 when (response?.response?.code) {
-                    AppConstant.HTTP_OK.toString() -> {
+                    AppConstant.HTTP_OK_201.toString(), AppConstant.HTTP_OK.toString() -> {
                         menuBar?.getItem(0)?.isVisible = menuBar?.getItem(0)?.itemId == R.id.closeIcon
                         (activity as? SelectStoreActivity)?.apply {
                             actionBar?.show()
