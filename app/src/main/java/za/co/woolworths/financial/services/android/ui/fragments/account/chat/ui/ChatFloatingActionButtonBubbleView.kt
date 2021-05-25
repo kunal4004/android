@@ -294,6 +294,10 @@ class ChatFloatingActionButtonBubbleView(
                 onlineChatImageViewIndicator?.visibility = GONE
             }
         }
+
+        if (!isUserAuthenticated){
+            floatingActionButton?.visibility = GONE
+        }
     }
 
     private fun messageCountObserver() {
