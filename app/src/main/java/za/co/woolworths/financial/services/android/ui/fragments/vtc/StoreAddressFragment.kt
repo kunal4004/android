@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.vtc
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.text.Editable
@@ -181,6 +182,7 @@ class StoreAddressFragment : Fragment() {
                 viewFlipperTab2?.background = ContextCompat.getDrawable(it, R.drawable.onde_dp_black_border_bg)
                 nextButton?.background = ContextCompat.getDrawable(it, R.drawable.next_button_icon)
             }
+            callLocationStores()
             startLocationDiscoveryProcess()
         }
 
@@ -214,9 +216,20 @@ class StoreAddressFragment : Fragment() {
                             StoreConfirmationFragment.STORE_DETAILS to Gson().toJson(storeCardEmailConfirmBody)
                     ))
                 }
-                else -> startLocationDiscoveryProcess()
+                else -> callLocationStores()
             }
         }
+    }
+
+    private fun callLocationStores() {
+        context?.apply {
+            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                navigateToParticipatingStores(null)
+                return
+            }
+            startLocationDiscoveryProcess()
+        }
+
     }
 
     private fun validateTextViews(): Boolean {
@@ -323,13 +336,12 @@ class StoreAddressFragment : Fragment() {
 
                     when (locationResponse?.httpCode) {
                         AppConstant.HTTP_OK -> {
-                            val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
+                            val npcStores: List<StoreDetails>? = locationResponse.Locations
                                     ?: mutableListOf()
                             if (npcStores?.size ?: 0 > 0) {
 
                                 findNavController()?.navigate(R.id.action_storeAddressFragment_to_participatingStoreFragment, bundleOf(
                                         PRODUCT_NAME to bindString(R.string.participating_stores),
-                                        CONTACT_INFO to bindString(R.string.participating_store_desc),
                                         MAP_LOCATION to Gson().toJson(npcStores),
                                         STORE_CARD to arguments?.getString(STORE_CARD),
                                         SHOW_GEOFENCING to false,
