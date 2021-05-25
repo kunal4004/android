@@ -20,7 +20,8 @@ class ProductNotAvailableForCollectionDialog : WBottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance() = ProductNotAvailableForCollectionDialog()
+        var dialogInstance = ProductNotAvailableForCollectionDialog()
+        fun newInstance() = dialogInstance
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

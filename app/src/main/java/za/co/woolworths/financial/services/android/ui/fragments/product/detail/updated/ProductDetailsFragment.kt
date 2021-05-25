@@ -10,6 +10,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Point
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
@@ -21,6 +22,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -42,6 +44,11 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues
 import za.co.woolworths.financial.services.android.ui.activities.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.TAG
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
@@ -97,6 +104,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var EDIT_LOCATION_LOGIN_REQUEST = 2020
     private var HTTP_EXPECTATION_FAILED_417: String = "417"
     private var isOutOfStock_502 = false
+    private var isOutOfStockFragmentAdded = false
 
 
     companion object {
@@ -148,6 +156,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
+        isOutOfStockFragmentAdded = false
         configureDefaultUI()
     }
 
@@ -559,6 +568,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         }
                     }
                 }
+            } else {
+                onlinePromotionalTextView1?.text = ""
+                onlinePromotionalTextView2?.text = ""
+                onlinePromotionalTextView3?.text = ""
+                onlinePromotionalTextView1?.visibility = View.GONE
+                onlinePromotionalTextView2?.visibility = View.GONE
+                onlinePromotionalTextView3?.visibility = View.GONE
             }
         }
 
@@ -931,6 +947,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 clearStockAvailability()
                                 showProductUnavailable()
                                 showProductNotAvailableForCollection()
+                                reloadFragment()
                                 return
                             }
                         }
@@ -939,11 +956,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             storeIdForInventory = ""
                             clearStockAvailability()
                             showProductUnavailable()
+                            reloadFragment()
                             return
                         }
 
                         if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
                             updateStockAvailability(true)
+                            reloadFragment()
                         }
                     }
                 }
@@ -1312,16 +1331,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showProductOutOfStock() {
-        activity?.apply {
-            getDeliveryLocation().let {
-                val suburbName = when (it) {
-                    is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
-                    is QuickShopDefaultValues -> it.suburb.name
-                    else -> ""
+        if (!isOutOfStockFragmentAdded) {
+            isOutOfStockFragmentAdded = true
+            activity?.apply {
+                getDeliveryLocation().let {
+                    val suburbName = when (it) {
+                        is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
+                        is QuickShopDefaultValues -> it.suburb.name
+                        else -> ""
+                    }
+                    val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
+                    OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
+                    updateAddToCartButtonForSelectedSKU()
                 }
-                val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
-                OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
-                updateAddToCartButtonForSelectedSKU()
             }
         }
     }
@@ -1377,6 +1399,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
+    private fun reloadFragment() {
+        val currentFragment = activity?.supportFragmentManager?.findFragmentByTag(TAG)
+        val fragmentTransaction: FragmentTransaction? = activity?.supportFragmentManager?.beginTransaction()
+        if (fragmentTransaction != null && currentFragment != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                fragmentTransaction?.detach(currentFragment!!).commitNow()
+                fragmentTransaction?.attach(currentFragment!!).commitNow()
+            } else
+                fragmentTransaction.detach(this).attach(this).commit()
+        }
+    }
+
     private fun showDeliveryOptionDialog() {
         (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
     }
@@ -1399,7 +1433,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun showProductNotAvailableForCollection() {
         activity?.apply {
-            ProductNotAvailableForCollectionDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager, ProductNotAvailableForCollectionDialog::class.java.simpleName)
+            if (!ProductNotAvailableForCollectionDialog.dialogInstance.isVisible)
+                 ProductNotAvailableForCollectionDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager, ProductNotAvailableForCollectionDialog::class.java.simpleName)
         }
     }
 
