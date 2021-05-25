@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
@@ -17,6 +18,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
@@ -83,7 +85,17 @@ class GetReplacementCardFragment : MyCardExtension() {
         tvAlreadyHaveCard?.setOnClickListener {
             navigateToLinkNewCardActivity(activity, storeCardResponse)
         }
-        btnParticipatingStores?.setOnClickListener { startLocationDiscoveryProcess() }
+        btnParticipatingStores?.setOnClickListener {
+
+            context?.let {
+                if (ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    navigateToParticipatingStores(null)
+                    return@setOnClickListener
+                }
+            }
+
+            startLocationDiscoveryProcess()
+        }
 
         uniqueIdsForReplacementCard()
     }
@@ -219,8 +231,8 @@ class GetReplacementCardFragment : MyCardExtension() {
         }
     }
 
-    private fun handleLocationEvent(locationEvent: Event.Location) {
-        locationEvent.locationData?.apply {
+    private fun handleLocationEvent(locationEvent: Event.Location?) {
+        locationEvent?.locationData?.apply {
             Utils.saveLastLocation(this, context)
             navigateToParticipatingStores(this)
         }
@@ -234,7 +246,6 @@ class GetReplacementCardFragment : MyCardExtension() {
             }
             EventType.LOCATION_PERMISSION_NOT_GRANTED -> {
                 Logger.logDebug("Permission NOT granted")
-                Utils.saveLastLocation(null, activity)
             }
             EventType.LOCATION_DISABLED_ON_DEVICE -> {
                 Logger.logDebug("Permission NOT granted permanently")
