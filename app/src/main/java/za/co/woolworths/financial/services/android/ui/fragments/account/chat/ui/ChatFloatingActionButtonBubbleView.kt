@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
@@ -8,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Gravity
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -42,6 +45,7 @@ import za.co.woolworths.financial.services.android.ui.views.NotificationBadge
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
+
 class ChatFloatingActionButtonBubbleView(
     var activity: AppCompatActivity? = null,
     var chatBubbleVisibility: ChatBubbleVisibility? = null,
@@ -50,12 +54,10 @@ class ChatFloatingActionButtonBubbleView(
     var scrollableView: Any? = null,
     var notificationBadge: NotificationBadge? = null,
     var onlineChatImageViewIndicator: ImageView? = null
-
 ) : LifecycleObserver {
 
     private var chatBubbleToolTip: Dialog? = null
     private var isLiveChatEnabled = false
-    private var activityLifeCycle: Lifecycle? = null
     private var receiverManager: ReceiverManager? = null
     private val liveChatDBRepository = LiveChatDBRepository()
 
@@ -64,9 +66,6 @@ class ChatFloatingActionButtonBubbleView(
         floatingActionButton?.visibility = if (isLiveChatEnabled) VISIBLE else GONE
 
         receiverManager = activity?.let { ReceiverManager.init(it) }
-        activity?.apply {
-            activityLifeCycle = lifecycle
-        }
     }
 
     @SuppressLint("InflateParams")
@@ -87,8 +86,8 @@ class ChatFloatingActionButtonBubbleView(
                 )
             activity?.apply {
                 greetingTextView?.text = bindString(
-                    R.string.chat_greeting_label, chatBubbleVisibility?.getUsername()
-                        ?: ""
+                    R.string.chat_greeting_label,
+                    chatBubbleVisibility?.getUsername() ?: ""
                 )
                 dismissChatTipImageView?.setOnClickListener {
                     chatBubbleVisibility?.saveInAppChatTooltip(applyNowState)
@@ -143,21 +142,16 @@ class ChatFloatingActionButtonBubbleView(
             is NestedScrollView -> {
                 (scrollableView as? NestedScrollView)?.apply {
                     viewTreeObserver?.addOnScrollChangedListener {
-                        if (userNotAuthenticated()) return@addOnScrollChangedListener
                         val scrollViewHeight: Double =
                             getChildAt(0)?.bottom?.minus(height.toDouble())
                                 ?: 0.0
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
-                            onlineIndicatorVisibility(false)
-                            notifyCountVisibility(false)
                             floatingActionButton?.hide()
                             if (chatBubbleToolTip?.isShowing == true)
                                 chatBubbleToolTip?.dismiss()
                         } else {
-                            onlineIndicatorVisibility(true)
-                            notifyCountVisibility(true)
                             floatingActionButton?.show()
                         }
                     }
@@ -169,16 +163,12 @@ class ChatFloatingActionButtonBubbleView(
                     RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         if (dy > 0 || dy < 0 && floatingActionButton?.isShown == true) {
-                            onlineIndicatorVisibility(false)
-                            notifyCountVisibility(false)
                             floatingActionButton?.hide()
                         }
                     }
 
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                            onlineIndicatorVisibility(true)
-                            notifyCountVisibility(true)
                             floatingActionButton?.show()
                         }
                         super.onScrollStateChanged(recyclerView, newState)
@@ -188,48 +178,6 @@ class ChatFloatingActionButtonBubbleView(
         }
     }
 
-    private fun userNotAuthenticated(): Boolean {
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            floatingActionButton?.visibility = GONE
-            notificationBadge?.setNumber(0)
-            liveChatDBRepository.resetUnReadMessageCount()
-            notificationBadge?.visibility = GONE
-            return true
-        }
-        return false
-    }
-
-    private fun notifyCountVisibility(visible: Boolean) {
-        activity?.runOnUiThread {
-            if (visible) {
-                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-                    notificationBadge?.visibility = VISIBLE
-                }
-            } else {
-                notificationBadge?.visibility = GONE
-            }
-        }
-    }
-
-    private fun onlineIndicatorVisibility() {
-        val messageCount = liveChatDBRepository.getUnReadMessageCount()
-        if (ServiceTools.checkServiceRunning(activity, LiveChatService::class.java) && messageCount == 0) {
-            onlineChatImageViewIndicator?.visibility = VISIBLE
-            notificationBadge?.visibility = GONE
-        } else {
-            if (liveChatDBRepository.getUnReadMessageCount() > 0) {
-                notificationBadge?.visibility = VISIBLE
-            }
-                onlineChatImageViewIndicator?.visibility = GONE
-        }
-    }
-
-    private fun onlineIndicatorVisibility(isVisible: Boolean) {
-        val messageCount = liveChatDBRepository.getUnReadMessageCount()
-        val isChatConnected = ServiceTools.checkServiceRunning(activity, LiveChatService::class.java) && messageCount == 0
-            onlineChatImageViewIndicator?.visibility = if (isVisible && isChatConnected) VISIBLE else GONE
-    }
-
     private fun floatingButtonListener() {
         activity?.apply {
             val chatAccountProductLandingPage: Account? =
@@ -237,7 +185,6 @@ class ChatFloatingActionButtonBubbleView(
                     applyNowState
                 )
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
-            onlineIndicatorVisibility()
             floatingActionButton?.setOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
             }
@@ -246,7 +193,8 @@ class ChatFloatingActionButtonBubbleView(
 
     fun navigateToChatActivity(activity: Activity?, chatAccountProductLandingPage: Account?) {
         activity ?: return
-        val initChatDetails = chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
+        val initChatDetails =
+            chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
         val liveChatParams = liveChatDBRepository.getLiveChatParams()
         liveChatDBRepository.resetUnReadMessageCount()
         GlobalScope.doAfterDelay(DelayConstant.DELAY_300_MS) {
@@ -274,36 +222,90 @@ class ChatFloatingActionButtonBubbleView(
             showChatToolTip()
             floatingButtonListener()
             messageCountObserver()
+            addLifeCycleObserver()
+            onFABVisibilityChangeListener()
+        }
+    }
+
+    private fun onFABVisibilityChangeListener() {
+        floatingActionButton?.addOnHideAnimationListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animator: Animator?) {
+                // react to the fab being hidden
+                showOnlineIconIndicator(false)
+            }
+        })
+
+        floatingActionButton?.addOnShowAnimationListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animator: Animator?) {
+                // react to the fab being shown
+                showOnlineIconIndicator(true)
+            }
+        })
+    }
+
+    private fun addLifeCycleObserver() {
+        activity?.lifecycle?.addObserver(object : LifecycleObserver {
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+            fun onResume() {
+                // handler for received Intents for the "UnreadMessageCount" event
+                if (activity?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == true) {
+                    receiverManager?.registerReceiver(
+                        messageCountBroadcastReceiver,
+                        IntentFilter(LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE)
+                    )
+                    showOnlineIconIndicator(true)
+                }
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+            fun onPause() {
+                Log.e("OnLifecycleEventDestroy", "@OnLifecycleEvent ON_PAUSE")
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            fun onDestroy() {
+                Log.e("OnLifecycleEventDestroy", "@OnLifecycleEvent ON_DESTROY")
+            }
+        })
+    }
+
+    private fun showOnlineIconIndicator(isVisible: Boolean) {
+        val isServiceRunning =
+            ServiceTools.checkServiceRunning(activity, LiveChatService::class.java)
+        val messageCount = liveChatDBRepository.getUnReadMessageCount()
+        val isUserAuthenticated = SessionUtilities.getInstance().isUserAuthenticated
+
+        if (isUserAuthenticated && isServiceRunning && messageCount > 0) {
+            notificationBadge?.setNumber(messageCount, true)
+            notificationBadge?.visibility = VISIBLE
+            onlineChatImageViewIndicator?.visibility = GONE
+            if (!isVisible) {
+                notificationBadge?.visibility = GONE
+            }
+        } else {
+            notificationBadge?.visibility = GONE
+            notificationBadge?.setNumber(0, true)
+            val isLiveChatServiceVisible =
+                isVisible && isServiceRunning && messageCount == 0 && isUserAuthenticated
+            if (isLiveChatServiceVisible) {
+                onlineChatImageViewIndicator?.visibility = VISIBLE
+            } else {
+                onlineChatImageViewIndicator?.visibility = GONE
+            }
         }
     }
 
     private fun messageCountObserver() {
-        activityLifeCycle?.addObserver(this@ChatFloatingActionButtonBubbleView)
-        if (activityLifeCycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) == true) {
-            // connect if not connected
-            onResume()
-        }
+        activity?.lifecycle?.addObserver(this@ChatFloatingActionButtonBubbleView)
     }
 
     val messageCountBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             activity?.runOnUiThread {
-                onlineIndicatorVisibility()
-                notificationBadge?.setNumber(liveChatDBRepository.getUnReadMessageCount())
+                showOnlineIconIndicator(true)
             }
         }
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    private fun onResume() {
-        // handler for received Intents for the "UnreadMessageCount" event
-        receiverManager?.registerReceiver(
-            messageCountBroadcastReceiver,
-            IntentFilter(LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE)
-        )
-
-        onlineIndicatorVisibility()
-        //userNotAuthenticated()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -321,6 +323,5 @@ class ChatFloatingActionButtonBubbleView(
         const val LIVE_CHAT_SUBSCRIPTION_RESULT = "live_chat_subscription_result"
         const val LIVE_CHAT_PACKAGE = "live.chat.subscription.result.SUBSCRIBE.DATA"
         const val LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE = "live.chat.message.COUNT.DATA"
-
     }
 }

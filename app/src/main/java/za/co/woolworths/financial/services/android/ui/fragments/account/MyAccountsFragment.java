@@ -508,6 +508,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void configureView() {
+
         this.isAccountsCallMade = true;
         this.unavailableAccounts.clear();
         this.unavailableAccounts.addAll(Arrays.asList(AccountsProductGroupCode.STORE_CARD.getGroupCode(),

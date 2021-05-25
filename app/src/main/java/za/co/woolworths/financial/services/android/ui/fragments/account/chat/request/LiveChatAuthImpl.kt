@@ -18,7 +18,6 @@ class LiveChatAuthImpl : ILiveChatAuth {
         val networkConfig = NetworkConfig()
         val username = networkConfig.getApiId()
         val password = networkConfig.getSha1Password()
-
         Auth.signIn(username, password, { authSignInResult ->
             onSuccess(authSignInResult)
         }, { authException ->
