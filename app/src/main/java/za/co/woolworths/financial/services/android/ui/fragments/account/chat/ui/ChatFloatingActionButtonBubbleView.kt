@@ -57,6 +57,7 @@ class ChatFloatingActionButtonBubbleView(
     private var isLiveChatEnabled = false
     private var activityLifeCycle: Lifecycle? = null
     private var receiverManager: ReceiverManager? = null
+    private val liveChatDBRepository = LiveChatDBRepository()
 
     init {
         isLiveChatEnabled = chatBubbleVisibility?.isChatBubbleVisible(applyNowState) == true
@@ -142,10 +143,7 @@ class ChatFloatingActionButtonBubbleView(
             is NestedScrollView -> {
                 (scrollableView as? NestedScrollView)?.apply {
                     viewTreeObserver?.addOnScrollChangedListener {
-                        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-                            floatingActionButton?.visibility = GONE
-                            return@addOnScrollChangedListener
-                        }
+                        if (userNotAuthenticated()) return@addOnScrollChangedListener
                         val scrollViewHeight: Double =
                             getChildAt(0)?.bottom?.minus(height.toDouble())
                                 ?: 0.0
@@ -190,6 +188,17 @@ class ChatFloatingActionButtonBubbleView(
         }
     }
 
+    private fun userNotAuthenticated(): Boolean {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            floatingActionButton?.visibility = GONE
+            notificationBadge?.setNumber(0)
+            liveChatDBRepository.resetUnReadMessageCount()
+            notificationBadge?.visibility = GONE
+            return true
+        }
+        return false
+    }
+
     private fun notifyCountVisibility(visible: Boolean) {
         activity?.runOnUiThread {
             if (visible) {
@@ -203,7 +212,6 @@ class ChatFloatingActionButtonBubbleView(
     }
 
     private fun onlineIndicatorVisibility() {
-        val liveChatDBRepository = LiveChatDBRepository()
         val messageCount = liveChatDBRepository.getUnReadMessageCount()
         if (ServiceTools.checkServiceRunning(activity, LiveChatService::class.java) && messageCount == 0) {
             onlineChatImageViewIndicator?.visibility = VISIBLE
@@ -217,7 +225,6 @@ class ChatFloatingActionButtonBubbleView(
     }
 
     private fun onlineIndicatorVisibility(isVisible: Boolean) {
-        val liveChatDBRepository = LiveChatDBRepository()
         val messageCount = liveChatDBRepository.getUnReadMessageCount()
         val isChatConnected = ServiceTools.checkServiceRunning(activity, LiveChatService::class.java) && messageCount == 0
             onlineChatImageViewIndicator?.visibility = if (isVisible && isChatConnected) VISIBLE else GONE
@@ -240,7 +247,6 @@ class ChatFloatingActionButtonBubbleView(
     fun navigateToChatActivity(activity: Activity?, chatAccountProductLandingPage: Account?) {
         activity ?: return
         val initChatDetails = chatBubbleVisibility?.getProductOfferingIdAndAccountNumber(applyNowState)
-        val liveChatDBRepository = LiveChatDBRepository()
         val liveChatParams = liveChatDBRepository.getLiveChatParams()
         liveChatDBRepository.resetUnReadMessageCount()
         GlobalScope.doAfterDelay(DelayConstant.DELAY_300_MS) {
@@ -282,7 +288,6 @@ class ChatFloatingActionButtonBubbleView(
     val messageCountBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             activity?.runOnUiThread {
-                val liveChatDBRepository = LiveChatDBRepository()
                 onlineIndicatorVisibility()
                 notificationBadge?.setNumber(liveChatDBRepository.getUnReadMessageCount())
             }
@@ -298,6 +303,7 @@ class ChatFloatingActionButtonBubbleView(
         )
 
         onlineIndicatorVisibility()
+        //userNotAuthenticated()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

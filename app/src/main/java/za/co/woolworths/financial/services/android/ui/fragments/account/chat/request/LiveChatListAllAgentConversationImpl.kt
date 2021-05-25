@@ -52,6 +52,8 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                 val agentMessageList: MutableList<SendMessageResponse>? =
                     agentConversationList?.items?.toMutableList()
 
+                agentMessageList?.sortedByDescending { it.createdAt }
+                agentMessageList?.reversed()
                 val chatMessageAgent = mutableListOf<ChatMessage>()
                 agentMessageList?.forEach { chatMessageAgent.add(it) }
                 /**

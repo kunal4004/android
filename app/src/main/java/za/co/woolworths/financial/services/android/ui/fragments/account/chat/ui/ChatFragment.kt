@@ -79,10 +79,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         with(chatViewModel) {
             if (!isChatServiceRunning(activity)) {
                 activity?.let { act ->
-                    ServiceTools.start(
-                        act,
-                        LiveChatService::class.java
-                    )
+                    ServiceTools.start(act, LiveChatService::class.java)
                 }
                 return@with
             }

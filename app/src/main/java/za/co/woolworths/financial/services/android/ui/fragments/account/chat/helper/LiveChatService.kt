@@ -146,6 +146,7 @@ class LiveChatService : Service() {
     override fun onDestroy() {
         ChatAWSAmplify.isLiveChatActivated = false
         ChatAWSAmplify.listAllChatMessages?.clear()
+        liveChatDBRepository.resetUnReadMessageCount()
         liveChat.onCancel()
         super.onDestroy()
     }
