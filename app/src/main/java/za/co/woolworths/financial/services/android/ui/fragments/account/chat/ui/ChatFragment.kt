@@ -86,7 +86,14 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
             liveChatListAllAgentConversation.list({ chatList ->
                 mChatAdapter?.clear()
-                chatList.first?.forEach { item -> showAgentsMessage(item) }
+                chatList.first?.forEach { item ->
+                    val content = when (item) {
+                        is UserMessage -> item.message
+                        is SendMessageResponse -> item.content
+                    }
+                    if (!TextUtils.isEmpty(content))
+                        showAgentsMessage(item)
+                }
                 activity?.runOnUiThread {
                     if (isAdded) {
                         chatLoaderProgressBar?.visibility = GONE

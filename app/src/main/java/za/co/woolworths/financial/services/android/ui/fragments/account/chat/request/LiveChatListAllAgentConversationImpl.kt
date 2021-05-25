@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.request
 
+import android.text.TextUtils
 import com.amplifyframework.api.ApiException
 import com.amplifyframework.api.aws.GsonVariablesSerializer
 import com.amplifyframework.api.graphql.GraphQLRequest
@@ -63,10 +64,20 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                  * and a List of the items
                  */
 
-                val messages: MutableList<ChatMessage>? = defaultMessageList?.plus(chatMessageAgent)?.distinct()?.toMutableList()
+                val messages: MutableList<ChatMessage>? =
+                    defaultMessageList?.plus(chatMessageAgent)?.distinct()?.toMutableList()
+                messages?.forEach {
+                    val message = when (it) {
+                        is SendMessageResponse -> it.content
+                        is UserMessage -> it.message
+                    }
+                    if (TextUtils.isEmpty(message))
+                        messages.remove(it)
+                }
 
                 ChatAWSAmplify.listAllChatMessages = messages
-                val latestAgentMessage = messages?.groupBy { it as? SendMessageResponse }?.keys?.lastOrNull()
+                val latestAgentMessage =
+                    messages?.groupBy { it as? SendMessageResponse }?.keys?.lastOrNull()
 
                 onSuccess(Pair(messages, latestAgentMessage))
             },
