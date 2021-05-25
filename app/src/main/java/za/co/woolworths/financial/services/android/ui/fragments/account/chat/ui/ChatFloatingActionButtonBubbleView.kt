@@ -303,7 +303,8 @@ class ChatFloatingActionButtonBubbleView(
     val messageCountBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             activity?.runOnUiThread {
-                showOnlineIconIndicator(true)
+                if (floatingActionButton?.isShown == true)
+                    showOnlineIconIndicator(true)
             }
         }
     }
