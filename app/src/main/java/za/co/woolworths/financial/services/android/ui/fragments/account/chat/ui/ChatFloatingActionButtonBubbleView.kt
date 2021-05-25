@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Gravity
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -258,14 +257,9 @@ class ChatFloatingActionButtonBubbleView(
                 }
             }
 
-            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-            fun onPause() {
-                Log.e("OnLifecycleEventDestroy", "@OnLifecycleEvent ON_PAUSE")
-            }
-
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             fun onDestroy() {
-                Log.e("OnLifecycleEventDestroy", "@OnLifecycleEvent ON_DESTROY")
+                unregisterReceiver()
             }
         })
     }
@@ -295,7 +289,7 @@ class ChatFloatingActionButtonBubbleView(
             }
         }
 
-        if (!isUserAuthenticated){
+        if (!isUserAuthenticated) {
             floatingActionButton?.visibility = GONE
         }
     }
