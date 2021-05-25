@@ -122,13 +122,12 @@ class AccountSalesFragment : Fragment() {
             return
         }
         activity?.let { activity ->
-            val cardCollectionDescriptionText: String = getString(R.string.card_collection_desc)
             val cardCollectionDescriptionTextView: TextView? = view?.findViewById(R.id.cardCollectionDescriptionTextView)
 
             if (isCreditCardProduct == true){ //there's a bug here. isCreditCardProduct is true but this is actually not a Credit Card
-                cardCollectionDescriptionTextView?.text = cardCollectionDescriptionText.replace("{PRODUCT}","Store Card")
+                cardCollectionDescriptionTextView?.text = getString(R.string.card_collection_desc,"Store Card")
             } else{
-                cardCollectionDescriptionTextView?.text = cardCollectionDescriptionText.replace("{PRODUCT}","Credit Card")
+                cardCollectionDescriptionTextView?.text = getString(R.string.card_collection_desc,"Credit Card")
             }
 
             cardCollection.forEach { items ->

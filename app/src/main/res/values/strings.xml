@@ -1199,7 +1199,7 @@
     <string name="storeCardQualifyCriteria_row_3">Earn in excess of R2,000 per month</string>
 
     <string name="card_collection_title">Card Collection</string>
-    <string name="card_collection_desc">When collecting your {PRODUCT}, make sure you bring the following:</string>
+    <string name="card_collection_desc">When collecting your %1$s, make sure you bring the following:</string>
 
     <string name="storeCardCardCollection_row_1">Valid South African ID</string>
     <string name="storeCardCardCollection_row_2">Latest payslip or bank statement</string>
