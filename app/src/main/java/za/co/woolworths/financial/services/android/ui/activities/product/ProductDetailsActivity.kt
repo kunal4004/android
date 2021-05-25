@@ -30,6 +30,7 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
 
     companion object {
         const val DEEP_LINK_REQUEST_CODE = 123
+        const val TAG = "ProductDetailsFragment"
         const val SHARE_LINK_REQUEST_CODE = 321
     }
 
@@ -84,6 +85,6 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
         productDetailsFragmentNew?.arguments = bundle
         val fragmentManager: FragmentManager = getSupportFragmentManager()
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, productDetailsFragmentNew!!).commit()
+                .replace(R.id.content_frame, productDetailsFragmentNew!!, TAG).commit()
     }
 }
