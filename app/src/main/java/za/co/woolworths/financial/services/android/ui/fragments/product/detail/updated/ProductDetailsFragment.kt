@@ -326,8 +326,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSelectedGroupKey(defaultGroupKey)
 
         Utils.getPreferredDeliveryLocation()?.let {
+            updateDefaultUI(false)
             if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.storePickup) {
-                updateDefaultUI(false)
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
                 return
