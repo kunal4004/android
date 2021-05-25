@@ -18,7 +18,7 @@
     <TextView
         android:id="@+id/cardCollectionDescriptionTextView"
         style="@style/account_sales_card_benefit_description_style"
-        android:text="@string/storeCard_card_collection_desc"
+        android:text="@string/card_collection_desc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardCollectionTitleTextView" />
