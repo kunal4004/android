@@ -11,11 +11,12 @@ class DateFormatter {
         fun isDateExpired(validToDate: String?): Boolean {
             if (TextUtils.isEmpty(validToDate))
                 return false
+            val toPattern = "dd MMM yyyy"
             try {
                 val formattedDate = formatDateTOddMMMYYYY(validToDate)
                 if (!TextUtils.isEmpty(formattedDate)) {
-                    val parsedValidDate: Date? =
-                        DateFormat.getDateInstance().parse(formattedDate ?: "")
+                    val formatter = SimpleDateFormat(toPattern, Locale.ENGLISH)
+                    val parsedValidDate = formatter.parse(formattedDate ?: "")
                     if (parsedValidDate?.before(Date()) == true) {
                         return true
                     }
