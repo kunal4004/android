@@ -2,12 +2,10 @@ package za.co.woolworths.financial.services.android.ui.activities.card
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_credit_report_tu.*
 import kotlinx.android.synthetic.main.select_store_activity.*
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -19,6 +17,11 @@ class SelectStoreActivity : AppCompatActivity() {
 
     private var navController: NavController? = null
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        //Clear the Activity's bundle of the subsidiary fragments' bundles.
+        outState.clear()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

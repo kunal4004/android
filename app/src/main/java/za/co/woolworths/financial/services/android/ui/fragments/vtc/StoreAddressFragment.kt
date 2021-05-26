@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.vtc
 
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -11,14 +10,11 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_store_address.*
@@ -26,6 +22,7 @@ import kotlinx.android.synthetic.main.layout_address_residential_or_business.*
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.select_store_activity.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.UserManager
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -34,7 +31,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.StoreCardEmailConfirmBody
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.CONTACT_INFO
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.MAP_LOCATION
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.PRODUCT_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.SHOW_BACK_BUTTON
@@ -121,7 +117,7 @@ class StoreAddressFragment : Fragment() {
 
             tvBusinessName?.visibility = View.GONE
             businessNameEdtTV?.visibility = View.GONE
-            if(validateTextViews()){
+            if (validateTextViews()) {
                 enableNextButton()
             } else {
                 disableNextButton()
@@ -140,7 +136,7 @@ class StoreAddressFragment : Fragment() {
             Utils.hideSoftKeyboard(activity)
             tvBusinessName?.visibility = View.VISIBLE
             businessNameEdtTV?.visibility = View.VISIBLE
-            if(validateTextViews()){
+            if (validateTextViews()) {
                 enableNextButton()
             } else {
                 disableNextButton()
@@ -223,7 +219,7 @@ class StoreAddressFragment : Fragment() {
 
     private fun callLocationStores() {
         context?.apply {
-            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 navigateToParticipatingStores(null)
                 return
             }
@@ -264,7 +260,7 @@ class StoreAddressFragment : Fragment() {
             }
         }
 
-        if(validateTextViews()){
+        if (validateTextViews()) {
             enableNextButton()
         } else {
             disableNextButton()
@@ -339,14 +335,13 @@ class StoreAddressFragment : Fragment() {
                             val npcStores: List<StoreDetails>? = locationResponse.Locations
                                     ?: mutableListOf()
                             if (npcStores?.size ?: 0 > 0) {
-
-                                findNavController()?.navigate(R.id.action_storeAddressFragment_to_participatingStoreFragment, bundleOf(
+                                val stores = Gson().toJson(npcStores)
+                                view?.findNavController()?.navigate(R.id.action_storeAddressFragment_to_participatingStoreFragment, bundleOf(
                                         PRODUCT_NAME to bindString(R.string.participating_stores),
-                                        MAP_LOCATION to Gson().toJson(npcStores),
+                                        MAP_LOCATION to stores,
                                         STORE_CARD to arguments?.getString(STORE_CARD),
                                         SHOW_GEOFENCING to false,
                                         SHOW_BACK_BUTTON to true
-
                                 ))
                             }
                         }

@@ -134,7 +134,6 @@ class StoreConfirmationFragment : Fragment() {
             }
 
             override fun onFailure(error: Throwable?) {
-                super.onFailure(error)
                 processingViewGroup?.visibility = View.GONE
                 showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)
             }
@@ -159,7 +158,7 @@ class StoreConfirmationFragment : Fragment() {
 
         if (resultCode == Activity.RESULT_CANCELED) {
             processingViewGroup?.visibility = View.GONE
-//            storeConfirmedLayout?.visibility = View.VISIBLE
+            confirmStoreLayout?.visibility = View.VISIBLE
         }
 
         when (requestCode) {
