@@ -167,6 +167,18 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 cardDetailImageView?.alpha = 0.3f
             }
 
+            // Get replacement card
+            mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() == true -> {
+                storeCardTagTextView?.text = bindString(R.string.inactive)
+                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.red_tag)) }
+                storeCardTagTextView?.visibility = VISIBLE
+                myCardDetailTextView?.visibility = GONE
+                manageLinkNewCardGroup?.visibility = VISIBLE
+                manageMyCardTextView?.text = bindString(R.string.replacement_card_label)
+                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
+                cardDetailImageView?.alpha = 0.3f
+            }
+
             // Temporary card
             (mCardPresenterImpl?.isVirtualCardObjectNotNull() == true) -> {
                 storeCardTagTextView?.text = bindString(R.string.temp_card)
@@ -183,19 +195,8 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 cardDetailImageView?.alpha = 0.3f
             }
 
-            // Get replacement card
-            mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() != true -> {
-                storeCardTagTextView?.text = bindString(R.string.inactive)
-                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.red_tag)) }
-                storeCardTagTextView?.visibility = VISIBLE
-                myCardDetailTextView?.visibility = GONE
-                manageLinkNewCardGroup?.visibility = VISIBLE
-                manageMyCardTextView?.text = bindString(R.string.replacement_card_label)
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
-                cardDetailImageView?.alpha = 0.3f
-            }
             // Temporary card
-            mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() == true -> {
+            mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() != true -> {
                 context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
 
                 //when virtual card is disabled on mobile config server

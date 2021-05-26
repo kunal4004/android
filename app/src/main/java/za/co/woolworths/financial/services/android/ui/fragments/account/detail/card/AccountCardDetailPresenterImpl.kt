@@ -332,11 +332,8 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         }
         val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
         val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
-        val shouldDisplayStoreCardDetail = TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
-        val virtualCard = storeCardsData.virtualCard
-        return (virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
-                || shouldDisplayStoreCardDetail
-                && blockType != TemporaryFreezeStoreCard.PERMANENT
+        return !storeCardsData?.generateVirtualCard && WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true
+                && TemporaryFreezeStoreCard.PERMANENT.equals(blockType, ignoreCase = true)
     }
 
     override fun onStartCreditLimitIncreaseFirebaseEvent() {

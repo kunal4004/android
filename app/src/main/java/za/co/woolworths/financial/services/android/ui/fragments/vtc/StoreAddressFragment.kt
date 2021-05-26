@@ -179,7 +179,6 @@ class StoreAddressFragment : Fragment() {
                 nextButton?.background = ContextCompat.getDrawable(it, R.drawable.next_button_icon)
             }
             callLocationStores()
-            startLocationDiscoveryProcess()
         }
 
         nextButton?.setOnClickListener {
@@ -336,6 +335,7 @@ class StoreAddressFragment : Fragment() {
                                     ?: mutableListOf()
                             if (npcStores?.size ?: 0 > 0) {
                                 val stores = Gson().toJson(npcStores)
+
                                 view?.findNavController()?.navigate(R.id.action_storeAddressFragment_to_participatingStoreFragment, bundleOf(
                                         PRODUCT_NAME to bindString(R.string.participating_stores),
                                         MAP_LOCATION to stores,
