@@ -139,7 +139,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
         when (storeCardResponse.httpCode) {
             200 -> {
-                onFreezeUnfreezeStoreCard()
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) { setStoreCardTag() }
             }
             440 -> activity?.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, storeCardResponse.response?.stsParams, it) }
@@ -154,7 +153,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     private fun setStoreCardTag() {
 
         when {
-
             // Activate Virtual Temporary card
             (mCardPresenterImpl?.isActivateVirtualTempCard() == true) -> {
                 storeCardTagTextView?.text = bindString(R.string.inactive)
@@ -167,20 +165,8 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 cardDetailImageView?.alpha = 0.3f
             }
 
-            // Get replacement card
-            mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() == true -> {
-                storeCardTagTextView?.text = bindString(R.string.inactive)
-                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.red_tag)) }
-                storeCardTagTextView?.visibility = VISIBLE
-                myCardDetailTextView?.visibility = GONE
-                manageLinkNewCardGroup?.visibility = VISIBLE
-                manageMyCardTextView?.text = bindString(R.string.replacement_card_label)
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
-                cardDetailImageView?.alpha = 0.3f
-            }
-
             // Temporary card
-            (mCardPresenterImpl?.isVirtualCardObjectNotNull() == true) -> {
+            (mCardPresenterImpl?.isTemporaryCardEnabled() == true) -> {
                 storeCardTagTextView?.text = bindString(R.string.temp_card)
                 storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE
@@ -195,37 +181,28 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 cardDetailImageView?.alpha = 0.3f
             }
 
-            // Temporary card
-            mCardPresenterImpl?.isReplacementCardAndVirtualCardViewEnabled() != true -> {
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
-
-                //when virtual card is disabled on mobile config server
-                if (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == false) {
-                    storeCardTagTextView?.visibility = GONE
-                    myCardDetailTextView?.visibility = VISIBLE
-                    manageLinkNewCardGroup?.visibility = GONE
-                    manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
-                    cardDetailImageView?.alpha = 1.0f
-                    return
-                }
-                if (mCardPresenterImpl?.isVirtualCardEnabled() == false) {
-                    storeCardTagTextView?.visibility = GONE
-                    myCardDetailTextView?.visibility = VISIBLE
-                    manageLinkNewCardGroup?.visibility = GONE
-                    manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
-                    cardDetailImageView?.alpha = 1.0f
-                    return
-                }
-                storeCardTagTextView?.text = bindString(R.string.temp_card)
-                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
+            // Get replacement card
+            mCardPresenterImpl?.isInstantCardReplacementEnabled() == true -> {
+                storeCardTagTextView?.text = bindString(R.string.inactive)
+                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.red_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
-                manageLinkNewCardGroup?.visibility = GONE
-                manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
+                manageLinkNewCardGroup?.visibility = VISIBLE
+                manageMyCardTextView?.text = bindString(R.string.replacement_card_label)
+                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
                 cardDetailImageView?.alpha = 0.3f
             }
+            //Unfreeze my card
+            mCardPresenterImpl?.getStoreCardBlockType() == true ->{
+                cardDetailImageView?.setImageDrawable(bindDrawable(R.drawable.card_freeze))
+                manageMyCardTextView?.text = bindString(R.string.unfreeze_my_card_label)
+                tempFreezeTextView?.let { KotlinUtils.roundCornerDrawable(it, "#FF7000") }
+                tempFreezeTextView?.text = bindString(R.string.freeze_temp_label)
+                tempFreezeTextView?.visibility = VISIBLE
+                myCardDetailTextView?.visibility = GONE
+            }
+            // Manage your card
             else -> {
-                // Manage your card
                 storeCardTagTextView?.visibility = GONE
                 myCardDetailTextView?.visibility = VISIBLE
                 manageLinkNewCardGroup?.visibility = GONE

@@ -320,7 +320,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         }
         val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
         val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
-        return  blockType ?: ""
+        return blockType ?: ""
     }
 
     // Determine if card is blocked: if blockCode is not null, card is blocked.
@@ -349,4 +349,32 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return (storeCardsData.generateVirtualCard
                 && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
     }
+
+    override fun isTemporaryCardEnabled(): Boolean {
+        val response = getStoreCardResponse()
+        if (response?.storeCardsData?.virtualCard != null
+                && response?.storeCardsData?.virtualCard?.number != null
+                && (TemporaryFreezeStoreCard.TEMPORARY.equals(response?.storeCardsData?.virtualCard?.blockType, ignoreCase = true))) {
+            return true
+        }
+        return false
+    }
+
+    override fun isInstantCardReplacementEnabled(): Boolean {
+        val response = getStoreCardResponse()
+        if (response?.storeCardsData?.primaryCards.isNullOrEmpty()) {
+            return false
+        }
+        val primaryCard = response?.storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
+
+        if (response?.storeCardsData?.generateVirtualCard == false
+                && !TextUtils.isEmpty(primaryCard?.blockType)
+                && TemporaryFreezeStoreCard.PERMANENT.equals(primaryCard?.blockType, ignoreCase = true)
+                && WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
+            return true
+        }
+        return false
+    }
+
+
 }
