@@ -16,7 +16,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/hundred_dp"
             tools:context="za.co.woolworths.financial.services.android.ui.fragments.vtc.StoreAddressFragment">
 
             <androidx.constraintlayout.widget.Guideline
@@ -157,16 +156,5 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-
-    <TextView
-        android:id="@+id/nextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:layout_marginBottom="@dimen/thirty_two_dp"
-        android:background="@drawable/next_button_inactive"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

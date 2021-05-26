@@ -201,10 +201,22 @@
         style="@style/credi_card_delivery_edittext_style"
         android:contentDescription="@string/hint_postal_code"
         android:hint="@string/hint_postal_code"
-        android:textColorHint="@color/black30"
         android:inputType="number"
+        android:textColorHint="@color/black30"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvPostalCode" />
+
+    <TextView
+        android:id="@+id/nextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eighty_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@drawable/next_button_inactive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/postalCodeEdtTV" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
