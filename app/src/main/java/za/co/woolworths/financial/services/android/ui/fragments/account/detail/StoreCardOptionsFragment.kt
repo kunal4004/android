@@ -173,7 +173,11 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
-                manageLinkNewCardGroup?.visibility = GONE
+                if(mCardPresenterImpl?.isVirtualCardObjectBlockTypeNull() == true){
+                    manageLinkNewCardGroup?.visibility = VISIBLE
+                } else {
+                    manageLinkNewCardGroup?.visibility = GONE
+                }
                 context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
                 manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
                 cardDetailImageView?.alpha = 0.3f
@@ -328,6 +332,10 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                                 MyAccountsScreenNavigator.navigateToLinkNewCardActivity(activity, Utils.objectToJson(storeCardResponse))
                             }
                             bindString(R.string.activate_vtc_title) -> {
+                                val storeCardResponse = getStoreCardResponse()
+                                MyAccountsScreenNavigator.navigateToLinkNewCardActivity(activity, Utils.objectToJson(storeCardResponse))
+                            }
+                            bindString(R.string.manage_my_card_title) -> {
                                 val storeCardResponse = getStoreCardResponse()
                                 MyAccountsScreenNavigator.navigateToLinkNewCardActivity(activity, Utils.objectToJson(storeCardResponse))
                             }

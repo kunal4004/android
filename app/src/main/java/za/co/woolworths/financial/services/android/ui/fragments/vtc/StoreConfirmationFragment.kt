@@ -51,7 +51,9 @@ class StoreConfirmationFragment : Fragment() {
             subTitleTextView?.text = body?.storeAddress
         } else {
             body?.let {
-//               address = street, complexName,businessName, city,postalCode,province
+                // Two types of address we receive in bundle
+                // 1. Already present storeAddress when select store (Can be empty or null for some stores)
+                // 2. Manually entered field from store address fragment = street, complexName, businessName, city, postalCode, province
                 var address = it.street + ", " + it.complexName + ", "
                 address += if (TextUtils.isEmpty(it.businessName)) {
                     it.city + ", " + it.postalCode + ", " + it.province
@@ -157,6 +159,7 @@ class StoreConfirmationFragment : Fragment() {
 
         if (resultCode == Activity.RESULT_CANCELED) {
             processingViewGroup?.visibility = View.GONE
+//            storeConfirmedLayout?.visibility = View.VISIBLE
         }
 
         when (requestCode) {
