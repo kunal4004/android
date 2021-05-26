@@ -119,7 +119,7 @@ class StoreConfirmationFragment : Fragment() {
         emailRequest.enqueue(CompletionHandler(object : IResponseListener<GenericResponse> {
             override fun onSuccess(response: GenericResponse?) {
                 processingViewGroup?.visibility = View.GONE
-                when (response?.httpCode?.toString() ?: response?.response?.code ?: "0") {
+                when (response?.httpCode?.toString() ?: response?.response?.code?.toString() ?: "0") {
                     AppConstant.HTTP_OK_201.toString(), AppConstant.HTTP_OK.toString() -> {
                         menuBar?.getItem(0)?.isVisible = menuBar?.getItem(0)?.itemId == R.id.closeIcon
                         (activity as? SelectStoreActivity)?.apply {
