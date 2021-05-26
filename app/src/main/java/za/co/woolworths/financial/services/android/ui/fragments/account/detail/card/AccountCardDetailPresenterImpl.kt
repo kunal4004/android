@@ -304,7 +304,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun isVirtualCardObjectBlockTypeNull(): Boolean {
         val response = getStoreCardResponse()
-        return response?.storeCardsData?.virtualCard != null && !TextUtils.isEmpty(response?.storeCardsData?.virtualCard?.blockType)
+        return response?.storeCardsData?.virtualCard != null && TextUtils.isEmpty(response?.storeCardsData?.virtualCard?.blockType)
     }
 
     override fun isGeneterateVTC(): Boolean {
