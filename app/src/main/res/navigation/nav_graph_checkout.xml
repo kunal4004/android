@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/checkout_nav_host"
+    app:startDestination="@+id/CheckoutAddAddressNewUserFragment">
+
+    <fragment
+        android:id="@+id/CheckoutAddAddressNewUserFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment"
+        android:label="Checkout New User"
+        tools:layout="@layout/checkout_add_address_new_user"></fragment>
+
+    <fragment
+        android:id="@+id/CheckoutAddAddressReturningUserFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment"
+        android:label="Checkout Returning User"
+        tools:layout="@layout/checkout_add_address_retuning_user"></fragment>
+
+</navigation>
