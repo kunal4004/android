@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -57,6 +58,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductSearchTypeAndTerm;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -69,6 +71,7 @@ import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
@@ -158,6 +161,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private BottomNavigationMenuView bottomNavigationMenu;
     private BottomNavigationItemView accountNavigationView;
     private View notificationBadgeOne;
+    private ImageView onlineIconImageView;
 
     @Override
     public int getLayoutId() {
@@ -361,8 +365,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         bottomNavigationMenu = getBottomNavigationById().getBottomNavigationMenuView();
         accountNavigationView = (BottomNavigationItemView) bottomNavigationMenu.getChildAt(INDEX_ACCOUNT);
-
         notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.green_circle_icon, accountNavigationView, false);
+         onlineIconImageView = notificationBadgeOne.findViewById(R.id.onlineIconImageView);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
         params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
@@ -638,9 +642,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     };
 
     private void replaceAccountIcon(@NonNull MenuItem item) {
-        if (ServiceTools.Companion.checkServiceRunning(this, LiveChatService.class)
+        if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
                 && item.getItemId() != R.id.navigate_to_account) {
             accountNavigationView.removeView(notificationBadgeOne);
+            SessionStateType sessionStateType = ChatAWSAmplify.INSTANCE.getSessionStateType();
+            if (sessionStateType!=null) {
+                if (sessionStateType == SessionStateType.DISCONNECT) {
+                    onlineIconImageView.setImageResource(R.drawable.nb_borderless_disconnect_badge_bg);
+                } else {
+                    onlineIconImageView.setImageResource(R.drawable.nb_borderless_badge_bg);
+                }
+            }
             accountNavigationView.addView(notificationBadgeOne);
         } else {
             accountNavigationView.removeView(notificationBadgeOne);

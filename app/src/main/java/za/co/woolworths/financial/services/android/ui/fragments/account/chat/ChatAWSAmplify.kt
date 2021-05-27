@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
@@ -20,8 +21,9 @@ object ChatAWSAmplify {
 
     var isChatActivityInForeground = false
     var listAllChatMessages: MutableList<ChatMessage>? = mutableListOf()
-    var isUserSubscriptionActive: Boolean = false
     var isLiveChatActivated: Boolean = false
+    var sessionStateType : SessionStateType? = null
+    var isLiveChatBackgroundServiceRunning = false
     var BOTTOM_NAVIGATION_BADGE_COUNT: Int = 100000
 
     init {

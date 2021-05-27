@@ -1,7 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper
 
 import android.app.*
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -16,26 +19,37 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.LiveChat
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatAuthImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatConversationImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatListAllAgentConversationImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatSubscribeImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_NO_INTERNET_RESULT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.ReceiverManager
+import za.co.woolworths.financial.services.android.util.animation.ConnectivityWatcher
 import java.lang.IllegalArgumentException
 
 class LiveChatService : Service() {
 
+    private var receiverManager: ReceiverManager? = null
     private val liveChatDBRepository = LiveChatDBRepository()
+    private var isConnectedToInternet = true
     private val liveChat = LiveChat(
         LiveChatAuthImpl(),
         LiveChatConversationImpl(),
         LiveChatSubscribeImpl(SessionStateType.CONNECT, "Hi"),
         LiveChatListAllAgentConversationImpl()
     )
+
+    override fun onCreate() {
+        super.onCreate()
+        receiverManager = ReceiverManager.init(this)
+    }
 
     companion object {
         const val CHANNEL_ID = "ForegroundServiceChannel"
@@ -46,10 +60,15 @@ class LiveChatService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        receiverManager?.registerReceiver(
+            serviceBroadcastReceiver,
+            IntentFilter(CHANNEL_ID)
+        )
         createNotificationChannel()
         try {
+            ChatAWSAmplify.isLiveChatBackgroundServiceRunning = true
             startLiveChat()
-        }catch (ex: IllegalArgumentException){
+        } catch (ex: IllegalArgumentException) {
             FirebaseManager.logException(ex)
         }
 
@@ -64,29 +83,16 @@ class LiveChatService : Service() {
                 conversation({
                     // conversation success
                     onSubscribe({ message ->
-                        if (message?.sessionState != SessionStateType.CONNECT || !TextUtils.isEmpty(message.content))
+                        if (message?.sessionState != SessionStateType.CONNECT || !TextUtils.isEmpty(
+                                message.content
+                            )
+                        )
                             message?.let { msg -> ChatAWSAmplify.addChatMessageToList(msg) }
 
                         if (ChatAWSAmplify.isChatActivityInForeground) {
                             postResult(Gson().toJson(message))
                         } else {
-                            if (!TextUtils.isEmpty(message?.content)) {
-                                val handler = Handler(Looper.getMainLooper())
-                                handler.post {
-                                    val woolworthsApplication =
-                                        applicationContext as? WoolworthsApplication
-                                    liveChatDBRepository.updateUnreadMessageCount()
-                                    postMessageCount()
-                                    val currentActivity = woolworthsApplication?.currentActivity
-                                    currentActivity?.let {
-                                        ToastFactory.chatFollowMeBubble(
-                                            it.window?.decorView?.rootView,
-                                            it,
-                                            message
-                                        )
-                                    }
-                                }
-                            }
+                            displayHeadUpMessage(message)
                         }
 
                     }, { apiException ->
@@ -108,6 +114,27 @@ class LiveChatService : Service() {
         }
     }
 
+    private fun displayHeadUpMessage(message: SendMessageResponse?) {
+        if (!TextUtils.isEmpty(message?.content)) {
+            val handler = Handler(Looper.getMainLooper())
+            handler.post {
+                val woolworthsApplication =
+                    applicationContext as? WoolworthsApplication
+                liveChatDBRepository.updateUnreadMessageCount()
+                ChatAWSAmplify.sessionStateType = message?.sessionState
+                postMessageCount()
+                val currentActivity = woolworthsApplication?.currentActivity
+                currentActivity?.let {
+                    ToastFactory.chatFollowMeBubble(
+                        it.window?.decorView?.rootView,
+                        it,
+                        message
+                    )
+                }
+            }
+        }
+    }
+
     private fun postResult(result: String?) {
         val postChatDataIntent = Intent()
         postChatDataIntent.action = LIVE_CHAT_PACKAGE
@@ -115,8 +142,16 @@ class LiveChatService : Service() {
         sendBroadcast(postChatDataIntent)
     }
 
+    private fun postResultShowNoInternetToast() {
+        val postChatDataIntent = Intent()
+        postChatDataIntent.action = LIVE_CHAT_PACKAGE
+        postChatDataIntent.putExtra(LIVE_CHAT_NO_INTERNET_RESULT, LIVE_CHAT_NO_INTERNET_RESULT)
+        sendBroadcast(postChatDataIntent)
+    }
+
     private fun postMessageCount() {
-        sendBroadcast(Intent(LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE))
+        val postMessageCountIntent = Intent(LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE)
+        sendBroadcast(postMessageCountIntent)
     }
 
     private fun createNotificationChannel() {
@@ -146,9 +181,30 @@ class LiveChatService : Service() {
     override fun onDestroy() {
         ChatAWSAmplify.isLiveChatActivated = false
         ChatAWSAmplify.listAllChatMessages?.clear()
+        ChatAWSAmplify.isLiveChatBackgroundServiceRunning = false
+        ChatAWSAmplify.sessionStateType = null
         liveChatDBRepository.resetUnReadMessageCount()
         liveChat.onCancel()
         super.onDestroy()
     }
 
+    var serviceBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            if (ChatAWSAmplify.isLiveChatBackgroundServiceRunning) {
+                ChatAWSAmplify.sessionStateType = null
+                ChatAWSAmplify.isLiveChatBackgroundServiceRunning = false
+                unregisterReceiver()
+                stopSelf()
+            }
+        }
+    }
+
+    // Unregister since the activity is not visible
+    private fun unregisterReceiver() {
+        try {
+            receiverManager?.unregisterReceiver(serviceBroadcastReceiver)
+        } catch (ex: IllegalArgumentException) {
+            FirebaseManager.logException("unregisterReceiver serviceBroadcastReceiver $ex")
+        }
+    }
 }

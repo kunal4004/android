@@ -8,6 +8,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.ILiveChatAuth
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 
 class LiveChatAuthImpl : ILiveChatAuth {
 
@@ -18,11 +19,15 @@ class LiveChatAuthImpl : ILiveChatAuth {
         val networkConfig = NetworkConfig()
         val username = networkConfig.getApiId()
         val password = networkConfig.getSha1Password()
-        Auth.signIn(username, password, { authSignInResult ->
-            onSuccess(authSignInResult)
-        }, { authException ->
-            onFailure(authException)
-        })
+        try {
+            Auth.signIn(username, password, { authSignInResult ->
+                onSuccess(authSignInResult)
+            }, { authException ->
+                onFailure(authException)
+            })
+        } catch (ex: IllegalStateException) {
+            FirebaseManager.logException(ex)
+        }
     }
 
     override fun signOut(result: () -> Unit) {

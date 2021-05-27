@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util
 
 
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -21,6 +22,14 @@ abstract class ConnectionBroadcastReceiver : BroadcastReceiver() {
         fun registerWithoutAutoUnregister(
             context: Context,
             connectionBroadcastReceiver: ConnectionBroadcastReceiver
+        ) {
+            context.registerReceiver(connectionBroadcastReceiver, IntentFilter(CONNECTIVITY_ACTION))
+        }
+
+        @JvmStatic
+        fun registerToServiceAndAutoUnregister(
+             context: Context,
+             connectionBroadcastReceiver: ConnectionBroadcastReceiver
         ) {
             context.registerReceiver(connectionBroadcastReceiver, IntentFilter(CONNECTIVITY_ACTION))
         }

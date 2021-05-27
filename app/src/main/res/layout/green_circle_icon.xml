@@ -19,7 +19,7 @@
         app:layout_constraintGuide_percent="0.54" />
 
     <ImageView
-        android:id="@+id/iv_badge_bg"
+        android:id="@+id/onlineIconImageView"
         android:layout_width="@dimen/eight_dp"
         android:layout_height="@dimen/eight_dp"
         android:contentDescription="@string/app_name"

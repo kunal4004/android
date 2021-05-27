@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
@@ -35,9 +36,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_NO_INTERNET_RESULT
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import java.util.*
 
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
 
@@ -98,6 +102,12 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
             override fun onReceive(context: Context?, intent: Intent) {
                 val extras = intent.extras ?: return
                 val result: String? = extras.getString(LIVE_CHAT_SUBSCRIPTION_RESULT)
+                val noInternet: String? = extras.getString(LIVE_CHAT_NO_INTERNET_RESULT, "")
+                // display toast when network is unavailable
+                if (!TextUtils.isEmpty(noInternet)) {
+                    ErrorHandlerView(this@WChatActivity).showToast()
+                    return
+                }
                 val sendMessage: SendMessageResponse? =
                     Gson().fromJson(result, SendMessageResponse::class.java)
                 when (topVisibleFragment) {
@@ -280,4 +290,5 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     fun updateToolbarTitle(@IntegerRes title: Int?) {
         agentNameTextView?.text = title?.let { name -> bindString(name) }
     }
+
 }

@@ -31,11 +31,14 @@ import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
@@ -265,10 +268,20 @@ class ChatFloatingActionButtonBubbleView(
     }
 
     private fun showOnlineIconIndicator(isVisible: Boolean) {
-        val isServiceRunning =
-            ServiceTools.checkServiceRunning(activity, LiveChatService::class.java)
+        val isServiceRunning = ChatAWSAmplify.isLiveChatBackgroundServiceRunning
         val messageCount = liveChatDBRepository.getUnReadMessageCount()
         val isUserAuthenticated = SessionUtilities.getInstance().isUserAuthenticated
+
+        // notificationBadge
+        if (ChatAWSAmplify.sessionStateType != null) {
+            val badgeBackgroundDrawable = when (ChatAWSAmplify.sessionStateType) {
+                SessionStateType.DISCONNECT -> bindDrawable(R.drawable.nb_badge_disconnect_bg)
+                else -> bindDrawable(R.drawable.nb_badge_bg)
+            }
+
+            notificationBadge?.badgeBackgroundDrawable = badgeBackgroundDrawable
+            onlineChatImageViewIndicator?.background = badgeBackgroundDrawable
+        }
 
         if (isUserAuthenticated && isServiceRunning && messageCount > 0) {
             notificationBadge?.setNumber(messageCount, true)
@@ -298,7 +311,7 @@ class ChatFloatingActionButtonBubbleView(
         activity?.lifecycle?.addObserver(this@ChatFloatingActionButtonBubbleView)
     }
 
-    val messageCountBroadcastReceiver = object : BroadcastReceiver() {
+    var messageCountBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             activity?.runOnUiThread {
                 if (floatingActionButton?.isShown == true)
@@ -314,12 +327,17 @@ class ChatFloatingActionButtonBubbleView(
 
     // Unregister since the activity is not visible
     private fun unregisterReceiver() {
-        receiverManager?.unregisterReceiver(messageCountBroadcastReceiver)
+        try {
+            receiverManager?.unregisterReceiver(messageCountBroadcastReceiver)
+        } catch (ex: IllegalArgumentException) {
+            FirebaseManager.logException("unregisterReceiver messageCountBroadcastReceiver $ex")
+        }
     }
 
     companion object {
         const val UNREAD_MESSAGE_COUNT = "unread_message_count"
         const val LIVE_CHAT_SUBSCRIPTION_RESULT = "live_chat_subscription_result"
+        const val LIVE_CHAT_NO_INTERNET_RESULT = "live_chat_no_internet_result"
         const val LIVE_CHAT_PACKAGE = "live.chat.subscription.result.SUBSCRIBE.DATA"
         const val LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE = "live.chat.message.COUNT.DATA"
     }

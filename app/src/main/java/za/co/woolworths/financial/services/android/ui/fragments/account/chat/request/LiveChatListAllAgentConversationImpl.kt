@@ -14,7 +14,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.mod
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
 import za.co.woolworths.financial.services.android.util.Assets
-import java.util.HashMap
+import java.text.SimpleDateFormat
+import java.util.*
 
 class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
 
@@ -42,19 +43,19 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
         API.query(
             request(conversationId),
             { messagesByConversationList ->
-
                 val defaultMessageList = ChatAWSAmplify.getChatMessageList()?.toMutableList()
+
+                // reset agent profile icon flag to default
                 defaultMessageList?.forEach {
                     (it as? UserMessage)?.isWoolworthIconVisible = true
                     (it as? SendMessageResponse)?.isWoolworthIconVisible = true
                 }
-                val agentConversationList: GetMessagesByConversation? =
-                    messagesByConversationList.data
-                val agentMessageList: MutableList<SendMessageResponse>? =
-                    agentConversationList?.items?.toMutableList()
 
-                agentMessageList?.sortedByDescending { it.createdAt }
-                agentMessageList?.reversed()
+                val agentMessageList: MutableList<SendMessageResponse>? =
+                    messagesByConversationList.data?.items?.toMutableList()
+
+                agentMessageList?.sortedBy { it.createdAt?.toDate() }
+
                 val chatMessageAgent = mutableListOf<ChatMessage>()
                 agentMessageList?.forEach { chatMessageAgent.add(it) }
                 /**
@@ -84,5 +85,9 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
             { apiException ->
                 onFailure(apiException)
             })
+    }
+
+    fun String.toDate(): Date? {
+        return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).parse(this)
     }
 }

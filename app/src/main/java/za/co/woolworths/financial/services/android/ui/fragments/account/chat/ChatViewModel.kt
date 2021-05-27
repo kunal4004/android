@@ -27,11 +27,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatAuthImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatListAllAgentConversationImpl
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.ActivityType
 
@@ -284,9 +282,6 @@ class ChatViewModel : ViewModel() {
 
     fun isChatServiceRunning(activity: Activity?): Boolean {
         activity ?: return false
-        return ServiceTools.checkServiceRunning(
-            activity,
-            LiveChatService::class.java
-        )
+        return ChatAWSAmplify.isLiveChatBackgroundServiceRunning
     }
 }
