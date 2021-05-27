@@ -251,6 +251,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         } else if (productLists.size == 1) {
             (activity as? BottomNavigationActivity)?.apply {
                 popFragmentNoAnim()
+                isReloadNeeded = false
                 openProductDetailFragment(mSubCategoryName, productLists[0])
             }
 
@@ -1093,8 +1094,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
         if (isMultiSelectCategoryRefined) {
             updateProductRequestBodyForRefinement(navigationState)
-            reloadProductsWithSortAndFilter()
-        } else {
+        }
             (activity as? BottomNavigationActivity)?.pushFragment(
                 newInstance(
                     mSearchType,
@@ -1104,7 +1104,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     productRequestBody.sortOption
                 )
             )
-        }
     }
 
     fun onResetFilter() {
