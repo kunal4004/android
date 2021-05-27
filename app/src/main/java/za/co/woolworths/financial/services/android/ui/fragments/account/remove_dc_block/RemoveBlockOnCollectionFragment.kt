@@ -36,8 +36,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragmentDirections
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.store_card.StoreCardFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.*
@@ -148,7 +146,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun navigatePayMyAccountStoreCard() {
+    private fun navigatePayMyAccountStoreCard() {
         payMyAccountViewModel.resetAmountEnteredToDefault()
 
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
@@ -166,14 +164,14 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
 
         navigateToPayMyAccount {
             try {
-                safeNavigateFromNavController(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
+                safeNavigateFromNavController(RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockDCFragmentToEnterPaymentAmountDetailFragment())
             } catch (ex: IllegalStateException) {
                 FirebaseManager.logException(ex)
             }
         }
     }
 
-    fun navigatePayMyAccountPersonalLoan() {
+    private fun navigatePayMyAccountPersonalLoan() {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
 
         if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
@@ -183,13 +181,12 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
 
         payMyAccountViewModel.resetAmountEnteredToDefault()
 
-        // TODO FIXME: Getting white screen first time this goes through
         navigateToPayMyAccount {
-            safeNavigateFromNavController(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment())
+            safeNavigateFromNavController(RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockDCFragmentToEnterPaymentAmountDetailFragment())
         }
     }
 
-    fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
+    private fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
         val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
         val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         val payUMethodType = payMyAccountViewModel.getCardDetail()?.payuMethodType
@@ -199,12 +196,12 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun navigateToPayMyAccountActivity() {
+    private fun navigateToPayMyAccountActivity() {
         if (fragmentAlreadyAdded()) return
         activity?.let { activity -> ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail()) }
     }
 
-    fun navigateToRecentTransactionActivity() {
+    private fun navigateToRecentTransactionActivity() {
         activity?.let { activity ->
             val applyNowState = accountData?.first
             val propertyName = when (applyNowState) {
@@ -227,7 +224,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun navigateToStatementActivity() {
+    private fun navigateToStatementActivity() {
         accountData?.apply {
 
             val applyNowState = accountData?.first

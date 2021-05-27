@@ -1919,6 +1919,7 @@
     <string name="credit_and_combination_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account. Combination cards will be treated as a credit card.</string>
     <string name="select_or_enter_a_payment_amount_label">Select or Enter\nPayment Amount</string>
     <string name="overdue_amount_label">Overdue Amount</string>
+    <string name="current_balance_label">Current Balance</string>
     <string name="currency_placeholder">R 0.00</string>
     <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
     <string name="generic_error_message_for_redeem_voucher">One or more of your vouchers could not be applied. Please see below for details.</string>

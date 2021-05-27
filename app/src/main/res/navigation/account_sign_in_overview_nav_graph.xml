@@ -106,7 +106,14 @@
     <fragment
         android:id="@+id/removeBlockDCFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockOnCollectionFragment"
-        android:label="remove_block_d_c_fragment"
-        tools:layout="@layout/remove_block_dc_fragment" />
+        android:label="remove_block_dc_fragment"
+        tools:layout="@layout/remove_block_dc_fragment" >
+        <action
+            android:id="@+id/action_removeBlockDCFragment_to_enterPaymentAmountDetailFragment"
+            app:destination="@id/toCardDetailFragmentDialog" />
+        <action
+            android:id="@+id/action_removeBlockDCFragment_to_payMyAccountRetryErrorFragment"
+            app:destination="@id/payMyAccountRetryErrorFragment" />
+    </fragment>
 
 </navigation>
