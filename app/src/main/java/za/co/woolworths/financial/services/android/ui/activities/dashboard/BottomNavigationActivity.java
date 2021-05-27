@@ -607,7 +607,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     return true;
 
                 case R.id.navigate_to_cart:
-                    replaceAccountIcon(item);
                     setCurrentSection(R.id.navigate_to_cart);
                     identifyTokenValidationAPI();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU);

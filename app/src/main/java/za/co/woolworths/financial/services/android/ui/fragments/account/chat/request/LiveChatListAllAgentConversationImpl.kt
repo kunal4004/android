@@ -51,10 +51,10 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                     (it as? SendMessageResponse)?.isWoolworthIconVisible = true
                 }
 
-                val agentMessageList: MutableList<SendMessageResponse>? =
+                var agentMessageList: MutableList<SendMessageResponse>? =
                     messagesByConversationList.data?.items?.toMutableList()
 
-                agentMessageList?.sortedBy { it.createdAt?.toDate() }
+                agentMessageList = agentMessageList?.sortedBy { it.createdAt?.toDate() }?.toMutableList()
 
                 val chatMessageAgent = mutableListOf<ChatMessage>()
                 agentMessageList?.forEach { chatMessageAgent.add(it) }

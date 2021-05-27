@@ -38,7 +38,6 @@ class LiveChatService : Service() {
 
     private var receiverManager: ReceiverManager? = null
     private val liveChatDBRepository = LiveChatDBRepository()
-    private var isConnectedToInternet = true
     private val liveChat = LiveChat(
         LiveChatAuthImpl(),
         LiveChatConversationImpl(),

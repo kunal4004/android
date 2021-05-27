@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.request
 
+import android.util.Log
 import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.auth.result.AuthSignInResult
@@ -26,6 +27,7 @@ class LiveChatAuthImpl : ILiveChatAuth {
                 onFailure(authException)
             })
         } catch (ex: IllegalStateException) {
+            Log.e("signIn", "IllegalStateException $ex")
             FirebaseManager.logException(ex)
         }
     }
