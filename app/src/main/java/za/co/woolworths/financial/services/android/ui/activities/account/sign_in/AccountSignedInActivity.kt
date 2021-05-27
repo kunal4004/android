@@ -155,6 +155,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
                     navigationController?.graph?.startDestination = R.id.removeBlockDCFragment
                     navigationController?.setGraph(navigationController.graph, bundleOf())
+                    navigationController?.navigate(R.id.removeBlockOnCollectionDialogFragment)
                 }
                 else -> {
                     window?.decorView?.fitsSystemWindows = true

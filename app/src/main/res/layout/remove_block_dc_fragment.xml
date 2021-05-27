@@ -8,6 +8,13 @@
     android:background="@drawable/personal_loan_background"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockOnCollectionFragment">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
     <include
         android:id="@+id/include"
         layout="@layout/my_account_product_landing_toolbar"
@@ -16,7 +23,7 @@
         android:layout_marginTop="@dimen/twelve_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/topGuideLine" />
 
     <TextView
         android:id="@+id/accountInArrearsTextview"

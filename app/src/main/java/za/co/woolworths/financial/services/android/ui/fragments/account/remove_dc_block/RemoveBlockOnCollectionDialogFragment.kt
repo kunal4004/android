@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.account_in_arrears_alert_dialog_fragment.*
+import kotlinx.android.synthetic.main.remove_block_on_collection_dialog.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
@@ -35,7 +35,6 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
-
         closeIconImageButton?.apply {
             setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
@@ -49,6 +48,8 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
                 dismiss()
                 setFragmentResult(mClassName, bundleOf(mClassName to ARREARS_PAY_NOW_BUTTON))
             }
+
+            R.id.closeIconImageButton -> dismiss()
         }
     }
 }

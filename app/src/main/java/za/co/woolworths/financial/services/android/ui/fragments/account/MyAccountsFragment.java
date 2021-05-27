@@ -648,11 +648,15 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             hideView(retryCreditCardLinearLayout);
             //Check with AccountNumber and change the image accordingly
             this.mCreditCardAccount = account;
-            if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
-                imgCreditCard.setBackgroundResource(R.drawable.small_5);
-            } else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
-                imgCreditCard.setBackgroundResource(R.drawable.small_4);
-            } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+            if (account.accountNumberBin != null) {
+                if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+                    imgCreditCard.setBackgroundResource(R.drawable.small_5);
+                } else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+                    imgCreditCard.setBackgroundResource(R.drawable.small_4);
+                } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+                    imgCreditCard.setBackgroundResource(R.drawable.small_3);
+                }
+            } else {
                 imgCreditCard.setBackgroundResource(R.drawable.small_3);
             }
 

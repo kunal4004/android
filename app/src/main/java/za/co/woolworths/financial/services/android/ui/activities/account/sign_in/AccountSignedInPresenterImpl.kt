@@ -86,7 +86,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 Utils.SILVER_CARD -> Pair(ApplyNowState.SILVER_CREDIT_CARD, account)
                 Utils.BLACK_CARD -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
                 Utils.GOLD_CARD -> Pair(ApplyNowState.GOLD_CREDIT_CARD, account)
-                else -> throw RuntimeException("Invalid  accountNumberBin ${account.accountNumberBin}")
+                else -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
             }
             AccountsProductGroupCode.PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
             else -> throw RuntimeException("Invalid  productGroupCode ${account?.productGroupCode}")

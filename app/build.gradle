@@ -207,7 +207,7 @@ dependencies {
     api 'com.google.zxing:core:3.3.3'
 
     api 'com.google.zxing:android-core:3.3.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
     //noinspection LifecycleAnnotationProcessorWithJava8
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.3.0'
     implementation 'me.relex:circleindicator:2.1.0@aar'
