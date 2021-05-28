@@ -1091,20 +1091,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
-        if (isMultiSelectCategoryRefined) {
+        if (isMultiSelectCategoryRefined)
             updateProductRequestBodyForRefinement(navigationState)
-            reloadProductsWithSortAndFilter()
-        } else {
-            (activity as? BottomNavigationActivity)?.pushFragment(
-                newInstance(
-                    mSearchType,
-                    mSubCategoryName,
-                    mSearchTerm,
-                    navigationState,
-                    productRequestBody.sortOption
-                )
+        (activity as? BottomNavigationActivity)?.pushFragment(
+            newInstance(
+                mSearchType,
+                mSubCategoryName,
+                mSearchTerm,
+                navigationState,
+                productRequestBody.sortOption
             )
-        }
+        )
     }
 
     fun onResetFilter() {
