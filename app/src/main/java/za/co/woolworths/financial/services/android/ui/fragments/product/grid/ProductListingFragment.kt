@@ -230,7 +230,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
-        mProductList = ArrayList()
+        if (mProductList?.isNullOrEmpty() == true)
+            mProductList = ArrayList()
         response.history?.apply {
             if (categoryDimensions.isNotEmpty()) {
                 mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
