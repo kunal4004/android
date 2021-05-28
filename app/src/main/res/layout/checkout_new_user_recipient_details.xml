@@ -8,13 +8,15 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/thirty_two_dp">
+        android:paddingBottom="@dimen/twenty_four_dp">
 
         <TextView
             android:id="@+id/recipientDetailsTitle"
             style="@style/futura_semi_bold_black"
             android:contentDescription="@string/cd_ccd_lablerecipientdetailstitle"
             android:letterSpacing="0.1"
+            android:paddingTop="@dimen/two_dp"
+            android:paddingBottom="@dimen/two_dp"
             android:text="@string/recipient_details"
             android:textSize="@dimen/twenty_sp"
             app:layout_constraintRight_toRightOf="@id/right_guideline"
@@ -24,8 +26,10 @@
         <TextView
             android:id="@+id/recipientNamePlaceHolder"
             style="@style/myriad_pro_regular_black"
-            android:layout_marginTop="@dimen/thirty_two_dp"
+            android:layout_marginTop="@dimen/twenty_dp"
             android:contentDescription="@string/cd_ccd_labelrecipientname"
+            android:paddingTop="@dimen/two_dp"
+            android:paddingBottom="@dimen/two_dp"
             android:text="@string/name_colon_text_view"
             android:textSize="@dimen/fourteen_sp"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -58,6 +62,8 @@
             style="@style/myriad_pro_regular_black"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:contentDescription="@string/cd_ccd_labelcellphonenumber"
+            android:paddingTop="@dimen/two_dp"
+            android:paddingBottom="@dimen/two_dp"
             android:text="@string/mobile_number_text_view"
             android:textSize="@dimen/fourteen_sp"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -68,7 +74,6 @@
             android:id="@+id/cellphoneNumber"
             style="@style/credi_card_delivery_edittext_style"
             android:contentDescription="@string/cd_ccd_txtcellphonenumber"
-            android:hint="@string/phone_no_hint"
             android:inputType="number"
             android:maxLength="10"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
