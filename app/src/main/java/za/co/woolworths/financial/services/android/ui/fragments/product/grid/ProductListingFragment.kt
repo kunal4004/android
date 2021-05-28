@@ -252,6 +252,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         } else if (productLists.size == 1) {
             (activity as? BottomNavigationActivity)?.apply {
                 popFragmentNoAnim()
+                isReloadNeeded = false
                 openProductDetailFragment(mSubCategoryName, productLists[0])
             }
 
@@ -676,7 +677,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 if (resultCode == Activity.RESULT_CANCELED || resultCode == DISMISS_POP_WINDOW_CLICKED) {
                     val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
                     val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-                    if ((currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) || (currentStoreId == null && !(localSuburbId.equals(
+                    if (currentStoreId == null && currentSuburbId == null) {
+                        //Fresh install with no location selection.
+                        return
+                    }
+                    else if ((currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) || (currentStoreId == null && !(localSuburbId.equals(
                             currentSuburbId
                         )))
                     )
