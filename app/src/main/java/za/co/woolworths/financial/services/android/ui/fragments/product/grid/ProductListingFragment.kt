@@ -230,7 +230,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
-        mProductList = ArrayList()
+        if (mProductList?.isNullOrEmpty() == true)
+            mProductList = ArrayList()
         response.history?.apply {
             if (categoryDimensions.isNotEmpty()) {
                 mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
@@ -1092,18 +1093,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
-        if (isMultiSelectCategoryRefined) {
+        if (isMultiSelectCategoryRefined)
             updateProductRequestBodyForRefinement(navigationState)
-        }
-            (activity as? BottomNavigationActivity)?.pushFragment(
-                newInstance(
-                    mSearchType,
-                    mSubCategoryName,
-                    mSearchTerm,
-                    navigationState,
-                    productRequestBody.sortOption
-                )
+        (activity as? BottomNavigationActivity)?.pushFragment(
+            newInstance(
+                mSearchType,
+                mSubCategoryName,
+                mSearchTerm,
+                navigationState,
+                productRequestBody.sortOption
             )
+        )
     }
 
     fun onResetFilter() {
