@@ -252,6 +252,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         } else if (productLists.size == 1) {
             (activity as? BottomNavigationActivity)?.apply {
                 popFragmentNoAnim()
+                isReloadNeeded = false
                 openProductDetailFragment(mSubCategoryName, productLists[0])
             }
 
