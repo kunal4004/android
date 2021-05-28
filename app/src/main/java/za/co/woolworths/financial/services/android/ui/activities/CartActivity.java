@@ -229,15 +229,6 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
                 bottomFragment.onActivityResult(requestCode, resultCode, data);
             }
         }
-        /***
-         * Result from success add to cart
-         */
-
-        if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
-            if (fragment instanceof CartFragment) {
-                fragment.onActivityResult(requestCode, resultCode, data);
-            }
-        }
 
         //DISMISS_POP_WINDOW_CLICKED
         //Cancel button click from session expired pop-up dialog
