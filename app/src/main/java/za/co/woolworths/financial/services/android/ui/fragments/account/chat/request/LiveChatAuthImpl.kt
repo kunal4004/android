@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.request
 
 import android.util.Log
-import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.options.AuthSignOutOptions
 import com.amplifyframework.auth.result.AuthSignInResult
 import com.amplifyframework.core.Amplify.Auth
@@ -16,7 +15,7 @@ class LiveChatAuthImpl : ILiveChatAuth {
     private val sendMessage = LiveChatSendMessageImpl()
     private val liveChatListAllAgentConversation = LiveChatDBRepository()
 
-    override fun signIn(onSuccess: (AuthSignInResult) -> Unit, onFailure: (AuthException) -> Unit) {
+    override fun signIn(onSuccess: (AuthSignInResult) -> Unit, onFailure: (Any) -> Unit) {
         val networkConfig = NetworkConfig()
         val username = networkConfig.getApiId()
         val password = networkConfig.getSha1Password()
@@ -27,6 +26,7 @@ class LiveChatAuthImpl : ILiveChatAuth {
                 onFailure(authException)
             })
         } catch (ex: IllegalStateException) {
+            onFailure(ex)
             Log.e("signIn", "IllegalStateException $ex")
             FirebaseManager.logException(ex)
         }

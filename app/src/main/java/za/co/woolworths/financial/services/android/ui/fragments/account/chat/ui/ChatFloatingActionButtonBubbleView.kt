@@ -42,7 +42,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatExtraParams
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.views.NotificationBadge
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension

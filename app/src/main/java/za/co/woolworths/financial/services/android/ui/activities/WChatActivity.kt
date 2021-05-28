@@ -290,5 +290,4 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
     fun updateToolbarTitle(@IntegerRes title: Int?) {
         agentNameTextView?.text = title?.let { name -> bindString(name) }
     }
-
 }

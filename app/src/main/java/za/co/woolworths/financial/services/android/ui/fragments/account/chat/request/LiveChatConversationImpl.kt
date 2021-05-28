@@ -26,5 +26,4 @@ class LiveChatConversationImpl : ILiveChatConversation {
     private fun request(): GraphQLRequest<Conversation> {
         return SimpleGraphQLRequest(createConversation, HashMap(), Conversation::class.java, GsonVariablesSerializer())
     }
-
 }

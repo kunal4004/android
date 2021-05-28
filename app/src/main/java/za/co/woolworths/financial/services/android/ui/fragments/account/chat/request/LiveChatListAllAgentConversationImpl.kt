@@ -19,6 +19,10 @@ import java.util.*
 
 class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
 
+    companion object {
+        const val DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    }
+
     private val listMessageByConversation: String =
         Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
     private val liveChatDBRepository = LiveChatDBRepository()
@@ -35,52 +39,63 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
         )
     }
 
-    override fun list(
+    override fun messageListFromAgent(
         onSuccess: (Pair<MutableList<ChatMessage>?, SendMessageResponse?>) -> Unit,
         onFailure: (ApiException) -> Unit
     ) {
         val conversationId = liveChatDBRepository.getConversationMessageId()
         API.query(
             request(conversationId),
-            { messagesByConversationList ->
-                val defaultMessageList = ChatAWSAmplify.getChatMessageList()?.toMutableList()
+            { agentMessagesList ->
+                val messageListFromChatAdapter =
+                    ChatAWSAmplify.getChatMessageList()?.toMutableList()
 
                 // reset agent profile icon flag to default
-                defaultMessageList?.forEach {
+                messageListFromChatAdapter?.forEach {
                     (it as? UserMessage)?.isWoolworthIconVisible = true
                     (it as? SendMessageResponse)?.isWoolworthIconVisible = true
                 }
 
-                var agentMessageList: MutableList<SendMessageResponse>? =
-                    messagesByConversationList.data?.items?.toMutableList()
+                // Get agent message list
+                var listOfAllConversationByAgent: MutableList<SendMessageResponse>? =
+                    agentMessagesList.data?.items?.toMutableList()
 
-                agentMessageList = agentMessageList?.sortedBy { it.createdAt?.toDate() }?.toMutableList()
+                // Sort agent list by createdAt Date Field
+                listOfAllConversationByAgent =
+                    listOfAllConversationByAgent
+                        ?.sortedBy { it.createdAt?.toDate() }
+                        ?.toMutableList()
 
+                // Convert MutableList<SendMessageResponse> to mutableListOf<ChatMessage>()
                 val chatMessageAgent = mutableListOf<ChatMessage>()
-                agentMessageList?.forEach { chatMessageAgent.add(it) }
-                /**
-                 * filter messageByConversation List and list of message from adapter,
-                 * and remove duplicates
-                 * groupBy creates a Map with a key as defined in the Lambda (id in this case),
-                 * and a List of the items
-                 */
+                listOfAllConversationByAgent?.forEach { chatMessageAgent.add(it) }
 
-                val messages: MutableList<ChatMessage>? =
-                    defaultMessageList?.plus(chatMessageAgent)?.distinct()?.toMutableList()
-                messages?.forEach {
+                // Create a new list with Adapter Messages and Agent Message and remove duplicate items
+                val newMessageList: MutableList<ChatMessage>? = messageListFromChatAdapter
+                        ?.plus(chatMessageAgent)
+                        ?.distinct()
+                        ?.toMutableList()
+
+                // Remove empty messages from list
+                newMessageList?.forEach {
                     val message = when (it) {
                         is SendMessageResponse -> it.content
                         is UserMessage -> it.message
                     }
                     if (TextUtils.isEmpty(message))
-                        messages.remove(it)
+                        newMessageList.remove(it)
                 }
 
-                ChatAWSAmplify.listAllChatMessages = messages
-                val latestAgentMessage =
-                    messages?.groupBy { it as? SendMessageResponse }?.keys?.lastOrNull()
+                //Keep a reference of new list
+                ChatAWSAmplify.listAllChatMessages = newMessageList
 
-                onSuccess(Pair(messages, latestAgentMessage))
+                //Last Message will determine sessionStateType of UI component
+                val lastMessage = newMessageList
+                        ?.groupBy { it as? SendMessageResponse }?.keys
+                        ?.lastOrNull()
+
+                // emit result as Pair(first, second)
+                onSuccess(Pair(newMessageList, lastMessage))
             },
             { apiException ->
                 onFailure(apiException)
@@ -88,6 +103,6 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
     }
 
     fun String.toDate(): Date? {
-        return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).parse(this)
+        return SimpleDateFormat(DATE_PATTERN, Locale.US).parse(this)
     }
 }

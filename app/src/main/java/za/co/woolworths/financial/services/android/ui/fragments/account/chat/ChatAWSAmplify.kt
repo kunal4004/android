@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
-import android.util.Log
 import com.amplifyframework.api.aws.AWSApiPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
@@ -15,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 object ChatAWSAmplify {
@@ -24,6 +24,7 @@ object ChatAWSAmplify {
     var isLiveChatActivated: Boolean = false
     var sessionStateType : SessionStateType? = null
     var isLiveChatBackgroundServiceRunning = false
+    var isConnectedToInternet = true
     var BOTTOM_NAVIGATION_BADGE_COUNT: Int = 100000
 
     init {
@@ -56,10 +57,8 @@ object ChatAWSAmplify {
                 Amplify.addPlugin(AWSApiPlugin())
                 Amplify.configure(awsConfiguration, context)
                 DeveloperMenu.singletonInstance(context).setVisible(false)
-                Log.e("awsException", "successful")
             } catch (ex: Exception) {
-                Log.e("awsException", ex.toString())
-                // FirebaseManager.logException(ex)
+                 FirebaseManager.logException(ex)
             }
         }
     }

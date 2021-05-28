@@ -18,10 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.chat_activity.*
 import kotlinx.android.synthetic.main.chat_fragment.*
+import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
+import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
@@ -87,7 +89,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
     }
 
     private fun ChatViewModel.listAllMessages() {
-        liveChatListAllAgentConversation.list({ chatList ->
+        liveChatListAllAgentConversation.messageListFromAgent({ chatList ->
             mChatAdapter?.clear()
             chatList.first?.forEach { item ->
                 val content = when (item) {
@@ -260,7 +262,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                         if (hasConnection && !isConnectedToNetwork) {
                             isConnectedToNetwork = true
                             with(chatViewModel) {
-                                liveChatListAllAgentConversation.list({ messagesByConversation ->
+                                liveChatListAllAgentConversation.messageListFromAgent({ messagesByConversation ->
                                     mChatAdapter?.clear()
                                     messagesByConversation.first?.forEach { item ->
                                         showMessage(item)
@@ -285,11 +287,11 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
     }
 
     fun subscribeErrorResponse() {
-//        GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-//            val serviceUnavailable = chatViewModel.getServiceUnavailableMessage()
-//            showAgentsMessage(serviceUnavailable.second, serviceUnavailable.first)
-//            chatLoaderProgressBar?.visibility = GONE
-//        }
+        GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            activity ?: return@doAfterDelay
+            ServiceTools.stop(activity, LiveChatService::class.java)
+            chatLoaderProgressBar?.visibility = GONE
+        }
     }
 
     private fun showMessage(message: ChatMessage) {
