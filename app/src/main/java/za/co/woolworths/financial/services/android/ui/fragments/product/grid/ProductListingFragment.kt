@@ -230,7 +230,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
-        mProductList = ArrayList()
+        if (mProductList?.isNullOrEmpty() == true)
+            mProductList = ArrayList()
         response.history?.apply {
             if (categoryDimensions.isNotEmpty()) {
                 mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
@@ -251,6 +252,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         } else if (productLists.size == 1) {
             (activity as? BottomNavigationActivity)?.apply {
                 popFragmentNoAnim()
+                isReloadNeeded = false
                 openProductDetailFragment(mSubCategoryName, productLists[0])
             }
 
@@ -675,7 +677,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 if (resultCode == Activity.RESULT_CANCELED || resultCode == DISMISS_POP_WINDOW_CLICKED) {
                     val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
                     val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-                    if ((currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) || (currentStoreId == null && !(localSuburbId.equals(
+                    if (currentStoreId == null && currentSuburbId == null) {
+                        //Fresh install with no location selection.
+                        return
+                    }
+                    else if ((currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) || (currentStoreId == null && !(localSuburbId.equals(
                             currentSuburbId
                         )))
                     )
@@ -1091,20 +1097,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
-        if (isMultiSelectCategoryRefined) {
+        if (isMultiSelectCategoryRefined)
             updateProductRequestBodyForRefinement(navigationState)
-            reloadProductsWithSortAndFilter()
-        } else {
-            (activity as? BottomNavigationActivity)?.pushFragment(
-                newInstance(
-                    mSearchType,
-                    mSubCategoryName,
-                    mSearchTerm,
-                    navigationState,
-                    productRequestBody.sortOption
-                )
+        (activity as? BottomNavigationActivity)?.pushFragment(
+            newInstance(
+                mSearchType,
+                mSubCategoryName,
+                mSearchTerm,
+                navigationState,
+                productRequestBody.sortOption
             )
-        }
+        )
     }
 
     fun onResetFilter() {

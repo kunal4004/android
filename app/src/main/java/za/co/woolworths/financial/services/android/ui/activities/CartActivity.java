@@ -39,7 +39,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.AddToSho
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 
 public class CartActivity extends BottomActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem, ToastUtils.ToastInterface, IToastInterface {
 
@@ -52,6 +51,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public static final int CHECKOUT_SUCCESS = 13134;
     private FrameLayout flContentFrame;
     private boolean toastButtonWasClicked = false;
+    private int localCartCount = 0;
     public static final int RESULT_PREVENT_CART_SUMMARY_CALL = 121;
     public static final String TAG = "CartActivity";
 
@@ -87,6 +87,8 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, cartFragment, TAG).commit();
+
+        localCartCount = QueryBadgeCounter.getInstance().getCartItemCount();
 
         //One time biometricsWalkthrough
         ScreenManager.presentBiometricWalkthrough(CartActivity.this);
@@ -137,8 +139,9 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     }
 
     public void finishActivity() {
+        int currentCartCount = cartFragment.productCountMap.getTotalProductCount();
         // Check to prevent DISMISS_POP_WINDOW_CLICKED override setResult for toast clicked event
-        if (!toastButtonWasClicked) {
+        if (!toastButtonWasClicked && localCartCount !=currentCartCount) {
             this.setResult(DISMISS_POP_WINDOW_CLICKED);
         }
 
@@ -227,15 +230,6 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         if (bottomFragment != null) {
             if (bottomFragment != null && bottomFragment instanceof ProductDetailsFragment) {
                 bottomFragment.onActivityResult(requestCode, resultCode, data);
-            }
-        }
-        /***
-         * Result from success add to cart
-         */
-
-        if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
-            if (fragment instanceof CartFragment) {
-                fragment.onActivityResult(requestCode, resultCode, data);
             }
         }
 
