@@ -65,8 +65,6 @@ class AccountInArrearsDialogFragment : AppCompatDialogFragment(), View.OnClickLi
             setOnClickListener(this@AccountInArrearsDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
-
-
     }
 
     override fun onClick(v: View?) {

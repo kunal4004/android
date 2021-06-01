@@ -925,8 +925,8 @@
     <string name="product_details">Product Details</string>
     <string name="nutritional_information">Nutritional Information</string>
     <string name="get_temp_sc_title">Congrats, you have been selected to trial our new Woolies Virtual Temp Card at selected Woolies’ stores.</string>
-   <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
-   <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
+    <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
+    <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
     <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
@@ -2026,7 +2026,11 @@
     <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
     <string name="payment_delay_note_label">Please note that payments may take up to 5 business days to reflect on your account.</string>
-    <string name="internet_waiting_subtitle">Waiting for internet connection...</string>
+    <string name="internet_waiting_subtitle">Waiting for internet connection…</string>
+    <string name="chat_title">chat</string>
+    <string name="chat_notification_title">You have received a message.</string>
+    <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
+    <string name="woolies_chat_active">Chat is currently active</string>
 
     <!--Native Checkout-->
     <string name="name_colon_text_view">Name:*</string>
