@@ -151,7 +151,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     override fun removeBlocksOnCollectionCustomer() {
         availableFundFragmentFrameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
-<<<<<<< HEAD
         removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
         val removeBlockOnCollectionFragmentContainerView = supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
         val navigationController: NavController? = removeBlockOnCollectionFragmentContainerView?.navController
@@ -169,12 +168,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 }
             }
         }
-=======
-        sixMonthArrearsFrameLayout?.visibility = VISIBLE
-        val sixMonthArrearsNavHost =
-            supportFragmentManager.findFragmentById(R.id.six_month_arrears_nav_host) as NavHostFragment
-        mAccountSignedInPresenter?.setAccountSixMonthInArrears(sixMonthArrearsNavHost.navController)
->>>>>>> 16fc10ab8cc3c57a4bc03cb53393ae0699148294
     }
 
     override fun bottomSheetIsExpanded(): Boolean {

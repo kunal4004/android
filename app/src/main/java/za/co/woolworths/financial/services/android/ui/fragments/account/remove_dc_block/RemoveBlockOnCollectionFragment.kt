@@ -36,7 +36,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -214,7 +214,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
                 intent.putExtra("productOfferingId", productOfferingId.toString())
                 intent.putExtra(
-                    ChatExtensionFragment.ACCOUNTS,
+                    ChatFragment.ACCOUNTS,
                     Gson().toJson(Pair(applyNowState, this))
                 )
                 intent.putExtra("cardType", productGroupCode?.toUpperCase())
@@ -238,7 +238,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
             activity?.apply {
                 val openStatement = Intent(this, StatementActivity::class.java)
                 openStatement.putExtra(
-                    ChatExtensionFragment.ACCOUNTS,
+                    ChatFragment.ACCOUNTS,
                     Gson().toJson(
                         Pair(
                             applyNowState,
