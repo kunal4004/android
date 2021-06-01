@@ -2038,4 +2038,5 @@
     <string name="province_colon_text_view">Province:*</string>
     <string name="postal_code_colon_text_view">Postal Code:*</string>
     <string name="optional_hint">Optional</string>
+    <string name="places_autocomplete_tv_hint">Enter a new address</string>
 </resources>

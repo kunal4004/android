@@ -22,20 +22,15 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <fragment
-                android:id="@+id/place_autocomplete_fragment"
-                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints" />
-
             <View
                 android:id="@+id/deliveringPartition"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/six_dp"
                 android:layout_marginTop="@dimen/six_dp"
-                app:layout_constraintTop_toBottomOf="@+id/place_autocomplete_fragment"
-                android:background="@color/color_D8D8D8" />
+                android:background="@color/color_D8D8D8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <include
                 android:id="@+id/recipientAddressLayout"
@@ -50,8 +45,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/six_dp"
                 android:layout_marginTop="@dimen/six_dp"
-                app:layout_constraintTop_toBottomOf="@+id/recipientAddressLayout"
-                android:background="@color/color_D8D8D8" />
+                android:background="@color/color_D8D8D8"
+                app:layout_constraintTop_toBottomOf="@+id/recipientAddressLayout" />
 
             <include
                 android:id="@+id/recipientDetailsLayout"
