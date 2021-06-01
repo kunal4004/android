@@ -2511,15 +2511,4 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-
-    <declare-styleable name="FloatingActionButtonBadgeCounter">
-        <attr name="badgeTextColor" format="color" />
-        <attr name="badgeBackgroundColor" format="color" />
-        <attr name="badgePosition" format="enum">
-            <enum name="RightTop" value="0" />
-            <enum name="LeftBottom" value="1" />
-            <enum name="LeftTop" value="2" />
-            <enum name="RightBottom" value="3" />
-        </attr>
-    </declare-styleable>
 </resources>
