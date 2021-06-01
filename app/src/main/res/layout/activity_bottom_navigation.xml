@@ -1,101 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:sothree="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:fitsSystemWindows="true"
-        tools:context="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity">
 
     <data>
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
         <variable
             name="viewModel"
-            type="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationViewModel"/>
+            type="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationViewModel" />
     </data>
-<androidx.drawerlayout.widget.DrawerLayout
-    android:id="@+id/drawerLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        app:contentScrim="?attr/colorPrimary"
-        >
 
-        <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
-            android:id="@+id/slideUpPanel"
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="bottom"
-            app:umanoPanelHeight="0dp"
-            app:umanoParallaxOffset="0dp"
-            app:umanoScrollableView="@+id/scrollProduct"
-            sothree:umanoDragView="@+id/detailsView"
-            sothree:umanoFadeColor="@android:color/transparent"
-            sothree:umanoOverlay="false"
-            sothree:umanoShadowHeight="0dp">
+            android:background="@color/white"
+            app:contentScrim="?attr/colorPrimary">
 
-            <RelativeLayout
+            <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+                android:id="@+id/slideUpPanel"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                >
+                android:gravity="bottom"
+                app:umanoPanelHeight="0dp"
+                app:umanoParallaxOffset="0dp"
+                app:umanoScrollableView="@+id/scrollProduct"
+                sothree:umanoDragView="@+id/detailsView"
+                sothree:umanoFadeColor="@android:color/transparent"
+                sothree:umanoOverlay="false"
+                sothree:umanoShadowHeight="0dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <FrameLayout
+                        android:id="@+id/frag_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_above="@+id/bottom_line"
+                        android:layout_below="@+id/incToolbar"
+                        android:layout_alignParentTop="true"
+                        android:background="@color/white"
+                        />
+
+                    <View
+                        android:id="@+id/bottom_line"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/one_dp"
+                        android:layout_above="@+id/wBottomNavigation"
+                        android:background="@color/recent_search_bg" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView
+                        android:id="@+id/wBottomNavigation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:background="@drawable/sub_category_header_bg"
+                        app:elevation="2dp"
+                        app:itemIconTint="@color/selector_item_gray_color"
+                        app:itemTextColor="@color/selector_item_gray_color"
+                        app:menu="@menu/menu_navigation" />
+
+                    <include
+                        android:id="@+id/incToolbar"
+                        layout="@layout/toolbar"
+
+                        />
+                </RelativeLayout>
 
                 <FrameLayout
-                    android:id="@+id/frag_container"
+                    android:id="@+id/fragment_bottom_container"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_above="@+id/bottom_line"
-                    android:layout_alignParentTop="true"
-                    android:layout_below="@+id/incToolbar"
-                    android:background="@color/white"
+                    android:layout_height="match_parent" />
+            </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-                    />
-
-                <View
-                    android:id="@+id/bottom_line"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_above="@+id/wBottomNavigation"
-                    android:background="@color/recent_search_bg"
-                    />
-
-                <za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView
-                    android:id="@+id/wBottomNavigation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:background="@drawable/sub_category_header_bg"
-
-                    app:elevation="0dp"
-                    app:itemIconTint="@color/selector_item_gray_color"
-                    app:itemTextColor="@color/selector_item_gray_color"
-                    app:menu="@menu/menu_navigation"/>
-
-                <include
-                    android:id="@+id/incToolbar"
-                    layout="@layout/toolbar"
-
-                    />
-            </RelativeLayout>
-
-            <FrameLayout
-                android:id="@+id/fragment_bottom_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
-        </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <FrameLayout
-        android:id="@+id/drawerFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:clickable="true"
-        android:contentDescription="@string/plp_refineDrawerFrameLayout"
-        android:background="@android:color/white"/>
-</androidx.drawerlayout.widget.DrawerLayout>
+        <FrameLayout
+            android:id="@+id/drawerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@android:color/white"
+            android:clickable="true"
+            android:contentDescription="@string/plp_refineDrawerFrameLayout" />
+    </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

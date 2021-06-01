@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -38,7 +39,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -66,9 +69,15 @@ import za.co.woolworths.financial.services.android.models.dto.contact_us.Contact
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
+import za.co.woolworths.financial.services.android.ui.activities.WChatActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.ServiceTools;
+
+import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
 
 
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
@@ -94,7 +103,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String cartCheckoutLink;
     private static JsonElement storeCardBlockReasons;
     private static String authenticVersionReleaseNote;
-
+    private Set<Class<Activity>> visibleActivities = new HashSet<>();
 
     private WGlobalState mWGlobalState;
 
@@ -305,7 +314,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         bus = new RxBus();
     }
 
-
     //#region ShowServerMessage
     public void showServerMessageOrProceed(Activity activity) {
         String passphrase = BuildConfig.VERSION_NAME + ", " + BuildConfig.SHA1;
@@ -341,27 +349,35 @@ public class WoolworthsApplication extends Application implements Application.Ac
             showServerMessageOrProceed(activity);
             shouldDisplayServerMessage = false;
         }
+
+        if (activity.getClass().equals(BottomNavigationActivity.class)) {
+            if (ChatAWSAmplify.INSTANCE == null)
+                ChatAWSAmplify.INSTANCE.init();
+        }
     }
 
     @Override
     public void onActivityStarted(Activity activity) {
         setCurrentActivity(activity);
-
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
         setCurrentActivity(activity);
+        if (activity != null) {
+            Class<Activity> activityClass = (Class<Activity>) activity.getClass();
+            visibleActivities.add(activityClass);
+        }
+
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-        setCurrentActivity(activity);
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
-
+        visibleActivities.remove(activity.getClass());
     }
 
     @Override
@@ -371,6 +387,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        if (!isAnyActivityVisible() && ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()) {
+            Intent intentDismissService = new Intent(CHANNEL_ID);
+            sendBroadcast(intentDismissService);
+        }
 
     }
     //#endregion
@@ -663,6 +683,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
         this.creditLimitIncrease = creditLimitIncrease;
     }
 
+    public boolean isAnyActivityVisible() {
+        return !visibleActivities.isEmpty();
+    }
+
     @VisibleForTesting
     public static void testSetInstance(WoolworthsApplication application) {
         mInstance = application;
@@ -672,4 +696,5 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public static void testSetContext(Context context) {
         mContextApplication = context;
     }
+
 }

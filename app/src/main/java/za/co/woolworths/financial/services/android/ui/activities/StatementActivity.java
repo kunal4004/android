@@ -36,7 +36,7 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.ACCOUNTS;
+import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.ACCOUNTS;
 
 public class StatementActivity extends AppCompatActivity implements PermissionResultCallback {
 

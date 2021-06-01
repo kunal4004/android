@@ -39,7 +39,6 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         const val RAND_AMOUNT_ZERO = "R 0.00"
     }
 
-
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {

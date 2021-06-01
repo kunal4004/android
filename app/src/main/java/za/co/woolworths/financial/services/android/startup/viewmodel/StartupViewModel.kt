@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.startup.viewmodel
 
+import android.app.Service
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
+import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
@@ -38,6 +40,7 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
         const val APP_SERVER_ENVIRONMENT_KEY = "app_server_environment"
         const val APP_VERSION_KEY = "app_version"
     }
+
 
     fun queryServiceGetConfig() = liveData(Dispatchers.IO) {
         emit(ConfigResource.loading(data = null))
