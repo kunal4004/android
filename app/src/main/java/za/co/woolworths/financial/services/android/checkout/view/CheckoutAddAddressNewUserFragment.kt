@@ -59,35 +59,5 @@ class CheckoutAddAddressNewUserFragment : Fragment() {
                     }
                 }
         }
-
-        /*var autoCompleteSupportFragment =
-            childFragmentManager?.findFragmentById(R.id.autocomplete_fragment) as? AutocompleteSupportFragment
-
-
-        autoCompleteSupportFragment?.setPlaceFields(
-            listOf(
-                com.google.android.libraries.places.api.model.Place.Field.ID,
-                com.google.android.libraries.places.api.model.Place.Field.NAME,
-                com.google.android.libraries.places.api.model.Place.Field.ADDRESS,
-                com.google.android.libraries.places.api.model.Place.Field.ADDRESS_COMPONENTS,
-                com.google.android.libraries.places.api.model.Place.Field.LAT_LNG
-            )
-        )
-        autoCompleteSupportFragment?.setCountry("ZA")
-
-        autoCompleteSupportFragment?.setOnPlaceSelectedListener(object :
-            com.google.android.libraries.places.widget.listener.PlaceSelectionListener {
-            override fun onPlaceSelected(place: com.google.android.libraries.places.api.model.Place) {
-                Log.i(WTodayExtension.TAG, "Place: " + place.addressComponents + ", " + place.id);
-                val geocoder = Geocoder(context, Locale.getDefault())
-                val addresses =
-                    place.latLng?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
-                Log.i(WTodayExtension.TAG, "Place: " + addresses.toString());
-            }
-
-            override fun onError(p0: Status) {
-
-            }
-        })*/
     }
 }
