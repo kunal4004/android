@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.sent_message_item.view.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 
@@ -52,12 +52,12 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         return if (viewType == VIEW_TYPE_RECEIVED_MESSAGE) {
-            ReceivedMessageViewHolder(
+            AgentMessageViewHolder(
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.received_message_item, parent, false)
             )
         } else {
-            SentMessageViewHolder(
+            SenderMessageViewHolder(
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.sent_message_item, parent, false)
             )
@@ -76,7 +76,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     override fun getItemViewType(position: Int): Int {
         return when (chatMessageList[position]) {
             is SendMessageResponse -> VIEW_TYPE_RECEIVED_MESSAGE
-            is UserMessage -> VIEW_TYPE_SENT_MESSAGE
+            is SenderMessage -> VIEW_TYPE_SENT_MESSAGE
             else -> 0
         }
     }
@@ -85,7 +85,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         chatMessageList.clear()
     }
 
-    inner class ReceivedMessageViewHolder(view: View) : MessageViewHolder(view) {
+    inner class AgentMessageViewHolder(view: View) : MessageViewHolder(view) {
 
         override fun bind(chatMessage: ChatMessage) {
             val agentMessage = chatMessage as? SendMessageResponse
@@ -124,8 +124,6 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
                         highlightColor = Color.GRAY
                     }
 
-                    itemView.image_message_profile?.visibility =
-                        if (agentMessage?.isWoolworthIconVisible == true) VISIBLE else INVISIBLE
                 }
                 false -> {
                     itemView.received_message_text?.apply {
@@ -133,19 +131,18 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
                         movementMethod = null
                         highlightColor = Color.WHITE
                     }
-                    itemView.image_message_profile?.visibility =
-                        if (agentMessage?.isWoolworthIconVisible == true) VISIBLE else INVISIBLE
-
                 }
             }
 
+            itemView.image_message_profile?.visibility =
+                if (agentMessage?.isWoolworthIconVisible == true) VISIBLE else INVISIBLE
         }
     }
 
-    inner class SentMessageViewHolder(view: View) : MessageViewHolder(view) {
+    inner class SenderMessageViewHolder(view: View) : MessageViewHolder(view) {
 
         override fun bind(chatMessage: ChatMessage) {
-            val userMessage = chatMessage as? UserMessage
+            val userMessage = chatMessage as? SenderMessage
             itemView.sent_message_text?.text = userMessage?.message
         }
     }

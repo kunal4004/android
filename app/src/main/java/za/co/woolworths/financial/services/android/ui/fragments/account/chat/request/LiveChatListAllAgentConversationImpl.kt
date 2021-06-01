@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.IListAllAgentMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.util.Assets
 import java.text.SimpleDateFormat
 import java.util.*
@@ -52,7 +52,7 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
 
                 // reset agent profile icon flag to default
                 messageListFromChatAdapter?.forEach {
-                    (it as? UserMessage)?.isWoolworthIconVisible = true
+                    (it as? SenderMessage)?.isWoolworthIconVisible = true
                     (it as? SendMessageResponse)?.isWoolworthIconVisible = true
                 }
 
@@ -80,7 +80,7 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                 newMessageList?.forEach {
                     val message = when (it) {
                         is SendMessageResponse -> it.content
-                        is UserMessage -> it.message
+                        is SenderMessage -> it.message
                     }
                     if (TextUtils.isEmpty(message))
                         newMessageList.remove(it)

@@ -31,7 +31,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Wha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatSendMessageImpl
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.keyboard.SoftKeyboardObserver
@@ -93,7 +93,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
             mChatAdapter?.clear()
             chatList.first?.forEach { item ->
                 val content = when (item) {
-                    is UserMessage -> item.message
+                    is SenderMessage -> item.message
                     is SendMessageResponse -> item.content
                 }
                 if (!TextUtils.isEmpty(content))
@@ -218,7 +218,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                     val message = chatBoxEditText?.text?.toString() ?: ""
                     if (TextUtils.isEmpty(message)) return
-                    showMessage(UserMessage(message))
+                    showMessage(SenderMessage(message))
                     sendMessageImpl.send(SessionStateType.ONLINE, message)
                     chatBoxEditText?.setText("")
                     try {
@@ -298,7 +298,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
         activity?.runOnUiThread {
             mChatAdapter?.let {
                 val content = when (message) {
-                    is UserMessage -> message.message
+                    is SenderMessage -> message.message
                     is SendMessageResponse -> message.content
                 }
                 if (!TextUtils.isEmpty(content)) {

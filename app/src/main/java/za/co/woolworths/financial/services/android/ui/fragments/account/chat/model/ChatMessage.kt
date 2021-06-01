@@ -8,7 +8,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 sealed class ChatMessage
 
     @Parcelize
-    data class UserMessage(
+    data class SenderMessage(
         var message: String,
         var isWoolworthIconVisible: Boolean = true,
         var sendEmailIntentInfo: SendEmailIntentInfo? = null

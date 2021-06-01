@@ -259,8 +259,8 @@ class ChatFloatingActionButtonBubbleView(
                 }
             }
 
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            fun onDestroy() {
+            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+            fun onPause() {
                 unregisterReceiver()
             }
         })

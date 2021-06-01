@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.Cha
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatCustomerInfo
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.ILiveChatSendMessage
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.util.Assets
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import java.util.*
@@ -30,7 +30,7 @@ class LiveChatSendMessageImpl : ILiveChatSendMessage {
         }
         API.mutate(request(sessionState, content), {
             if (sessionState != SessionStateType.CONNECT && !TextUtils.isEmpty(content)) {
-                ChatAWSAmplify.addChatMessageToList(UserMessage(content))
+                ChatAWSAmplify.addChatMessageToList(SenderMessage(content))
             }
         }, {})
     }

@@ -37,7 +37,7 @@ class ConnectivityWatcher(
 
     override fun onInactive() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+            val cm = context.getSystemService(CONNECTIVITY_SERVICE) as? ConnectivityManager
             cm.unregisterNetworkCallback(networkCallback)
         } else {
             context.unregisterReceiver(broadcastReceiver)

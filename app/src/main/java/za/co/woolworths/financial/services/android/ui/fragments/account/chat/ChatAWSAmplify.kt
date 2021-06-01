@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.ChatMessage
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.UserMessage
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
@@ -67,7 +67,7 @@ object ChatAWSAmplify {
 
     fun addChatMessageToList(chatMessage: ChatMessage) {
         val content = when (chatMessage) {
-            is UserMessage -> chatMessage.message
+            is SenderMessage -> chatMessage.message
             is SendMessageResponse -> chatMessage.content
         }
         if (content?.isNotEmpty() == true)
