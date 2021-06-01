@@ -139,6 +139,7 @@
     <dimen name="sixty_four_dp">64dp</dimen>
     <dimen name="sixty_five_dp">65dp</dimen>
     <dimen name="one_dp">1dp</dimen>
+    <dimen name="one_point_five_dp">1.5dp</dimen>
     <dimen name="store_card_enter_otp_title_top_margin_32dp">32dp</dimen>
     <dimen name="store_card_enter_otp_title_top_margin_16dp">16dp</dimen>
     <dimen name="store_card_enter_otp_title_top_margin_8dp">8dp</dimen>

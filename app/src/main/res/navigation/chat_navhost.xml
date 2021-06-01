@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/chatToUsWhatsAppFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.WhatsAppChatToUsFragment"
         android:label="ChatToUsWhatsAppFragment"
         tools:layout="@layout/chat_to_us_via_whatsapp_fragment" />
     <fragment
         android:id="@+id/chatToCollectionAgentOfflineFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatOfflineFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatOfflineFragment"
         android:label="ChatToCollectionAgentOfflineFragment"
         tools:layout="@layout/chat_to_collection_agent_offline_fragment" />
     <fragment
         android:id="@+id/chatFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment"
         android:label="ChatFragment"
         tools:layout="@layout/chat_fragment">
         <action
@@ -39,7 +39,7 @@
     <fragment
         android:id="@+id/chatRetrieveABSACardTokenFragment"
         tools:layout="@layout/chat_retrieve_absa_card_token_fragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatRetrieveABSACardTokenFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatRetrieveABSACardTokenFragment"
         android:label="ChatRetrieveABSACardTokenFragment" >
         <action
             android:id="@+id/action_chatRetrieveABSACardTokenFragment_to_chatCustomerServiceEndSessionDialogFragment"

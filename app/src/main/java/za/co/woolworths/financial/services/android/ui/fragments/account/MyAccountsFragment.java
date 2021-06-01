@@ -3,9 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -34,6 +32,7 @@ import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.awfs.coordination.R;
+import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -48,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract;
@@ -56,7 +54,6 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner;
 import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
-import za.co.woolworths.financial.services.android.models.UserManager;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -91,7 +88,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragment;
@@ -100,6 +97,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSection
 import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
+import za.co.woolworths.financial.services.android.ui.views.NotificationBadge;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
@@ -210,6 +208,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private LinearLayout retryCreditCardLinearLayout;
     private LinearLayout retryPersonalLoanLinearLayout;
     private ArrayList<UserDevice> deviceList;
+    private NotificationBadge notificationBadge;
+    private ImageView onlineIndicatorImageView;
+    private ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -294,6 +295,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             imgCreditCardLayout = view.findViewById(R.id.imgCreditCardLayout);
             RelativeLayout myOrdersRelativeLayout = view.findViewById(R.id.myOrdersRelativeLayout);
             chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
+            onlineIndicatorImageView = view.findViewById(R.id.onlineIndicatorImageView);
+            notificationBadge = view.findViewById(R.id.badge);
             creditReportView = view.findViewById(R.id.creditReport);
             creditReportIcon = view.findViewById(R.id.creditReportIcon);
 
@@ -506,11 +509,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void configureView() {
+
         this.isAccountsCallMade = true;
         this.unavailableAccounts.clear();
         this.unavailableAccounts.addAll(Arrays.asList(AccountsProductGroupCode.STORE_CARD.getGroupCode(),
                 AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode()));
         this.configureAndLayoutTopLayerView();
+
 
         //show content for all available products
         for (Map.Entry<Products, Account> item : mAccountsHashMap.entrySet()) {
@@ -1805,7 +1810,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (!isAdded() || activity == null || mAccountResponse == null || mAccountResponse.accountList == null)
             return;
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account) {
-            ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(getActivity(), new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView);
+            AppCompatActivity act;
+            if (activity instanceof BottomNavigationActivity)
+                act = (BottomNavigationActivity) activity;
+            else
+                act = (MyAccountActivity) activity;
+
+            inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView,notificationBadge,onlineIndicatorImageView);
             inAppChatTipAcknowledgement.build();
         }
     }

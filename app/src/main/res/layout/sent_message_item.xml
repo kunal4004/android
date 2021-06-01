@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/default_background"
     android:clipToPadding="false"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp">
+    android:paddingTop="@dimen/four_dp"
+    android:paddingBottom="@dimen/four_dp">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/sent_message_text"
         style="@style/chat_text_style"
         android:background="@drawable/sent_message_bubble_bg"
-        android:paddingStart="12dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="12dp"
-        android:paddingBottom="14dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:paddingStart="@dimen/twelve_dp"
+        android:paddingTop="@dimen/ten_dp"
+        android:paddingEnd="@dimen/twelve_dp"
+        android:paddingBottom="@dimen/fourteen_dp"
         android:textColor="@color/chat_sent_message_text_color"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,9 +24,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:text="11:40"
-        android:textSize="10sp"
+        android:layout_marginEnd="@dimen/four_dp"
+        android:textSize="@dimen/ten_sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/sent_message_text"
         app:layout_constraintRight_toLeftOf="@+id/sent_message_text" />

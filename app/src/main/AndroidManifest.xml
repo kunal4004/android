@@ -528,6 +528,11 @@
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize" />
 
+        <service
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService"
+            android:enabled="true"
+            android:label="liveChatFollowMeService" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity"
             android:screenOrientation="portrait"

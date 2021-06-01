@@ -41,7 +41,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -296,14 +296,20 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
         queryServicePaymentMethod()
     }
 
-    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+    private fun chatToCollectionAgent(
+        applyNowState: ApplyNowState,
+        accountList: MutableList<Account>?
+    ) {
         activity?.apply {
             mChatFloatingActionButtonBubbleView = ChatFloatingActionButtonBubbleView(
-                    activity = this,
-                    chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
-                    floatingActionButton = chatBubbleFloatingButton,
-                    applyNowState = applyNowState,
-                    scrollableView = creditDebitCardPaymentsScrollView)
+                activity = this as? PayMyAccountActivity,
+                chatBubbleVisibility = ChatBubbleVisibility(accountList, this),
+                floatingActionButton = chatBubbleFloatingButton,
+                applyNowState = applyNowState,
+                scrollableView = creditDebitCardPaymentsScrollView,
+                notificationBadge = badge,
+                onlineChatImageViewIndicator = onlineIndicatorImageView
+            )
 
             mChatFloatingActionButtonBubbleView?.build()
         }

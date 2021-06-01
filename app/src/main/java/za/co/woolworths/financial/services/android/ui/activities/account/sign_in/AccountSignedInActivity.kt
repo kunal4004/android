@@ -36,13 +36,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.availabl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView, IBottomSheetBehaviourPeekHeightListener, View.OnClickListener, IShowChatBubble {
+class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView,
+    IBottomSheetBehaviourPeekHeightListener, View.OnClickListener, IShowChatBubble {
 
     companion object {
         const val ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111
@@ -69,8 +70,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter?.apply {
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
 
-            mAvailableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
-            mAccountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
+            mAvailableFundsNavHost =
+                supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
+            mAccountOptionsNavHost =
+                supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
 
             setAvailableFundBundleInfo(mAvailableFundsNavHost?.navController)
             setAccountCardDetailInfo(mAccountOptionsNavHost?.navController)
@@ -84,7 +87,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         accountInArrearsTextView?.setOnClickListener(this)
         infoIconImageView?.setOnClickListener(this)
         navigateBackImageButton?.setOnClickListener(this)
-
     }
 
     private fun setToolbarTopMargin() {
@@ -95,13 +97,14 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     private fun configureBottomSheetDialog() {
-        val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.bottomSheetBehaviourLinearLayout)
+        val bottomSheetBehaviourLinearLayout =
+            findViewById<LinearLayout>(R.id.bottomSheetBehaviourLinearLayout)
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
         layoutParams?.height = mAccountSignedInPresenter?.bottomSheetBehaviourHeight()
         bottomSheetBehaviourLinearLayout?.requestLayout()
         sheetBehavior = BottomSheetBehavior.from(bottomSheetBehaviourLinearLayout)
         sheetBehavior?.peekHeight = mAccountSignedInPresenter?.bottomSheetBehaviourPeekHeight()
-                ?: 0
+            ?: 0
         sheetBehavior?.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {}
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -132,7 +135,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     override fun showAccountInArrears(account: Account) {
         toolbarTitleTextView?.visibility = GONE
         accountInArrearsTextView?.visibility = VISIBLE
-        mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
+        mAccountSignedInPresenter?.getMyAccountCardInfo()
+            ?.let { accountKeyPair -> showAccountInArrearsDialog(accountKeyPair) }
     }
 
     override fun hideAccountInArrears(account: Account) {
@@ -147,6 +151,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     override fun removeBlocksOnCollectionCustomer() {
         availableFundFragmentFrameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
+<<<<<<< HEAD
         removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
         val removeBlockOnCollectionFragmentContainerView = supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
         val navigationController: NavController? = removeBlockOnCollectionFragmentContainerView?.navController
@@ -164,6 +169,12 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 }
             }
         }
+=======
+        sixMonthArrearsFrameLayout?.visibility = VISIBLE
+        val sixMonthArrearsNavHost =
+            supportFragmentManager.findFragmentById(R.id.six_month_arrears_nav_host) as NavHostFragment
+        mAccountSignedInPresenter?.setAccountSixMonthInArrears(sixMonthArrearsNavHost.navController)
+>>>>>>> 16fc10ab8cc3c57a4bc03cb53393ae0699148294
     }
 
     override fun bottomSheetIsExpanded(): Boolean {
@@ -171,14 +182,22 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     override fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>?) {
-        val chatToCollectionAgentView = ChatFloatingActionButtonBubbleView(this@AccountSignedInActivity, ChatBubbleVisibility(accountList, this@AccountSignedInActivity), chatBubbleFloatingButton, applyNowState)
+        val chatToCollectionAgentView = ChatFloatingActionButtonBubbleView(
+            this@AccountSignedInActivity,
+            ChatBubbleVisibility(accountList, this@AccountSignedInActivity),
+            chatBubbleFloatingButton,
+            applyNowState,
+            notificationBadge = badge,
+            onlineChatImageViewIndicator = onlineIndicatorImageView
+        )
         chatToCollectionAgentView.build()
     }
 
     @Throws(RuntimeException::class)
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.accountInArrearsTextView -> mAccountSignedInPresenter?.getMyAccountCardInfo()?.let { account -> showAccountInArrearsDialog(account) }
+            R.id.accountInArrearsTextView -> mAccountSignedInPresenter?.getMyAccountCardInfo()
+                ?.let { account -> showAccountInArrearsDialog(account) }
             R.id.infoIconImageView -> navigateToCardInformation()
             R.id.navigateBackImageButton -> onBackPressed()
             else -> throw RuntimeException("Unexpected onClick Id found ${v?.id}")
@@ -187,7 +206,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
     private fun navigateToCardInformation() {
         val cardInformationHelpActivity = Intent(this, CardInformationHelpActivity::class.java)
-        cardInformationHelpActivity.putExtra(CardInformationHelpActivity.HELP_INFORMATION, Gson().toJson(mAccountHelpInformation))
+        cardInformationHelpActivity.putExtra(
+            CardInformationHelpActivity.HELP_INFORMATION,
+            Gson().toJson(mAccountHelpInformation)
+        )
         startActivityForResult(cardInformationHelpActivity, REQUEST_CODE_ACCOUNT_INFORMATION)
         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
     }
@@ -245,7 +267,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                     }
                 }
             }
-            REQUEST_CODE_ACCOUNT_INFORMATION -> sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+            REQUEST_CODE_ACCOUNT_INFORMATION -> sheetBehavior?.state =
+                BottomSheetBehavior.STATE_COLLAPSED
             else -> supportFragmentManager.fragments.apply {
                 if (this.isNotEmpty()) {
                     this[1].let {
