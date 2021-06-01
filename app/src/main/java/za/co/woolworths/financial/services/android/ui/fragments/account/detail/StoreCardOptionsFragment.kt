@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
@@ -250,6 +251,10 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         if (resultCode == TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE) {
             checkForLocationPermission()
         }
+        //Activate VTC journey when successfully activated
+        if (resultCode == ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE) {
+            navigateToGetStoreCards()
+        }
         if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
             activity?.runOnUiThread {
                 startLocationDiscoveryProcess()
@@ -295,9 +300,15 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                             }
                         }
                         bindString(R.string.activate_vtc_title) -> {
-                            navigateToTemporaryStoreCard()
+                            activity?.apply {
+                                navigateToTemporaryStoreCard()
+                            }
                         }
-                        else -> navigateToTemporaryStoreCard()
+                        else -> {
+                            activity?.apply {
+                                navigateToTemporaryStoreCard()
+                            }
+                        }
 
                     }
                 }

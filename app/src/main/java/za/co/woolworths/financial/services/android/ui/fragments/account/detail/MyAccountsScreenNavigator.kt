@@ -28,7 +28,7 @@ class MyAccountsScreenNavigator {
                 intent.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, Utils.objectToJson(storeCardResponse))
                 if (screenType != StoreCardViewType.DEFAULT)
                     intent.putExtra(MyCardDetailActivity.STORE_CARD_VIEW_TYPE, screenType)
-                startActivity(intent)
+                startActivityForResult(intent, MyCardDetailActivity.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE)
                 overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
             }
         }
