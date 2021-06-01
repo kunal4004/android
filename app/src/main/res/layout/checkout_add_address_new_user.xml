@@ -10,6 +10,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/ten_dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,6 +23,38 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/whereWeDeliveringTitle"
+                style="@style/futura_semi_bold_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/two_dp"
+                android:paddingBottom="@dimen/two_dp"
+                android:text="@string/where_are_we_delivering"
+                android:textSize="@dimen/twenty_sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <HorizontalScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/twenty_dp"
+                android:scrollbars="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/whereWeDeliveringTitle">
+
+                <LinearLayout
+                    android:id="@+id/delivering_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/twenty_dp"
+                    android:paddingEnd="@dimen/twelve_dp" />
+            </HorizontalScrollView>
+
             <View
                 android:id="@+id/deliveringPartition"
                 android:layout_width="match_parent"
@@ -30,7 +63,7 @@
                 android:background="@color/color_D8D8D8"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/scrollView" />
 
             <include
                 android:id="@+id/recipientAddressLayout"

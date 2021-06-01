@@ -1,30 +1,28 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
-import android.location.Geocoder
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
-import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayExtension
-import java.util.*
 
 
 /**
  * Created by Kunal Uttarwar on 26/05/21.
  */
 class CheckoutAddAddressNewUserFragment : Fragment() {
+
+    private val deliveringOptionsList: ArrayList<String> = ArrayList()
     private var navController: NavController? = null
 
     override fun onCreateView(
@@ -42,6 +40,7 @@ class CheckoutAddAddressNewUserFragment : Fragment() {
     }
 
     private fun init() {
+        showWhereAreWeDeliveringView()
         activity?.applicationContext?.let {
             Places.initialize(it, getString(R.string.maps_api_key))
             var placesClient = Places.createClient(it)
@@ -58,6 +57,20 @@ class CheckoutAddAddressNewUserFragment : Fragment() {
                         setSelection(autoCompleteTextView.length())
                     }
                 }
+        }
+    }
+
+    private fun showWhereAreWeDeliveringView() {
+        deliveringOptionsList.add("Home")
+        deliveringOptionsList.add("Office")
+        deliveringOptionsList.add("Complex/Estate")
+        deliveringOptionsList.add("Apartment")
+
+        for (options in deliveringOptionsList) {
+            val view = View.inflate(context, R.layout.where_are_we_delivering_items, null)
+            val title: TextView? = view?.findViewById(R.id.titleTv)
+            title?.text = options
+            delivering_layout?.addView(view)
         }
     }
 }

@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -12,7 +11,6 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
@@ -20,7 +18,6 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import kotlin.collections.ArrayList
 
 
 class GooglePlacesAdapter(
@@ -30,12 +27,8 @@ class GooglePlacesAdapter(
 ) :
     ArrayAdapter<PlaceAutocomplete>(context, resourceId),
     Filterable {
-
-    private val TAG = "PlaceAutoAdapter"
-    val mContext = context
-
-    var mResultList = arrayListOf<PlaceAutocomplete>()
-    val placesClient = geoData
+    private var mResultList = arrayListOf<PlaceAutocomplete>()
+    private val placesClient = geoData
     override fun getCount(): Int {
         return mResultList.size
     }
@@ -45,36 +38,30 @@ class GooglePlacesAdapter(
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-
         val row = super.getView(position, convertView, parent)
         val item = getItem(position)
         val textView1 = row.findViewById<View>(android.R.id.text1) as TextView
-        textView1.text = item?.description
-
+        textView1.text = item.description
         return row
     }
 
-
     override fun getFilter(): Filter {
         return object : Filter() {
-            override fun performFiltering(constraint: CharSequence?): Filter.FilterResults {
-                val results = Filter.FilterResults()
-                // Skip the autocomplete query if no constraints are given.
-                if (constraint != null && constraint.length>=3) {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val results = FilterResults()
+                // Skip the autocomplete query if no constraints or less than 3 char is given.
+                if (constraint != null && constraint.length >= 3) {
                     mResultList = getPredictions(constraint)
                     results.values = mResultList
                     results.count = mResultList.size
                 }
-
                 return results
             }
 
-            override fun publishResults(constraint: CharSequence?, results: Filter.FilterResults?) {
-                Log.v("results", "results==" + results);
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 if (results != null && results.count > 0) {
                     // The API returned at least one result, update the data.
                     mResultList = results.values as ArrayList<PlaceAutocomplete>
-                    Log.v("resultList", "resultList==" + mResultList);
                     notifyDataSetChanged()
                 } else {
                     // The API did not return any results, invalidate the data set.
@@ -83,15 +70,13 @@ class GooglePlacesAdapter(
             }
 
             override fun convertResultToString(resultValue: Any): CharSequence {
-                // Override this method to display a readable result in the AutocompleteTextView
-                // when clicked.
+                // To display a readable result in the AutocompleteTextView when clicked.
                 return if (resultValue is AutocompletePrediction) {
                     resultValue.getFullText(null)
                 } else {
                     super.convertResultToString(resultValue)
                 }
             }
-
         }
     }
 
@@ -99,12 +84,6 @@ class GooglePlacesAdapter(
         val resultList = arrayListOf<PlaceAutocomplete>()
         // and once again when the user makes a selection (for example when calling fetchPlace()).
         val token = AutocompleteSessionToken.newInstance()
-
-        // Include address, ID, and phone number.
-        val placeFields: List<Place.Field> = listOf(
-            Place.Field.ADDRESS_COMPONENTS,
-            Place.Field.NAME
-        )
         // Use the builder to create a FindAutocompletePredictionsRequest.
         val request = FindAutocompletePredictionsRequest.builder()
             .setCountry("ZA")
@@ -112,7 +91,6 @@ class GooglePlacesAdapter(
             .setSessionToken(token)
             .setQuery(constraint.toString())
             .build()
-
 
         val autocompletePredictions: Task<FindAutocompletePredictionsResponse> =
             placesClient.findAutocompletePredictions(request)
@@ -126,14 +104,10 @@ class GooglePlacesAdapter(
             e.printStackTrace()
         }
 
-
         if (autocompletePredictions.isSuccessful) {
             val findAutocompletePredictionsResponse: FindAutocompletePredictionsResponse =
-                autocompletePredictions.result!!
+                autocompletePredictions.result
             for (prediction in findAutocompletePredictionsResponse.autocompletePredictions) {
-                Log.i(TAG, prediction.placeId)
-                Log.i(TAG, prediction.getPrimaryText(null).toString())
-
                 resultList.add(
                     PlaceAutocomplete(
                         prediction.placeId,
@@ -141,13 +115,9 @@ class GooglePlacesAdapter(
                     )
                 )
             }
-            return resultList;
-
-        } else {
-            return resultList;
         }
+        return resultList
     }
-
 }
 
 class PlaceAutocomplete(var placeId: CharSequence, var description: CharSequence) {
