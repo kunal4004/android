@@ -50,6 +50,8 @@ import android.widget.TextView;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -1590,11 +1592,15 @@ public class Utils {
 
     public static void setToken(String value) {
         try {
+            if(TextUtils.isEmpty(value)){
+                return;
+            }
             String firstTime = Utils.getSessionDaoValue(FCM_TOKEN);
             if (firstTime == null) {
                 Utils.sessionDaoSave(FCM_TOKEN, value);
             }
-        } catch (NullPointerException ignored) {
+        } catch (Exception ignored) {
+            FirebaseManager.Companion.logException(ignored);
         }
     }
 
@@ -1602,9 +1608,14 @@ public class Utils {
         String token = "";
         try {
             token = Utils.getSessionDaoValue(FCM_TOKEN);
-        } catch (NullPointerException ignored) {
+        } catch (Exception ignored) {
+            return null;
         }
 
         return token;
+    }
+
+    public static Boolean isGooglePlayServicesAvailable() {
+        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 }
