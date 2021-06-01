@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
@@ -83,6 +84,14 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
                         tempFreezeTextView?.visibility = GONE
                         myCardDetailTextView?.visibility = VISIBLE
+                        context?.let {
+                            myCardDetailTextView?.setTextColor( ContextCompat.getColor(it, R.color.black))
+                        }
+                        myCardDetailTextView?.isEnabled = true
+                        myCardDetailTextView?.isClickable = true
+                        myCardDetailTextView?.setOnClickListener {
+                            mCardPresenterImpl?.navigateToTemporaryStoreCard()
+                        }
                     }
                 }
             }

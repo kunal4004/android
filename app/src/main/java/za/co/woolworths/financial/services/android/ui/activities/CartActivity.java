@@ -52,7 +52,10 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public static final int CHECKOUT_SUCCESS = 13134;
     private FrameLayout flContentFrame;
     private boolean toastButtonWasClicked = false;
-    public  static  final int  RESULT_PREVENT_CART_SUMMARY_CALL = 121;
+    private int localCartCount = 0;
+    public static final int RESULT_PREVENT_CART_SUMMARY_CALL = 121;
+    public static final String TAG = "CartActivity";
+
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_cart;
@@ -84,7 +87,9 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         cartFragment = new CartFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, cartFragment).commit();
+                .replace(R.id.content_frame, cartFragment, TAG).commit();
+
+        localCartCount = QueryBadgeCounter.getInstance().getCartItemCount();
 
         //One time biometricsWalkthrough
         ScreenManager.presentBiometricWalkthrough(CartActivity.this);
@@ -135,8 +140,9 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     }
 
     public void finishActivity() {
+        int currentCartCount = cartFragment.productCountMap.getTotalProductCount();
         // Check to prevent DISMISS_POP_WINDOW_CLICKED override setResult for toast clicked event
-        if (!toastButtonWasClicked) {
+        if (!toastButtonWasClicked && localCartCount !=currentCartCount) {
             this.setResult(DISMISS_POP_WINDOW_CLICKED);
         }
 
@@ -186,6 +192,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         Utils.fadeInFadeOutAnimation(btnEditCart, enable);
         btnEditCart.setEnabled(enable ? false : true);
     }
+
     public void enableEditCart() {
         Utils.fadeInFadeOutAnimation(btnEditCart, false);
         btnEditCart.setEnabled(true);
@@ -210,7 +217,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         }
 
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            ToastFactory.Companion.buildShoppingListToast(this,flContentFrame, true, data, this);
+            ToastFactory.Companion.buildShoppingListToast(this, flContentFrame, true, data, this);
             return;
         }
 
@@ -224,15 +231,6 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         if (bottomFragment != null) {
             if (bottomFragment != null && bottomFragment instanceof ProductDetailsFragment) {
                 bottomFragment.onActivityResult(requestCode, resultCode, data);
-            }
-        }
-        /***
-         * Result from success add to cart
-         */
-
-        if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
-            if (fragment instanceof CartFragment) {
-                fragment.onActivityResult(requestCode, resultCode, data);
             }
         }
 
