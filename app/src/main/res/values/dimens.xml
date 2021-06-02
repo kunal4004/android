@@ -210,5 +210,7 @@
     <dimen name="thirty_five_dp">35dp</dimen>
     <dimen name="seventeen_sp">17sp</dimen>
     <dimen name="three_hundred_dp">300dp</dimen>
+    <dimen name="sixty_three_dp">63dp</dimen>
+    <dimen name="eight_sp">8sp</dimen>
 </resources>
 

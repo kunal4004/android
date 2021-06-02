@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/accountInDelinquencyFragment">
+
+    <fragment
+        android:id="@+id/accountInDelinquencyFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountSixMonthArrearsFragment"
+        android:label="AccountCardDetailFragment"
+        tools:layout="@layout/account_card_detail_fragment" />
+
+    <fragment
+        android:id="@+id/removeBlockDCFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockOnCollectionFragment"
+        android:label="remove_block_dc_fragment"
+        tools:layout="@layout/remove_block_dc_fragment" >
+        <action
+            android:id="@+id/action_removeBlockDCFragment_to_enterPaymentAmountDetailFragment"
+            app:destination="@id/toCardDetailFragmentDialog" />
+        <action
+            android:id="@+id/action_removeBlockDCFragment_to_payMyAccountRetryErrorFragment"
+            app:destination="@id/payMyAccountRetryErrorFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/removeBlockOnCollectionDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.remove_dc_block.RemoveBlockOnCollectionDialogFragment"
+        android:label="RemoveBlockOnCollectionDialogFragment"
+        tools:layout="@layout/remove_block_on_collection_dialog" />
+
+    <dialog
+        android:id="@+id/toCardDetailFragmentDialog"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.dialog.ShowAmountPopupFragment"
+        android:label="EnterPaymentAmountDetailFragment"
+        tools:layout="@layout/pma_update_payment_fragment">
+        <argument
+            android:name="isAccountStartDestination"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/payMyAccountRetryErrorFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PayMyAccountRetryErrorFragment"
+        android:label="PayMyAccountRetryErrorFragment"
+        tools:layout="@layout/pay_my_account_retry_on_error_dialog_fragment" />
+
+</navigation>
