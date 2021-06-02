@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.chat
+package za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +13,10 @@ import kotlinx.android.synthetic.main.chat_retrieve_absa_card_token_fragment.*
 import kotlinx.android.synthetic.main.chat_retrieve_absa_card_token_fragment.chatLoaderProgressBar
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -27,7 +31,7 @@ class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         (activity as? WChatActivity)?.apply {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            setChatState(true)
+            displayEndSessionButton(true)
         }
     }
 
@@ -56,16 +60,16 @@ class ChatRetrieveABSACardTokenFragment : Fragment(), View.OnClickListener {
             getCreditCardToken({ result ->
                 result?.cards = null
                 when (result?.httpCode) {
-                    200 -> {
+                    HTTP_OK -> {
                         val cards = result.cards
                         if (cards.isNullOrEmpty()) {
                             (activity as? WChatActivity)?.setStartDestination(R.id.chatToCollectionAgentOfflineFragment)
                         } else {
-                            chatViewModel.mAbsaCard.value = cards
+                            LiveChatDBRepository().saveABSACardsList(cards)
                             (activity as? WChatActivity)?.setStartDestination(R.id.chatFragment)
                         }
                     }
-                    440 -> activity?.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, result.response.stsParams, it) }
+                    HTTP_SESSION_TIMEOUT_440 -> activity?.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, result.response.stsParams, it) }
 
                     else -> (activity as? WChatActivity)?.setStartDestination(R.id.chatToCollectionAgentOfflineFragment)
 

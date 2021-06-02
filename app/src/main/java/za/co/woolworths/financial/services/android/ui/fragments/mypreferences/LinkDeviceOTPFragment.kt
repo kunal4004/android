@@ -3,8 +3,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Paint
 import android.location.Address
@@ -25,7 +27,11 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.iid.InstanceIdResult
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
@@ -56,11 +62,14 @@ import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
 
-class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
+class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
 
+
+    private var mConnectionBroadCast: BroadcastReceiver? = null
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
-    private var otpMethod: String? = null
+    private var retryApiCall: String? = null
+    private var otpMethod: String? = "SMS"
     private var currentLocation: Location? = null
     private var isOTPValidated: Boolean = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -185,22 +194,24 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         }
 
+        connectionDetector()
+
         didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         didNotReceiveOTPTextView?.setOnClickListener(this)
 
-        linkDeviceOTPEdtTxt1.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2) { validateNextButton() })
-        linkDeviceOTPEdtTxt2.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3) { validateNextButton() })
-        linkDeviceOTPEdtTxt3.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4) { validateNextButton() })
-        linkDeviceOTPEdtTxt4.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5) { validateNextButton() })
-        linkDeviceOTPEdtTxt5.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5, linkDeviceOTPEdtTxt5) { validateNextButton() })
+        linkDeviceOTPEdtTxt1?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2) { validateNextButton() })
+        linkDeviceOTPEdtTxt2?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3) { validateNextButton() })
+        linkDeviceOTPEdtTxt3?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4) { validateNextButton() })
+        linkDeviceOTPEdtTxt4?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5) { validateNextButton() })
+        linkDeviceOTPEdtTxt5?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt4, linkDeviceOTPEdtTxt5, linkDeviceOTPEdtTxt5) { validateNextButton() })
 
-        linkDeviceOTPEdtTxt1.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt2.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt3.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt4.setOnKeyListener(mKeyListener)
-        linkDeviceOTPEdtTxt5.setOnKeyListener(mKeyListener)
+        linkDeviceOTPEdtTxt1?.setOnKeyListener(mKeyListener)
+        linkDeviceOTPEdtTxt2?.setOnKeyListener(mKeyListener)
+        linkDeviceOTPEdtTxt3?.setOnKeyListener(mKeyListener)
+        linkDeviceOTPEdtTxt4?.setOnKeyListener(mKeyListener)
+        linkDeviceOTPEdtTxt5?.setOnKeyListener(mKeyListener)
 
-        buttonNext.setOnClickListener(this)
+        buttonNext?.setOnClickListener(this)
 
         callGetOTPAPI(OTPMethodType.SMS.name)
     }
@@ -222,16 +233,19 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
     private fun enableNextButton() {
         buttonNext?.isEnabled = true
-        context?.let { buttonNext.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.next_button_icon)) }
+        context?.let { buttonNext?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.next_button_icon)) }
     }
 
     private fun disableNextButton() {
         buttonNext?.isEnabled = false
-        context?.let { buttonNext.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.next_button_inactive)) }
+        context?.let { buttonNext?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.next_button_inactive)) }
     }
 
     companion object {
         private const val OTP_CALL_CENTER = "CALL CENTER"
+        const val RETRY_GET_OTP: String = "GET_OTP"
+        const val RETRY_VALIDATE: String = "VALIDATE_OTP"
+        const val RETRY_LINK_DEVICE: String = "LINK_DEVICE"
     }
 
     override fun onClick(v: View?) {
@@ -247,22 +261,31 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             }
             R.id.buttonNext -> {
 
-                val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5.windowToken, 0)
-
-                val otpNumber = getNumberFromEditText(linkDeviceOTPEdtTxt1)
-                        .plus(getNumberFromEditText(linkDeviceOTPEdtTxt2))
-                        .plus(getNumberFromEditText(linkDeviceOTPEdtTxt3))
-                        .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
-                        .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
-
-                callValidatingOTPAPI(otpNumber)
+                makeValidateOTPRequest()
             }
         }
     }
 
+    private fun makeValidateOTPRequest() {
 
-    private fun isRetrieveOTPCallInProgress(): Boolean = sendinOTPLayout.visibility == View.VISIBLE
+        val otpNumber = getNumberFromEditText(linkDeviceOTPEdtTxt1)
+                .plus(getNumberFromEditText(linkDeviceOTPEdtTxt2))
+                .plus(getNumberFromEditText(linkDeviceOTPEdtTxt3))
+                .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
+                .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
+
+        if (TextUtils.isEmpty(otpNumber) || otpNumber.length < 5) {
+            return
+        }
+
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5?.windowToken, 0)
+
+        callValidatingOTPAPI(otpNumber)
+    }
+
+
+    private fun isRetrieveOTPCallInProgress(): Boolean = sendinOTPLayout?.visibility == View.VISIBLE
 
     fun createLocationRequest(): LocationRequest? {
         return LocationRequest.create().apply {
@@ -303,11 +326,17 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         mLinkDeviceOTPReq = otpMethod?.let { type -> OneAppService.getLinkDeviceOtp(type) }
         this.otpMethod = otpMethod
 
-        context?.let { didNotReceiveOTPTextView.setTextColor(ContextCompat.getColor(it, R.color.button_disable))}
+        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+            retryApiCall = RETRY_GET_OTP
+            return
+        }
+
+        context?.let { didNotReceiveOTPTextView?.setTextColor(ContextCompat.getColor(it, R.color.button_disable)) }
         showSendingOTPProcessing()
         mLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
-                context?.let { didNotReceiveOTPTextView.setTextColor(ContextCompat.getColor(it, R.color.black)) }
+                context?.let { didNotReceiveOTPTextView?.setTextColor(ContextCompat.getColor(it, R.color.black)) }
 
                 when (retrieveOTPResponse?.httpCode) {
                     AppConstant.HTTP_OK -> {
@@ -338,21 +367,44 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }
                         }
                     else -> retrieveOTPResponse?.response?.desc?.let { desc ->
-                        context?.let { didNotReceiveOTPTextView.setTextColor(ContextCompat.getColor(it, R.color.black)) }
-                        sendOTPFailedGroup.visibility = View.VISIBLE
+                        context?.let { didNotReceiveOTPTextView?.setTextColor(ContextCompat.getColor(it, R.color.black)) }
+
+                        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                            sendOTPFailedGroup?.visibility = View.GONE
+                            sendinOTPLayout?.visibility = View.GONE
+                            linkDeviceOTPScreen?.visibility = View.VISIBLE
+                            retryApiCall = RETRY_GET_OTP
+                            return
+                        }
+
+                        sendOTPFailedGroup?.visibility = View.VISIBLE
                     }
                 }
             }
 
             override fun onFailure(error: Throwable?) {
-                context?.let { didNotReceiveOTPTextView.setTextColor(ContextCompat.getColor(it, R.color.black)) }
-                sendOTPFailedGroup.visibility = View.VISIBLE
+                context?.let { didNotReceiveOTPTextView?.setTextColor(ContextCompat.getColor(it, R.color.black)) }
+
+                if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                    sendOTPFailedGroup?.visibility = View.GONE
+                    sendinOTPLayout?.visibility = View.GONE
+                    linkDeviceOTPScreen?.visibility = View.VISIBLE
+                    enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+                    retryApiCall = RETRY_GET_OTP
+                    return
+                }
+
+                sendOTPFailedGroup?.visibility = View.VISIBLE
             }
         }, RetrieveOTPResponse::class.java))
-
     }
 
     private fun callValidatingOTPAPI(otp: String) {
+
+        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+            return
+        }
 
         mValidateLinkDeviceOTPReq = otpMethod?.let { type ->
             OneAppService.validateLinkDeviceOtp(LinkDeviceValidateBody(otp, otpMethod
@@ -370,6 +422,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                         if (!isAdded) {
                             return
                         }
+                        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+                            return
+                        }
+
                         isOTPValidated = true
                         callLinkingDeviceAPI()
                     }
@@ -380,6 +437,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }
                         }
                     else -> retrieveOTPResponse?.response?.desc?.let { desc ->
+
                         showValidateOTPError(desc)
                         Handler().postDelayed({
                             linkDeviceOTPEdtTxt5.requestFocus()
@@ -394,7 +452,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                 context?.apply {
                     showValidateOTPError(getString(R.string.icr_wrong_otp_error))
                     Handler().postDelayed({
-                        linkDeviceOTPEdtTxt5.requestFocus()
+                        linkDeviceOTPEdtTxt5?.requestFocus()
                         val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                         imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
                     }, AppConstant.DELAY_200_MS)
@@ -404,13 +462,20 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showValidateOTPError(msg: String) {
-        setOtpErrorBackground(R.drawable.otp_box_error_background)
-        linkDeviceOTPErrorTxt?.text = msg
-        linkDeviceOTPErrorTxt?.visibility = View.VISIBLE
+        sendinOTPLayout?.visibility = View.GONE
         linkDeviceOTPScreen?.visibility = View.VISIBLE
         buttonNext?.visibility = View.VISIBLE
         didNotReceiveOTPTextView?.visibility = View.VISIBLE
 
+        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+            retryApiCall = RETRY_VALIDATE
+            return
+        }
+
+        setOtpErrorBackground(R.drawable.otp_box_error_background)
+        linkDeviceOTPErrorTxt?.text = msg
+        linkDeviceOTPErrorTxt?.visibility = View.VISIBLE
     }
 
     fun setOtpErrorBackground(drawableId: Int) {
@@ -434,6 +499,15 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
     }
 
     private fun callLinkingDeviceAPI() {
+
+        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+            sendinOTPLayout?.visibility = View.GONE
+            linkDeviceOTPScreen?.visibility = View.VISIBLE
+            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+            retryApiCall = RETRY_LINK_DEVICE
+            return
+        }
+
         linkDeviceOTPScreen?.visibility = View.GONE
 
         if (!isOTPValidated) {
@@ -446,7 +520,36 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
             return
         }
 
-        mlinkDeviceReq = OneAppService.linkDeviceApi(KotlinUtils.getUserDefinedDeviceName(activity), Utils.getUniqueDeviceID(context), getLocationAddress(currentLocation?.latitude, currentLocation?.longitude), true, Utils.getToken())
+        retrieveTokenAndCallLinkDevice()
+    }
+
+    private fun retrieveTokenAndCallLinkDevice() {
+        if (TextUtils.isEmpty(Utils.getToken())) {
+            if (Utils.isGooglePlayServicesAvailable()) {
+                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task: Task<InstanceIdResult?> ->
+                    if (task.isSuccessful) {
+                        task.result?.token?.let {
+                            // Save fb token in DB.
+                            Utils.setToken(it)
+                            sendTokenToLinkDevice(it)
+                            return@addOnCompleteListener
+                        }
+                    }
+                    // token is null show error message to user
+                    showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                }
+            } else {
+                // token is null show error message to user
+                showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+            }
+        } else {
+            sendTokenToLinkDevice(Utils.getToken())
+        }
+    }
+
+    private fun sendTokenToLinkDevice(token: String) {
+
+        mlinkDeviceReq = OneAppService.linkDeviceApi(KotlinUtils.getUserDefinedDeviceName(activity), Utils.getUniqueDeviceID(context), getLocationAddress(currentLocation?.latitude, currentLocation?.longitude), true, token)
 
         linkDeviceOTPScreen?.visibility = View.GONE
         mlinkDeviceReq?.enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
@@ -470,7 +573,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             mApplyNowState?.let {
                                 activity?.apply {
                                     if (this is LinkDeviceConfirmationActivity) {
-                                        Utils.setLinkConfirmationShown(true)
                                         val intent = Intent()
                                         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
                                         intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
@@ -492,6 +594,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                             }
                         }
                     else -> linkedDeviceResponse?.response?.desc?.let { desc ->
+                        linkDeviceOTPScreen?.visibility = View.VISIBLE
+                        buttonNext?.visibility = View.VISIBLE
+                        didNotReceiveOTPTextView?.visibility = View.VISIBLE
                         showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
                     }
                 }
@@ -499,6 +604,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
 
             override fun onFailure(error: Throwable?) {
                 linkDeviceOTPScreen?.visibility = View.VISIBLE
+                buttonNext?.visibility = View.VISIBLE
+                didNotReceiveOTPTextView?.visibility = View.VISIBLE
                 showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
             }
         }, LinkedDeviceResponse::class.java))
@@ -513,7 +620,19 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         val gcd = Geocoder(context, Locale.getDefault())
         val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
         if (addresses.isNotEmpty()) {
-            location = addresses[0].locality + ", " + addresses[0].countryName
+            location =
+                    if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
+                        for (address in addresses) {
+                            if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
+                                return address.locality + ", " + address.countryName
+                            } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
+                                return address.subLocality + ", " + address.countryName
+                            }
+                        }
+                        return addresses[0].countryName
+                    } else
+                        return addresses[0].locality + ", " + addresses[0].countryName
+
         }
         return location
     }
@@ -538,7 +657,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         sendOTPSubtitle?.visibility = View.GONE
 
         context?.let {
-            sendOTPProcessingReq.text = it.getString(R.string.link_device_linking_processing)
+            sendOTPProcessingReq?.text = it.getString(R.string.link_device_linking_processing)
         }
         sendinOTPLayout?.visibility = View.VISIBLE
     }
@@ -548,10 +667,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         sendOTPTitle?.visibility = View.VISIBLE
         sendOTPSubtitle?.visibility = View.VISIBLE
         linkDeviceOTPScreen?.visibility = View.GONE
-        sendOTPFailedGroup.visibility = View.GONE
+        sendOTPFailedGroup?.visibility = View.GONE
 
         context?.let {
-            sendOTPProcessingReq.text = it.getString(R.string.link_device_sending_otp_processing)
+            sendOTPProcessingReq?.text = it.getString(R.string.link_device_sending_otp_processing)
         }
         sendinOTPLayout?.visibility = View.VISIBLE
     }
@@ -563,12 +682,16 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         didNotReceiveOTPTextView?.visibility = View.GONE
 
         context?.let {
-            sendOTPProcessingReq.text = it.getString(R.string.validating_otp)
+            sendOTPProcessingReq?.text = it.getString(R.string.validating_otp)
         }
         sendinOTPLayout?.visibility = View.VISIBLE
     }
 
     private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
+
+        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+            retryApiCall = RETRY_LINK_DEVICE
+        }
 
         activity?.let {
             val intent = Intent(it, ErrorHandlerActivity::class.java)
@@ -578,13 +701,16 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun connectionDetector() {
+        mConnectionBroadCast = Utils.connectionBroadCast(activity, this)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_CANCELED) {
             resetOTPView()
             linkDeviceOTPScreen?.visibility = View.VISIBLE
-            Utils.setLinkConfirmationShown(true)
         }
 
         when (requestCode) {
@@ -595,7 +721,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
                     }
                     ErrorHandlerActivity.RESULT_CALL_CENTER -> {
                         Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
-                        Utils.setLinkConfirmationShown(true)
                         setFragmentResult("linkDevice", bundleOf(
                                 "isLinked" to false
                         ))
@@ -606,8 +731,39 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        activity?.registerReceiver(mConnectionBroadCast, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        activity?.unregisterReceiver(mConnectionBroadCast)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
+    }
+
+    override fun onConnectionChanged() {
+        val isConnected = NetworkManager.getInstance().isConnectedToNetwork(activity)
+
+        if (!isConnected) {
+            ErrorHandlerView(activity).showToast()
+        } else {
+            when (retryApiCall) {
+                RETRY_GET_OTP -> {
+                    callGetOTPAPI(otpMethod)
+                }
+                RETRY_VALIDATE -> {
+                    makeValidateOTPRequest()
+                }
+                RETRY_LINK_DEVICE -> {
+                    callLinkingDeviceAPI()
+                }
+            }
+        }
+
     }
 }

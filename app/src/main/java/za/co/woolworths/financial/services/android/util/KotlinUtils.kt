@@ -48,7 +48,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
@@ -58,6 +57,7 @@ import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class KotlinUtils {
     companion object {
@@ -65,7 +65,12 @@ class KotlinUtils {
         const val DELAY: Long = 900
         const val productImageUrlPrefix = "https://images.woolworthsstatic.co.za/"
 
-        fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, textIsClickable: Boolean = true): SpannableString {
+        fun highlightTextInDesc(
+                context: Context?,
+                spannableTitle: SpannableString,
+                searchTerm: String,
+                textIsClickable: Boolean = true
+        ): SpannableString {
             var start = spannableTitle.indexOf(searchTerm)
             if (start == -1) {
                 start = 0
@@ -83,15 +88,36 @@ class KotlinUtils {
                 }
             }
 
-            val typeface: Typeface? = context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
-            if (textIsClickable) spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val typeface: Typeface? =
+                    context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+            if (textIsClickable) spannableTitle.setSpan(
+                    clickableSpan,
+                    start,
+                    end,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
             val dimenPix =
                     context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
-            typeface?.style?.let { style -> spannableTitle.setSpan(StyleSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
-            spannableTitle.setSpan(AbsoluteSizeSpan(dimenPix?.toInt()
-                    ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannableTitle.setSpan(AbsoluteSizeSpan(dimenPix?.toInt()
-                    ?: 0), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            typeface?.style?.let { style ->
+                spannableTitle.setSpan(
+                        StyleSpan(style),
+                        start,
+                        end,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            spannableTitle.setSpan(
+                    AbsoluteSizeSpan(
+                            dimenPix?.toInt()
+                                    ?: 0
+                    ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            spannableTitle.setSpan(
+                    AbsoluteSizeSpan(
+                            dimenPix?.toInt()
+                                    ?: 0
+                    ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
             return spannableTitle
         }
 
@@ -102,7 +128,10 @@ class KotlinUtils {
                         View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             }
             if (Build.VERSION.SDK_INT >= 21) {
-                appCompatActivity?.setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false)
+                appCompatActivity?.setWindowFlag(
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                        false
+                )
                 appCompatActivity?.window?.statusBarColor = Color.TRANSPARENT
             }
         }
@@ -168,7 +197,16 @@ class KotlinUtils {
             val shape = GradientDrawable()
             shape.shape = GradientDrawable.RECTANGLE
             shape.cornerRadii =
-                    floatArrayOf(paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp)
+                    floatArrayOf(
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp
+                    )
             shape.setColor(Color.parseColor(color))
             view.background = shape
         }
@@ -227,7 +265,10 @@ class KotlinUtils {
             var actionBarHeight = 0
             val appCompat = WoolworthsApplication.getAppContext()
             if (appCompat?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
-                actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, appCompat.resources?.displayMetrics)
+                actionBarHeight = TypedValue.complexToDimensionPixelSize(
+                        tv.data,
+                        appCompat.resources?.displayMetrics
+                )
             }
             return actionBarHeight
         }
@@ -238,7 +279,10 @@ class KotlinUtils {
             return newWord
         }
 
-        fun setAccountNavigationGraph(navigationController: NavController, screenType: OnBoardingScreenType) {
+        fun setAccountNavigationGraph(
+                navigationController: NavController,
+                screenType: OnBoardingScreenType
+        ) {
             val bundle = Bundle()
             bundle.putSerializable(ON_BOARDING_SCREEN_TYPE, screenType)
             navigationController.setGraph(navigationController.graph, bundle)
@@ -273,7 +317,11 @@ class KotlinUtils {
 
             groupTransactionsByMonth?.forEach { transactionMap ->
                 transactionList.add(TransactionHeader(transactionMap.key))
-                transactionMap.value.forEach { transactionItem -> transactionList.add(transactionItem) }
+                transactionMap.value.forEach { transactionItem ->
+                    transactionList.add(
+                            transactionItem
+                    )
+                }
             }
 
             return transactionList
@@ -289,11 +337,16 @@ class KotlinUtils {
             return SimpleDateFormat("dd-MM-yyy").format(date)
         }
 
-        fun presentEditDeliveryLocationActivity(activity: Activity?, requestCode: Int, deliveryType: DeliveryType? = null) {
+        fun presentEditDeliveryLocationActivity(
+                activity: Activity?,
+                requestCode: Int,
+                deliveryType: DeliveryType? = null
+        ) {
             var type = deliveryType
             if (type == null) {
                 if (Utils.getPreferredDeliveryLocation() != null) {
-                    type = if (Utils.getPreferredDeliveryLocation().storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
+                    type =
+                            if (Utils.getPreferredDeliveryLocation().storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
                 }
             }
             activity?.apply {
@@ -306,18 +359,27 @@ class KotlinUtils {
             }
         }
 
-        fun setDeliveryAddressView(context: Activity?, shoppingDeliveryLocation: ShoppingDeliveryLocation, tvDeliveringTo: WTextView, tvDeliveryLocation: WTextView, deliverLocationIcon: ImageView?) {
+        fun setDeliveryAddressView(
+                context: Activity?,
+                shoppingDeliveryLocation: ShoppingDeliveryLocation,
+                tvDeliveringTo: WTextView,
+                tvDeliveryLocation: WTextView,
+                deliverLocationIcon: ImageView?
+        ) {
             with(shoppingDeliveryLocation) {
                 when (storePickup) {
                     true -> {
-                        tvDeliveringTo.text = context?.resources?.getString(R.string.collecting_from)
-                        tvDeliveryLocation.text = context?.resources?.getString(R.string.store) + store?.name
+                        tvDeliveringTo.text =
+                                context?.resources?.getString(R.string.collecting_from)
+                        tvDeliveryLocation.text =
+                                context?.resources?.getString(R.string.store) + store?.name
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
                     false -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
-                        tvDeliveryLocation.text = suburb.name + if (province?.name.isNullOrEmpty()) "" else ", " + province.name
+                        tvDeliveryLocation.text =
+                                suburb.name + if (province?.name.isNullOrEmpty()) "" else ", " + province.name
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
                     }
@@ -347,31 +409,54 @@ class KotlinUtils {
 
         fun sendEmail(activity: Activity?, emailId: String, subject: String?) {
             val emailIntent = Intent(Intent.ACTION_SENDTO)
-            emailIntent.data = Uri.parse("mailto:" + emailId +
-                    "?subject=" + Uri.encode(subject) +
-                    "&body=" + Uri.encode(""))
+            emailIntent.data = Uri.parse(
+                    "mailto:" + emailId +
+                            "?subject=" + Uri.encode(subject) +
+                            "&body=" + Uri.encode("")
+            )
             val listOfEmail =
                     activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
             if (listOfEmail.size > 0) {
                 activity?.startActivity(emailIntent)
             } else {
-                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.INFO, bindString(R.string.contact_us_no_email_error).replace("email_address", emailId).replace("subject_line", subject
-                        ?: ""))
+                Utils.displayValidationMessage(
+                        activity,
+                        CustomPopUpWindow.MODAL_LAYOUT.INFO,
+                        bindString(R.string.contact_us_no_email_error).replace("email_address", emailId)
+                                .replace(
+                                        "subject_line", subject
+                                        ?: ""
+                                )
+                )
             }
         }
 
-        fun sendEmail(activity: Activity?, emailAddress: String, subjectLine: String?, emailMessage: String) {
+        fun sendEmail(
+                activity: Activity?,
+                emailAddress: String,
+                subjectLine: String?,
+                emailMessage: String
+        ) {
             val emailIntent = Intent(Intent.ACTION_SENDTO)
-            emailIntent.data = Uri.parse("mailto:" + emailAddress +
-                    "?subject=" + Uri.encode(subjectLine) +
-                    "&body=" + Uri.encode(emailMessage))
+            emailIntent.data = Uri.parse(
+                    "mailto:" + emailAddress +
+                            "?subject=" + Uri.encode(subjectLine) +
+                            "&body=" + Uri.encode(emailMessage)
+            )
             val listOfEmail =
                     activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
             if (listOfEmail.size > 0) {
                 activity?.startActivity(emailIntent)
             } else {
-                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.INFO, activity?.resources?.getString(R.string.contact_us_no_email_error)?.replace("email_address", emailAddress)?.replace("subject_line", subjectLine
-                        ?: ""))
+                Utils.displayValidationMessage(
+                        activity,
+                        CustomPopUpWindow.MODAL_LAYOUT.INFO,
+                        activity?.resources?.getString(R.string.contact_us_no_email_error)
+                                ?.replace("email_address", emailAddress)?.replace(
+                                        "subject_line", subjectLine
+                                        ?: ""
+                                )
+                )
             }
         }
 
@@ -379,10 +464,19 @@ class KotlinUtils {
             request(OneAppService.queryServicePostEvent(featureName, appScreen))
         }
 
-        fun parseMoneyValue(value: String, groupingSeparator: String, currencySymbol: String): String =
+        fun parseMoneyValue(
+                value: String,
+                groupingSeparator: String,
+                currencySymbol: String
+        ): String =
                 value.replace(groupingSeparator, "").replace(currencySymbol, "")
 
-        fun parseMoneyValueWithLocale(locale: Locale, value: String, groupingSeparator: String, currencySymbol: String): Number {
+        fun parseMoneyValueWithLocale(
+                locale: Locale,
+                value: String,
+                groupingSeparator: String,
+                currencySymbol: String
+        ): Number {
             val valueWithoutSeparator = parseMoneyValue(value, groupingSeparator, currencySymbol)
             return try {
                 NumberFormat.getInstance(locale).parse(valueWithoutSeparator)!!
@@ -405,8 +499,18 @@ class KotlinUtils {
                 val start = string.indexOf(key)
                 val end = start.plus(key.length)
                 val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
-                noteStringBuilder.setSpan(myriadProFont, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-                noteStringBuilder.setSpan(ForegroundColorSpan(bindColor(R.color.description_color)), start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+                noteStringBuilder.setSpan(
+                        myriadProFont,
+                        start,
+                        end,
+                        Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                )
+                noteStringBuilder.setSpan(
+                        ForegroundColorSpan(bindColor(R.color.description_color)),
+                        start,
+                        end,
+                        Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                )
             }
 
             return noteStringBuilder
@@ -430,8 +534,10 @@ class KotlinUtils {
         }
 
         fun firstLetterCapitalization(name: String?): String? {
-            val capitaliseFirstLetterInName = name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
-            val lowercaseOtherLetterInName = name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
+            val capitaliseFirstLetterInName =
+                    name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
+            val lowercaseOtherLetterInName =
+                    name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
             return capitaliseFirstLetterInName?.plus(lowercaseOtherLetterInName)
         }
 
@@ -477,7 +583,8 @@ class KotlinUtils {
         @SuppressLint("DiscouragedPrivateApi")
         fun convertActivityToTranslucent(activity: Activity) {
             try {
-                val getActivityOptions = Activity::class.java.getDeclaredMethod("getActivityOptions")
+                val getActivityOptions =
+                        Activity::class.java.getDeclaredMethod("getActivityOptions")
                 getActivityOptions.isAccessible = true
                 val options = getActivityOptions.invoke(activity)
                 val classes = Activity::class.java.declaredClasses
@@ -487,8 +594,10 @@ class KotlinUtils {
                         translucentConversionListenerClazz = clazz
                     }
                 }
-                val convertToTranslucent = Activity::class.java.getDeclaredMethod("convertToTranslucent",
-                        translucentConversionListenerClazz, ActivityOptions::class.java)
+                val convertToTranslucent = Activity::class.java.getDeclaredMethod(
+                        "convertToTranslucent",
+                        translucentConversionListenerClazz, ActivityOptions::class.java
+                )
                 convertToTranslucent.isAccessible = true
                 convertToTranslucent.invoke(activity, null, options)
             } catch (t: Throwable) {
@@ -496,9 +605,21 @@ class KotlinUtils {
             }
         }
 
-        fun showGeneralInfoDialog(fragmentManager: FragmentManager, description: String, title: String = "", actionText: String = "", infoIcon: Int = 0) {
-            val dialog = GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
-            fragmentManager.let { fragmentTransaction -> dialog.show(fragmentTransaction, GeneralInfoDialogFragment::class.java.simpleName) }
+        fun showGeneralInfoDialog(
+                fragmentManager: FragmentManager,
+                description: String,
+                title: String = "",
+                actionText: String = "",
+                infoIcon: Int = 0
+        ) {
+            val dialog =
+                    GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
+            fragmentManager.let { fragmentTransaction ->
+                dialog.show(
+                        fragmentTransaction,
+                        GeneralInfoDialogFragment::class.java.simpleName
+                )
+            }
         }
 
         fun openBrowserWithUrl(urlString: String?, activity: Activity?) {
@@ -524,7 +645,10 @@ class KotlinUtils {
         }
 
         fun getAccount(accountExtras: String?): Pair<ApplyNowState, Account>? {
-            return Gson().fromJson<Pair<ApplyNowState, Account>>(accountExtras, object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type)
+            return Gson().fromJson<Pair<ApplyNowState, Account>>(
+                    accountExtras,
+                    object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type
+            )
         }
 
         fun isAppInstalled(activity: Activity?, appURI: String?): Boolean {
@@ -541,16 +665,41 @@ class KotlinUtils {
         @SuppressLint("MissingPermission")
         @JvmStatic
         fun setUserPropertiesToNull() {
-            val firebaseInstance = FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
+            val firebaseInstance =
+                    FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
             firebaseInstance?.apply {
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING, null)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING, null)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING, null)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING, null)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING, null)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_STATE, null)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.CREDIT_CARD_PRODUCT_STATE, null)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_STATE, null)
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
+                        null
+                )
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING,
+                        null
+                )
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING,
+                        null
+                )
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING,
+                        null
+                )
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING,
+                        null
+                )
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_STATE,
+                        null
+                )
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.CREDIT_CARD_PRODUCT_STATE,
+                        null
+                )
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_STATE,
+                        null
+                )
                 setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, null)
                 setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, null)
             }
@@ -570,8 +719,10 @@ class KotlinUtils {
         }
 
         fun rotateViewAnimation(): RotateAnimation {
-            val animation = RotateAnimation(0f, 360f,
-                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+            val animation = RotateAnimation(
+                    0f, 360f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+            )
             with(animation) {
                 duration = AppConstant.DURATION_1000_MS
                 repeatCount = 45
@@ -581,9 +732,23 @@ class KotlinUtils {
         }
 
         fun requestInAppReview(eventName: String, activity: Activity?) {
-            if (WoolworthsApplication.getInAppReview()?.triggerEvents?.contains(eventName) == true && !Utils.isInAppReviewRequested()) {
+            if (WoolworthsApplication.getInAppReview().isEnabled && WoolworthsApplication.getInAppReview()?.triggerEvents?.contains(eventName) == true && !Utils.isInAppReviewRequested()) {
                 askForReview(activity)
             }
         }
+
+        fun getTimeStamp(): String? {
+            return try {
+                java.lang.String.valueOf(
+                        TimeUnit.MILLISECONDS.toSeconds(
+                                System.currentTimeMillis()
+                        )
+                )
+            } catch (ex: java.lang.Exception) {
+                null
+            }
+
+        }
     }
+
 }

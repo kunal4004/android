@@ -64,6 +64,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
         activity?.apply {
             getProgressState()?.animateSuccessEnd(true)
             Handler().postDelayed({
+                (this as? CreditCardDeliveryActivity)?.mFirebaseCreditCardDeliveryEvent?.forCreditCardDeliveryScheduled()
                 processingLayout?.visibility = View.GONE
                 if (bundle?.containsKey("isEditRecipient") == true) {
                     if (bundle?.getBoolean("isEditRecipient") == true) {

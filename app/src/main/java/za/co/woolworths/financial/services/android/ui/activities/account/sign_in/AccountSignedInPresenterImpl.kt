@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -87,7 +86,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 Utils.SILVER_CARD -> Pair(ApplyNowState.SILVER_CREDIT_CARD, account)
                 Utils.BLACK_CARD -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
                 Utils.GOLD_CARD -> Pair(ApplyNowState.GOLD_CREDIT_CARD, account)
-                else -> throw RuntimeException("Invalid  accountNumberBin ${account.accountNumberBin}")
+                else -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
             }
             AccountsProductGroupCode.PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
             else -> throw RuntimeException("Invalid  productGroupCode ${account?.productGroupCode}")
@@ -116,7 +115,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             return when {
                 (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
                     // account is in arrears for more than 6 months
-                    mainView?.showAccountChargeOffForMoreThan6Months()!!
+                    mainView?.removeBlocksOnCollectionCustomer()!!
                 }
                 !productOfferingGoodStanding -> { // account is in arrears
                     mainView?.showAccountInArrears(account)
@@ -131,8 +130,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             }
         }
     }
-
-
 
     override fun bottomSheetBehaviourPeekHeight(): Int {
         val height = deviceHeight()
@@ -159,6 +156,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         mDeepLinkingData = null
     }
 
+    override fun isProductInGoodStanding(): Boolean  = getAccount()?.productOfferingGoodStanding == true
 
     private fun getAccount(): Account? {
         return mAccountResponse?.let { account -> getAccount(account) }
@@ -173,7 +171,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         deleteDeepLinkData()
     }
 
-    private fun getCardProductInformation(accountIsInArrearsState: Boolean): MutableList<AccountHelpInformation> {
+    fun getCardProductInformation(accountIsInArrearsState: Boolean): MutableList<AccountHelpInformation> {
         return model.getCardProductInformation(accountIsInArrearsState)
     }
 

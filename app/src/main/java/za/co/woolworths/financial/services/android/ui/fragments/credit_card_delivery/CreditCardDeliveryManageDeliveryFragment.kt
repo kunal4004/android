@@ -11,7 +11,6 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.*
 import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.deliveryDate
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -47,7 +46,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
         when (v?.id) {
             R.id.cancelDelivery -> {
                 activity?.apply {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY_CANCEL, this)
+                    (this as? CreditCardDeliveryActivity)?.mFirebaseCreditCardDeliveryEvent?.forCreditCarDeliveryCancel()
                     supportFragmentManager.apply {
                         val creditCardCancelDeliveryFragment = CancelOrToLateDeliveryDialog.newInstance(CreditCardDeliveryActivity.DeliveryStatus.CANCEL_DELIVERY)
                         creditCardCancelDeliveryFragment.show(this, CancelOrToLateDeliveryDialog::class.java.simpleName)

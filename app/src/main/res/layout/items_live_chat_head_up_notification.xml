@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:paddingLeft="@dimen/twelve_dp"
+    android:paddingRight="@dimen/twelve_dp"
+    android:paddingBottom="@dimen/eight_dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toastView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_notification_toast_bg"
+        android:minHeight="@dimen/fifty_six_dp"
+        android:paddingLeft="@dimen/sixteen_dp"
+        android:paddingRight="@dimen/sixteen_dp">
+
+        <ImageView
+            android:id="@+id/notificationLogoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_white"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_chat_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/notificationTitleTextView"
+            style="@style/futura_semi_bold_black_12_text_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/eight_dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:letterSpacing="0.1"
+            android:singleLine="true"
+            android:text="@string/chat_notification_title"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/notificationLogoTextView"
+            app:layout_constraintTop_toTopOf="@+id/notificationLogoTextView"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/notificationDescTextView"
+            style="@style/myriad_pro_regular"
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/three_dp"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:letterSpacing="0.1"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/notificationTitleTextView"
+            app:layout_constraintTop_toBottomOf="@id/notificationTitleTextView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -57,6 +57,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
                 toolbar = it.getToolbar() as Toolbar
             }
         }
+        Utils.setLinkConfirmationShown(true)
         val skipButton: TextView = toolbar?.findViewById(R.id.linkDeviceConfirmToolbarRightButton) as TextView
         skipButton.setOnClickListener(this)
         val navController = Navigation.findNavController(view)
@@ -64,6 +65,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
             Utils.setLinkConfirmationShown(true)
             activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_START, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated)), this) }
+
 
             navController.navigate(R.id.action_linkDeviceConfirmationFragment_to_otp_navigation, bundleOf(
                     AccountSignedInPresenterImpl.APPLY_NOW_STATE to mApplyNowState
@@ -111,7 +113,6 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             }
             Handler().postDelayed({
 
-                Utils.setLinkConfirmationShown(true)
                 val intent = Intent()
                 intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
                 setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)

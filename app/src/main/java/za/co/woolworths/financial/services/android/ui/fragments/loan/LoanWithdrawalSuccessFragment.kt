@@ -6,7 +6,9 @@ import android.view.*
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.loan_withdrawal_success.*
 import kotlinx.android.synthetic.main.view_floating_action_button.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
+import za.co.woolworths.financial.services.android.util.Utils
 
 class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
 
@@ -14,6 +16,10 @@ class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
         fun newInstance() = LoanWithdrawalSuccessFragment()
     }
 
+    override fun onStart() {
+        super.onStart()
+        activity?.apply {Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.personalLoanDrawdownComplete, this) }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)

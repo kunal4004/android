@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
+import android.graphics.Color
 import android.text.Html
 import android.text.TextUtils
 import android.util.Log
@@ -116,11 +117,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
         with(itemView) {
-
             measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-            val itemWidth = itemView.measuredWidth
-            imReducedImage?.layoutParams?.width = (itemWidth / 2) - Utils.dp2px(8f)
-            imSave?.layoutParams?.width = (itemWidth / 4) - Utils.dp2px(16f)
 
             ImageManager.setPictureOverrideWidthHeight(imReducedImage, imPromo?.reduced ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imFreeGiftImage, imPromo?.freeGift ?: "")

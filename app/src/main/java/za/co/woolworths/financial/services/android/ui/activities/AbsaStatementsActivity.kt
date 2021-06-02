@@ -29,9 +29,9 @@ import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.CARD
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.CARD
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.util.*
 import java.net.HttpCookie
@@ -149,7 +149,6 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                 showEmptyView()
             }
         }
-
     }
 
     override fun onBackPressed() {
@@ -260,22 +259,34 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         val accountList = account?.let { account -> mutableListOf(account) }
         chatAccountProductLandingPage?.first?.let {
             ChatFloatingActionButtonBubbleView(
-                    activity = this@AbsaStatementsActivity,
-                    chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
-                    floatingActionButton = chatBubbleFloatingButton,
-                    applyNowState = it,
-                    scrollableView = paymentOptionScrollView)
-                    .build()
+                activity = this@AbsaStatementsActivity,
+                chatBubbleVisibility = ChatBubbleVisibility(
+                    accountList,
+                    this@AbsaStatementsActivity
+                ),
+                floatingActionButton = chatBubbleFloatingButton,
+                applyNowState = it,
+                scrollableView = paymentOptionScrollView,
+                notificationBadge = badge,
+                onlineChatImageViewIndicator = onlineIndicatorImageView
+            )
+                .build()
         }
     }
 
-    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+    private fun chatToCollectionAgent(
+        applyNowState: ApplyNowState,
+        accountList: MutableList<Account>?
+    ) {
         ChatFloatingActionButtonBubbleView(
-                activity = this@AbsaStatementsActivity,
-                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
-                floatingActionButton = chatBubbleFloatingButton,
-                applyNowState = applyNowState,
-                scrollableView = paymentOptionScrollView)
-                .build()
+            activity = this@AbsaStatementsActivity,
+            chatBubbleVisibility = ChatBubbleVisibility(accountList, this@AbsaStatementsActivity),
+            floatingActionButton = chatBubbleFloatingButton,
+            applyNowState = applyNowState,
+            scrollableView = paymentOptionScrollView,
+            notificationBadge = badge,
+            onlineChatImageViewIndicator = onlineIndicatorImageView
+        )
+            .build()
     }
 }

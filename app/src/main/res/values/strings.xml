@@ -925,8 +925,8 @@
     <string name="product_details">Product Details</string>
     <string name="nutritional_information">Nutritional Information</string>
     <string name="get_temp_sc_title">Congrats, you have been selected to trial our new Woolies Virtual Temp Card at selected Woolies’ stores.</string>
-   <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
-   <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
+    <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
+    <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
     <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
@@ -1199,9 +1199,10 @@
     <string name="storeCardQualifyCriteria_row_3">Earn in excess of R2,000 per month</string>
 
     <string name="card_collection_title">Card Collection</string>
-    <string name="storeCard_card_collection_desc">When collection your Store Card, make sure you bring the following:</string>
+    <string name="card_collection_desc">When collecting your %1$s, make sure you bring the following:</string>
+
     <string name="storeCardCardCollection_row_1">Valid South African ID</string>
-    <string name="storeCardCardCollection_row_2">Latest three payslips or the last three months\' bank statements.</string>
+    <string name="storeCardCardCollection_row_2">Latest payslip or bank statement</string>
 
     <string name="goldCreditCard_title">Gold Credit Card</string>
     <string name="goldCreditCard_title_small">gold credit card</string>
@@ -1213,7 +1214,7 @@
     <string name="goldCreditCardQualify_row_3">Earn in excess of R3,000 per month</string>
 
     <string name="goldCreditCardCollection_row_1">Valid South African ID</string>
-    <string name="goldCreditCardCollection_row_2">Provide your latest payslip or bank statements</string>
+    <string name="goldCreditCardCollection_row_2">Latest payslip or bank statement</string>
     <string name="goldCreditCardCollection_row_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
 
     <string name="blackCreditCard_title">Black Credit Card</string>
@@ -1223,9 +1224,9 @@
     <string name="blackCreditCardQualify_row_2">Have a valid RSA ID Number</string>
     <string name="blackCreditCardQualify_row_3">Earn in excess of R41,666 per month</string>
 
-    <string name="blackCreditCardCollection_row_1">A valid RSA ID number</string>
-    <string name="blackCreditCardCollection_row_2">Latest three payslips or the last three months\' bank statements</string>
-    <string name="blackCreditCardCollection_row_3">Utility bill or original bank statement dated within the last three months, as proof of residence</string>
+    <string name="blackCreditCardCollection_row_1">Valid South African ID</string>
+    <string name="blackCreditCardCollection_row_2">Latest payslip or bank statement</string>
+    <string name="blackCreditCardCollection_row_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
 
     <string name="personalLoanCard_title">Personal Loan</string>
     <string name="personalLoanCard_desc">Access funds again and again</string>
@@ -1233,7 +1234,7 @@
     <string name="personalLoanQualifyingCriteria_row_1">Be 18 years of age, or older</string>
     <string name="personalLoanQualifyingCriteria_row_2">Have a valid RSA ID Number</string>
     <string name="personalLoanQualifyingCriteria_row_3">Earn in excess of R2,000 per month</string>
-    <string name="personalLoanQualifyingCriteria_row_4">Latest payslip or the last one months\' bank statements</string>
+    <string name="personalLoanQualifyingCriteria_row_4">Latest payslip or bank statement</string>
     <string name="personalLoanQualifyingCriteria_row_5">Have a bank account in your name</string>
 
     <string name="cardBenefits_title">Card Benefits</string>
@@ -1820,7 +1821,7 @@
     <string name="no_vouchers_available">NO VOUCHERS AVAILABLE</string>
     <string name="applied">\u0020Applied</string>
     <string name="available_vouchers_title">Select the vouchers you\'d like to redeem.\nSome vouchers can\'t be used in conjunction with\n other offers or promotions.</string>
-    <string name="available_vouchers_sub_title">Please Note: Your Woolies cash-back vouchers,\n quarterly vouchers and coffee vouchers are only\n redeemable in store.</string>
+    <string name="available_vouchers_sub_title">Please Note: Your Woolies cash-back vouchers, quarterly vouchers and coffee vouchers are only redeemable in store.</string>
     <string name="vouchers_applied_toast_message">Your &lt;b>Vouchers&lt;/b> have been applied</string>
 
     <string name="pma_retry_error_title">Oops!</string>
@@ -1919,6 +1920,7 @@
     <string name="credit_and_combination_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account. Combination cards will be treated as a credit card.</string>
     <string name="select_or_enter_a_payment_amount_label">Select or Enter\nPayment Amount</string>
     <string name="overdue_amount_label">Overdue Amount</string>
+    <string name="current_balance_label">Current Balance</string>
     <string name="currency_placeholder">R 0.00</string>
     <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
     <string name="generic_error_message_for_redeem_voucher">One or more of your vouchers could not be applied. Please see below for details.</string>
@@ -2025,4 +2027,15 @@
     <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
     <string name="payment_delay_note_label">Please note that payments may take up to 5 business days to reflect on your account.</string>
+    <string name="your_account_in_arrears_title">Your Account Is In Arrears</string>
+    <string name="your_account_in_arrears_desc">Your account has been in arrears for more than 6 months and has been handed to a collections agency.</string>
+    <string name="need_help_for_your_account">Need help with your account?</string>
+    <string name="contact_the_call_centre_now">Contact the call centre now at 0861502020</string>
+    <string name="remove_block_on_collection_dialog_title">Your Account Has Been In Arrears For Longer Than 6 Months.</string>
+    <string name="remove_block_on_collection_dialog_desc">Your account is being managed by our collections partners.</string>
+    <string name="internet_waiting_subtitle">Waiting for internet connection…</string>
+    <string name="chat_title">chat</string>
+    <string name="chat_notification_title">You have received a message.</string>
+    <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
+    <string name="woolies_chat_active">Chat is currently active</string>
 </resources>

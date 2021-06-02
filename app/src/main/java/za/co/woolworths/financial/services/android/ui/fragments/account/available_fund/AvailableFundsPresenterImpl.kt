@@ -23,7 +23,6 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     @Throws(RuntimeException::class)
     override fun setBundle(bundle: Bundle?) {
         val account = bundle?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE)
-                ?: throw RuntimeException("Accounts object is null or not found")
         mAccountPair = Gson().fromJson(account, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
         mAccount = mAccountPair?.second
     }

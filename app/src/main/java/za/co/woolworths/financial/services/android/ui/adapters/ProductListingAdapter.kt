@@ -24,17 +24,35 @@ class ProductListingAdapter(private val navigator: IProductListing?, private val
 
     override fun onBindViewHolder(holder: RecyclerViewViewHolder, position: Int) {
         mProductListItems?.get(position)?.let { productList ->
+            holder.itemView.invalidate()
+            holder.itemView.requestLayout()
             when (productList.rowType) {
-                ProductListingViewType.HEADER -> (holder as? RecyclerViewViewHolderHeader)?.setNumberOfItems(productList)
+                ProductListingViewType.HEADER -> (holder as? RecyclerViewViewHolderHeader)?.setNumberOfItems(
+                    productList
+                )
                 ProductListingViewType.FOOTER -> (holder as? RecyclerViewViewHolderFooter)?.loadMoreProductProgressBarVisibility()
                 else -> (holder as? RecyclerViewViewHolderItems)?.let { view ->
-                    navigator?.let { view.setProductItem(productList, it, if (position % 2 != 0) mProductListItems.getOrNull(position + 1) else null, if (position % 2 == 0) mProductListItems.getOrNull(position - 1) else null) }
+                    navigator?.let {
+                        view.setProductItem(
+                            productList,
+                            it,
+                            if (position % 2 != 0) mProductListItems.getOrNull(position + 1) else null,
+                            if (position % 2 == 0) mProductListItems.getOrNull(position - 1) else null
+                        )
+                    }
                     view.itemView.imQuickShopAddToCartIcon?.setOnClickListener {
                         if (!productList.quickShopButtonWasTapped) {
                             activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this) }
                             val fulfilmentTypeId = WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId
                             val storeId = fulfilmentTypeId?.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
                             fulfilmentTypeId?.let { id -> navigator?.queryInventoryForStore(id, AddItemToCart(productList.productId, productList.sku, 0), productList) }
+                            fulfilmentTypeId?.let { id ->
+                                navigator?.queryInventoryForStore(
+                                    id,
+                                    AddItemToCart(productList.productId, productList.sku, 0),
+                                    productList
+                                )
+                            }
                         }
                     }
                 }
@@ -42,7 +60,15 @@ class ProductListingAdapter(private val navigator: IProductListing?, private val
         }
     }
 
-    override fun getItemViewType(position: Int): Int = mProductListItems?.get(position)?.rowType?.ordinal
+    override fun onViewAttachedToWindow(holder: RecyclerViewViewHolder) {
+        if (holder is RecyclerViewViewHolderItems) {
+            holder.setIsRecyclable(false)
+        }
+        super.onViewAttachedToWindow(holder)
+    }
+
+    override fun getItemViewType(position: Int): Int =
+        mProductListItems?.get(position)?.rowType?.ordinal
             ?: 0
 
     override fun getItemCount(): Int = mProductListItems?.size ?: 0

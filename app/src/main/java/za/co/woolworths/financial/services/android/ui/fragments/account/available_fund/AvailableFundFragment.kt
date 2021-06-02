@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -58,7 +58,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAvailableFundPresenter = AvailableFundsPresenterImpl(this, AvailableFundsModelImpl())
-        mAvailableFundPresenter?.setBundle(arguments)
+        mAvailableFundPresenter.setBundle(arguments)
     }
 
     @Throws(RuntimeException::class)
@@ -385,7 +385,8 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                     val deepLinkingObject = getDeepLinkData()
                     when (deepLinkingObject?.get("feature")?.asString) {
                         destination -> {
-                                deleteDeepLinkData()
+                            deleteDeepLinkData()
+                            if (isProductInGoodStanding())
                                 view?.performClick()
                         }
                     }

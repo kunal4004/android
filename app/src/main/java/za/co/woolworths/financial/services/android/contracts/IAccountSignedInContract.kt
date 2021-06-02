@@ -17,7 +17,7 @@ interface IAccountSignedInContract {
         fun showAccountInArrears(account: Account)
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
-        fun showAccountChargeOffForMoreThan6Months()
+        fun removeBlocksOnCollectionCustomer()
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
     }
@@ -40,6 +40,7 @@ interface IAccountSignedInContract {
         fun chatWithCollectionAgent()
         fun getDeepLinkData(): JsonObject?
         fun deleteDeepLinkData()
+        fun isProductInGoodStanding():Boolean
     }
 
     interface MyAccountModel {

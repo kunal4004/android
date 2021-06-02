@@ -340,13 +340,14 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
-            <intent-filter
+            <!--Deep link to PDP disabled-->
+           <!-- <intent-filter
                 android:autoVerify="true"
                 android:order="1">
                 <action android:name="android.intent.action.VIEW" />
@@ -357,7 +358,7 @@
                 <data android:scheme="https" />
                 <data android:host="${app_links_host}" />
                 <data android:pathPattern="/prod.*" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity"
@@ -526,6 +527,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize" />
+
+        <service
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService"
+            android:enabled="true"
+            android:label="liveChatFollowMeService" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity"

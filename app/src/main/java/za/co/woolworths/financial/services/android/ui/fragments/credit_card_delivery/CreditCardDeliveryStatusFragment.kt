@@ -150,7 +150,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.manageDeliveryLayout -> {
-                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_BLK_CC_MANAGE_DELIVERY, this) }
+                (activity as? CreditCardDeliveryActivity)?.mFirebaseCreditCardDeliveryEvent?.forCreditCardManageDelivery()
                 navController?.navigate(R.id.action_to_creditCardDeliveryManageDeliveryFragmentToStatusFrag, bundleOf("bundle" to bundle))
             }
             R.id.trackDeliveryLayout -> {
