@@ -34,6 +34,20 @@
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/myAddressTitle" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/places_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/thirty_two_dp"
+            android:layout_marginEnd="@dimen/thirty_two_dp"
+            android:background="#FFF"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/autoCompleteTextView" />
+
         <TextView
             android:id="@+id/addressNicknamePlaceHolder"
             style="@style/myriad_pro_regular_black"
