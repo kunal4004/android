@@ -2044,4 +2044,5 @@
     <string name="optional_hint">Optional</string>
     <string name="places_autocomplete_tv_hint">Enter a new address</string>
     <string name="where_are_we_delivering">Where Are We Delivering?</string>
+    <string name="save_address">SAVE ADDRESS</string>
 </resources>

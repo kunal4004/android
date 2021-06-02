@@ -32,8 +32,7 @@
                 android:paddingBottom="@dimen/two_dp"
                 android:text="@string/where_are_we_delivering"
                 android:textSize="@dimen/twenty_sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/left_guideline"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <HorizontalScrollView
@@ -70,7 +69,7 @@
                 layout="@layout/checkout_new_user_address_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/recipientDetailsLayout"
+                app:layout_constraintBottom_toTopOf="@+id/addressDetailsPartition"
                 app:layout_constraintTop_toBottomOf="@+id/deliveringPartition" />
 
             <View
@@ -86,8 +85,57 @@
                 layout="@layout/checkout_new_user_recipient_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/recipientDetailsPartition"
                 app:layout_constraintTop_toBottomOf="@+id/addressDetailsPartition" />
+
+            <View
+                android:id="@+id/recipientDetailsPartition"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/six_dp"
+                android:layout_marginTop="@dimen/six_dp"
+                android:background="@color/color_D8D8D8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recipientDetailsLayout" />
+
+            <Button
+                android:id="@+id/saveAddress"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/fifty_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:background="@drawable/order_add_to_cart_button_bg"
+                android:fontFamily="@font/futura_semi_bold"
+                android:letterSpacing="0.13"
+                android:text="@string/save_address"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twelve_sp"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_guideline"
+                app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+                app:layout_constraintStart_toStartOf="@+id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/recipientDetailsPartition" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/left_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/twenty_six_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/right_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/bottom_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

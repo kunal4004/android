@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -15,6 +16,7 @@ import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 
 
 /**
@@ -66,11 +68,41 @@ class CheckoutAddAddressNewUserFragment : Fragment() {
         deliveringOptionsList.add("Complex/Estate")
         deliveringOptionsList.add("Apartment")
 
-        for (options in deliveringOptionsList) {
+        for ((index, options) in deliveringOptionsList.withIndex()) {
             val view = View.inflate(context, R.layout.where_are_we_delivering_items, null)
-            val title: TextView? = view?.findViewById(R.id.titleTv)
-            title?.text = options
+            val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
+            titleTextView?.tag = index
+            titleTextView?.text = options
+            titleTextView?.setOnClickListener {
+                resetOtherDeliveringTitle(it.tag as Int)
+                // change background of selected textView
+                it.background =
+                    bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                (it as TextView).setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+            }
             delivering_layout?.addView(view)
+        }
+    }
+
+    fun resetOtherDeliveringTitle(selectedTag: Int) {
+        //change background of unselected textview
+        for ((indx, option) in deliveringOptionsList.withIndex()) {
+            if (indx != selectedTag) {
+                val titleTextView: TextView? = view?.findViewWithTag(indx)
+                titleTextView?.background =
+                    bindDrawable(R.drawable.checkout_delivering_title_round_button)
+                titleTextView?.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+            }
         }
     }
 }
