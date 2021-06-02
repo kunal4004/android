@@ -19,7 +19,6 @@ class LiveChatOnStartCommandImpl : ILiveChatOnStartCommand {
         LiveChatAuthImpl(),
         LiveChatSubscribeImpl(),
         LiveChatListAllAgentConversationImpl(),
-        LiveChatOnStartCommandImpl(),
         LiveChatNotificationImpl()
     )
 
