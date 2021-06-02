@@ -20,13 +20,9 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 
-class GooglePlacesAdapter(
-    context: Context,
-    resourceId: Int,
-    geoData: PlacesClient
-) :
-    ArrayAdapter<PlaceAutocomplete>(context, resourceId),
-    Filterable {
+class GooglePlacesAdapter(context: Context, resourceId: Int, geoData: PlacesClient) :
+    ArrayAdapter<PlaceAutocomplete>(context, resourceId), Filterable {
+
     private var mResultList = arrayListOf<PlaceAutocomplete>()
     private val placesClient = geoData
     override fun getCount(): Int {
@@ -52,8 +48,10 @@ class GooglePlacesAdapter(
                 // Skip the autocomplete query if no constraints or less than 3 char is given.
                 if (constraint != null && constraint.length >= 3) {
                     mResultList = getPredictions(constraint)
-                    results.values = mResultList
-                    results.count = mResultList.size
+                    if (mResultList != null) {
+                        results.values = mResultList
+                        results.count = mResultList.size
+                    }
                 }
                 return results
             }
@@ -82,9 +80,7 @@ class GooglePlacesAdapter(
 
     fun getPredictions(constraint: CharSequence): ArrayList<PlaceAutocomplete> {
         val resultList = arrayListOf<PlaceAutocomplete>()
-        // and once again when the user makes a selection (for example when calling fetchPlace()).
         val token = AutocompleteSessionToken.newInstance()
-        // Use the builder to create a FindAutocompletePredictionsRequest.
         val request = FindAutocompletePredictionsRequest.builder()
             .setCountry("ZA")
             .setTypeFilter(TypeFilter.ADDRESS)

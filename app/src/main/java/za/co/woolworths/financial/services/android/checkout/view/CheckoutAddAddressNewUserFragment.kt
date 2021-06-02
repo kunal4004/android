@@ -3,26 +3,31 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FetchPlaceResponse
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
-import za.co.woolworths.financial.services.android.checkout.view.adapter.PlacesAutoCompleteAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -30,10 +35,9 @@ import kotlin.collections.ArrayList
 /**
  * Created by Kunal Uttarwar on 26/05/21.
  */
-class CheckoutAddAddressNewUserFragment : Fragment(), PlacesAutoCompleteAdapter.ClickListener {
+class CheckoutAddAddressNewUserFragment : Fragment() {
 
     private val deliveringOptionsList: ArrayList<String> = ArrayList()
-    var mAutoCompleteAdapter: PlacesAutoCompleteAdapter? = null
     private var navController: NavController? = null
 
     companion object {
@@ -56,7 +60,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), PlacesAutoCompleteAdapter.
 
     private fun init() {
         showWhereAreWeDeliveringView()
-        /*activity?.applicationContext?.let {
+        activity?.applicationContext?.let {
             Places.initialize(it, getString(R.string.maps_api_key))
             var placesClient = Places.createClient(it)
             val placesAdapter =
@@ -66,54 +70,47 @@ class CheckoutAddAddressNewUserFragment : Fragment(), PlacesAutoCompleteAdapter.
             }
             autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
-                    val place = parent.getItemAtPosition(position) as PlaceAutocomplete
-                    autoCompleteTextView.apply {
-                        setText(place.description)
-                        setSelection(autoCompleteTextView.length())
+                    val item = parent.getItemAtPosition(position) as PlaceAutocomplete
+                    val placeId = item.placeId.toString()
+                    val placeFields: MutableList<Place.Field>? = Arrays.asList(
+                        Place.Field.ID,
+                        Place.Field.NAME,
+                        Place.Field.LAT_LNG,
+                        Place.Field.ADDRESS
+                    )
+                    val request =
+                        placeFields?.let { FetchPlaceRequest.builder(placeId, it).build() }
+                    request?.let {
+                        placesClient?.fetchPlace(it)
+                            ?.addOnSuccessListener(object : OnSuccessListener<FetchPlaceResponse?> {
+                                override fun onSuccess(response: FetchPlaceResponse?) {
+                                    val place = response!!.place
+                                    val geocoder = Geocoder(context, Locale.getDefault())
+                                    val addresses =
+                                        place?.latLng?.let {
+                                            geocoder.getFromLocation(
+                                                it.latitude,
+                                                it.longitude,
+                                                1
+                                            )
+                                        }
+                                    addresses?.let { setAddress(it) }
+                                }
+                            })?.addOnFailureListener(object : OnFailureListener {
+                                override fun onFailure(@NonNull exception: Exception) {
+                                    if (exception is ApiException) {
+                                        Toast.makeText(
+                                            AuthenticateUtils.mContext,
+                                            exception.message + "",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    }
+                                }
+                            })
                     }
                 }
-        }*/
-
-
-
-        activity?.applicationContext?.let {
-            Places.initialize(it, getString(R.string.maps_api_key))
-            autoCompleteTextView.addTextChangedListener(filterTextWatcher);
-
-            mAutoCompleteAdapter = PlacesAutoCompleteAdapter(it)
-            places_recycler_view.setLayoutManager(LinearLayoutManager(activity))
-            mAutoCompleteAdapter!!.setClickListener(this);
-            places_recycler_view.setAdapter(mAutoCompleteAdapter);
-            mAutoCompleteAdapter!!.notifyDataSetChanged();
         }
-    }
-
-    private val filterTextWatcher: TextWatcher = object : TextWatcher {
-        override fun afterTextChanged(s: Editable) {
-            if (!s.toString().isNullOrEmpty() && s.toString().length >= SEARCH_LENGTH) {
-                mAutoCompleteAdapter!!.filter!!.filter(s.toString())
-                if (places_recycler_view.getVisibility() === View.GONE) {
-                    places_recycler_view.setVisibility(View.VISIBLE)
-                }
-            } else {
-                if (places_recycler_view.getVisibility() === View.VISIBLE) {
-                    places_recycler_view.setVisibility(View.GONE)
-                }
-            }
-        }
-
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    }
-
-    override fun click(place: Place?) {
-        if (places_recycler_view.getVisibility() === View.VISIBLE) {
-            places_recycler_view.setVisibility(View.GONE)
-        }
-        val geocoder = Geocoder(context, Locale.getDefault())
-        val addresses =
-            place?.latLng?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
-        addresses?.let { setAddress(it) }
     }
 
     private fun setAddress(addresses: MutableList<Address>) {
@@ -125,7 +122,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), PlacesAutoCompleteAdapter.
         provinceEditText.setText(address.countryName)
         postalCode.setText(address.postalCode)
     }
-
 
     private fun showWhereAreWeDeliveringView() {
         deliveringOptionsList.add("Home")
