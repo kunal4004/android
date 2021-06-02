@@ -26,6 +26,8 @@
             android:id="@+id/autoCompleteTextView"
             style="@style/credi_card_delivery_edittext_style"
             android:layout_marginTop="@dimen/fifteen_dp"
+            android:drawableStart="@drawable/mapview"
+            android:drawablePadding="@dimen/eight_dp"
             android:hint="@string/places_autocomplete_tv_hint"
             android:maxLines="1"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
@@ -149,7 +151,10 @@
         <EditText
             android:id="@+id/provinceEditText"
             style="@style/credi_card_delivery_edittext_style"
+            android:background="@color/checkout_delivering_title_background"
             android:contentDescription="@string/cd_ccd_txtprovince"
+            android:editable="false"
+            android:textColor="@color/non_editable_edit_text_text_color"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/provincePlaceHolder" />
@@ -170,8 +175,11 @@
         <EditText
             android:id="@+id/postalCode"
             style="@style/credi_card_delivery_edittext_style"
+            android:background="@color/checkout_delivering_title_background"
             android:contentDescription="@string/cd_ccd_txtpostalcode"
+            android:editable="false"
             android:imeOptions="actionDone"
+            android:textColor="@color/non_editable_edit_text_text_color"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/postalCodePlaceHolder" />
