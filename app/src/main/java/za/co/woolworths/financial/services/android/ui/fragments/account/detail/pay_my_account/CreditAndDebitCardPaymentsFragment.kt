@@ -94,9 +94,12 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
         setWhatsAppChatWithUsVisibility(payMyAccountPresenter?.getWhatsAppVisibility() ?: false)
 
-        val account = payMyAccountViewModel.getAccountWithApplyNowState()
-        account?.apply { chatToCollectionAgent(first, mutableListOf(second)) }
-
+        if (payMyAccountViewModel.isAccountChargedOff()) {
+            chatBubbleFloatingButton.visibility = GONE
+        } else {
+            val account = payMyAccountViewModel.getAccountWithApplyNowState()
+            account?.apply { chatToCollectionAgent(first, mutableListOf(second)) }
+        }
     }
 
     private fun onRetry() {
