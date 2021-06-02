@@ -1920,6 +1920,7 @@
     <string name="credit_and_combination_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account. Combination cards will be treated as a credit card.</string>
     <string name="select_or_enter_a_payment_amount_label">Select or Enter\nPayment Amount</string>
     <string name="overdue_amount_label">Overdue Amount</string>
+    <string name="current_balance_label">Current Balance</string>
     <string name="currency_placeholder">R 0.00</string>
     <string name="view_payment_option_label">VIEW OTHER PAYMENT OPTIONS</string>
     <string name="generic_error_message_for_redeem_voucher">One or more of your vouchers could not be applied. Please see below for details.</string>
@@ -2026,6 +2027,12 @@
     <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
     <string name="payment_delay_note_label">Please note that payments may take up to 5 business days to reflect on your account.</string>
+    <string name="your_account_in_arrears_title">Your Account Is In Arrears</string>
+    <string name="your_account_in_arrears_desc">Your account has been in arrears for more than 6 months and has been handed to a collections agency.</string>
+    <string name="need_help_for_your_account">Need help with your account?</string>
+    <string name="contact_the_call_centre_now">Contact the call centre now at 0861502020</string>
+    <string name="remove_block_on_collection_dialog_title">Your Account Has Been In Arrears For Longer Than 6 Months.</string>
+    <string name="remove_block_on_collection_dialog_desc">Your account is being managed by our collections partners.</string>
     <string name="internet_waiting_subtitle">Waiting for internet connection…</string>
     <string name="chat_title">chat</string>
     <string name="chat_notification_title">You have received a message.</string>
