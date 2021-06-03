@@ -35,6 +35,19 @@
             app:layout_constraintTop_toBottomOf="@id/myAddressTitle" />
 
         <TextView
+            android:id="@+id/autocompletePlaceErrorMsg"
+            style="@style/myriad_pro_regular"
+            android:layout_marginTop="@dimen/eight_dp"
+            android:lineSpacingMultiplier="1.40"
+            android:text="@string/places_address_error_msg"
+            android:textColor="@color/input_error_color_code"
+            android:textSize="@dimen/fourteen_sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/autoCompleteTextView" />
+
+        <TextView
             android:id="@+id/addressNicknamePlaceHolder"
             style="@style/myriad_pro_regular_black"
             android:layout_marginTop="@dimen/twenty_four_dp"
@@ -44,7 +57,7 @@
             android:textSize="@dimen/fourteen_sp"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/autoCompleteTextView" />
+            app:layout_constraintTop_toBottomOf="@id/autocompletePlaceErrorMsg" />
 
         <EditText
             android:id="@+id/addressNicknameEditText"
@@ -58,7 +71,7 @@
             style="@style/myriad_pro_regular"
             android:layout_marginTop="@dimen/eight_dp"
             android:lineSpacingMultiplier="1.40"
-            android:text="@string/business_name_error_msg"
+            android:text="@string/address_nickname_error_msg"
             android:textColor="@color/input_error_color_code"
             android:textSize="@dimen/fourteen_sp"
             android:visibility="gone"
@@ -89,19 +102,6 @@
             app:layout_constraintTop_toBottomOf="@id/unitComplexFloorPlaceHolder" />
 
         <TextView
-            android:id="@+id/unitComplexFloorErrorMsg"
-            style="@style/myriad_pro_regular"
-            android:layout_marginTop="@dimen/eight_dp"
-            android:lineSpacingMultiplier="1.40"
-            android:text="@string/street_address_error_msg"
-            android:textColor="@color/input_error_color_code"
-            android:textSize="@dimen/fourteen_sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@id/right_guideline"
-            app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/unitComplexFloorEditText" />
-
-        <TextView
             android:id="@+id/suburbPlaceHolder"
             style="@style/myriad_pro_regular_black"
             android:layout_marginTop="@dimen/twenty_four_dp"
@@ -112,7 +112,7 @@
             android:textSize="@dimen/fourteen_sp"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/unitComplexFloorErrorMsg" />
+            app:layout_constraintTop_toBottomOf="@id/unitComplexFloorEditText" />
 
         <EditText
             android:id="@+id/suburbEditText"
@@ -123,11 +123,11 @@
             app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolder" />
 
         <TextView
-            android:id="@+id/suburbErrorMsg"
+            android:id="@+id/suburbNameErrorMsg"
             style="@style/myriad_pro_regular"
             android:layout_marginTop="@dimen/eight_dp"
             android:lineSpacingMultiplier="1.40"
-            android:text="@string/suburb_error_msg"
+            android:text="@string/suburb_name_error_msg"
             android:textColor="@color/input_error_color_code"
             android:textSize="@dimen/fourteen_sp"
             android:visibility="gone"
@@ -146,7 +146,7 @@
             android:textSize="@dimen/fourteen_sp"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/suburbErrorMsg" />
+            app:layout_constraintTop_toBottomOf="@id/suburbNameErrorMsg" />
 
         <EditText
             android:id="@+id/provinceEditText"
@@ -160,6 +160,19 @@
             app:layout_constraintTop_toBottomOf="@id/provincePlaceHolder" />
 
         <TextView
+            android:id="@+id/provinceNameErrorMsg"
+            style="@style/myriad_pro_regular"
+            android:layout_marginTop="@dimen/eight_dp"
+            android:lineSpacingMultiplier="1.40"
+            android:text="@string/province_name_error_msg"
+            android:textColor="@color/input_error_color_code"
+            android:textSize="@dimen/fourteen_sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/provinceEditText" />
+
+        <TextView
             android:id="@+id/postalCodePlaceHolder"
             style="@style/myriad_pro_regular_black"
             android:layout_marginTop="@dimen/twenty_four_dp"
@@ -170,7 +183,7 @@
             android:textSize="@dimen/fourteen_sp"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/provinceEditText" />
+            app:layout_constraintTop_toBottomOf="@id/provinceNameErrorMsg" />
 
         <EditText
             android:id="@+id/postalCode"
@@ -183,6 +196,19 @@
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/postalCodePlaceHolder" />
+
+        <TextView
+            android:id="@+id/postalCodeTextErrorMsg"
+            style="@style/myriad_pro_regular"
+            android:layout_marginTop="@dimen/eight_dp"
+            android:lineSpacingMultiplier="1.40"
+            android:text="@string/postal_code_error_msg"
+            android:textColor="@color/input_error_color_code"
+            android:textSize="@dimen/fourteen_sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/postalCode" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"

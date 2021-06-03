@@ -2052,4 +2052,9 @@
     <string name="places_autocomplete_tv_hint">Enter a new address</string>
     <string name="where_are_we_delivering">Where Are We Delivering?</string>
     <string name="save_address">SAVE ADDRESS</string>
+    <string name="places_address_error_msg">Please enter a valid Address</string>
+    <string name="address_nickname_error_msg">Please enter Address nickname</string>
+    <string name="suburb_name_error_msg">Please enter Suburb name</string>
+    <string name="province_name_error_msg">Please enter Province name</string>
+    <string name="postal_code_error_msg">Please enter a Postal Code</string>
 </resources>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.NonNull
@@ -24,6 +25,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FetchPlaceResponse
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
+import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
@@ -35,14 +37,11 @@ import kotlin.collections.ArrayList
 /**
  * Created by Kunal Uttarwar on 26/05/21.
  */
-class CheckoutAddAddressNewUserFragment : Fragment() {
+class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private val deliveringOptionsList: ArrayList<String> = ArrayList()
     private var navController: NavController? = null
-
-    companion object {
-        const val SEARCH_LENGTH = 3
-    }
+    private lateinit var listOfInputFields: List<EditText>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +54,16 @@ class CheckoutAddAddressNewUserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        saveAddress?.setOnClickListener(this)
+        listOfInputFields = listOf(
+            autoCompleteTextView,
+            addressNicknameEditText,
+            suburbEditText,
+            provinceEditText,
+            postalCode,
+            recipientName,
+            cellphoneNumber
+        )
         init()
     }
 
@@ -116,7 +125,7 @@ class CheckoutAddAddressNewUserFragment : Fragment() {
     private fun setAddress(addresses: MutableList<Address>) {
         val address = addresses.get(0)
         autoCompleteTextView.apply {
-            setText(address.featureName)
+            setText(address.getAddressLine(0))
             setSelection(autoCompleteTextView.length())
         }
         provinceEditText.setText(address.countryName)
@@ -163,6 +172,57 @@ class CheckoutAddAddressNewUserFragment : Fragment() {
                         R.color.black
                     )
                 )
+            }
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.saveAddress -> {
+                if (autoCompleteTextView?.text.toString().trim()
+                        .isNotEmpty() && addressNicknameEditText?.text.toString().trim()
+                        .isNotEmpty() && suburbEditText?.text.toString().trim()
+                        .isNotEmpty() && provinceEditText?.text.toString().trim()
+                        .isNotEmpty() && postalCode?.text.toString().trim()
+                        .isNotEmpty() && recipientName?.text.toString().trim()
+                        .isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty()
+                ) {
+
+
+                } else {
+                    listOfInputFields.forEach {
+                        if (it.text.toString().trim().isEmpty())
+                            showErrorInputField(it, View.VISIBLE)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showErrorInputField(editText: EditText, visible: Int) {
+
+        editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.otp_box_error_background else R.drawable.recipient_details_input_edittext_bg)
+        when (editText.id) {
+            R.id.autoCompleteTextView -> {
+                autocompletePlaceErrorMsg?.visibility = visible
+            }
+            R.id.addressNicknameEditText -> {
+                addressNicknameErrorMsg?.visibility = visible
+            }
+            R.id.suburbEditText -> {
+                suburbNameErrorMsg?.visibility = visible
+            }
+            R.id.provinceEditText -> {
+                provinceNameErrorMsg?.visibility = visible
+            }
+            R.id.postalCode -> {
+                postalCodeTextErrorMsg?.visibility = visible
+            }
+            R.id.recipientName -> {
+                recipientNameErrorMsg?.visibility = visible
+            }
+            R.id.cellphoneNumber -> {
+                cellphoneNumberErrorMsg?.visibility = visible
             }
         }
     }

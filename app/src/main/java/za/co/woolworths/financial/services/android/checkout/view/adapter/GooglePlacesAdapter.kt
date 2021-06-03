@@ -23,6 +23,10 @@ import java.util.concurrent.TimeoutException
 class GooglePlacesAdapter(context: Context, resourceId: Int, geoData: PlacesClient) :
     ArrayAdapter<PlaceAutocomplete>(context, resourceId), Filterable {
 
+    companion object {
+        const val SEARCH_LENGTH = 3
+    }
+
     private var mResultList = arrayListOf<PlaceAutocomplete>()
     private val placesClient = geoData
     override fun getCount(): Int {
@@ -46,7 +50,7 @@ class GooglePlacesAdapter(context: Context, resourceId: Int, geoData: PlacesClie
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val results = FilterResults()
                 // Skip the autocomplete query if no constraints or less than 3 char is given.
-                if (constraint != null && constraint.length >= 3) {
+                if (constraint != null && constraint.length >= SEARCH_LENGTH) {
                     mResultList = getPredictions(constraint)
                     if (mResultList != null) {
                         results.values = mResultList
