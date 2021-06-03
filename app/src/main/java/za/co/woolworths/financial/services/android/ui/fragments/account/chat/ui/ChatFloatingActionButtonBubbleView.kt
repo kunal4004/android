@@ -213,6 +213,7 @@ class ChatFloatingActionButtonBubbleView(
             )
         )
 
+        activity.sendBroadcast(Intent(LIVE_CHAT_TOAST))
         activity.startActivity(Intent(activity, WChatActivity::class.java))
     }
 
@@ -339,5 +340,6 @@ class ChatFloatingActionButtonBubbleView(
         const val LIVE_CHAT_NO_INTERNET_RESULT = "live_chat_no_internet_result"
         const val LIVE_CHAT_PACKAGE = "live.chat.subscription.result.SUBSCRIBE.DATA"
         const val LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE = "live.chat.message.COUNT.DATA"
+        const val LIVE_CHAT_TOAST = "live.chat.TOAST.DATA"
     }
 }
