@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardRes
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.*
+import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
@@ -423,6 +424,14 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         if (resultCode == Activity.RESULT_OK && requestCode == OTP_REQUEST_CODE) {
             val otp = data?.getStringExtra(OTP_VALUE)
             otp?.let { requestUnblockCard(it) }
+        }
+        //When blocked card and on success My card should refresh
+        else if(requestCode == BlockMyCardActivity.REQUEST_CODE_BLOCK_MY_CARD
+                && resultCode == MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE) {
+            activity?.apply {
+                setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE, data)
+                finish() // will close previous activity in stack
+            }
         }
     }
 

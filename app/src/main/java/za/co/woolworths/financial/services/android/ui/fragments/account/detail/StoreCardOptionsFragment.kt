@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
@@ -172,7 +173,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
-                if(mCardPresenterImpl?.isVirtualCardObjectBlockTypeNull() == true){
+                if (mCardPresenterImpl?.isVirtualCardObjectBlockTypeNull() == true) {
                     manageLinkNewCardGroup?.visibility = VISIBLE
                 } else {
                     manageLinkNewCardGroup?.visibility = GONE
@@ -194,7 +195,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 cardDetailImageView?.alpha = 0.3f
             }
             //Unfreeze my card
-            mCardPresenterImpl?.getStoreCardBlockType() == true ->{
+            mCardPresenterImpl?.getStoreCardBlockType() == true -> {
                 cardDetailImageView?.setImageDrawable(bindDrawable(R.drawable.card_freeze))
                 manageMyCardTextView?.text = bindString(R.string.unfreeze_my_card_label)
                 tempFreezeTextView?.let { KotlinUtils.roundCornerDrawable(it, "#FF7000") }
@@ -250,6 +251,12 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE) {
             checkForLocationPermission()
+            data?.apply {
+                val shouldRefreshCardDetails = getBooleanExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, false)
+                if (shouldRefreshCardDetails) {
+                    navigateToGetStoreCards()
+                }
+            }
         }
         //Activate VTC journey when successfully activated
         if (resultCode == ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE) {
@@ -288,7 +295,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
                     when (manageMyCardTextView?.text?.toString()) {
                         bindString(R.string.replacement_card_label) -> {
-//                            getStoreCardResponse()?.let { MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, it, screenType = StoreCardViewType.GET_REPLACEMENT_CARD) }
                             activity?.apply {
                                 getStoreCardResponse()?.let {
                                     Intent(this, SelectStoreActivity::class.java).apply {

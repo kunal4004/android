@@ -32,7 +32,6 @@
         app:layout_constraintEnd_toStartOf="@+id/businessTextView"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/storeAddressDeliveryDetailsTextView"
         app:layout_constraintWidth_percent="@integer/point_five" />
 
@@ -44,9 +43,9 @@
         android:drawablePadding="@dimen/ten_dp"
         android:gravity="center"
         android:text="@string/business"
+        android:layout_marginStart="@dimen/eighty_dp"
         android:textColor="@color/color_7b7b7b"
         app:layout_constraintBottom_toBottomOf="@+id/residentialTextView"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/residentialTextView"
         app:layout_constraintTop_toTopOf="@+id/residentialTextView"

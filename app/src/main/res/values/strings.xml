@@ -2040,7 +2040,7 @@
     <string name="confirm_store_header_desc">Please confirm your collection store details below.</string>
     <string name="store_address_header">Where would you like your card to be delivered?</string>
     <string name="store_address_left_tab">To Me</string>
-    <string name="store_address_right_tab">To Woolies Store</string>
+    <string name="store_address_right_tab">To a Woolies Store</string>
     <string name="store_address_delivery_details">Please complete your delivery details below. A delivery charge of R50 will be charged to your Store card account.</string>
     <string name="hint_complex_building">Building name, unit or floor number</string>
     <string name="hint_business_name">Enter business name</string>

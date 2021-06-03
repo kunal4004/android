@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -144,7 +145,8 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     activity?.apply {
-                        setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
+                        setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE,
+                                Intent().putExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, true))
                         overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                         finish()
                     }

@@ -36,6 +36,7 @@ import java.util.*
 class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     companion object {
+        const val REFRESH_MY_CARD_DETAILS = "refreshMyCardDetails"
         const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
         const val STORE_CARD_VIEW_TYPE = "STORE_CARD_VIEW_TYPE"
         const val CARD_NUMBER = "CARD_NUMBER"
