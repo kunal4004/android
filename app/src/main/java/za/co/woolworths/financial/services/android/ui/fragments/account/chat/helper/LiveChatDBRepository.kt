@@ -76,7 +76,7 @@ class LiveChatDBRepository : DatabaseManager() {
         val productGroupCode = account?.productGroupCode?.toLowerCase(Locale.getDefault())
         val isCreditCard =
             productGroupCode == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase()
-        val prsCardNumber = if (isCreditCard) getABSACardToken() else "0"
+        val prsCardNumber = if (isCreditCard) getABSACardToken() else null
         val prsC2id = customerInfo.getCustomerC2ID()
         val prsFirstname = customerInfo.getCustomerUsername()
         val prsSurname = customerInfo.getCustomerFamilyName()
@@ -101,15 +101,12 @@ class LiveChatDBRepository : DatabaseManager() {
         )
     }
 
-    fun getABSACardToken(): String {
+    fun getABSACardToken(): String? {
         val account = getAccount()
         val absaCardList = getLiveChatParams()?.absaCardList
-        val absaCard = if (!absaCardList.isNullOrEmpty()) Gson().fromJson(
-            absaCardList,
-            object : TypeToken<List<Card>>() {}.type
-        ) else null
+        val absaCard = if (!absaCardList.isNullOrEmpty()) Gson().fromJson(absaCardList, object : TypeToken<List<Card>>() {}.type) else null
         val result: List<Card>? = account?.cards ?: absaCard
-        return result?.get(0)?.absaCardToken ?: "0"
+        return if(result?.isNotEmpty() == true) result[0].absaCardToken else null
     }
 
     fun clearData() {
@@ -120,10 +117,8 @@ class LiveChatDBRepository : DatabaseManager() {
         saveLiveChatParams(liveChatParams)
     }
 
-
     fun getConversationMessageId(): String = getConversation()?.id ?: ""
 
     fun getConversation() = getLiveChatParams()?.conversation
-
 
 }
