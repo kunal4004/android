@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.extension.setSafeOnClickListener
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
@@ -95,7 +96,7 @@ class ChatFloatingActionButtonBubbleView(
                     dismiss()
                 }
 
-                chatToUsNowTextView?.setOnClickListener {
+                chatToUsNowTextView?.setSafeOnClickListener {
                     chatBubbleVisibility?.saveInAppChatTooltip(applyNowState)
                     navigateToChatActivity(activity, chatAccountProductLandingPage)
                     dismiss()
@@ -126,7 +127,8 @@ class ChatFloatingActionButtonBubbleView(
             }
             setTitle(null)
             setCancelable(true)
-            show()
+            if (!this.isShowing)
+                show()
         }
     }
 
@@ -143,15 +145,11 @@ class ChatFloatingActionButtonBubbleView(
             is NestedScrollView -> {
                 (scrollableView as? NestedScrollView)?.apply {
                     viewTreeObserver?.addOnScrollChangedListener {
-                        val scrollViewHeight: Double =
-                            getChildAt(0)?.bottom?.minus(height.toDouble())
-                                ?: 0.0
+                        val scrollViewHeight: Double = getChildAt(0)?.bottom?.minus(height.toDouble()) ?: 0.0
                         val getScrollY: Double = scrollY.toDouble()
                         val scrollPosition = getScrollY / scrollViewHeight * 100.0
                         if (scrollPosition.toInt() > 30) {
                             floatingActionButton?.hide()
-                            if (chatBubbleToolTip?.isShowing == true)
-                                chatBubbleToolTip?.dismiss()
                         } else {
                             floatingActionButton?.show()
                         }
@@ -186,7 +184,7 @@ class ChatFloatingActionButtonBubbleView(
                     applyNowState
                 )
             AnimationUtilExtension.animateViewPushDown(floatingActionButton)
-            floatingActionButton?.setOnClickListener {
+            floatingActionButton?.setSafeOnClickListener {
                 navigateToChatActivity(activity, chatAccountProductLandingPage)
             }
         }
