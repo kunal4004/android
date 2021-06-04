@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.views
 
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.GradientDrawable
@@ -13,7 +15,6 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import com.awfs.coordination.R
-import com.google.gson.JsonParser
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
@@ -21,9 +22,7 @@ import android.util.DisplayMetrics
 import android.view.View.*
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
+import com.google.gson.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
@@ -31,8 +30,11 @@ import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatDBRepository
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_TOAST
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
+import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.ScreenManager
 
 class ToastFactory {
@@ -347,7 +349,7 @@ class ToastFactory {
             return popupWindow
         }
 
-        fun chatFollowMeBubble(
+        fun liveChatHeadUpNotificationWindow(
             viewLocation: View?,
             activity: Activity?,
             sendMessageResponse: SendMessageResponse?
@@ -381,16 +383,24 @@ class ToastFactory {
                 LinearLayout.LayoutParams.WRAP_CONTENT, true
             )
 
+            val receiverManager = activity?.let { ReceiverManager.init(it) }
+
+            val mToastNotifier = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent) {
+                    popupWindow.dismiss() // dismiss the window
+                }
+            }
+
             toastContainerConstraintLayout?.setOnClickListener {
                 activity ?: return@setOnClickListener
                 LiveChatDBRepository().resetUnReadMessageCount()
-                activity.sendBroadcast(Intent(ChatFloatingActionButtonBubbleView.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE))
+                activity.sendBroadcast(Intent(LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE))
                 activity.startActivity(Intent(activity, WChatActivity::class.java))
                 popupWindow.dismiss() // dismiss the window
             }
             popupWindow.isFocusable = false
             GlobalScope.doAfterDelay(POPUP_3000_DELAY_MILLIS) {
-                popupWindow.dismiss()
+                popupWindow.dismiss() // dismiss the window
             }
 
             popupWindow.showAtLocation(
@@ -399,6 +409,19 @@ class ToastFactory {
                 0,
                 16
             )
+
+            if (receiverManager?.isReceiverRegistered(mToastNotifier) == false) {
+                receiverManager.registerReceiver(
+                    mToastNotifier,
+                    IntentFilter(LIVE_CHAT_TOAST)
+                )
+            }
+
+            popupWindow.setOnDismissListener {
+                if (receiverManager?.isReceiverRegistered(mToastNotifier) == true)
+                    receiverManager.unregisterReceiver(mToastNotifier)
+            }
+
             return popupWindow
         }
     }

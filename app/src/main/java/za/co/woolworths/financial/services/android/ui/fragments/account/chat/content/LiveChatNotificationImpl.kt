@@ -39,7 +39,7 @@ class LiveChatNotificationImpl : ILiveChatNotification {
             broadcastMessageCountResult(woolworthsApplication)
             val currentActivity = woolworthsApplication?.currentActivity
             currentActivity?.let {
-                ToastFactory.chatFollowMeBubble(
+                ToastFactory.liveChatHeadUpNotificationWindow(
                     it.window?.decorView?.rootView,
                     it,
                     messageResponse

@@ -253,10 +253,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             cartActivity.hideEditCart();
         }
         ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
-        if (location.suburb != null)
-            localSuburbId = location.suburb.id;
-        if (location.store != null)
-            localStoreId = location.store.getId();
+        if (location != null) {
+            if (location.suburb != null)
+                localSuburbId = location.suburb.id;
+            if (location.store != null)
+                localStoreId = location.store.getId();
+        }
         loadShoppingCart(false);
         mToastUtils = new ToastUtils(this);
         mDisposables.add(WoolworthsApplication.getInstance()
