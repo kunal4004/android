@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -90,9 +91,14 @@ public class IncreaseLimitController {
 		wTextView.setVisibility(View.VISIBLE);
 		if (!TextUtils.isEmpty(value))
 			value = value + "00";
+		setInputFilter(editTextView, value.length() >= 9 ? 13 : 11);
 		editTextView.setText(value);
 		editTextView.clearFocus();
 		editTextView.setSelection(editTextView.getText().length());
+	}
+
+	private void setInputFilter(CurrencyEditText editTextView, int i) {
+		editTextView.setFilters(new InputFilter[]{new InputFilter.LengthFilter(i)});
 	}
 
 	public void showView(View view) {
