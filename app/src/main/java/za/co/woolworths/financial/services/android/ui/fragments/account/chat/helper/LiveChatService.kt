@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
+import com.amplifyframework.AmplifyException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -73,10 +75,18 @@ class LiveChatService : Service() {
                     is SendMessageResponse -> headUpNotification(item, applicationContext)
                     else -> broadcastResultToAmplifySubscribe(applicationContext, item as? String)
                 }
-            }, {
+            }, { error ->
                 GlobalScope.launch(Dispatchers.Main) {
-                    ChatAWSAmplify.isLiveChatActivated = false
-                    broadcastResultToAmplifySubscribe(applicationContext, null)
+                    when (error) {
+                        is AmplifyException -> {
+                            // Handshake is corrupted, should resubscribe
+                            // onReConnectToSubscribeAPI()
+                        }
+                        else -> {
+                            ChatAWSAmplify.isLiveChatActivated = false
+                            broadcastResultToAmplifySubscribe(applicationContext, null)
+                        }
+                    }
                 }
             })
         }
@@ -84,7 +94,10 @@ class LiveChatService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(1, liveChatPresenter.createNotificationChannel(applicationContext)?.build())
+            startForeground(
+                1,
+                liveChatPresenter.createNotificationChannel(applicationContext)?.build()
+            )
         }
     }
 

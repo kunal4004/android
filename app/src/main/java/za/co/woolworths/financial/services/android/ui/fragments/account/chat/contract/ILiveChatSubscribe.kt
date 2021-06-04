@@ -5,5 +5,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.mod
 
 interface ILiveChatSubscribe {
     fun onSubscribe(onSuccess: (SendMessageResponse?) -> Unit, onFailure: (ApiException) -> Unit)
+    fun onReConnectToSubscribeAPI(){}
     fun onCancel()
 }

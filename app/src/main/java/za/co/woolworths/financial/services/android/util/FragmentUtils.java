@@ -36,6 +36,12 @@ public class FragmentUtils {
 				.replace(fragmentId, nextFragment).commitAllowingStateLoss();
 	}
 
+	public void replaceFragment(FragmentManager fragmentManager, Fragment nextFragment, int fragmentId) {
+		fragmentManager.beginTransaction()
+				.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+				.addToBackStack(nextFragment.getClass().getSimpleName())
+				.replace(fragmentId, nextFragment).commitAllowingStateLoss();
+	}
 
 	public void openFragment(FragmentManager fragmentManager, Fragment nextFragment, int fragmentId) {
 		fragmentManager.beginTransaction()

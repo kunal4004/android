@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawer
 import za.co.woolworths.financial.services.android.ui.fragments.account.AccountMasterCache;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.AmplifyInit;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
@@ -204,7 +205,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         mBundle = getIntent().getExtras();
         parseDeepLinkData();
-
+        new AmplifyInit();
         mNavController = FragNavController.newBuilder(savedInstanceState,
                 getSupportFragmentManager(),
                 R.id.frag_container)

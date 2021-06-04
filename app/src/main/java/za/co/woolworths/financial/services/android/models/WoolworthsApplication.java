@@ -349,11 +349,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
             showServerMessageOrProceed(activity);
             shouldDisplayServerMessage = false;
         }
-
-        if (activity.getClass().equals(BottomNavigationActivity.class)) {
-            if (ChatAWSAmplify.INSTANCE == null)
-                ChatAWSAmplify.INSTANCE.init();
-        }
     }
 
     @Override
@@ -368,7 +363,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
             Class<Activity> activityClass = (Class<Activity>) activity.getClass();
             visibleActivities.add(activityClass);
         }
-
     }
 
     @Override
