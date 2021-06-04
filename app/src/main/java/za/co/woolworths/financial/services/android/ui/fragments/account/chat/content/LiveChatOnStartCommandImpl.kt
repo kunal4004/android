@@ -6,21 +6,19 @@ import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.LiveChatPresenter
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.contract.LiveChatReconnectPresenter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatAuthImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatListAllAgentConversationImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.request.LiveChatSubscribeImpl
-import za.co.woolworths.financial.services.android.util.animation.ConnectivityWatcher
 
 class LiveChatOnStartCommandImpl : ILiveChatOnStartCommand {
 
-    private val liveChatReconnectPresenter = LiveChatReconnectPresenter(
-        LiveChatAuthImpl(),
-        LiveChatSubscribeImpl(),
-        LiveChatListAllAgentConversationImpl(),
-        LiveChatNotificationImpl()
-    )
+    override fun onReconnectToSubscribeAPI(liveChatPresenter: LiveChatPresenter,
+                                                   onSuccess: (Any) -> Unit, onFailure: (Any) -> Unit) {
+        liveChatPresenter.onSubscribe({ message ->
+            message?.let { msg -> onSubscribeData(msg, onSuccess) }
+        }, {
+            // subscribe error
+            onFailure(it)
+        })
+    }
 
     override fun onStartConversationBySender(
         liveChatPresenter: LiveChatPresenter,
@@ -47,34 +45,6 @@ class LiveChatOnStartCommandImpl : ILiveChatOnStartCommand {
                 onFailure(it)
                 // sign in error
             })
-        }
-    }
-
-    override fun reconnectToNetwork(
-        context: Context,
-        onSuccess: (Any) -> Unit,
-        onFailure: (Any) -> Unit
-    ) {
-        with(liveChatReconnectPresenter) {
-            ConnectivityWatcher(context).observeForever { hasConnection ->
-                if (!hasConnection) {
-                    ChatAWSAmplify.isConnectedToInternet = false
-                    broadcastResultShowNoConnectionToast(context)
-                } else {
-                    if (!ChatAWSAmplify.isConnectedToInternet) {
-                        ChatAWSAmplify.isConnectedToInternet = true
-                        messageListFromAgent({ newMessageList ->
-                            val messagesList = newMessageList.first
-                            val lastMessage = newMessageList.second
-                            /**
-                             * TODO:: IN NEXT SPRINT, BROADCAST EVENT TO SHOW MESSAGE COUNT WHEN APP RECONNECT TO WIFI
-                             */
-                        }, { apiException ->
-                            onFailure(apiException)
-                        })
-                    }
-                }
-            }
         }
     }
 

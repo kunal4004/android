@@ -53,6 +53,7 @@ class LiveChatSubscribeImpl(
             }, { }
         )
     }
+    
 
     override fun onCancel() {
         subscription?.cancel()
