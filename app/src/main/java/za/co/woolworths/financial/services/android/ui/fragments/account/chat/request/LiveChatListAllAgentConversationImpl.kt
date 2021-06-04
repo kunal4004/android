@@ -14,14 +14,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.mod
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.util.Assets
-import java.text.SimpleDateFormat
 import java.util.*
 
 class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
-
-    companion object {
-        const val DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-    }
 
     private val listMessageByConversation: String =
         Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
@@ -41,9 +36,9 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
 
     override fun messageListFromAgent(
         onSuccess: (Pair<MutableList<ChatMessage>?, SendMessageResponse?>) -> Unit,
-        onFailure: (ApiException) -> Unit
-    ) {
+        onFailure: (ApiException) -> Unit) {
         val conversationId = liveChatDBRepository.getConversationMessageId()
+
         API.query(
             request(conversationId),
             { agentMessagesList ->
@@ -63,7 +58,7 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
                 // Sort agent list by createdAt Date Field
                 listOfAllConversationByAgent =
                     listOfAllConversationByAgent
-                        ?.sortedBy { it.createdAt?.toDate() }
+                        ?.sortedBy { it.createdAt }
                         ?.toMutableList()
 
                 // Convert MutableList<SendMessageResponse> to mutableListOf<ChatMessage>()
@@ -72,37 +67,36 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
 
                 // Create a new list with Adapter Messages and Agent Message and remove duplicate items
                 val newMessageList: MutableList<ChatMessage>? = messageListFromChatAdapter
-                        ?.plus(chatMessageAgent)
-                        ?.distinct()
-                        ?.toMutableList()
+                    ?.plus(chatMessageAgent)
+                    ?.distinct()
+                    ?.toMutableList()
 
+                val listWithoutNullValues : MutableList<ChatMessage>? = mutableListOf()
                 // Remove empty messages from list
-                newMessageList?.forEach {
-                    val message = when (it) {
-                        is SendMessageResponse -> it.content
-                        is SenderMessage -> it.message
-                    }
-                    if (TextUtils.isEmpty(message))
-                        newMessageList.remove(it)
+                newMessageList?.forEach { messages ->
+                    val message = TextUtils.isEmpty(
+                        when (messages) {
+                            is SendMessageResponse -> messages.content
+                            is SenderMessage -> messages.message
+                        }
+                    )
+                    if (!message)
+                        listWithoutNullValues?.add(messages)
                 }
 
                 //Keep a reference of new list
-                ChatAWSAmplify.listAllChatMessages = newMessageList
+                ChatAWSAmplify.listAllChatMessages = listWithoutNullValues
 
                 //Last Message will determine sessionStateType of UI component
-                val lastMessage = newMessageList
-                        ?.groupBy { it as? SendMessageResponse }?.keys
-                        ?.lastOrNull()
+                val lastMessage = listWithoutNullValues
+                    ?.groupBy { it as? SendMessageResponse }?.keys
+                    ?.lastOrNull()
 
                 // emit result as Pair(first, second)
-                onSuccess(Pair(newMessageList, lastMessage))
+                onSuccess(Pair(listWithoutNullValues, lastMessage))
             },
             { apiException ->
                 onFailure(apiException)
             })
-    }
-
-    fun String.toDate(): Date? {
-        return SimpleDateFormat(DATE_PATTERN, Locale.US).parse(this)
     }
 }
