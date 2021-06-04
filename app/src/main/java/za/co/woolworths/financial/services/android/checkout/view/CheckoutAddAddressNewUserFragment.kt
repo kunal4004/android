@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
+import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
@@ -94,7 +95,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun setupViewModel() {
         checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
             this,
-            ViewModelFactory(CheckoutAddAddressNewUserInteractor(), CheckoutAddAddressNewUserApiHelper())
+            ViewModelFactory(CheckoutAddAddressNewUserInteractor(CheckoutAddAddressNewUserApiHelper()))
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
@@ -183,7 +184,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             setText(address.getAddressLine(0))
             setSelection(autoCompleteTextView.length())
         }
-        provinceEditText.setText(address.countryName)
+        provinceEditText.setText(address.adminArea)
+        val province = Province()
+        province.id = "2000030"
+        province.name = address.adminArea
+        selectedProvince = province
         postalCode.setText(address.postalCode)
     }
 
@@ -246,8 +251,19 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getSuburbs() {
         if (progressbarGetProvinces?.visibility == View.VISIBLE) return
-        showGetSuburbProgress()
-        selectedProvince?.id?.let { checkoutAddAddressNewUserViewModel.initGetSuburbs(it, deliveryType)}
+        selectedProvince?.id?.let { checkoutAddAddressNewUserViewModel.initGetSuburbs(it).observe(this, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+
+                }
+                ResponseStatus.LOADING -> {
+                    showGetSuburbProgress()
+                }
+                ResponseStatus.ERROR -> {
+
+                }
+            }
+        }) }
     }
 
     fun showGetSuburbProgress() {
