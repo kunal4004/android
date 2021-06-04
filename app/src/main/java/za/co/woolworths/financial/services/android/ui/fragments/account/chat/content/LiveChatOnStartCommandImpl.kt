@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.content
 
-import android.content.Context
 import android.text.TextUtils
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionStateType
