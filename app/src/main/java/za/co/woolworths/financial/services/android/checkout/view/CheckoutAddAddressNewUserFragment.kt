@@ -1,17 +1,20 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
@@ -28,6 +31,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceResponse
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
+import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
@@ -60,7 +64,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     var selectedProvince: Province? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
 
-    companion object{
+    companion object {
         const val SUBURB_SELECTOR_REQUEST_CODE = "1717"
     }
 
@@ -251,24 +255,61 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getSuburbs() {
         if (progressbarGetProvinces?.visibility == View.VISIBLE) return
-        selectedProvince?.id?.let { checkoutAddAddressNewUserViewModel.initGetSuburbs(it).observe(this, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
+        selectedProvince?.id?.let {
+            checkoutAddAddressNewUserViewModel.initGetSuburbs(it).observe(this, {
+                when (it.responseStatus) {
+                    ResponseStatus.SUCCESS -> {
+                        hideSetSuburbProgressBar()
+                        if (it?.data?.suburbs.isNullOrEmpty()) {
+                            //showNoStoresError()
+                        } else {
+                            it?.data?.suburbs?.let { it1 -> navigateToSuburbSelection(it1) }
+                        }
+                    }
+                    ResponseStatus.LOADING -> {
+                        showGetSuburbProgress()
+                    }
+                    ResponseStatus.ERROR -> {
+                        hideSetSuburbProgressBar()
+                    }
+                }
+            })
+        }
+    }
 
-                }
-                ResponseStatus.LOADING -> {
-                    showGetSuburbProgress()
-                }
-                ResponseStatus.ERROR -> {
-
-                }
+    private fun navigateToSuburbSelection(suburbs: List<Suburb>) {
+        activity?.let {
+            // TODO:: WOP-9342 - Handle Transaction too large exception android nougat
+            //  and remove share preference temp fix
+            val sharedPreferences = it.getSharedPreferences(
+                EditDeliveryLocationFragment.SHARED_PREFS,
+                Context.MODE_PRIVATE
+            )
+            val editor = sharedPreferences?.edit()
+            editor?.putString(EditDeliveryLocationFragment.SUBURB_LIST, Utils.toJson(suburbs))
+            editor?.apply()
+            val bundle = Bundle()
+            bundle?.apply {
+                putString("SuburbList", Utils.toJson(suburbs))
+                putSerializable("deliveryType", deliveryType)
             }
-        }) }
+            navController?.navigate(
+                R.id.action_to_suburbSelectorFragment,
+                bundleOf("bundle" to bundle)
+            )
+        }
     }
 
     fun showGetSuburbProgress() {
         dropdownGetSuburbImg?.visibility = View.INVISIBLE
         progressbarGetSuburb?.visibility = View.VISIBLE
+    }
+
+    fun hideSetSuburbProgressBar() {
+        progressSetSuburb?.visibility = View.INVISIBLE
+        activity?.apply {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
     }
 
     private fun onSaveAddressClicked() {

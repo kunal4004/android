@@ -14,7 +14,7 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
     fun initGetSuburbs(provinceId: String) = liveData(Dispatchers.IO) {
         emit(CheckoutResource.loading(data = null))
         try {
-            emit(CheckoutResource.success(data = checkoutAddAddressNewUserInteractor.getSuburbs(provinceId)))
+            emit(CheckoutResource.success(data = checkoutAddAddressNewUserInteractor.getSuburbs(provinceId).body()))
         } catch (exception: Exception) {
             emit(CheckoutResource.error(data = null, msg = exception.toString()))
         }
