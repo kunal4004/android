@@ -114,13 +114,56 @@
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/unitComplexFloorEditText" />
 
-        <EditText
-            android:id="@+id/suburbEditText"
-            style="@style/credi_card_delivery_edittext_style"
-            android:contentDescription="@string/cd_ccd_txtsuburb"
-            app:layout_constraintEnd_toEndOf="@id/right_guideline"
-            app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolder" />
+        <RelativeLayout
+            android:id="@+id/selectSuburbLayout"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/fourty_eight_dp"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:background="@drawable/input_box_inactive_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="@dimen/sixteen_dp"
+            android:paddingEnd="@dimen/sixteen_dp"
+            app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+            app:layout_constraintRight_toRightOf="@+id/right_guideline"
+            app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolder">
+
+            <AutoCompleteTextView
+                android:id="@+id/suburbEditText"
+                style="@style/myriad_pro_regular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:layout_toStartOf="@+id/progressbarGetSuburb"
+                android:background="@color/white"
+                android:focusable="false"
+                android:hint="@string/select_a_suburb"
+                android:textColor="@color/offer_title"
+                android:textColorHint="@color/black40"
+                android:textSize="@dimen/sixteen_sp" />
+
+            <ProgressBar
+                android:id="@+id/progressbarGetSuburb"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:focusable="false"
+                android:indeterminateTint="@color/black"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/dropdownGetSuburbImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/icon_dropdown"
+                android:focusable="false" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/suburbNameErrorMsg"
@@ -133,7 +176,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/suburbEditText" />
+            app:layout_constraintTop_toBottomOf="@id/selectSuburbLayout" />
 
         <TextView
             android:id="@+id/provincePlaceHolder"
@@ -158,6 +201,58 @@
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/provincePlaceHolder" />
+
+        <RelativeLayout
+            android:id="@+id/selectProvinceLayout"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/fourty_eight_dp"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:background="@drawable/input_box_inactive_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="invisible"
+            android:paddingStart="@dimen/sixteen_dp"
+            android:paddingEnd="@dimen/sixteen_dp"
+            app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+            app:layout_constraintRight_toRightOf="@+id/right_guideline"
+            app:layout_constraintTop_toBottomOf="@id/provincePlaceHolder">
+
+            <AutoCompleteTextView
+                android:id="@+id/provinceAutocompleteEditText"
+                style="@style/myriad_pro_regular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:layout_toStartOf="@+id/progressbarGetProvinces"
+                android:background="@color/white"
+                android:focusable="false"
+                android:hint="@string/select_a_suburb"
+                android:textColor="@color/offer_title"
+                android:textColorHint="@color/black40"
+                android:textSize="@dimen/sixteen_sp" />
+
+            <ProgressBar
+                android:id="@+id/progressbarGetProvinces"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:focusable="false"
+                android:indeterminateTint="@color/black"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/dropdownGetProvinces"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/icon_dropdown"
+                android:focusable="false" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/provinceNameErrorMsg"

@@ -13,6 +13,8 @@ import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -26,10 +28,19 @@ import com.google.android.libraries.places.api.net.FetchPlaceResponse
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
+import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
+import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
+import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
+import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.models.dto.Province
+import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
+import za.co.woolworths.financial.services.android.util.DeliveryType
+import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -42,6 +53,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private val deliveringOptionsList: ArrayList<String> = ArrayList()
     private var navController: NavController? = null
     private lateinit var listOfInputFields: List<EditText>
+    var deliveryType: DeliveryType = DeliveryType.DELIVERY
+    var selectedSuburb: Suburb? = null
+    var selectedStore: Suburb? = null
+    var selectedProvince: Province? = null
+    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
+
+    companion object{
+        const val SUBURB_SELECTOR_REQUEST_CODE = "1717"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +75,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         saveAddress?.setOnClickListener(this)
+        selectSuburbLayout.setOnClickListener(this)
+        suburbEditText.setOnClickListener(this)
         listOfInputFields = listOf(
             autoCompleteTextView,
             addressNicknameEditText,
@@ -64,7 +86,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             recipientName,
             cellphoneNumber
         )
+        setupViewModel()
         init()
+        addFragmentResultListener()
+    }
+
+    private fun setupViewModel() {
+        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory(CheckoutAddAddressNewUserInteractor(), CheckoutAddAddressNewUserApiHelper())
+        ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
     private fun init() {
@@ -122,6 +153,30 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun addFragmentResultListener() {
+        // Use the Kotlin extension in the fragment-ktx artifact
+        setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
+            // We use a String here, but any type that can be put in a Bundle is supported
+            val result = bundle.getString("Suburb")
+            // Do something with the result
+            val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as Suburb
+            suburb?.let {
+                onSuburbSelected(it)
+            }
+        }
+    }
+
+    private fun onSuburbSelected(suburb: Suburb?) {
+        if (deliveryType == DeliveryType.DELIVERY)
+            this.selectedSuburb = suburb
+        else
+            this.selectedStore = suburb
+        selectSuburbLayout?.setBackgroundResource(R.drawable.input_box_inactive_bg)
+        suburbEditText?.setText(suburb?.name)
+        suburbEditText?.dismissDropDown()
+        //suburb?.id?.let { validateSelectedSuburb(it, deliveryType == DeliveryType.STORE_PICKUP) }
+    }
+
     private fun setAddress(addresses: MutableList<Address>) {
         val address = addresses.get(0)
         autoCompleteTextView.apply {
@@ -177,24 +232,44 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
+        if (progressbarGetProvinces.visibility == View.VISIBLE || progressbarGetSuburb.visibility == View.VISIBLE) return
         when (v?.id) {
             R.id.saveAddress -> {
-                if (autoCompleteTextView?.text.toString().trim()
-                        .isNotEmpty() && addressNicknameEditText?.text.toString().trim()
-                        .isNotEmpty() && suburbEditText?.text.toString().trim()
-                        .isNotEmpty() && provinceEditText?.text.toString().trim()
-                        .isNotEmpty() && postalCode?.text.toString().trim()
-                        .isNotEmpty() && recipientName?.text.toString().trim()
-                        .isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty()
-                ) {
+                onSaveAddressClicked()
+            }
+            R.id.selectSuburbLayout, R.id.suburbEditText -> {
+                if (selectedProvince == null) return
+                getSuburbs()
+            }
+        }
+    }
+
+    private fun getSuburbs() {
+        if (progressbarGetProvinces?.visibility == View.VISIBLE) return
+        showGetSuburbProgress()
+        selectedProvince?.id?.let { checkoutAddAddressNewUserViewModel.initGetSuburbs(it, deliveryType)}
+    }
+
+    fun showGetSuburbProgress() {
+        dropdownGetSuburbImg?.visibility = View.INVISIBLE
+        progressbarGetSuburb?.visibility = View.VISIBLE
+    }
+
+    private fun onSaveAddressClicked() {
+        if (autoCompleteTextView?.text.toString().trim()
+                .isNotEmpty() && addressNicknameEditText?.text.toString().trim()
+                .isNotEmpty() && suburbEditText?.text.toString().trim()
+                .isNotEmpty() && provinceEditText?.text.toString().trim()
+                .isNotEmpty() && postalCode?.text.toString().trim()
+                .isNotEmpty() && recipientName?.text.toString().trim()
+                .isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty()
+        ) {
 
 
-                } else {
-                    listOfInputFields.forEach {
-                        if (it.text.toString().trim().isEmpty())
-                            showErrorInputField(it, View.VISIBLE)
-                    }
-                }
+        } else {
+            listOfInputFields.forEach {
+                if (it.text.toString().trim().isEmpty())
+                    showErrorInputField(it, View.VISIBLE)
             }
         }
     }
