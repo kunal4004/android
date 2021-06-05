@@ -9,4 +9,5 @@ import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 class CheckoutAddAddressNewUserApiHelper: RetrofitConfig() {
 
     fun getSuburbs(provinceId: String) = OneAppService.getSuburbs(provinceId).execute()
+    fun getProvince() = OneAppService.getProvinces().execute()
 }

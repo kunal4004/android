@@ -8,4 +8,5 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Chec
 class CheckoutAddAddressNewUserInteractor(private val checkoutAddAddressNewUserApiHelper: CheckoutAddAddressNewUserApiHelper) {
 
     fun getSuburbs(provinceId: String) = checkoutAddAddressNewUserApiHelper.getSuburbs(provinceId)
+    fun getProvince() = checkoutAddAddressNewUserApiHelper.getProvince()
 }

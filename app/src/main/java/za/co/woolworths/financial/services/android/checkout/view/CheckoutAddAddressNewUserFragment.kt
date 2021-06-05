@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
@@ -169,6 +170,30 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 onSuburbSelected(it)
             }
         }
+        // Use the Kotlin extension in the fragment-ktx artifact
+        setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
+            // We use a String here, but any type that can be put in a Bundle is supported
+            val result = bundle.getString("Province")
+            // Do something with the result
+            val province: Province? = Utils.strToJson(result, Province::class.java) as Province
+            province?.let {
+                onProvinceSelected(it)
+            }
+        }
+    }
+
+    private fun onProvinceSelected(province: Province?) {
+        this.selectedProvince = province
+        resetSuburbSelection()
+        provinceAutocompleteEditText?.setText(province?.name)
+        provinceAutocompleteEditText?.dismissDropDown()
+    }
+
+    private fun resetSuburbSelection() {
+        selectedSuburb = null
+        selectedStore = null
+        provinceAutocompleteEditText.text.clear()
+        provinceAutocompleteEditText.hint = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
     }
 
     private fun onSuburbSelected(suburb: Suburb?) {
@@ -188,12 +213,64 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             setText(address.getAddressLine(0))
             setSelection(autoCompleteTextView.length())
         }
-        provinceEditText.setText(address.adminArea)
+        getProvince(address)
+    }
+
+    private fun getProvince(address: Address) {
+        checkoutAddAddressNewUserViewModel.initGetProvince().observe(this, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    //hideSetSuburbProgressBar()
+                    if (it?.data?.regions.isNullOrEmpty()) {
+                        //showNoStoresError()
+                    } else {
+                        it?.data?.regions?.let { it1 -> checkIfSelectedProvinceExist(it1, address) }
+                    }
+                }
+                ResponseStatus.LOADING -> {
+
+                }
+                ResponseStatus.ERROR -> {
+
+                }
+            }
+        })
+    }
+
+    private fun checkIfSelectedProvinceExist(
+        provinceList: MutableList<Province>,
+        address: Address
+    ) {
         val province = Province()
-        province.id = "2000030"
-        province.name = address.adminArea
-        selectedProvince = province
+        val provinceName = address.adminArea
+        if (provinceName != null) {
+            for (provinces in provinceList) {
+                if (provinceName.equals(provinces.name)) {
+                    province.id = provinces.id
+                    province.name = provinces.name
+                }
+            }
+        }
+        if (province == null) {
+            enableProvinceSelection()
+        } else
+            selectedProvince = province
         postalCode.setText(address.postalCode)
+        provinceEditText.setText(address.adminArea)
+    }
+
+    private fun enableProvinceSelection() {
+        provinceEditText.visibility = View.INVISIBLE
+        selectProvinceLayout.visibility = View.VISIBLE
+    }
+
+    private fun navigateToProvinceSelection() {
+        showGetProvincesProgress()
+    }
+
+    fun showGetProvincesProgress() {
+        dropdownGetProvincesImg?.visibility = View.INVISIBLE
+        progressbarGetProvinces?.visibility = View.VISIBLE
     }
 
     private fun showWhereAreWeDeliveringView() {
@@ -249,6 +326,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             R.id.selectSuburbLayout, R.id.suburbEditText -> {
                 if (selectedProvince == null) return
                 getSuburbs()
+            }
+            R.id.selectProvinceLayout, R.id.provinceAutocompleteEditText -> {
+                navigateToProvinceSelection()
             }
         }
     }
