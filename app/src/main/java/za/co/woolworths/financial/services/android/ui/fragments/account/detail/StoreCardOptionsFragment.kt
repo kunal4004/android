@@ -84,11 +84,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
                         tempFreezeTextView?.visibility = GONE
                         myCardDetailTextView?.visibility = VISIBLE
-                        context?.let {
-                            myCardDetailTextView?.setTextColor( ContextCompat.getColor(it, R.color.black))
-                        }
-                        myCardDetailTextView?.isEnabled = true
-                        myCardDetailTextView?.isClickable = true
                         myCardDetailTextView?.setOnClickListener {
                             mCardPresenterImpl?.navigateToTemporaryStoreCard()
                         }
