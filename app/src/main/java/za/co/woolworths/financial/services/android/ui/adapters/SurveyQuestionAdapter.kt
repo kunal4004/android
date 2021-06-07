@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
-import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.row_survey_question_free_text.view.*
@@ -86,15 +88,36 @@ class SurveyQuestionAdapter(
         fun bind(question: SurveyQuestion, answer: SurveyAnswer?, callback: (Long, String) -> Unit) {
             itemView.apply {
                 tvTitleFreeText.text = question.title
+
+                (etValueFreeText.tag as? TextWatcher)?.let {
+                    etValueFreeText.removeTextChangedListener(it)
+                }
+
                 if (answer?.textAnswer != null) {
                     etValueFreeText.setText(answer?.textAnswer)
                 } else {
                     etValueFreeText.text = null
                 }
-//                etValueFreeText.removeTextChangedListener()
-//                etValueFreeText.doOnTextChanged { text, start, before, count ->
-//
-//                }
+
+                val textWatcher = object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        callback.invoke(question.id, etValueFreeText.text.toString())
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+                }
+                etValueFreeText.addTextChangedListener(textWatcher)
+                etValueFreeText.tag = textWatcher
+
+                etValueFreeText.setOnFocusChangeListener { v, hasFocus ->
+                    if (!hasFocus && v != null) {
+                        (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).apply {
+                            hideSoftInputFromWindow(v.windowToken, 0)
+                        }
+                    }
+                }
             }
         }
     }

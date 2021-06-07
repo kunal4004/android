@@ -5,7 +5,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -120,30 +119,29 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate {
         if (answer == null) {
             val question = surveyDetails!!.questions!!.first { it.id == questionId }
             // Set default answer
-            when (question.type) {
+            answer = when (question.type) {
                 SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
-                    answer = SurveyAnswer(
+                    SurveyAnswer(
                             questionId = question.id,
                             answerId = question.maxValue
                     )
                 }
                 else -> {
-                    answer = SurveyAnswer(
+                    SurveyAnswer(
                             questionId = question.id
                     )
                 }
             }
-            if (answer != null) surveyAnswers[questionId] = answer
+            surveyAnswers[questionId] = answer
         }
         return answer
     }
 
     override fun onInputRateSlider(questionId: Long, value: Int) {
-//        Toast.makeText(context, "selected: $value", Toast.LENGTH_SHORT).show()
         getAnswer(questionId)?.answerId = value + 1
     }
 
     override fun onInputFreeText(questionId: Long, value: String) {
-
+        getAnswer(questionId)?.textAnswer = value
     }
 }
