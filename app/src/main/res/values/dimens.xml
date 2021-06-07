@@ -212,5 +212,8 @@
     <dimen name="three_hundred_dp">300dp</dimen>
     <dimen name="sixty_three_dp">63dp</dimen>
     <dimen name="eight_sp">8sp</dimen>
+
+    <dimen name="line_spacing_4sp">4sp</dimen>
+    <dimen name="line_spacing_8sp">8sp</dimen>
 </resources>
 

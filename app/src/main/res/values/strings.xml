@@ -2038,4 +2038,7 @@
     <string name="chat_notification_title">You have received a message.</string>
     <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
     <string name="woolies_chat_active">Chat is currently active</string>
+
+    <!--  Voice of Customer  -->
+    <string name="voc_question_slider_desc">Please rate your experience, 1 being poor and 10 being excellent</string>
 </resources>

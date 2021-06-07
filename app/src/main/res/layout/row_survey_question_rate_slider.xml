@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
-    android:padding="15dp">
+    android:paddingLeft="24dp"
+    android:paddingTop="22dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="24dp">
+
+    <TextView
+        android:id="@+id/tvTitleRateSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="left"
+        android:lineSpacingExtra="@dimen/line_spacing_4sp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_20sp"
+        tools:text="Lorem ipsum sit dolor" />
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/myriad_pro_regular"
         android:gravity="left"
-        android:text="Title" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:gravity="left"
-        android:text="Description" />
+        android:lineSpacingExtra="@dimen/line_spacing_8sp"
+        android:text="@string/voc_question_slider_desc"
+        android:textColor="@color/text_description_color"
+        android:textSize="16dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="19dp">
 
         <TextView
             android:id="@+id/tvTooltipRateSlider"
@@ -39,7 +52,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/seekbar_background_voc_rating"
         android:padding="2dp">
 

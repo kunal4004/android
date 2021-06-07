@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="@color/white">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="24dp">
 
     <TextView
+        android:id="@+id/tvTitleFreeText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Free Text"/>
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="left"
+        android:lineSpacingExtra="@dimen/line_spacing_4sp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_20sp"
+        tools:text="Lorem ipsum sit dolor" />
+
+    <EditText
+        android:id="@+id/etValueFreeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:gravity="top|left"
+        android:hint="Lorem ipsum sit dolor"
+        android:lines="5"
+        android:padding="10dp" />
 
 </LinearLayout>

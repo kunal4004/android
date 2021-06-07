@@ -1,67 +1,71 @@
 package za.co.woolworths.financial.services.android.ui.fragments.voc
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
-import android.text.TextUtils
-import android.util.Log
-import android.view.*
-import androidx.core.os.bundleOf
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_my_preferences.*
 import kotlinx.android.synthetic.main.fragment_survey_voc.*
-import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
-import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
-import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerInterface
 import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.ViewAllLinkedDevicesAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment.RESULT_CODE_DEVICE_LINKED
-import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.ViewAllLinkedDevicesFragment
-import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.ViewAllLinkedDevicesFragment.Companion.DEVICE_LIST
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.setDeliveryAddressView
-import za.co.woolworths.financial.services.android.util.Utils
 
-
-class SurveyVocFragment : Fragment() {
+class SurveyVocFragment : Fragment(), SurveyAnswerDelegate {
 
     companion object {
-        const val QUESTION_LIST = "questionList"
+        const val SURVEY_DETAILS = "surveyDetails"
     }
 
     private var surveyQuestionAdapter: SurveyQuestionAdapter? = null
-    private var questionList: ArrayList<Int>? = null
+    private var surveyDetails: SurveyDetails? = null
+    private val surveyAnswers = HashMap<Long, SurveyAnswer>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.getSerializable(QUESTION_LIST)?.let { list ->
-            if (list is ArrayList<*> && list?.get(0) is Int) { // TODO: instance type check to be updated
-                questionList = list as ArrayList<Int>
+        arguments?.getSerializable(SURVEY_DETAILS)?.let { survey ->
+            if (survey is SurveyDetails) {
+                surveyDetails = survey
             }
         }
 
         // TODO: remove dummy code
-        questionList = ArrayList()
-        questionList?.add(1)
-        questionList?.add(2)
+        val dummyQuestions = ArrayList<SurveyQuestion>()
+        for (i in 1..10) {
+            dummyQuestions.add(SurveyQuestion(
+                    id = i.toLong(),
+                    type = "NUMERIC",
+                    title = "Please rate how satisfied you are with the LiveChat experience?",
+                    minValue = 1,
+                    maxValue = 11,
+                    required = true,
+                    matrix = false
+            ))
+        }
+        for (i in 11..30) {
+            dummyQuestions.add(SurveyQuestion(
+                    id = i.toLong(),
+                    type = "FREE_TEXT",
+                    title = "Please tell us how the LiveChat service could make more of a difference to you",
+                    required = false,
+                    matrix = false
+            ))
+        }
+        surveyDetails = SurveyDetails(
+                id = 1,
+                name = "Live Chat",
+                type = "GENEX",
+                questions = dummyQuestions
+        )
+
+        // TODO: generate default answers for required questions... unless not necessary
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -93,11 +97,53 @@ class SurveyVocFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        if (questionList.isNullOrEmpty()) return
+        if (surveyDetails == null || surveyDetails!!.questions.isNullOrEmpty()) return
         context?.let {
             rvSurveyQuestions.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
-            surveyQuestionAdapter = SurveyQuestionAdapter(it, questionList!!)
+            surveyQuestionAdapter = SurveyQuestionAdapter(it, getAllowedQuestions(surveyDetails!!.questions!!), this)
         }
         rvSurveyQuestions.adapter = surveyQuestionAdapter
+    }
+
+    private fun getAllowedQuestions(questions: ArrayList<SurveyQuestion>): List<SurveyQuestion> {
+        // Array to be updated as new types are implemented.
+        // This is just in case the survey contains question types that have not been implemented yet in this version.
+        val allowedQuestionTypes = arrayOf(
+                SurveyQuestion.QuestionType.RATE_SLIDER.type,
+                SurveyQuestion.QuestionType.FREE_TEXT.type
+        )
+        return questions.filter { item -> allowedQuestionTypes.contains(item.type)}
+    }
+
+    override fun getAnswer(questionId: Long): SurveyAnswer? {
+        var answer = surveyAnswers[questionId]
+        if (answer == null) {
+            val question = surveyDetails!!.questions!!.first { it.id == questionId }
+            // Set default answer
+            when (question.type) {
+                SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
+                    answer = SurveyAnswer(
+                            questionId = question.id,
+                            answerId = question.maxValue
+                    )
+                }
+                else -> {
+                    answer = SurveyAnswer(
+                            questionId = question.id
+                    )
+                }
+            }
+            if (answer != null) surveyAnswers[questionId] = answer
+        }
+        return answer
+    }
+
+    override fun onInputRateSlider(questionId: Long, value: Int) {
+//        Toast.makeText(context, "selected: $value", Toast.LENGTH_SHORT).show()
+        getAnswer(questionId)?.answerId = value + 1
+    }
+
+    override fun onInputFreeText(questionId: Long, value: String) {
+
     }
 }
