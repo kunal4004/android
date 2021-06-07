@@ -117,9 +117,11 @@
             android:letterSpacing="0.15"
             android:text="@string/label_card_details"
             android:textAllCaps="true"
-            android:textColor="@color/permanent_card_block_desc_color"
-            android:textSize="12sp"
-            android:visibility="visible"
+            android:clickable="true"
+            android:focusable="true"
+            android:enabled="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twelve_sp"
             tools:ignore="UnusedAttribute" />
     </com.facebook.shimmer.ShimmerFrameLayout>
     <com.facebook.shimmer.ShimmerFrameLayout
