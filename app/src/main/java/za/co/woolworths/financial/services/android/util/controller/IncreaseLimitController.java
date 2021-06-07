@@ -89,12 +89,15 @@ public class IncreaseLimitController {
 	@SuppressLint("SetTextI18n")
 	public void populateExpenseField(CurrencyEditText editTextView, String value, WTextView wTextView) {
 		wTextView.setVisibility(View.VISIBLE);
-		if (!TextUtils.isEmpty(value))
+		if (!TextUtils.isEmpty(value)) {
 			value = value + "00";
-		setInputFilter(editTextView, value.length() >= 9 ? 13 : 11);
+			setInputFilter(editTextView, value.length() >= 9 ? 13 : 11);
+		}
 		editTextView.setText(value);
 		editTextView.clearFocus();
-		editTextView.setSelection(editTextView.getText().length());
+		if (!TextUtils.isEmpty(editTextView.getText())) {
+			editTextView.setSelection(editTextView.getText().length());
+		}
 	}
 
 	private void setInputFilter(CurrencyEditText editTextView, int i) {
