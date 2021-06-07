@@ -2041,4 +2041,8 @@
 
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, 1 being poor and 10 being excellent</string>
+    <string name="voc_question_freetext_hint">Describe your experience in detail (optional)</string>
+    <string name="voc_survey_submit">SUBMIT</string>
+    <string name="voc_survey_opt_out">DON\'T ASK AGAIN</string>
+    <string name="voc_survey_skip">NOT NOW</string>
 </resources>

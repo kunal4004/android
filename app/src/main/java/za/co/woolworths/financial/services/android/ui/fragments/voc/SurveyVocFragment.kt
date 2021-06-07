@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,18 +42,18 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate {
             dummyQuestions.add(SurveyQuestion(
                     id = i.toLong(),
                     type = "NUMERIC",
-                    title = "Please rate how satisfied you are with the LiveChat experience?",
+                    title = "$i. Please rate how satisfied you are with the LiveChat experience?",
                     minValue = 1,
-                    maxValue = 11,
+                    maxValue = 10,
                     required = true,
                     matrix = false
             ))
         }
-        for (i in 11..30) {
+        for (i in 11..20) {
             dummyQuestions.add(SurveyQuestion(
                     id = i.toLong(),
                     type = "FREE_TEXT",
-                    title = "Please tell us how the LiveChat service could make more of a difference to you",
+                    title = "$i. Please tell us how the LiveChat service could make more of a difference to you",
                     required = false,
                     matrix = false
             ))
@@ -138,10 +139,18 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate {
     }
 
     override fun onInputRateSlider(questionId: Long, value: Int) {
-        getAnswer(questionId)?.answerId = value + 1
+        getAnswer(questionId)?.answerId = value
     }
 
     override fun onInputFreeText(questionId: Long, value: String) {
         getAnswer(questionId)?.textAnswer = value
+    }
+
+    override fun onSubmit() {
+        Toast.makeText(context, "Submit Tapped", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onOptOut() {
+        Toast.makeText(context, "Opt Out Tapped", Toast.LENGTH_SHORT).show()
     }
 }

@@ -6,4 +6,6 @@ interface SurveyAnswerDelegate {
     fun getAnswer(questionId: Long): SurveyAnswer?
     fun onInputRateSlider(questionId: Long, value: Int)
     fun onInputFreeText(questionId: Long, value: String)
+    fun onSubmit()
+    fun onOptOut()
 }

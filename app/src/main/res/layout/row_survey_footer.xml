@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp">
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnSurveySubmit"
+        style="@style/blackButtonStyle"
+        android:gravity="center"
+        android:text="@string/voc_survey_submit"
+        android:textColor="@color/white"
+        app:WButton_font="medium_bold" />
+
+    <TextView
+        android:id="@+id/btnSurveyOptOut"
+        style="@style/dialog_action_text_style_gray_medium"
+        android:layout_marginTop="14dp"
+        android:padding="10dp"
+        android:text="@string/voc_survey_opt_out"
+        android:textAllCaps="true" />
+
+</LinearLayout>
