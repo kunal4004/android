@@ -1,13 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="@color/white">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="15dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Rate Slider"/>
+        android:gravity="left"
+        android:text="Title" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:gravity="left"
+        android:text="Description" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/tvTooltipRateSlider"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:background="@color/product_search_hint"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/seekbar_background_voc_rating"
+        android:padding="2dp">
+
+        <SeekBar
+            android:id="@+id/sbRateSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"
+            android:max="10"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:progress="5"
+            android:progressDrawable="@drawable/seekbar_progress_voc_rating"
+            android:splitTrack="false"
+            android:thumb="@drawable/seekbar_thumb_voc_rating"
+            android:thumbOffset="20dp" />
+
+    </LinearLayout>
 
 </LinearLayout>

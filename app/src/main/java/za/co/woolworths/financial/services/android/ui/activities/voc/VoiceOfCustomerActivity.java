@@ -37,9 +37,9 @@ public class VoiceOfCustomerActivity extends AppCompatActivity implements VoiceO
         Utils.updateStatusBarBackground(this);
         setContentView(R.layout.activity_voice_of_customer);
 
-        NavHostFragment myPreferencesNavHostFrag = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.vocNavHostFrag);
-        if (myPreferencesNavHostFrag != null) {
-            navigationHost = myPreferencesNavHostFrag.getNavController();
+        NavHostFragment vocNavHostFrag = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.vocNavHostFrag);
+        if (vocNavHostFrag != null) {
+            navigationHost = vocNavHostFrag.getNavController();
         }
         mPrefsToolbar = findViewById(R.id.mVocToolbar);
         setActionBar();
