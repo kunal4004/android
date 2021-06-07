@@ -220,7 +220,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.initGetProvince().observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    //hideSetSuburbProgressBar()
+                    hideGetProvincesProgress()
                     if (it?.data?.regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
@@ -228,10 +228,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 }
                 ResponseStatus.LOADING -> {
-
+                    showGetProvincesProgress()
                 }
                 ResponseStatus.ERROR -> {
-
+                    hideGetProvincesProgress()
                 }
             }
         })
@@ -266,11 +266,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun navigateToProvinceSelection() {
         showGetProvincesProgress()
-    }
-
-    fun showGetProvincesProgress() {
-        dropdownGetProvincesImg?.visibility = View.INVISIBLE
-        progressbarGetProvinces?.visibility = View.VISIBLE
     }
 
     private fun showWhereAreWeDeliveringView() {
@@ -390,6 +385,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         activity?.apply {
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
+    }
+
+    fun hideGetProvincesProgress() {
+        progressbarGetProvinces?.visibility = View.INVISIBLE
+        dropdownGetProvincesImg?.visibility = View.VISIBLE
+    }
+
+    fun showGetProvincesProgress() {
+        dropdownGetProvincesImg?.visibility = View.INVISIBLE
+        progressbarGetProvinces?.visibility = View.VISIBLE
     }
 
     private fun onSaveAddressClicked() {
