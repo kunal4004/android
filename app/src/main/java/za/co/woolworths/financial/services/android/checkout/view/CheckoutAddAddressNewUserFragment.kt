@@ -8,10 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -38,6 +35,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.GoogleP
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -48,7 +46,6 @@ import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 /**
@@ -56,18 +53,15 @@ import kotlin.collections.ArrayList
  */
 class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
-    private val deliveringOptionsList: ArrayList<String> = ArrayList()
+    private var deliveringOptionsList: List<String>? = null
     private var navController: NavController? = null
-    private lateinit var listOfInputFields: List<EditText>
+    private lateinit var listOfInputFields: List<View>
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
+    private var selectedDeliveryAddressType: String? = null
     var selectedSuburb: Suburb? = null
     var selectedStore: Suburb? = null
     var selectedProvince: Province? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
-
-    companion object {
-        const val SUBURB_SELECTOR_REQUEST_CODE = "1717"
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,8 +80,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         listOfInputFields = listOf(
             autoCompleteTextView,
             addressNicknameEditText,
-            suburbEditText,
-            provinceEditText,
+            selectSuburbLayout,
+            selectProvinceLayout,
             postalCode,
             recipientName,
             cellphoneNumber
@@ -105,6 +99,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun init() {
+        deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let {
             Places.initialize(it, getString(R.string.maps_api_key))
@@ -193,7 +188,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectedSuburb = null
         selectedStore = null
         provinceAutocompleteEditText.text.clear()
-        provinceAutocompleteEditText.hint = bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
+        provinceAutocompleteEditText.hint =
+            bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
     }
 
     private fun onSuburbSelected(suburb: Suburb?) {
@@ -269,22 +265,19 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showWhereAreWeDeliveringView() {
-        deliveringOptionsList.add("Home")
-        deliveringOptionsList.add("Office")
-        deliveringOptionsList.add("Complex/Estate")
-        deliveringOptionsList.add("Apartment")
-
-        for ((index, options) in deliveringOptionsList.withIndex()) {
+        for ((index, options) in deliveringOptionsList!!.withIndex()) {
             val view = View.inflate(context, R.layout.where_are_we_delivering_items, null)
             val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
             titleTextView?.tag = index
             titleTextView?.text = options
             titleTextView?.setOnClickListener {
                 resetOtherDeliveringTitle(it.tag as Int)
+                selectedDeliveryAddressType = (it as TextView).text as String
+                deliveringAddressTypesErrorMsg.visibility = View.GONE
                 // change background of selected textView
                 it.background =
                     bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                (it as TextView).setTextColor(
+                it.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
                         R.color.white
@@ -297,7 +290,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     fun resetOtherDeliveringTitle(selectedTag: Int) {
         //change background of unselected textview
-        for ((indx, option) in deliveringOptionsList.withIndex()) {
+        for ((indx, option) in deliveringOptionsList!!.withIndex()) {
             if (indx != selectedTag) {
                 val titleTextView: TextView? = view?.findViewWithTag(indx)
                 titleTextView?.background =
@@ -404,21 +397,45 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 .isNotEmpty() && provinceEditText?.text.toString().trim()
                 .isNotEmpty() && postalCode?.text.toString().trim()
                 .isNotEmpty() && recipientName?.text.toString().trim()
-                .isNotEmpty() && cellphoneNumber?.text.toString().trim().isNotEmpty()
+                .isNotEmpty() && cellphoneNumber?.text.toString().trim()
+                .isNotEmpty() && selectedDeliveryAddressType != null
         ) {
 
 
         } else {
+            if (selectedDeliveryAddressType == null) {
+                deliveringAddressTypesErrorMsg.visibility = View.VISIBLE
+            }
             listOfInputFields.forEach {
-                if (it.text.toString().trim().isEmpty())
-                    showErrorInputField(it, View.VISIBLE)
+                if (it is RelativeLayout) {
+                    if (suburbEditText?.text.toString().trim()
+                            .isEmpty() || provinceEditText?.text.toString().trim().isEmpty()
+                    )
+                        showErrorSuburbOrProvince(it, View.VISIBLE)
+                }
+                if (it is EditText) {
+                    if (it.text.toString().trim().isEmpty())
+                        showErrorInputField(it, View.VISIBLE)
+                }
+            }
+        }
+    }
+
+    private fun showErrorSuburbOrProvince(relativeLayout: RelativeLayout, visible: Int) {
+        relativeLayout.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
+        when (relativeLayout.id) {
+            R.id.selectSuburbLayout -> {
+                suburbNameErrorMsg.visibility = visible
+            }
+            R.id.selectProvinceLayout -> {
+                provinceNameErrorMsg.visibility = visible
             }
         }
     }
 
     private fun showErrorInputField(editText: EditText, visible: Int) {
 
-        editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.otp_box_error_background else R.drawable.recipient_details_input_edittext_bg)
+        editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
         when (editText.id) {
             R.id.autoCompleteTextView -> {
                 autocompletePlaceErrorMsg?.visibility = visible
