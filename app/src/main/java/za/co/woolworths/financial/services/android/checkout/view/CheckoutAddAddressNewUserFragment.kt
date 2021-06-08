@@ -95,24 +95,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         saveAddress?.setOnClickListener(this)
         selectSuburbLayout?.setOnClickListener(this)
         suburbEditText?.setOnClickListener(this)
-        selectProvinceLayout?.setOnClickListener(this)
-        provinceEditText?.setOnClickListener(this)
         autoCompleteTextView?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         addressNicknameEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         suburbEditText?.apply { afterTextChanged { suburbNameErrorMsg?.visibility = View.GONE } }
-        provinceEditText?.apply {
-            afterTextChanged {
-                provinceNameErrorMsg?.visibility = View.GONE
-                showErrorInputField(this, View.GONE)
-                showErrorSuburbOrProvince(selectProvinceLayout, View.GONE)
-            }
-        }
         provinceAutocompleteEditText?.apply {
             afterTextChanged {
-                showErrorInputField(
-                    this,
-                    View.GONE
-                )
+                provinceNameErrorMsg?.visibility = View.GONE
             }
         }
         postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
@@ -208,15 +196,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun onProvinceSelected(province: Province?) {
         this.selectedProvince = province
+        enableProvinceSelection()
         resetSuburbSelection()
         provinceAutocompleteEditText?.setText(province?.name)
-        provinceAutocompleteEditText?.dismissDropDown()
     }
 
     private fun resetSuburbSelection() {
         selectedSuburb = null
         selectedStore = null
         provinceAutocompleteEditText.text.clear()
+        suburbEditText.text.clear()
     }
 
     private fun onSuburbSelected(suburb: Suburb?) {
@@ -242,7 +231,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.initGetProvince().observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    hideGetProvincesProgress()
+                    //hideGetProvincesProgress()
                     if (it?.data?.regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
@@ -253,10 +242,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 }
                 ResponseStatus.LOADING -> {
-                    showGetProvincesProgress()
+                    //showGetProvincesProgress()
                 }
                 ResponseStatus.ERROR -> {
-                    hideGetProvincesProgress()
+                    //hideGetProvincesProgress()
                 }
             }
         })
@@ -275,7 +264,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     province.name = provinces.name
                 }
             }
-            provinceEditText.setText(provinceName)
+            provinceAutocompleteEditText.setText(provinceName)
         }
         if (province == null || provinceName.isNullOrEmpty()) {
             enableProvinceSelection()
@@ -285,8 +274,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun enableProvinceSelection() {
-        provinceEditText.visibility = View.INVISIBLE
-        selectProvinceLayout.visibility = View.VISIBLE
+        selectProvinceLayout?.setOnClickListener(this)
+        provinceAutocompleteEditText?.setOnClickListener(this)
+        dropdownGetProvincesImg.visibility = View.VISIBLE
+        selectProvinceLayout.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_inactive_bg)
+        provinceAutocompleteEditText.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_box_autocomplete_edit_text)
     }
 
     private fun navigateToProvinceSelection() {
@@ -295,7 +287,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         bundle?.apply {
             putString("ProvinceList", Utils.toJson(provinceList))
         }
-        navController?.navigate(R.id.action_to_provinceSelectorFragment, bundleOf("bundle" to bundle))
+        navController?.navigate(
+            R.id.action_to_provinceSelectorFragment,
+            bundleOf("bundle" to bundle)
+        )
         hideGetProvincesProgress()
     }
 
@@ -442,7 +437,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         if (autoCompleteTextView?.text.toString().trim()
                 .isNotEmpty() && addressNicknameEditText?.text.toString().trim()
                 .isNotEmpty() && suburbEditText?.text.toString().trim()
-                .isNotEmpty() && provinceEditText?.text.toString().trim()
+                .isNotEmpty() && provinceAutocompleteEditText?.text.toString().trim()
                 .isNotEmpty() && postalCode?.text.toString().trim()
                 .isNotEmpty() && recipientName?.text.toString().trim()
                 .isNotEmpty() && cellphoneNumber?.text.toString().trim()
@@ -456,10 +451,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             listOfInputFields.forEach {
                 if (it is RelativeLayout) {
-                    if (suburbEditText?.text.toString().trim()
-                            .isEmpty() || provinceEditText?.text.toString().trim().isEmpty()
-                    )
+                    if (it.id == R.id.selectSuburbLayout && suburbEditText?.text.toString().trim()
+                            .isEmpty()
+                    ) {
                         showErrorSuburbOrProvince(it, View.VISIBLE)
+                    }
+                    if (it.id == R.id.selectProvinceLayout && provinceAutocompleteEditText?.text.toString()
+                            .trim().isEmpty()
+                    ) {
+                        showErrorSuburbOrProvince(it, View.VISIBLE)
+                    }
                 }
                 if (it is EditText) {
                     if (it.text.toString().trim().isEmpty())
@@ -477,7 +478,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             R.id.selectProvinceLayout -> {
                 provinceNameErrorMsg.visibility = visible
-                provinceEditText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_non_editable_background else R.drawable.input_non_editable_edit_text)
+                provinceAutocompleteEditText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_non_editable_half_edit_text)
+                selectProvinceLayout.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
             }
         }
     }
@@ -494,7 +496,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             R.id.suburbEditText -> {
                 suburbNameErrorMsg?.visibility = visible
             }
-            R.id.provinceEditText -> {
+            R.id.provinceAutocompleteEditText -> {
                 provinceNameErrorMsg?.visibility = visible
             }
             R.id.postalCode -> {

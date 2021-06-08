@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <solid android:color="@color/grey_bg"/>
+            <solid android:color="@color/input_error_color_code" />
         </shape>
     </item>
 
@@ -12,7 +12,7 @@
         android:right="0dp"
         android:top="@dimen/one_dp">
         <shape>
-            <solid android:color="@color/white"/>
+            <solid android:color="@color/checkout_delivering_title_background" />
         </shape>
     </item>
 </layer-list>
