@@ -124,6 +124,7 @@
     <color name="color_e1e1e1">#E1E1E1</color>
     <color name="reward_benefit_background">#2C2C2D</color>
     <color name="tab_text_color">#80ffffff</color>
+    <color name="voc_slider_inner_progress">#99FFFFFF</color>
 
     <color name="link_text_color">#7F7F7F</color>
     <color name="color_222222">#222222</color>
