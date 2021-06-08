@@ -39,8 +39,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
-import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
@@ -54,6 +54,7 @@ import java.util.*
 class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private var deliveringOptionsList: List<String>? = null
+    private var provinceList: List<Province>? = null
     private var navController: NavController? = null
     private lateinit var listOfInputFields: List<View>
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
@@ -73,10 +74,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navController = Navigation.findNavController(view)
-        saveAddress?.setOnClickListener(this)
-        selectSuburbLayout.setOnClickListener(this)
-        suburbEditText.setOnClickListener(this)
+        if (navController == null)
+            navController = Navigation.findNavController(view)
+        initView()
         listOfInputFields = listOf(
             autoCompleteTextView,
             addressNicknameEditText,
@@ -89,6 +89,35 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         setupViewModel()
         init()
         addFragmentResultListener()
+    }
+
+    private fun initView() {
+        saveAddress?.setOnClickListener(this)
+        selectSuburbLayout?.setOnClickListener(this)
+        suburbEditText?.setOnClickListener(this)
+        selectProvinceLayout?.setOnClickListener(this)
+        provinceEditText?.setOnClickListener(this)
+        autoCompleteTextView?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        addressNicknameEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        suburbEditText?.apply { afterTextChanged { suburbNameErrorMsg?.visibility = View.GONE } }
+        provinceEditText?.apply {
+            afterTextChanged {
+                provinceNameErrorMsg?.visibility = View.GONE
+                showErrorInputField(this, View.GONE)
+                showErrorSuburbOrProvince(selectProvinceLayout, View.GONE)
+            }
+        }
+        provinceAutocompleteEditText?.apply {
+            afterTextChanged {
+                showErrorInputField(
+                    this,
+                    View.GONE
+                )
+            }
+        }
+        postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        recipientName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        cellphoneNumber?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
     }
 
     private fun setupViewModel() {
@@ -188,8 +217,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectedSuburb = null
         selectedStore = null
         provinceAutocompleteEditText.text.clear()
-        provinceAutocompleteEditText.hint =
-            bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.select_a_suburb else R.string.select_a_store)
     }
 
     private fun onSuburbSelected(suburb: Suburb?) {
@@ -197,10 +224,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             this.selectedSuburb = suburb
         else
             this.selectedStore = suburb
-        selectSuburbLayout?.setBackgroundResource(R.drawable.input_box_inactive_bg)
+        selectSuburbLayout?.setBackgroundResource(R.drawable.input_box_autocomplete_edit_text)
         suburbEditText?.setText(suburb?.name)
         suburbEditText?.dismissDropDown()
-        //suburb?.id?.let { validateSelectedSuburb(it, deliveryType == DeliveryType.STORE_PICKUP) }
     }
 
     private fun setAddress(addresses: MutableList<Address>) {
@@ -220,7 +246,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     if (it?.data?.regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
-                        it?.data?.regions?.let { it1 -> checkIfSelectedProvinceExist(it1, address) }
+                        it?.data?.regions?.let { it1 ->
+                            provinceList = it1
+                            checkIfSelectedProvinceExist(it1, address)
+                        }
                     }
                 }
                 ResponseStatus.LOADING -> {
@@ -246,13 +275,13 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     province.name = provinces.name
                 }
             }
+            provinceEditText.setText(provinceName)
         }
-        if (province == null) {
+        if (province == null || provinceName.isNullOrEmpty()) {
             enableProvinceSelection()
         } else
             selectedProvince = province
-        postalCode.setText(address.postalCode)
-        provinceEditText.setText(address.adminArea)
+        postalCode.setText(address?.postalCode)
     }
 
     private fun enableProvinceSelection() {
@@ -262,6 +291,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun navigateToProvinceSelection() {
         showGetProvincesProgress()
+        val bundle = Bundle()
+        bundle?.apply {
+            putString("ProvinceList", Utils.toJson(provinceList))
+        }
+        navController?.navigate(R.id.action_to_provinceSelectorFragment, bundleOf("bundle" to bundle))
+        hideGetProvincesProgress()
     }
 
     private fun showWhereAreWeDeliveringView() {
@@ -270,6 +305,19 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
             titleTextView?.tag = index
             titleTextView?.text = options
+            if (!selectedDeliveryAddressType.isNullOrEmpty() && selectedDeliveryAddressType.equals(
+                    options
+                )
+            ) {
+                titleTextView?.background =
+                    bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                titleTextView?.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+            }
             titleTextView?.setOnClickListener {
                 resetOtherDeliveringTitle(it.tag as Int)
                 selectedDeliveryAddressType = (it as TextView).text as String
@@ -429,12 +477,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             R.id.selectProvinceLayout -> {
                 provinceNameErrorMsg.visibility = visible
+                provinceEditText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_non_editable_background else R.drawable.input_non_editable_edit_text)
             }
         }
     }
 
     private fun showErrorInputField(editText: EditText, visible: Int) {
-
         editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
         when (editText.id) {
             R.id.autoCompleteTextView -> {
@@ -451,6 +499,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             R.id.postalCode -> {
                 postalCodeTextErrorMsg?.visibility = visible
+                editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_non_editable_background else R.drawable.input_non_editable_edit_text)
             }
             R.id.recipientName -> {
                 recipientNameErrorMsg?.visibility = visible

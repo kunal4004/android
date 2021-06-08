@@ -46,7 +46,7 @@
         <TextView
             android:id="@+id/recipientNameErrorMsg"
             style="@style/myriad_pro_regular"
-            android:layout_marginTop="@dimen/eight_dp"
+            android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/recipient_name_error_msg"
             android:textColor="@color/input_error_color_code"
@@ -82,7 +82,7 @@
         <TextView
             android:id="@+id/cellphoneNumberErrorMsg"
             style="@style/myriad_pro_regular"
-            android:layout_marginTop="@dimen/eight_dp"
+            android:layout_marginTop="@dimen/fifteen_dp"
             android:lineSpacingMultiplier="1.40"
             android:text="@string/mobile_number_error_msg"
             android:textColor="@color/input_error_color_code"
