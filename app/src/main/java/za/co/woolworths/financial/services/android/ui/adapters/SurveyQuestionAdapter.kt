@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
+import androidx.core.view.doOnLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.row_survey_footer.view.*
@@ -51,6 +52,7 @@ class SurveyQuestionAdapter(
         when (holder) {
             is FooterViewHolder -> {
                 holder.bind(
+                        delegate,
                         submitCallback = {
                             delegate.onSubmit()
                         },
@@ -146,7 +148,7 @@ class SurveyQuestionAdapter(
     }
 
     inner class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(submitCallback: () -> Unit, optOutCallback: () -> Unit) {
+        fun bind(delegate: SurveyAnswerDelegate, submitCallback: () -> Unit, optOutCallback: () -> Unit) {
             itemView.apply {
                 btnSurveySubmit.setOnClickListener {
                     submitCallback.invoke()
@@ -154,6 +156,13 @@ class SurveyQuestionAdapter(
                 btnSurveyOptOut.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 btnSurveyOptOut.setOnClickListener {
                     optOutCallback.invoke()
+                }
+
+                post {
+                    // Fill remaining vertical space, if any
+                    val heightDifference = delegate.getRecyclerViewHeight() - bottom
+                    vEmptySpace.layoutParams.height = if (heightDifference > 0)  heightDifference else 0
+                    vEmptySpace.visibility = if (heightDifference > 0) View.VISIBLE else View.GONE
                 }
             }
         }

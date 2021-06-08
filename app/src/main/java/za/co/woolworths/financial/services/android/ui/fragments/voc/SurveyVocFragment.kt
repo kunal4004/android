@@ -22,7 +22,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
 
     companion object {
         const val SURVEY_DETAILS = "surveyDetails"
-        const val DIALOG_OPT_OUT_ID = 1
+        const val DIALOG_OPT_OUT_ID = 2
     }
 
     private var surveyQuestionAdapter: SurveyQuestionAdapter? = null
@@ -40,26 +40,22 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
 
         // TODO: remove dummy code
         val dummyQuestions = ArrayList<SurveyQuestion>()
-        for (i in 1..10) {
-            dummyQuestions.add(SurveyQuestion(
-                    id = i.toLong(),
-                    type = "NUMERIC",
-                    title = "$i. Please rate how satisfied you are with the LiveChat experience?",
-                    minValue = 1,
-                    maxValue = 10,
-                    required = true,
-                    matrix = false
-            ))
-        }
-        for (i in 11..20) {
-            dummyQuestions.add(SurveyQuestion(
-                    id = i.toLong(),
-                    type = "FREE_TEXT",
-                    title = "$i. Please tell us how the LiveChat service could make more of a difference to you",
-                    required = false,
-                    matrix = false
-            ))
-        }
+        dummyQuestions.add(SurveyQuestion(
+                id = 1,
+                type = "NUMERIC",
+                title = "Please rate how satisfied you are with the LiveChat experience?",
+                minValue = 1,
+                maxValue = 10,
+                required = true,
+                matrix = false
+        ))
+        dummyQuestions.add(SurveyQuestion(
+                id = 2,
+                type = "FREE_TEXT",
+                title = "Please tell us how the LiveChat service could make more of a difference to you",
+                required = false,
+                matrix = false
+        ))
         surveyDetails = SurveyDetails(
                 id = 1,
                 name = "Live Chat",
@@ -89,9 +85,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
             when (this) {
                 is VoiceOfCustomerInterface -> {
                     context?.let {
-                        // TODO: remove and replace with Not Now button to the right
-                        setToolbarTitle("Survey")
-                        setToolbarTitleGravity(Gravity.CENTER_HORIZONTAL)
+                        setToolbarSkipVisibility(show = true)
                     }
                 }
             }
@@ -108,13 +102,17 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     }
 
     private fun getAllowedQuestions(questions: ArrayList<SurveyQuestion>): List<SurveyQuestion> {
-        // Array to be updated as new types are implemented.
+        // Array to be updated as new question types are implemented.
         // This is just in case the survey contains question types that have not been implemented yet in this version.
         val allowedQuestionTypes = arrayOf(
                 SurveyQuestion.QuestionType.RATE_SLIDER.type,
                 SurveyQuestion.QuestionType.FREE_TEXT.type
         )
-        return questions.filter { item -> allowedQuestionTypes.contains(item.type)}
+        return questions.filter { item -> allowedQuestionTypes.contains(item.type) }
+    }
+
+    override fun getRecyclerViewHeight(): Int {
+        return rvSurveyQuestions.height
     }
 
     override fun getAnswer(questionId: Long): SurveyAnswer? {
