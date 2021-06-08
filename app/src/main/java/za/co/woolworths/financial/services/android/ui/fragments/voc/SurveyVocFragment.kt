@@ -16,11 +16,13 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerInterface
 import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
 
-class SurveyVocFragment : Fragment(), SurveyAnswerDelegate {
+class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCancelDialogFragment.IActionOrCancel {
 
     companion object {
         const val SURVEY_DETAILS = "surveyDetails"
+        const val DIALOG_OPT_OUT_ID = 1
     }
 
     private var surveyQuestionAdapter: SurveyQuestionAdapter? = null
@@ -151,6 +153,22 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate {
     }
 
     override fun onOptOut() {
-        Toast.makeText(context, "Opt Out Tapped", Toast.LENGTH_SHORT).show()
+        activity?.let {
+            val dialog = GenericActionOrCancelDialogFragment.newInstance(
+                    dialogId = DIALOG_OPT_OUT_ID,
+                    title = getString(R.string.voc_opt_out_dialog_title),
+                    desc = getString(R.string.voc_opt_out_dialog_desc),
+                    actionButtonText = getString(R.string.voc_opt_out_dialog_action),
+                    cancelButtonText = getString(R.string.voc_opt_out_dialog_cancel),
+                    this
+            )
+            dialog.show(it.supportFragmentManager, GenericActionOrCancelDialogFragment::class.java.simpleName)
+        }
+    }
+
+    override fun onDialogActionClicked(dialogId: Int) {
+        if (dialogId == DIALOG_OPT_OUT_ID) {
+            Toast.makeText(context, "Opt Out Confirmation Tapped", Toast.LENGTH_SHORT).show()
+        }
     }
 }

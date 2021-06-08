@@ -2045,4 +2045,8 @@
     <string name="voc_survey_submit">SUBMIT</string>
     <string name="voc_survey_opt_out">DON\'T ASK AGAIN</string>
     <string name="voc_survey_skip">NOT NOW</string>
+    <string name="voc_opt_out_dialog_title">Are You Sure You Don’t Want To Take This Survey?</string>
+    <string name="voc_opt_out_dialog_desc">If you proceed, we won’t ask you to take this survey again.</string>
+    <string name="voc_opt_out_dialog_action">YES, PROCEED</string>
+    <string name="voc_opt_out_dialog_cancel">CANCEL</string>
 </resources>
