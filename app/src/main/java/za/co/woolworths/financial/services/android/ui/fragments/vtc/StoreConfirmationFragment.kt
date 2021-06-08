@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.vtc
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -74,6 +75,7 @@ class StoreConfirmationFragment : Fragment() {
 
         emailGotItBtn?.setOnClickListener {
             activity?.apply {
+                setResult(RESULT_OK)
                 finish()
             }
         }

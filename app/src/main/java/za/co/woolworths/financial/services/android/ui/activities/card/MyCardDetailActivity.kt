@@ -42,6 +42,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
         const val CARD_NUMBER = "CARD_NUMBER"
         const val TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE = 3212
         const val ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE = 3213
+        const val REQUEST_CODE_GET_REPLACEMENT_CARD = 3214
     }
 
     private var mStoreCardScreenType: StoreCardViewType? = StoreCardViewType.DEFAULT

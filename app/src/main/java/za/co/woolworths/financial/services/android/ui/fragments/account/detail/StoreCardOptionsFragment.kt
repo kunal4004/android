@@ -261,6 +261,9 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         //Activate VTC journey when successfully activated
         if (resultCode == ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE) {
             navigateToGetStoreCards()
+        //ICR Journey success and When Get replacement card email confirmation is success and result ok
+        } else if(requestCode == MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD && resultCode == AppCompatActivity.RESULT_OK){
+            navigateToGetStoreCards()
         }
         if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
             activity?.runOnUiThread {
@@ -299,7 +302,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                                 getStoreCardResponse()?.let {
                                     Intent(this, SelectStoreActivity::class.java).apply {
                                         putExtra(SelectStoreActivity.STORE_DETAILS, Gson().toJson(it))
-                                        startActivity(this)
+                                        startActivityForResult(this, MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD)
                                         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
                                     }
                                 }

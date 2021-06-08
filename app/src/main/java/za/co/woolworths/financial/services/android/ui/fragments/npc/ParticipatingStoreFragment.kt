@@ -73,9 +73,6 @@ class ParticipatingStoreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.apply {
-            Utils.updateStatusBarBackground(this, android.R.color.transparent)
-        }
 
         setupActionBar()
         initViewPagerWithTabLayout()
