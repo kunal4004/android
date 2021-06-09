@@ -16,6 +16,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.suburb_selector_fragment.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -65,6 +66,9 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        if (activity is CheckoutActivity) {
+            (activity as? CheckoutActivity)?.apply { setActionBar() }
+        }
         if (deliveryType == DeliveryType.DELIVERY) {
             activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_suburb)
             suburbInputValue.setHint(R.string.hint_search_for_your_suburb)

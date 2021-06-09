@@ -16,6 +16,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.province_selector_fragment.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.ui.adapters.ProvinceListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -45,6 +46,9 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        if (activity is CheckoutActivity) {
+            (activity as? CheckoutActivity)?.apply { setActionBar() }
+        }
         activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_province)
         loadProvinceList()
     }

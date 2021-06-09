@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
@@ -92,6 +93,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initView() {
+        if (activity is CheckoutActivity) {
+            (activity as? CheckoutActivity)?.apply { hideToolbar() }
+        }
         saveAddress?.setOnClickListener(this)
         selectSuburbLayout?.setOnClickListener(this)
         suburbEditText?.setOnClickListener(this)
@@ -120,7 +124,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let {
             Places.initialize(it, getString(R.string.maps_api_key))
-            var placesClient = Places.createClient(it)
+            val placesClient = Places.createClient(it)
             val placesAdapter =
                 GooglePlacesAdapter(it, android.R.layout.simple_list_item_1, placesClient)
             autoCompleteTextView?.apply {
@@ -128,8 +132,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             autoCompleteTextView?.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
-                    val item = parent.getItemAtPosition(position) as PlaceAutocomplete
-                    val placeId = item.placeId.toString()
+                    val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
+                    val placeId = item?.placeId.toString()
                     val placeFields: MutableList<Place.Field>? = Arrays.asList(
                         Place.Field.ID,
                         Place.Field.NAME,
@@ -139,7 +143,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     val request =
                         placeFields?.let { FetchPlaceRequest.builder(placeId, it).build() }
                     request?.let {
-                        placesClient?.fetchPlace(it)
+                        placesClient.fetchPlace(it)
                             ?.addOnSuccessListener(object : OnSuccessListener<FetchPlaceResponse?> {
                                 override fun onSuccess(response: FetchPlaceResponse?) {
                                     val place = response!!.place
@@ -177,8 +181,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Suburb")
             // Do something with the result
-            val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as Suburb
-            suburb?.let {
+            val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
+            suburb.let {
                 onSuburbSelected(it)
             }
         }
@@ -187,8 +191,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Province")
             // Do something with the result
-            val province: Province? = Utils.strToJson(result, Province::class.java) as Province
-            province?.let {
+            val province: Province? = Utils.strToJson(result, Province::class.java) as? Province
+            province.let {
                 onProvinceSelected(it)
             }
         }
@@ -219,7 +223,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setAddress(addresses: MutableList<Address>) {
-        val address = addresses.get(0)
+        val address = addresses[0]
         autoCompleteTextView.apply {
             setText(address.getAddressLine(0))
             setSelection(autoCompleteTextView.length())
@@ -265,12 +269,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
             provinceAutocompleteEditText.setText(provinceName)
+            selectProvinceLayout.setBackgroundResource(R.drawable.input_non_editable_edit_text)
+            provinceAutocompleteEditText.setBackgroundResource(R.drawable.input_non_editable_half_edit_text)
         }
-        if (province == null || provinceName.isNullOrEmpty()) {
+        if (provinceName.isNullOrEmpty()) {
             enableProvinceSelection()
         } else
             selectedProvince = province
-        postalCode.setText(address?.postalCode)
+        postalCode.setText(address.postalCode)
     }
 
     private fun enableProvinceSelection() {
@@ -333,7 +339,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     fun resetOtherDeliveringTitle(selectedTag: Int) {
         //change background of unselected textview
-        for ((indx, option) in deliveringOptionsList!!.withIndex()) {
+        for ((indx) in deliveringOptionsList!!.withIndex()) {
             if (indx != selectedTag) {
                 val titleTextView: TextView? = view?.findViewWithTag(indx)
                 titleTextView?.background =
@@ -400,7 +406,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             editor?.putString(EditDeliveryLocationFragment.SUBURB_LIST, Utils.toJson(suburbs))
             editor?.apply()
             val bundle = Bundle()
-            bundle?.apply {
+            bundle.apply {
                 putString("SuburbList", Utils.toJson(suburbs))
                 putSerializable("deliveryType", deliveryType)
             }
@@ -419,7 +425,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     fun hideSetSuburbProgressBar() {
         progressSetSuburb?.visibility = View.INVISIBLE
         activity?.apply {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         }
     }
 
@@ -434,6 +440,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onSaveAddressClicked() {
+        if (cellphoneNumber?.text.toString().trim().length > 0 && cellphoneNumber?.text.toString()
+                .trim().length < 10
+        ) {
+            showErrorPhoneNumber()
+        }
         if (autoCompleteTextView?.text.toString().trim()
                 .isNotEmpty() && addressNicknameEditText?.text.toString().trim()
                 .isNotEmpty() && suburbEditText?.text.toString().trim()
@@ -468,6 +479,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    private fun showErrorPhoneNumber() {
+        cellphoneNumberErrorMsg?.visibility = View.VISIBLE
+        cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
     }
 
     private fun showErrorSuburbOrProvince(relativeLayout: RelativeLayout, visible: Int) {
@@ -508,6 +524,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             R.id.cellphoneNumber -> {
                 cellphoneNumberErrorMsg?.visibility = visible
+                cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
             }
         }
     }
