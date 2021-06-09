@@ -474,7 +474,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun isUserGotVirtualCard(storeCardsData: StoreCardsData?): Boolean {
-        return (storeCardsData?.virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+        // virtual card should not be blocked.
+        return (storeCardsData?.virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true && !TemporaryFreezeStoreCard.PERMANENT.equals(storeCardsData?.virtualCard?.blockType, ignoreCase = true))
     }
 
     private fun isApiCallInProgress(): Boolean {

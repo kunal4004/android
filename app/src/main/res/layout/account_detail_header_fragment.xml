@@ -118,9 +118,11 @@
             android:letterSpacing="0.15"
             android:text="@string/label_card_details"
             android:textAllCaps="true"
-            android:textColor="@color/permanent_card_block_desc_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:enabled="true"
+            android:textColor="@color/black"
             android:textSize="@dimen/twelve_sp"
-            android:visibility="visible"
             tools:ignore="UnusedAttribute" />
 
         <TextView

@@ -114,13 +114,16 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
     private fun autoConnectListener() {
         activity?.let { activity ->
-            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(activity, this, object : ConnectionBroadcastReceiver() {
-                override fun onConnectionChanged(hasConnection: Boolean) {
-                    if (hasConnection && !accountStoreCardCallWasCompleted) {
-                        navigateToGetStoreCard()
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
+                activity,
+                this,
+                object : ConnectionBroadcastReceiver() {
+                    override fun onConnectionChanged(hasConnection: Boolean) {
+                        if (hasConnection && !accountStoreCardCallWasCompleted) {
+                            navigateToGetStoreCard()
+                        }
                     }
-                }
-            })
+                })
         }
     }
 
@@ -143,7 +146,13 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             200 -> {
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) { setStoreCardTag() }
             }
-            440 -> activity?.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, storeCardResponse.response?.stsParams, it) }
+            440 -> activity?.let {
+                SessionUtilities.getInstance().setSessionState(
+                    SessionDao.SESSION_STATE.INACTIVE,
+                    storeCardResponse.response?.stsParams,
+                    it
+                )
+            }
 
             else -> {
                 val desc = storeCardResponse.response?.desc ?: ""
@@ -158,11 +167,23 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             // Activate Virtual Temporary card
             (mCardPresenterImpl?.isActivateVirtualTempCard() == true) -> {
                 storeCardTagTextView?.text = bindString(R.string.inactive)
-                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.red_tag)) }
+                storeCardTagTextView?.let {
+                    KotlinUtils.roundCornerDrawable(
+                        it,
+                        bindString(R.string.red_tag)
+                    )
+                }
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
                 manageLinkNewCardGroup?.visibility = VISIBLE
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_activate_vtc_grey)) }
+                context?.let {
+                    imLogoIncreaseLimit?.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            it,
+                            R.drawable.ic_activate_vtc_grey
+                        )
+                    )
+                }
                 manageMyCardTextView?.text = bindString(R.string.activate_vtc_title)
                 cardDetailImageView?.alpha = 0.3f
             }
@@ -170,7 +191,12 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             // Temporary card
             (mCardPresenterImpl?.isTemporaryCardEnabled() == true) -> {
                 storeCardTagTextView?.text = bindString(R.string.temp_card)
-                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.orange_tag)) }
+                storeCardTagTextView?.let {
+                    KotlinUtils.roundCornerDrawable(
+                        it,
+                        bindString(R.string.orange_tag)
+                    )
+                }
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
                 if (mCardPresenterImpl?.isVirtualCardObjectBlockTypeNull() == true) {
@@ -178,7 +204,14 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 } else {
                     manageLinkNewCardGroup?.visibility = GONE
                 }
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
+                context?.let {
+                    imLogoIncreaseLimit?.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            it,
+                            R.drawable.icon_card
+                        )
+                    )
+                }
                 manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
                 cardDetailImageView?.alpha = 0.3f
             }
@@ -186,12 +219,24 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             // Get replacement card
             mCardPresenterImpl?.isInstantCardReplacementEnabled() == true -> {
                 storeCardTagTextView?.text = bindString(R.string.inactive)
-                storeCardTagTextView?.let { KotlinUtils.roundCornerDrawable(it, bindString(R.string.red_tag)) }
+                storeCardTagTextView?.let {
+                    KotlinUtils.roundCornerDrawable(
+                        it,
+                        bindString(R.string.red_tag)
+                    )
+                }
                 storeCardTagTextView?.visibility = VISIBLE
                 myCardDetailTextView?.visibility = GONE
                 manageLinkNewCardGroup?.visibility = VISIBLE
                 manageMyCardTextView?.text = bindString(R.string.replacement_card_label)
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
+                context?.let {
+                    imLogoIncreaseLimit?.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            it,
+                            R.drawable.icon_card
+                        )
+                    )
+                }
                 cardDetailImageView?.alpha = 0.3f
             }
             //Unfreeze my card
@@ -207,42 +252,34 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             else -> {
                 storeCardTagTextView?.visibility = GONE
                 myCardDetailTextView?.visibility = VISIBLE
+                myCardDetailTextView?.setOnClickListener {
+                    mCardPresenterImpl?.navigateToTemporaryStoreCard()
+                }
                 manageLinkNewCardGroup?.visibility = GONE
                 manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
-                context?.let { imLogoIncreaseLimit?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.icon_card)) }
+                context?.let {
+                    imLogoIncreaseLimit?.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            it,
+                            R.drawable.icon_card
+                        )
+                    )
+                }
                 cardDetailImageView?.alpha = 1.0f
-            }
-        }
-    }
-
-    private fun onFreezeUnfreezeStoreCard() {
-        when (mCardPresenterImpl?.getStoreCardBlockType()) {
-            true -> {
-                cardDetailImageView?.setImageDrawable(bindDrawable(R.drawable.card_freeze))
-                manageMyCardTextView?.text = bindString(R.string.unfreeze_my_card_label)
-                tempFreezeTextView?.let { KotlinUtils.roundCornerDrawable(it, "#FF7000") }
-                tempFreezeTextView?.text = bindString(R.string.freeze_temp_label)
-                tempFreezeTextView?.visibility = VISIBLE
-                myCardDetailTextView?.visibility = GONE
-            }
-            else -> {
-                cardDetailImageView?.setImageDrawable(bindDrawable(R.drawable.w_store_card))
-                manageMyCardTextView?.text = bindString(R.string.manage_my_card_title)
-                tempFreezeTextView?.visibility = GONE
-                myCardDetailTextView?.visibility = VISIBLE
             }
         }
     }
 
     override fun showUnBlockStoreCardCardDialog() {
         val storeCardResponse = mCardPresenterImpl?.getStoreCardResponse()
-        val temporaryFreezeStoreCard = TemporaryFreezeStoreCard(storeCardResponse, object : ITemporaryCardFreeze {
+        val temporaryFreezeStoreCard =
+            TemporaryFreezeStoreCard(storeCardResponse, object : ITemporaryCardFreeze {
 
-            override fun onTemporaryCardUnFreezeConfirmed() {
-                super.onTemporaryCardUnFreezeConfirmed()
-                mCardPresenterImpl?.navigateToMyCardDetailActivity(true)
-            }
-        })
+                override fun onTemporaryCardUnFreezeConfirmed() {
+                    super.onTemporaryCardUnFreezeConfirmed()
+                    mCardPresenterImpl?.navigateToMyCardDetailActivity(true)
+                }
+            })
 
         temporaryFreezeStoreCard.showUnFreezeStoreCardDialog(childFragmentManager)
     }
@@ -252,7 +289,8 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         if (resultCode == TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE) {
             checkForLocationPermission()
             data?.apply {
-                val shouldRefreshCardDetails = getBooleanExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, false)
+                val shouldRefreshCardDetails =
+                    getBooleanExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, false)
                 if (shouldRefreshCardDetails) {
                     navigateToGetStoreCards()
                 }
@@ -261,8 +299,8 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         //Activate VTC journey when successfully activated
         if (resultCode == ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE) {
             navigateToGetStoreCards()
-        //ICR Journey success and When Get replacement card email confirmation is success and result ok
-        } else if(requestCode == MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD && resultCode == AppCompatActivity.RESULT_OK){
+            //ICR Journey success and When Get replacement card email confirmation is success and result ok
+        } else if (requestCode == MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD && resultCode == AppCompatActivity.RESULT_OK) {
             navigateToGetStoreCards()
         }
         if (requestCode == EnableLocationSettingsFragment.ACCESS_MY_LOCATION_REQUEST_CODE) {
@@ -279,7 +317,10 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
             if (!Utils.isLocationEnabled(this)) {
                 val enableLocationSettingsFragment = EnableLocationSettingsFragment()
-                enableLocationSettingsFragment?.show(supportFragmentManager, EnableLocationSettingsFragment::class.java.simpleName)
+                enableLocationSettingsFragment?.show(
+                    supportFragmentManager,
+                    EnableLocationSettingsFragment::class.java.simpleName
+                )
                 return@apply
             }
 
@@ -301,9 +342,18 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                             activity?.apply {
                                 getStoreCardResponse()?.let {
                                     Intent(this, SelectStoreActivity::class.java).apply {
-                                        putExtra(SelectStoreActivity.STORE_DETAILS, Gson().toJson(it))
-                                        startActivityForResult(this, MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD)
-                                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                                        putExtra(
+                                            SelectStoreActivity.STORE_DETAILS,
+                                            Gson().toJson(it)
+                                        )
+                                        startActivityForResult(
+                                            this,
+                                            MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD
+                                        )
+                                        overridePendingTransition(
+                                            R.anim.slide_from_right,
+                                            R.anim.slide_to_left
+                                        )
                                     }
                                 }
                             }
@@ -327,15 +377,24 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         when (manageMyCardTextView?.text?.toString()) {
                             bindString(R.string.replacement_card_label) -> {
                                 val storeCardResponse = getStoreCardResponse()
-                                MyAccountsScreenNavigator.navigateToLinkNewCardActivity(activity, Utils.objectToJson(storeCardResponse))
+                                MyAccountsScreenNavigator.navigateToLinkNewCardActivity(
+                                    activity,
+                                    Utils.objectToJson(storeCardResponse)
+                                )
                             }
                             bindString(R.string.activate_vtc_title) -> {
                                 val storeCardResponse = getStoreCardResponse()
-                                MyAccountsScreenNavigator.navigateToLinkNewCardActivity(activity, Utils.objectToJson(storeCardResponse))
+                                MyAccountsScreenNavigator.navigateToLinkNewCardActivity(
+                                    activity,
+                                    Utils.objectToJson(storeCardResponse)
+                                )
                             }
                             bindString(R.string.manage_my_card_title) -> {
                                 val storeCardResponse = getStoreCardResponse()
-                                MyAccountsScreenNavigator.navigateToLinkNewCardActivity(activity, Utils.objectToJson(storeCardResponse))
+                                MyAccountsScreenNavigator.navigateToLinkNewCardActivity(
+                                    activity,
+                                    Utils.objectToJson(storeCardResponse)
+                                )
                             }
                         }
                     }
