@@ -63,6 +63,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     var selectedSuburb: Suburb? = null
     var selectedStore: Suburb? = null
     var selectedProvince: Province? = null
+    var savedAddressList: List<za.co.woolworths.financial.services.android.checkout.service.network.Address>? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
 
     override fun onCreateView(
@@ -120,6 +121,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun init() {
+        getSavedAddresses()
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let {
@@ -173,6 +175,22 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 }
         }
+    }
+
+    private fun getSavedAddresses() {
+        checkoutAddAddressNewUserViewModel.getSavedAddresses().observe(viewLifecycleOwner, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    savedAddressList =  it.data?.addresses
+                }
+                ResponseStatus.LOADING -> {
+
+                }
+                ResponseStatus.ERROR -> {
+
+                }
+            }
+        })
     }
 
     private fun addFragmentResultListener() {

@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.utils.CheckoutResourceGetProvince
 import za.co.woolworths.financial.services.android.checkout.utils.CheckoutResourceGetSuburb
+import za.co.woolworths.financial.services.android.checkout.utils.CheckoutResourceSavedAddress
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
@@ -27,6 +28,15 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
             emit(CheckoutResourceGetProvince.success(data = checkoutAddAddressNewUserInteractor.getProvince().body()))
         } catch (exception: Exception) {
             emit(CheckoutResourceGetProvince.error(data = null, msg = exception.toString()))
+        }
+    }
+
+    fun getSavedAddresses() = liveData(Dispatchers.IO) {
+        emit(CheckoutResourceSavedAddress.loading(data = null))
+        try {
+            emit(CheckoutResourceSavedAddress.success(data = checkoutAddAddressNewUserInteractor.getSavedAddresses().body()))
+        } catch (exception: Exception) {
+            emit(CheckoutResourceSavedAddress.error(data = null, msg = exception.toString()))
         }
     }
 }

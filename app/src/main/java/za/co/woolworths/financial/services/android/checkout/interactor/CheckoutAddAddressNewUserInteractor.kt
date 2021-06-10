@@ -9,4 +9,5 @@ class CheckoutAddAddressNewUserInteractor(private val checkoutAddAddressNewUserA
 
     fun getSuburbs(provinceId: String) = checkoutAddAddressNewUserApiHelper.getSuburbs(provinceId)
     fun getProvince() = checkoutAddAddressNewUserApiHelper.getProvince()
+    fun getSavedAddresses() = checkoutAddAddressNewUserApiHelper.getSavedAddresses()
 }
