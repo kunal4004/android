@@ -18,7 +18,7 @@ import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
+import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.android.synthetic.main.view_statement_button.*
 import kotlinx.coroutines.GlobalScope
@@ -72,7 +72,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.account_available_fund_overview_fragment, container, false)
+        return inflater.inflate(R.layout.available_funds_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
