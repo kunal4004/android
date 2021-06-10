@@ -115,6 +115,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.CartActi
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
@@ -1143,7 +1144,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         } else if (requestCode == CART_BACK_PRESSED_CODE) {
             reloadFragment();
             return;
-        } else if (requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE) {
+        } else if (requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE || requestCode == SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {
             checkLocationChangeAndReload();
         }
 

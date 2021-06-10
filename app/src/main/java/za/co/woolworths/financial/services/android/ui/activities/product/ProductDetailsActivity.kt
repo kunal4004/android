@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.product
 
-import android.app.ActivityManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
@@ -10,7 +9,6 @@ import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
 import com.google.gson.JsonElement
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
-import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
@@ -73,12 +71,6 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
     override fun onToastButtonClicked(jsonElement: JsonElement?) {
         //val navigateTo = NavigateToShoppingList
         if (jsonElement != null) navigateToShoppingListOnToastClicked(this, jsonElement)
-    }
-
-    private fun restartApp() {
-        val intent = Intent(this, StartupActivity::class.java)
-        this.startActivity(intent)
-        finishAffinity()
     }
 
     fun goToProductDetailsFragment(bundle: Bundle?) {
