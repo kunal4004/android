@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -89,7 +88,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             paymentOverdueGroup?.visibility = VISIBLE
             0.8f
         } else {
-            paymentOverdueGroup?.visibility = GONE
+            paymentOverdueGroup?.visibility = INVISIBLE
             0.7f
         }
         bottomViewGuideline.layoutParams = constParam
