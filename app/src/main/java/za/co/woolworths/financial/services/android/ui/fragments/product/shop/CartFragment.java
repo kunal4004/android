@@ -1187,6 +1187,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
         String currentSuburbId = null;
         String currentStoreId = null;
+        int currentCartCount = QueryBadgeCounter.getInstance().getCartCount();
         if (deliveryLocation.suburb != null)
             currentSuburbId = deliveryLocation.suburb.id;
         if (deliveryLocation.store != null)
@@ -1204,6 +1205,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             localStoreId = null;
             reloadFragment();
             return;
+        }
+        else if (productCountMap.getTotalProductCount() != currentCartCount){
+            reloadFragment();
         }
     }
 
