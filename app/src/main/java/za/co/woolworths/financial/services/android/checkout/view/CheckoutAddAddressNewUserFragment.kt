@@ -31,6 +31,7 @@ import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
@@ -63,7 +64,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     var selectedSuburb: Suburb? = null
     var selectedStore: Suburb? = null
     var selectedProvince: Province? = null
-    var savedAddressList: List<za.co.woolworths.financial.services.android.checkout.service.network.Address>? = null
+    private var savedAddressList: List<za.co.woolworths.financial.services.android.checkout.service.network.Address>? =
+        null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
 
     override fun onCreateView(
@@ -116,12 +118,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun setupViewModel() {
         checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
             this,
-            ViewModelFactory(CheckoutAddAddressNewUserInteractor(CheckoutAddAddressNewUserApiHelper()))
+            ViewModelFactory(
+                CheckoutAddAddressNewUserInteractor(
+                    CheckoutAddAddressNewUserApiHelper(),
+                    CheckoutMockApiHelper()
+                )
+            )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
     private fun init() {
-        getSavedAddresses()
+        if (savedAddressList.isNullOrEmpty())
+            getSavedAddresses()
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let {
@@ -181,7 +189,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.getSavedAddresses().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    savedAddressList =  it.data?.addresses
+                    savedAddressList = it.data?.addresses
                 }
                 ResponseStatus.LOADING -> {
 
@@ -472,9 +480,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 .isNotEmpty() && cellphoneNumber?.text.toString().trim()
                 .isNotEmpty() && selectedDeliveryAddressType != null
         ) {
-
+            if (isNickNameExist())
+                return
 
         } else {
+            isNickNameExist()
             if (selectedDeliveryAddressType == null) {
                 deliveringAddressTypesErrorMsg.visibility = View.VISIBLE
             }
@@ -497,6 +507,19 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    private fun isNickNameExist(): Boolean {
+        var isExist = false
+        for (address in savedAddressList!!) {
+            if (addressNicknameEditText.text.toString().equals(address.nickname, true)) {
+                addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
+                addressNicknameErrorMsg?.visibility = View.VISIBLE
+                addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
+                isExist = true
+            }
+        }
+        return isExist
     }
 
     private fun showErrorPhoneNumber() {

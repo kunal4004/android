@@ -10,5 +10,4 @@ class CheckoutAddAddressNewUserApiHelper: RetrofitConfig() {
 
     fun getSuburbs(provinceId: String) = OneAppService.getSuburbs(provinceId).execute()
     fun getProvince() = OneAppService.getProvinces().execute()
-    fun getSavedAddresses() = OneAppService.getSavedAddresses().execute()
 }

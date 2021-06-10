@@ -2059,4 +2059,5 @@
     <string name="province_name_error_msg">Please select a province.</string>
     <string name="postal_code_error_msg">Please enter a Postal Code</string>
     <string name="mobile_number_error_msg">Please enter a 10-digit South African mobile number.</string>
+    <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
 </resources>
