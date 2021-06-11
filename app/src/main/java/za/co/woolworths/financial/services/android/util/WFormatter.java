@@ -64,16 +64,6 @@ public class WFormatter {
         return new SimpleDateFormat("dd/MM/yyyy").format(m_ISO8601Local.parse(validFromDate));
     }
 
-    public static boolean isDateExpired(String validToDate) throws ParseException {
-        String formattedDate = formatDateTOddMMMYYYY(validToDate);
-        if (!TextUtils.isEmpty(formattedDate)) {
-            Date parsedValidDate = new Date(formattedDate);
-            if (parsedValidDate.before(new Date())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public static String newDateFormat(String validFromDate) throws ParseException {
         if (validFromDate == null) {

@@ -18,6 +18,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -52,10 +53,10 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView;
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
+import za.co.woolworths.financial.services.android.ui.views.NotificationBadge;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
-import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -90,6 +91,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private UserStatement mSelectedStatement;
     private View topMarginView;
     private FloatingActionButton chatWithAgentFloatingButton;
+    private NotificationBadge notificationBadge;
+    private ImageView onlineIndicatorImageView;
 
     public StatementFragment() {
     }
@@ -138,6 +141,9 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         ctNoResultFound = view.findViewById(R.id.ctNoResultFound);
         ccProgressLayout = view.findViewById(R.id.ccProgressLayout);
         chatWithAgentFloatingButton = view.findViewById(R.id.chatBubbleFloatingButton);
+        notificationBadge = view.findViewById(R.id.badge);
+        onlineIndicatorImageView = view.findViewById(R.id.onlineIndicatorImageView);
+
         topMarginView = view.findViewById(R.id.topMarginView);
         rclEStatement = view.findViewById(R.id.rclEStatement);
         relNextButton = view.findViewById(R.id.relNextButton);
@@ -208,7 +214,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     @Override
     public void onClick(View v) {
         Activity activity = getActivity();
-        if (activity == null)return;
+        if (activity == null) return;
         switch (v.getId()) {
             case R.id.btnEmailStatement:
                 Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
@@ -243,7 +249,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         cliGetStatements.enqueue(new CompletionHandler<>(new IResponseListener<StatementResponse>() {
             @Override
             public void onSuccess(StatementResponse statementResponse) {
-                if (statementResponse != null && getActivity() !=null) {
+                if (statementResponse != null && getActivity() != null) {
                     switch (statementResponse.httpCode) {
                         case 200:
                             setAdapter();
@@ -284,14 +290,14 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             public void onFailure(final Throwable error) {
                 if (error == null) return;
                 Activity activity = getActivity();
-                if (activity !=null) {
+                if (activity != null) {
                     activity.runOnUiThread(() -> {
                         onLoadComplete();
                         mErrorHandlerView.networkFailureHandler(error.getMessage());
                     });
                 }
             }
-        },StatementResponse.class));
+        }, StatementResponse.class));
 
     }
 
@@ -452,7 +458,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         Pair<ApplyNowState, Account> account = ((StatementActivity) activity).getAccountWithApplyNowState();
         ArrayList<Account> accountList = new ArrayList<>();
         accountList.add(account.second);
-        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement);
+        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement, notificationBadge,onlineIndicatorImageView);
         inAppChatTipAcknowledgement.build();
     }
 }

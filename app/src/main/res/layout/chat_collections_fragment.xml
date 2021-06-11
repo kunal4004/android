@@ -78,7 +78,7 @@
             app:WEditTextView_font="myriadpro_regular" />
 
         <Button
-            android:id="@+id/button_send"
+            android:id="@+id/sendMessageButton"
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_gravity="center_vertical"

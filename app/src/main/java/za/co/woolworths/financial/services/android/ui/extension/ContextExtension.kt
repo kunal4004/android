@@ -14,7 +14,7 @@ fun Any.bindColor(@ColorRes color: Int) = ContextCompat.getColor(WoolworthsAppli
 
 fun Any.bindString(@StringRes id: Int): String = WoolworthsApplication.getAppContext().resources.getString(id)
 
-fun Any.bindString(@StringRes id: Int, value: String = "", value1: String = "", value2: String = "", value3: String = "", value4: String = "", value5: String = "", value6: String = "", value7: String = ""): String = WoolworthsApplication.getAppContext().resources.getString(id, value, value1, value2, value3, value4, value5, value6, value7)
+fun Any.bindString(@StringRes id: Int, value: String = "", value1: String? = "", value2: String = "", value3: String = "", value4: String = "", value5: String = "", value6: String = "", value7: String = ""): String = WoolworthsApplication.getAppContext().resources.getString(id, value, value1, value2, value3, value4, value5, value6, value7)
 
 fun Any.bindStringArray(@ArrayRes id: Int): Array<String>? = WoolworthsApplication.getAppContext()?.resources?.getStringArray(id)
 
