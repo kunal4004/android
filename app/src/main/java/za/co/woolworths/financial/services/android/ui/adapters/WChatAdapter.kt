@@ -77,7 +77,6 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         return when (chatMessageList[position]) {
             is SendMessageResponse -> VIEW_TYPE_RECEIVED_MESSAGE
             is SenderMessage -> VIEW_TYPE_SENT_MESSAGE
-            else -> 0
         }
     }
 

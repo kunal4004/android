@@ -138,7 +138,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
     private fun getUserTokenAndSignIn() {
         with(chatViewModel) {
             val absaCardToken = liveChatDBRepository.getABSACardToken()
-            if (absaCardToken.isEmpty()) {
+            if (absaCardToken?.isEmpty() == true) {
                 // show retrieve ABSA card token retry screen
                 chatNavController?.navigate(R.id.chatRetrieveABSACardTokenFragment)
             } else {
