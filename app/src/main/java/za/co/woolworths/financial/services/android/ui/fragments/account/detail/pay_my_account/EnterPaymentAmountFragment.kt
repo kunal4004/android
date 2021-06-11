@@ -26,8 +26,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumFont
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-
 
 class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
@@ -59,7 +59,13 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
         with(payMyAccountViewModel) {
             totalAmountDueValueTextView?.text = getTotalAmountDue()
-            amountOutstandingValueTextView?.text = getOverdueAmount()
+            if (isAccountChargedOff()) {
+                amountOverdueLabelTextView?.text = getString(R.string.current_balance_label)
+                amountOutstandingValueTextView?.text = getCurrentBalance()
+            } else {
+                amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
+                amountOutstandingValueTextView?.text = getOverdueAmount()
+            }
             paymentAmountInputEditText?.setText(getAmountEntered())
         }
     }
@@ -72,7 +78,11 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         }
 
         amountOutstandingValueTextView?.apply {
-            if (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) return
+            if (payMyAccountViewModel.isAccountChargedOff()) {
+                if (isZeroAmount(payMyAccountViewModel.getCurrentBalance())) return
+            } else {
+                if (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) return
+            }
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@EnterPaymentAmountFragment)
         }
@@ -187,11 +197,17 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             }
 
             R.id.amountOutstandingValueTextView -> {
-                if (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) return
+                if (payMyAccountViewModel.isAccountChargedOff()) {
+                    if (isZeroAmount(payMyAccountViewModel.getCurrentBalance())) return
+                    selectCurrentBalance()
+                    paymentAmountInputEditText?.setText(payMyAccountViewModel.getCurrentBalance())
+                } else {
+                    if (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) return
+                    selectOutstandingAmount()
+                    paymentAmountInputEditText?.setText(payMyAccountViewModel.getOverdueAmount())
+                }
                 enterPaymentAmountTextView?.tag = R.id.amountOutstandingValueTextView
                 isAmountSelected = true
-                selectOutstandingAmount()
-                paymentAmountInputEditText?.setText(payMyAccountViewModel.getOverdueAmount())
 
             }
         }
@@ -199,6 +215,16 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     private fun selectOutstandingAmount() {
         when (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) {
+            true -> clearSelection()
+            else -> {
+                totalAmountDueValueTextView?.isSelected = false
+                amountOutstandingValueTextView?.isSelected = true
+            }
+        }
+    }
+
+    private fun selectCurrentBalance() {
+        when (isZeroAmount(payMyAccountViewModel.getCurrentBalance())) {
             true -> clearSelection()
             else -> {
                 totalAmountDueValueTextView?.isSelected = false

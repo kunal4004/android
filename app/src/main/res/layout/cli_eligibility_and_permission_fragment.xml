@@ -1,18 +1,17 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/scrollView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/default_background"
-            android:orientation="vertical"
-            android:scrollbars="none"
-            tools:context="za.co.woolworths.financial.services.android.ui.fragments.cli.CLIEligibilityAndPermissionFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_background"
+    android:orientation="vertical"
+    android:scrollbars="none"
+    tools:context="za.co.woolworths.financial.services.android.ui.fragments.cli.CLIEligibilityAndPermissionFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/llEligibilityView"
@@ -20,56 +19,52 @@
             android:layout_height="wrap_content"
             android:background="@color/default_background"
             android:orientation="vertical"
-            android:paddingTop="16dp"
-            >
+            android:paddingTop="16dp">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/cli_permission_title_text"
-                tools:text="@string/cli_eligibility_check_title"
+            <TextView
                 android:id="@+id/eligibilityQuestion"
-                />
+                style="@style/cli_permission_title_text"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                tools:text="@string/cli_eligibility_check_title" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:background="@color/white"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/cli_permission_description_text"
-                    tools:text="@string/cli_eligibility_check_description"
+                <TextView
                     android:id="@+id/eligibilityQuestionDesc"
-                    />
+                    style="@style/cli_permission_description_text"
+                    android:fontFamily="@font/myriad_pro_regular_otf"
+                    tools:text="@string/cli_eligibility_check_description" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/fifty_dp"
-                    android:layout_marginBottom="@dimen/thirty_dp"
-                    android:layout_marginEnd="@dimen/twenty_six_dp"
                     android:layout_marginStart="@dimen/thirty_dp"
                     android:layout_marginTop="@dimen/thirty_dp"
-                    android:background="@drawable/cli_yes_no_button_background"
-                    >
+                    android:layout_marginEnd="@dimen/twenty_six_dp"
+                    android:layout_marginBottom="@dimen/thirty_dp"
+                    android:background="@drawable/cli_yes_no_button_background">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/eligibilityYes"
                         style="@style/cli_yes_no_button"
-                        android:text="@string/cli_yes"
-                        />
+                        android:fontFamily="@font/futura_semi_bold_ttf"
+                        android:text="@string/cli_yes" />
 
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:background="#19000000"
-                        />
+                        android:background="#19000000" />
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/eligibilityNo"
                         style="@style/cli_yes_no_button"
-                        android:text="@string/cli_no"
-                        />
+                        android:fontFamily="@font/futura_semi_bold_ttf"
+                        android:text="@string/cli_no" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -82,56 +77,52 @@
             android:background="@color/default_background"
             android:orientation="vertical"
             android:paddingTop="16dp"
-            android:visibility="gone"
-            >
+            android:visibility="gone">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/cli_permission_title_text"
-                tools:text="@string/cli_permission_check_title"
+            <TextView
                 android:id="@+id/permissionsTitle"
-                />
+                style="@style/cli_permission_title_text"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                tools:text="@string/cli_permission_check_title" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:background="@color/white"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/cli_permission_description_text"
-                    tools:text="@string/cli_permission_check_description"
+                <TextView
                     android:id="@+id/permissionsDesc"
-                    />
+                    style="@style/cli_permission_description_text"
+                    android:fontFamily="@font/myriad_pro_regular_otf"
+                    tools:text="@string/cli_permission_check_description" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/fifty_dp"
-                    android:layout_marginBottom="@dimen/thirty_dp"
-                    android:layout_marginEnd="@dimen/twenty_six_dp"
                     android:layout_marginStart="@dimen/thirty_dp"
                     android:layout_marginTop="@dimen/thirty_dp"
-                    android:background="@drawable/cli_yes_no_button_background"
-                    >
+                    android:layout_marginEnd="@dimen/twenty_six_dp"
+                    android:layout_marginBottom="@dimen/thirty_dp"
+                    android:background="@drawable/cli_yes_no_button_background">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/permissionYes"
                         style="@style/cli_yes_no_button"
-                        android:text="@string/cli_yes"
-                        />
+                        android:fontFamily="@font/futura_semi_bold_ttf"
+                        android:text="@string/cli_yes" />
 
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:background="#19000000"
-                        />
+                        android:background="#19000000" />
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/permissionNo"
                         style="@style/cli_yes_no_button"
-                        android:text="@string/cli_no"
-                        />
+                        android:fontFamily="@font/futura_semi_bold_ttf"
+                        android:text="@string/cli_no" />
                 </LinearLayout>
             </LinearLayout>
 

@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.absa.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListener {
@@ -56,7 +56,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
 
         intent?.extras?.apply {
             mShouldDisplayABSALogin = getBoolean(SHOULD_DISPLAY_LOGIN_SCREEN, false)
-            mAccounts = bundle.getString(ChatExtensionFragment.ACCOUNTS, "")
+            mAccounts = bundle.getString(ChatFragment.ACCOUNTS, "")
             mCreditAccountInfo = getString("creditCardToken")
         }
     }

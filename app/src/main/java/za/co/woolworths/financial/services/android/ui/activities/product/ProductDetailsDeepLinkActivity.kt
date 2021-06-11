@@ -44,7 +44,8 @@ import java.util.*
 /**
  * Created by Kunal Uttarwar on 26/3/21.
  */
-class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtension.ProductDetailsStatusListner, ToastInterface {
+class ProductDetailsDeepLinkActivity : AppCompatActivity(),
+    ProductDetailsExtension.ProductDetailsStatusListner, ToastInterface {
 
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var jsonLinkData: JsonObject
@@ -57,7 +58,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
         startProgressBar()
         var bundle: Any? = intent?.data
         if (intent.hasExtra("deepLinkRequestCode")) {
-            deepLinkRequestCode = intent?.getIntExtra("deepLinkRequestCode", DEEP_LINK_REQUEST_CODE)!!
+            deepLinkRequestCode =
+                intent?.getIntExtra("deepLinkRequestCode", DEEP_LINK_REQUEST_CODE)!!
         } else
             deepLinkRequestCode = SHARE_LINK_REQUEST_CODE
         if (intent.hasExtra("parameters")) {
@@ -66,13 +68,15 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
             bundle = Uri.parse(jsonLinkData.get("url").asString)
             intent?.action = Intent.ACTION_VIEW
         } else if (bundle == null && intent?.extras != null) {
-            bundle = intent!!.extras!!
+            bundle = intent.extras
             intent?.action = Intent.ACTION_VIEW
         }
-        if (Intent.ACTION_VIEW == intent?.action && bundle != null && bundle.toString().contains("A-")) {
+        if (Intent.ACTION_VIEW == intent?.action && bundle != null && bundle.toString()
+                .contains("A-")
+        ) {
             handleAppLink(bundle)
         } else {
-            goToProductDetailsActivity(bundle as Bundle?)
+            restartApp()
         }
     }
 
@@ -85,26 +89,38 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
         var bundle: Bundle
         if (appLinkData is Uri) {
             bundle = bundleOf(
-                    "feature" to AppConstant.DP_LINKING_PRODUCT_DETAIL,
-                    "parameters" to "{\"url\": \"${appLinkData}\"}"
+                "feature" to AppConstant.DP_LINKING_PRODUCT_DETAIL,
+                "parameters" to "{\"url\": \"${appLinkData}\"}"
             )
         } else {
             bundle = appLinkData as Bundle
         }
         parseDeepLinkData(bundle)
 
-        if (bundle != null && bundle.get("feature") != null && !TextUtils.isEmpty(bundle.get("feature").toString()) && jsonLinkData?.get("url") != null) {
+        if (bundle != null && bundle.get("feature") != null && !TextUtils.isEmpty(
+                bundle.get("feature").toString()
+            ) && jsonLinkData?.get("url") != null
+        ) {
             val linkData = Uri.parse(jsonLinkData.get("url").asString)
             val productSearchTerm = linkData.pathSegments?.find { it.startsWith("A-") }!!
             if (productSearchTerm == null || productSearchTerm.isEmpty()) {
                 restartApp()
+                return
             }
 
             val productId = productSearchTerm.substring(2)
+            if (productId.isNullOrEmpty()) {
+                restartApp()
+                return
+            }
             val arguments = HashMap<String, String>()
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID] = productId
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = FirebaseManagerAnalyticsProperties.ACTION_PDP_DEEPLINK
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE_DP_LNK, arguments)
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] =
+                FirebaseManagerAnalyticsProperties.ACTION_PDP_DEEPLINK
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE_DP_LNK,
+                arguments
+            )
 
             setupViewModel()
             init()
@@ -120,8 +136,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
 
     private fun setupViewModel() {
         startupViewModel = ViewModelProviders.of(
-                this,
-                ViewModelFactory(StartUpRepository(StartupApiHelper()), StartupApiHelper())
+            this,
+            ViewModelFactory(StartUpRepository(StartupApiHelper()), StartupApiHelper())
         ).get(StartupViewModel::class.java)
     }
 
@@ -137,7 +153,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
         }
         //Remove old usage of SharedPreferences data.
         startupViewModel.clearSharedPreference(this@ProductDetailsDeepLinkActivity)
-        AuthenticateUtils.getInstance(this@ProductDetailsDeepLinkActivity).enableBiometricForCurrentSession(true)
+        AuthenticateUtils.getInstance(this@ProductDetailsDeepLinkActivity)
+            .enableBiometricForCurrentSession(true)
     }
 
     private fun getConfig(productId: String) {
@@ -185,7 +202,8 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
         val mngr = getSystemService(ACTIVITY_SERVICE) as? ActivityManager
         val taskList = mngr!!.getRunningTasks(10)
         if (taskList[0].numActivities == 1 && taskList[0].topActivity!!.className == this.localClassName
-                && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name) {
+            && taskList.get(0).baseActivity?.className == ProductDetailsDeepLinkActivity::class.java.name
+        ) {
             restartApp()
         } else {
             finish()
@@ -253,7 +271,10 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
     private fun checkAndSetToastMessage(data: Intent, resultCode: Int) {
         if (resultCode == RESULT_OK && data != null) {
             val itemAddToCartMessage = data.getStringExtra("addedToCartMessage")
-            val productCountMap = Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap::class.java) as ProductCountMap
+            val productCountMap = Utils.jsonStringToObject(
+                data.getStringExtra("ProductCountMap"),
+                ProductCountMap::class.java
+            ) as ProductCountMap
             val itemsCount = data.getIntExtra("ItemsCount", 0)
             if (itemAddToCartMessage != null) {
                 setToast(itemAddToCartMessage, "", productCountMap, itemsCount)
@@ -283,9 +304,20 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
                 && taskList.get(0).baseActivity?.className == BottomNavigationActivity::class.java.name)
     }
 
-    fun setToast(message: String?, cartText: String?, productCountMap: ProductCountMap?, noOfItems: Int) {
+    fun setToast(
+        message: String?,
+        cartText: String?,
+        productCountMap: ProductCountMap?,
+        noOfItems: Int
+    ) {
         if (productCountMap != null && isDeliveryOptionClickAndCollect() && productCountMap.quantityLimit!!.foodLayoutColour != null) {
-            showItemsLimitToastOnAddToCart(pdpBottomNavigation, productCountMap, this, noOfItems, true)
+            showItemsLimitToastOnAddToCart(
+                pdpBottomNavigation,
+                productCountMap,
+                this,
+                noOfItems,
+                true
+            )
             return
         }
         mToastUtils = ToastUtils(this@ProductDetailsDeepLinkActivity)
@@ -313,8 +345,12 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(), ProductDetailsExtens
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
                     ScreenManager.presentSSOSignin(this@ProductDetailsDeepLinkActivity)
                 } else {
-                    val openCartActivity = Intent(this@ProductDetailsDeepLinkActivity, CartActivity::class.java)
-                    startActivityForResult(openCartActivity, BottomNavigationActivity.OPEN_CART_REQUEST)
+                    val openCartActivity =
+                        Intent(this@ProductDetailsDeepLinkActivity, CartActivity::class.java)
+                    startActivityForResult(
+                        openCartActivity,
+                        BottomNavigationActivity.OPEN_CART_REQUEST
+                    )
                     overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                 }
             }

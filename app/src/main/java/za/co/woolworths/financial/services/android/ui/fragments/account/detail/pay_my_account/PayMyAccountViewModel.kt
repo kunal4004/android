@@ -214,12 +214,23 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getAccount() = getCardDetail()?.account?.second
 
+    fun isAccountChargedOff(): Boolean {
+        getAccount()?.let {
+            return !it.productOfferingGoodStanding && it.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
+        }
+        return false
+    }
+
     fun getOverdueAmount(): String? {
         return getAccount()?.amountOverdue?.let { formatAndRemoveNegativeSymbol(it) }?.replace("R  ","R ")
     }
 
     fun getTotalAmountDue(): String? {
         return getAccount()?.totalAmountDue?.let { formatAndRemoveNegativeSymbol(it) }?.replace("R  ","R ")
+    }
+
+    fun getCurrentBalance(): String? {
+        return getAccount()?.currentBalance?.let { formatAndRemoveNegativeSymbol(it) }?.replace("R  ","R ")
     }
 
     private fun formatAndRemoveNegativeSymbol(amount: Int): String? {
@@ -336,8 +347,12 @@ class PayMyAccountViewModel : ViewModel() {
     fun getAmountEntered(): String {
         val cardInfo = getCardDetail()
         val account = getAccount()
-        return if (cardInfo?.paymentMethodList?.isEmpty() == true) account?.amountOverdue?.toString()
-                ?: "" else cardInfo?.amountEntered ?: ""
+        return if (cardInfo?.paymentMethodList?.isEmpty() == true) {
+            if (isAccountChargedOff()) account?.currentBalance?.toString() ?: ""
+            else account?.amountOverdue?.toString() ?: ""
+        } else {
+            cardInfo?.amountEntered ?: ""
+        }
     }
 
     fun convertRandFormatToDouble(item: String?): Double {
@@ -374,7 +389,11 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun resetAmountEnteredToDefault() {
         val card = getCardDetail()
-        card?.amountEntered = getOverdueAmount()
+        if (isAccountChargedOff()) {
+            card?.amountEntered = getCurrentBalance()
+        } else {
+            card?.amountEntered = getOverdueAmount()
+        }
         setPMACardInfo(card)
     }
 
