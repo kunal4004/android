@@ -86,10 +86,10 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         val constParam: ConstraintLayout.LayoutParams = bottomViewGuideline.layoutParams as ConstraintLayout.LayoutParams
         constParam.guidePercent = if ((activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.isAccountInArrearsState() == true) {
             paymentOverdueGroup?.visibility = VISIBLE
-            0.8f
+            0.82f
         } else {
             paymentOverdueGroup?.visibility = INVISIBLE
-            0.7f
+            0.72f
         }
         bottomViewGuideline.layoutParams = constParam
 
@@ -100,7 +100,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             val location = IntArray(2)
             bottomGuide?.getLocationOnScreen(location)
             val bottomGuidelineVerticalPosition = location[1]
-            val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition
+            val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition + Utils.dp2px(20f)
             bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
 
         }
