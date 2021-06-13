@@ -14,6 +14,7 @@ public class Suburb {
 
 	public String id;
 	public String name;
+	public String postalCode;
 	public boolean suburbDeliverable;
 
 	public boolean hasHeader = false;

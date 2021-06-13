@@ -32,10 +32,12 @@ import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
@@ -46,6 +48,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
@@ -64,8 +67,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     var selectedSuburb: Suburb? = null
     var selectedStore: Suburb? = null
     var selectedProvince: Province? = null
-    private var savedAddressList: List<za.co.woolworths.financial.services.android.checkout.service.network.Address>? =
-        null
+    private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
 
     override fun onCreateView(
@@ -128,8 +130,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun init() {
-        if (savedAddressList.isNullOrEmpty())
+        if (recipientName?.text.toString().isNullOrEmpty()) {
+            val jwtDecoded: JWTDecodedModel? = SessionUtilities.getInstance().jwt
+            val name = jwtDecoded?.name?.get(0) ?: ""
+            recipientName.setText(name)
+        }
+        if (savedAddressResponse?.addresses.isNullOrEmpty() == true) {
             getSavedAddresses()
+        }
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let {
@@ -189,7 +197,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.getSavedAddresses().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    savedAddressList = it.data?.addresses
+                    savedAddressResponse = it.data
+                    if (cellphoneNumber?.text.toString().isNullOrEmpty())
+                        cellphoneNumber.setText(savedAddressResponse?.primaryContactNo)
                 }
                 ResponseStatus.LOADING -> {
 
@@ -245,6 +255,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             this.selectedStore = suburb
         selectSuburbLayout?.setBackgroundResource(R.drawable.input_box_autocomplete_edit_text)
         suburbEditText?.setText(suburb?.name)
+        postalCode?.setText(suburb?.postalCode)
         suburbEditText?.dismissDropDown()
     }
 
@@ -511,7 +522,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun isNickNameExist(): Boolean {
         var isExist = false
-        for (address in savedAddressList!!) {
+        for (address in savedAddressResponse?.addresses!!) {
             if (addressNicknameEditText.text.toString().equals(address.nickname, true)) {
                 addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
                 addressNicknameErrorMsg?.visibility = View.VISIBLE
