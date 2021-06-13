@@ -4,6 +4,8 @@ import android.location.Location
 import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.MockRetrofitConfig.Companion.mockApiInterface
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
@@ -160,6 +162,9 @@ object OneAppService : RetrofitConfig() {
     }
     fun getSavedAddresses(): Call<SavedAddressResponse> {
         return mockApiInterface.getSavedAddresses()
+    }
+    fun addAddress(addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse> {
+        return mockApiInterface.addAddress(addAddressRequestBody)
     }
 
     fun getCartSummary(): Call<CartSummaryResponse> {

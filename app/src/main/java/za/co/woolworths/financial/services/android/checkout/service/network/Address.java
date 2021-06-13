@@ -68,6 +68,13 @@ public class Address {
     @SerializedName("displayName")
     private String displayName;
 
+    @SerializedName("latitude")
+    private Double latitude;
+
+    @SerializedName("longitude")
+    private Double longitude;
+
+
     public String getLastName() {
         return lastName;
     }

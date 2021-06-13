@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.interactor
 
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 
@@ -11,4 +12,5 @@ class CheckoutAddAddressNewUserInteractor(private val checkoutAddAddressNewUserA
     fun getSuburbs(provinceId: String) = checkoutAddAddressNewUserApiHelper.getSuburbs(provinceId)
     fun getProvince() = checkoutAddAddressNewUserApiHelper.getProvince()
     fun getSavedAddresses() = checkoutMockApiHelper.getSavedAddresses()
+    fun addAddress(addAddressRequestBody: AddAddressRequestBody) = checkoutMockApiHelper.addAddress(addAddressRequestBody)
 }

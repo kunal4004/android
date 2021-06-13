@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
@@ -67,6 +68,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     var selectedSuburb: Suburb? = null
     var selectedStore: Suburb? = null
     var selectedProvince: Province? = null
+    var selectedAddress: Address? = null
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
 
@@ -156,7 +158,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         Place.Field.ID,
                         Place.Field.NAME,
                         Place.Field.LAT_LNG,
-                        Place.Field.ADDRESS
+                        Place.Field.ADDRESS,
+                        Place.Field.ADDRESS_COMPONENTS
                     )
                     val request =
                         placeFields?.let { FetchPlaceRequest.builder(placeId, it).build() }
@@ -260,12 +263,13 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setAddress(addresses: MutableList<Address>) {
-        val address = addresses[0]
+        selectedAddress = addresses[0]
         autoCompleteTextView.apply {
-            setText(address.getAddressLine(0))
+            setText(selectedAddress?.getAddressLine(0))
             setSelection(autoCompleteTextView.length())
         }
-        getProvince(address)
+        //getSuburbs(selectedAddress) //selectedAddress.locality
+        getProvince(selectedAddress!!)
     }
 
     private fun getProvince(address: Address) {
@@ -493,6 +497,38 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         ) {
             if (isNickNameExist())
                 return
+
+            checkoutAddAddressNewUserViewModel.addAddress(
+                AddAddressRequestBody(
+                    addressNicknameEditText?.text.toString(),
+                    recipientName?.text.toString(),
+                    autoCompleteTextView?.text.toString(),
+                    unitComplexFloorEditText?.text.toString(),
+                    postalCode?.text.toString(),
+                    cellphoneNumber?.text.toString(),
+                    "",
+                    provinceAutocompleteEditText?.text.toString(),
+                    selectedSuburb?.id.toString(),
+                    selectedAddress!!.locality,
+                    suburbEditText?.text.toString(),
+                    "",
+                    "",
+                    true,
+                    selectedAddress!!.latitude,
+                    selectedAddress!!.longitude
+                )
+            ).observe(this, {
+                when (it.responseStatus) {
+                    ResponseStatus.SUCCESS -> {
+                    }
+                    ResponseStatus.LOADING -> {
+
+                    }
+                    ResponseStatus.ERROR -> {
+
+                    }
+                }
+            })
 
         } else {
             isNickNameExist()
