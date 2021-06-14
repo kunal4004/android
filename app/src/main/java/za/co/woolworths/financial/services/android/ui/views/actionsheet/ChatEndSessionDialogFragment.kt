@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.ccs_end_session_dialog_fragment.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
 
 class ChatEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
@@ -48,6 +49,7 @@ class ChatEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickL
                     postChatEventEndSession()
                 }
                 dismiss()
+                VoiceOfCustomerManager.showVocSurvey(context)
             }
             R.id.noContinueSessionButton -> dismiss()
         }

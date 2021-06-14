@@ -24,7 +24,8 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
         super.onCreate(savedInstanceState)
 
         // TODO: add param to be either right to left, or bottom to top
-        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+//        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+        overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
 
         Utils.updateStatusBarBackground(this)
         setContentView(R.layout.activity_voice_of_customer)
@@ -79,7 +80,8 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
     private fun finishActivity() {
         finish()
         // TODO: add param to be either left to right, or top to bottom
-        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+//        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
     override fun setToolbarSkipVisibility(show: Boolean) {
