@@ -66,8 +66,6 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
         }
 
-        loadDefaultCardType()
-
         voucherResponse?.tierInfo?.apply {
             handleTireHistoryView(this)
             bundle?.apply {
@@ -90,7 +88,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
     private fun uniqueIdsForWRewardOverview() {
         activity?.resources?.apply {
-            wRewardCardFrameLayout?.contentDescription = getString(R.string.wreward_flip_card_framelayout)
+//            wRewardCardFrameLayout?.contentDescription = getString(R.string.wreward_flip_card_framelayout)
             flipCardBackLayout?.contentDescription = getString(R.string.flipCardBackLayout)
             cardBackgroundLinearLayout?.contentDescription = getString(R.string.cardBackgroundLinearLayout)
             cardFrameLayout?.contentDescription = getString(R.string.card_frame_layout)
@@ -101,11 +99,6 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             promotionsLayout?.contentDescription = getString(R.string.featured_promotions)
             vipLogo?.contentDescription = getString(R.string.vipLogoLayout)
         }
-    }
-
-    private fun loadDefaultCardType() {
-        flipCardFrontLayout?.setBackgroundResource(R.drawable.wrewards_card)
-        flipCardBackLayout?.setBackgroundResource(R.drawable.wrewards_card_flipped)
     }
 
     fun scrollToTop() = scrollWRewardsOverview?.let { ObjectAnimator.ofInt(it, "scrollY", it.scrollY, 0).setDuration(500).start() }

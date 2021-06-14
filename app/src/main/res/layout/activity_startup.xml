@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainFrameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -20,8 +19,7 @@
         android:paddingTop="0dp"
         android:paddingRight="0dp"
         android:paddingBottom="0dp"
-        android:visibility="gone"
-        tools:context="za.co.woolworths.financial.services.android.startup.view.StartupActivity">
+        android:visibility="gone">
 
         <za.co.woolworths.financial.services.android.ui.views.WVideoView
             android:id="@+id/activity_wsplash_screen_videoview"

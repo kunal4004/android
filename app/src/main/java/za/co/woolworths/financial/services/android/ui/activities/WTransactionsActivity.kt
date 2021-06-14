@@ -24,9 +24,9 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getAccountTransactionHistory
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionAdapter
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatExtensionFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -57,14 +57,19 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
 
         val woolworthApplication = this@WTransactionsActivity.application as WoolworthsApplication
 
-        applyNowAccountHashPair = Gson().fromJson(chatAccountProductLandingPage, object : TypeToken<Pair<ApplyNowState, Account>>() {}.type)
+        applyNowAccountHashPair = Gson().fromJson(
+            chatAccountProductLandingPage,
+            object : TypeToken<Pair<ApplyNowState, Account>>() {}.type
+        )
 
-        mErrorHandlerView = ErrorHandlerView(this, woolworthApplication,
-                findViewById(R.id.relEmptyStateHandler),
-                findViewById(R.id.imgEmpyStateIcon),
-                findViewById(R.id.txtEmptyStateTitle),
-                findViewById(R.id.txtEmptyStateDesc),
-                findViewById(R.id.no_connection_layout))
+        mErrorHandlerView = ErrorHandlerView(
+            this, woolworthApplication,
+            findViewById(R.id.relEmptyStateHandler),
+            findViewById(R.id.imgEmpyStateIcon),
+            findViewById(R.id.txtEmptyStateTitle),
+            findViewById(R.id.txtEmptyStateDesc),
+            findViewById(R.id.no_connection_layout)
+        )
 
 
         closeTransactionImageButton?.let { closeIcon ->
@@ -97,15 +102,19 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun transactionAsyncAPI(productOfferingId: String?) {
-        mExecuteTransactionRequest = productOfferingId?.let { id -> getAccountTransactionHistory(id) }
-        mExecuteTransactionRequest?.enqueue(CompletionHandler(object : IResponseListener<TransactionHistoryResponse> {
+        mExecuteTransactionRequest =
+            productOfferingId?.let { id -> getAccountTransactionHistory(id) }
+        mExecuteTransactionRequest?.enqueue(CompletionHandler(object :
+            IResponseListener<TransactionHistoryResponse> {
             override fun onSuccess(response: TransactionHistoryResponse?) {
                 dismissProgress()
                 if (this@WTransactionsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                     when (response?.httpCode) {
                         200 -> {
                             if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
-                                FirebaseEventDetailManager.success(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                                FirebaseEventDetailManager.success(
+                                    FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS
+                                )
                             }
 
                             if (response.transactions.size > 0) {
@@ -118,17 +127,29 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         440 -> if (!this@WTransactionsActivity.isFinishing) {
                             if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
-                                FirebaseEventDetailManager.timeout(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                                FirebaseEventDetailManager.timeout(
+                                    FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS
+                                )
                             }
-                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams, this@WTransactionsActivity)
+                            SessionUtilities.getInstance().setSessionState(
+                                SessionDao.SESSION_STATE.INACTIVE,
+                                response.response?.stsParams,
+                                this@WTransactionsActivity
+                            )
                         }
                         else -> response?.response?.desc?.let { desc ->
                             if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
-                                FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                                FirebaseEventDetailManager.undefined(
+                                    FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS
+                                )
                             }
                             try {
-                                val accountsErrorHandlerFragment = AccountsErrorHandlerFragment.newInstance(desc)
-                                accountsErrorHandlerFragment.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName)
+                                val accountsErrorHandlerFragment =
+                                    AccountsErrorHandlerFragment.newInstance(desc)
+                                accountsErrorHandlerFragment.show(
+                                    supportFragmentManager,
+                                    AccountsErrorHandlerFragment::class.java.simpleName
+                                )
                             } catch (ex: IllegalStateException) {
                                 FirebaseManager.logException(ex)
                             }
@@ -150,8 +171,10 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
 
 
     private fun setupTransactionRecyclerview(transactionHistoryResponse: TransactionHistoryResponse) {
-        val transactionsAdapter = WTransactionAdapter(getListOfTransaction(transactionHistoryResponse.transactions))
-        val linearLayoutManager: LinearLayoutManager? = LinearLayoutManager(this@WTransactionsActivity)
+        val transactionsAdapter =
+            WTransactionAdapter(getListOfTransaction(transactionHistoryResponse.transactions))
+        val linearLayoutManager: LinearLayoutManager? =
+            LinearLayoutManager(this@WTransactionsActivity)
         linearLayoutManager?.orientation = LinearLayoutManager.VERTICAL
         transactionRecyclerview?.apply {
             layoutManager = linearLayoutManager
@@ -171,7 +194,11 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
 
     fun networkFailureHandler(errorMessage: String?) {
         runOnUiThread {
-            errorMessage?.let { messageLabel -> mErrorHandlerView?.networkFailureHandler(messageLabel) }
+            errorMessage?.let { messageLabel ->
+                mErrorHandlerView?.networkFailureHandler(
+                    messageLabel
+                )
+            }
             dismissProgress()
         }
     }
@@ -187,13 +214,19 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: MutableList<Account>?) {
+    private fun chatToCollectionAgent(
+        applyNowState: ApplyNowState,
+        accountList: MutableList<Account>?
+    ) {
         ChatFloatingActionButtonBubbleView(
-                activity = this@WTransactionsActivity,
-                chatBubbleVisibility = ChatBubbleVisibility(accountList, this@WTransactionsActivity),
-                floatingActionButton = chatBubbleFloatingButton,
-                applyNowState = applyNowState,
-                scrollableView = paymentOptionScrollView)
-                .build()
+            activity = this@WTransactionsActivity,
+            chatBubbleVisibility = ChatBubbleVisibility(accountList, this@WTransactionsActivity),
+            floatingActionButton = chatBubbleFloatingButton,
+            applyNowState = applyNowState,
+            scrollableView = transactionRecyclerview,
+            notificationBadge = badge,
+            onlineChatImageViewIndicator = onlineIndicatorImageView
+        )
+            .build()
     }
 }

@@ -50,6 +50,8 @@ import android.widget.TextView;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -245,12 +247,10 @@ public class Utils {
         Window window = activity.getWindow();
 
         View decor = activity.getWindow().getDecorView();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
-            decor.setSystemUiVisibility(0);
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
+        decor.setSystemUiVisibility(0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -263,12 +263,10 @@ public class Utils {
         Window window = activity.getWindow();
 
         View decor = activity.getWindow().getDecorView();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
-            decor.setSystemUiVisibility(0);
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
+        decor.setSystemUiVisibility(0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -769,6 +767,7 @@ public class Utils {
             badge.setTag(tagPosition);
             return badge
                     .setBadgeNumber(number)
+                    .setBadgeBackgroundColor(R.color.black)
                     .setGravityOffset(15, 2, true)
                     .bindTarget(mBottomNav.getBottomNavigationItemView(position));
         }
@@ -1055,10 +1054,12 @@ public class Utils {
                     JsonObject fulfillmentObj = jsonElement.getAsJsonObject();
                     JsonElement fulFillmentTypeId = fulfillmentObj.get("fulFillmentTypeId");
                     if (!fulFillmentTypeId.isJsonNull()) {
-                        if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
-                            JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
-                            if (fulFillmentStoreId != null)
-                                storeId = fulfillmentObj.get("fulFillmentStoreId").getAsString();
+                        if (!TextUtils.isEmpty(fulFillmentTypeId.getAsString()) && !TextUtils.isEmpty(fulFillmentType)) {
+                            if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
+                                JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
+                                if (fulFillmentStoreId != null)
+                                    storeId = fulfillmentObj.get("fulFillmentStoreId").getAsString();
+                            }
                         }
                     }
                 }
@@ -1591,11 +1592,15 @@ public class Utils {
 
     public static void setToken(String value) {
         try {
+            if(TextUtils.isEmpty(value)){
+                return;
+            }
             String firstTime = Utils.getSessionDaoValue(FCM_TOKEN);
             if (firstTime == null) {
                 Utils.sessionDaoSave(FCM_TOKEN, value);
             }
-        } catch (NullPointerException ignored) {
+        } catch (Exception ignored) {
+            FirebaseManager.Companion.logException(ignored);
         }
     }
 
@@ -1603,9 +1608,14 @@ public class Utils {
         String token = "";
         try {
             token = Utils.getSessionDaoValue(FCM_TOKEN);
-        } catch (NullPointerException ignored) {
+        } catch (Exception ignored) {
+            return null;
         }
 
         return token;
+    }
+
+    public static Boolean isGooglePlayServicesAvailable() {
+        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 }

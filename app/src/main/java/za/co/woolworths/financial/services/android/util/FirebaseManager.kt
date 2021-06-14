@@ -44,4 +44,5 @@ class FirebaseManager : IFirebaseManager {
         }
         return analytics!!
     }
+
 }

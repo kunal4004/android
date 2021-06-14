@@ -98,8 +98,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         val lastDeliveryLocation = Utils.getPreferredDeliveryLocation()
         lastDeliveryLocation?.let { setDeliveryLocation(it) }
 
-        val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
-        updateLinkedDeviceView(isDeviceIdentityIdPresent)
+        if (Utils.isGooglePlayServicesAvailable()) {
+            val isDeviceIdentityIdPresent = verifyDeviceIdentityId(deviceList)
+            updateLinkedDeviceView(isDeviceIdentityIdPresent)
+        }
     }
 
     private fun callLinkedDevicesAPI() {

@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.product
 
-import android.app.ActivityManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
@@ -10,7 +9,6 @@ import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
 import com.google.gson.JsonElement
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
-import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
@@ -30,6 +28,7 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
 
     companion object {
         const val DEEP_LINK_REQUEST_CODE = 123
+        const val TAG = "ProductDetailsFragment"
         const val SHARE_LINK_REQUEST_CODE = 321
     }
 
@@ -74,16 +73,10 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
         if (jsonElement != null) navigateToShoppingListOnToastClicked(this, jsonElement)
     }
 
-    private fun restartApp() {
-        val intent = Intent(this, StartupActivity::class.java)
-        this.startActivity(intent)
-        finishAffinity()
-    }
-
     fun goToProductDetailsFragment(bundle: Bundle?) {
         productDetailsFragmentNew?.arguments = bundle
         val fragmentManager: FragmentManager = getSupportFragmentManager()
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, productDetailsFragmentNew!!).commit()
+                .replace(R.id.content_frame, productDetailsFragmentNew!!, TAG).commit()
     }
 }

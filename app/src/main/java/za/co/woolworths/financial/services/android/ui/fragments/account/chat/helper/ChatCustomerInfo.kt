@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.chat
+package za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.util.KotlinUtils
