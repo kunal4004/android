@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
-import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -19,12 +18,9 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.android.libraries.places.api.net.FetchPlaceResponse
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
@@ -55,7 +51,7 @@ import java.util.*
 
 
 /**
- * Created by Kunal Uttarwar on 26/05/21.
+ * Created by Kunal Uttarwar on 29/05/21.
  */
 class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
@@ -132,21 +128,21 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun init() {
-        if (recipientName?.text.toString().isNullOrEmpty()) {
+        if (recipientName?.text.toString().isEmpty()) {
             val jwtDecoded: JWTDecodedModel? = SessionUtilities.getInstance().jwt
             val name = jwtDecoded?.name?.get(0) ?: ""
             recipientName.setText(name)
         }
-        if (savedAddressResponse?.addresses.isNullOrEmpty() == true) {
+        if (savedAddressResponse?.addresses.isNullOrEmpty()) {
             getSavedAddresses()
         }
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
-        activity?.applicationContext?.let {
-            Places.initialize(it, getString(R.string.maps_api_key))
-            val placesClient = Places.createClient(it)
+        activity?.applicationContext?.let { context ->
+            Places.initialize(context, getString(R.string.maps_api_key))
+            val placesClient = Places.createClient(context)
             val placesAdapter =
-                GooglePlacesAdapter(it, android.R.layout.simple_list_item_1, placesClient)
+                GooglePlacesAdapter(context, android.R.layout.simple_list_item_1, placesClient)
             autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
@@ -154,7 +150,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
                     val placeId = item?.placeId.toString()
-                    val placeFields: MutableList<Place.Field>? = Arrays.asList(
+                    val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
                         Place.Field.NAME,
                         Place.Field.LAT_LNG,
@@ -162,35 +158,31 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         Place.Field.ADDRESS_COMPONENTS
                     )
                     val request =
-                        placeFields?.let { FetchPlaceRequest.builder(placeId, it).build() }
-                    request?.let {
-                        placesClient.fetchPlace(it)
-                            ?.addOnSuccessListener(object : OnSuccessListener<FetchPlaceResponse?> {
-                                override fun onSuccess(response: FetchPlaceResponse?) {
-                                    val place = response!!.place
-                                    val geocoder = Geocoder(context, Locale.getDefault())
-                                    val addresses =
-                                        place?.latLng?.let {
-                                            geocoder.getFromLocation(
-                                                it.latitude,
-                                                it.longitude,
-                                                1
-                                            )
-                                        }
-                                    addresses?.let { setAddress(it) }
-                                }
-                            })?.addOnFailureListener(object : OnFailureListener {
-                                override fun onFailure(@NonNull exception: Exception) {
-                                    if (exception is ApiException) {
-                                        Toast.makeText(
-                                            AuthenticateUtils.mContext,
-                                            exception.message + "",
-                                            Toast.LENGTH_SHORT
+                        placeFields.let { FetchPlaceRequest.builder(placeId, it).build() }
+                    request.let { placeRequest ->
+                        placesClient.fetchPlace(placeRequest)
+                            .addOnSuccessListener { response ->
+                                val place = response!!.place
+                                val geocoder = Geocoder(context, Locale.getDefault())
+                                val addresses =
+                                    place.latLng?.let {
+                                        geocoder.getFromLocation(
+                                            it.latitude,
+                                            it.longitude,
+                                            1
                                         )
-                                            .show()
                                     }
+                                addresses?.let { setAddress(it) }
+                            }.addOnFailureListener { exception ->
+                                if (exception is ApiException) {
+                                    Toast.makeText(
+                                        AuthenticateUtils.mContext,
+                                        exception.message + "",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
                                 }
-                            })
+                            }
                     }
                 }
         }
@@ -201,7 +193,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     savedAddressResponse = it.data
-                    if (cellphoneNumber?.text.toString().isNullOrEmpty())
+                    if (cellphoneNumber?.text.toString().isEmpty())
                         cellphoneNumber.setText(savedAddressResponse?.primaryContactNo)
                 }
                 ResponseStatus.LOADING -> {
@@ -219,21 +211,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Suburb")
-            // Do something with the result
             val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
-            suburb.let {
-                onSuburbSelected(it)
-            }
+            onSuburbSelected(suburb)
         }
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Province")
-            // Do something with the result
             val province: Province? = Utils.strToJson(result, Province::class.java) as? Province
-            province.let {
-                onProvinceSelected(it)
-            }
+            onProvinceSelected(province)
         }
     }
 
@@ -273,10 +259,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun getProvince(address: Address) {
-        checkoutAddAddressNewUserViewModel.initGetProvince().observe(this, {
+        checkoutAddAddressNewUserViewModel.initGetProvince().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    //hideGetProvincesProgress()
                     if (it?.data?.regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
@@ -287,10 +272,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 }
                 ResponseStatus.LOADING -> {
-                    //showGetProvincesProgress()
                 }
                 ResponseStatus.ERROR -> {
-                    //hideGetProvincesProgress()
                 }
             }
         })
@@ -331,7 +314,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun navigateToProvinceSelection() {
         showGetProvincesProgress()
         val bundle = Bundle()
-        bundle?.apply {
+        bundle.apply {
             putString("ProvinceList", Utils.toJson(provinceList))
         }
         navController?.navigate(
@@ -380,9 +363,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     fun resetOtherDeliveringTitle(selectedTag: Int) {
         //change background of unselected textview
-        for ((indx) in deliveringOptionsList!!.withIndex()) {
-            if (indx != selectedTag) {
-                val titleTextView: TextView? = view?.findViewWithTag(indx)
+        for ((index) in deliveringOptionsList!!.withIndex()) {
+            if (index != selectedTag) {
+                val titleTextView: TextView? = view?.findViewWithTag(index)
                 titleTextView?.background =
                     bindDrawable(R.drawable.checkout_delivering_title_round_button)
                 titleTextView?.setTextColor(
@@ -413,8 +396,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getSuburbs() {
         if (progressbarGetProvinces?.visibility == View.VISIBLE) return
-        selectedProvince?.id?.let {
-            checkoutAddAddressNewUserViewModel.initGetSuburbs(it).observe(this, {
+        selectedProvince?.id?.let { selectedProvinceName ->
+            checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedProvinceName).observe(this, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
                         hideSetSuburbProgressBar()
@@ -481,7 +464,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onSaveAddressClicked() {
-        if (cellphoneNumber?.text.toString().trim().length > 0 && cellphoneNumber?.text.toString()
+        if (cellphoneNumber?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString()
                 .trim().length < 10
         ) {
             showErrorPhoneNumber()
@@ -513,13 +496,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     suburbEditText?.text.toString(),
                     "",
                     "",
-                    true,
+                    false,
                     selectedAddress!!.latitude,
                     selectedAddress!!.longitude
                 )
             ).observe(this, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
+                        savedAddressResponse?.addresses?.add(it.data?.address)
                     }
                     ResponseStatus.LOADING -> {
 
@@ -540,12 +524,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     if (it.id == R.id.selectSuburbLayout && suburbEditText?.text.toString().trim()
                             .isEmpty()
                     ) {
-                        showErrorSuburbOrProvince(it, View.VISIBLE)
+                        showErrorSuburbOrProvince(it)
                     }
                     if (it.id == R.id.selectProvinceLayout && provinceAutocompleteEditText?.text.toString()
                             .trim().isEmpty()
                     ) {
-                        showErrorSuburbOrProvince(it, View.VISIBLE)
+                        showErrorSuburbOrProvince(it)
                     }
                 }
                 if (it is EditText) {
@@ -574,16 +558,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
     }
 
-    private fun showErrorSuburbOrProvince(relativeLayout: RelativeLayout, visible: Int) {
-        relativeLayout.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
+    private fun showErrorSuburbOrProvince(relativeLayout: RelativeLayout) {
+        relativeLayout.setBackgroundResource(R.drawable.input_error_background)
         when (relativeLayout.id) {
             R.id.selectSuburbLayout -> {
-                suburbNameErrorMsg.visibility = visible
+                suburbNameErrorMsg.visibility = View.VISIBLE
             }
             R.id.selectProvinceLayout -> {
-                provinceNameErrorMsg.visibility = visible
-                provinceAutocompleteEditText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_non_editable_half_edit_text)
-                selectProvinceLayout.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
+                provinceNameErrorMsg.visibility = View.VISIBLE
+                provinceAutocompleteEditText.setBackgroundResource(R.drawable.input_box_half_error_bg)
+                selectProvinceLayout.setBackgroundResource(R.drawable.input_error_background)
             }
         }
     }
