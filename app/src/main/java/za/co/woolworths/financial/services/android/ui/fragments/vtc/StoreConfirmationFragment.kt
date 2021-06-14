@@ -27,6 +27,7 @@ class StoreConfirmationFragment : Fragment() {
 
     private var body: StoreCardEmailConfirmBody? = null
     private var menuBar: Menu? = null
+    private var isConfirmStore: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +37,10 @@ class StoreConfirmationFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_store_confirmation, container, false)
     }
@@ -49,20 +52,28 @@ class StoreConfirmationFragment : Fragment() {
         setActionBar()
 
         if (!TextUtils.isEmpty(body?.storeAddress)) {
+            isConfirmStore = true
             subTitleTextView?.text = body?.storeAddress
         } else {
+            isConfirmStore = false
             body?.let {
                 // Two types of address we receive in bundle
                 // 1. Already present storeAddress when select store (Can be empty or null for some stores)
                 // 2. Manually entered field from store address fragment = street, complexName, businessName, city, postalCode, province
-                var address = it.street + ", " + it.complexName + ", "
+                var address = it.complexName  + ", " + it.street + ", "
                 address += if (TextUtils.isEmpty(it.businessName)) {
-                    it.city + ", " + it.postalCode + ", " + it.province
+                    it.city + ", " + it.province + ", " + it.postalCode
                 } else {
-                    it.businessName + ", " + it.city + ", " + it.postalCode + ", " + it.province
+                    it.businessName + ", " + it.city + ", " + it.province  + ", " + it.postalCode
                 }
                 subTitleTextView?.text = address
             }
+        }
+
+
+        context?.let {
+            nextActionTextView.text =
+                if (isConfirmStore) it.getString(R.string.confirm_store) else it.getString(R.string.confirm_address)
         }
 
         nextActionTextView?.setOnClickListener {
@@ -121,9 +132,11 @@ class StoreConfirmationFragment : Fragment() {
         emailRequest.enqueue(CompletionHandler(object : IResponseListener<GenericResponse> {
             override fun onSuccess(response: GenericResponse?) {
                 processingViewGroup?.visibility = View.GONE
-                when (response?.httpCode?.toString() ?: response?.response?.code?.toString() ?: "0") {
+                when (response?.httpCode?.toString() ?: response?.response?.code?.toString()
+                ?: "0") {
                     AppConstant.HTTP_OK_201.toString(), AppConstant.HTTP_OK.toString() -> {
-                        menuBar?.getItem(0)?.isVisible = menuBar?.getItem(0)?.itemId == R.id.closeIcon
+                        menuBar?.getItem(0)?.isVisible =
+                            menuBar?.getItem(0)?.itemId == R.id.closeIcon
                         (activity as? SelectStoreActivity)?.apply {
                             actionBar?.show()
                         }
