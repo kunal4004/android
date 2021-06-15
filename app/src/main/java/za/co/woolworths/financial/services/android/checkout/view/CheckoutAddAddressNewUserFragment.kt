@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.content.Context
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -45,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
 
 
 /**
@@ -62,7 +59,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     var selectedSuburb: Suburb? = null
     var selectedStore: Suburb? = null
     var selectedProvince: Province? = null
-    var selectedAddress: Address? = null
+    var selectedAddress = SelectedPlacesAddress()
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
 
@@ -159,16 +156,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         placesClient.fetchPlace(placeRequest)
                             .addOnSuccessListener { response ->
                                 val place = response!!.place
-                                val geocoder = Geocoder(context, Locale.getDefault())
-                                val addresses =
-                                    place.latLng?.let {
-                                        geocoder.getFromLocation(
-                                            it.latitude,
-                                            it.longitude,
-                                            1
-                                        )
-                                    }
-                                addresses?.let { setAddress(it) }
+                                setAddress(place)
                             }.addOnFailureListener { exception ->
                                 if (exception is ApiException) {
                                     Toast.makeText(
@@ -221,6 +209,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun onProvinceSelected(province: Province?) {
         this.selectedProvince = province
+        selectedAddress.province = province?.name.toString()
+        selectedAddress.region = province?.id.toString()
         enableProvinceSelection()
         resetSuburbSelection()
         provinceAutocompleteEditText?.setText(province?.name)
@@ -234,26 +224,59 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onSuburbSelected(suburb: Suburb?) {
-        if (deliveryType == DeliveryType.DELIVERY)
+        if (deliveryType == DeliveryType.DELIVERY) {
             this.selectedSuburb = suburb
-        else
+            selectedAddress.suburb = suburb?.name.toString()
+            selectedAddress.suburbId = suburb?.id.toString()
+            selectedAddress.postalCode = suburb?.postalCode.toString()
+        } else
             this.selectedStore = suburb
         enableSuburbSelection()
         suburbEditText?.setText(suburb?.name)
         postalCode?.setText(suburb?.postalCode)
     }
 
-    private fun setAddress(addresses: MutableList<Address>) {
-        selectedAddress = addresses[0]
+    private fun setAddress(place: Place) {
+        var addressText1 = ""
+        var addressText2 = ""
+        for (address in place.addressComponents?.asList()!!) {
+            when (address.types[0]) {
+                "street_number" -> addressText1 = address.name
+                "route" -> addressText2 = address.name
+                "administrative_area_level_1" -> {
+                    selectedAddress.province = address.name
+                    if (selectedAddress.province.isNotEmpty())
+                        selectedAddress.region = ""
+                }
+                "postal_code" -> selectedAddress.postalCode = address.name
+                "sublocality_level_1" -> {
+                    if (address.name.isNotEmpty())
+                        selectedAddress.suburb = address.name
+                }
+                "sublocality_level_2" -> {
+                    if (selectedAddress.suburb.isEmpty())
+                        selectedAddress.suburb = address.name
+                }
+
+                "locality" -> selectedAddress.city = address.name
+
+            }
+        }
+        if (selectedAddress.suburb.isNotEmpty())
+            selectedAddress.suburbId = ""
+        selectedAddress.address1 = addressText1.plus(" ").plus(addressText2)
+        selectedAddress.latitude = place.latLng?.latitude
+        selectedAddress.longitude = place.latLng?.longitude
+
         autoCompleteTextView.apply {
-            setText(selectedAddress?.getAddressLine(0)?.split(",")?.get(0))
+            setText(selectedAddress.address1)
             setSelection(autoCompleteTextView.length())
             autoCompleteTextView.dismissDropDown()
         }
-        getProvince(selectedAddress!!)
+        getProvince()
     }
 
-    private fun getProvince(address: Address) {
+    private fun getProvince() {
         checkoutAddAddressNewUserViewModel.initGetProvince().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
@@ -262,7 +285,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     } else {
                         it?.data?.regions?.let { it1 ->
                             provinceList = it1
-                            checkIfSelectedProvinceExist(it1, address)
+                            checkIfSelectedProvinceExist(it1)
                         }
                     }
                 }
@@ -274,16 +297,13 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         })
     }
 
-    private fun checkIfSelectedProvinceExist(
-        provinceList: MutableList<Province>,
-        address: Address
-    ) {
+    private fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
         val province = Province()
-        val provinceName = address.adminArea
-        if (!provinceName.isNullOrEmpty()) {
+        val provinceName = selectedAddress.province
+        if (provinceName.isNotEmpty()) {
             for (provinces in provinceList) {
                 if (provinceName.equals(provinces.name)) {
-                    province.id = ""
+                    province.id = provinces.id
                     province.name = provinces.name
                 }
             }
@@ -292,21 +312,21 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             provinceAutocompleteEditText.setBackgroundResource(R.drawable.input_non_editable_half_edit_text)
             selectedProvince = province
 
-            if (selectedAddress?.locality.isNullOrEmpty())
+            if (selectedAddress.suburb.isEmpty())
                 enableSuburbSelection()
             else {
-                suburbEditText.setText(selectedAddress?.locality)
+                suburbEditText.setText(selectedAddress.suburb)
                 selectSuburbLayout.setBackgroundResource(R.drawable.input_non_editable_edit_text)
                 suburbEditText.setBackgroundResource(R.drawable.input_non_editable_half_edit_text)
                 val suburb = Suburb()
-                suburb.name = selectedAddress?.locality
-                suburb.id = ""
-                suburb.postalCode = address.postalCode
+                suburb.name = selectedAddress.suburb
+                suburb.id = selectedAddress.suburbId
+                suburb.postalCode = selectedAddress.postalCode
                 selectedSuburb = suburb
             }
         } else
             enableProvinceSelection()
-        postalCode.setText(address.postalCode)
+        postalCode.setText(selectedAddress.postalCode)
     }
 
     private fun enableProvinceSelection() {
@@ -502,15 +522,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     postalCode?.text.toString(),
                     cellphoneNumber?.text.toString(),
                     "",
-                    selectedProvince?.id.toString(),
-                    selectedSuburb?.id.toString(),
-                    selectedAddress?.locality.toString(),
+                    selectedAddress.region,
+                    selectedAddress.suburbId,
+                    selectedAddress.city,
                     suburbEditText?.text.toString(),
                     selectedDeliveryAddressType.toString(),
                     "",
                     false,
-                    selectedAddress!!.latitude,
-                    selectedAddress!!.longitude
+                    selectedAddress.latitude!!,
+                    selectedAddress.longitude!!
                 )
             ).observe(this, {
                 when (it.responseStatus) {
