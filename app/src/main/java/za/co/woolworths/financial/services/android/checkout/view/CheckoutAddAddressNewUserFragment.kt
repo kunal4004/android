@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.content.Context
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +29,9 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Chec
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
+import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
+import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -43,6 +46,7 @@ import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.*
 
 
 /**
@@ -56,9 +60,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private lateinit var listOfInputFields: List<View>
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var selectedDeliveryAddressType: String? = null
-    var selectedSuburb: Suburb? = null
-    var selectedStore: Suburb? = null
-    var selectedProvince: Province? = null
     var selectedAddress = SelectedPlacesAddress()
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
@@ -208,30 +209,34 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onProvinceSelected(province: Province?) {
-        this.selectedProvince = province
         selectedAddress.province = province?.name.toString()
         selectedAddress.region = province?.id.toString()
         enableProvinceSelection()
+        enableSuburbSelection()
         resetSuburbSelection()
         provinceAutocompleteEditText?.setText(province?.name)
     }
 
     private fun resetSuburbSelection() {
-        selectedSuburb = null
-        selectedStore = null
+        selectedAddress.suburb = ""
+        selectedAddress.suburbId = ""
+        selectedAddress.store = ""
+        selectedAddress.storeId = ""
         provinceAutocompleteEditText.text.clear()
         suburbEditText.text.clear()
     }
 
     private fun onSuburbSelected(suburb: Suburb?) {
         if (deliveryType == DeliveryType.DELIVERY) {
-            this.selectedSuburb = suburb
             selectedAddress.suburb = suburb?.name.toString()
             selectedAddress.suburbId = suburb?.id.toString()
-            selectedAddress.postalCode = suburb?.postalCode.toString()
-        } else
-            this.selectedStore = suburb
+        } else {
+            selectedAddress.store = suburb?.name.toString()
+            selectedAddress.storeId = suburb?.id.toString()
+        }
+        selectedAddress.postalCode = suburb?.postalCode.toString()
         enableSuburbSelection()
+        enableProvinceSelection()
         suburbEditText?.setText(suburb?.name)
         postalCode?.setText(suburb?.postalCode)
     }
@@ -241,32 +246,40 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         var addressText2 = ""
         for (address in place.addressComponents?.asList()!!) {
             when (address.types[0]) {
-                "street_number" -> addressText1 = address.name
-                "route" -> addressText2 = address.name
-                "administrative_area_level_1" -> {
+                STREET_NUMBER.value -> addressText1 = address.name
+                ROUTE.value -> addressText2 = address.name
+                ADMINISTRATIVE_AREA_LEVEL_1.value -> {
                     selectedAddress.province = address.name
                     if (selectedAddress.province.isNotEmpty())
                         selectedAddress.region = ""
                 }
-                "postal_code" -> selectedAddress.postalCode = address.name
-                "sublocality_level_1" -> {
+                POSTAL_CODE.value -> selectedAddress.postalCode = address.name
+                SUBLOCALITY_LEVEL_1.value -> {
                     if (address.name.isNotEmpty())
                         selectedAddress.suburb = address.name
                 }
-                "sublocality_level_2" -> {
+                SUBLOCALITY_LEVEL_2.value -> {
                     if (selectedAddress.suburb.isEmpty())
                         selectedAddress.suburb = address.name
                 }
 
-                "locality" -> selectedAddress.city = address.name
+                LOCALITY.value -> selectedAddress.city = address.name
 
             }
         }
-        if (selectedAddress.suburb.isNotEmpty())
-            selectedAddress.suburbId = ""
         selectedAddress.address1 = addressText1.plus(" ").plus(addressText2)
         selectedAddress.latitude = place.latLng?.latitude
         selectedAddress.longitude = place.latLng?.longitude
+
+        if (selectedAddress.suburb.isNotEmpty())
+            selectedAddress.suburbId = ""
+        if (selectedAddress.postalCode.isEmpty()) {
+            //If Google places failed to give postal code.
+            val geocoder = Geocoder(context, Locale.getDefault())
+            val addresses =
+                geocoder.getFromLocation(selectedAddress.latitude!!, selectedAddress.longitude!!, 1)
+            selectedAddress.postalCode = addresses[0].postalCode
+        }
 
         autoCompleteTextView.apply {
             setText(selectedAddress.address1)
@@ -310,7 +323,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             provinceAutocompleteEditText.setText(provinceName)
             selectProvinceLayout.setBackgroundResource(R.drawable.input_non_editable_edit_text)
             provinceAutocompleteEditText.setBackgroundResource(R.drawable.input_non_editable_half_edit_text)
-            selectedProvince = province
+            selectedAddress.province = province.name
+            selectedAddress.region = province.id
 
             if (selectedAddress.suburb.isEmpty())
                 enableSuburbSelection()
@@ -318,14 +332,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 suburbEditText.setText(selectedAddress.suburb)
                 selectSuburbLayout.setBackgroundResource(R.drawable.input_non_editable_edit_text)
                 suburbEditText.setBackgroundResource(R.drawable.input_non_editable_half_edit_text)
-                val suburb = Suburb()
-                suburb.name = selectedAddress.suburb
-                suburb.id = selectedAddress.suburbId
-                suburb.postalCode = selectedAddress.postalCode
-                selectedSuburb = suburb
             }
-        } else
+        } else {
             enableProvinceSelection()
+            enableSuburbSelection()
+        }
         postalCode.setText(selectedAddress.postalCode)
     }
 
@@ -419,7 +430,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 onSaveAddressClicked()
             }
             R.id.selectSuburbLayout, R.id.suburbEditText -> {
-                if (selectedProvince == null) return
+                if (selectedAddress.province.isEmpty()) return
                 getSuburbs()
             }
             R.id.selectProvinceLayout, R.id.provinceAutocompleteEditText -> {
@@ -430,26 +441,24 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getSuburbs() {
         if (progressbarGetProvinces?.visibility == View.VISIBLE) return
-        selectedProvince?.id?.let { selectedProvinceName ->
-            checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedProvinceName).observe(this, {
-                when (it.responseStatus) {
-                    ResponseStatus.SUCCESS -> {
-                        hideSetSuburbProgressBar()
-                        if (it?.data?.suburbs.isNullOrEmpty()) {
-                            //showNoStoresError()
-                        } else {
-                            it?.data?.suburbs?.let { it1 -> navigateToSuburbSelection(it1) }
-                        }
-                    }
-                    ResponseStatus.LOADING -> {
-                        showGetSuburbProgress()
-                    }
-                    ResponseStatus.ERROR -> {
-                        hideSetSuburbProgressBar()
+        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region).observe(this, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    hideSetSuburbProgressBar()
+                    if (it?.data?.suburbs.isNullOrEmpty()) {
+                        //showNoStoresError()
+                    } else {
+                        it?.data?.suburbs?.let { it1 -> navigateToSuburbSelection(it1) }
                     }
                 }
-            })
-        }
+                ResponseStatus.LOADING -> {
+                    showGetSuburbProgress()
+                }
+                ResponseStatus.ERROR -> {
+                    hideSetSuburbProgressBar()
+                }
+            }
+        })
     }
 
     private fun navigateToSuburbSelection(suburbs: List<Suburb>) {
