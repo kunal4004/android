@@ -137,4 +137,5 @@
     <color name="checkout_delivering_title_background">#F3F3F3</color>
     <color name="non_editable_edit_text_text_color">#666666</color>
     <color name="non_editable_button_bg">#E0E0E0</color>
+    <color name="shimmer_view_background">#F3F3F3</color>
 </resources>

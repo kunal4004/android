@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
 import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -92,6 +93,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initView() {
+        setUpShimmer()
         if (activity is CheckoutActivity) {
             (activity as? CheckoutActivity)?.apply { hideToolbar() }
         }
@@ -107,6 +109,23 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         recipientName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         cellphoneNumber?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+    }
+
+    private fun setUpShimmer() {
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        addressNicknameShimmerFrameLayout?.setShimmer(shimmer)
+        startShimmer()
+    }
+
+    private fun startShimmer() {
+        addressNicknameShimmerFrameLayout?.startShimmer()
+        addressNicknamePlaceHolder.visibility = View.INVISIBLE
+    }
+
+    private fun stopShimmer() {
+        addressNicknameShimmerFrameLayout?.stopShimmer()
+        addressNicknameShimmerFrameLayout.setShimmer(null)
+        addressNicknamePlaceHolder.visibility = View.VISIBLE
     }
 
     private fun setupViewModel() {
@@ -151,6 +170,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         Place.Field.ADDRESS,
                         Place.Field.ADDRESS_COMPONENTS
                     )
+                    stopShimmer()
                     val request =
                         placeFields.let { FetchPlaceRequest.builder(placeId, it).build() }
                     request.let { placeRequest ->

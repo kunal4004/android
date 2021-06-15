@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity">
 
     <androidx.core.widget.NestedScrollView
@@ -47,7 +48,7 @@
 
                 <LinearLayout
                     android:id="@+id/delivering_layout"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingStart="@dimen/twenty_dp"
