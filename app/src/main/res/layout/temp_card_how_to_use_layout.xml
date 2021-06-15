@@ -119,6 +119,36 @@
             app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
             app:layout_constraintTop_toBottomOf="@+id/howToUse9" />
 
+        <CheckBox
+            android:id="@+id/howToUse11"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_card_how_to_use11"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse10" />
+
+        <CheckBox
+            android:id="@+id/howToUse12"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_card_how_to_use12"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse11" />
+
+        <CheckBox
+            android:id="@+id/howToUse13"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_card_how_to_use13"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse12" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"
             android:layout_width="wrap_content"
