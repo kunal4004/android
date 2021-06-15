@@ -121,24 +121,24 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/fourty_eight_dp"
             android:layout_marginTop="@dimen/sixteen_dp"
-            android:background="@drawable/input_box_autocomplete_edit_text"
-            android:clickable="true"
+            android:background="@drawable/input_non_editable_edit_text"
+            android:clickable="false"
             android:focusable="true"
             android:paddingEnd="@dimen/nine_dp"
             app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
             app:layout_constraintRight_toRightOf="@+id/right_guideline"
             app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolder">
 
-            <AutoCompleteTextView
+            <EditText
                 android:id="@+id/suburbEditText"
                 style="@style/myriad_pro_regular"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_margin="@dimen/one_dp"
+
                 android:layout_toStartOf="@+id/progressbarGetSuburb"
-                android:background="@color/white"
+                android:background="@drawable/input_non_editable_half_edit_text"
                 android:focusable="false"
                 android:paddingStart="@dimen/sixteen_dp"
                 android:paddingEnd="@dimen/thirty_two_dp"
@@ -163,6 +163,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/icon_dropdown"
+                android:visibility="invisible"
                 android:focusable="false" />
         </RelativeLayout>
 
