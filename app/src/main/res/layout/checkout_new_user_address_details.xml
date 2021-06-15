@@ -58,6 +58,7 @@
             style="@style/myriad_pro_regular_black"
             android:layout_width="match_parent"
             android:background="@color/white"
+            android:contentDescription="@string/cd_ccd_labelsuburb"
             android:paddingTop="@dimen/two_dp"
             android:paddingBottom="@dimen/two_dp"
             android:text="@string/address_nickname_text_view"
@@ -65,13 +66,20 @@
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <EditText
-        android:id="@+id/addressNicknameEditText"
-        style="@style/credi_card_delivery_edittext_style"
-        android:maxLength="@integer/thirty"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/addressNicknameEditTextShimmerFrameLayout"
+        style="@style/shimmer_view_edittext_style"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/addressNicknameShimmerFrameLayout" />
+        app:layout_constraintTop_toBottomOf="@id/addressNicknameShimmerFrameLayout">
+
+        <EditText
+            android:id="@+id/addressNicknameEditText"
+            style="@style/checkout_edittext_style"
+            android:layout_width="match_parent"
+            android:maxLength="@integer/thirty" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <TextView
         android:id="@+id/addressNicknameErrorMsg"
@@ -84,94 +92,122 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/addressNicknameEditText" />
+        app:layout_constraintTop_toBottomOf="@id/addressNicknameEditTextShimmerFrameLayout" />
 
-    <TextView
-        android:id="@+id/unitComplexFloorPlaceHolder"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/unitComplexPlaceHolderShimmerFrameLayout"
         style="@style/myriad_pro_regular_black"
+        android:layout_width="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:contentDescription="@string/cd_ccd_labelstreetaddress"
-        android:paddingTop="@dimen/two_dp"
-        android:paddingBottom="@dimen/two_dp"
-        android:text="@string/unit_complex_floor_text_view"
-        android:textSize="@dimen/fourteen_sp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/addressNicknameErrorMsg">
+
+        <TextView
+            android:id="@+id/unitComplexFloorPlaceHolder"
+            style="@style/myriad_pro_regular_black"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:contentDescription="@string/cd_ccd_labelstreetaddress"
+            android:paddingTop="@dimen/two_dp"
+            android:paddingBottom="@dimen/two_dp"
+            android:text="@string/unit_complex_floor_text_view"
+            android:textSize="@dimen/fourteen_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/unitComplexEditTextShimmerFrameLayout"
+        style="@style/shimmer_view_edittext_style"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/addressNicknameErrorMsg" />
-
-    <EditText
-        android:id="@+id/unitComplexFloorEditText"
-        style="@style/credi_card_delivery_edittext_style"
-        android:contentDescription="@string/cd_ccd_txtstreetaddress"
-        android:hint="@string/optional_hint"
-        android:maxLength="@integer/fifty"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline"
-        app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/unitComplexFloorPlaceHolder" />
-
-    <TextView
-        android:id="@+id/suburbPlaceHolder"
-        style="@style/myriad_pro_regular_black"
-        android:layout_marginTop="@dimen/twenty_four_dp"
-        android:contentDescription="@string/cd_ccd_labelsuburb"
-        android:paddingTop="@dimen/two_dp"
-        android:paddingBottom="@dimen/two_dp"
-        android:text="@string/suburb_colon_text_view"
-        android:textSize="@dimen/fourteen_sp"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline"
-        app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/unitComplexFloorEditText" />
-
-    <RelativeLayout
-        android:id="@+id/selectSuburbLayout"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/fourty_eight_dp"
-        android:layout_marginTop="@dimen/sixteen_dp"
-        android:background="@drawable/input_non_editable_edit_text"
-        android:clickable="false"
-        android:focusable="true"
-        android:paddingEnd="@dimen/nine_dp"
-        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
-        app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolder">
+        app:layout_constraintTop_toBottomOf="@id/unitComplexPlaceHolderShimmerFrameLayout">
 
         <EditText
-            android:id="@+id/suburbEditText"
-            style="@style/myriad_pro_regular"
+            android:id="@+id/unitComplexFloorEditText"
+            style="@style/checkout_edittext_style"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
+            android:contentDescription="@string/cd_ccd_txtstreetaddress"
+            android:hint="@string/optional_hint"
+            android:maxLength="@integer/fifty" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
-            android:layout_toStartOf="@+id/progressbarGetSuburb"
-            android:background="@drawable/input_non_editable_half_edit_text"
-            android:focusable="false"
-            android:paddingStart="@dimen/sixteen_dp"
-            android:paddingEnd="@dimen/thirty_two_dp"
-            android:textColor="@color/offer_title"
-            android:textSize="@dimen/sixteen_sp" />
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/suburbPlaceHolderShimmerFrameLayout"
+        style="@style/myriad_pro_regular_black"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/unitComplexEditTextShimmerFrameLayout">
 
-        <ProgressBar
-            android:id="@+id/progressbarGetSuburb"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="@dimen/twenty_four_dp"
-            android:layout_height="@dimen/twenty_four_dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:focusable="false"
-            android:indeterminateTint="@color/black"
-            android:visibility="invisible" />
+        <TextView
+            android:id="@+id/suburbPlaceHolder"
+            style="@style/myriad_pro_regular_black"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:contentDescription="@string/cd_ccd_labelsuburb"
+            android:paddingTop="@dimen/two_dp"
+            android:paddingBottom="@dimen/two_dp"
+            android:text="@string/suburb_colon_text_view"
+            android:textSize="@dimen/fourteen_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/dropdownGetSuburbImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/icon_dropdown"
-            android:focusable="false"
-            android:visibility="invisible" />
-    </RelativeLayout>
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/selectSuburbLayoutShimmerFrameLayout"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/fourty_eight_dp"
+        android:layout_marginTop="@dimen/six_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/suburbPlaceHolderShimmerFrameLayout">
+
+        <RelativeLayout
+            android:id="@+id/selectSuburbLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fourty_eight_dp"
+            android:background="@drawable/input_non_editable_edit_text"
+            android:clickable="false"
+            android:focusable="true"
+            android:paddingEnd="@dimen/nine_dp">
+
+            <EditText
+                android:id="@+id/suburbEditText"
+                style="@style/myriad_pro_regular"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/progressbarGetSuburb"
+                android:background="@drawable/input_non_editable_half_edit_text"
+                android:focusable="false"
+                android:paddingStart="@dimen/sixteen_dp"
+                android:paddingEnd="@dimen/thirty_two_dp"
+                android:textColor="@color/offer_title"
+                android:textSize="@dimen/sixteen_sp" />
+
+            <ProgressBar
+                android:id="@+id/progressbarGetSuburb"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:focusable="false"
+                android:indeterminateTint="@color/black"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/dropdownGetSuburbImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/icon_dropdown"
+                android:focusable="false"
+                android:visibility="invisible" />
+        </RelativeLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <TextView
         android:id="@+id/suburbNameErrorMsg"
@@ -184,71 +220,86 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/selectSuburbLayout" />
+        app:layout_constraintTop_toBottomOf="@id/selectSuburbLayoutShimmerFrameLayout" />
 
-    <TextView
-        android:id="@+id/provincePlaceHolder"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/provincePlaceHolderShimmerFrameLayout"
         style="@style/myriad_pro_regular_black"
+        android:layout_width="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:contentDescription="@string/cd_ccd_labelprovince"
-        android:paddingTop="@dimen/two_dp"
-        android:paddingBottom="@dimen/two_dp"
-        android:text="@string/province_colon_text_view"
-        android:textSize="@dimen/fourteen_sp"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/suburbNameErrorMsg" />
+        app:layout_constraintTop_toBottomOf="@id/suburbNameErrorMsg">
 
-    <RelativeLayout
-        android:id="@+id/selectProvinceLayout"
+        <TextView
+            android:id="@+id/provincePlaceHolder"
+            style="@style/myriad_pro_regular_black"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:contentDescription="@string/cd_ccd_labelprovince"
+            android:paddingTop="@dimen/two_dp"
+            android:paddingBottom="@dimen/two_dp"
+            android:text="@string/province_colon_text_view"
+            android:textSize="@dimen/fourteen_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/selectProvinceLayoutShimmerFrameLayout"
         android:layout_width="0dp"
         android:layout_height="@dimen/fourty_eight_dp"
         android:layout_marginTop="@dimen/six_dp"
-        android:background="@drawable/input_non_editable_edit_text"
-        android:clickable="false"
-        android:focusable="true"
-        android:paddingEnd="@dimen/nine_dp"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/provincePlaceHolder">
+        app:layout_constraintTop_toBottomOf="@id/provincePlaceHolderShimmerFrameLayout">
 
-        <EditText
-            android:id="@+id/provinceAutocompleteEditText"
-            style="@style/myriad_pro_regular"
+        <RelativeLayout
+            android:id="@+id/selectProvinceLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/progressbarGetProvinces"
-            android:background="@drawable/input_non_editable_half_edit_text"
+            android:layout_height="@dimen/fourty_eight_dp"
+            android:background="@drawable/input_non_editable_edit_text"
             android:clickable="false"
-            android:focusable="false"
-            android:paddingStart="@dimen/sixteen_dp"
-            android:paddingEnd="@dimen/thirty_two_dp"
-            android:textColor="@color/offer_title"
-            android:textSize="@dimen/sixteen_sp" />
+            android:focusable="true"
+            android:paddingEnd="@dimen/nine_dp">
 
-        <ProgressBar
-            android:id="@+id/progressbarGetProvinces"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="@dimen/twenty_four_dp"
-            android:layout_height="@dimen/twenty_four_dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:focusable="false"
-            android:indeterminateTint="@color/black"
-            android:visibility="invisible" />
+            <EditText
+                android:id="@+id/provinceAutocompleteEditText"
+                style="@style/myriad_pro_regular"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/progressbarGetProvinces"
+                android:background="@drawable/input_non_editable_half_edit_text"
+                android:clickable="false"
+                android:focusable="false"
+                android:paddingStart="@dimen/sixteen_dp"
+                android:paddingEnd="@dimen/thirty_two_dp"
+                android:textColor="@color/offer_title"
+                android:textSize="@dimen/sixteen_sp" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/dropdownGetProvincesImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/icon_dropdown"
-            android:focusable="false"
-            android:visibility="invisible" />
-    </RelativeLayout>
+            <ProgressBar
+                android:id="@+id/progressbarGetProvinces"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:focusable="false"
+                android:indeterminateTint="@color/black"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/dropdownGetProvincesImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/icon_dropdown"
+                android:focusable="false"
+                android:visibility="invisible" />
+        </RelativeLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <TextView
         android:id="@+id/provinceNameErrorMsg"
@@ -261,32 +312,47 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/selectProvinceLayout" />
+        app:layout_constraintTop_toBottomOf="@id/selectProvinceLayoutShimmerFrameLayout" />
 
-    <TextView
-        android:id="@+id/postalCodePlaceHolder"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/postalCodePlaceHolderShimmerFrameLayout"
         style="@style/myriad_pro_regular_black"
+        android:layout_width="wrap_content"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:contentDescription="@string/cd_ccd_labelpostalcode"
-        android:paddingTop="@dimen/two_dp"
-        android:paddingBottom="@dimen/two_dp"
-        android:text="@string/postal_code_colon_text_view"
-        android:textSize="@dimen/fourteen_sp"
-        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/provinceNameErrorMsg" />
+        app:layout_constraintTop_toBottomOf="@id/provinceNameErrorMsg">
 
-    <EditText
-        android:id="@+id/postalCode"
-        style="@style/credi_card_delivery_edittext_style"
-        android:background="@color/checkout_delivering_title_background"
-        android:contentDescription="@string/cd_ccd_txtpostalcode"
-        android:editable="false"
-        android:imeOptions="actionDone"
-        android:textColor="@color/non_editable_edit_text_text_color"
+        <TextView
+            android:id="@+id/postalCodePlaceHolder"
+            style="@style/myriad_pro_regular_black"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:contentDescription="@string/cd_ccd_labelpostalcode"
+            android:paddingTop="@dimen/two_dp"
+            android:paddingBottom="@dimen/two_dp"
+            android:text="@string/postal_code_colon_text_view"
+            android:textSize="@dimen/fourteen_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/postalCodeShimmerFrameLayout"
+        style="@style/shimmer_view_edittext_style"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/postalCodePlaceHolder" />
+        app:layout_constraintTop_toBottomOf="@id/postalCodePlaceHolderShimmerFrameLayout">
+
+        <EditText
+            android:id="@+id/postalCode"
+            style="@style/checkout_edittext_style"
+            android:layout_width="match_parent"
+            android:background="@color/checkout_delivering_title_background"
+            android:contentDescription="@string/cd_ccd_txtpostalcode"
+            android:editable="false"
+            android:imeOptions="actionDone"
+            android:textColor="@color/non_editable_edit_text_text_color" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <TextView
         android:id="@+id/postalCodeTextErrorMsg"
@@ -299,7 +365,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/postalCode" />
+        app:layout_constraintTop_toBottomOf="@id/postalCodeShimmerFrameLayout" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"

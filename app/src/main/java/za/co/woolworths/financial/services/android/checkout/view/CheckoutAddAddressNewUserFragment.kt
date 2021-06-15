@@ -114,18 +114,75 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun setUpShimmer() {
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         addressNicknameShimmerFrameLayout?.setShimmer(shimmer)
+        unitComplexPlaceHolderShimmerFrameLayout.setShimmer(shimmer)
+        suburbPlaceHolderShimmerFrameLayout.setShimmer(shimmer)
+        provincePlaceHolderShimmerFrameLayout.setShimmer(shimmer)
+        postalCodePlaceHolderShimmerFrameLayout.setShimmer(shimmer)
+        addressNicknameEditTextShimmerFrameLayout.setShimmer(shimmer)
+        unitComplexEditTextShimmerFrameLayout.setShimmer(shimmer)
+        selectSuburbLayoutShimmerFrameLayout.setShimmer(shimmer)
+        selectProvinceLayoutShimmerFrameLayout.setShimmer(shimmer)
+        postalCodeShimmerFrameLayout.setShimmer(shimmer)
         startShimmer()
     }
 
     private fun startShimmer() {
         addressNicknameShimmerFrameLayout?.startShimmer()
+        unitComplexPlaceHolderShimmerFrameLayout?.startShimmer()
+        suburbPlaceHolderShimmerFrameLayout?.startShimmer()
+        provincePlaceHolderShimmerFrameLayout?.startShimmer()
+        postalCodePlaceHolderShimmerFrameLayout?.startShimmer()
+        addressNicknameEditTextShimmerFrameLayout?.startShimmer()
+        unitComplexEditTextShimmerFrameLayout?.startShimmer()
+        selectSuburbLayoutShimmerFrameLayout?.startShimmer()
+        selectProvinceLayoutShimmerFrameLayout?.startShimmer()
+        postalCodeShimmerFrameLayout?.startShimmer()
+
         addressNicknamePlaceHolder.visibility = View.INVISIBLE
+        unitComplexFloorPlaceHolder.visibility = View.INVISIBLE
+        suburbPlaceHolder.visibility = View.INVISIBLE
+        provincePlaceHolder.visibility = View.INVISIBLE
+        postalCodePlaceHolder.visibility = View.INVISIBLE
+        addressNicknameEditText.visibility = View.INVISIBLE
+        unitComplexFloorEditText.visibility = View.INVISIBLE
+        selectSuburbLayout.visibility = View.INVISIBLE
+        selectProvinceLayout.visibility = View.INVISIBLE
+        postalCode.visibility = View.INVISIBLE
     }
 
     private fun stopShimmer() {
         addressNicknameShimmerFrameLayout?.stopShimmer()
+        unitComplexPlaceHolderShimmerFrameLayout?.stopShimmer()
+        suburbPlaceHolderShimmerFrameLayout?.stopShimmer()
+        provincePlaceHolderShimmerFrameLayout?.stopShimmer()
+        postalCodePlaceHolderShimmerFrameLayout?.stopShimmer()
+        addressNicknameEditTextShimmerFrameLayout?.stopShimmer()
+        unitComplexEditTextShimmerFrameLayout?.stopShimmer()
+        selectSuburbLayoutShimmerFrameLayout?.stopShimmer()
+        selectProvinceLayoutShimmerFrameLayout?.stopShimmer()
+        postalCodeShimmerFrameLayout?.stopShimmer()
+
         addressNicknameShimmerFrameLayout.setShimmer(null)
+        unitComplexPlaceHolderShimmerFrameLayout.setShimmer(null)
+        suburbPlaceHolderShimmerFrameLayout.setShimmer(null)
+        provincePlaceHolderShimmerFrameLayout.setShimmer(null)
+        postalCodePlaceHolderShimmerFrameLayout.setShimmer(null)
+        addressNicknameEditTextShimmerFrameLayout.setShimmer(null)
+        unitComplexEditTextShimmerFrameLayout.setShimmer(null)
+        selectSuburbLayoutShimmerFrameLayout.setShimmer(null)
+        selectProvinceLayoutShimmerFrameLayout.setShimmer(null)
+        postalCodeShimmerFrameLayout.setShimmer(null)
+
         addressNicknamePlaceHolder.visibility = View.VISIBLE
+        unitComplexFloorPlaceHolder.visibility = View.VISIBLE
+        suburbPlaceHolder.visibility = View.VISIBLE
+        provincePlaceHolder.visibility = View.VISIBLE
+        postalCodePlaceHolder.visibility = View.VISIBLE
+        addressNicknameEditText.visibility = View.VISIBLE
+        unitComplexFloorEditText.visibility = View.VISIBLE
+        selectSuburbLayout.visibility = View.VISIBLE
+        selectProvinceLayout.visibility = View.VISIBLE
+        postalCode.visibility = View.VISIBLE
     }
 
     private fun setupViewModel() {
@@ -336,7 +393,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         if (provinceName.isNotEmpty()) {
             for (provinces in provinceList) {
                 if (provinceName.equals(provinces.name)) {
-                    province.id = provinces.id
+                    province.id = ""
                     province.name = provinces.name
                 }
             }
