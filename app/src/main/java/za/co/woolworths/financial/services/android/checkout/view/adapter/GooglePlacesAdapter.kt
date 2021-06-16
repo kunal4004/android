@@ -1,12 +1,13 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
-import android.content.Context
+import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
+import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
+import com.awfs.coordination.R
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -20,8 +21,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 
-class GooglePlacesAdapter(context: Context, resourceId: Int, geoData: PlacesClient) :
-    ArrayAdapter<PlaceAutocomplete>(context, resourceId), Filterable {
+class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapter(),
+    Filterable {
 
     companion object {
         const val SEARCH_LENGTH = 3
@@ -29,6 +30,9 @@ class GooglePlacesAdapter(context: Context, resourceId: Int, geoData: PlacesClie
 
     private var mResultList = arrayListOf<PlaceAutocomplete>()
     private val placesClient = geoData
+    private val mContext = context
+
+
     override fun getCount(): Int {
         return mResultList.size
     }
@@ -37,12 +41,34 @@ class GooglePlacesAdapter(context: Context, resourceId: Int, geoData: PlacesClie
         return mResultList.get(position)
     }
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val row = super.getView(position, convertView, parent)
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
+        var convrtView = convertView
+        val mHolder: ViewHolder
+        if (convrtView == null) {
+            mHolder = ViewHolder()
+            convrtView =
+                mContext.layoutInflater.inflate(R.layout.places_simple_item_list, null)
+            mHolder.text1 = convrtView.findViewById<View>(R.id.text1) as? TextView
+            convrtView.tag = mHolder
+        } else {
+            mHolder = convrtView.tag as ViewHolder
+        }
+        /*val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        val layout =
+            (row.findViewById<View>(R.id.recyclerViewShimmerFrameLayout) as? ShimmerFrameLayout)
+        layout?.setShimmer(shimmer)
+        layout?.startShimmer()*/
         val item = getItem(position)
-        val textView1 = row.findViewById<View>(android.R.id.text1) as TextView
-        textView1.text = item.description
-        return row
+        mHolder.text1?.text = item.description
+        return convrtView
+    }
+
+    internal class ViewHolder {
+        var text1: TextView? = null
     }
 
     override fun getFilter(): Filter {
@@ -52,10 +78,8 @@ class GooglePlacesAdapter(context: Context, resourceId: Int, geoData: PlacesClie
                 // Skip the autocomplete query if no constraints or less than 3 char is given.
                 if (constraint != null && constraint.length >= SEARCH_LENGTH) {
                     mResultList = getPredictions(constraint)
-                    if (mResultList != null) {
-                        results.values = mResultList
-                        results.count = mResultList.size
-                    }
+                    results.values = mResultList
+                    results.count = mResultList.size
                 }
                 return results
             }

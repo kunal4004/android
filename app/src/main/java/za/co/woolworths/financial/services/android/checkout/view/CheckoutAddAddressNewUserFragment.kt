@@ -212,7 +212,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             Places.initialize(context, getString(R.string.maps_api_key))
             val placesClient = Places.createClient(context)
             val placesAdapter =
-                GooglePlacesAdapter(context, android.R.layout.simple_list_item_1, placesClient)
+                GooglePlacesAdapter(requireActivity(), placesClient)
             autoCompleteTextView?.apply {
                 setAdapter(placesAdapter)
             }
