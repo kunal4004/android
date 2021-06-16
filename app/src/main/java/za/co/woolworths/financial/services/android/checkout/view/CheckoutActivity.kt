@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -9,11 +8,16 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_checkout.*
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
+
 
 /**
  * Created by Kunal Uttarwar on 26/05/21.
  */
 class CheckoutActivity : AppCompatActivity() {
+
+    var navHostFrag = NavHostFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +32,20 @@ class CheckoutActivity : AppCompatActivity() {
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(true)
-            setDisplayHomeAsUpEnabled(false)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.back24)
+        }
+    }
+
+    fun showBackArrowWithoutTitle() {
+        toolbar?.visibility = View.VISIBLE
+        setSupportActionBar(toolbar)
+        toolbarText.text = ""
+        supportActionBar?.apply {
+            title = ""
+            setDisplayShowTitleEnabled(false)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.back24)
         }
     }
 
@@ -37,9 +54,9 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     private fun loadNavHostFragment() {
-        val navHostFragment = navHostFragment as NavHostFragment
+        navHostFrag = navHostFragment as NavHostFragment
         val graph =
-            navHostFragment.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
+            navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
         if (true)
             graph.startDestination = R.id.CheckoutAddAddressNewUserFragment
         else
@@ -47,15 +64,28 @@ class CheckoutActivity : AppCompatActivity() {
         findNavController(R.id.navHostFragment)?.graph = graph
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.search_item, menu)
         return super.onCreateOptionsMenu(menu)
-    }
+    }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_search -> onBackPressed()
+            android.R.id.home -> onBackPressed()
         }
         return false
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val fragmentList: MutableList<androidx.fragment.app.Fragment> =
+            navHostFrag.childFragmentManager.fragments
+        if (fragmentList.size > 0 && fragmentList[0] is ProvinceSelectorFragment) {
+            (fragmentList[0] as ProvinceSelectorFragment).onBackPressed()
+        }
+        if (fragmentList.size > 0 && fragmentList[0] is SuburbSelectorFragment) {
+            (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
+        }
     }
 }

@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -64,6 +65,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     var selectedAddress = SelectedPlacesAddress()
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
+    private var isShimmerRequired = true
+
+    companion object {
+        const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
+        const val SUBURB_SELECTION_BACK_PRESSED = "5465"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,9 +100,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initView() {
-        setUpShimmer()
+        if (isShimmerRequired) {
+            setUpShimmer()
+            isShimmerRequired = false
+        } else
+            stopShimmer()
         if (activity is CheckoutActivity) {
-            (activity as? CheckoutActivity)?.apply { hideToolbar() }
+            (activity as? CheckoutActivity)?.apply {
+                showBackArrowWithoutTitle()
+            }
         }
         saveAddress?.setOnClickListener(this)
         autoCompleteTextView?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
@@ -283,6 +296,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             val province: Province? = Utils.strToJson(result, Province::class.java) as? Province
             onProvinceSelected(province)
         }
+
+        setFragmentResultListener(PROVINCE_SELECTION_BACK_PRESSED) { requestKey, bundle ->
+            enableSuburbSelection()
+            enableProvinceSelection()
+        }
+        setFragmentResultListener(SUBURB_SELECTION_BACK_PRESSED) { requestKey, bundle ->
+            enableSuburbSelection()
+            enableProvinceSelection()
+        }
     }
 
     private fun onProvinceSelected(province: Province?) {
@@ -397,7 +419,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     province.name = provinces.name
                 }
             }
-            provinceAutocompleteEditText.setText(provinceName)
             selectProvinceLayout.setBackgroundResource(R.drawable.input_non_editable_edit_text)
             provinceAutocompleteEditText.setBackgroundResource(R.drawable.input_non_editable_half_edit_text)
             selectedAddress.province = province.name
@@ -406,7 +427,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             if (selectedAddress.suburb.isEmpty())
                 enableSuburbSelection()
             else {
-                suburbEditText.setText(selectedAddress.suburb)
                 selectSuburbLayout.setBackgroundResource(R.drawable.input_non_editable_edit_text)
                 suburbEditText.setBackgroundResource(R.drawable.input_non_editable_half_edit_text)
             }
@@ -414,6 +434,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             enableProvinceSelection()
             enableSuburbSelection()
         }
+        suburbEditText.setText(if (provinceName.isEmpty()) "" else selectedAddress.suburb)
+        provinceAutocompleteEditText.setText(provinceName)
         postalCode.setText(selectedAddress.postalCode)
     }
 

@@ -17,6 +17,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -102,6 +103,13 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
             }
             setFragmentResult(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE, bundle)
             navController?.navigateUp()
+        }
+    }
+
+    fun onBackPressed() {
+        activity?.apply {
+            // Use the Kotlin extension in the fragment-ktx artifact
+            setFragmentResult(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED, Bundle())
         }
     }
 

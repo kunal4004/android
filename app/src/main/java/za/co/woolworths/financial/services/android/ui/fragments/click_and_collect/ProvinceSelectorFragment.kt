@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +15,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.province_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.Companion.PROVINCE_SELECTION_BACK_PRESSED
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.ui.adapters.ProvinceListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -71,6 +70,13 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
             }
             setFragmentResult(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE, bundle)
             navController?.navigateUp()
+        }
+    }
+
+    fun onBackPressed() {
+        activity?.apply {
+            // Use the Kotlin extension in the fragment-ktx artifact
+            setFragmentResult(PROVINCE_SELECTION_BACK_PRESSED, Bundle())
         }
     }
 }
