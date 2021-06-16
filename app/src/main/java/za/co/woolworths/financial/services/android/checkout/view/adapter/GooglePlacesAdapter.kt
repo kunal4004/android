@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
 import android.app.Activity
+import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -8,6 +9,8 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -16,6 +19,7 @@ import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
+import za.co.woolworths.financial.services.android.util.AppConstant
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -31,6 +35,7 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
     private var mResultList = arrayListOf<PlaceAutocomplete>()
     private val placesClient = geoData
     private val mContext = context
+    private var isShimmerShowing = true
 
 
     override fun getCount(): Int {
@@ -52,23 +57,45 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
             mHolder = ViewHolder()
             convrtView =
                 mContext.layoutInflater.inflate(R.layout.places_simple_item_list, null)
-            mHolder.text1 = convrtView.findViewById<View>(R.id.text1) as? TextView
+            mHolder.primaryTextView =
+                convrtView.findViewById<View>(R.id.primaryTextView) as? TextView
+            mHolder.SecondaryTextView =
+                convrtView.findViewById<View>(R.id.SecondaryTextView) as? TextView
             convrtView.tag = mHolder
         } else {
             mHolder = convrtView.tag as ViewHolder
         }
-        /*val shimmer = Shimmer.AlphaHighlightBuilder().build()
-        val layout =
-            (row.findViewById<View>(R.id.recyclerViewShimmerFrameLayout) as? ShimmerFrameLayout)
-        layout?.setShimmer(shimmer)
-        layout?.startShimmer()*/
-        val item = getItem(position)
-        mHolder.text1?.text = item.description
+        mHolder.primaryTextViewShimmerFrameLayout =
+            convrtView?.findViewById<View>(R.id.primaryTextViewShimmerFrameLayout) as? ShimmerFrameLayout
+        mHolder.SecondaryTextViewShimmerFrameLayout =
+            convrtView?.findViewById<View>(R.id.SecondaryTextViewShimmerFrameLayout) as? ShimmerFrameLayout
+        mHolder.dividerRecyclerView =
+            convrtView?.findViewById(R.id.dividerRecyclerView) as? View
+        mHolder.dividerRecyclerView?.visibility = View.VISIBLE
+        if (isShimmerShowing) {
+            mHolder.primaryTextView?.visibility = View.INVISIBLE
+            mHolder.SecondaryTextView?.visibility = View.INVISIBLE
+            val shimmer = Shimmer.AlphaHighlightBuilder().build()
+            mHolder.primaryTextViewShimmerFrameLayout?.setShimmer(shimmer)
+            mHolder.primaryTextViewShimmerFrameLayout?.startShimmer()
+            mHolder.SecondaryTextViewShimmerFrameLayout?.setShimmer(shimmer)
+            mHolder.SecondaryTextViewShimmerFrameLayout?.startShimmer()
+            Handler().postDelayed({
+                isShimmerShowing = false
+                notifyDataSetChanged()
+            }, AppConstant.DELAY_1500_MS)
+        } else {
+            mHolder.primaryTextViewShimmerFrameLayout?.stopShimmer()
+            mHolder.primaryTextViewShimmerFrameLayout?.setShimmer(null)
+            mHolder.SecondaryTextViewShimmerFrameLayout?.stopShimmer()
+            mHolder.SecondaryTextViewShimmerFrameLayout?.setShimmer(null)
+            mHolder.primaryTextView?.visibility = View.VISIBLE
+            mHolder.SecondaryTextView?.visibility = View.VISIBLE
+            val item = getItem(position)
+            mHolder.primaryTextView?.text = item.primaryText
+            mHolder.SecondaryTextView?.text = item.secondaryText
+        }
         return convrtView
-    }
-
-    internal class ViewHolder {
-        var text1: TextView? = null
     }
 
     override fun getFilter(): Filter {
@@ -135,7 +162,8 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
                 resultList.add(
                     PlaceAutocomplete(
                         prediction.placeId,
-                        prediction.getFullText(null).toString()
+                        prediction.getPrimaryText(null).toString(),
+                        prediction.getSecondaryText(null).toString()
                     )
                 )
             }
@@ -144,9 +172,21 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
     }
 }
 
-class PlaceAutocomplete(var placeId: CharSequence, var description: CharSequence) {
+internal class ViewHolder {
+    var primaryTextView: TextView? = null
+    var SecondaryTextView: TextView? = null
+    var primaryTextViewShimmerFrameLayout: ShimmerFrameLayout? = null
+    var SecondaryTextViewShimmerFrameLayout: ShimmerFrameLayout? = null
+    var dividerRecyclerView: View? = null
+}
+
+class PlaceAutocomplete(
+    var placeId: CharSequence,
+    var primaryText: CharSequence,
+    var secondaryText: CharSequence
+) {
 
     override fun toString(): String {
-        return description.toString()
+        return placeId.toString()
     }
 }
