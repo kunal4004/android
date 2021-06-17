@@ -183,7 +183,7 @@
                 android:focusable="false"
                 android:paddingStart="@dimen/sixteen_dp"
                 android:paddingEnd="@dimen/thirty_two_dp"
-                android:textColor="@color/offer_title"
+                android:textColor="@color/non_editable_edit_text_text_color"
                 android:textSize="@dimen/sixteen_sp" />
 
             <ProgressBar
@@ -275,7 +275,7 @@
                 android:focusable="false"
                 android:paddingStart="@dimen/sixteen_dp"
                 android:paddingEnd="@dimen/thirty_two_dp"
-                android:textColor="@color/offer_title"
+                android:textColor="@color/non_editable_edit_text_text_color"
                 android:textSize="@dimen/sixteen_sp" />
 
             <ProgressBar

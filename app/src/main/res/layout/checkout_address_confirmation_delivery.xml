@@ -16,6 +16,16 @@
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/top_guideline" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/saveAddressRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_two_dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+        app:layout_constraintStart_toEndOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/whereWeDeliveringTitle" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
         android:layout_width="wrap_content"

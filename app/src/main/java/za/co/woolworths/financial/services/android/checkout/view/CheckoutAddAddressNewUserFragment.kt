@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -267,7 +266,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.getSavedAddresses().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    savedAddressResponse = it.data
+                    savedAddressResponse = it?.data
                     if (cellphoneNumber?.text.toString().isEmpty())
                         cellphoneNumber.setText(savedAddressResponse?.primaryContactNo)
                 }
@@ -349,8 +348,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 ROUTE.value -> addressText2 = address.name
                 ADMINISTRATIVE_AREA_LEVEL_1.value -> {
                     selectedAddress.province = address.name
-                    if (selectedAddress.province.isNotEmpty())
-                        selectedAddress.region = ""
                 }
                 POSTAL_CODE.value -> selectedAddress.postalCode = address.name
                 SUBLOCALITY_LEVEL_1.value -> {
@@ -366,6 +363,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
             }
         }
+        if (selectedAddress.province.isNotEmpty() && selectedAddress.suburb.isNotEmpty())
+            selectedAddress.region = ""
         selectedAddress.address1 = addressText1.plus(" ").plus(addressText2)
         selectedAddress.latitude = place.latLng?.latitude
         selectedAddress.longitude = place.latLng?.longitude
@@ -415,7 +414,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         if (provinceName.isNotEmpty()) {
             for (provinces in provinceList) {
                 if (provinceName.equals(provinces.name)) {
-                    province.id = ""
+                    province.id = provinces.id
                     province.name = provinces.name
                 }
             }
@@ -643,7 +642,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             ).observe(this, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
-                        savedAddressResponse?.addresses?.add(it.data?.address)
+                        if (savedAddressResponse != null && it?.data != null)
+                            savedAddressResponse?.addresses?.add(it.data.address)
                         navigateToAddressConfirmation()
                     }
                     ResponseStatus.LOADING -> {
@@ -683,19 +683,21 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun isNickNameExist(): Boolean {
         var isExist = false
-        for (address in savedAddressResponse?.addresses!!) {
-            if (addressNicknameEditText.text.toString().equals(address.nickname, true)) {
-                addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
-                addressNicknameErrorMsg?.visibility = View.VISIBLE
-                addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
-                isExist = true
+        if (!savedAddressResponse?.addresses.isNullOrEmpty()) {
+            for (address in savedAddressResponse?.addresses!!) {
+                if (addressNicknameEditText.text.toString().equals(address?.nickname, true)) {
+                    addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
+                    addressNicknameErrorMsg?.visibility = View.VISIBLE
+                    addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
+                    isExist = true
+                }
             }
         }
         return isExist
     }
 
     private fun navigateToAddressConfirmation() {
-        var bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
         navController?.navigate(
             R.id.checkoutAddressConfirmationFragment,
