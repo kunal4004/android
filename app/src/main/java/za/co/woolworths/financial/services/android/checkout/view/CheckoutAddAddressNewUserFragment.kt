@@ -644,6 +644,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
                         savedAddressResponse?.addresses?.add(it.data?.address)
+                        navigateToAddressConfirmation()
                     }
                     ResponseStatus.LOADING -> {
 
@@ -691,6 +692,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
         }
         return isExist
+    }
+
+    private fun navigateToAddressConfirmation() {
+        var bundle = Bundle()
+        bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
+        navController?.navigate(
+            R.id.checkoutAddressConfirmationFragment,
+            bundleOf("bundle" to bundle)
+        )
     }
 
     private fun showErrorPhoneNumber() {

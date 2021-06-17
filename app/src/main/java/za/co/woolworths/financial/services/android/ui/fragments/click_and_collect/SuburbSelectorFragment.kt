@@ -2,9 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.click_and_colle
 
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -68,7 +66,8 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         if (activity is CheckoutActivity) {
-            (activity as? CheckoutActivity)?.apply { setActionBar() }
+            setHasOptionsMenu(true)
+            (activity as? CheckoutActivity)?.apply { hideBackArrow() }
         }
         if (deliveryType == DeliveryType.DELIVERY) {
             activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_suburb)
@@ -83,6 +82,11 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
             }
         }
         loadSuburbsList()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_item, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun loadSuburbsList() {

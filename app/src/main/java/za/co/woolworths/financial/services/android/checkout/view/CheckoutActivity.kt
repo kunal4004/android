@@ -49,6 +49,15 @@ class CheckoutActivity : AppCompatActivity() {
         }
     }
 
+    fun hideBackArrow() {
+        toolbar?.visibility = View.VISIBLE
+        setSupportActionBar(toolbar)
+        supportActionBar?.apply {
+            title = ""
+            setDisplayHomeAsUpEnabled(false)
+        }
+    }
+
     fun hideToolbar() {
         toolbar?.visibility = View.GONE
     }
@@ -61,13 +70,8 @@ class CheckoutActivity : AppCompatActivity() {
             graph.startDestination = R.id.CheckoutAddAddressNewUserFragment
         else
             graph.startDestination = R.id.CheckoutAddAddressReturningUserFragment
-        findNavController(R.id.navHostFragment)?.graph = graph
+        findNavController(R.id.navHostFragment).graph = graph
     }
-
-    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.search_item, menu)
-        return super.onCreateOptionsMenu(menu)
-    }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

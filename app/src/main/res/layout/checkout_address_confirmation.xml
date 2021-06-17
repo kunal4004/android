@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/deliveryLayout"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/fourty_dp"
+        android:background="@drawable/onde_dp_black_border_bg"
+        app:layout_constraintEnd_toStartOf="@id/clickAndCollectLayout"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtDelivery"
+            style="@style/myriad_pro_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/delivery"
+            android:textColor="@color/offer_title"
+            android:textSize="@dimen/fifteen_sp" />
+
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/addressConfirmationDelivery"
+        layout="@layout/checkout_address_confirmation_delivery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/deliveryLayout" />
+
+    <RelativeLayout
+        android:id="@+id/clickAndCollectLayout"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:background="@drawable/onde_dp_black_border_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/deliveryLayout"
+        app:layout_constraintTop_toTopOf="@id/deliveryLayout">
+
+        <TextView
+            android:id="@+id/txtclickAndCollect"
+            style="@style/myriad_pro_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/click_collect"
+            android:textColor="@color/offer_title"
+            android:textSize="@dimen/fifteen_sp" />
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

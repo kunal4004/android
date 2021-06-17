@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -46,10 +44,16 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         if (activity is CheckoutActivity) {
-            (activity as? CheckoutActivity)?.apply { setActionBar() }
+            setHasOptionsMenu(true)
+            (activity as? CheckoutActivity)?.apply { hideBackArrow() }
         }
         activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_province)
         loadProvinceList()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_item, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun loadProvinceList() {
