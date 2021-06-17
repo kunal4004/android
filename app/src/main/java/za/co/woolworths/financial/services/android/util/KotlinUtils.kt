@@ -743,5 +743,12 @@ class KotlinUtils {
             }
 
         }
+
+        fun isCurrentSuburbDeliversLiquor(): Boolean {
+            Utils.getPreferredDeliveryLocation()?.apply {
+                return (!storePickup && suburb != null && WoolworthsApplication.getLiquor()?.suburbs?.contains(suburb.id) == true)
+            }
+            return false
+        }
     }
 }

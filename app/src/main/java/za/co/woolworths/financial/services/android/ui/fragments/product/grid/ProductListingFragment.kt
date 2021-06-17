@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.grid
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.location.Location
@@ -55,6 +56,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.Companion.REQUEST_SUBURB_CHANGE
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
@@ -99,7 +101,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSortOption: String = ""
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var mFulfilmentTypeId: String? = null
-
+    private var liquorDialog: Dialog? = null
+    private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -278,11 +281,48 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 if (!Utils.isDeliverySelectionModalShown()) {
                     showDeliveryOptionDialog()
                 }
+                if (!KotlinUtils.isCurrentSuburbDeliversLiquor())
+                    showLiquorDialog()
             } else {
                 loadMoreData(productLists)
             }
         }
         mProductAdapter?.notifyDataSetChanged()
+    }
+
+    fun showLiquorDialog(){
+
+        liquorDialog = activity?.let { activity -> Dialog(activity) }
+        liquorDialog?.apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val view = layoutInflater.inflate(R.layout.liquor_info_dialog, null)
+            val desc = view.findViewById<TextView>(R.id.desc)
+            val close = view.findViewById<Button>(R.id.close)
+            val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
+            desc?.text = WoolworthsApplication.getLiquor()?.message ?: ""
+            close?.setOnClickListener { dismiss() }
+            setSuburb?.setOnClickListener {
+                dismiss()
+                if (!SessionUtilities.getInstance().isUserAuthenticated) {
+                    ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
+                } else {
+                    activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, LOGIN_REQUEST_SUBURB_CHANGE, DeliveryType.DELIVERY_LIQUOR) }
+                }
+            }
+            setContentView(view)
+            window?.apply {
+                setLayout(
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT
+                )
+                setBackgroundDrawableResource(R.color.transparent)
+                setGravity(Gravity.CENTER)
+            }
+
+            setTitle(null)
+            setCancelable(true)
+            show()
+        }
     }
 
     private fun getCategoryNameAndSetTitle() {
@@ -687,6 +727,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     )
                         isBackPressed =
                             true // if PDP closes or cart fragment closed with location change.
+                }
+            }
+            LOGIN_REQUEST_SUBURB_CHANGE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+                    activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, LOGIN_REQUEST_SUBURB_CHANGE, DeliveryType.DELIVERY_LIQUOR) }
                 }
             }
             else -> return

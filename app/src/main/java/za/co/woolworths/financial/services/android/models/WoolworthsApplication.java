@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncreas
 import za.co.woolworths.financial.services.android.models.dto.CreditView;
 import za.co.woolworths.financial.services.android.models.dto.DashConfig;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
+import za.co.woolworths.financial.services.android.models.dto.Liquor;
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
@@ -143,6 +144,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static CreditView creditView;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
+    private static Liquor liquor;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -691,4 +693,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         mContextApplication = context;
     }
 
+    public static Liquor getLiquor() {
+        return liquor;
+    }
+
+    public static void setLiquor(Liquor liquor) {
+        WoolworthsApplication.liquor = liquor;
+    }
 }

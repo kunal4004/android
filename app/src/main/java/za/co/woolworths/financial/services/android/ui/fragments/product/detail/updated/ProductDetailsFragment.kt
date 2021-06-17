@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -14,11 +15,10 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -105,7 +105,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var HTTP_EXPECTATION_FAILED_417: String = "417"
     private var isOutOfStock_502 = false
     private var isOutOfStockFragmentAdded = false
-
+    private var liquorDialog: Dialog? = null
+    private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
 
     companion object {
         const val INDEX_STORE_FINDER = 1
@@ -580,7 +581,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (isAllProductsOutOfStock() && isInventoryCalled) {
             showProductOutOfStock()
+            return
         }
+
+        if (!KotlinUtils.isCurrentSuburbDeliversLiquor() && isInventoryCalled)
+            showLiquorDialog()
     }
 
     private fun setBrandText(it: ProductDetails) {
@@ -980,6 +985,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK -> {
                         activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK) }
+                    }
+                    LOGIN_REQUEST_SUBURB_CHANGE ->{
+                        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK, DeliveryType.DELIVERY_LIQUOR) }
                     }
                 }
             }
@@ -1465,6 +1473,41 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 putExtra(Intent.EXTRA_TEXT, message)
             }
             startActivity(shareIntent)
+        }
+    }
+
+    fun showLiquorDialog(){
+
+        liquorDialog = activity?.let { activity -> Dialog(activity) }
+        liquorDialog?.apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val view = layoutInflater.inflate(R.layout.liquor_info_dialog, null)
+            val desc = view.findViewById<TextView>(R.id.desc)
+            val close = view.findViewById<Button>(R.id.close)
+            val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
+            desc?.text = WoolworthsApplication.getLiquor()?.message ?: ""
+            close?.setOnClickListener { dismiss() }
+            setSuburb?.setOnClickListener {
+                dismiss()
+                if (!SessionUtilities.getInstance().isUserAuthenticated) {
+                    ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
+                } else {
+                    activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK, DeliveryType.DELIVERY_LIQUOR) }
+                }
+            }
+            setContentView(view)
+            window?.apply {
+                setLayout(
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT
+                )
+                setBackgroundDrawableResource(R.color.transparent)
+                setGravity(Gravity.CENTER)
+            }
+
+            setTitle(null)
+            setCancelable(true)
+            show()
         }
     }
 }

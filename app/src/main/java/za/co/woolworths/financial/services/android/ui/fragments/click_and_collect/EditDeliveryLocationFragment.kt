@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.DELIVERY_TYPE
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.IS_LIQUOR
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
@@ -50,7 +51,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     var validatedSuburbProductsForDelivery: ValidatedSuburbProducts? = null
     var validatedSuburbProductsForStore: ValidatedSuburbProducts? = null
     var rootView: View? = null
-
+    var isLiquor = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (rootView == null)
@@ -65,6 +66,7 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
             deliveryType = DeliveryType.valueOf(getString(DELIVERY_TYPE, DeliveryType.DELIVERY.name))
+            isLiquor = containsKey(IS_LIQUOR)
         }
     }
 
@@ -107,9 +109,11 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
             maxItemsInfoMessage?.text = it
         }
         setDeliveryOption(deliveryType)
-
-        if (selectedProvince == null) {
+        if (selectedProvince == null && !isLiquor) {
             setUsersCurrentDeliveryDetails()
+        } else if (isLiquor) {
+            selectedProvince = WoolworthsApplication.getLiquor()?.regions?.get(0)
+            onProvinceSelected(selectedProvince)
         }
     }
 
@@ -175,7 +179,10 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
         if (suburbs.isNullOrEmpty()) {
             showNoStoresError()
         } else {
-            navigateToSuburbSelection(suburbs)
+            var suburbsList = suburbs
+            if (isLiquor)
+                suburbsList = WoolworthsApplication.getLiquor().suburbs.flatMap { sub ->  suburbs.filter { it.id == sub } }
+            navigateToSuburbSelection(suburbsList)
         }
     }
 
@@ -192,7 +199,11 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
     }
 
     override fun getProvinces() {
-        if (progressGetSuburb?.visibility == View.VISIBLE) return
+        if (isLiquor && WoolworthsApplication.getLiquor()?.regions?.size ?: 0 > 1) {
+            WoolworthsApplication.getLiquor()?.regions?.let { navigateToProvinceSelection(it) }
+            return
+        }
+        if (progressGetSuburb?.visibility == View.VISIBLE || isLiquor) return
         showGetProvincesProgress()
         presenter?.initGetProvinces()
     }
@@ -254,7 +265,8 @@ class EditDeliveryLocationFragment : Fragment(), EditDeliveryLocationContract.Ed
 
     private fun onProvinceSelected(province: Province?) {
         this.selectedProvince = province
-        resetSuburbSelection()
+        if (!isLiquor || WoolworthsApplication.getLiquor()?.regions?.size ?: 0 > 1)
+            resetSuburbSelection()
         tvSelectedProvince?.setText(province?.name)
         tvSelectedProvince?.dismissDropDown()
     }

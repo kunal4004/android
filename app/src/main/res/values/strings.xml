@@ -2038,4 +2038,6 @@
     <string name="chat_notification_title">You have received a message.</string>
     <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
     <string name="woolies_chat_active">Chat is currently active</string>
+    <string name="shop_liquor_in_our_app">Shop liquor in our app</string>
+    <string name="select_suburb">Select Suburb</string>
 </resources>

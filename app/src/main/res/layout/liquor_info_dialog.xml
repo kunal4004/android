@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sixteen_dp"
+        android:background="@color/white"
+        android:padding="@dimen/sixteen_dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/futura_semi_bold"
+            android:text="@string/shop_liquor_in_our_app"
+            android:textSize="@dimen/sixteen_sp"
+            android:textColor="@color/black"
+            />
+
+        <TextView
+            android:id="@+id/desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_marginTop="@dimen/five_dp"
+            android:textSize="@dimen/fifteen_sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/myriad_pro_regular"
+            />
+        <TextView
+            android:id="@+id/setSuburb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/desc"
+            android:textSize="12sp"
+            android:layout_alignParentRight="true"
+            android:text="@string/select_suburb"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:textColor="@color/com_facebook_messenger_blue"
+            />
+
+    </RelativeLayout>
+    <Button
+        android:id="@+id/close"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:background="@drawable/ic_closecircle"
+        android:layout_gravity="right"
+        android:layout_margin="@dimen/eight_dp"
+        />
+
+</FrameLayout>
