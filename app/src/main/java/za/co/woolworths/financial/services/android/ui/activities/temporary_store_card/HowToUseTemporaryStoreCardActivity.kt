@@ -31,17 +31,17 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         type = intent?.extras?.getSerializable(TRANSACTION_TYPE) as Transition
         actionBar()
 
-        val howToUseSpannableStringBuilder = WSpannableStringBuilder(getString(R.string.temp_card_how_to_use5))
+        val howToUseSpannableStringBuilder = WSpannableStringBuilder(getString(R.string.temp_card_how_to_use6))
         howToUseSpannableStringBuilder.makeStringInteractable("appfeedback@woolworths.co.za", LinkType.EMAIL)
         howToUseSpannableStringBuilder.makeStringUnderlined("appfeedback@woolworths.co.za")
-        setUnderlineText(howToUseSpannableStringBuilder.build(), howToUse5)
+        setUnderlineText(howToUseSpannableStringBuilder.build(), howToUse6)
 
-        val howToUse8SpannableContent = WSpannableStringBuilder(getString(R.string.temp_store_card_contact_customer_service_desc))
+        val howToUse8SpannableContent = WSpannableStringBuilder(getString(R.string.temp_card_how_to_use12))
         howToUse8SpannableContent.makeStringInteractable("queries@wfs.co.za", LinkType.EMAIL)
         howToUse8SpannableContent.makeStringUnderlined("queries@wfs.co.za")
         howToUse8SpannableContent.makeStringInteractable("0861 50 20 20", LinkType.PHONE)
         howToUse8SpannableContent.makeStringUnderlined("0861 50 20 20")
-        setUnderlineText(howToUse8SpannableContent.build(), howToUse10)
+        setUnderlineText(howToUse8SpannableContent.build(), howToUse12)
 
         setUniqueIds()
 

@@ -54,8 +54,10 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         getTempStoreCardButton.setOnClickListener(this)
         (activity as? MyCardActivityExtension)?.apply {
+            Utils.updateStatusBarBackground(this)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeAsUpIndicator(R.drawable.icon_info)
