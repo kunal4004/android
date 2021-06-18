@@ -44,7 +44,6 @@ import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActiv
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
-import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
@@ -317,7 +316,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             }
 
             productGroupCode?.let { Utils.triggerFireBaseEvents(it) }
-                // val navigateToBalanceProtectionInsurance = Intent(this, BPIBalanceProtectionActivity::class.java)
             val navigateToBalanceProtectionInsurance = Intent(this, BalanceProtectionInsuranceActivity::class.java)
             navigateToBalanceProtectionInsurance.putExtra(BPIOverviewOverviewImpl.ACCOUNT_INFO, accountInfo)
             startActivity(navigateToBalanceProtectionInsurance)

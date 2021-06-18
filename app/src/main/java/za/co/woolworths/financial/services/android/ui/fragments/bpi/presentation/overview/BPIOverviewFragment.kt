@@ -6,9 +6,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.balance_protection_insurance_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverviewFromConfig
@@ -19,10 +19,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 class BPIOverviewFragment : Fragment() {
 
     private val bpiViewModel: BPIViewModel? by activityViewModels()
-
-    companion object {
-        const val SELECTED_ITEM = "SELECTED_ITEM"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +44,8 @@ class BPIOverviewFragment : Fragment() {
         activity ?: return
         bpiOverviewRecyclerview?.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = BalanceProtectionInsuranceAdapter(coveredUncoveredList){
-                overview ->
-                bpiViewModel?.bpiPresenter?.navigateTo(R.id.action_Overview_to_OverViewDetail,
-                    bundleOf(SELECTED_ITEM to Gson().toJson(overview)))
+            adapter = BalanceProtectionInsuranceAdapter(coveredUncoveredList) { overview ->
+                view?.findNavController()?.navigate(BPIOverviewFragmentDirections.actionOverviewToOverViewDetail(overview))
             }
         }
     }

@@ -9,9 +9,11 @@ import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
+import java.util.List;
+
 public class RequiredFormAdapter extends RecyclerView.Adapter<RequiredFormAdapter.MyViewHolder> {
 
-	private String[] item;
+	private List<String> item;
 	private boolean imageIsVisible;
 
 	class MyViewHolder extends RecyclerView.ViewHolder {
@@ -25,8 +27,8 @@ public class RequiredFormAdapter extends RecyclerView.Adapter<RequiredFormAdapte
 		}
 	}
 
-	public RequiredFormAdapter(String[] item, boolean imageIsVisible) {
-		this.item = item;
+	public RequiredFormAdapter(List<String> itemList, boolean imageIsVisible) {
+		this.item = itemList;
 		this.imageIsVisible = imageIsVisible;
 	}
 
@@ -39,12 +41,12 @@ public class RequiredFormAdapter extends RecyclerView.Adapter<RequiredFormAdapte
 	@Override
 	public void onBindViewHolder(final MyViewHolder holder, final int position) {
 		holder.imIcon.setVisibility(imageIsVisible ? View.VISIBLE : View.GONE);
-		holder.tvTitle.setText(item[position]);
+		holder.tvTitle.setText(item.get(position));
 	}
 
 	@Override
 	public int getItemCount() {
-		return item.length;
+		return item.size();
 	}
 }
 

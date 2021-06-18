@@ -10,16 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.bpi_detail_header.*
 import kotlinx.android.synthetic.main.bpi_overview_detail_content.*
-import kotlinx.android.synthetic.main.bpi_overview_detail_fragment.*
+import kotlinx.android.synthetic.main.overview_detail_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverviewFromConfig
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.overview.BPIOverviewFragment.Companion.SELECTED_ITEM
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.Utils
@@ -41,16 +39,13 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.apply {
-            val item = getString(SELECTED_ITEM, "")
-            val bpiOverview: BalanceProtectionInsuranceOverviewFromConfig? =
-                item?.let { Gson().fromJson(item, BalanceProtectionInsuranceOverviewFromConfig::class.java) }
-            bpiOverview?.apply {
+
+       val bpiOverview =  BPIOverviewDetailFragmentArgs.fromBundle(arguments)
+            bpiOverview.overviewArgs?.apply {
                 tvTitle?.text = overview?.title ?: ""
                 benefitHeaderDrawable?.let { imBackgroundHeader?.setImageResource(it) }
                 insuranceType?.let { claimVisibility(it) }
-                setBenefitDetail(bpiOverview)
-            }
+                setBenefitDetail(this)
         }
 
         btnHowToClaim?.apply {
@@ -63,7 +58,6 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
                 NavHostFragment.findNavController(this@BPIOverviewDetailFragment).navigateUp()
             }
         })
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

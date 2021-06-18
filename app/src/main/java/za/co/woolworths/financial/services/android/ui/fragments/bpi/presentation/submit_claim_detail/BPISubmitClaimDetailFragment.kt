@@ -13,11 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_submit_claim_detail_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.bpi.ClaimReason
 import za.co.woolworths.financial.services.android.ui.adapters.RequiredFormAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.submit_claim.BPISubmitClaimFragment.Companion.REQUIRED_FORM
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.submit_claim.BPISubmitClaimFragment.Companion.REQUIRED_FORM_SUBMIT
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.submit_claim.BPISubmitClaimFragment.Companion.REQUIRED_TITLE
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -25,8 +23,9 @@ import za.co.woolworths.financial.services.android.util.animation.AnimationUtilE
 
 class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
 
-    private lateinit var mTitle: String
     private val bpiViewModel: BPIViewModel? by activityViewModels()
+
+    private var claimReasonArgs : ClaimReason? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,12 +43,9 @@ class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
 
     private fun initView() {
         arguments?.apply {
-            mTitle = getString(REQUIRED_TITLE, "")
-            val form = getStringArray(REQUIRED_FORM)
-            val formSubmit = getStringArray(REQUIRED_FORM_SUBMIT)
-
-            val requiredFormAdapter = RequiredFormAdapter(form, true)
-            val requiredFormSubmitAdapter = RequiredFormAdapter(formSubmit, false)
+            claimReasonArgs = BPISubmitClaimDetailFragmentArgs.fromBundle(this).claimReasonList
+            val requiredFormAdapter = RequiredFormAdapter(claimReasonArgs?.requiredForm, true)
+            val requiredFormSubmitAdapter = RequiredFormAdapter(claimReasonArgs?.requiredSubmit, false)
 
             rlRequiredForm?.apply {
                 layoutManager = LinearLayoutManager(activity)
@@ -86,7 +82,7 @@ class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
         super.onResume()
         (activity as? BalanceProtectionInsuranceActivity)?.apply {
             changeActionBarUI(colorId = R.color.white, isActionBarTitleVisible = true)
-           setToolbarTitle(mTitle)
+            claimReasonArgs?.title?.let { setToolbarTitle(it) }
         }
     }
 

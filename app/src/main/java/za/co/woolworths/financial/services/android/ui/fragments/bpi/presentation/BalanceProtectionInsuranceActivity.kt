@@ -39,7 +39,6 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
             startDestination = R.id.Overview,
             extras = intent.extras
         )
-
     }
 
     fun actionBar() {

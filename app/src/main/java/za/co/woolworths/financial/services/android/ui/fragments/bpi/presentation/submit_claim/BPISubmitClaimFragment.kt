@@ -6,9 +6,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -22,12 +22,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 class BPISubmitClaimFragment : Fragment() {
 
     private val bpiViewModel: BPIViewModel? by activityViewModels()
-
-    companion object {
-        const val REQUIRED_FORM = "REQUIRED_FORM"
-        const val REQUIRED_FORM_SUBMIT = "REQUIRED_FORM_SUBMIT"
-        const val REQUIRED_TITLE = "REQUIRED_TITLE"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,13 +47,7 @@ class BPISubmitClaimFragment : Fragment() {
             layoutManager = LinearLayoutManager(activity)
             adapter = BPISubmitClaimAdapter(claimReasonList){ position ->
                 val selectedClaimReason  = claimReasonList?.get(position)
-
-                bpiViewModel?.bpiPresenter?.navigateTo(
-                    R.id.action_SubmitClaim_to_BPISubmitClaimDetailFragment,
-                    bundleOf(
-                        REQUIRED_TITLE to selectedClaimReason?.title,
-                        REQUIRED_FORM to selectedClaimReason?.requiredForm,
-                        REQUIRED_FORM_SUBMIT to selectedClaimReason?.requiredSubmit))
+                view?.findNavController()?.navigate(BPISubmitClaimFragmentDirections.actionSubmitClaimToBPISubmitClaimDetailFragment(selectedClaimReason))
             }
         }
     }
