@@ -64,7 +64,6 @@ import java.util.*
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
 
-
     private var mConnectionBroadCast: BroadcastReceiver? = null
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
@@ -373,11 +372,16 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             sendOTPFailedGroup?.visibility = View.GONE
                             sendinOTPLayout?.visibility = View.GONE
                             linkDeviceOTPScreen?.visibility = View.VISIBLE
+                            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
                             retryApiCall = RETRY_GET_OTP
                             return
                         }
-
+                        sendOTPProcessingGroup?.visibility = View.GONE
+                        linkDeviceResultScreen?.visibility = View.GONE
                         sendOTPFailedGroup?.visibility = View.VISIBLE
+                        sendOTPFailedImageView?.visibility = View.VISIBLE
+                        sendOTPFailedTitle?.visibility = View.VISIBLE
+                        sendOTPFailedTitle?.text = "Failed to send OTP."
                     }
                 }
             }
@@ -394,7 +398,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     return
                 }
 
+                sendOTPProcessingGroup?.visibility = View.GONE
+                linkDeviceResultScreen?.visibility = View.GONE
                 sendOTPFailedGroup?.visibility = View.VISIBLE
+                sendOTPFailedImageView?.visibility = View.VISIBLE
+                sendOTPFailedTitle?.visibility = View.VISIBLE
+                sendOTPFailedTitle?.text = "Failed to send OTP."
             }
         }, RetrieveOTPResponse::class.java))
     }
