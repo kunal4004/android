@@ -10,6 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_voice_of_customer.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
+import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, GenericActionOrCancelDialogFragment.IActionOrCancel {
@@ -37,6 +38,9 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
 
         setActionBar()
         setNavHostStartDestination()
+
+        // Hide keyboard in case it was visible from a previous screen
+        KeyboardUtils.hideKeyboard(this)
     }
 
     private fun setActionBar() {
