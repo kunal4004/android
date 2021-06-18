@@ -43,7 +43,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
         dummyQuestions.add(SurveyQuestion(
                 id = 1,
                 type = "NUMERIC",
-                title = "Please rate how satisfied you are with the LiveChat experience?",
+                title = "How was your live chat experience?",
                 minValue = 1,
                 maxValue = 10,
                 required = true,
@@ -52,7 +52,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
         dummyQuestions.add(SurveyQuestion(
                 id = 2,
                 type = "FREE_TEXT",
-                title = "Please tell us how the LiveChat service could make more of a difference to you",
+                title = "Please tell us more about your experience?",
                 required = false,
                 matrix = false
         ))
