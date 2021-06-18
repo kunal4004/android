@@ -89,10 +89,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 else -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
             }
             AccountsProductGroupCode.PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
-            else -> throw RuntimeException("Invalid  productGroupCode ${account?.productGroupCode}")
+            else -> null
         }
 
-        getToolbarTitle(productGroupInfo.first)?.let { toolbarTitle -> mainView?.toolbarTitle(toolbarTitle) }
+        productGroupInfo?.first?.let { getToolbarTitle(it)?.let { toolbarTitle -> mainView?.toolbarTitle(toolbarTitle) } }
 
         return productGroupInfo
     }

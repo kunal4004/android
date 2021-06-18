@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.activities.bpi.*
 import za.co.woolworths.financial.services.android.ui.adapters.BPIOverviewAdapter
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewOverviewImpl
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -25,7 +27,7 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
         fun newInstance(accountInfo: String?): BPIOverviewFragment {
             val bpiOverviewFragment = BPIOverviewFragment()
             val bundle = Bundle()
-            bundle.putString("accountInfo", accountInfo)
+            bundle.putString(BPIOverviewOverviewImpl.ACCOUNT_INFO, accountInfo)
             bpiOverviewFragment.arguments = bundle
             return bpiOverviewFragment
         }
@@ -51,6 +53,7 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
         activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.BPI_OVERVIEW) }
     }
 
+    @SuppressLint("WrongConstant")
     private fun initialize() {
         activity?.let { mLayoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false) }
         mBPIOverviewAdapter = BPIOverviewAdapter(updateBPIList(), this)

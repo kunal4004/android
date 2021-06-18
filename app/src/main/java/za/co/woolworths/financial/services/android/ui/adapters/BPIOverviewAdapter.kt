@@ -21,12 +21,12 @@ internal class BPIOverviewAdapter(private val bpiOverviewList: MutableList<BPIOv
         fun onItemViewClicked(bpiOverview: BPIOverview)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BPIOverviewAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(parent.context).inflate(R.layout.bpi_overview_row, parent, false)
         return ViewHolder(v)
     }
 
-    override fun onBindViewHolder(holder: BPIOverviewAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bpiOverview: BPIOverview = bpiOverviewList!![position]
         val insuranceType: InsuranceType = bpiOverview.insuranceType!!
         mOnBPIOverviewAdapter = onBPIAdapterClickListener
@@ -58,8 +58,8 @@ internal class BPIOverviewAdapter(private val bpiOverviewList: MutableList<BPIOv
                 itemView.tvCover.visibility = View.VISIBLE
                 itemView.imRightArrow.visibility = View.GONE
             } else {
-                itemView.tvCover.visibility = View.GONE
-                itemView.imRightArrow.visibility = View.VISIBLE
+                itemView.tvCover?.visibility = View.GONE
+                itemView.imRightArrow?.visibility = View.VISIBLE
             }
         }
 

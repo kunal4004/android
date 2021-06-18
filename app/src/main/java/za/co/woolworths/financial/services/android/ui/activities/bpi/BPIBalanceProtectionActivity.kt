@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.BPIOverviewFragment
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewOverviewImpl
 import za.co.woolworths.financial.services.android.util.Utils
 
 class BPIBalanceProtectionActivity : AppCompatActivity() {
@@ -17,7 +18,7 @@ class BPIBalanceProtectionActivity : AppCompatActivity() {
         val bundle = intent.extras
         var accountInfo: String? = ""
         if (bundle != null) {
-            accountInfo = bundle.getString("account_info")
+            accountInfo = bundle.getString(BPIOverviewOverviewImpl.ACCOUNT_INFO)
         }
 
         if (savedInstanceState == null) {

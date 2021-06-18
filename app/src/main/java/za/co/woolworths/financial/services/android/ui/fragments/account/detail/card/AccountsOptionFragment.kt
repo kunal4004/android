@@ -54,6 +54,8 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewOverviewImpl
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -315,8 +317,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             }
 
             productGroupCode?.let { Utils.triggerFireBaseEvents(it) }
-            val navigateToBalanceProtectionInsurance = Intent(this, BPIBalanceProtectionActivity::class.java)
-            navigateToBalanceProtectionInsurance.putExtra("account_info", accountInfo)
+                // val navigateToBalanceProtectionInsurance = Intent(this, BPIBalanceProtectionActivity::class.java)
+            val navigateToBalanceProtectionInsurance = Intent(this, BalanceProtectionInsuranceActivity::class.java)
+            navigateToBalanceProtectionInsurance.putExtra(BPIOverviewOverviewImpl.ACCOUNT_INFO, accountInfo)
             startActivity(navigateToBalanceProtectionInsurance)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }

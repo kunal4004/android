@@ -64,18 +64,16 @@ import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForD
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.ui.activities.WChatActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
-import za.co.woolworths.financial.services.android.util.ServiceTools;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
 
@@ -143,6 +141,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static CreditView creditView;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
+    BalanceProtectionInsurance mBalanceProtectionInsurance;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -689,6 +688,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @VisibleForTesting
     public static void testSetContext(Context context) {
         mContextApplication = context;
+    }
+
+    public void setBalanceProtectionInsurance(@NotNull BalanceProtectionInsurance balanceProtectionInsurance) {
+        mBalanceProtectionInsurance = balanceProtectionInsurance;
+    }
+
+    public BalanceProtectionInsurance getBalanceProtectionInsurance() {
+        return mBalanceProtectionInsurance;
     }
 
 }
