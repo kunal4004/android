@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
@@ -34,7 +35,7 @@ class CheckoutAddressConfirmationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init()
+        initView()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,16 +46,16 @@ class CheckoutAddressConfirmationFragment : Fragment() {
             if (containsKey("savedAddress")) {
                 val addressString = getString("savedAddress")
                 if (!addressString.isNullOrEmpty() && !addressString.equals("null", true))
-                savedAddress =
-                    (Utils.jsonStringToObject(
-                        getString("savedAddress"),
-                        SavedAddressResponse::class.java
-                    ) as? SavedAddressResponse)!!
+                    savedAddress =
+                        (Utils.jsonStringToObject(
+                            getString("savedAddress"),
+                            SavedAddressResponse::class.java
+                        ) as? SavedAddressResponse)!!
             }
         }
     }
 
-    private fun init() {
+    private fun initView() {
 
         val decoration: ItemDecoration = object : ItemDecoration() {
             override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
@@ -69,6 +70,17 @@ class CheckoutAddressConfirmationFragment : Fragment() {
             addItemDecoration(decoration)
             layoutManager = activity?.let { LinearLayoutManager(it) }
             checkoutAddressConfirmationListAdapter?.let { adapter = it }
+        }
+
+        deliveryTab.setOnClickListener {
+            it.setBackgroundResource(R.drawable.delivery_round_btn_white)
+            collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
+            addressConfirmationDelivery.visibility = View.VISIBLE
+        }
+        collectionTab.setOnClickListener {
+            it.setBackgroundResource(R.drawable.delivery_round_btn_white)
+            deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
+            addressConfirmationDelivery.visibility = View.GONE
         }
     }
 }

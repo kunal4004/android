@@ -5,10 +5,10 @@
     android:id="@+id/addressSelectionLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/twenty_four_dp"
-    android:layout_marginEnd="@dimen/twenty_four_dp"
     android:background="@color/white"
     android:minHeight="@dimen/sixty_four_dp"
+    android:paddingStart="@dimen/ten_dp"
+    android:paddingEnd="@dimen/ten_dp"
     app:layout_constraintTop_toTopOf="parent">
 
     <CheckBox
@@ -26,6 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
+        android:layout_marginEnd="@dimen/twenty_eight_dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
@@ -43,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
         android:layout_marginTop="@dimen/two_dp"
+        android:layout_marginEnd="@dimen/twenty_eight_dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
@@ -57,6 +59,7 @@
         android:id="@+id/editAddressImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/four_dp_"
         android:contentDescription="@string/edit_address"
         android:minWidth="@dimen/sixteen_dp"
         android:minHeight="@dimen/sixteen_dp"
