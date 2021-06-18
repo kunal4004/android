@@ -1797,6 +1797,7 @@
     <string name="secure_3d_title">3D Secure</string>
     <string name="enter_payment_amount_max_input_error">Please reduce your payment amount. The maximum amount you can pay is R50 000.00</string>
     <string name="enter_payment_amount_min_input_error">Please increase your payment amount. The minimum amount you can pay is R 1.00</string>
+    <string name="update_payment_above_limit_error">We do not accept payments of more than R50 000.</string>
 
     <string name="collection_date_title">labelCollectionDate</string>
     <string name="collection_date_value">txtCollectionDateValue</string>
