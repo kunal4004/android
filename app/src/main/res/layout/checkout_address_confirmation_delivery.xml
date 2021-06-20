@@ -26,6 +26,67 @@
         app:layout_constraintStart_toEndOf="@+id/leftguideline"
         app:layout_constraintTop_toBottomOf="@+id/whereWeDeliveringTitle" />
 
+    <View
+        android:id="@+id/addressListPartition"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/sign_in_register_button_border"
+        app:layout_constraintTop_toBottomOf="@+id/saveAddressRecyclerView" />
+
+    <ImageView
+        android:id="@+id/plusImgAddAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ten_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:minWidth="@dimen/twenty_four_dp"
+        android:minHeight="@dimen/twenty_four_dp"
+        app:layout_constraintStart_toEndOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/addressListPartition"
+        app:srcCompat="@drawable/add_black" />
+
+    <TextView
+        android:id="@+id/addNewAddressTextView"
+        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twelve_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:text="@string/add_a_new_address"
+        app:layout_constraintStart_toEndOf="@+id/plusImgAddAddress"
+        app:layout_constraintTop_toBottomOf="@+id/addressListPartition" />
+
+    <LinearLayout
+        android:id="@+id/btnConfirmLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/twenty_six_dp"
+        android:layout_marginEnd="@dimen/twenty_six_dp"
+        android:background="@color/white"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/addNewAddressTextView">
+
+        <View
+            android:id="@+id/confirmAddressPartition"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_dp"
+            android:layout_marginBottom="@dimen/twenty_five_dp"
+            android:background="@color/sign_in_register_button_border" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnCheckOut"
+            style="@style/blackButtonStyle"
+            android:layout_marginBottom="@dimen/twenty_six_dp"
+            android:background="@drawable/black_button_drawable_state"
+            android:text="@string/confirm"
+            app:WButton_font="medium_bold" />
+
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
         android:layout_width="wrap_content"
