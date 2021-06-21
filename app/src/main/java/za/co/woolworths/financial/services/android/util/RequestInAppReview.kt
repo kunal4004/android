@@ -12,7 +12,6 @@ fun askForReview(activity: Activity?) {
                 val reviewInfo = request.result
                 manager.launchReviewFlow(this, reviewInfo).addOnCompleteListener { _ ->
                     Utils.setInAppReviewRequested()
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.inAppReviewRequest, this)
                 }
             }
         }

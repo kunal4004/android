@@ -734,6 +734,7 @@ class KotlinUtils {
         fun requestInAppReview(eventName: String, activity: Activity?) {
             if (WoolworthsApplication.getInAppReview().isEnabled && WoolworthsApplication.getInAppReview()?.triggerEvents?.contains(eventName) == true && !Utils.isInAppReviewRequested()) {
                 askForReview(activity)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.inAppReviewRequest, activity)
             }
         }
 
