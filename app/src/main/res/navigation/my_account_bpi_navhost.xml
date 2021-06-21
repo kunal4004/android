@@ -59,7 +59,7 @@
             app:popExitAnim="@anim/navigation_slide_to_right" />
         <argument
             android:name="OverviewArgs"
-            app:argType="za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverviewFromConfig"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverview"
             app:nullable="true" />
     </fragment>
 </navigation>

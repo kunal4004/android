@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.balance_protection_insurance_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverviewFromConfig
+import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverview
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.util.Utils
@@ -40,7 +40,7 @@ class BPIOverviewFragment : Fragment() {
         })
     }
 
-    private fun initRecyclerview(coveredUncoveredList: MutableList<BalanceProtectionInsuranceOverviewFromConfig>?) {
+    private fun initRecyclerview(coveredUncoveredList: MutableList<BalanceProtectionInsuranceOverview>?) {
         activity ?: return
         bpiOverviewRecyclerview?.apply {
             layoutManager = LinearLayoutManager(activity)

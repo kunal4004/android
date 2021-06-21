@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.bpi_detail_header.*
 import kotlinx.android.synthetic.main.bpi_overview_detail_content.*
 import kotlinx.android.synthetic.main.overview_detail_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverviewFromConfig
+import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
@@ -90,7 +90,7 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
     }
 
     @SuppressLint("InflateParams")
-    private fun setBenefitDetail(bpiOverview: BalanceProtectionInsuranceOverviewFromConfig?) {
+    private fun setBenefitDetail(bpiOverview: BalanceProtectionInsuranceOverview?) {
         val layoutInflater = LayoutInflater.from(context)
         bpiOverview?.overview?.benefits?.forEach { desc ->
                 val bpiBenefitRow = layoutInflater.inflate(R.layout.bpi_overview_benefit_row, null, false)

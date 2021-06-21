@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_overview_row.view.*
-import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverviewFromConfig
+import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindDimens
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-internal class BalanceProtectionInsuranceAdapter(private val bpiOverviewList: MutableList<BalanceProtectionInsuranceOverviewFromConfig>?, val onClickListener: (BalanceProtectionInsuranceOverviewFromConfig) -> Unit)
+internal class BalanceProtectionInsuranceAdapter(private val bpiOverviewList: MutableList<BalanceProtectionInsuranceOverview>?, val onClickListener: (BalanceProtectionInsuranceOverview) -> Unit)
     : RecyclerView.Adapter<BalanceProtectionInsuranceAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -21,7 +21,7 @@ internal class BalanceProtectionInsuranceAdapter(private val bpiOverviewList: Mu
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val bpiOverview: BalanceProtectionInsuranceOverviewFromConfig? = bpiOverviewList?.get(position)
+        val bpiOverview: BalanceProtectionInsuranceOverview? = bpiOverviewList?.get(position)
         val insuranceType: InsuranceType? = bpiOverview?.insuranceType
         holder.bindItems(bpiOverview)
         insuranceType?.let { holder.verticalBarBackground(it) }
@@ -31,7 +31,7 @@ internal class BalanceProtectionInsuranceAdapter(private val bpiOverviewList: Mu
     override fun getItemCount(): Int = bpiOverviewList?.size ?: 0
 
    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(bpiOverview: BalanceProtectionInsuranceOverviewFromConfig?) {
+        fun bindItems(bpiOverview: BalanceProtectionInsuranceOverview?) {
             setOverviewConstraint(
                 itemCount,
                 itemView.clBalanceOverview,
