@@ -86,7 +86,7 @@ class BPIOverviewFragment : Fragment() {
         super.onResume()
         (activity as? BalanceProtectionInsuranceActivity)?.apply {
             changeActionBarUI(R.color.white, isActionBarTitleVisible = true)
-            setToolbarTitle(R.string.overview)
+            bpiViewModel?.bpiPresenter?.defaultLabel()?.overviewTitle?.let { setToolbarTitle(it) }
         }
     }
 }

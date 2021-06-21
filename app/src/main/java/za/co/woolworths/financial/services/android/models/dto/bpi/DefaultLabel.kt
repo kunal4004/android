@@ -6,5 +6,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class DefaultLabel(
     val howToClaim: String,
-    val requiredDocuments: String
+    val requiredDocuments: String,
+    val claimReasonTitle: String,
+    val overviewTitle: String
 ) : Parcelable

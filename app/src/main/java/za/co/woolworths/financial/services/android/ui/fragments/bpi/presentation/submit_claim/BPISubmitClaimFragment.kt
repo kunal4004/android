@@ -64,7 +64,8 @@ class BPISubmitClaimFragment : Fragment() {
         super.onResume()
         (activity as? BalanceProtectionInsuranceActivity)?.apply {
             changeActionBarUI(isActionBarTitleVisible = true)
-            setToolbarTitle(R.string.select_claim_reason)
+            bpiViewModel?.bpiPresenter?.defaultLabel()?.claimReasonTitle?.let { setToolbarTitle(it) }
+
         }
     }
 

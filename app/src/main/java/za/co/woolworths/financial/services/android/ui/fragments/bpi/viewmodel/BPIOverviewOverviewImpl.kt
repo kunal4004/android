@@ -122,7 +122,7 @@ class BPIOverviewOverviewImpl(private val arguments: Bundle?) :
             }
         }
 
-        return coveredList.plus(uncoveredList).filterNotNull().toMutableList()
+        return coveredList.plus(uncoveredList).toMutableList()
     }
 
     override fun isCovered(): Boolean = coveredUncoveredList().any { it.insuranceType?.covered == true }

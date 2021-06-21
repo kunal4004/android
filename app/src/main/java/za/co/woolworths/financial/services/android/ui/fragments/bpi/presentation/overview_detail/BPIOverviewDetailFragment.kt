@@ -38,18 +38,19 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-       val bpiOverview =  BPIOverviewDetailFragmentArgs.fromBundle(arguments)
+        arguments?.apply {
+            val bpiOverview = BPIOverviewDetailFragmentArgs.fromBundle(this)
             bpiOverview.overviewArgs?.apply {
                 tvTitle?.text = overview?.title ?: ""
                 benefitHeaderDrawable?.let { imBackgroundHeader?.setImageResource(it) }
                 insuranceType?.let { claimVisibility(it) }
                 setBenefitDetail(this)
+            }
         }
 
         btnHowToClaim?.apply {
-         AnimationUtilExtension.animateViewPushDown(this)
+            bpiViewModel?.bpiPresenter?.defaultLabel()?.howToClaim?.let { text = it }
+            AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@BPIOverviewDetailFragment)
         }
 

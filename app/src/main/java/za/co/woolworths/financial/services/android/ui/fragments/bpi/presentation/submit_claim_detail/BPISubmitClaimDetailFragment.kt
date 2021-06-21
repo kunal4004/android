@@ -59,6 +59,7 @@ class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
         }
 
         btnGetDocument?.apply {
+            bpiViewModel?.bpiPresenter?.defaultLabel()?.requiredDocuments?.let { text = it }
             AnimationUtilExtension.animateViewPushDown(this)
             btnGetDocument?.setOnClickListener(this@BPISubmitClaimDetailFragment)
         }
