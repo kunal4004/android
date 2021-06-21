@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_store_confirmation.*
 import kotlinx.android.synthetic.main.layout_confirmation.*
 import kotlinx.android.synthetic.main.layout_store_card_confirmed.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
@@ -131,6 +132,12 @@ class StoreConfirmationFragment : Fragment() {
         val emailRequest = OneAppService.confirmStoreCardEmail(body)
         emailRequest.enqueue(CompletionHandler(object : IResponseListener<GenericResponse> {
             override fun onSuccess(response: GenericResponse?) {
+                if(isConfirmStore){
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_STORE_DELIVERY)
+                } else {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_F2F)
+                }
+
                 processingViewGroup?.visibility = View.GONE
                 when (response?.httpCode?.toString() ?: response?.response?.code?.toString()
                 ?: "0") {
@@ -149,6 +156,11 @@ class StoreConfirmationFragment : Fragment() {
             }
 
             override fun onFailure(error: Throwable?) {
+                if(isConfirmStore){
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_STORE_DELIVERY)
+                } else {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_F2F)
+                }
                 processingViewGroup?.visibility = View.GONE
                 showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)
             }

@@ -26,6 +26,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.select_store_activity.*
 import kotlinx.android.synthetic.main.store_locator_activity.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
@@ -135,9 +136,9 @@ class ParticipatingStoreFragment : Fragment() {
         val clickableSpan: ClickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
                 activity?.apply {
-                    /*val intentInStoreFinder = Intent(this, StoreSelectAddressActivity::class.java)
-                    intentInStoreFinder.putExtra(PRODUCT_NAME, bindString(R.string.participating_stores))
-                    startActivity(intentInStoreFinder)*/
+
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_VTC_CARD_REPLACEMENT_START)
+
                     view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_storeAddressFragment, bundleOf(
                             PRODUCT_NAME to bindString(R.string.participating_stores),
                             STORE_CARD to arguments?.getString(STORE_CARD)

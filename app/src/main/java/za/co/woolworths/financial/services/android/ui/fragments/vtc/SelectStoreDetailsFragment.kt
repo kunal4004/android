@@ -48,33 +48,8 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
     private val REQUEST_CALL = 1
     var googleMap: GoogleMap? = null
 
-    //    var toolbar: Toolbar? = null
     var storeDetails: StoreDetails? = null
     var showStoreSelect: Boolean = false
-
-    //Detail page Views
-//    var detailsLayout: LinearLayout? = null
-//    var timeingsLayout: LinearLayout? = null
-//    var brandsLayout: LinearLayout? = null
-
-//    var direction: RelativeLayout? = null
-//    var makeCall: RelativeLayout? = null
-//    var relBrandLayout: RelativeLayout? = null
-
-    //    var storeTimingView: RelativeLayout? = null
-//    var storeName: TextView? = null
-//    var storeOfferings: TextView? = null
-//    var storeAddress: TextView? = null
-//    var storeDistance: TextView? = null
-//    var storeNumber: TextView? = null
-//    var selectStoreBtn: TextView? = null
-//    private var progressViewGroup: Group? = null
-//    var nativeMap: WTextView? = null
-//    var cancel: WTextView? = null
-//    var closePage: ImageView? = null
-
-//    var mapLayout: LinearLayout? = null
-//    private var mLayout: SlidingUpPanelLayout? = null
 
     companion object{
         const val SHOW_STORE_SELECT = "SHOW_STORE_SELECT"
@@ -119,12 +94,6 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
         mapLayout?.layoutParams = SlidingUpPanelLayout.LayoutParams(width, height * 3 / 10)
         //set height of store details view to 7/10 of the screen height
         selectStoreSlidingPane?.panelHeight = height * 7 / 10
-//        direction = findViewById<RelativeLayout>(R.id.direction)
-//        storeNumber = findViewById<TextView>(R.id.storeNumberTextView)
-//        makeCall = findViewById<RelativeLayout>(R.id.call)
-//        relBrandLayout = findViewById<RelativeLayout>(R.id.relBrandLayout)
-//        selectStoreBtn = findViewById<TextView>(R.id.selectStoreTextViewBtn)
-//        progressViewGroup = findViewById<Group>(R.id.processingViewGroup)
         animateViewPushDown(selectStoreTextViewBtn)
         selectStoreTextViewBtn?.visibility = if(showStoreSelect) View.VISIBLE else View.GONE
 

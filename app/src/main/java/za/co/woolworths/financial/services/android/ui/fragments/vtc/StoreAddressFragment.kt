@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_store_address.*
 import kotlinx.android.synthetic.main.layout_address_residential_or_business.*
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.select_store_activity.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.UserManager
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
@@ -190,6 +191,8 @@ class StoreAddressFragment : Fragment() {
                     if (!validateTextViews()) {
                         return@setOnClickListener
                     }
+
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_SC_REPLACE_CARD_F2F)
 
                     var resp: StoreCardsResponse? = null
                     arguments?.apply {

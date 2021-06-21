@@ -312,7 +312,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
     @TargetApi(Build.VERSION_CODES.M)
     private fun checkForLocationPermission() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_STORES)
         activity?.apply {
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
             if (!Utils.isLocationEnabled(this)) {
@@ -341,6 +340,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         bindString(R.string.replacement_card_label) -> {
                             activity?.apply {
                                 getStoreCardResponse()?.let {
+                                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD)
                                     Intent(this, SelectStoreActivity::class.java).apply {
                                         putExtra(
                                             SelectStoreActivity.STORE_DETAILS,

@@ -17,6 +17,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.store_locator_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
@@ -170,15 +171,8 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     }
 
     private fun showStoreDetails(position: Int) {
-        /*activity?.apply {
-            with(Intent(this, SelectStoreDetailsActivity::class.java)) {
-                putExtra("store", Gson().toJson(storeDetailsList?.get(position)))
-                putExtra("FromStockLocator", false)
-                putExtra("SHOULD_DISPLAY_BACK_ICON", true)
-                startActivity(this)
-                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            }
-        }*/
+
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_SC_REPLACE_CARD_STORE)
 
         view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_selectStoreDetailsFragment, bundleOf(
                 "store" to Gson().toJson(storeDetailsList?.get(position)),
