@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.content.Intent
 import android.graphics.Canvas
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,7 +21,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 /**
  * Created by Kunal Uttarwar on 16/06/21.
  */
-class CheckoutAddressConfirmationFragment : Fragment() {
+class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
     var savedAddress: SavedAddressResponse? = null
     var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? = null
@@ -71,16 +72,27 @@ class CheckoutAddressConfirmationFragment : Fragment() {
             layoutManager = activity?.let { LinearLayoutManager(it) }
             checkoutAddressConfirmationListAdapter?.let { adapter = it }
         }
+        deliveryTab.setOnClickListener(this)
+        collectionTab.setOnClickListener(this)
+        plusImgAddAddress.setOnClickListener(this)
+        addNewAddressTextView.setOnClickListener(this)
+    }
 
-        deliveryTab.setOnClickListener {
-            it.setBackgroundResource(R.drawable.delivery_round_btn_white)
-            collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
-            addressConfirmationDelivery.visibility = View.VISIBLE
-        }
-        collectionTab.setOnClickListener {
-            it.setBackgroundResource(R.drawable.delivery_round_btn_white)
-            deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
-            addressConfirmationDelivery.visibility = View.GONE
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.deliveryTab -> {
+                deliveryTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
+                collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
+                addressConfirmationDelivery.visibility = View.VISIBLE
+            }
+            R.id.collectionTab -> {
+                collectionTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
+                deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
+                addressConfirmationDelivery.visibility = View.GONE
+            }
+            R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
+                startActivity(Intent(activity, CheckoutActivity::class.java))
+            }
         }
     }
 }

@@ -376,7 +376,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             val geocoder = Geocoder(context, Locale.getDefault())
             val addresses =
                 geocoder.getFromLocation(selectedAddress.latitude!!, selectedAddress.longitude!!, 1)
-            selectedAddress.postalCode = addresses[0].postalCode
+            if (!addresses[0]?.postalCode.isNullOrEmpty())
+                selectedAddress.postalCode = addresses[0]?.postalCode.toString()
         }
 
         autoCompleteTextView.apply {

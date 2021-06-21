@@ -53,6 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
         android:layout_marginTop="@dimen/twenty_dp"
+        android:minHeight="@dimen/twenty_four_dp"
         android:text="@string/add_a_new_address"
         app:layout_constraintStart_toEndOf="@+id/plusImgAddAddress"
         app:layout_constraintTop_toBottomOf="@+id/addressListPartition" />
@@ -67,8 +68,7 @@
         android:background="@color/white"
         android:gravity="bottom"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/addNewAddressTextView">
+        app:layout_constraintBottom_toTopOf="@+id/bottom_guideline">
 
         <View
             android:id="@+id/confirmAddressPartition"
@@ -80,7 +80,6 @@
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnCheckOut"
             style="@style/blackButtonStyle"
-            android:layout_marginBottom="@dimen/twenty_six_dp"
             android:background="@drawable/black_button_drawable_state"
             android:text="@string/confirm"
             app:WButton_font="medium_bold" />
