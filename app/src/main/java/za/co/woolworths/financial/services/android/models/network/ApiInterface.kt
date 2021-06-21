@@ -8,6 +8,7 @@ import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.ChangeAddressResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -640,6 +641,10 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("addAddress")
     fun addAddress(@Body addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("changeAddress/{nickName}")
+    fun changeAddress(@Path("nickName") nickName: String): Call<ChangeAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/{locationId}")

@@ -3,16 +3,23 @@ package za.co.woolworths.financial.services.android.checkout.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
+import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
 /**
  * Created by Kunal Uttarwar on 17/06/21.
  */
-class CheckoutAddressConfirmationListAdapter(private var savedAddress: SavedAddressResponse?) :
+class CheckoutAddressConfirmationListAdapter(
+    private var savedAddress: SavedAddressResponse?,
+    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel,
+    private val viewLifecycleOwner: LifecycleOwner
+) :
     RecyclerView.Adapter<CheckoutAddressConfirmationListAdapter.CheckoutAddressConfirmationViewHolder>() {
 
     var checkedItemPosition = -1
@@ -60,6 +67,10 @@ class CheckoutAddressConfirmationListAdapter(private var savedAddress: SavedAddr
                 }
 
                 setOnClickListener {
+                    savedAddress?.addresses?.get(position)?.let {
+                        changeAddress(it.nickname)
+                    }
+
                     checkedItemPosition = position
                     notifyDataSetChanged()
                 }
@@ -69,5 +80,23 @@ class CheckoutAddressConfirmationListAdapter(private var savedAddress: SavedAddr
             }
 
         }
+    }
+
+    private fun changeAddress(nickName: String) {
+        checkoutAddAddressNewUserViewModel.changeAddress(nickName).observe(viewLifecycleOwner, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    if (it?.data !=null && it?.data.deliverable){
+
+                    }
+                }
+                ResponseStatus.LOADING -> {
+
+                }
+                ResponseStatus.ERROR -> {
+
+                }
+            }
+        })
     }
 }

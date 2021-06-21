@@ -7,14 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
+import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
+import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
+import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
+import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -25,6 +31,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
     var savedAddress: SavedAddressResponse? = null
     var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? = null
+    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +43,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupViewModel()
         initView()
     }
 
@@ -56,28 +64,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun initView() {
-
-        val decoration: ItemDecoration = object : ItemDecoration() {
-            override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-                super.onDraw(c, parent!!, state!!)
-                //empty because to remove divider
-            }
-        }
-
-        saveAddressRecyclerView?.apply {
-            checkoutAddressConfirmationListAdapter =
-                CheckoutAddressConfirmationListAdapter(savedAddress)
-            addItemDecoration(decoration)
-            layoutManager = activity?.let { LinearLayoutManager(it) }
-            checkoutAddressConfirmationListAdapter?.let { adapter = it }
-        }
-        deliveryTab.setOnClickListener(this)
-        collectionTab.setOnClickListener(this)
-        plusImgAddAddress.setOnClickListener(this)
-        addNewAddressTextView.setOnClickListener(this)
-    }
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.deliveryTab -> {
@@ -94,5 +80,39 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 startActivity(Intent(activity, CheckoutActivity::class.java))
             }
         }
+    }
+
+    private fun initView() {
+
+        val decoration: ItemDecoration = object : ItemDecoration() {
+            override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+                super.onDraw(c, parent!!, state!!)
+                //empty because to remove divider
+            }
+        }
+
+        saveAddressRecyclerView?.apply {
+            checkoutAddressConfirmationListAdapter =
+                CheckoutAddressConfirmationListAdapter(savedAddress, checkoutAddAddressNewUserViewModel, viewLifecycleOwner)
+            addItemDecoration(decoration)
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            checkoutAddressConfirmationListAdapter?.let { adapter = it }
+        }
+        deliveryTab.setOnClickListener(this)
+        collectionTab.setOnClickListener(this)
+        plusImgAddAddress.setOnClickListener(this)
+        addNewAddressTextView.setOnClickListener(this)
+    }
+
+    private fun setupViewModel() {
+        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory(
+                CheckoutAddAddressNewUserInteractor(
+                    CheckoutAddAddressNewUserApiHelper(),
+                    CheckoutMockApiHelper()
+                )
+            )
+        ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 }

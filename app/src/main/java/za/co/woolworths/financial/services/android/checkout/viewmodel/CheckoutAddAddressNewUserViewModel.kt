@@ -5,10 +5,7 @@ import androidx.lifecycle.liveData
 import kotlinx.coroutines.Dispatchers
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
-import za.co.woolworths.financial.services.android.checkout.utils.CheckoutResourceAddAddress
-import za.co.woolworths.financial.services.android.checkout.utils.CheckoutResourceGetProvince
-import za.co.woolworths.financial.services.android.checkout.utils.CheckoutResourceGetSuburb
-import za.co.woolworths.financial.services.android.checkout.utils.CheckoutResourceSavedAddress
+import za.co.woolworths.financial.services.android.checkout.utils.*
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
@@ -69,6 +66,21 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
             )
         } catch (exception: Exception) {
             emit(CheckoutResourceAddAddress.error(data = null, msg = exception.toString()))
+        }
+    }
+
+    fun changeAddress(nickName: String) = liveData(Dispatchers.IO) {
+        emit(CheckoutResourceChangeAddress.loading(data = null))
+        try {
+            emit(
+                CheckoutResourceChangeAddress.success(
+                    data = checkoutAddAddressNewUserInteractor.changeAddress(
+                        nickName
+                    ).body()
+                )
+            )
+        } catch (exception: Exception) {
+            emit(CheckoutResourceChangeAddress.error(data = null, msg = exception.toString()))
         }
     }
 }
