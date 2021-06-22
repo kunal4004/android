@@ -68,6 +68,9 @@ public class Address {
     @SerializedName("displayName")
     private String displayName;
 
+    @SerializedName("addressType")
+    private String addressType;
+
     @SerializedName("latitude")
     private Double latitude;
 
@@ -243,4 +246,27 @@ public class Address {
         this.displayName = displayName;
     }
 
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getAddressType() {
+        return addressType;
+    }
+
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
+    }
 }

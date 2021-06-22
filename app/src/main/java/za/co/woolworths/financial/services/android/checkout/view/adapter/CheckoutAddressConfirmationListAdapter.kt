@@ -1,9 +1,12 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
@@ -11,6 +14,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import za.co.woolworths.financial.services.android.util.Utils
 
 /**
  * Created by Kunal Uttarwar on 17/06/21.
@@ -18,7 +22,8 @@ import za.co.woolworths.financial.services.android.ui.extension.bindColor
 class CheckoutAddressConfirmationListAdapter(
     private var savedAddress: SavedAddressResponse?,
     private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel,
-    private val viewLifecycleOwner: LifecycleOwner
+    private val viewLifecycleOwner: LifecycleOwner,
+    private val navController: NavController?
 ) :
     RecyclerView.Adapter<CheckoutAddressConfirmationListAdapter.CheckoutAddressConfirmationViewHolder>() {
 
@@ -75,7 +80,12 @@ class CheckoutAddressConfirmationListAdapter(
                     notifyDataSetChanged()
                 }
                 editAddressImageView.setOnClickListener {
-
+                    val bundle = Bundle()
+                    bundle.putString("editSavedAddress", Utils.toJson(savedAddress?.addresses?.get(position)))
+                    navController?.navigate(
+                        R.id.CheckoutAddAddressNewUserFragment,
+                        bundleOf("bundle" to bundle)
+                    )
                 }
             }
 

@@ -7,7 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
@@ -32,6 +35,11 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
     var savedAddress: SavedAddressResponse? = null
     var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
+    private var navController: NavController? = null
+
+    companion object{
+        const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,25 +51,18 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (navController == null)
+            navController = Navigation.findNavController(view)
         setupViewModel()
         initView()
+        addFragmentResultListener()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
-            if (containsKey("savedAddress")) {
-                val addressString = getString("savedAddress")
-                if (!addressString.isNullOrEmpty() && !addressString.equals("null", true))
-                    savedAddress =
-                        (Utils.jsonStringToObject(
-                            getString("savedAddress"),
-                            SavedAddressResponse::class.java
-                        ) as? SavedAddressResponse)!!
-            }
-        }
+        updateSavedAddress(bundle)
     }
 
     override fun onClick(v: View?) {
@@ -79,6 +80,32 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
                 startActivity(Intent(activity, CheckoutActivity::class.java))
             }
+            R.id.btnCheckOut -> {
+                if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
+                    addNewAddressErrorMsg.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun addFragmentResultListener() {
+        // Use the Kotlin extension in the fragment-ktx artifact
+        setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
+            updateSavedAddress(bundle)
+            initView()
+        }
+    }
+
+    private fun updateSavedAddress(bundle: Bundle?) {
+        bundle?.apply {
+            if (containsKey("savedAddress")) {
+                val addressString = getString("savedAddress")
+                if (!addressString.isNullOrEmpty() && !addressString.equals("null", true))
+                    savedAddress =
+                        (Utils.jsonStringToObject(
+                            getString("savedAddress"),
+                            SavedAddressResponse::class.java
+                        ) as? SavedAddressResponse)!!
+            }
         }
     }
 
@@ -93,7 +120,11 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
         saveAddressRecyclerView?.apply {
             checkoutAddressConfirmationListAdapter =
-                CheckoutAddressConfirmationListAdapter(savedAddress, checkoutAddAddressNewUserViewModel, viewLifecycleOwner)
+                CheckoutAddressConfirmationListAdapter(
+                    savedAddress,
+                    checkoutAddAddressNewUserViewModel,
+                    viewLifecycleOwner, navController
+                )
             addItemDecoration(decoration)
             layoutManager = activity?.let { LinearLayoutManager(it) }
             checkoutAddressConfirmationListAdapter?.let { adapter = it }

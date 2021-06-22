@@ -643,6 +643,10 @@ interface ApiInterface {
     fun addAddress(@Body addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("address/{id}")
+    fun updateAddress(@Body addAddressRequestBody: AddAddressRequestBody, @Path("id") id: String): Call<AddAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("changeAddress/{nickName}")
     fun changeAddress(@Path("nickName") nickName: String): Call<ChangeAddressResponse>
 

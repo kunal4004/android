@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
@@ -24,10 +25,8 @@ import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
-import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
-import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
-import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UPDATE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
@@ -65,6 +64,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var isShimmerRequired = true
+    private var selectedAddressId = ""
+    private var savedAddress: Address? = null
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -77,6 +78,26 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.checkout_add_address_new_user, container, false)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            if (containsKey("editSavedAddress")) {
+                val addressId = getString("editSavedAddress")
+                if (!addressId.isNullOrEmpty() && !addressId.equals("null", true)) {
+                    savedAddress =
+                        (Utils.jsonStringToObject(
+                            getString("editSavedAddress"),
+                            Address::class.java
+                        ) as? Address)
+                    selectedAddressId = savedAddress?.id.toString()
+                    isShimmerRequired = false
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,6 +117,31 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         setupViewModel()
         init()
         addFragmentResultListener()
+        if (savedAddress != null) {
+            setTextFields(savedAddress)
+        }
+    }
+
+    private fun setTextFields(savedAddress: Address?) {
+        selectedAddress.address1 = savedAddress?.address1 ?: ""
+        selectedAddress.postalCode = savedAddress?.postalCode ?: ""
+        selectedAddress.region = savedAddress?.region ?: ""
+        selectedAddress.suburbId = savedAddress?.suburbId ?: ""
+        selectedAddress.city = savedAddress?.city ?: ""
+        selectedAddress.suburb = savedAddress?.suburb ?: ""
+        selectedAddress.province = savedAddress?.country ?: "" //province and country
+        selectedAddress.latitude = savedAddress?.latitude
+        selectedAddress.longitude = savedAddress?.longitude
+        selectedAddress.nickname = savedAddress?.nickname ?: ""
+        selectedAddress.unitComplexFloor = savedAddress?.address2 ?: ""
+
+        autoCompleteTextView?.setText(selectedAddress.address1)
+        addressNicknameEditText.setText(selectedAddress.nickname)
+        unitComplexFloorEditText.setText(selectedAddress.unitComplexFloor)
+        suburbEditText.setText(selectedAddress.suburb)
+        provinceAutocompleteEditText.setText(selectedAddress.province)
+        postalCode.setText(selectedAddress.postalCode)
+        selectedDeliveryAddressType = savedAddress?.addressType
     }
 
     private fun initView() {
@@ -111,11 +157,21 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
         saveAddress?.setOnClickListener(this)
         autoCompleteTextView?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        addressNicknameEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        addressNicknameEditText?.apply {
+            afterTextChanged {
+                selectedAddress.nickname = it
+                showErrorInputField(this, View.GONE)
+            }
+        }
         suburbEditText?.apply { afterTextChanged { suburbNameErrorMsg?.visibility = View.GONE } }
         provinceAutocompleteEditText?.apply {
             afterTextChanged {
                 provinceNameErrorMsg?.visibility = View.GONE
+            }
+        }
+        unitComplexFloorEditText?.apply {
+            afterTextChanged {
+                selectedAddress.unitComplexFloor = it
             }
         }
         postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
@@ -621,40 +677,26 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             if (isNickNameExist())
                 return
 
-            checkoutAddAddressNewUserViewModel.addAddress(
-                AddAddressRequestBody(
-                    addressNicknameEditText?.text.toString(),
-                    recipientName?.text.toString(),
-                    autoCompleteTextView?.text.toString(),
-                    unitComplexFloorEditText?.text.toString(),
-                    postalCode?.text.toString(),
-                    cellphoneNumber?.text.toString(),
-                    "",
-                    selectedAddress.region,
-                    selectedAddress.suburbId,
-                    selectedAddress.city,
-                    suburbEditText?.text.toString(),
-                    selectedDeliveryAddressType.toString(),
-                    "",
-                    false,
-                    selectedAddress.latitude!!,
-                    selectedAddress.longitude!!
-                )
-            ).observe(this, {
-                when (it.responseStatus) {
-                    ResponseStatus.SUCCESS -> {
-                        if (savedAddressResponse != null && it?.data != null)
-                            savedAddressResponse?.addresses?.add(it.data.address)
-                        navigateToAddressConfirmation()
-                    }
-                    ResponseStatus.LOADING -> {
+            if (selectedAddressId.isNullOrEmpty()) {
+                checkoutAddAddressNewUserViewModel.addAddress(
+                    getAddAddressRequestBody()
+                ).observe(this, {
+                    when (it.responseStatus) {
+                        ResponseStatus.SUCCESS -> {
+                            if (savedAddressResponse != null && it?.data != null)
+                                savedAddressResponse?.addresses?.add(it.data.address)
+                            navigateToAddressConfirmation()
+                        }
+                        ResponseStatus.LOADING -> {
 
-                    }
-                    ResponseStatus.ERROR -> {
+                        }
+                        ResponseStatus.ERROR -> {
 
+                        }
                     }
-                }
-            })
+                })
+            } else
+                updateAddress()
 
         } else {
             isNickNameExist()
@@ -682,9 +724,55 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun getAddAddressRequestBody(): AddAddressRequestBody {
+        return AddAddressRequestBody(
+            selectedAddress.nickname,
+            recipientName?.text.toString(),
+            selectedAddress.address1,
+            selectedAddress.unitComplexFloor,
+            selectedAddress.postalCode,
+            cellphoneNumber?.text.toString(),
+            "",
+            selectedAddress.region,
+            selectedAddress.suburbId,
+            selectedAddress.city,
+            suburbEditText?.text.toString(),
+            selectedDeliveryAddressType.toString(),
+            "",
+            false,
+            selectedAddress.latitude!!,
+            selectedAddress.longitude!!
+        )
+    }
+
+    private fun updateAddress() {
+        checkoutAddAddressNewUserViewModel.updateAddress(
+            getAddAddressRequestBody(), selectedAddressId
+        ).observe(this, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    if (savedAddressResponse != null && it?.data != null) {
+                        savedAddressResponse?.addresses?.add(it.data.address)
+                        val bundle = Bundle()
+                        bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
+                        setFragmentResult(UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundle)
+                        navController?.navigateUp()
+                        selectedAddressId = ""
+                    }
+                }
+                ResponseStatus.LOADING -> {
+
+                }
+                ResponseStatus.ERROR -> {
+
+                }
+            }
+        })
+    }
+
     private fun isNickNameExist(): Boolean {
         var isExist = false
-        if (!savedAddressResponse?.addresses.isNullOrEmpty()) {
+        if (!savedAddressResponse?.addresses.isNullOrEmpty() && selectedAddressId.isNullOrEmpty()) {
             for (address in savedAddressResponse?.addresses!!) {
                 if (addressNicknameEditText.text.toString().equals(address?.nickname, true)) {
                     addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)

@@ -13,5 +13,6 @@ class CheckoutAddAddressNewUserInteractor(private val checkoutAddAddressNewUserA
     fun getProvince() = checkoutAddAddressNewUserApiHelper.getProvince()
     fun getSavedAddresses() = checkoutMockApiHelper.getSavedAddresses()
     fun addAddress(addAddressRequestBody: AddAddressRequestBody) = checkoutMockApiHelper.addAddress(addAddressRequestBody)
+    fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) = checkoutMockApiHelper.updateAddress(addAddressRequestBody, addressId)
     fun changeAddress(nickName:String) = checkoutMockApiHelper.changeAddress(nickName)
 }

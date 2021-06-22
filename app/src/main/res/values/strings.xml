@@ -2055,6 +2055,7 @@
     <string name="save_address">SAVE ADDRESS</string>
     <string name="places_address_error_msg">Please enter a valid Address</string>
     <string name="address_nickname_error_msg">This field is required.</string>
+    <string name="add_new_address_error_msg">Please select or add a delivery address.</string>
     <string name="delivering_address_types_error_msg">Please select an address type.</string>
     <string name="suburb_name_error_msg">Please select a suburb.</string>
     <string name="province_name_error_msg">Please select a province.</string>
