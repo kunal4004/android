@@ -25,21 +25,26 @@
         <RelativeLayout
             android:id="@+id/rlCardBarcode"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/rlCardDetails"
+            android:layout_alignParentTop="true">
 
             <TextView
                 android:id="@+id/tvBarcodeTitle"
                 style="@style/dialog_title_text_style"
                 android:layout_width="match_parent"
                 android:layout_alignParentTop="true"
+                android:contentDescription="@string/scan_barcode_title"
                 android:text="@string/dialog_scan_barcode_to_pay_barcode_title" />
 
             <TextView
                 android:id="@+id/tvBarcodeDescription"
                 style="@style/dialog_description_text_style"
                 android:layout_width="match_parent"
+                android:layout_above="@id/ivBarcode"
                 android:layout_below="@id/tvBarcodeTitle"
                 android:layout_marginTop="@dimen/sixteen_dp"
+                android:contentDescription="@string/scan_barcode_description"
                 android:text="@string/dialog_scan_barcode_to_pay_barcode_desc"
                 android:textSize="@dimen/sixteen_sp" />
 
@@ -47,9 +52,11 @@
                 android:id="@+id/ivBarcode"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sixty_six_dp"
-                android:layout_below="@id/tvBarcodeDescription"
+                android:layout_alignParentBottom="true"
                 android:layout_marginTop="@dimen/thirty_six_dp"
+                android:layout_marginBottom="@dimen/three_dp"
                 android:adjustViewBounds="true"
+                android:contentDescription="@string/scan_barcode_image"
                 android:scaleType="fitXY" />
 
         </RelativeLayout>
@@ -64,6 +71,7 @@
                 style="@style/dialog_title_text_style"
                 android:layout_width="match_parent"
                 android:layout_alignParentTop="true"
+                android:contentDescription="@string/card_details_title"
                 android:text="@string/dialog_scan_barcode_to_pay_card_details_title" />
 
             <TextView
@@ -72,6 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_below="@id/tvCardDetailsTitle"
                 android:layout_marginTop="@dimen/fourty_four_dp"
+                android:contentDescription="@string/card_details_number"
                 android:lines="1"
                 android:maxLines="1"
                 app:autoSizeMaxTextSize="@dimen/thirty_sp"
@@ -86,6 +95,7 @@
                 android:layout_below="@id/tvCardNumber"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="@dimen/thirty_nine_dp"
+                android:contentDescription="@string/card_details_cardholder_label"
                 android:text="Cardholder" />
 
             <TextView
@@ -95,6 +105,7 @@
                 android:layout_below="@id/tvCardholderLabel"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="@dimen/eight_dp"
+                android:contentDescription="@string/card_details_sequence_label"
                 android:text="Sequence Number" />
 
             <TextView
@@ -103,6 +114,7 @@
                 android:layout_width="wrap_content"
                 android:layout_alignBaseline="@id/tvCardholderLabel"
                 android:layout_alignParentRight="true"
+                android:contentDescription="@string/card_details_cardholder_value"
                 android:textColor="@color/card_details_value_color" />
 
             <TextView
@@ -111,18 +123,37 @@
                 android:layout_width="wrap_content"
                 android:layout_alignBaseline="@id/tvSequenceNumberLabel"
                 android:layout_alignParentRight="true"
+                android:contentDescription="@string/card_details_sequence_value"
                 android:textColor="@color/card_details_value_color" />
 
         </RelativeLayout>
 
     </RelativeLayout>
 
-    <za.co.woolworths.financial.services.android.ui.views.WButton
+    <LinearLayout
         android:id="@+id/btnToggleCardDetails"
         style="@style/blackButtonStyle"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/twenty_four_dp"
-        android:text="@string/dialog_scan_barcode_to_pay_toggle_details_visible" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:contentDescription="@string/scan_barcode_toggle_card_details_button"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/fifteen_dp"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_hide_password" />
+
+        <TextView
+            android:id="@+id/btnToggleCardDetailsLabel"
+            style="@style/blackButtonStyle"
+            android:layout_width="wrap_content"
+            android:text="@string/dialog_scan_barcode_to_pay_toggle_details_visible" />
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -132,10 +163,13 @@
 
     <TextView
         android:id="@+id/btnDismissDialog"
-        style="@style/dialog_action_text_style"
+        style="@style/call_to_action_text_style"
+        android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/twenty_dp"
+        android:contentDescription="@string/scan_barcode_dismiss_button"
         android:padding="@dimen/nine_dp"
-        android:text="@string/done" />
+        android:text="@string/done"
+        android:textColor="@color/black" />
 
 </LinearLayout>

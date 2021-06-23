@@ -1116,9 +1116,17 @@
     <string name="info_card_expire_date">info card expire date</string>
     <string name="layout_pay_with_card">layout pay with card</string>
     <string name="layout_how_it_works">layout how it works</string>
+    <string name="scan_barcode_toggle_card_details_button">scan barcode toggle card details button</string>
+    <string name="scan_barcode_dismiss_button">scan barcode dismiss button</string>
     <string name="scan_barcode_title">barcode title</string>
     <string name="scan_barcode_description">barcode description</string>
-    <string name="barcode_image">barcode image</string>
+    <string name="scan_barcode_image">barcode image</string>
+    <string name="card_details_title">card details title</string>
+    <string name="card_details_number">card details number</string>
+    <string name="card_details_cardholder_label">card details cardholder label</string>
+    <string name="card_details_cardholder_value">card details cardholder value</string>
+    <string name="card_details_sequence_label">card details sequence number label</string>
+    <string name="card_details_sequence_value">card details sequence number value</string>
 
     <!-- storeCardMoreBenefits -->
 

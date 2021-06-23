@@ -11,6 +11,8 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import kotlinx.android.synthetic.main.scan_barcode_to_pay_dialog.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -22,13 +24,11 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
     private var mStoreCardDetail: String? = null
     private var mStoreCardsResponse: StoreCardsResponse? = null
     private var listener: IOnTemporaryStoreCardDialogDismiss? = null
-    private var isRegenerateBarcode: Boolean = false
     private var isCardDetailsVisible: Boolean = false
     private val timerCardDetailsVisibility = Handler(Looper.getMainLooper())
 
     interface IOnTemporaryStoreCardDialogDismiss {
-        fun onDialogDismiss()
-        fun onRegenerateBarcode()
+        fun onTempStoreCardDialogDismiss()
     }
 
     companion object {
@@ -62,11 +62,6 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUniqueIds()
-    }
-
-    override fun onResume() {
-        super.onResume()
         configureUI()
     }
 
@@ -90,7 +85,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
 
     private fun toggleCardDetailsVisibility() {
         isCardDetailsVisible = !isCardDetailsVisible
-        btnToggleCardDetails.text = getString(if (isCardDetailsVisible) R.string.dialog_scan_barcode_to_pay_toggle_details_hidden else R.string.dialog_scan_barcode_to_pay_toggle_details_visible)
+        btnToggleCardDetailsLabel.text = getString(if (isCardDetailsVisible) R.string.dialog_scan_barcode_to_pay_toggle_details_hidden else R.string.dialog_scan_barcode_to_pay_toggle_details_visible)
 
         rlCardBarcode
                 .animate()
@@ -105,28 +100,16 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
 
         timerCardDetailsVisibility.removeCallbacksAndMessages(null)
         if (isCardDetailsVisible) {
-            // TODO: get value from app config
-            timerCardDetailsVisibility.postDelayed({ toggleCardDetailsVisibility() }, 5000)
-        }
-    }
+            val cardDisplayTimeoutInSeconds = WoolworthsApplication.getVirtualTempCard().cardDisplayTimeoutInSeconds ?: 10L
+            timerCardDetailsVisibility.postDelayed({ toggleCardDetailsVisibility() }, cardDisplayTimeoutInSeconds * 1000)
 
-    private fun regenerateBarcode() {
-        isRegenerateBarcode = true
-        dismissAllowingStateLoss()
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_VIEWCARDNUMBERS)
+        }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        if (isRegenerateBarcode) listener?.onRegenerateBarcode() else listener?.onDialogDismiss()
-    }
-
-    private fun setUniqueIds() {
-        activity?.resources?.apply {
-//            tvTitle?.contentDescription = getString(R.string.scan_barcode_title)
-//            tvDescription?.contentDescription = getString(R.string.scan_barcode_description)
-//            ivBarcode?.contentDescription = getString(R.string.barcode_image)
-//            cardHolderName?.contentDescription = getString(R.string.text_cardHolderName)
-        }
+        listener?.onTempStoreCardDialogDismiss()
     }
 
     override fun onDetach() {
