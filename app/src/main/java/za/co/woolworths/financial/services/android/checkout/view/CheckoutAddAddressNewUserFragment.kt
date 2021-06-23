@@ -3,9 +3,7 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.content.Context
 import android.location.Geocoder
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -94,10 +92,17 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             Address::class.java
                         ) as? Address)
                     selectedAddressId = savedAddress?.id.toString()
+                    setHasOptionsMenu(true)
                     isShimmerRequired = false
                 }
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_item, menu)
+        if (selectedAddressId.isNotEmpty()) //show only if it is edit address screen
+            return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -117,7 +122,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         setupViewModel()
         init()
         addFragmentResultListener()
+        // Show prepolute fields on edit address
         if (savedAddress != null) {
+            if (activity is CheckoutActivity)
+                (activity as CheckoutActivity).hideBackArrow()
             setTextFields(savedAddress)
         }
     }
@@ -129,7 +137,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectedAddress.suburbId = savedAddress?.suburbId ?: ""
         selectedAddress.city = savedAddress?.city ?: ""
         selectedAddress.suburb = savedAddress?.suburb ?: ""
-        selectedAddress.province = savedAddress?.country ?: "" //province and country
+        selectedAddress.province = savedAddress?.city ?: "" //province and city
         selectedAddress.latitude = savedAddress?.latitude
         selectedAddress.longitude = savedAddress?.longitude
         selectedAddress.nickname = savedAddress?.nickname ?: ""
@@ -740,8 +748,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             selectedDeliveryAddressType.toString(),
             "",
             false,
-            selectedAddress.latitude!!,
-            selectedAddress.longitude!!
+            selectedAddress.latitude,
+            selectedAddress.longitude
         )
     }
 

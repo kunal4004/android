@@ -21,9 +21,8 @@ import za.co.woolworths.financial.services.android.util.Utils
  */
 class CheckoutAddressConfirmationListAdapter(
     private var savedAddress: SavedAddressResponse?,
-    private val checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel,
-    private val viewLifecycleOwner: LifecycleOwner,
-    private val navController: NavController?
+    private val navController: NavController?,
+    private val listner: EventListner
 ) :
     RecyclerView.Adapter<CheckoutAddressConfirmationListAdapter.CheckoutAddressConfirmationViewHolder>() {
 
@@ -69,11 +68,14 @@ class CheckoutAddressConfirmationListAdapter(
                             R.color.white
                         )
                     )
+                    if (selector.isChecked){
+                        listner.hideErrorView()
+                    }
                 }
 
                 setOnClickListener {
                     savedAddress?.addresses?.get(position)?.let {
-                        changeAddress(it.nickname)
+                        listner.changeAddress(it.nickname)
                     }
 
                     checkedItemPosition = position
@@ -92,21 +94,8 @@ class CheckoutAddressConfirmationListAdapter(
         }
     }
 
-    private fun changeAddress(nickName: String) {
-        checkoutAddAddressNewUserViewModel.changeAddress(nickName).observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    if (it?.data !=null && it?.data.deliverable){
-
-                    }
-                }
-                ResponseStatus.LOADING -> {
-
-                }
-                ResponseStatus.ERROR -> {
-
-                }
-            }
-        })
+    interface EventListner {
+        fun hideErrorView()
+        fun changeAddress(nickName: String)
     }
 }

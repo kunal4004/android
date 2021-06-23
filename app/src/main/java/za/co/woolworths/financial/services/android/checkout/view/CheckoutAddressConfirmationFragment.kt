@@ -24,20 +24,22 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.util.Utils
 
 
 /**
  * Created by Kunal Uttarwar on 16/06/21.
  */
-class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
+class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
+    CheckoutAddressConfirmationListAdapter.EventListner {
 
     var savedAddress: SavedAddressResponse? = null
     var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var navController: NavController? = null
 
-    companion object{
+    companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
     }
 
@@ -80,7 +82,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
                 startActivity(Intent(activity, CheckoutActivity::class.java))
             }
-            R.id.btnCheckOut -> {
+            R.id.btnAddressConfirmation -> {
                 if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
                     addNewAddressErrorMsg.visibility = View.VISIBLE
             }
@@ -113,18 +115,13 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
         val decoration: ItemDecoration = object : ItemDecoration() {
             override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-                super.onDraw(c, parent!!, state!!)
+                super.onDraw(c, parent, state)
                 //empty because to remove divider
             }
         }
-
+        checkoutAddressConfirmationListAdapter =
+            CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
         saveAddressRecyclerView?.apply {
-            checkoutAddressConfirmationListAdapter =
-                CheckoutAddressConfirmationListAdapter(
-                    savedAddress,
-                    checkoutAddAddressNewUserViewModel,
-                    viewLifecycleOwner, navController
-                )
             addItemDecoration(decoration)
             layoutManager = activity?.let { LinearLayoutManager(it) }
             checkoutAddressConfirmationListAdapter?.let { adapter = it }
@@ -133,6 +130,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
         collectionTab.setOnClickListener(this)
         plusImgAddAddress.setOnClickListener(this)
         addNewAddressTextView.setOnClickListener(this)
+        btnAddressConfirmation.setOnClickListener(this)
     }
 
     private fun setupViewModel() {
@@ -145,5 +143,27 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 )
             )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
+    }
+
+    override fun hideErrorView() {
+        addNewAddressErrorMsg.visibility = View.GONE
+    }
+
+    override fun changeAddress(nickName: String) {
+        checkoutAddAddressNewUserViewModel.changeAddress(nickName).observe(viewLifecycleOwner, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    if (it?.data != null && it?.data.deliverable) {
+
+                    }
+                }
+                ResponseStatus.LOADING -> {
+
+                }
+                ResponseStatus.ERROR -> {
+
+                }
+            }
+        })
     }
 }

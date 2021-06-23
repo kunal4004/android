@@ -91,7 +91,7 @@
             android:background="@color/sign_in_register_button_border" />
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
-            android:id="@+id/btnCheckOut"
+            android:id="@+id/btnAddressConfirmation"
             style="@style/blackButtonStyle"
             android:background="@drawable/black_button_drawable_state"
             android:text="@string/confirm"
