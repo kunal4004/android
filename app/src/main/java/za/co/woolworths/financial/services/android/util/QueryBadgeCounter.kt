@@ -31,6 +31,9 @@ class QueryBadgeCounter : Observable() {
         this.updateAtPosition = BottomNavigationActivity.INDEX_CART
         notifyUpdate()
     }
+    fun getCartItemCount(): Int {
+        return cartCount
+    }
 
     private fun setVoucherCount(count: Int) {
         voucherCount = count

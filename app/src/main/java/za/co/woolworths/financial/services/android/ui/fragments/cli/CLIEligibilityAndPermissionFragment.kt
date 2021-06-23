@@ -87,7 +87,7 @@ class CLIEligibilityAndPermissionFragment : Fragment(), View.OnClickListener {
                     llEligibilityView?.visibility = View.GONE
                     permissionView?.setPadding(0, paddingDp, 0, 0)
                     val fragmentUtils = FragmentUtils()
-                    fragmentUtils.nextFragment(supportFragmentManager, CLIMaritalStatusFragment.newInstance(), R.id.cliMainFrame)
+                    fragmentUtils.replaceFragment(supportFragmentManager, CLIMaritalStatusFragment.newInstance(), R.id.cliMainFrame)
                 }
                 R.id.permissionNo -> {
                     permissionNo?.setBackgroundColor(ContextCompat.getColor(this, R.color.black))

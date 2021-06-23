@@ -27,69 +27,102 @@
                 android:visibility="visible"
                 >
 
-
-                <FrameLayout
-                    android:id="@+id/cardFrameLayout"
+                <!--  Card -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_marginTop="32sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rewardsoverviewcardbg"
-                    android:paddingTop="@dimen/sixteen_dp">
+                    android:id="@+id/cardFrameLayout"
+                    android:background="@drawable/rewardsoverviewcardbg">
 
                     <FrameLayout
-                        android:id="@+id/wRewardCardFrameLayout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal">
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintWidth_percent="0.8"
+                        app:layout_constraintDimensionRatio="h,281:200">
 
-                        <FrameLayout
+                        <!--  White Placeholder -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/flipCardBackLayout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/twenty_four_dp"
-                            android:layout_marginTop="@dimen/twenty_four_dp"
-                            android:layout_marginRight="@dimen/twenty_four_dp"
-                            android:paddingTop="30dp">
+                            android:background="@drawable/wrewards_card_flipped"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
 
-                            <LinearLayout
-                                android:id="@+id/cardBackgroundLinearLayout"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
+                            <FrameLayout
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
                                 android:background="@drawable/wrewards_barcode_white_background"
-                                android:orientation="vertical"
-                                android:paddingLeft="20dp"
-                                android:paddingTop="16dp"
-                                android:paddingRight="20dp"
-                                android:paddingBottom="16dp">
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintWidth_percent="0.8"
+                                app:layout_constraintHeight_percent="0.65">
 
-                                <ImageView
-                                    android:id="@+id/barCodeImage"
-                                    android:layout_width="170dp"
-                                    android:layout_height="57dp"
-                                    android:layout_gravity="center_horizontal"
-                                    android:adjustViewBounds="true"
-                                    android:scaleType="fitXY" />
+                                <!-- The Barcode Image & Barcode Number Container -->
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
 
-                                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                    android:id="@+id/barCodeNumber"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:layout_marginTop="10dp"
-                                    android:letterSpacing="0.08"
-                                    android:textColor="@color/black"
-                                    android:textSize="15sp"
-                                    app:WTextView_font="medium" />
-                            </LinearLayout>
-                        </FrameLayout>
+                                    <androidx.constraintlayout.widget.ConstraintLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="0dp"
+                                        android:id="@+id/cardBackgroundLinearLayout"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintWidth_percent="0.8"
+                                        app:layout_constraintHeight_percent="0.65">
+
+                                        <ImageView
+                                            android:id="@+id/barCodeImage"
+                                            android:layout_width="0dp"
+                                            android:layout_height="0dp"
+                                            android:adjustViewBounds="true"
+                                            android:scaleType="fitXY"
+                                            android:paddingBottom="@dimen/ten_dp"
+                                            app:layout_constraintHeight_default="wrap"
+                                            app:layout_constraintStart_toStartOf="parent"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent"
+                                            app:layout_constraintBottom_toTopOf="@id/barCodeNumber"/>
+
+                                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                            android:id="@+id/barCodeNumber"
+                                            android:layout_width="0dp"
+                                            android:layout_height="0dp"
+                                            android:gravity="center"
+                                            android:letterSpacing="0.08"
+                                            android:textColor="@color/black"
+                                            android:textSize="@dimen/fifteen_sp"
+                                            app:WTextView_font="medium"
+                                            android:text="hello"
+
+                                            app:layout_constraintHeight_default="wrap"
+                                            app:layout_constraintStart_toStartOf="parent"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintBottom_toBottomOf="parent"
+                                            app:layout_constraintHeight_max="@dimen/fifteen_dp"/>
+
+                                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                            </FrameLayout>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <ImageView
                             android:id="@+id/flipCardFrontLayout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/twenty_four_dp"
-                            android:layout_marginTop="@dimen/twenty_four_dp"
-                            android:layout_marginRight="@dimen/twenty_four_dp" />
+                            android:layout_height="match_parent"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/wrewards_card" />
 
                         <ImageView
                             android:id="@+id/vipLogo"
@@ -100,8 +133,7 @@
                             app:srcCompat="@drawable/vip_flash" />
                     </FrameLayout>
 
-                </FrameLayout>
-
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <RelativeLayout
                     android:id="@+id/wRewardsBenefitsRelativeLayout"
