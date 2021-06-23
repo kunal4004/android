@@ -25,8 +25,10 @@
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"
-            />
+            app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/action_CheckoutAddAddressNewUserFragment_to_checkoutAddressConfirmationFragment"
+            app:destination="@id/checkoutAddressConfirmationFragment" />
     </fragment>
 
     <fragment
@@ -39,7 +41,11 @@
         android:id="@+id/checkoutAddressConfirmationFragment"
         android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment"
         android:label="Checkout Address Confirmation"
-        tools:layout="@layout/checkout_address_confirmation"></fragment>
+        tools:layout="@layout/checkout_address_confirmation">
+        <action
+            android:id="@+id/action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment"
+            app:destination="@id/CheckoutAddAddressNewUserFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/suburbSelectorFragment"

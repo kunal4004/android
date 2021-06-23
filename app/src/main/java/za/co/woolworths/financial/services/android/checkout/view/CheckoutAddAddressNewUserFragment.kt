@@ -64,6 +64,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private var isShimmerRequired = true
     private var selectedAddressId = ""
     private var savedAddress: Address? = null
+    private var isAddNewAddress = false
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
@@ -84,17 +85,21 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         val bundle = arguments?.getBundle("bundle")
         bundle?.apply {
             if (containsKey("editSavedAddress")) {
-                val addressId = getString("editSavedAddress")
-                if (!addressId.isNullOrEmpty() && !addressId.equals("null", true)) {
+                //Edit new Address from delivery
+                val editSavedAddress = getString("editSavedAddress")
+                if (!editSavedAddress.isNullOrEmpty() && !editSavedAddress.equals("null", true)) {
                     savedAddress =
                         (Utils.jsonStringToObject(
-                            getString("editSavedAddress"),
+                            editSavedAddress,
                             Address::class.java
                         ) as? Address)
                     selectedAddressId = savedAddress?.id.toString()
                     setHasOptionsMenu(true)
                     isShimmerRequired = false
                 }
+            } else if (containsKey("addNewAddress")) {
+                //Add new Address from delivery.
+                isAddNewAddress = getBoolean("addNewAddress")
             }
         }
     }
@@ -693,7 +698,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         ResponseStatus.SUCCESS -> {
                             if (savedAddressResponse != null && it?.data != null)
                                 savedAddressResponse?.addresses?.add(it.data.address)
-                            navigateToAddressConfirmation()
+                            if (isAddNewAddress)
+                                navController?.navigateUp()
+                            else
+                                navigateToAddressConfirmation()
                         }
                         ResponseStatus.LOADING -> {
 
@@ -797,7 +805,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         val bundle = Bundle()
         bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
         navController?.navigate(
-            R.id.checkoutAddressConfirmationFragment,
+            R.id.action_CheckoutAddAddressNewUserFragment_to_checkoutAddressConfirmationFragment,
             bundleOf("bundle" to bundle)
         )
     }

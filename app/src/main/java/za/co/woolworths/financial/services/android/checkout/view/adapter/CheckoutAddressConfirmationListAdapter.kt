@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
-import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.util.Utils
 

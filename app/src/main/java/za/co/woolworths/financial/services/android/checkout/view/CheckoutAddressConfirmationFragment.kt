@@ -1,11 +1,11 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
-import android.content.Intent
 import android.graphics.Canvas
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
@@ -65,6 +65,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
         val bundle = arguments?.getBundle("bundle")
         updateSavedAddress(bundle)
+        if (activity is CheckoutActivity)
+            (activity as? CheckoutActivity)?.showBackArrowWithoutTitle()
     }
 
     override fun onClick(v: View?) {
@@ -80,7 +82,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 addressConfirmationDelivery.visibility = View.GONE
             }
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
-                startActivity(Intent(activity, CheckoutActivity::class.java))
+                val bundle = Bundle()
+                bundle.putBoolean("addNewAddress", true)
+                navController?.navigate(
+                    R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
+                    bundleOf("bundle" to bundle)
+                )
             }
             R.id.btnAddressConfirmation -> {
                 if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
@@ -93,7 +100,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
-            initView()
+            checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
         }
     }
 
