@@ -900,8 +900,11 @@
     <string name="temp_card_how_to_use4">You can make a payment to your Store Card account at POS.  Just advise the operator you would like to make a payment and they will take you through the process.  Scan your card when asked.  ID is not required to make a payment.</string>
     <string name="temp_card_how_to_use5">To get a refund, please advise the operator of your card number, which is contained in the app, and don’t scan the barcode. The operator will key enter your details and process your refund as normal.</string>
     <string name="temp_card_how_to_use6">The Woolworths Virtual Temp Store Card will only be usable within selected Woolies stores. You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
-    <string name="dialog_scan_barcode_to_pay_title">Scan the Barcode to Pay</string>
-    <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. to the cashier to use your temporary card.</string>
+    <string name="dialog_scan_barcode_to_pay_barcode_title">Scan your barcode to buy, get a refund or pay your account.</string>
+    <string name="dialog_scan_barcode_to_pay_barcode_desc">Please remember your South African ID when using your virtual temp card. </string>
+    <string name="dialog_scan_barcode_to_pay_card_details_title">Show card details to buy, get a refund or pay your account.</string>
+    <string name="dialog_scan_barcode_to_pay_toggle_details_visible">Tap to view card details</string>
+    <string name="dialog_scan_barcode_to_pay_toggle_details_hidden">Tap to hide card details</string>
     <string name="card_details">card details</string>
     <string name="card_holder">Cardholder</string>
     <string name="temp_card_expires">Temp Card Expires</string>
@@ -1116,7 +1119,6 @@
     <string name="scan_barcode_title">barcode title</string>
     <string name="scan_barcode_description">barcode description</string>
     <string name="barcode_image">barcode image</string>
-    <string name="scan_barcode_regenerate">regenerate barcode</string>
 
     <!-- storeCardMoreBenefits -->
 
