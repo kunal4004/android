@@ -32,15 +32,4 @@ public class NetworkManager {
 		}
 		return haveConnectedWifi || haveConnectedMobile;
 	}
-
-	/*
-	*
-	* ConnectivityManager cm=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isAvailable() && cm.getActiveNetworkInfo().isConnected()) {
-            return true;
-        }
-        else {
-            return false;
-        }
-	* */
 }

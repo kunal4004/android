@@ -4,6 +4,7 @@ import android.app.Activity
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity
@@ -14,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.ChatCustomerInfo
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
@@ -118,27 +120,27 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
                     when (applyNowState) {
                         ApplyNowState.PERSONAL_LOAN -> isChatVisibleForAccountProductsLanding(applyNowState) && when (activity) {
                             is AccountSignedInActivity -> false // AccountSignedInActivity; the chat pop-up should not display in this instance - only the overlay.
-                            is PayMyAccountActivity -> !personalLoan.paymentOptions
-                            is WTransactionsActivity -> !personalLoan.transactions
-                            is AbsaStatementsActivity, is StatementActivity -> !personalLoan.statements
+                            is PayMyAccountActivity -> !personalLoan.paymentOptions && isAccountNotChargeOff(AccountsProductGroupCode.PERSONAL_LOAN)
+                            is WTransactionsActivity -> !personalLoan.transactions && isAccountNotChargeOff(AccountsProductGroupCode.PERSONAL_LOAN)
+                            is AbsaStatementsActivity, is StatementActivity -> !personalLoan.statements && isAccountNotChargeOff(AccountsProductGroupCode.PERSONAL_LOAN)
                             else -> false
                         }
 
                         ApplyNowState.STORE_CARD -> isChatVisibleForAccountProductsLanding(applyNowState) &&
                         when (activity) {
                                     is AccountSignedInActivity -> false
-                                    is PayMyAccountActivity -> !storeCard.paymentOptions
-                                    is WTransactionsActivity -> !storeCard.transactions
-                                    is AbsaStatementsActivity, is StatementActivity -> !storeCard.statements
+                                    is PayMyAccountActivity -> !storeCard.paymentOptions && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
+                                    is WTransactionsActivity -> !storeCard.transactions && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
+                                    is AbsaStatementsActivity, is StatementActivity -> !storeCard.statements && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                                     else -> false
 
                                 }
                         ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> isChatVisibleForAccountProductsLanding(applyNowState) &&
                                 when (activity) {
                                     is AccountSignedInActivity -> false
-                                    is PayMyAccountActivity -> !creditCard.paymentOptions
-                                    is WTransactionsActivity -> !creditCard.transactions
-                                    is AbsaStatementsActivity, is StatementActivity -> !creditCard.statements
+                                    is PayMyAccountActivity -> !creditCard.paymentOptions && isAccountNotChargeOff(AccountsProductGroupCode.CREDIT_CARD)
+                                    is WTransactionsActivity -> !creditCard.transactions && isAccountNotChargeOff(AccountsProductGroupCode.CREDIT_CARD)
+                                    is AbsaStatementsActivity, is StatementActivity -> !creditCard.statements && isAccountNotChargeOff(AccountsProductGroupCode.CREDIT_CARD)
                                     else -> false
                                 }
                     }
@@ -155,24 +157,24 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
                 else -> {
                     when (applyNowState) {
                         ApplyNowState.PERSONAL_LOAN -> when (activity) {
-                            is AccountSignedInActivity -> personalLoan.landing = true
-                            is PayMyAccountActivity -> personalLoan.paymentOptions = true
-                            is WTransactionsActivity -> personalLoan.transactions = true
-                            is AbsaStatementsActivity, is StatementActivity -> personalLoan.statements = true
+                            is AccountSignedInActivity -> isChatVisibleForAccountProductsLanding(applyNowState) && personalLoan.landing
+                            is PayMyAccountActivity -> personalLoan.paymentOptions = true  && isAccountNotChargeOff(AccountsProductGroupCode.PERSONAL_LOAN)
+                            is WTransactionsActivity -> personalLoan.transactions = true  && isAccountNotChargeOff(AccountsProductGroupCode.PERSONAL_LOAN)
+                            is AbsaStatementsActivity, is StatementActivity -> personalLoan.statements = true  && isAccountNotChargeOff(AccountsProductGroupCode.PERSONAL_LOAN)
                         }
                         ApplyNowState.STORE_CARD -> when (activity) {
-                            is AccountSignedInActivity -> storeCard.landing = true
-                            is PayMyAccountActivity -> storeCard.paymentOptions = true
-                            is WTransactionsActivity -> storeCard.transactions = true
-                            is AbsaStatementsActivity, is StatementActivity -> storeCard.statements = true
+                            is AccountSignedInActivity -> isChatVisibleForAccountProductsLanding(applyNowState) && storeCard.landing
+                            is PayMyAccountActivity -> storeCard.paymentOptions = true  && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
+                            is WTransactionsActivity -> storeCard.transactions = true  && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
+                            is AbsaStatementsActivity, is StatementActivity -> storeCard.statements = true && isAccountNotChargeOff(AccountsProductGroupCode.STORE_CARD)
                         }
 
 
                         ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD -> when (activity) {
-                            is AccountSignedInActivity -> creditCard.landing = true
-                            is PayMyAccountActivity -> creditCard.paymentOptions = true
-                            is WTransactionsActivity -> creditCard.transactions = true
-                            is AbsaStatementsActivity, is StatementActivity -> creditCard.statements = true
+                            is AccountSignedInActivity -> isChatVisibleForAccountProductsLanding(applyNowState) && creditCard.landing
+                            is PayMyAccountActivity -> creditCard.paymentOptions = true && isAccountNotChargeOff(AccountsProductGroupCode.CREDIT_CARD)
+                            is WTransactionsActivity -> creditCard.transactions = true && isAccountNotChargeOff(AccountsProductGroupCode.CREDIT_CARD)
+                            is AbsaStatementsActivity, is StatementActivity -> creditCard.statements = true && isAccountNotChargeOff(AccountsProductGroupCode.CREDIT_CARD)
                         }
                     }
                 }
@@ -265,14 +267,21 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
     }
 
-    private fun isAccountInDelinquency(applyNowState: ApplyNowState): Boolean {
+    private fun isAccountInDelinquency(applyNowState: ApplyNowState?): Boolean {
+        val accountsProductGroupCode : AccountsProductGroupCode? = when(applyNowState){
+            ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD
+            ApplyNowState.BLACK_CREDIT_CARD,ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD
+            ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN
+            else -> null
+        }
+        val isAccountNotChargeOff = accountsProductGroupCode?.let { isAccountNotChargeOff(it) } ?: false
         return when (activity) {
             // PayMyAccountActivity:: Show to all Customer
-            is PayMyAccountActivity, is WTransactionsActivity -> true
+            is PayMyAccountActivity, is WTransactionsActivity, is StatementActivity, is AbsaStatementsActivity -> isAccountNotChargeOff
             else -> when (activity) {
                 // Account Landing: show only to Customer in arrears
                 is MyAccountActivity, is BottomNavigationActivity -> isChatVisibleForAccountLanding()
-                else -> isChatVisibleForAccountProductsLanding(applyNowState)
+                else -> applyNowState?.let { isChatVisibleForAccountProductsLanding(it) } ?: false
                 // Product Landing Page: show only to Personal Loan and Store Card and CC in arrears
             }
         }
@@ -297,4 +306,9 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
     fun isChatBubbleVisible(applyNowState: ApplyNowState) = isInAppChatFeatureEnabled
             && isLiveChatEnabled(applyNowState = applyNowState)
             && isAccountInDelinquency(applyNowState = applyNowState)
+
+    private fun isAccountNotChargeOff(productGroupCode: AccountsProductGroupCode): Boolean {
+        val account = accountList?.singleOrNull { it.productGroupCode == productGroupCode.groupCode }
+        return account?.productOfferingStatus != Utils.ACCOUNT_CHARGED_OFF
+    }
 }

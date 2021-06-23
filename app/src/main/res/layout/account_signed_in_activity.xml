@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/frameLayout"
+        android:id="@+id/availableFundFragmentFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -27,17 +27,10 @@
             android:id="@+id/dimView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_anchor="@+id/frameLayout"
+            app:layout_anchor="@+id/availableFundFragmentFrameLayout"
             app:layout_anchorGravity="center" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbarContainer"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="top">
-
-            <include layout="@layout/account_in_arrears_layout" />
-        </androidx.appcompat.widget.Toolbar>
+        <include layout="@layout/my_account_product_landing_toolbar" />
 
     </FrameLayout>
 
@@ -81,6 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/recent_search_bg">
+
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/nav_host_overlay_bottom_sheet_fragment"
                 android:name="androidx.navigation.fragment.NavHostFragment"
@@ -94,20 +88,22 @@
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/sixMonthArrearsFrameLayout"
+        android:id="@+id/removeBlockOnCollectionCustomerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
+        <include layout="@layout/my_account_product_landing_toolbar" />
+
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/six_month_arrears_nav_host"
+            android:id="@+id/removeBlockOnCollectionFragmentContainerView"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:navGraph="@navigation/account_six_month_in_arrears_nav_host" />
+            app:navGraph="@navigation/remove_block_on_collection_customer_nav_host" />
     </FrameLayout>
 
     <include layout="@layout/chat_collect_agent_floating_button_layout" />

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -54,7 +55,7 @@ public class IncreaseLimitController {
 				randAmount = Integer.parseInt(randValue.replaceAll("\\s+", ""));
 			}
 		}
-		return !TextUtils.isEmpty(value) && value.length() > 0 && randAmount > 0;
+		return !TextUtils.isEmpty(value) && value.length() > 0 && randAmount >= 100;
 	}
 
 	public static boolean validateExpenseAmount(String value) {
@@ -88,11 +89,19 @@ public class IncreaseLimitController {
 	@SuppressLint("SetTextI18n")
 	public void populateExpenseField(CurrencyEditText editTextView, String value, WTextView wTextView) {
 		wTextView.setVisibility(View.VISIBLE);
-		if (!TextUtils.isEmpty(value))
+		if (!TextUtils.isEmpty(value)) {
 			value = value + "00";
+			setInputFilter(editTextView, value.length() >= 9 ? 13 : 11);
+		}
 		editTextView.setText(value);
 		editTextView.clearFocus();
-		editTextView.setSelection(editTextView.getText().length());
+		if (!TextUtils.isEmpty(editTextView.getText())) {
+			editTextView.setSelection(editTextView.getText().length());
+		}
+	}
+
+	private void setInputFilter(CurrencyEditText editTextView, int i) {
+		editTextView.setFilters(new InputFilter[]{new InputFilter.LengthFilter(i)});
 	}
 
 	public void showView(View view) {

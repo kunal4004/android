@@ -1965,8 +1965,10 @@
 
     <style name="promotionLayoutStyle">
         <item name="android:layout_width">@dimen/twenty_dp</item>
-        <item name="android:layout_height">@dimen/twenty_dp</item>
-        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_height">@dimen/sixteen_dp</item>
+        <item name="android:minHeight">@dimen/sixteen_dp</item>
+        <item name="android:layout_marginBottom">@dimen/two_dp</item>
+        <item name="android:scaleType">fitStart</item>
         <item name="android:contentDescription">@string/plp_newPromotionalImage</item>
     </style>
 

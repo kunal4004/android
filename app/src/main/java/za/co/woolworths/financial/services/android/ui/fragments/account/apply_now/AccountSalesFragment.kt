@@ -46,9 +46,11 @@ class AccountSalesFragment : Fragment() {
         val storeCardItem = arguments?.getString(ACCOUNT_SALES_CREDIT_CARD, "")
         val accountSales: AccountSales? = Gson().fromJson(storeCardItem, AccountSales::class.java)
 
+        var isCreditCardProduct: Boolean? = null
+
         (activity as? AccountSalesActivity)?.apply {
             // setNestedScrollingEnabled will unlock the ability of NestedScrollView to scroll inside ViewPager2
-            val isCreditCardProduct = mAccountSalesModelImpl?.isCreditCardProduct()
+            isCreditCardProduct = mAccountSalesModelImpl?.isCreditCardProduct()
 
             applyNowCardDetailScrollView?.apply {
                 setScrollingEnabled(
@@ -68,7 +70,7 @@ class AccountSalesFragment : Fragment() {
             displayCardBenefits(cardBenefit)
             displayMoreBenefits(moreBenefit)
             displayQualifyCriteria(cardQualifyCriteria)
-            displayCartCollection(cardCollection)
+            displayCardCollection(cardCollection, isCreditCardProduct)
         }
     }
 
@@ -113,14 +115,22 @@ class AccountSalesFragment : Fragment() {
         }
     }
 
-    private fun displayCartCollection(cartCollection: MutableList<CardCollection>) {
-        if (cartCollection.isEmpty()) {
+    private fun displayCardCollection(cardCollection: MutableList<CardCollection>, isCreditCardProduct: Boolean?) {
+        if (cardCollection.isEmpty()) {
             cardCollectionConstraintLayout?.visibility = GONE
             qualifyCriteriaSpaceView?.setBackgroundColor(Color.WHITE)
             return
         }
         activity?.let { activity ->
-            cartCollection.forEach { items ->
+            val cardCollectionDescriptionTextView: TextView? = view?.findViewById(R.id.cardCollectionDescriptionTextView)
+
+            if (isCreditCardProduct == true){ //there's a bug here. isCreditCardProduct is true but this is actually not a Credit Card
+                cardCollectionDescriptionTextView?.text = getString(R.string.card_collection_desc,"Store Card")
+            } else{
+                cardCollectionDescriptionTextView?.text = getString(R.string.card_collection_desc,"Credit Card")
+            }
+
+            cardCollection.forEach { items ->
                 val view = View.inflate(activity, R.layout.account_sales_bullet_item, null)
                 val titleTextView: TextView? = view?.findViewById(R.id.bulletTitleTextView)
                 titleTextView?.text = items.title

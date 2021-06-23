@@ -27,7 +27,11 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
+import com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.iid.InstanceIdResult
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
@@ -516,7 +520,36 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             return
         }
 
-        mlinkDeviceReq = OneAppService.linkDeviceApi(KotlinUtils.getUserDefinedDeviceName(activity), Utils.getUniqueDeviceID(context), getLocationAddress(currentLocation?.latitude, currentLocation?.longitude), true, Utils.getToken())
+        retrieveTokenAndCallLinkDevice()
+    }
+
+    private fun retrieveTokenAndCallLinkDevice() {
+        if (TextUtils.isEmpty(Utils.getToken())) {
+            if (Utils.isGooglePlayServicesAvailable()) {
+                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task: Task<InstanceIdResult?> ->
+                    if (task.isSuccessful) {
+                        task.result?.token?.let {
+                            // Save fb token in DB.
+                            Utils.setToken(it)
+                            sendTokenToLinkDevice(it)
+                            return@addOnCompleteListener
+                        }
+                    }
+                    // token is null show error message to user
+                    showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                }
+            } else {
+                // token is null show error message to user
+                showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+            }
+        } else {
+            sendTokenToLinkDevice(Utils.getToken())
+        }
+    }
+
+    private fun sendTokenToLinkDevice(token: String) {
+
+        mlinkDeviceReq = OneAppService.linkDeviceApi(KotlinUtils.getUserDefinedDeviceName(activity), Utils.getUniqueDeviceID(context), getLocationAddress(currentLocation?.latitude, currentLocation?.longitude), true, token)
 
         linkDeviceOTPScreen?.visibility = View.GONE
         mlinkDeviceReq?.enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
@@ -587,7 +620,19 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         val gcd = Geocoder(context, Locale.getDefault())
         val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
         if (addresses.isNotEmpty()) {
-            location = addresses[0].locality + ", " + addresses[0].countryName
+            location =
+                    if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
+                        for (address in addresses) {
+                            if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
+                                return address.locality + ", " + address.countryName
+                            } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
+                                return address.subLocality + ", " + address.countryName
+                            }
+                        }
+                        return addresses[0].countryName
+                    } else
+                        return addresses[0].locality + ", " + addresses[0].countryName
+
         }
         return location
     }

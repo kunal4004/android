@@ -8,8 +8,10 @@ import android.graphics.Paint
 
 import android.os.CountDownTimer
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
@@ -47,6 +49,8 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.ui.views.SafeClickListener
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 /**
  * Method to add the fragment. The [fragment] is added to the container view with id
@@ -55,14 +59,16 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
  * @return the fragment added.
  */
 @Suppress("UNCHECKED_CAST")
-fun <T : Fragment> AppCompatActivity.addFragment(fragment: T?,
-                                                 tag: String,
-                                                 allowStateLoss: Boolean = false,
-                                                 @IdRes containerViewId: Int,
-                                                 @AnimRes enterAnimation: Int = 0,
-                                                 @AnimRes exitAnimation: Int = 0,
-                                                 @AnimRes popEnterAnimation: Int = 0,
-                                                 @AnimRes popExitAnimation: Int = 0): T? {
+fun <T : Fragment> AppCompatActivity.addFragment(
+    fragment: T?,
+    tag: String,
+    allowStateLoss: Boolean = false,
+    @IdRes containerViewId: Int,
+    @AnimRes enterAnimation: Int = 0,
+    @AnimRes exitAnimation: Int = 0,
+    @AnimRes popEnterAnimation: Int = 0,
+    @AnimRes popExitAnimation: Int = 0
+): T? {
     if (!existsFragmentByTag(tag)) {
         val ft = supportFragmentManager.beginTransaction()
         ft.setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
@@ -81,19 +87,21 @@ fun <T : Fragment> AppCompatActivity.addFragment(fragment: T?,
  * Method to replace the fragment. The [fragment] is added to the container view with id
  * [containerViewId] and a [tag]. The operation is performed by the supportFragmentManager.
  */
-fun AppCompatActivity.replaceFragmentSafely(fragment: Fragment,
-                                            tag: String,
-                                            allowStateLoss: Boolean = false,
-                                            allowBackStack: Boolean,
-                                            @IdRes containerViewId: Int,
-                                            @AnimRes enterAnimation: Int = 0,
-                                            @AnimRes exitAnimation: Int = 0,
-                                            @AnimRes popEnterAnimation: Int = 0,
-                                            @AnimRes popExitAnimation: Int = 0) {
+fun AppCompatActivity.replaceFragmentSafely(
+    fragment: Fragment,
+    tag: String,
+    allowStateLoss: Boolean = false,
+    allowBackStack: Boolean,
+    @IdRes containerViewId: Int,
+    @AnimRes enterAnimation: Int = 0,
+    @AnimRes exitAnimation: Int = 0,
+    @AnimRes popEnterAnimation: Int = 0,
+    @AnimRes popExitAnimation: Int = 0
+) {
     val ft = supportFragmentManager
-            .beginTransaction()
-            .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
-            .replace(containerViewId, fragment, tag)
+        .beginTransaction()
+        .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
+        .replace(containerViewId, fragment, tag)
     if (allowBackStack)
         ft.addToBackStack(null)
     if (!supportFragmentManager.isStateSaved) {
@@ -103,19 +111,21 @@ fun AppCompatActivity.replaceFragmentSafely(fragment: Fragment,
     }
 }
 
-fun AppCompatActivity.addFragment(fragment: Fragment,
-                                  tag: String,
-                                  allowStateLoss: Boolean = false,
-                                  allowBackStack: Boolean,
-                                  @IdRes containerViewId: Int,
-                                  @AnimRes enterAnimation: Int = 0,
-                                  @AnimRes exitAnimation: Int = 0,
-                                  @AnimRes popEnterAnimation: Int = 0,
-                                  @AnimRes popExitAnimation: Int = 0) {
+fun AppCompatActivity.addFragment(
+    fragment: Fragment,
+    tag: String,
+    allowStateLoss: Boolean = false,
+    allowBackStack: Boolean,
+    @IdRes containerViewId: Int,
+    @AnimRes enterAnimation: Int = 0,
+    @AnimRes exitAnimation: Int = 0,
+    @AnimRes popEnterAnimation: Int = 0,
+    @AnimRes popExitAnimation: Int = 0
+) {
     val ft = supportFragmentManager
-            .beginTransaction()
-            .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
-            .add(containerViewId, fragment, tag)
+        .beginTransaction()
+        .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
+        .add(containerViewId, fragment, tag)
     if (allowBackStack)
         ft.addToBackStack(null)
     if (!supportFragmentManager.isStateSaved) {
@@ -156,13 +166,17 @@ fun EditText.hideKeyboard(activity: AppCompatActivity) {
         // check if no view has focus:
         val currentFocusedView = currentFocus
         if (currentFocusedView != null) {
-            inputManager?.hideSoftInputFromWindow(currentFocusedView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            inputManager?.hideSoftInputFromWindow(
+                currentFocusedView.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
         }
     }
 
 }
 
-inline fun <reified T> Gson.fromJson(json: String): T = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+inline fun <reified T> Gson.fromJson(json: String): T =
+    this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 
 fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
     this.addTextChangedListener(object : TextWatcher {
@@ -190,7 +204,11 @@ fun EditText.onAction(action: Int, runAction: () -> Unit) {
     }
 }
 
-fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Long = 10000, afterTypingStateChanged: (Boolean) -> Unit) {
+fun EditText.afterTypingStateChanged(
+    millisInFuture: Long,
+    countDownInterval: Long = 10000,
+    afterTypingStateChanged: (Boolean) -> Unit
+) {
     this.addTextChangedListener(object : TextWatcher {
         var timer: CountDownTimer? = null
         var isTyping: Boolean = false
@@ -217,7 +235,10 @@ fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Lo
     })
 }
 
-inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>?, requestListener: IGenericAPILoaderView<Any>? = null): Call<RESPONSE_OBJECT>? {
+inline fun <reified RESPONSE_OBJECT> request(
+    call: Call<RESPONSE_OBJECT>?,
+    requestListener: IGenericAPILoaderView<Any>? = null
+): Call<RESPONSE_OBJECT>? {
     val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
     requestListener?.showProgress()
     call?.enqueue(CompletionHandler(object : IResponseListener<RESPONSE_OBJECT> {
@@ -262,7 +283,7 @@ fun <F : Fragment> AppCompatActivity.getFragment(fragmentClass: Class<F>): F? {
 }
 
 inline fun <reified T : Enum<T>> String.asEnumOrDefault(defaultValue: T? = null): T? =
-        enumValues<T>().firstOrNull { it.name.equals(this, ignoreCase = true) } ?: defaultValue
+    enumValues<T>().firstOrNull { it.name.equals(this, ignoreCase = true) } ?: defaultValue
 
 fun String.isEmailValid(): Boolean {
     return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
@@ -270,9 +291,9 @@ fun String.isEmailValid(): Boolean {
 
 
 fun navOptions() = NavOptions.Builder().setEnterAnim(R.anim.slide_in_from_right)
-        .setExitAnim(R.anim.slide_out_to_left)
-        .setPopEnterAnim(R.anim.slide_from_left)
-        .setPopExitAnim(R.anim.slide_to_right).build()
+    .setExitAnim(R.anim.slide_out_to_left)
+    .setPopEnterAnim(R.anim.slide_from_left)
+    .setPopExitAnim(R.anim.slide_to_right).build()
 
 
 fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
@@ -283,7 +304,7 @@ fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
 }
 
 fun Fragment.getNavigationResult(key: String = "result") =
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(key)
+    findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(key)
 
 fun Fragment.setNavigationResult(key: String = "result", result: String) {
     findNavController().previousBackStackEntry?.savedStateHandle?.set(key, result)
@@ -292,8 +313,8 @@ fun Fragment.setNavigationResult(key: String = "result", result: String) {
 
 fun <T> Fragment.setNavigationResult(key: String, value: T) {
     findNavController().previousBackStackEntry?.savedStateHandle?.set(
-            key,
-            value
+        key,
+        value
     )
 }
 
@@ -302,7 +323,7 @@ fun <T> Fragment.getNavigationResult(@IdRes id: Int, key: String, onResult: (res
 
     val observer = LifecycleEventObserver { _, event ->
         if (event == Lifecycle.Event.ON_RESUME
-                && navBackStackEntry.savedStateHandle.contains(key)
+            && navBackStackEntry.savedStateHandle.contains(key)
         ) {
             val result = navBackStackEntry.savedStateHandle.get<T>(key)
             result?.let(onResult)
@@ -320,12 +341,12 @@ fun <T> Fragment.getNavigationResult(@IdRes id: Int, key: String, onResult: (res
 
 fun RecyclerView.setDivider(@DrawableRes drawableRes: Int) {
     val divider = DividerItemDecoration(
-            this.context,
-            DividerItemDecoration.VERTICAL
+        this.context,
+        DividerItemDecoration.VERTICAL
     )
     val drawable = ContextCompat.getDrawable(
-            this.context,
-            drawableRes
+        this.context,
+        drawableRes
     )
     drawable?.let {
         divider.setDrawable(it)
@@ -334,12 +355,12 @@ fun RecyclerView.setDivider(@DrawableRes drawableRes: Int) {
 }
 
 inline fun <reified T : Enum<T>> Intent.putEnumExtra(victim: T): Intent =
-        putExtra(T::class.java.name, victim.ordinal)
+    putExtra(T::class.java.name, victim.ordinal)
 
 inline fun <reified T : Enum<T>> Intent.getEnumExtra(): T? =
-        getIntExtra(T::class.java.name, -1)
-                .takeUnless { it == -1 }
-                ?.let { T::class.java.enumConstants?.get(it) }
+    getIntExtra(T::class.java.name, -1)
+        .takeUnless { it == -1 }
+        ?.let { T::class.java.enumConstants?.get(it) }
 
 /**
  *  Access items of ViewPager2
@@ -352,8 +373,8 @@ fun ViewPager2.findCurrentFragment(fragmentManager: FragmentManager): Fragment? 
 }
 
 fun ViewPager2.findFragmentAtPosition(
-        fragmentManager: FragmentManager,
-        position: Int
+    fragmentManager: FragmentManager,
+    position: Int
 ): Fragment? {
     return fragmentManager.findFragmentByTag("f$position")
 }
@@ -368,4 +389,22 @@ fun Fragment.safeNavigateFromNavController(directions: NavDirections) {
     if (javaClass.name == destination?.className) {
         navController.navigate(directions)
     }
+}
+
+fun View.setSafeOnClickListener(onSafeClick: (View) -> Unit) {
+    val safeClickListener = SafeClickListener {
+        onSafeClick(it)
+    }
+    setOnClickListener(safeClickListener)
+}
+
+/**
+ * maxLength extension function makes a filter that
+ * will constrain edits not to make the length of the text
+ * greater than the specified length.
+ *
+ * @param max
+ */
+fun EditText.maxLength(max: Int){
+    this.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(max))
 }
