@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 
 class LiveChatNotificationImpl : ILiveChatNotification {
 
-    override fun headUpNotification(messageResponse: SendMessageResponse, context: Context?) {
+    override fun headUpNotification(unreadMessageCount: Int, messageResponse: SendMessageResponse, context: Context?) {
         context ?: return
 
         if (TextUtils.isEmpty(messageResponse.content))
@@ -34,11 +34,10 @@ class LiveChatNotificationImpl : ILiveChatNotification {
 
         GlobalScope.launch(Dispatchers.Main) {
             val woolworthsApplication = context as? WoolworthsApplication
-            LiveChatDBRepository().updateUnreadMessageCount()
+            LiveChatDBRepository().updateUnreadMessageCount(unreadMessageCount)
             ChatAWSAmplify.sessionStateType = messageResponse.sessionState
             broadcastMessageCountResult(woolworthsApplication)
-            val currentActivity = woolworthsApplication?.currentActivity
-            currentActivity?.let {
+            woolworthsApplication?.currentActivity?.let {
                 ToastFactory.liveChatHeadUpNotificationWindow(
                     it.window?.decorView?.rootView,
                     it,

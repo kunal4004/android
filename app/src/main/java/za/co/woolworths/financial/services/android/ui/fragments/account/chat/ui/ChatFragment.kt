@@ -95,6 +95,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 val content = when (item) {
                     is SenderMessage -> item.message
                     is SendMessageResponse -> item.content
+                    else -> null
                 }
                 if (!TextUtils.isEmpty(content))
                     showMessage(item)
@@ -300,6 +301,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 val content = when (message) {
                     is SenderMessage -> message.message
                     is SendMessageResponse -> message.content
+                    else -> null
                 }
                 if (!TextUtils.isEmpty(content)) {
                     it.addMessage(message)

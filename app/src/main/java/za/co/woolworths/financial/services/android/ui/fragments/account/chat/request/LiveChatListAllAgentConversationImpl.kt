@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.request
 
 import android.text.TextUtils
+import android.util.Log
 import com.amplifyframework.api.ApiException
 import com.amplifyframework.api.aws.GsonVariablesSerializer
 import com.amplifyframework.api.graphql.GraphQLRequest
@@ -14,12 +15,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.mod
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.util.Assets
+import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
 class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
 
-    private val listMessageByConversation: String =
-        Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
+    private val listMessageByConversation: String = Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
     private val liveChatDBRepository = LiveChatDBRepository()
 
     // Arrange a request to start a subscription.
@@ -98,5 +99,33 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
             { apiException ->
                 onFailure(apiException)
             })
+    }
+
+    override fun fetchAllAgentConversation(onSuccess: (Int, SendMessageResponse?) -> Unit) {
+        val conversationId = liveChatDBRepository.getConversationMessageId()
+        if (TextUtils.isEmpty(conversationId)) return
+        API.query(
+            request(conversationId),
+            { listOfConversationsFromAgent ->
+                // Conversation displayed in adapter
+                val messageListFromChatAdapter = ChatAWSAmplify.getChatMessageList()?.toMutableList()
+
+                // reset agent profile icon flag to default
+                messageListFromChatAdapter?.forEach {
+                    (it as? SenderMessage)?.isWoolworthIconVisible = true
+                    (it as? SendMessageResponse)?.isWoolworthIconVisible = true
+                }
+
+               val currentAgentList : List<ChatMessage>? = messageListFromChatAdapter?.filter  { it as? SendMessageResponse is SendMessageResponse }
+
+                val listOfMessagesFromAgent =  listOfConversationsFromAgent.data.items
+                // query last item in  agent list
+                val lastItem = listOfMessagesFromAgent.firstOrNull()
+
+                val sendMessageResponseList = currentAgentList?.filter { (it as? SendMessageResponse)?.content !in listOfMessagesFromAgent.map { item -> item.content } }
+
+                Log.e("messageList" , "currentList ${Utils.toJson(currentAgentList)}+\n\n+ agentList  ${Utils.toJson(listOfMessagesFromAgent)}  \n\n sendMessageList  ${Utils.toJson(sendMessageResponseList)} \n\n size ${sendMessageResponseList?.size ?: 0}" )
+                onSuccess(sendMessageResponseList?.size ?: 0, lastItem)
+            }, {})
     }
 }
