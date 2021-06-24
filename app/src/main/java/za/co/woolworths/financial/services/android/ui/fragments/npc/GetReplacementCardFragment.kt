@@ -177,13 +177,6 @@ class GetReplacementCardFragment : MyCardExtension() {
                                 val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
                                         ?: mutableListOf()
                                 if (npcStores?.size ?: 0 > 0) {
-                                    /*val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
-                                    intentInStoreFinder.putExtra(PRODUCT_NAME, bindString(R.string.participating_stores))
-                                    intentInStoreFinder.putExtra(CONTACT_INFO, bindString(R.string.participating_store_desc))
-                                    intentInStoreFinder.putExtra(MAP_LOCATION, Gson().toJson(npcStores))
-                                    intentInStoreFinder.putExtra(GEOFENCE_ENABLED, locationResponse.inGeofence)
-                                    startActivity(intentInStoreFinder)
-                                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)*/
 
                                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_STORES)
 

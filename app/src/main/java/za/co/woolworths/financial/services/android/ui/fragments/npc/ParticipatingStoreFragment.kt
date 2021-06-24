@@ -24,8 +24,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.participating_store_fragment.*
 import kotlinx.android.synthetic.main.select_store_activity.*
-import kotlinx.android.synthetic.main.store_locator_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
@@ -69,7 +69,7 @@ class ParticipatingStoreFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.store_locator_activity, container, false)
+        return inflater.inflate(R.layout.participating_store_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
