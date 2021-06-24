@@ -1124,10 +1124,7 @@
     <string name="scan_barcode_description">barcode description</string>
     <string name="scan_barcode_image">barcode image</string>
     <string name="card_details_title">card details title</string>
-    <string name="card_details_number_1">card details number part 1</string>
-    <string name="card_details_number_2">card details number part 2</string>
-    <string name="card_details_number_3">card details number part 3</string>
-    <string name="card_details_number_4">card details number part 4</string>
+    <string name="card_details_number">card details number</string>
     <string name="card_details_cardholder_label">card details cardholder label</string>
     <string name="card_details_cardholder_value">card details cardholder value</string>
     <string name="card_details_sequence_label">card details sequence number label</string>

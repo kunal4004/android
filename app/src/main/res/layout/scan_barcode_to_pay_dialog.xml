@@ -74,81 +74,26 @@
                 android:contentDescription="@string/card_details_title"
                 android:text="@string/dialog_scan_barcode_to_pay_card_details_title" />
 
-            <LinearLayout
-                android:id="@+id/llCardNumberContainer"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCardNumber"
+                style="@style/card_item_barcode_number_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvCardDetailsTitle"
                 android:layout_marginTop="@dimen/fourty_four_dp"
+                android:contentDescription="@string/card_details_number"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:weightSum="4">
-
-                <TextView
-                    android:id="@+id/tvCardNumber1"
-                    style="@style/card_item_barcode_number_text_style"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:autoSizeMaxTextSize="@dimen/thirty_sp"
-                    android:autoSizeMinTextSize="@dimen/twenty_four_sp"
-                    android:autoSizeTextType="uniform"
-                    android:contentDescription="@string/card_details_number_1"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:paddingRight="@dimen/three_dp"
-                    tools:text="1234" />
-
-                <TextView
-                    android:id="@+id/tvCardNumber2"
-                    style="@style/card_item_barcode_number_text_style"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:autoSizeMaxTextSize="@dimen/thirty_sp"
-                    android:autoSizeMinTextSize="@dimen/twenty_four_sp"
-                    android:autoSizeTextType="uniform"
-                    android:contentDescription="@string/card_details_number_2"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:paddingLeft="@dimen/three_dp"
-                    android:paddingRight="@dimen/three_dp"
-                    tools:text="5678" />
-
-                <TextView
-                    android:id="@+id/tvCardNumber3"
-                    style="@style/card_item_barcode_number_text_style"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:autoSizeMaxTextSize="@dimen/thirty_sp"
-                    android:autoSizeMinTextSize="@dimen/twenty_four_sp"
-                    android:autoSizeTextType="uniform"
-                    android:contentDescription="@string/card_details_number_3"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:paddingLeft="@dimen/three_dp"
-                    android:paddingRight="@dimen/three_dp"
-                    tools:text="9123" />
-
-                <TextView
-                    android:id="@+id/tvCardNumber4"
-                    style="@style/card_item_barcode_number_text_style"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:autoSizeMaxTextSize="@dimen/thirty_sp"
-                    android:autoSizeMinTextSize="@dimen/twenty_four_sp"
-                    android:autoSizeTextType="uniform"
-                    android:contentDescription="@string/card_details_number_4"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:paddingLeft="@dimen/three_dp"
-                    tools:text="4567" />
-
-            </LinearLayout>
+                android:lines="1"
+                android:maxLines="1"
+                app:autoSizeMaxTextSize="@dimen/thirty_sp"
+                app:autoSizeTextType="uniform"
+                tools:text="1234  5678  9012  3456" />
 
             <TextView
                 android:id="@+id/tvCardholderLabel"
                 style="@style/card_item_regular_text_style"
                 android:layout_width="wrap_content"
-                android:layout_below="@id/llCardNumberContainer"
+                android:layout_below="@id/tvCardNumber"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="@dimen/thirty_nine_dp"
                 android:contentDescription="@string/card_details_cardholder_label"

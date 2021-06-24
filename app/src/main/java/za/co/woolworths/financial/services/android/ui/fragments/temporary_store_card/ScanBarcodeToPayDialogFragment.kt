@@ -70,14 +70,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
         btnToggleCardDetails.setOnClickListener { toggleCardDetailsVisibility() }
 
         mStoreCardsResponse?.storeCardsData?.virtualCard?.let {
-            it.number.chunked(4).forEachIndexed { index, s ->
-                when (index) {
-                    0 -> tvCardNumber1.text = s
-                    1 -> tvCardNumber2.text = s
-                    2 -> tvCardNumber3.text = s
-                    3 -> tvCardNumber4.text = s
-                }
-            }
+            tvCardNumber.text = it.number.chunked(4).joinToString("  ")
             tvCardholderValue.text = it.embossedName
             tvSequenceNumberValue.text = it.sequence
             ivBarcode.post {
