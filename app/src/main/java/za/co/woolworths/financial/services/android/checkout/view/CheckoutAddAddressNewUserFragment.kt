@@ -162,6 +162,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initView() {
+        if (selectedAddressId.isNotEmpty())
+        {
+            //it's not empty means it's a edit address call.
+            deleteTextView.visibility = View.VISIBLE
+            saveAddress.text = bindString(R.string.change_details)
+        }
         if (isShimmerRequired) {
             setUpShimmer()
             isShimmerRequired = false
@@ -507,16 +513,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     province.name = provinces.name
                 }
             }
-            selectProvinceLayout.setBackgroundResource(R.drawable.input_non_editable_edit_text)
-            provinceAutocompleteEditText.setBackgroundResource(R.drawable.input_non_editable_half_edit_text)
+            disableProvinceSelection()
             selectedAddress.province = province.name
             selectedAddress.region = province.id
 
             if (selectedAddress.suburb.isEmpty())
                 enableSuburbSelection()
             else {
-                selectSuburbLayout.setBackgroundResource(R.drawable.input_non_editable_edit_text)
-                suburbEditText.setBackgroundResource(R.drawable.input_non_editable_half_edit_text)
+                disableSuburbSelection()
             }
         } else {
             enableProvinceSelection()
@@ -534,6 +538,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun enableProvinceSelection() {
+        selectProvinceLayout?.isClickable = true
+        provinceAutocompleteEditText?.isClickable = true
+        selectProvinceLayout?.isEnabled = true
+        provinceAutocompleteEditText?.isEnabled = true
         selectProvinceLayout?.setOnClickListener(this)
         provinceAutocompleteEditText?.setOnClickListener(this)
         dropdownGetProvincesImg.visibility = View.VISIBLE
@@ -542,11 +550,35 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun enableSuburbSelection() {
+        selectSuburbLayout?.isClickable = true
+        suburbEditText?.isClickable = true
+        selectSuburbLayout?.isEnabled = true
+        suburbEditText?.isEnabled = true
         selectSuburbLayout?.setOnClickListener(this)
         suburbEditText?.setOnClickListener(this)
         dropdownGetSuburbImg.visibility = View.VISIBLE
         selectSuburbLayout.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_inactive_bg)
         suburbEditText.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_box_autocomplete_edit_text)
+    }
+
+    private fun disableProvinceSelection() {
+        selectProvinceLayout?.isClickable = false
+        provinceAutocompleteEditText?.isClickable = false
+        selectProvinceLayout?.isEnabled = false
+        provinceAutocompleteEditText?.isEnabled = false
+        dropdownGetProvincesImg.visibility = View.GONE
+        selectProvinceLayout.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
+        provinceAutocompleteEditText.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_non_editable_half_edit_text)
+    }
+
+    private fun disableSuburbSelection() {
+        selectSuburbLayout?.isClickable = false
+        suburbEditText?.isClickable = false
+        selectSuburbLayout?.isEnabled = false
+        suburbEditText?.isEnabled = false
+        dropdownGetSuburbImg.visibility = View.GONE
+        selectSuburbLayout.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
+        suburbEditText.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_non_editable_half_edit_text)
     }
 
     private fun enablePostalCode() {

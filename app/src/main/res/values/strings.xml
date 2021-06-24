@@ -2053,6 +2053,8 @@
     <string name="where_are_we_delivering">Where Are We Delivering?</string>
     <string name="where_should_we_deliver">Where Should We Deliver?</string>
     <string name="save_address">SAVE ADDRESS</string>
+    <string name="change_details">change details</string>
+    <string name="delete_address">delete address</string>
     <string name="places_address_error_msg">Please enter a valid Address</string>
     <string name="address_nickname_error_msg">This field is required.</string>
     <string name="add_new_address_error_msg">Please select or add a delivery address.</string>
