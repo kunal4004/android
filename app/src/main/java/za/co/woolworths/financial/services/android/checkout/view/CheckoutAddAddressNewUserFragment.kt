@@ -162,8 +162,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initView() {
-        if (selectedAddressId.isNotEmpty())
-        {
+        if (selectedAddressId.isNotEmpty()) {
             //it's not empty means it's a edit address call.
             deleteTextView.visibility = View.VISIBLE
             saveAddress.text = bindString(R.string.change_details)
@@ -742,8 +741,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onSaveAddressClicked() {
-        if (cellphoneNumber?.text.toString().trim().isNotEmpty() && cellphoneNumber?.text.toString()
-                .trim().length < 10
+        if (cellphoneNumber?.text.toString().trim().isNotEmpty()
+            && cellphoneNumber?.text.toString().trim().length < 10
         ) {
             showErrorPhoneNumber()
         }
@@ -755,6 +754,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 .isNotEmpty() && recipientName?.text.toString().trim()
                 .isNotEmpty() && cellphoneNumber?.text.toString().trim()
                 .isNotEmpty() && selectedDeliveryAddressType != null
+            && cellphoneNumber?.text.toString().trim().length == 10
         ) {
             if (isNickNameExist())
                 return
