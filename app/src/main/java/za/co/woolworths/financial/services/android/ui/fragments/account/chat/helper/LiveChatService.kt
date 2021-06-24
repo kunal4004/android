@@ -133,10 +133,7 @@ class LiveChatService : LifecycleService() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(
-                1,
-                liveChatPresenter.createNotificationChannel(applicationContext)?.build()
-            )
+            startForeground(1, liveChatPresenter.createNotificationChannel(applicationContext)?.build())
         }
     }
 

@@ -49,8 +49,6 @@ class LiveChatDBRepository : DatabaseManager() {
         saveLiveChatParams(liveChatParams)
     }
 
-
-
     fun getUnReadMessageCount(): Int {
         val liveChatParams = getLiveChatParams()
         return liveChatParams?.unReadMessageCount ?: 0

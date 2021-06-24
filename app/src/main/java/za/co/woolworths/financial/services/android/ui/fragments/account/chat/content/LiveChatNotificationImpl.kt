@@ -87,7 +87,6 @@ class LiveChatNotificationImpl : ILiveChatNotification {
             return context?.let {
                 NotificationCompat.Builder(it, LiveChatService.CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification)
-                    //.setContentTitle(bindString(R.string.app_name))
                     .setContentText(bindString(R.string.woolies_chat_active))
                     .setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_SOUND)
                     .setVibrate(null) // Passing null here silently fails

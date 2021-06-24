@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat.request
 
 import android.text.TextUtils
-import android.util.Log
 import com.amplifyframework.api.ApiException
 import com.amplifyframework.api.aws.GsonVariablesSerializer
 import com.amplifyframework.api.graphql.GraphQLRequest
@@ -15,7 +14,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.mod
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SenderMessage
 import za.co.woolworths.financial.services.android.util.Assets
-import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
 class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
@@ -108,23 +106,23 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
             request(conversationId),
             { listOfConversationsFromAgent ->
                 // Conversation displayed in adapter
-                val messageListFromChatAdapter = ChatAWSAmplify.getChatMessageList()?.toMutableList()
+                val chatListFromAdapter = ChatAWSAmplify.getChatMessageList()?.toMutableList()
 
                 // reset agent profile icon flag to default
-                messageListFromChatAdapter?.forEach {
+                chatListFromAdapter?.forEach {
                     (it as? SenderMessage)?.isWoolworthIconVisible = true
                     (it as? SendMessageResponse)?.isWoolworthIconVisible = true
                 }
 
-               val currentAgentList : List<ChatMessage>? = messageListFromChatAdapter?.filter  { it as? SendMessageResponse is SendMessageResponse }
+               val agentListFromAdapter : MutableList<SendMessageResponse>? = chatListFromAdapter?.filterIsInstance<SendMessageResponse>() as? MutableList<SendMessageResponse>?
 
-                val listOfMessagesFromAgent =  listOfConversationsFromAgent.data.items
+                val agentListFromService =  listOfConversationsFromAgent.data?.items?.sortedBy { it.createdAt }
+
                 // query last item in  agent list
-                val lastItem = listOfMessagesFromAgent.firstOrNull()
+                val lastItem = agentListFromService?.firstOrNull()
 
-                val sendMessageResponseList = currentAgentList?.filter { (it as? SendMessageResponse)?.content !in listOfMessagesFromAgent.map { item -> item.content } }
+                val sendMessageResponseList =  agentListFromService?.minus(agentListFromAdapter)
 
-                Log.e("messageList" , "currentList ${Utils.toJson(currentAgentList)}+\n\n+ agentList  ${Utils.toJson(listOfMessagesFromAgent)}  \n\n sendMessageList  ${Utils.toJson(sendMessageResponseList)} \n\n size ${sendMessageResponseList?.size ?: 0}" )
                 onSuccess(sendMessageResponseList?.size ?: 0, lastItem)
             }, {})
     }

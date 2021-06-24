@@ -72,8 +72,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? WChatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        chatNavController =
-            (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
+        chatNavController = (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
         initView()
     }
 
@@ -83,7 +82,6 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 activity?.let { act -> ServiceTools.start(act, LiveChatService::class.java) }
                 return@with
             }
-
             listAllMessages()
         }
     }
@@ -95,7 +93,6 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 val content = when (item) {
                     is SenderMessage -> item.message
                     is SendMessageResponse -> item.content
-                    else -> null
                 }
                 if (!TextUtils.isEmpty(content))
                     showMessage(item)
@@ -255,35 +252,29 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
     private fun autoConnectToNetwork() {
         activity?.let { activity ->
-            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
-                activity,
-                this,
-                object : ConnectionBroadcastReceiver() {
-                    override fun onConnectionChanged(hasConnection: Boolean) {
-                        if (hasConnection && !isConnectedToNetwork) {
-                            isConnectedToNetwork = true
-                            with(chatViewModel) {
-                                liveChatListAllAgentConversation.messageListFromAgent({ messagesByConversation ->
-                                    mChatAdapter?.clear()
-                                    messagesByConversation.first?.forEach { item ->
-                                        showMessage(item)
-                                    }
-                                    activity.runOnUiThread {
-                                        if (isAdded) {
-                                            chatLoaderProgressBar?.visibility = GONE
-                                            subscribeResult(messagesByConversation.second, false)
-                                        }
-                                    }
-                                }, {
-                                    chatLoaderProgressBar?.visibility = GONE
-                                })
+            ConnectivityLiveData.observe(viewLifecycleOwner, { hasConnection ->
+                if (hasConnection && !isConnectedToNetwork) {
+                    isConnectedToNetwork = true
+                    with(chatViewModel) {
+                        liveChatListAllAgentConversation.messageListFromAgent({ messagesByConversation ->
+                            mChatAdapter?.clear()
+                            messagesByConversation.first?.forEach { item ->
+                                showMessage(item)
                             }
-                        } else {
-                            isConnectedToNetwork = false
-                        }
-
+                            activity.runOnUiThread {
+                                if (isAdded) {
+                                    chatLoaderProgressBar?.visibility = GONE
+                                    subscribeResult(messagesByConversation.second, false)
+                                }
+                            }
+                        }, {
+                            chatLoaderProgressBar?.visibility = GONE
+                        })
                     }
-                })
+                } else {
+                    isConnectedToNetwork = false
+                }
+            })
         }
     }
 
@@ -301,7 +292,6 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 val content = when (message) {
                     is SenderMessage -> message.message
                     is SendMessageResponse -> message.content
-                    else -> null
                 }
                 if (!TextUtils.isEmpty(content)) {
                     it.addMessage(message)
