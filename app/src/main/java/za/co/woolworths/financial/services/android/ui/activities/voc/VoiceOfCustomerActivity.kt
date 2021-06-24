@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, GenericActionOrCancelDialogFragment.IActionOrCancel {
 
     companion object {
+        const val EXTRA_SURVEY_DETAILS = "extraSurveyDetails"
         const val DIALOG_SKIP_ID = 1
     }
 

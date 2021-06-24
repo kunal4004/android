@@ -49,7 +49,7 @@ class ChatEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickL
                     postChatEventEndSession()
                 }
                 dismiss()
-                VoiceOfCustomerManager.showVocSurvey(context)
+                VoiceOfCustomerManager.showVocSurveyIfNeeded(context)
             }
             R.id.noContinueSessionButton -> dismiss()
         }

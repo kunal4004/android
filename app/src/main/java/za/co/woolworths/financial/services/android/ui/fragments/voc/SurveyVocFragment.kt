@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.fragment_survey_voc.*
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
+import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerInterface
 import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
@@ -21,7 +22,6 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericA
 class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCancelDialogFragment.IActionOrCancel {
 
     companion object {
-        const val SURVEY_DETAILS = "surveyDetails"
         const val DIALOG_OPT_OUT_ID = 2
     }
 
@@ -32,36 +32,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.getSerializable(SURVEY_DETAILS)?.let { survey ->
-            if (survey is SurveyDetails) {
-                surveyDetails = survey
-            }
-        }
-
-        // TODO: remove dummy code
-        val dummyQuestions = ArrayList<SurveyQuestion>()
-        dummyQuestions.add(SurveyQuestion(
-                id = 1,
-                type = "NUMERIC",
-                title = "How was your live chat experience?",
-                minValue = 1,
-                maxValue = 10,
-                required = true,
-                matrix = false
-        ))
-        dummyQuestions.add(SurveyQuestion(
-                id = 2,
-                type = "FREE_TEXT",
-                title = "Please tell us more about your experience?",
-                required = false,
-                matrix = false
-        ))
-        surveyDetails = SurveyDetails(
-                id = 1,
-                name = "Live Chat",
-                type = "GENEX",
-                questions = dummyQuestions
-        )
+        surveyDetails = activity?.intent?.extras?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_DETAILS) as? SurveyDetails
 
         // TODO: generate default answers for required questions... unless not necessary
     }

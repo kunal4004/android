@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto.voc
 
+import java.io.Serializable
+
 data class SurveyQuestion(
         val id: Long,
         val type: String,
@@ -8,7 +10,7 @@ data class SurveyQuestion(
         val maxValue: Int? = null,
         val required: Boolean?,
         val matrix: Boolean? = null
-) {
+) : Serializable {
     enum class QuestionType(val type: String, val viewType: Int) {
         RATE_SLIDER("NUMERIC", 0),
         FREE_TEXT("FREE_TEXT", 1);
