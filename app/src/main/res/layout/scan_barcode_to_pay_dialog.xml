@@ -97,7 +97,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="@dimen/thirty_nine_dp"
                 android:contentDescription="@string/card_details_cardholder_label"
-                android:text="Cardholder" />
+                android:text="@string/card_holder" />
 
             <TextView
                 android:id="@+id/tvSequenceNumberLabel"
@@ -107,7 +107,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="@dimen/eight_dp"
                 android:contentDescription="@string/card_details_sequence_label"
-                android:text="Sequence Number" />
+                android:text="@string/sequence_number" />
 
             <TextView
                 android:id="@+id/tvCardholderValue"
