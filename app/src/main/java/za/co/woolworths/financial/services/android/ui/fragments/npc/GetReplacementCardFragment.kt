@@ -55,10 +55,6 @@ class GetReplacementCardFragment : MyCardExtension() {
 
     private lateinit var locator: Locator
 
-    companion object {
-        fun newInstance() = GetReplacementCardFragment()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)

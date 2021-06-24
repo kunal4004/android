@@ -88,16 +88,7 @@ class MyCardBlockedFragment : MyCardExtension() {
 
     private fun navigateToReplacementCard() {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD)
-        /*replaceFragment(
-                fragment = GetReplacementCardFragment.newInstance(),
-                tag = GetReplacementCardFragment::class.java.simpleName,
-                containerViewId = R.id.flMyCard,
-                allowStateLoss = true,
-                enterAnimation = R.anim.slide_in_from_right,
-                exitAnimation = R.anim.slide_to_left,
-                popEnterAnimation = R.anim.slide_from_left,
-                popExitAnimation = R.anim.slide_to_right
-        )*/
+
         activity?.apply {
             Intent(this, SelectStoreActivity::class.java).apply {
                 startActivity(this)
