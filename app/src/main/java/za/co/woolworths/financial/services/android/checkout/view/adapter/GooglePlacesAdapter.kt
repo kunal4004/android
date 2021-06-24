@@ -104,6 +104,7 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
                 val results = FilterResults()
                 // Skip the autocomplete query if no constraints or less than 3 char is given.
                 if (constraint != null && constraint.length >= SEARCH_LENGTH) {
+                    isShimmerShowing = true
                     mResultList = getPredictions(constraint)
                     results.values = mResultList
                     results.count = mResultList.size

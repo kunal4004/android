@@ -153,7 +153,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         unitComplexFloorEditText.setText(selectedAddress.unitComplexFloor)
         suburbEditText.setText(selectedAddress.suburb)
         provinceAutocompleteEditText.setText(selectedAddress.province)
-        postalCode.setText(selectedAddress.postalCode)
+        if (selectedAddress.postalCode.isNullOrEmpty()) {
+            enablePostalCode()
+            postalCode.text.clear()
+        } else
+            postalCode.setText(selectedAddress.postalCode)
         selectedDeliveryAddressType = savedAddress?.addressType
     }
 
@@ -187,7 +191,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 selectedAddress.unitComplexFloor = it
             }
         }
-        postalCode?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        postalCode?.apply {
+            afterTextChanged {
+                if (it.length > 0)
+                    showErrorInputField(this, View.GONE)
+            }
+        }
         recipientName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         cellphoneNumber?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
     }
@@ -279,6 +288,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun init() {
+        if (selectedAddress != null && selectedAddress.postalCode.isNullOrEmpty()) {
+            enablePostalCode()
+        }
         if (recipientName?.text.toString().isEmpty()) {
             val jwtDecoded: JWTDecodedModel? = SessionUtilities.getInstance().jwt
             val name = jwtDecoded?.name?.get(0) ?: ""
@@ -315,6 +327,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         placesClient.fetchPlace(placeRequest)
                             .addOnSuccessListener { response ->
                                 val place = response!!.place
+                                selectedAddress = SelectedPlacesAddress()
                                 setAddress(place)
                             }.addOnFailureListener { exception ->
                                 if (exception is ApiException) {
@@ -403,9 +416,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
         selectedAddress.postalCode = suburb?.postalCode.toString()
         enableSuburbSelection()
-        enableProvinceSelection()
+        //enableProvinceSelection()
         suburbEditText?.setText(suburb?.name)
-        postalCode?.setText(suburb?.postalCode)
+        if (suburb?.postalCode.isNullOrEmpty()) {
+            enablePostalCode()
+            postalCode.text.clear()
+        } else {
+            disablePostalCode()
+            postalCode?.setText(suburb?.postalCode)
+        }
     }
 
     private fun setAddress(place: Place) {
@@ -505,7 +524,13 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
         suburbEditText.setText(if (provinceName.isEmpty()) "" else selectedAddress.suburb)
         provinceAutocompleteEditText.setText(provinceName)
-        postalCode.setText(selectedAddress.postalCode)
+        if (selectedAddress.postalCode.isNullOrEmpty()) {
+            enablePostalCode()
+            postalCode.text.clear()
+        } else {
+            disablePostalCode()
+            postalCode.setText(selectedAddress.postalCode)
+        }
     }
 
     private fun enableProvinceSelection() {
@@ -522,6 +547,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         dropdownGetSuburbImg.visibility = View.VISIBLE
         selectSuburbLayout.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_inactive_bg)
         suburbEditText.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_box_autocomplete_edit_text)
+    }
+
+    private fun enablePostalCode() {
+        postalCode.setBackgroundResource(if (postalCodeTextErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
+        postalCode.isClickable = true
+        postalCode.isEnabled = true
+    }
+
+    private fun disablePostalCode() {
+        postalCode.setBackgroundResource(R.drawable.input_box_inactive_bg)
+        postalCode.isClickable = false
+        postalCode.isEnabled = false
     }
 
     private fun navigateToProvinceSelection() {

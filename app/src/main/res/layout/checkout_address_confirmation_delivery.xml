@@ -22,7 +22,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/eighteen_dp"
         android:background="@color/white"
+        android:scrollbars="vertical"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/addressListPartition"
         app:layout_constraintEnd_toStartOf="@+id/rightguideline"
+        app:layout_constraintHeight_max="@dimen/hundred_and_eighty_dp"
         app:layout_constraintStart_toEndOf="@+id/leftguideline"
         app:layout_constraintTop_toBottomOf="@+id/whereWeDeliveringTitle" />
 
@@ -32,6 +36,7 @@
         android:layout_height="@dimen/line_dp"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:background="@color/sign_in_register_button_border"
+        app:layout_constraintBottom_toTopOf="@+id/plusImgAddAddress"
         app:layout_constraintTop_toBottomOf="@+id/saveAddressRecyclerView" />
 
     <ImageView
@@ -40,6 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/ten_dp"
         android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginBottom="@dimen/hundred_dp"
         android:minWidth="@dimen/twenty_four_dp"
         android:minHeight="@dimen/twenty_four_dp"
         app:layout_constraintStart_toEndOf="@+id/left_guideline"
@@ -53,6 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
         android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginBottom="@dimen/hundred_dp"
         android:minHeight="@dimen/twenty_four_dp"
         android:text="@string/add_a_new_address"
         app:layout_constraintStart_toEndOf="@+id/plusImgAddAddress"

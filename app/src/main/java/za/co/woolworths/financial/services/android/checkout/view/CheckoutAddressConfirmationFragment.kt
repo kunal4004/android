@@ -55,6 +55,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         super.onViewCreated(view, savedInstanceState)
         if (navController == null)
             navController = Navigation.findNavController(view)
+
+        if (activity is CheckoutActivity)
+            (activity as? CheckoutActivity)?.showBackArrowWithoutTitle()
         setupViewModel()
         initView()
         addFragmentResultListener()
@@ -65,8 +68,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
         val bundle = arguments?.getBundle("bundle")
         updateSavedAddress(bundle)
-        if (activity is CheckoutActivity)
-            (activity as? CheckoutActivity)?.showBackArrowWithoutTitle()
     }
 
     override fun onClick(v: View?) {
@@ -109,27 +110,19 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             if (containsKey("savedAddress")) {
                 val addressString = getString("savedAddress")
                 if (!addressString.isNullOrEmpty() && !addressString.equals("null", true))
-                    savedAddress =
-                        (Utils.jsonStringToObject(
-                            getString("savedAddress"),
-                            SavedAddressResponse::class.java
-                        ) as? SavedAddressResponse)!!
+                    savedAddress = (Utils.jsonStringToObject(
+                        addressString,
+                        SavedAddressResponse::class.java
+                    ) as? SavedAddressResponse)
             }
         }
     }
 
     private fun initView() {
-
-        val decoration: ItemDecoration = object : ItemDecoration() {
-            override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-                super.onDraw(c, parent, state)
-                //empty because to remove divider
-            }
-        }
         checkoutAddressConfirmationListAdapter =
             CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
         saveAddressRecyclerView?.apply {
-            addItemDecoration(decoration)
+            addItemDecoration(object : ItemDecoration() {})
             layoutManager = activity?.let { LinearLayoutManager(it) }
             checkoutAddressConfirmationListAdapter?.let { adapter = it }
         }

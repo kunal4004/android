@@ -347,9 +347,11 @@
             android:id="@+id/postalCode"
             style="@style/checkout_edittext_style"
             android:layout_width="match_parent"
-            android:background="@color/checkout_delivering_title_background"
+            android:background="@drawable/input_box_inactive_bg"
             android:contentDescription="@string/cd_ccd_txtpostalcode"
-            android:editable="false"
+            android:enabled="false"
+            android:clickable="false"
+            android:inputType="number"
             android:imeOptions="actionDone"
             android:textColor="@color/non_editable_edit_text_text_color" />
     </com.facebook.shimmer.ShimmerFrameLayout>
