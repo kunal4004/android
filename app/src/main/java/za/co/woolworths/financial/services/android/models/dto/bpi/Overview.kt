@@ -7,5 +7,6 @@ import kotlinx.android.parcel.Parcelize
 data class Overview(
     val benefits: List<String>,
     val description: String,
+    val header:String?,
     val title: String
 ) : Parcelable

@@ -8,5 +8,8 @@ data class DefaultLabel(
     val howToClaim: String,
     val requiredDocuments: String,
     val claimReasonTitle: String,
-    val overviewTitle: String
+    val overviewTitle: String,
+    val requiredForm: String,
+    val submitForm: String,
+    val submitDescription: String
 ) : Parcelable

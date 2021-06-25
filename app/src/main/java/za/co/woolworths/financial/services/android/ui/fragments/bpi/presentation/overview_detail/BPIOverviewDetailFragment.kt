@@ -41,7 +41,7 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
         arguments?.apply {
             val bpiOverview = BPIOverviewDetailFragmentArgs.fromBundle(this)
             bpiOverview.overviewArgs?.apply {
-                tvTitle?.text = overview?.title ?: ""
+                tvTitle?.text = overview?.header ?: overview?.title ?: ""
                 benefitHeaderDrawable?.let { imBackgroundHeader?.setImageResource(it) }
                 insuranceType?.let { claimVisibility(it) }
                 setBenefitDetail(this)

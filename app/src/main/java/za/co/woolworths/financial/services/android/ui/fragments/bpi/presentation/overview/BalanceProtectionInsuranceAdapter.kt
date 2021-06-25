@@ -39,7 +39,7 @@ internal class BalanceProtectionInsuranceAdapter(private val bpiOverviewList: Mu
                 R.dimen.seventeen_dp,
                 R.dimen.sixteen_dp
             )
-            itemView.tvTitle?.text = bpiOverview?.overview?.title ?: ""
+            itemView.tvTitle?.text = bpiOverview?.overview?.header ?: bpiOverview?.overview?.title ?: ""
             itemView.tvDescription?.text = bpiOverview?.overview?.description ?: ""
             bpiOverview?.overviewDrawable?.let { itemView.imOverViewDescImage.setImageResource(it) }
 
