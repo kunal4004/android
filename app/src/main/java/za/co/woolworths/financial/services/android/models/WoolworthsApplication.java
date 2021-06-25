@@ -101,6 +101,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String howToSaveLink;
     private static String wrewardsTCLink;
     private static String cartCheckoutLink;
+    private static String cartCheckoutLinkWithParams;
     private static JsonElement storeCardBlockReasons;
     private static String authenticVersionReleaseNote;
     private Set<Class<Activity>> visibleActivities = new HashSet<>();
@@ -691,4 +692,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         mContextApplication = context;
     }
 
+    public static void setCartCheckoutLinkWithParams(String cartCheckoutLinkWithParams) {
+        WoolworthsApplication.cartCheckoutLinkWithParams = cartCheckoutLinkWithParams;
+    }
+
+    public static String getCartCheckoutLinkWithParams() {
+        return cartCheckoutLinkWithParams;
+    }
 }
