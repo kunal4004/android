@@ -102,11 +102,10 @@
     <TextView
         android:id="@+id/availableFundAmountTextView"
         style="@style/accountAvailableFundAmountStyle"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_marginTop="@dimen/eight_dp"
         android:gravity="center|top"
-        android:text="R54 000.00"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/availableFundsValueAmountEndGuideLine"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
@@ -117,7 +116,7 @@
     <TextView
         android:id="@+id/currentBalanceTextView"
         style="@style/accountSalesTextViewStyle"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="@dimen/zero_dp"
         android:text="@string/current_balance_layout"
         app:layout_constraintBottom_toTopOf="@+id/currentBalanceGuideline"
         app:layout_constraintEnd_toStartOf="@+id/currentBalanceAmountTextView"
@@ -128,7 +127,7 @@
     <TextView
         android:id="@+id/currentBalanceAmountTextView"
         style="@style/accountSalesTextViewAmountStyle"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="@dimen/zero_dp"
         app:layout_constraintBottom_toTopOf="@+id/currentBalanceGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
