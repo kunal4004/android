@@ -62,9 +62,9 @@ class ParticipatingStoreFragment : Fragment() {
             mTitle = getString(PRODUCT_NAME)
             mDescription = getString(CONTACT_INFO)
 
-            val mLocationOnMap = getString(MAP_LOCATION)
+            val mLocationOnMap = getSerializable(MAP_LOCATION)
 
-            mLocations = Gson().fromJson(mLocationOnMap, object : TypeToken<List<StoreDetails>>() {}.type)
+            mLocations = mLocationOnMap as? MutableList<StoreDetails>
         }
     }
 
@@ -95,15 +95,16 @@ class ParticipatingStoreFragment : Fragment() {
 
     private fun setupActionBar() {
         (activity as? SelectStoreActivity)?.apply {
-            val mActionBar = supportActionBar
-            mActionBar?.show()
-            val showBackButton: Boolean = arguments?.getBoolean(SHOW_BACK_BUTTON, false) == true
-            mActionBar?.setDisplayHomeAsUpEnabled(showBackButton)
-            mActionBar?.setDisplayUseLogoEnabled(false)
-            if (showBackButton) {
-                mActionBar?.setHomeAsUpIndicator(R.drawable.back24)
-            } else {
-                mActionBar?.setHomeAsUpIndicator(null)
+            supportActionBar?.apply {
+                show()
+                val showBackButton: Boolean = arguments?.getBoolean(SHOW_BACK_BUTTON, false) == true
+                setDisplayHomeAsUpEnabled(showBackButton)
+                setDisplayUseLogoEnabled(false)
+                if (showBackButton) {
+                    setHomeAsUpIndicator(R.drawable.back24)
+                } else {
+                    setHomeAsUpIndicator(null)
+                }
             }
         }
     }

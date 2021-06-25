@@ -106,12 +106,11 @@ class GetReplacementCardFragment : MyCardExtension() {
     private fun setActionBar() {
         (activity as? SelectStoreActivity)?.apply {
             vtcReplacementToolbarTextView?.text = ""
-            val mActionBar = supportActionBar
-            if (mActionBar != null) {
-                mActionBar.setDisplayHomeAsUpEnabled(true)
-                mActionBar.setDisplayShowTitleEnabled(false)
-                mActionBar.setDisplayUseLogoEnabled(false)
-                mActionBar.setHomeAsUpIndicator(R.drawable.back24)
+             supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                setDisplayShowTitleEnabled(false)
+                setDisplayUseLogoEnabled(false)
+                setHomeAsUpIndicator(R.drawable.back24)
             }
         }
     }
@@ -180,7 +179,7 @@ class GetReplacementCardFragment : MyCardExtension() {
                                     view?.findNavController()?.navigate(R.id.action_getReplacementCardFragment_to_participatingStoreFragment, bundleOf(
                                             PRODUCT_NAME to bindString(R.string.participating_stores),
                                             CONTACT_INFO to bindString(R.string.participating_store_desc),
-                                            MAP_LOCATION to Gson().toJson(npcStores),
+                                            MAP_LOCATION to npcStores,
                                             STORE_CARD to storeCardResponse,
                                             GEOFENCE_ENABLED to locationResponse.inGeofence
                                     ))
