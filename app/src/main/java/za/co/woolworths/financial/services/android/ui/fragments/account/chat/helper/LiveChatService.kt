@@ -85,12 +85,12 @@ class LiveChatService : LifecycleService() {
                                         item
                                     )
                                 }
-                                onReconnectToSubscribeAPI(this, { item ->
-                                    notifySender(1, item)
-                                }, {
-                                    ChatAWSAmplify.isLiveChatActivated = false
-                                    broadcastResultToAmplifySubscribe(applicationContext, null)
-                                })
+//                                onReconnectToSubscribeAPI(this, { item ->
+//                                    notifySender(1, item)
+//                                }, {
+//                                    ChatAWSAmplify.isLiveChatActivated = false
+//                                    broadcastResultToAmplifySubscribe(applicationContext, null)
+//                                })
                             }
                         }
                     }
