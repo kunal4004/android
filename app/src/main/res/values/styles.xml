@@ -413,6 +413,7 @@
         <item name="android:layout_marginStart">@dimen/default_margin</item>
         <item name="android:layout_marginEnd">@dimen/default_margin</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
 
@@ -422,13 +423,18 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:gravity">center|start</item>
-        <item name="android:lineSpacingExtra">0.2sp</item>
+        <item name="android:lineSpacingExtra">0.12sp</item>
         <item name="WTextView_font">myriadpro_semibold</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:layout_marginTop">18dp</item>
-        <item name="android:layout_marginBottom">18dp</item>
-        <item name="android:layout_marginStart">@dimen/default_margin</item>
-        <item name="android:layout_marginEnd">@dimen/default_margin</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:layout_marginBottom">0dp</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
     </style>
 

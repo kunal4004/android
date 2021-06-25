@@ -47,6 +47,13 @@ class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
             val requiredFormAdapter = RequiredFormAdapter(claimReasonArgs?.requiredForm, true)
             val requiredFormSubmitAdapter = RequiredFormAdapter(claimReasonArgs?.requiredSubmit, false)
 
+            bpiViewModel?.bpiPresenter?.defaultLabel()?.apply {
+                applyLoanInfoTextView?.text = submitDescription
+                requiredFormTextView?.text = requiredForm
+                btnGetDocument?.text = requiredDocuments
+                youWillAlsoNeedToSubmitTextView?.text = submitForm
+            }
+
             rlRequiredForm?.apply {
                 layoutManager = LinearLayoutManager(activity)
                 adapter = requiredFormAdapter
@@ -59,7 +66,6 @@ class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
         }
 
         btnGetDocument?.apply {
-            bpiViewModel?.bpiPresenter?.defaultLabel()?.requiredDocuments?.let { text = it }
             AnimationUtilExtension.animateViewPushDown(this)
             btnGetDocument?.setOnClickListener(this@BPISubmitClaimDetailFragment)
         }

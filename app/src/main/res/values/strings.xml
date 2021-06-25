@@ -299,42 +299,6 @@
     <string name="submit_a_claim">Submit a Claim</string>
     <string name="submit_a_claim_desc">Critical Illness/Death Cover/Retrenchment etc. Submit a Claim</string>
 
-    <string name="select_claim_reason">select your claim reason</string>
-    <string name="death_cover">Death Cover</string>
-    <string name="death_cover_desc">Pays the outstanding balance on your account</string>
-    <string name="retrenchment">Total Loss of Income</string>
-    <string name="retrenchment_desc">Pays your instalments for up to 12 months in the event of Total Loss of Income (such as Retrenchment or “no work, no pay”)</string>
-    <string name="temporary_disability">Temporary Disability</string>
-    <string name="temporary_disability_desc">Pays up to 12 months of installments from the first day of disability</string>
-
-    <string name="permanent_disability">Permanent Disability</string>
-    <string name="permanent_disability_desc">Pays the outstanding balance on your account</string>
-
-    <string name="critical_illness">Critical Illness</string>
-    <string name="critical_illness_desc">Pays the outstanding balance on your account.</string>
-    <string name="apply_loan_info">In order to process your claim we will need the following documents.</string>
-    <string name="required_form">required forms (available from woolworths financials solutions)</string>
-    <string name="you_will_also_need">IN ADDITION, YOU WILL ALSO NEED TO SUBMIT THE BELOW DOCUMENTS</string>
-    <string name="balance_protection_claim_form">Balance Protection Claim Form</string>
-    <string name="new_disability_claim_form">New Disability Claim Form</string>
-    <string name="confidential_medical_specialist_report">Confidential Medical Specialist Report</string>
-    <string name="medical_reports_from_doctor">Medical Reports from Doctor</string>
-    <string name="death_certificate">Death Certificate</string>
-
-    <string name="certified_id">Certified ID</string>
-    <string name="certified_id_claimant">Certified ID Copy of next of Kin/Claimant</string>
-    <string name="investigation_results_from_doctor">Investigation Results from Doctor</string>
-    <string name="retrenchement_form">Retrenchment Form</string>
-    <string name="certified_id_copy">Certified ID Copy</string>
-    <string name="UI19_form">UI19 Form</string>
-    <string name="certified_letter_of_retrenchment_from_employer">Certified Letter of Retrenchment from Employer</string>
-    <string name="employee_declaration_form">Employee Declaration Form</string>
-    <string name="sick_note_from_doctor">Sick Note from Doctor</string>
-    <string name="personal_medical_attendants_report">Personal Medical Attendants Report</string>
-    <string name="boarding_letter_from_employer">Boarding Letter from Employer</string>
-    <string name="balance_protection_title">balance insurance</string>
-    <string name="get_the_documents">Get the documents</string>
-    <string name="balance_insurance_overview">Balance Protection Insurance Overview</string>
 
     <string name="features_and_benefit">FEATURES AND BENEFITS</string>
     <string name="features_and_benefit_desc">Your peace of mind is important to us, so we offer you comprehensive balance protection insurance on your Woolies Store Card, Credit Card or Personal Loan.</string>
@@ -817,9 +781,6 @@
     <string name="error_passcode_locked_desc">You have entered your Passcode incorrectly 3 times. To log in, please reset your Passcode using your Credit Card ATM PIN.</string>
     <string name="forgot_passcode">Forgot Passcode</string>
     <string name="forgot_passcode_dialog_desc">You can reset your passcode for this device using your Woolies Credit Card Pin.</string>
-    <string name="police_report">Police Report</string>
-    <string name="certified_id_deceased">Certified ID Deceased</string>
-    <string name="claimant_bank_statement">Claimant\'s Bank Statement</string>
     <string name="npc_block_card_desc">There was a problem blocking your card</string>
     <string name="credit_limit_decrease">Credit Limit Decrease</string>
     <string name="credit_limit_decrease_desc_part_1">You will only be able to apply for a limit increase 6 month after this application has been concluded. You will need to go through a credit and affordability assessment at the time.</string>
