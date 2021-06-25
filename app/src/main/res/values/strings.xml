@@ -1844,7 +1844,7 @@
     <string name="debit_order_amount_label">Debit order amount: (this can be either full payment, minimum payment, fixed amount or fixed percentage)</string>
     <string name="debit_order_deduction_date_label">"Debit order deduction date: "</string>
     <string name="debit_order_deduction_desc">"Note: If you are setting up a debit order for a Woolies Personal Loan, remember to also attach a clear copy of your valid SA Identity Document (if its an ID card include both sides).  "</string>
-    <string name="amount_payable_now">"Overdue Amount, Payable Now"</string>
+    <string name="amount_payable_now">Overdue Amount, Payable Now</string>
     <string name="pma_ten_card_limit_error_desc">You have reached the maximum number of  cards allowed. Please delete a card before  adding a new one.</string>
 
     <string name="by_electronic_fund_trasfer_personal_loan_desc">Pay your account by EFT or a direct payment into your loan account.</string>

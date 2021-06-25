@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -18,7 +17,7 @@ import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
+import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.android.synthetic.main.view_statement_button.*
 import kotlinx.coroutines.GlobalScope
@@ -72,7 +71,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.account_available_fund_overview_fragment, container, false)
+        return inflater.inflate(R.layout.available_funds_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -87,10 +86,10 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         val constParam: ConstraintLayout.LayoutParams = bottomViewGuideline.layoutParams as ConstraintLayout.LayoutParams
         constParam.guidePercent = if ((activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.isAccountInArrearsState() == true) {
             paymentOverdueGroup?.visibility = VISIBLE
-            0.8f
+            0.82f
         } else {
-            paymentOverdueGroup?.visibility = GONE
-            0.7f
+            paymentOverdueGroup?.visibility = INVISIBLE
+            0.72f
         }
         bottomViewGuideline.layoutParams = constParam
 
@@ -101,7 +100,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             val location = IntArray(2)
             bottomGuide?.getLocationOnScreen(location)
             val bottomGuidelineVerticalPosition = location[1]
-            val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition
+            val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition + Utils.dp2px(20f)
             bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
 
         }
