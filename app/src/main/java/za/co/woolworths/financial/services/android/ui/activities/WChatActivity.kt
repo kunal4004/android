@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.util.*
 
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
@@ -62,6 +63,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
     companion object {
         const val DELAY: Long = 300
+        const val EXTRA_VOC_TRIGGER_EVENT = "extraVocTriggerEvent"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1816,7 +1816,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             else
                 act = (MyAccountActivity) activity;
 
-            inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView,notificationBadge,onlineIndicatorImageView);
+            inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView(act, new ChatBubbleVisibility(mAccountResponse.accountList, activity), chatWithAgentFloatingButton, ApplyNowState.STORE_CARD, mScrollView,notificationBadge,onlineIndicatorImageView, null);
             inAppChatTipAcknowledgement.build();
         }
     }
