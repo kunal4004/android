@@ -98,9 +98,20 @@ class BPIOverviewOverviewImpl(private val arguments: Bundle?) :
         }
     }
 
+    override fun getAccount(): Account? {
+        return arguments?.let { Gson().fromJson(it.getString(ACCOUNT_INFO), Account::class.java)  }
+    }
+
+    override fun navigateToOverviewDetail(): Pair<BalanceProtectionInsuranceOverview, Boolean> {
+        val insuranceType  = getInsuranceType()
+       val hasOneInsuranceTypeItem = insuranceType.isNotEmpty() && insuranceType.size ==1
+        val insuranceTypeItem = coveredUncoveredList()?.get(0)
+        return Pair(insuranceTypeItem,hasOneInsuranceTypeItem)
+    }
+
     override fun getInsuranceType(): MutableList<InsuranceType> = arguments?.let {
         if (it.containsKey(ACCOUNT_INFO)) {
-            Gson().fromJson(it.getString(ACCOUNT_INFO), Account::class.java)?.insuranceTypes ?: mutableListOf()
+            getAccount() ?.insuranceTypes ?: mutableListOf()
         } else mutableListOf() } ?: mutableListOf()
 
     override fun coveredUncoveredList(): MutableList<BalanceProtectionInsuranceOverview> {

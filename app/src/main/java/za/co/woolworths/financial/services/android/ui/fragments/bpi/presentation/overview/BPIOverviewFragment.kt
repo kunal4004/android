@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentatio
 import android.os.Bundle
 import android.view.*
 import androidx.activity.OnBackPressedCallback
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -55,7 +54,7 @@ class BPIOverviewFragment : Fragment() {
         val claimButton = menu.findItem(R.id.menu_claim_button)
         claimButton?.isVisible = bpiViewModel?.bpiPresenter?.isCovered() ?: false
         claimButton.actionView?.setOnClickListener {
-            bpiViewModel?.bpiPresenter?.navigateTo(R.id.action_Overview_to_SubmitClaim, bundleOf())
+            view?.findNavController()?.navigate(BPIOverviewFragmentDirections.actionOverviewToSubmitClaim())
         }
         super.onCreateOptionsMenu(menu, inflater)
     }

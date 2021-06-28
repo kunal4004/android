@@ -15,6 +15,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.overview_detail.BPIOverviewDetailFragmentArgs
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewPresenter
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 
@@ -32,13 +33,14 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
         /*
         * Implementation of room db will eliminate bundle argument requirement by fetching account data directly from db
         */
-        intent?.extras?.let { args -> bpiPresenter = bpiViewModel?.overviewPresenter(args) }
+            intent?.extras?.let { args -> bpiPresenter = bpiViewModel?.overviewPresenter(args) }
+            val overviewPair = bpiPresenter?.navigateToOverviewDetail()
+            val hasOnlyOneInsuranceTypeItem = overviewPair?.second ?: false
         bpiPresenter?.createNavigationGraph(
-            fragmentContainerView = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as? NavHostFragment,
-            navHostFragmentId = R.navigation.my_account_bpi_navhost,
-            startDestination = R.id.Overview,
-            extras = intent.extras
-        )
+                fragmentContainerView = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as? NavHostFragment,
+                navHostFragmentId = R.navigation.my_account_bpi_navhost,
+                startDestination =  if(hasOnlyOneInsuranceTypeItem) R.id.OverViewDetail else R.id.Overview,
+                extras =  if(hasOnlyOneInsuranceTypeItem) BPIOverviewDetailFragmentArgs.Builder(overviewPair?.first).build().toBundle() else  intent.extras)
     }
 
     fun actionBar() {

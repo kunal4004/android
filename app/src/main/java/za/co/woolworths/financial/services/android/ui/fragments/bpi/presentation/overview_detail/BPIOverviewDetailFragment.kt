@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.navigateUpOrFinish
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -38,6 +39,7 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.let { Utils.updateStatusBarBackground(it, R.color.white) }
         arguments?.apply {
             val bpiOverview = BPIOverviewDetailFragmentArgs.fromBundle(this)
             bpiOverview.overviewArgs?.apply {
@@ -56,7 +58,7 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                NavHostFragment.findNavController(this@BPIOverviewDetailFragment).navigateUp()
+                onBackPress()
             }
         })
     }
@@ -64,9 +66,13 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
         when (item.itemId) {
-            android.R.id.home -> bpiViewModel?.bpiPresenter?.navigateToPreviousFragment()
+            android.R.id.home -> onBackPress()
         }
         return true
+    }
+
+    private fun onBackPress() {
+        NavHostFragment.findNavController(this@BPIOverviewDetailFragment).navigateUpOrFinish(activity as? BalanceProtectionInsuranceActivity)
     }
 
     @SuppressLint("SetTextI18n")

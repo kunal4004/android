@@ -9,10 +9,16 @@ class NavGraphRouterImpl : NavigationGraphRouterInterface {
 
     private var navHost : NavHostFragment? = null
     // Configure the navigation
-    override fun createNavigationGraph(fragmentContainerView: NavHostFragment?, navHostFragmentId: Int?, startDestination: Int, extras: Bundle?): NavHostFragment? {
+    override fun createNavigationGraph(
+        fragmentContainerView: NavHostFragment?,
+        navHostFragmentId: Int?,
+        startDestination: Int,
+        extras: Bundle?
+    ): NavHostFragment? {
         navHost = fragmentContainerView
         val navController: NavController? = navHost?.navController
         val navGraph = navHostFragmentId?.let { navController?.navInflater?.inflate(it) }
+         // This is where you pass the bundle data from Activity to StartDestination
         navGraph?.startDestination = startDestination
         navGraph?.let { graph -> navController?.setGraph(graph, extras) }
         return navHost
@@ -25,4 +31,5 @@ class NavGraphRouterImpl : NavigationGraphRouterInterface {
     override fun navigateToPreviousFragment() {
         navHost?.navController?.popBackStack()
     }
+
 }
