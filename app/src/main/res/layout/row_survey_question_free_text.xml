@@ -34,7 +34,7 @@
             android:focusableInTouchMode="true"
             android:fontFamily="@font/myriad_pro_regular"
             android:gravity="top|left"
-            android:hint="@string/voc_question_freetext_hint"
+            android:hint="@string/voc_question_freetext_hint_optional"
             android:lines="5"
             android:paddingStart="@dimen/thirteen_dp"
             android:paddingTop="@dimen/twelve_dp"

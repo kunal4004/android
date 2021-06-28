@@ -77,10 +77,11 @@ class SurveyQuestionAdapter(
     inner class RateSliderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(question: SurveyQuestion, answer: SurveyAnswer?, callback: (Long, Int) -> Unit) {
             itemView.apply {
-                val minValue = question.minValue ?: 0
-                val maxValue = question.maxValue ?: 0
+                val minValue = (question.minValue ?: 1) - 1
+                val maxValue = (question.maxValue ?: 10) - 1
 
                 tvTitleRateSlider.text = question.title ?: ""
+                tvDescRateSlider.text = resources.getString(R.string.voc_question_slider_desc, minValue, maxValue)
 
                 sbRateSlider.max = maxValue - minValue // setMin() requires min API level 26. Doing this as a workaround.
                 sbRateSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -115,6 +116,7 @@ class SurveyQuestionAdapter(
         fun bind(question: SurveyQuestion, answer: SurveyAnswer?, callback: (Long, String) -> Unit) {
             itemView.apply {
                 tvTitleFreeText.text = question.title
+                etValueFreeText.hint = resources.getString(if (question.required == true) R.string.voc_question_freetext_hint_required else R.string.voc_question_freetext_hint_optional)
 
                 (etValueFreeText.tag as? TextWatcher)?.let {
                     etValueFreeText.removeTextChangedListener(it)
