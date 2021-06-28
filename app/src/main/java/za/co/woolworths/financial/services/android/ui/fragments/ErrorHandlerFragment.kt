@@ -97,6 +97,13 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 actionButton.text = getString(R.string.retry)
                 cancelButton.text = getString(R.string.need_help_call_the_center)
             }
+            ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION -> {
+                errorLogo.setImageResource(R.drawable.ic_error_icon)
+                errorTitle.text = getString(R.string.store_email_error_title)
+                errorDescription?.text = getString(R.string.store_email_error_desc)
+                actionButton.text = getString(R.string.retry)
+                cancelButton.text = getString(R.string.need_help_call_the_center)
+            }
         }
     }
 
@@ -104,7 +111,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
         when (p0?.id) {
             R.id.cancelButton -> {
                 when (errorType) {
-                    ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
+                    ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION, ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_CALL_CENTER)
                     }
                     else -> {
@@ -124,6 +131,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
                     ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
+                        setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
+                    }
+                    ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
                 }

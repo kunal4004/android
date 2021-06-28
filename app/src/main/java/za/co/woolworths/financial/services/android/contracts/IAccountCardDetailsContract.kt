@@ -83,6 +83,15 @@ interface IAccountCardDetailsContract {
         fun navigateToPayMyAccountActivity()
         fun getStoreCardBlockType(): Boolean
         fun isProductCodeStoreCard(): Boolean
+        fun isVirtualCardEnabled(): Boolean
+        fun isVirtualCardObjectNotNull(): Boolean
+        fun isTemporaryCardEnabled(): Boolean
+        fun isInstantCardReplacementEnabled(): Boolean
+        fun isVirtualCardObjectBlockTypeNull(): Boolean
+        fun isGeneterateVTC(): Boolean
+        fun getPrimaryStoreCardBlockType(): String
+        fun isReplacementCardAndVirtualCardViewEnabled(): Boolean
+        fun isActivateVirtualTempCard(): Boolean
         fun onStartCreditLimitIncreaseFirebaseEvent()
     }
 

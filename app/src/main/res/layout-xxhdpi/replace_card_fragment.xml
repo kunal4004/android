@@ -36,7 +36,7 @@
         android:background="@color/black"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.18"
-        android:text="@string/participating_stores"
+        android:text="@string/select_a_store"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="12sp"
