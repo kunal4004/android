@@ -36,7 +36,7 @@
         android:background="@drawable/black_button_drawable_state"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.18"
-        android:text="@string/participating_stores"
+        android:text="@string/select_a_store"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="12sp"
@@ -68,7 +68,6 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
-
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center|start"
         android:lineSpacingMultiplier="1.40"
