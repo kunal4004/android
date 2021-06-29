@@ -43,9 +43,7 @@ import za.co.woolworths.financial.services.android.models.service.event.BusStati
 import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
@@ -53,12 +51,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
-<<<<<<< HEAD
-import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewOverviewImpl
-=======
->>>>>>> 88c0c3c9bc3bfc2d105be8aa964213ee1d2b0270
+
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -293,25 +286,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun navigateToBalanceProtectionInsurance(accountInfo: String?) {
-<<<<<<< HEAD
-        activity?.apply {
-
-            val productGroupCode = when (mCardPresenterImpl?.getAccount()?.productGroupCode) {
-                AccountsProductGroupCode.CREDIT_CARD.groupCode -> FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDBPI
-                AccountsProductGroupCode.STORE_CARD.groupCode -> FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDBPI
-                AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANBPI
-                else -> null
-            }
-
-            productGroupCode?.let { Utils.triggerFireBaseEvents(it) }
-            val navigateToBalanceProtectionInsurance = Intent(this, BalanceProtectionInsuranceActivity::class.java)
-            navigateToBalanceProtectionInsurance.putExtra(BPIOverviewOverviewImpl.ACCOUNT_INFO, accountInfo)
-            startActivity(navigateToBalanceProtectionInsurance)
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
-=======
         MyAccountsScreenNavigator.navigateToBalanceProtectionInsurance(activity, accountInfo, mCardPresenterImpl?.getAccount())
->>>>>>> 88c0c3c9bc3bfc2d105be8aa964213ee1d2b0270
     }
 
     override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
@@ -595,7 +570,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
         tvScheduleOrMangeDelivery?.text = bindString(R.string.schedule_your_delivery)
     }
-
 }
 
 
