@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
@@ -85,7 +86,14 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
 
     private fun toggleCardDetailsVisibility() {
         isCardDetailsVisible = !isCardDetailsVisible
-        btnToggleCardDetailsLabel.text = getString(if (isCardDetailsVisible) R.string.dialog_scan_barcode_to_pay_toggle_details_hidden else R.string.dialog_scan_barcode_to_pay_toggle_details_visible)
+
+        if (isCardDetailsVisible) {
+            btnToggleCardDetailsLabel.text = getString(R.string.dialog_scan_barcode_to_pay_toggle_details_hidden)
+            ivToggleCardDetailsLabelIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_barcode_hide, null))
+        } else {
+            btnToggleCardDetailsLabel.text = getString(R.string.dialog_scan_barcode_to_pay_toggle_details_visible)
+            ivToggleCardDetailsLabelIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_barcode_show, null))
+        }
 
         rlCardBarcode
                 .animate()
