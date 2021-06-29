@@ -12,7 +12,7 @@ class StoreLocatorCardListAdapter(private val clickListener: (StoreDetails) -> U
     }
 
     override fun onBindViewHolder(holder: StoreLocatorCardListViewHolder, position: Int) {
-        storeLocatorCards?.get(position)?.let { storeDetails -> holder.setItem(storeDetails, clickListener) }
+        storeLocatorCards?.get(holder.adapterPosition)?.let { storeDetails -> holder.setItem(storeDetails, clickListener) }
 
     }
 
