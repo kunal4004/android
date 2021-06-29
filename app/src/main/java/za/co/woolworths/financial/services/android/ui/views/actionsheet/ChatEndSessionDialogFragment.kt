@@ -56,8 +56,7 @@ class ChatEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickL
                     postChatEventEndSession()
                 }
                 dismiss()
-//                VoiceOfCustomerManager.showVocSurveyIfNeeded(context, vocTriggerEvent)
-                VoiceOfCustomerManager.showVocSurveyIfNeeded(context, VocTriggerEvent.CHAT_PL_STATEMENT)
+                VoiceOfCustomerManager.showVocSurveyIfNeeded(context, vocTriggerEvent)
             }
             R.id.noContinueSessionButton -> dismiss()
         }
