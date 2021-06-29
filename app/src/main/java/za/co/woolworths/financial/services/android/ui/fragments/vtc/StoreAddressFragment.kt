@@ -337,11 +337,10 @@ class StoreAddressFragment : Fragment() {
                             val npcStores: List<StoreDetails>? = locationResponse.Locations
                                     ?: mutableListOf()
                             if (npcStores?.size ?: 0 > 0) {
-                                val stores = Gson().toJson(npcStores)
 
                                 view?.findNavController()?.navigate(R.id.action_storeAddressFragment_to_participatingStoreFragment, bundleOf(
                                         PRODUCT_NAME to bindString(R.string.participating_stores),
-                                        MAP_LOCATION to stores,
+                                        MAP_LOCATION to npcStores,
                                         STORE_CARD to arguments?.getString(STORE_CARD),
                                         SHOW_GEOFENCING to false,
                                         SHOW_BACK_BUTTON to true

@@ -147,17 +147,17 @@ class SelectStoreDetailsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap?) {
         googleMap = map
-        googleMap!!.uiSettings.isScrollGesturesEnabled = false
-        googleMap!!.isMyLocationEnabled = false
+        googleMap?.uiSettings?.isScrollGesturesEnabled = false
+        googleMap?.isMyLocationEnabled = false
         centerCamera()
     }
 
     fun centerCamera() {
-        googleMap!!.addMarker(MarkerOptions().position(LatLng(storeDetails!!.latitude, storeDetails!!.longitude))
+        googleMap?.addMarker(MarkerOptions().position(LatLng(storeDetails?.latitude ?: 0.0, storeDetails?.longitude ?: 0.0))
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)))
         val cameraPosition = CameraPosition.Builder().target(
-                LatLng(storeDetails!!.latitude, storeDetails!!.longitude)).zoom(13f).build()
-        googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+                LatLng(storeDetails?.latitude ?: 0.0, storeDetails?.longitude ?: 0.0)).zoom(13f).build()
+        googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
     fun initMap() {

@@ -45,9 +45,9 @@
 
                     <ImageView
                         android:id="@+id/closePage"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_margin="12dp"
+                        android:layout_width="@dimen/twenty_four_dp"
+                        android:layout_height="@dimen/twenty_four_dp"
+                        android:layout_margin="@dimen/twelve_dp"
                         android:background="@drawable/ic_closecircle" />
 
                 </RelativeLayout>

@@ -33,12 +33,11 @@ class SelectStoreActivity : AppCompatActivity() {
 
     private fun setActionBar() {
         setSupportActionBar(vtcReplacementToolbar)
-        val mActionBar = supportActionBar
-        if (mActionBar != null) {
-            mActionBar.setDisplayHomeAsUpEnabled(true)
-            mActionBar.setDisplayShowTitleEnabled(false)
-            mActionBar.setDisplayUseLogoEnabled(false)
-            mActionBar.setHomeAsUpIndicator(R.drawable.back24)
+        supportActionBar?.apply{
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+            setHomeAsUpIndicator(R.drawable.back24)
         }
     }
 

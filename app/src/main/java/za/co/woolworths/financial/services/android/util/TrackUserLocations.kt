@@ -11,7 +11,6 @@ class TrackUserLocations {
     fun oneTimeLocation(oneTimeLocation: (Location?) -> Unit) {
         FuseLocationAPISingleton.addLocationChangeListener(object : ILocationProvider {
             override fun onLocationChange(location: Location?) {
-                Log.e("myLocationUpdate", Gson().toJson(location))
                 WoolworthsApplication.getAppContext()?.let { context -> Utils.saveLastLocation(location, context) }
                 FuseLocationAPISingleton.stopLocationUpdate()
                 oneTimeLocation(location)

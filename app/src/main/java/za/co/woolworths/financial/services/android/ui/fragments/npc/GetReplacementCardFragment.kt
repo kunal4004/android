@@ -55,10 +55,6 @@ class GetReplacementCardFragment : MyCardExtension() {
 
     private lateinit var locator: Locator
 
-    companion object {
-        fun newInstance() = GetReplacementCardFragment()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -110,12 +106,11 @@ class GetReplacementCardFragment : MyCardExtension() {
     private fun setActionBar() {
         (activity as? SelectStoreActivity)?.apply {
             vtcReplacementToolbarTextView?.text = ""
-            val mActionBar = supportActionBar
-            if (mActionBar != null) {
-                mActionBar.setDisplayHomeAsUpEnabled(true)
-                mActionBar.setDisplayShowTitleEnabled(false)
-                mActionBar.setDisplayUseLogoEnabled(false)
-                mActionBar.setHomeAsUpIndicator(R.drawable.back24)
+             supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                setDisplayShowTitleEnabled(false)
+                setDisplayUseLogoEnabled(false)
+                setHomeAsUpIndicator(R.drawable.back24)
             }
         }
     }
@@ -177,13 +172,6 @@ class GetReplacementCardFragment : MyCardExtension() {
                                 val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
                                         ?: mutableListOf()
                                 if (npcStores?.size ?: 0 > 0) {
-                                    /*val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
-                                    intentInStoreFinder.putExtra(PRODUCT_NAME, bindString(R.string.participating_stores))
-                                    intentInStoreFinder.putExtra(CONTACT_INFO, bindString(R.string.participating_store_desc))
-                                    intentInStoreFinder.putExtra(MAP_LOCATION, Gson().toJson(npcStores))
-                                    intentInStoreFinder.putExtra(GEOFENCE_ENABLED, locationResponse.inGeofence)
-                                    startActivity(intentInStoreFinder)
-                                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)*/
 
                                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_STORES)
 
@@ -191,7 +179,7 @@ class GetReplacementCardFragment : MyCardExtension() {
                                     view?.findNavController()?.navigate(R.id.action_getReplacementCardFragment_to_participatingStoreFragment, bundleOf(
                                             PRODUCT_NAME to bindString(R.string.participating_stores),
                                             CONTACT_INFO to bindString(R.string.participating_store_desc),
-                                            MAP_LOCATION to Gson().toJson(npcStores),
+                                            MAP_LOCATION to npcStores,
                                             STORE_CARD to storeCardResponse,
                                             GEOFENCE_ENABLED to locationResponse.inGeofence
                                     ))

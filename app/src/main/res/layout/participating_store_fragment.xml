@@ -2,36 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/noParticipatingStoreTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:background="@color/stock_finder_map_header_bg"
-        android:clickable="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:gravity="center"
-        android:paddingStart="32dp"
-        android:paddingTop="@dimen/eight_dp"
-        android:paddingEnd="32dp"
-        android:paddingBottom="@dimen/ten_dp"
-        android:text="@string/npc_participating_store"
-        android:textColor="@android:color/white"
-        android:textColorLink="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/participatingStoreTabLayout" />
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/participatingStoreTabLayout"
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/color_yellow_FDE353"
+        android:layout_height="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -46,22 +23,44 @@
         app:tabTextAppearance="@style/TabLayoutDefaultStyle"
         app:tabTextColor="@color/normal_store_locator_tab_title" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/selectStoreViewPager2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/status_green"
-        android:fadeScrollbars="false"
-        android:fadingEdge="none"
-        android:orientation="horizontal"
-        android:overScrollMode="never"
-        android:requiresFadingEdge="none"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/participatingStoreTabLayout" >
+        app:layout_constraintTop_toBottomOf="@id/tabs">
 
-    </androidx.viewpager2.widget.ViewPager2>
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vpStoreLocator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fadeScrollbars="false"
+            android:fadingEdge="none"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:requiresFadingEdge="none" />
 
+        <TextView
+            android:id="@+id/tvStoreContactInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="@color/stock_finder_map_header_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:gravity="center"
+            android:paddingStart="@dimen/twenty_five_dp"
+            android:paddingTop="@dimen/eight_dp"
+            android:paddingEnd="@dimen/twenty_five_dp"
+            android:paddingBottom="@dimen/ten_dp"
+            android:text="@string/npc_participating_store_outside_geofence"
+            android:textColor="@color/white"
+            android:textColorLink="@color/white"
+            android:textSize="@dimen/sixteen_sp" />
 
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
