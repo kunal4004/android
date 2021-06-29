@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
-    android:focusable="true"
-    android:visibility="visible">
+    android:focusable="true">
 
     <include
         android:id="@+id/incSwipeCloseIndicator"
@@ -158,15 +157,15 @@
         android:layout_marginTop="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_nine_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:background="@color/color_f1f1f1"
         android:fontFamily="@font/myriad_pro_regular"
-        android:gravity="center"
         android:includeFontPadding="false"
+        android:gravity="center"
         android:lineSpacingExtra="@dimen/one_dp"
-        android:paddingVertical="@dimen/seven_dp"
         android:text="@string/pma_payment_delay_label"
         android:textColor="@color/color_808080"
+        android:background="@color/color_f1f1f1"
         android:textSize="@dimen/fourteen_sp"
+        android:paddingVertical="@dimen/seven_dp"
         app:autoSizeMaxTextSize="@dimen/sixteen_sp"
         app:autoSizeMinTextSize="@dimen/thirteen_sp"
         app:autoSizeStepGranularity="@dimen/one_sp"
@@ -314,19 +313,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/amountEndGuideline"
         app:layout_constraintStart_toStartOf="@+id/amountBeginGuideline" />
-
-    <TextView
-        android:id="@+id/amountExceeds50000TextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/sixteen_dp"
-        android:gravity="start"
-        android:text="@string/amount_exceeds_50000_desc"
-        android:textColor="@color/promo_text_color"
-        android:textSize="@dimen/twelve_sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/amountEndGuideline"
-        app:layout_constraintStart_toStartOf="@+id/amountBeginGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/pmaAmountEnteredTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

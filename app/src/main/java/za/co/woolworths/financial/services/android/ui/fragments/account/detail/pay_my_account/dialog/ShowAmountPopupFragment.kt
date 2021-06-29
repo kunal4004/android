@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pma_update_payment_fragment.*
-import kotlinx.android.synthetic.main.product_color_selector_list_item.view.*
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
-import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -40,7 +37,6 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
     companion object {
         const val ONE_RAND = "R1.00"
         const val RAND_AMOUNT_ZERO = "R 0.00"
-        const val MAXIMUM_PAYABLE_AMOUNT: Int = 50000
     }
 
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
@@ -100,21 +96,14 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 val payableAmount = pmaAmountEnteredTextView?.text?.toString()
                 cvvFieldEnableState(payableAmount)
 
-                //WOP-11259 - We do not accept payments of more than R50 000.
-                if (!TextUtils.isEmpty(payableAmount)) {
-                    val amountPayable = convertRandFormatToDouble(payableAmount)
-                    validateAmountEntered(amountPayable, {}, {
-                        amountExceeds50000TextView?.visibility = VISIBLE
-                        pmaAmountEnteredTextView?.setTextColor(bindColor(R.color.promo_text_color))
-                    }, {
-                        amountExceeds50000TextView?.visibility = GONE
-                        pmaAmountEnteredTextView?.setTextColor(bindColor(R.color.black))
-                    })
-                }
+
+                cvvFieldEnableState(pmaAmountEnteredTextView?.text?.toString())
+
 
                 // Dismiss popup when payment method list is empty
                 if (isPaymentListEmpty(card?.paymentMethodList))
                     dismiss()
+
             })
         }
 

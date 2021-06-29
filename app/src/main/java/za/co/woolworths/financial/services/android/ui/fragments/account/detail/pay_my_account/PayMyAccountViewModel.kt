@@ -18,7 +18,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.request
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.dialog.ShowAmountPopupFragment.Companion.MAXIMUM_PAYABLE_AMOUNT
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
@@ -244,7 +243,7 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun isConfirmPaymentButtonEnabled(cvvLength: Int, amountEntered: String?): Boolean {
-        return cvvLength > 2 && isChangeIconEnabled(amountEntered) && convertRandFormatToDouble(amountEntered) > MAXIMUM_PAYABLE_AMOUNT
+        return cvvLength > 2 && isChangeIconEnabled(amountEntered)
     }
 
     fun isMaxCVVLength(size: Int): Boolean {
@@ -376,7 +375,7 @@ class PayMyAccountViewModel : ViewModel() {
     fun validateAmountEntered(amount: Double, minAmount: () -> Unit, maxAmount: () -> Unit, validAmount: () -> Unit) {
         when {
             amount < 1.toDouble() -> minAmount()
-            amount > MAXIMUM_PAYABLE_AMOUNT.toDouble() -> maxAmount()
+            amount > 50000.toDouble() -> maxAmount()
             else -> validAmount()
         }
     }
