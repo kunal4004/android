@@ -170,7 +170,7 @@ public class Utils {
     };
 
     public static void saveLastLocation(Location loc, Context mContext) {
-
+        if (loc == null) return;
         try {
             JSONObject locationJson = new JSONObject();
 
