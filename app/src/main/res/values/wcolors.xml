@@ -34,4 +34,7 @@
     <color name="button_click_ripple_bg">#45efefef</color>
     <color name="grey_background_color">#F2F2F2</color>
 
+    <string name="red_tag">#CF0808</string>
+    <string name="orange_tag">#FF7000</string>
+
 </resources>

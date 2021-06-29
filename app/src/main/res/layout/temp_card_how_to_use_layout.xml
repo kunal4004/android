@@ -92,13 +92,22 @@
             app:layout_constraintTop_toBottomOf="@+id/howToUse5" />
 
         <CheckBox
+            android:id="@+id/howToUse7"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_card_how_to_use7"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse6" />
+
+        <CheckBox
             android:id="@+id/howToUse8"
             style="@style/how_to_pay_text_style"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:text="@string/temp_card_how_to_use8"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/howToUse6" />
+            app:layout_constraintTop_toBottomOf="@+id/howToUse7" />
 
         <CheckBox
             android:id="@+id/howToUse9"
@@ -116,8 +125,26 @@
             android:text="@string/temp_card_how_to_use10"
             app:layout_constraintEnd_toEndOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
             app:layout_constraintTop_toBottomOf="@+id/howToUse9" />
+
+        <CheckBox
+            android:id="@+id/howToUse11"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_card_how_to_use11"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse10" />
+
+        <CheckBox
+            android:id="@+id/howToUse12"
+            style="@style/how_to_pay_text_style"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:text="@string/temp_card_how_to_use12"
+            app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_guideline"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/howToUse11" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"
