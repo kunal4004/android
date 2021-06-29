@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.balance_insurance_item.view.*
-import za.co.woolworths.financial.services.android.models.dto.bpi.ClaimReason
+import za.co.woolworths.financial.services.android.models.dto.bpi.SubmitClaimReason
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 
-internal class BPISubmitClaimAdapter(private val claimReasonList: MutableList<ClaimReason>?, val onClickListener: (Int) -> Unit) :
+internal class BPISubmitClaimAdapter(private val claimReasonList: List<SubmitClaimReason>?, val onClickListener: (Int) -> Unit) :
     RecyclerView.Adapter<BPISubmitClaimAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -19,17 +20,17 @@ internal class BPISubmitClaimAdapter(private val claimReasonList: MutableList<Cl
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val claimReason: ClaimReason? = claimReasonList?.get(position)
+        val claimReason: SubmitClaimReason? = claimReasonList?.get(position)
         holder.bindItems(claimReason)
     }
 
     override fun getItemCount(): Int = claimReasonList?.size ?: 0
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(claimReason: ClaimReason?) {
+        fun bindItems(claimReason: SubmitClaimReason?) {
             with(itemView) {
-                tvTitle?.text = claimReason?.title
-                tvDescription?.text = claimReason?.description
+                tvTitle?.text = claimReason?.title?.let { bindString(it) }
+                tvDescription?.text = claimReason?.description?.let { bindString(it) }
 
                 when (adapterPosition) {
                     0 -> {

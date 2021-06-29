@@ -13,8 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_submit_claim_detail_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.bpi.ClaimReason
+import za.co.woolworths.financial.services.android.models.dto.bpi.SubmitClaimReason
 import za.co.woolworths.financial.services.android.ui.adapters.RequiredFormAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -25,7 +26,7 @@ class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
 
     private val bpiViewModel: BPIViewModel? by activityViewModels()
 
-    private var claimReasonArgs : ClaimReason? = null
+    private var claimReasonArgs : SubmitClaimReason? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +49,10 @@ class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
             val requiredFormSubmitAdapter = RequiredFormAdapter(claimReasonArgs?.requiredSubmit, false)
 
             bpiViewModel?.bpiPresenter?.defaultLabel()?.apply {
-                applyLoanInfoTextView?.text = submitDescription
-                requiredFormTextView?.text = requiredForm
-                btnGetDocument?.text = requiredDocuments
-                youWillAlsoNeedToSubmitTextView?.text = submitForm
+                applyLoanInfoTextView?.text = bindString(submitDescription)
+                requiredFormTextView?.text = bindString(requiredForm)
+                btnGetDocument?.text = bindString(requiredDocuments)
+                youWillAlsoNeedToSubmitTextView?.text = bindString(submitForm)
             }
 
             rlRequiredForm?.apply {

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class RequiredFormAdapter extends RecyclerView.Adapter<RequiredFormAdapter.MyViewHolder> {
 
-	private List<String> item;
+	private List<Integer> item;
 	private boolean imageIsVisible;
 
 	class MyViewHolder extends RecyclerView.ViewHolder {
@@ -27,7 +27,7 @@ public class RequiredFormAdapter extends RecyclerView.Adapter<RequiredFormAdapte
 		}
 	}
 
-	public RequiredFormAdapter(List<String> itemList, boolean imageIsVisible) {
+	public RequiredFormAdapter(List<Integer> itemList, boolean imageIsVisible) {
 		this.item = itemList;
 		this.imageIsVisible = imageIsVisible;
 	}

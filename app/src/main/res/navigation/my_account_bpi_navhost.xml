@@ -42,7 +42,7 @@
         tools:layout="@layout/bpi_submit_claim_detail_fragment" >
         <argument
             android:name="claimReasonList"
-            app:argType="za.co.woolworths.financial.services.android.models.dto.bpi.ClaimReason"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.bpi.SubmitClaimReason"
             app:nullable="true" />
     </fragment>
     <fragment

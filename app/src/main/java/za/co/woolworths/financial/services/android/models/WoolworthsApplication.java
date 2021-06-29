@@ -64,7 +64,6 @@ import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForD
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
@@ -142,7 +141,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static CreditView creditView;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
-    BalanceProtectionInsurance mBalanceProtectionInsurance;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -689,14 +687,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @VisibleForTesting
     public static void testSetContext(Context context) {
         mContextApplication = context;
-    }
-
-    public void setBalanceProtectionInsurance(@NotNull BalanceProtectionInsurance balanceProtectionInsurance) {
-        mBalanceProtectionInsurance = balanceProtectionInsurance;
-    }
-
-    public BalanceProtectionInsurance getBalanceProtectionInsurance() {
-        return mBalanceProtectionInsurance;
     }
 
     public static void setCartCheckoutLinkWithParams(String cartCheckoutLinkWithParams) {

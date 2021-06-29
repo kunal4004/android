@@ -10,6 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionI
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindDimens
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 internal class BalanceProtectionInsuranceAdapter(private val bpiOverviewList: MutableList<BalanceProtectionInsuranceOverview>?, val onClickListener: (BalanceProtectionInsuranceOverview) -> Unit)
@@ -39,8 +40,10 @@ internal class BalanceProtectionInsuranceAdapter(private val bpiOverviewList: Mu
                 R.dimen.seventeen_dp,
                 R.dimen.sixteen_dp
             )
-            itemView.tvTitle?.text = bpiOverview?.overview?.header ?: bpiOverview?.overview?.title ?: ""
-            itemView.tvDescription?.text = bpiOverview?.overview?.description ?: ""
+
+             val header = bpiOverview?.overview?.header ?: bpiOverview?.overview?.title
+            itemView.tvTitle?.text = header?.let { bindString(it) } ?: ""
+            itemView.tvDescription?.text = bpiOverview?.overview?.description?.let { bindString(it) }
             bpiOverview?.overviewDrawable?.let { itemView.imOverViewDescImage.setImageResource(it) }
 
             AnimationUtilExtension.animateViewPushDown(itemView)

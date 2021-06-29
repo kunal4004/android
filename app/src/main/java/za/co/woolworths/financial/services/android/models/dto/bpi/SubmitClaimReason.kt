@@ -4,9 +4,9 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class ClaimReason(
-    val description: String,
-    val requiredForm: List<String>,
-    val requiredSubmit: List<String>,
-    val title: String
+data class SubmitClaimReason(
+     val description: Int,
+    val requiredForm: List<Int>,
+    val requiredSubmit: List<Int>,
+    val title: Int
 ): Parcelable

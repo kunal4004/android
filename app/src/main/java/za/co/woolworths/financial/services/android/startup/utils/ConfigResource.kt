@@ -131,10 +131,6 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 creditLimitIncrease?.apply {
                     WoolworthsApplication.getInstance().setCreditLimitsIncrease(this)
                 }
-
-                balanceProtectionInsurance?.apply {
-                    WoolworthsApplication.getInstance().balanceProtectionInsurance = this
-                }
             }
         }
     }

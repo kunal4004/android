@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_submit_claim_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.dto.bpi.ClaimReason
+import za.co.woolworths.financial.services.android.models.dto.bpi.SubmitClaimReason
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.util.Utils
@@ -34,14 +34,13 @@ class BPISubmitClaimFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val submitClaimList : MutableList<ClaimReason>? = bpiViewModel?.bpiPresenter?.submitClaimList()
-        initRecyclerview(submitClaimList)
+        initRecyclerview(bpiViewModel?.bpiPresenter?.submitClaimList())
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() { NavHostFragment.findNavController(this@BPISubmitClaimFragment).navigateUp() }
         })
     }
 
-    private fun initRecyclerview(claimReasonList: MutableList<ClaimReason>?) {
+    private fun initRecyclerview(claimReasonList: List<SubmitClaimReason>?) {
         activity ?: return
         bpiSubmitClaimRecyclerview?.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -65,7 +64,6 @@ class BPISubmitClaimFragment : Fragment() {
         (activity as? BalanceProtectionInsuranceActivity)?.apply {
             changeActionBarUI(isActionBarTitleVisible = true)
             bpiViewModel?.bpiPresenter?.defaultLabel()?.claimReasonTitle?.let { setToolbarTitle(it) }
-
         }
     }
 

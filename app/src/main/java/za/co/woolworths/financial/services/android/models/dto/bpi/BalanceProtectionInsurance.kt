@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class BalanceProtectionInsurance(
-    val claimReason: MutableList<ClaimReason>,
+    val claimReason: MutableList<SubmitClaimReason>,
     val defaultLabel: DefaultLabel,
     val overview: MutableList<Overview>
 ):Parcelable

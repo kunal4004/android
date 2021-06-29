@@ -43,7 +43,8 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
         arguments?.apply {
             val bpiOverview = BPIOverviewDetailFragmentArgs.fromBundle(this)
             bpiOverview.overviewArgs?.apply {
-                tvTitle?.text = overview?.header ?: overview?.title ?: ""
+                val title =  overview?.header ?: overview?.title
+                tvTitle?.text = title?.let { bindString(it) }
                 benefitHeaderDrawable?.let { imBackgroundHeader?.setImageResource(it) }
                 insuranceType?.let { claimVisibility(it) }
                 setBenefitDetail(this)
@@ -51,7 +52,7 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
         }
 
         btnHowToClaim?.apply {
-            bpiViewModel?.bpiPresenter?.defaultLabel()?.howToClaim?.let { text = it }
+           text = bpiViewModel?.bpiPresenter?.defaultLabel()?.howToClaim?.let { bindString(it) }
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@BPIOverviewDetailFragment)
         }
@@ -101,7 +102,7 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
         bpiOverview?.overview?.benefits?.forEach { desc ->
                 val bpiBenefitRow = layoutInflater.inflate(R.layout.bpi_overview_benefit_row, null, false)
                 val tvDescription = bpiBenefitRow.findViewById(R.id.tvDescription) as? WTextView
-                tvDescription?.text = desc
+                tvDescription?.text = bindString(desc)
                 llBenefitContainer.addView(bpiBenefitRow)
             }
     }
