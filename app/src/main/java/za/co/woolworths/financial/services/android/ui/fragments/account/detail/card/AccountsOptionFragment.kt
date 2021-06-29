@@ -20,6 +20,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.account_activate_credit_card_layout.*
 import kotlinx.android.synthetic.main.account_card_detail_fragment.*
+import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_options_layout.*
 import kotlinx.android.synthetic.main.bpi_covered_tag_layout.*
@@ -40,30 +41,30 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
-import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
-import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+<<<<<<< HEAD
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewOverviewImpl
+=======
+>>>>>>> 88c0c3c9bc3bfc2d105be8aa964213ee1d2b0270
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
-    companion object {
-        private const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
-    }
 
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
@@ -89,10 +90,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         balanceProtectionInsuranceView?.setOnClickListener(this)
         cardImageRootView?.setOnClickListener(this)
         debitOrderView?.setOnClickListener(this)
-        cardDetailImageView?.setOnClickListener(this)
         tvIncreaseLimit?.setOnClickListener(this)
         relIncreaseMyLimit?.setOnClickListener(this)
-        includeManageMyCard?.setOnClickListener(this)
         llIncreaseLimitContainer?.setOnClickListener(this)
         withdrawCashView?.setOnClickListener(this)
         viewPaymentOptions?.setOnClickListener(this)
@@ -131,10 +130,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
         //Disable shimmer for non store card
         if (mCardPresenterImpl?.isProductCodeStoreCard() != true) {
-            cardDetailImageShimmerFrameLayout?.setShimmer(null)
-            myCardTextViewShimmerFrameLayout?.setShimmer(null)
-            tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
+            disableShimmer()
         }
+    }
+
+    fun disableShimmer() {
+        cardDetailImageShimmerFrameLayout?.setShimmer(null)
+        myCardTextViewShimmerFrameLayout?.setShimmer(null)
+        tempFreezeTextViewShimmerFrameLayout?.setShimmer(null)
     }
 
     private fun autoConnectToNetwork() {
@@ -160,17 +163,18 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun showStoreCardProgress() {
-        loadStoreCardProgressBar?.visibility = VISIBLE
-
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         cardDetailImageShimmerFrameLayout?.setShimmer(shimmer)
         myCardTextViewShimmerFrameLayout?.setShimmer(shimmer)
         tempFreezeTextViewShimmerFrameLayout?.setShimmer(shimmer)
         manageCardGroup?.visibility = GONE
+        manageLinkNewCardGroup?.visibility = GONE
         bottomView?.visibility = VISIBLE
+        manageMyCardTextView?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.startShimmer()
         myCardTextViewShimmerFrameLayout?.startShimmer()
         tempFreezeTextViewShimmerFrameLayout?.startShimmer()
+        storeCardTagTextView?.visibility = GONE
         storeCardLoaderView?.visibility = VISIBLE
         includeManageMyCard?.isEnabled = false
         cardImageRootView?.isEnabled = false
@@ -178,7 +182,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     @SuppressLint("DefaultLocale")
     override fun hideStoreCardProgress() {
-        loadStoreCardProgressBar?.visibility = GONE
         storeCardLoaderView?.visibility = GONE
         manageCardGroup?.visibility = VISIBLE
         cardDetailImageShimmerFrameLayout?.stopShimmer()
@@ -213,7 +216,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 R.id.cardImageRootView -> navigateToTemporaryStoreCard()
                 R.id.debitOrderView -> navigateToDebitOrderActivity()
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
-                    if (loadStoreCardProgressBar?.visibility == VISIBLE) return
+                    if (cardDetailImageShimmerFrameLayout?.isShimmerVisible == true) return
                     cancelRetrofitRequest(mOfferActiveCall)
                     navigateToTemporaryStoreCard()
                 }
@@ -278,34 +281,19 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun navigateToGetTemporaryStoreCardPopupActivity(storeCardResponse: StoreCardsResponse) {
-        activity?.apply {
-            val intent = Intent(this, GetTemporaryStoreCardPopupActivity::class.java)
-            intent.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, Utils.objectToJson(storeCardResponse))
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
+        MyAccountsScreenNavigator.navigateToGetTemporaryStoreCardPopupActivity(activity, storeCardResponse)
     }
 
     override fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse, requestUnblockStoreCardCall: Boolean) {
-        activity?.apply {
-            val displayStoreCardDetail = Intent(this, MyCardDetailActivity::class.java)
-            displayStoreCardDetail.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, Utils.objectToJson(storeCardResponse))
-            displayStoreCardDetail.putExtra(ACTIVATE_UNBLOCK_CARD_ON_LANDING, requestUnblockStoreCardCall)
-            startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
+        MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, storeCardResponse, requestUnblockStoreCardCall)
     }
 
     override fun navigateToDebitOrderActivity(debitOrder: DebitOrder) {
-        activity?.apply {
-            val debitOrderIntent = Intent(this, DebitOrderActivity::class.java)
-            debitOrderIntent.putExtra("DebitOrder", debitOrder)
-            startActivity(debitOrderIntent)
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
+        MyAccountsScreenNavigator.navigateToDebitOrderActivity(activity, debitOrder)
     }
 
     override fun navigateToBalanceProtectionInsurance(accountInfo: String?) {
+<<<<<<< HEAD
         activity?.apply {
 
             val productGroupCode = when (mCardPresenterImpl?.getAccount()?.productGroupCode) {
@@ -321,6 +309,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             startActivity(navigateToBalanceProtectionInsurance)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
+=======
+        MyAccountsScreenNavigator.navigateToBalanceProtectionInsurance(activity, accountInfo, mCardPresenterImpl?.getAccount())
+>>>>>>> 88c0c3c9bc3bfc2d105be8aa964213ee1d2b0270
     }
 
     override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
@@ -560,11 +551,11 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         deliveryStatus.apply {
             if (!statusDescription.isNullOrEmpty() && !displayColour.isNullOrEmpty()) {
                 KotlinUtils.roundCornerDrawable(creditCardStatusTextView, displayColour)
-                creditCardStatusTextView.text = displayTitle
+                creditCardStatusTextView?.text = displayTitle
             } else if (!statusDescription.isNullOrEmpty() && (deliveryStatus.statusDescription?.equals(CARD_DELIVERED.name) == true)) {
                 KotlinUtils.roundCornerDrawable(creditCardStatusTextView, "#bad110")
-                creditCardStatusTextView.text = bindString(R.string.activate)
-            } else creditCardStatusTextView.visibility = INVISIBLE
+                creditCardStatusTextView?.text = bindString(R.string.activate)
+            } else creditCardStatusTextView?.visibility = INVISIBLE
         }
     }
 
@@ -588,9 +579,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     private fun showManageMyDelivery() {
         stopCardActivationShimmer()
-        creditCardActivationView.visibility = VISIBLE
+        creditCardActivationView?.visibility = VISIBLE
         scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
-        tvScheduleOrMangeDelivery.text = activity?.resources?.getString(R.string.manage_my_delivery)
+        tvScheduleOrMangeDelivery?.text = bindString(R.string.manage_my_delivery)
     }
 
     private fun showDefaultCreditCardStatusView() {
@@ -600,9 +591,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     private fun showScheduleYourDelivery() {
         stopCardActivationShimmer()
-        creditCardActivationView.visibility = VISIBLE
+        creditCardActivationView?.visibility = VISIBLE
         scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
-        tvScheduleOrMangeDelivery.text = activity?.resources?.getString(R.string.schedule_your_delivery)
+        tvScheduleOrMangeDelivery?.text = bindString(R.string.schedule_your_delivery)
     }
 
 }

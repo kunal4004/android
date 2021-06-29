@@ -137,4 +137,5 @@
     <color name="color_primary">#212121</color>
     <color name="color_primary_dark">@android:color/black</color>
     <color name="color_accent">#4285F4</color>
+    <color name="color_cccccc">#CCCCCC</color>
 </resources>

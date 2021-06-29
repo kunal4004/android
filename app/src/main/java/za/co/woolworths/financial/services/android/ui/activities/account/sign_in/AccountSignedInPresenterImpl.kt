@@ -144,6 +144,13 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         return !productOfferingGoodStanding && account?.productGroupCode?.toUpperCase() != AccountsProductGroupCode.CREDIT_CARD.groupCode.toUpperCase()
     }
 
+    override fun isAccountInDelinquencyMoreThan6Months(): Boolean {
+        val accounts = getAccount()
+        val productOfferingStatus = accounts?.productOfferingStatus
+        val productOfferingGoodStanding = accounts?.productOfferingGoodStanding
+        return productOfferingGoodStanding == false && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
+    }
+
     override fun chatWithCollectionAgent() {
         mainView?.chatToCollectionAgent(mApplyNowState, mAccountResponse?.accountList)
     }
