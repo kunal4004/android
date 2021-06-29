@@ -93,9 +93,6 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 // set payment method
                 initPaymentMethod()
 
-                val payableAmount = pmaAmountEnteredTextView?.text?.toString()
-                cvvFieldEnableState(payableAmount)
-
 
                 cvvFieldEnableState(pmaAmountEnteredTextView?.text?.toString())
 
