@@ -26,8 +26,8 @@
             android:id="@+id/rlCardBarcode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/rlCardDetails"
-            android:layout_alignParentTop="true">
+            android:layout_alignParentTop="true"
+            android:paddingBottom="@dimen/thirteen_dp">
 
             <TextView
                 android:id="@+id/tvBarcodeTitle"
@@ -41,20 +41,19 @@
                 android:id="@+id/tvBarcodeDescription"
                 style="@style/dialog_description_text_style"
                 android:layout_width="match_parent"
-                android:layout_above="@id/ivBarcode"
                 android:layout_below="@id/tvBarcodeTitle"
                 android:layout_marginTop="@dimen/sixteen_dp"
                 android:contentDescription="@string/scan_barcode_description"
                 android:text="@string/dialog_scan_barcode_to_pay_barcode_desc"
+                android:textColor="@color/black"
                 android:textSize="@dimen/sixteen_sp" />
 
             <ImageView
                 android:id="@+id/ivBarcode"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sixty_six_dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="@dimen/thirty_six_dp"
-                android:layout_marginBottom="@dimen/three_dp"
+                android:layout_below="@id/tvBarcodeDescription"
+                android:layout_marginTop="@dimen/thirty_two_dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/scan_barcode_image"
                 android:scaleType="fitXY" />
@@ -64,7 +63,8 @@
         <RelativeLayout
             android:id="@+id/rlCardDetails"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/twenty_five_dp">
 
             <TextView
                 android:id="@+id/tvCardDetailsTitle"
@@ -158,9 +158,10 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/fourty_six_dp"
-        android:background="@color/recent_search_bg" />
+        android:layout_height="@dimen/line_dp"
+        android:layout_marginTop="@dimen/thirty_eight_dp"
+        android:alpha="0.1"
+        android:background="@color/black" />
 
     <TextView
         android:id="@+id/btnDismissDialog"

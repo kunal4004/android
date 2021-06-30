@@ -70,6 +70,10 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
         btnDismissDialog.setOnClickListener { dismiss() }
         btnToggleCardDetails.setOnClickListener { toggleCardDetailsVisibility() }
 
+        tvCardDetailsTitle.text = WoolworthsApplication.getVirtualTempCard().cardDisplayTitle ?: getString(R.string.dialog_scan_barcode_to_pay_card_details_title)
+        tvBarcodeTitle.text = WoolworthsApplication.getVirtualTempCard().barcodeDisplayTitle ?: getString(R.string.dialog_scan_barcode_to_pay_barcode_title)
+        tvBarcodeDescription.text = WoolworthsApplication.getVirtualTempCard().barcodeDisplaySubtitle ?: getString(R.string.dialog_scan_barcode_to_pay_barcode_desc)
+
         mStoreCardsResponse?.storeCardsData?.virtualCard?.let {
             tvCardNumber.text = it.number.chunked(4).joinToString("  ")
             tvCardholderValue.text = it.embossedName

@@ -201,6 +201,7 @@
     <dimen name="thirty_five_sp">35sp</dimen>
     <dimen name="thirty_six_sp">36sp</dimen>
     <dimen name="thirty_seven_dp">37dp</dimen>
+    <dimen name="thirty_eight_dp">38dp</dimen>
     <dimen name="two_hundred_and_fifty_dp">250dp</dimen>
     <dimen name="forty_four_dp">44dp</dimen>
     <dimen name="forty_eight_sp">48sp</dimen>
