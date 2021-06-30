@@ -143,6 +143,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static CreditView creditView;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
+    private static boolean isBadgesRequired;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -691,4 +692,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         mContextApplication = context;
     }
 
+    public static boolean isIsBadgesRequired() {
+        return isBadgesRequired;
+    }
+
+    public static void setIsBadgesRequired(boolean isBadgesRequired) {
+        WoolworthsApplication.isBadgesRequired = isBadgesRequired;
+    }
 }

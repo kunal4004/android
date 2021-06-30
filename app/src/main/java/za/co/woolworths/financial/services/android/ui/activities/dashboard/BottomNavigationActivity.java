@@ -52,6 +52,7 @@ import java.util.Set;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -249,10 +250,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         });
 
-        if (mBundle != null && mBundle.containsKey("OnBoardingLoginBadge")) {
-            QueryBadgeCounter.getInstance().queryCartSummaryCount();
-            QueryBadgeCounter.getInstance().queryVoucherCount();
-        }
         queryBadgeCountOnStart();
         addDrawerFragment();
     }
@@ -269,9 +266,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     private void queryBadgeCountOnStart() {
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+        if (SessionUtilities.getInstance().isUserAuthenticated() && WoolworthsApplication.isIsBadgesRequired()) {
             mQueryBadgeCounter.queryVoucherCount();
             mQueryBadgeCounter.queryCartSummaryCount();
+            mQueryBadgeCounter.queryMessageCount();
+            WoolworthsApplication.setIsBadgesRequired(false);
+        } else if (!WoolworthsApplication.isIsBadgesRequired()) {
+            WoolworthsApplication.setIsBadgesRequired(true);
         }
     }
 
@@ -611,6 +612,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     setCurrentSection(R.id.navigate_to_cart);
                     identifyTokenValidationAPI();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU);
+                    if(WoolworthsApplication.isIsBadgesRequired())
+                        queryBadgeCountOnStart();
                     return false;
 
                 case R.id.navigate_to_wreward:
@@ -619,11 +622,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_REWARD);
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU);
+                    if(WoolworthsApplication.isIsBadgesRequired())
+                        queryBadgeCountOnStart();
                     return true;
 
                 case R.id.navigate_to_account:
                     setCurrentSection(R.id.navigate_to_account);
                     replaceAccountIcon(item);
+                    if(WoolworthsApplication.isIsBadgesRequired())
+                        queryBadgeCountOnStart();
                     if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
                         try {
                             AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
@@ -1325,7 +1332,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     break;
 
                 default:
-                    badgeCount();
+                    queryBadgeCountOnStart();
                     break;
             }
         }
