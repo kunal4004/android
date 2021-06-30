@@ -339,26 +339,18 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     private fun navigateToLinkDeviceFragment() {
-
-        if (linkDeviceSwitch!!.isChecked) {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_START,
-                hashMapOf(
-                    Pair(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated
-                    )
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_START,
+            hashMapOf(
+                Pair(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated
                 )
             )
-            view?.let {
-                Navigation.findNavController(it)
-                    .navigate(R.id.action_myPreferencesFragment_to_navigation)
-            }
-        } else {
-            view?.let {
-                Navigation.findNavController(it)
-                    .navigate(R.id.action_myPreferencesFragment_to_unlinkDeviceBottomSheetFragment)
-            }
+        )
+        view?.let {
+            Navigation.findNavController(it)
+                .navigate(R.id.action_myPreferencesFragment_to_navigation)
         }
     }
 

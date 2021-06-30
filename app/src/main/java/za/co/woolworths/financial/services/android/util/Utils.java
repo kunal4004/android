@@ -170,12 +170,19 @@ public class Utils {
     };
 
     public static void saveLastLocation(Location loc, Context mContext) {
-
         try {
             JSONObject locationJson = new JSONObject();
 
-            locationJson.put("lat", loc.getLatitude());
-            locationJson.put("lon", loc.getLongitude());
+            Double latitude = null;
+            Double longitude = null;
+
+            if (loc != null) {
+                latitude = loc.getLatitude();
+                longitude = loc.getLongitude();
+            }
+
+            locationJson.put("lat", latitude);
+            locationJson.put("lon", longitude);
 
             sessionDaoSave(SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
         } catch (JSONException e) {
@@ -425,7 +432,6 @@ public class Utils {
         openInternalWebView.putExtra("externalLink", url);
         context.startActivity(openInternalWebView);
     }
-
 
     public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
         //IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");

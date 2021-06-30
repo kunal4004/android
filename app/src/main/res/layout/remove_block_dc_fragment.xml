@@ -135,8 +135,9 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/available_fund_transaction_button_height"
         android:layout_marginEnd="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/thirty_dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintTop_toBottomOf="@+id/totalAmountDueLabelTextview"
         app:layout_constraintEnd_toStartOf="@+id/incPayMyAccountButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/incRecentTransactionButton" />
@@ -147,8 +148,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/available_fund_transaction_button_height"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/incViewStatementButton"
         app:layout_constraintEnd_toStartOf="@+id/endGuide"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/incViewStatementButton" />
@@ -158,7 +158,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.66" />
+        app:layout_constraintGuide_percent="0.8" />
 
     <TextView
         android:id="@+id/needHelpWithYourAccountTextview"
