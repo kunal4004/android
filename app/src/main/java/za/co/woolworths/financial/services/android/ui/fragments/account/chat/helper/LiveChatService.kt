@@ -70,7 +70,6 @@ class LiveChatService : LifecycleService() {
 
     private fun connectionDetector() {
         ConnectivityLiveData.observe(this, { isConnected ->
-            Log.e("isConnectedToNetwork", "$isConnected")
             when (isConnected
                     && ChatAWSAmplify.isLiveChatBackgroundServiceRunning
                     && WoolworthsApplication.getInstance().currentActivity::class != WChatActivity::class) {
@@ -85,12 +84,6 @@ class LiveChatService : LifecycleService() {
                                         item
                                     )
                                 }
-//                                onReconnectToSubscribeAPI(this, { item ->
-//                                    notifySender(1, item)
-//                                }, {
-//                                    ChatAWSAmplify.isLiveChatActivated = false
-//                                    broadcastResultToAmplifySubscribe(applicationContext, null)
-//                                })
                             }
                         }
                     }
