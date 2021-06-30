@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
@@ -741,6 +742,15 @@ class KotlinUtils {
                 null
             }
 
+        }
+
+        fun openLinkInInternalWebView(activity: Activity?, url: String?) {
+            activity?.apply {
+                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                openInternalWebView.putExtra("externalLink", url)
+                startActivity(openInternalWebView)
+            }
         }
     }
 }
