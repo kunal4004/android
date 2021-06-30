@@ -433,7 +433,6 @@ public class Utils {
         context.startActivity(openInternalWebView);
     }
 
-
     public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
         //IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
         BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {

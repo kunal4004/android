@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fontFamily="@font/futura_medium_ttf"
+    android:gravity="center"
+    android:letterSpacing="0.2"
+    android:paddingStart="@dimen/four_dp"
+    android:paddingEnd="@dimen/fourteen_dp"
+    android:text="@string/bpi_claim_toolbar_title"
+    android:textAllCaps="true"
+    android:textColor="@color/black"
+    android:textSize="@dimen/twelve_sp" />

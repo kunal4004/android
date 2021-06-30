@@ -133,5 +133,9 @@
     <color name="color_333333">#333333</color>
     <color name="color_f1f1f1">#F1F1F1</color>
     <color name="color_808080">#808080</color>
+
+    <color name="color_primary">#212121</color>
+    <color name="color_primary_dark">@android:color/black</color>
+    <color name="color_accent">#4285F4</color>
     <color name="color_cccccc">#CCCCCC</color>
 </resources>
