@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesIn
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
@@ -63,7 +64,6 @@ import java.util.*
 
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
-
 
     private var mConnectionBroadCast: BroadcastReceiver? = null
     private var mApplyNowState: ApplyNowState? = null
@@ -336,6 +336,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         showSendingOTPProcessing()
         mLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
+                if (!isAdded || activity == null) return
                 context?.let { didNotReceiveOTPTextView?.setTextColor(ContextCompat.getColor(it, R.color.black)) }
 
                 when (retrieveOTPResponse?.httpCode) {
@@ -373,11 +374,16 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             sendOTPFailedGroup?.visibility = View.GONE
                             sendinOTPLayout?.visibility = View.GONE
                             linkDeviceOTPScreen?.visibility = View.VISIBLE
+                            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
                             retryApiCall = RETRY_GET_OTP
                             return
                         }
-
+                        sendOTPProcessingGroup?.visibility = View.GONE
+                        linkDeviceResultScreen?.visibility = View.GONE
                         sendOTPFailedGroup?.visibility = View.VISIBLE
+                        sendOTPFailedImageView?.visibility = View.VISIBLE
+                        sendOTPFailedTitle?.visibility = View.VISIBLE
+                        sendOTPFailedTitle?.text = "Failed to send OTP."
                     }
                 }
             }
@@ -394,7 +400,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     return
                 }
 
+                sendOTPProcessingGroup?.visibility = View.GONE
+                linkDeviceResultScreen?.visibility = View.GONE
                 sendOTPFailedGroup?.visibility = View.VISIBLE
+                sendOTPFailedImageView?.visibility = View.VISIBLE
+                sendOTPFailedTitle?.visibility = View.VISIBLE
+                sendOTPFailedTitle?.text = "Failed to send OTP."
             }
         }, RetrieveOTPResponse::class.java))
     }
@@ -743,6 +754,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     override fun onDestroy() {
         super.onDestroy()
+        cancelRetrofitRequest(mLinkDeviceOTPReq)
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
     }
 

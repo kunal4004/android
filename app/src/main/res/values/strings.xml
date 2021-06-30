@@ -299,50 +299,14 @@
     <string name="submit_a_claim">Submit a Claim</string>
     <string name="submit_a_claim_desc">Critical Illness/Death Cover/Retrenchment etc. Submit a Claim</string>
 
-    <string name="select_claim_reason">select your claim reason</string>
-    <string name="death_cover">Death Cover</string>
-    <string name="death_cover_desc">Pays the outstanding balance on your account</string>
-    <string name="retrenchment">Retrenchment</string>
-    <string name="retrenchment_desc">Pays up to 12 months of installments from first day of retrenchment.</string>
-    <string name="temporary_disability">Temporary Disability</string>
-    <string name="temporary_disability_desc">Pays up to 12 months of installments from the first day of disability</string>
-
-    <string name="permanent_disability">Permanent Disability</string>
-    <string name="permanent_disability_desc">Pays the outstanding balance on your account</string>
-
-    <string name="critical_illness">Critical Illness</string>
-    <string name="critical_illness_desc">Pays the outstanding balance on your account.</string>
-    <string name="apply_loan_info">In order to process your claim we will need the following documents.</string>
-    <string name="required_form">required forms (available from woolworths financials solutions)</string>
-    <string name="you_will_also_need">IN ADDITION, YOU WILL ALSO NEED TO SUBMIT THE BELOW DOCUMENTS</string>
-    <string name="balance_protection_claim_form">Balance Protection Claim Form</string>
-    <string name="new_disability_claim_form">New Disability Claim Form</string>
-    <string name="confidential_medical_specialist_report">Confidential Medical Specialist Report</string>
-    <string name="medical_reports_from_doctor">Medical Reports from Doctor</string>
-    <string name="death_certificate">Death Certificate</string>
-
-    <string name="certified_id">Certified ID</string>
-    <string name="certified_id_claimant">Certified ID Copy of next of Kin/Claimant</string>
-    <string name="investigation_results_from_doctor">Investigation Results from Doctor</string>
-    <string name="retrenchement_form">Retrenchment Form</string>
-    <string name="certified_id_copy">Certified ID Copy</string>
-    <string name="UI19_form">UI19 Form</string>
-    <string name="certified_letter_of_retrenchment_from_employer">Certified Letter of Retrenchment from Employer</string>
-    <string name="employee_declaration_form">Employee Declaration Form</string>
-    <string name="sick_note_from_doctor">Sick Note from Doctor</string>
-    <string name="personal_medical_attendants_report">Personal Medical Attendants Report</string>
-    <string name="boarding_letter_from_employer">Boarding Letter from Employer</string>
-    <string name="balance_protection_title">balance insurance</string>
-    <string name="get_the_documents">Get the documents</string>
-    <string name="balance_insurance_overview">Balance Insurance Overview</string>
 
     <string name="features_and_benefit">FEATURES AND BENEFITS</string>
-    <string name="features_and_benefit_desc">Your peace of mind is important to us, so we offer you comprehensive balance protection on your Woolies Store Card, Credit Card or Personal Loan.</string>
+    <string name="features_and_benefit_desc">Your peace of mind is important to us, so we offer you comprehensive balance protection insurance on your Woolies Store Card, Credit Card or Personal Loan.</string>
 
-    <string name="comprehensive_balance_protection">Comprehensive Balance Protection</string>
-    <string name="comprehensive_balance_protection_desc1">Your Comprehensive balance protection covers you in the event of death, retrenchment, critical illness, temporary and permanent disability.</string>
-    <string name="comprehensive_balance_protection_desc2">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death or permanent disability, or if you are diagnosed with a critical illness.</string>
-    <string name="comprehensive_balance_protection_desc3">Pays your instalments for up to 12 months if you are retrenched or temporary disabled.</string>
+    <string name="comprehensive_balance_protection">Comprehensive Balance Protection Insurance</string>
+    <string name="comprehensive_balance_protection_desc1">Covers you in the event of Death, Total Loss of Income, Critical Illness, Temporary and Permanent Disability.</string>
+    <string name="comprehensive_balance_protection_desc2">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100 000, in the event of your Death, Permanent Disability, or if you are diagnosed with a Critical Illness.</string>
+    <string name="comprehensive_balance_protection_desc3">Pays your instalments for up to 12 months (provided it is not in arrears), up to a maximum of R100 000, in the event of Total Loss of Income or Temporary Disability.</string>
 
     <string name="additional_death_cover">Additional Death Cover</string>
     <string name="additional_death_cover_desc">For an extra monthly premium of only R13.70 per month, you can also take out additional death benefit, which pays R20 000 to your next of kin in the event of your death, to help them handle unforeseen expenses.</string>
@@ -606,9 +570,9 @@
     <string name="bpi_covered">Covered</string>
     <string name="bpi_not_covered">not covered</string>
     <string name="bpi_balance_protection_title">Balance Protection</string>
-    <string name="bpi_balance_protection_desc">Cover in the event of your death, retrenchment, disability or a critical illness.</string>
+    <string name="bpi_balance_protection_desc">Cover in the event of your Death, Total Loss of Income, Disability or Critical Illness.</string>
     <string name="bpi_partner_cover_title">Partner Cover</string>
-    <string name="bpi_partner_cover_desc">Covers you in the event of your partners death, permanent disability or a critical illness.</string>
+    <string name="bpi_partner_cover_desc">Covers in the event of your Partner’s Death, Total Loss of Income, Disability or Critical Illness.</string>
     <string name="bpi_additional_death_cover_title">Additional Death Cover</string>
     <string name="bpi_additional_death_cover_desc">Helps pay for unforeseen expenses in the event of your death.</string>
     <string name="bpi_additional_death_cover_for_partner_title">Additional Death Cover for Partner</string>
@@ -620,14 +584,14 @@
     <string name="bpi_how_to_claim">how to claim</string>
 
 
-    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
-    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
-    <string name="bpi_balance_protection_benefit_3">All cover ceases at the age of 65, except death and critical illness.</string>
+    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100,000, in the event of your Death, Permanent Disability, or if you are diagnosed with a Critical Illness.</string>
+    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months, up to a maximum of R100,000, in the event of Total Loss of Income or Temporary Disability.</string>
+    <string name="bpi_balance_protection_benefit_3">All cover ceases at the age of 65, except Death and Critical Illness.</string>
 
 
-    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away, becomes permanently disabled, or is diagnosed with a critical illness.</string>
-    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months starting from the date your partner is retrenched or temporarily disabled.</string>
-    <string name="bpi_partner_cover_benefit_3">All cover ceases at the age of 65, except death and a critical illness.</string>
+    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100,000,in the event of your Partner’s Death, Permanent Disability, or if they are diagnosed with a Critical Illness.</string>
+    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months, up to a maximum of R100,000, in the event of Total Loss of Income or Temporary Disability.</string>
+    <string name="bpi_partner_cover_benefit_3">All cover ceases at the age of 65, except Death and Critical Illness.</string>
 
     <string name="bpi_additional_death_cover_1">Pays R20 000 cash to a nominated beneficiary when you pass away.</string>
     <string name="bpi_additional_death_cover_2">Helps your family handle any unforeseen expenses in the event of your passing.</string>
@@ -662,7 +626,7 @@
     <string name="bpi_loan_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
     <string name="bpi_companion_care_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your partner’s death.</string>
     <string name="bpi_partner_cover_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away or if your partner is diagnosed with a critical illness.</string>
-    <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.></string>
+    <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.</string>
     <string name="walkthrough_refine_title">Filter Your Search</string>
     <string name="walkthrough_refine_desc">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, Carb Clever.</string>
     <string name="walkthrough_refine_action">REFINE NOW</string>
@@ -817,9 +781,6 @@
     <string name="error_passcode_locked_desc">You have entered your Passcode incorrectly 3 times. To log in, please reset your Passcode using your Credit Card ATM PIN.</string>
     <string name="forgot_passcode">Forgot Passcode</string>
     <string name="forgot_passcode_dialog_desc">You can reset your passcode for this device using your Woolies Credit Card Pin.</string>
-    <string name="police_report">Police Report</string>
-    <string name="certified_id_deceased">Certified ID Deceased</string>
-    <string name="claimant_bank_statement">Claimant\'s Bank Statement</string>
     <string name="npc_block_card_desc">There was a problem blocking your card</string>
     <string name="credit_limit_decrease">Credit Limit Decrease</string>
     <string name="credit_limit_decrease_desc_part_1">You will only be able to apply for a limit increase 6 month after this application has been concluded. You will need to go through a credit and affordability assessment at the time.</string>
@@ -892,13 +853,14 @@
     <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
     <string name="npc_already_have_your_card_link">ALREADY HAVE your card? LINK it NOW</string>
-    <string name="npc_participating_store">Can\'t find a participating store close to you? Call 0861 50 20 20 to arrange for delivery.</string>
-    <string name="temp_card_how_to_use1">This Virtual temporary In-Store Card (temp store card) is valid for 30 days.</string>
-    <string name="temp_card_how_to_use2">Your temp store card can only be used for in-store purchases and not on-line purchases.</string>
-    <string name="temp_card_how_to_use3">Your temp store card will be removed after your first in-store purchase with your plastic Store Card</string>
-    <string name="temp_card_how_to_use4">Unfortunately, you will not be able to pay your account in-store using a virtual card. Online payments, like EFT, are available.</string>
-    <string name="temp_card_how_to_use5">The Woolworths Virtual Temp Store Card is currently being trialed in selected Woolies Stores.  You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
-    <string name="temp_card_how_to_use6">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
+    <string name="npc_participating_store">Can’t find a participating store close to you? Tap here to arrange delivery and we will issue you a virtual temp card to get shopping today.</string>
+    <string name="npc_participating_store_outside_geofence">Can’t find participating store close to you? Tap here to arrange delivery.</string>
+    <string name="temp_card_how_to_use1">This Virtual Temporary In-Store Card (temp store card) is valid for 30 days.</string>
+    <string name="temp_card_how_to_use2">Your temp store card can only be used for in-store purchases and not online purchases.</string>
+    <string name="temp_card_how_to_use3">Your temp store card will be removed after your first in-store purchase with your plastic Store Card.</string>
+    <string name="temp_card_how_to_use4">You can make a payment to your Store Card account at POS.  Just advise the operator you would like to make a payment and they will take you through the process.  Scan your card when asked.  ID is not required to make a payment.</string>
+    <string name="temp_card_how_to_use5">To get a refund, please advise the operator of your card number, which is contained in the app, and don’t scan the barcode. The operator will key enter your details and process your refund as normal.</string>
+    <string name="temp_card_how_to_use6">The Woolworths Virtual Temp Store Card will only be usable within selected Woolies stores. You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
     <string name="dialog_scan_barcode_to_pay_title">Scan the Barcode to Pay</string>
     <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. to the cashier to use your temporary card.</string>
     <string name="card_details">card details</string>
@@ -924,16 +886,18 @@
     <string name="product_information">Product Information</string>
     <string name="product_details">Product Details</string>
     <string name="nutritional_information">Nutritional Information</string>
-    <string name="get_temp_sc_title">Congrats, you have been selected to trial our new Woolies Virtual Temp Card at selected Woolies’ stores.</string>
-    <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies card is being sent to you. Your card is valid for 30 days.</string>
+
+    <string name="get_temp_sc_title">Would you like a virtual temporary card to start shopping in store today?</string>
+    <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies store card is being sent to you. Your card is valid for 30 days.</string>
     <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
-    <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
+    <string name="get_temp_sc_action">ACTIVATE VIRTUAL TEMP CARD</string>
+
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
     <string name="dialog_temp_store_card_expire_info_desc">Your temporary card is only valid for 30 days and will automatically expire after this time or on your first swipe of your store card, in store.</string>
     <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout \n* Delivery cost to be confirmed before payment</string>
     <string name="having_problems_generate_new_barcode">having problems? generate new barcode</string>
-    <string name="store_card_status_temporay">\u0020temp\u0020</string>
+    <string name="store_card_status_temporary">\u0020temp\u0020</string>
     <string name="virtual_store_card_temp_desc">Congratulations!\nYour Temp Store Card has been activated. Happy Shopping!</string>
     <string name="link_card_failure_desc">There was a problem  linking your card</string>
 
@@ -1615,10 +1579,12 @@
     <string name="credit_card_payment_option_label">Credit Card Payment Options</string>
     <string name="personal_loan_payment_option_label">Personal Loan Payment Options</string>
     <string name="chat_with_us_description">Unfortunately chat to us on WhatsApp is unavailable at the moment. Please try again later.</string>
-    <string name="temp_card_how_to_use7">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
-    <string name="temp_card_how_to_use8">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
-    <string name="temp_card_how_to_use9">Your temp store card cannot be used at Engen service stations.</string>
-    <string name="temp_card_how_to_use10">If you have issues using you temporary card please contact Woolworths financial services at <u><a href="tel:086150202">0861 50 20 20</a></u> or by email at queries@wfs.co.za.</string>
+    <string name="temp_card_how_to_use7">Your virtual temporary card is active for WRewards too, so you can scan it upfront and all your WRewards will work as normal.</string>
+    <string name="temp_card_how_to_use8">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
+    <string name="temp_card_how_to_use9">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
+    <string name="temp_card_how_to_use10">Your temp store card cannot be used at Engen service stations.</string>
+    <string name="temp_card_how_to_use11">If you receive any staff discounts, please make sure that your virtual card number is loaded correctly in other systems, like Peoplesoft.</string>
+    <string name="temp_card_how_to_use12">If you have issues using you temporary card please contact Woolworths Financial Services at <u>0861 50 20 20</u> or by email at <u>queries@wfs.co.za</u>.</string>
     <string name="id_number_error_msg">Please enter a ID Number</string>
     <string name="myself">Myself\u0020</string>
     <string name="another_person">Another Person</string>
@@ -1766,6 +1732,7 @@
     <string name="confirm_store">Confirm Store</string>
     <string name="confirm_suburb">Confirm Suburb</string>
     <string name="manage_my_card_title">Manage My Card</string>
+    <string name="activate_vtc_title">Activate Virtual Temp Card</string>
     <string name="temporary_card_freeze_title">Temporary Card Freeze</string>
     <string name="freeze_temporary_card_title">Temporary Card Freeze</string>
     <string name="freeze_store_card_description">Your card will be temporarily frozen and cannot be used to shop online or in-store.</string>
@@ -1797,6 +1764,7 @@
     <string name="secure_3d_title">3D Secure</string>
     <string name="enter_payment_amount_max_input_error">Please reduce your payment amount. The maximum amount you can pay is R50 000.00</string>
     <string name="enter_payment_amount_min_input_error">Please increase your payment amount. The minimum amount you can pay is R 1.00</string>
+    <string name="update_payment_above_limit_error">We do not accept payments of more than R50 000.</string>
 
     <string name="collection_date_title">labelCollectionDate</string>
     <string name="collection_date_value">txtCollectionDateValue</string>
@@ -1844,7 +1812,7 @@
     <string name="debit_order_amount_label">Debit order amount: (this can be either full payment, minimum payment, fixed amount or fixed percentage)</string>
     <string name="debit_order_deduction_date_label">"Debit order deduction date: "</string>
     <string name="debit_order_deduction_desc">"Note: If you are setting up a debit order for a Woolies Personal Loan, remember to also attach a clear copy of your valid SA Identity Document (if its an ID card include both sides).  "</string>
-    <string name="amount_payable_now">"Overdue Amount, Payable Now"</string>
+    <string name="amount_payable_now">Overdue Amount, Payable Now</string>
     <string name="pma_ten_card_limit_error_desc">You have reached the maximum number of  cards allowed. Please delete a card before  adding a new one.</string>
 
     <string name="by_electronic_fund_trasfer_personal_loan_desc">Pay your account by EFT or a direct payment into your loan account.</string>
@@ -2019,6 +1987,13 @@
     <string name="link_device_this_is_linked">This device is linked</string>
 
     <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
+    <string name="link_new_card">Link New Card</string>
+
+    <string name="replacement_card_label">Get Replacement Card</string>
+    <string name="temp_card">TEMP CARD</string>
+    <string name="inactive">INACTIVE</string>
+    <string name="how_it_works_label">How it Works</string>
+
     <string name="unable_to_process_502">We are unable to process your request at the moment. Please Try Again Later.</string>
 
     <!-- View All Linked Devices -->
@@ -2030,6 +2005,31 @@
     <string name="view_all_device_linked_on">Linked %s</string>
     <string name="payment_options_label">Payment Options</string>
     <string name="payment_delay_note_label">Please note that payments may take up to 5 business days to reflect on your account.</string>
+
+    <string name="select_store">Select Store</string>
+    <string name="confirm_store_header_title">Collection Details</string>
+    <string name="confirm_store_header_desc">Please confirm your collection store details below.</string>
+    <string name="store_address_header">Where would you like your card to be delivered?</string>
+    <string name="store_address_left_tab">To Me</string>
+    <string name="store_address_right_tab">To a Woolies Store</string>
+    <string name="store_address_delivery_details">Please complete your delivery details below. A delivery charge of R50 will be charged to your Store card account.</string>
+    <string name="hint_complex_building">Building name, unit or floor number</string>
+    <string name="hint_business_name">Enter business name</string>
+    <string name="business_name">Business name</string>
+    <string name="hint_street_address">E.g. 123 Ocean View Drive</string>
+    <string name="hint_suburb">Select Suburb</string>
+    <string name="hint_city_town">Select City / Town</string>
+    <string name="hint_province">Select Province</string>
+    <string name="hint_postal_code">Suburb Postal Code</string>
+    <string name="confirm_selected_store_title">Please Confirm Your Selected Store</string>
+    <string name="edit_store">Edit Store</string>
+    <string name="please_confirm_your_nselected_store">Please Confirm Your \nSelected Store</string>
+
+    <string name="store_email_error_title">There was a Problem Selecting Your Collection Store</string>
+    <string name="store_email_error_desc">Try selecting your store again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="replacement_card_success_title">Your Replacement Card \nHas Been Ordered.</string>
+    <string name="replacement_card_success_desc">You will be notified when your \ncard is ready for collection.</string>
+
     <string name="your_account_in_arrears_title">Your Account Is In Arrears</string>
     <string name="your_account_in_arrears_desc">Your account has been in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="need_help_for_your_account">Need help with your account?</string>
@@ -2041,4 +2041,66 @@
     <string name="chat_notification_title">You have received a message.</string>
     <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
     <string name="woolies_chat_active">Chat is currently active</string>
+    <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
+
+    <string name="death_cover_title">Death Cover</string>
+    <string name="death_cover_desc">Pays the outstanding balance on your account</string>
+    <string name="death_cover_required_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="death_cover_required_form_2">Personal Medical Attendants Report</string>
+    <string name="death_cover_required_form_3">Police Report</string>
+    <string name="death_cover_required_submit_1">Certified ID Copy of next of Kin/Claimant</string>
+    <string name="death_cover_required_submit_2">Death Certificate</string>
+    <string name="death_cover_required_submit_3">Certified ID Deceased</string>
+    <string name="death_cover_required_submit_4">Claimant\'s Bank Statement</string>
+
+    <string name="total_loss_of_income_title">Total Loss of Income</string>
+    <string name="total_loss_of_income_desc">Pays your instalments for up to 12 months in the event of Total Loss of Income (such as Retrenchment or "no work, no pay")"</string>
+    <string name="total_loss_of_income_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="total_loss_of_income_form_2">Retrenchment Form</string>
+    <string name="total_loss_of_income_required_submit_1">Certified ID Copy</string>
+    <string name="total_loss_of_income_required_submit_2">UI19 Form</string>
+    <string name="total_loss_of_income_required_submit_3">Certified Letter of Retrenchment from Employer</string>
+
+    <string name="temporary_disability_title">Temporary Disability</string>
+    <string name="temporary_disability_desc">Pays up to 12 months of installments from the first day of disability</string>
+    <string name="temporary_disability_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="temporary_disability_form_2">Employee Declaration Form</string>
+    <string name="temporary_disability_form_3">New Disability Claim Form</string>
+    <string name="temporary_disability_form_4">Confidential Medical Specialist Report</string>
+    <string name="temporary_disability_form_5">Personal Medical Attendants Report</string>
+    <string name="temporary_disability_required_submit_1">Medical Reports from Doctor</string>
+    <string name="temporary_disability_required_submit_2">Certified ID</string>
+    <string name="temporary_disability_required_submit_3">Sick Note from Doctor</string>
+    <string name="temporary_disability_required_submit_4">Investigation Results from Doctor</string>
+
+    <string name="permanent_disability_title">Permanent Disability</string>
+    <string name="permanent_disability_desc">Pays the outstanding balance on your account</string>
+    <string name="permanent_disability_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="permanent_disability_form_2">Employee Declaration Form</string>
+    <string name="permanent_disability_form_3">New Disability Claim Form</string>
+    <string name="permanent_disability_form_4">Confidential Medical Specialist Report</string>
+    <string name="permanent_disability_form_5">Personal Medical Attendants Report</string>
+    <string name="permanent_disability_required_submit_1">Medical Reports from Doctor</string>
+    <string name="permanent_disability_required_submit_2">Certified ID</string>
+    <string name="permanent_disability_required_submit_3">Boarding Letter from Employer</string>
+    <string name="permanent_disability_required_submit_4">Investigation Results from Doctor</string>
+
+    <string name="critical_illness_title">Critical Illness</string>
+    <string name="critical_illness_desc">Pays the outstanding balance on your account.</string>
+    <string name="critical_illness_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="critical_illness_form_2">New Disability Claim Form</string>
+    <string name="critical_illness_form_3">Confidentail Medical Specialist Report</string>
+    <string name="critical_illness_form_4">Personal Medical Attendants Report</string>
+    <string name="critical_illness_required_submit_1">Medical Reports from Doctor</string>
+    <string name="critical_illness_required_submit_2">Certified ID</string>
+    <string name="critical_illness_required_submit_3">Investigation Results from Doctor</string>
+
+    <string name="claimReasonTitle">select your claim reason</string>
+    <string name="overviewTitle">overview</string>
+    <string name="howToClaim">how to claim</string>
+    <string name="requiredDocuments">Get the required documents</string>
+    <string name="requiredForm">required forms</string>
+    <string name="submitForm">You will also need to submit</string>
+    <string name="submitDescription">In order to process your claim we will need the following documents.</string>
+
 </resources>
