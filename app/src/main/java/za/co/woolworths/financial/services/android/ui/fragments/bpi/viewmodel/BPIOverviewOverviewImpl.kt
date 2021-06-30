@@ -157,7 +157,7 @@ class BPIOverviewOverviewImpl(private val arguments: Bundle?) :
 
     override fun navigateToOverviewDetail(): Pair<BalanceProtectionInsuranceOverview, Boolean> {
         val insuranceType = getInsuranceType()
-        val hasOneInsuranceTypeItem = insuranceType.isNotEmpty() && insuranceType.size == 1
+        val hasOneInsuranceTypeItem = insuranceType.isNotEmpty() && insuranceType.size == 1 && !insuranceType[0].covered
         val insuranceTypeItem = coveredUncoveredList()?.get(0)
         return Pair(insuranceTypeItem, hasOneInsuranceTypeItem)
     }
