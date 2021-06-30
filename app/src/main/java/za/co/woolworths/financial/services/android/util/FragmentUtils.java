@@ -34,7 +34,6 @@ public class FragmentUtils {
 		fragmentManager.beginTransaction()
 				.addToBackStack(nextFragment.getClass().getSimpleName())
 				.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
-				.addToBackStack(nextFragment.getClass().getSimpleName())
 				.replace(fragmentId, nextFragment).commitAllowingStateLoss();
 	}
 
