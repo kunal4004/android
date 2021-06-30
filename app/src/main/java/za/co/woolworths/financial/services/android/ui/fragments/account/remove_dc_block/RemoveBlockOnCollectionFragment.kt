@@ -15,7 +15,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.remove_block_dc_fragment.*
 import kotlinx.android.synthetic.main.remove_block_dc_fragment.incPayMyAccountButton
