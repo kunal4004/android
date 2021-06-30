@@ -14,7 +14,10 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_view_all_linked_devices.*
+import kotlinx.android.synthetic.main.fragment_select_primary_device.*
+import kotlinx.android.synthetic.main.fragment_select_primary_device.view.*
+import kotlinx.android.synthetic.main.fragment_view_all_linked_devices.progressLoadDevices
+import kotlinx.android.synthetic.main.item_select_primary_device_layout.view.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -23,15 +26,16 @@ import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAll
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
-import za.co.woolworths.financial.services.android.ui.adapters.ViewAllLinkedDevicesAdapter
+import za.co.woolworths.financial.services.android.ui.adapters.SelectPrimaryDeviceAdapter
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
+import java.net.UnknownServiceException
 
-class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
+class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
 
     private var deviceIdentityId: String = ""
     private var unlinkOrDeleteDeviceReq: Call<ViewAllLinkedDeviceResponse>? = null
-    private var viewAllDevicesAdapter: ViewAllLinkedDevicesAdapter? = null
+    private var selectPrimaryDeviceAdapter: SelectPrimaryDeviceAdapter? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +44,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         arguments?.getSerializable(DEVICE_LIST)?.let { list ->
             if (list is ArrayList<*> && list?.get(0) is UserDevice) {
                 deviceList = list as ArrayList<UserDevice>
+                System.err.println("TEST select: "+ deviceList?.size)
             }
         }
     }
@@ -53,19 +58,8 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                 unlinkDevice()
             }
         }
-
-        setFragmentResultListener(CHOOSE_PRIMARY_DEVICE) { requestKey, bundle ->
-
-            System.err.println("TEST fragmentresultlistener")
-            val navController = view?.findNavController()
-            navController?.navigate(R.id.action_to_selectPrimaryDeviceFragment,
-                bundleOf(
-                    SelectPrimaryDeviceFragment.DEVICE_LIST to deviceList
-                ))
-        }
-
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_all_linked_devices, container, false)
+        return inflater.inflate(R.layout.fragment_select_primary_device, container, false)
     }
 
     private fun unlinkDevice() {
@@ -130,7 +124,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
         setupToolbar()
         callRetrieveDevices()
-        if (viewAllDevicesAdapter == null) {
+        if (selectPrimaryDeviceAdapter == null) {
             initRecyclerView()
         }
     }
@@ -140,7 +134,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
             when (this) {
                 is MyPreferencesInterface -> {
                     context?.let {
-                        setToolbarTitle(it.getString(R.string.view_all_device_title))
+                        setToolbarTitle(it.getString(R.string.select_primary_device_title))
                         setToolbarTitleGravity(Gravity.CENTER_HORIZONTAL)
                     }
                 }
@@ -154,38 +148,33 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
             return
         }
         context?.let {
-            viewAllLinkedDevicesRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
-            viewAllDevicesAdapter = ViewAllLinkedDevicesAdapter(it, this)
-            viewAllDevicesAdapter?.setDeviceList(deviceList)
+            selectPrimaryDeviceRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
+            selectPrimaryDeviceAdapter = SelectPrimaryDeviceAdapter(it, this)
+            selectPrimaryDeviceAdapter?.setDeviceList(deviceList)
         }
-        viewAllLinkedDevicesRecyclerView.adapter = viewAllDevicesAdapter
+        selectPrimaryDeviceRecyclerView.adapter = selectPrimaryDeviceAdapter
     }
 
     companion object {
         const val DEVICE_LIST = "deviceList"
         const val DELETE_DEVICE = "deleteDevice"
         const val KEY_BOOLEAN_UNLINK_DEVICE = "isUnlinkSuccess"
-        const val CHOOSE_PRIMARY_DEVICE = "choosePrimaryDevice"
     }
 
     override fun onClick(v: View?) {
-
-        val navController = view?.findNavController()
-        val userDevice = v?.getTag(v.id) as UserDevice
-
-        if (TextUtils.isEmpty(userDevice?.deviceIdentityId.toString())) {
-            return
-        }
-        deviceIdentityId = userDevice?.deviceIdentityId?.toString() ?: ""
-
         when (v?.id) {
-            R.id.viewAllDeviceDeleteImageView -> {
-                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment)
+            R.id.selectPrimaryDeviceConstraintLayout -> {
+                v.deviceCheckbox.isChecked = !v.deviceCheckbox.isChecked
+                v.changePrimaryDeviceButton.isEnabled = !v.changePrimaryDeviceButton.isEnabled
+
+                if(v.deviceCheckbox.isChecked) {
+                    val userSelectedDevice = v.getTag(R.id.selectPrimaryDeviceConstraintLayout) as UserDevice
+                    System.err.println("TEST: selectPrimaryDeviceConstraintLayout " + userSelectedDevice.deviceName)
+                }
             }
-            R.id.viewAllDeviceEditImageView -> {
-                val bundle = Bundle()
-                bundle.putString("DEVICE_NAME", userDevice.deviceName)
-                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_makePrimaryOrDeleteDeviceBottomSheetFragment, bundle)
+            R.id.changePrimaryDeviceButton -> {
+                val userSelectedDevice = v.getTag(R.id.selectPrimaryDeviceConstraintLayout) as UserDevice
+                System.err.println("TEST: changePrimaryDeviceButton " + userSelectedDevice.deviceName)
             }
         }
     }

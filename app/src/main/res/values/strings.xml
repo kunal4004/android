@@ -2004,6 +2004,8 @@
     <string name="link_device_sending_otp_processing">Processing Request</string>
     <string name="link_device_error_title">There was a Problem Linking Your Device.</string>
     <string name="link_device_error_desc">Try activating your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="unlink_device_change_to_primary">Change to Primary Device</string>
+    <string name="unlink_device_delete">Delete Device</string>
 
     <!--  Link Device Confirmation  -->
     <string name="link_device_confirm_title">Please confirm this is your primary device.</string>
@@ -2021,6 +2023,7 @@
 
     <!-- View All Linked Devices -->
     <string name="view_all_device_title">My Linked Devices</string>
+    <string name="select_primary_device_title">Select Primary Device</string>
     <string name="view_all_device_location_n_a">Location N/A</string>
     <string name="view_all_primary_device_title">Primary Device</string>
     <string name="view_all_other_device_title">Other Linked Devices</string>
