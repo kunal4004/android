@@ -305,8 +305,8 @@
 
     <string name="comprehensive_balance_protection">Comprehensive Balance Protection Insurance</string>
     <string name="comprehensive_balance_protection_desc1">Covers you in the event of Death, Total Loss of Income, Critical Illness, Temporary and Permanent Disability.</string>
-    <string name="comprehensive_balance_protection_desc2">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100,000, in the event of your Death, Permanent Disability, or if you are diagnosed with a Critical Illness.</string>
-    <string name="comprehensive_balance_protection_desc3">Pays your instalments for up to 12 months (provided it is not in arrears), up to a maximum of R100,000, in the event of Total Loss of Income or Temporary Disability.</string>
+    <string name="comprehensive_balance_protection_desc2">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100 000, in the event of your Death, Permanent Disability, or if you are diagnosed with a Critical Illness.</string>
+    <string name="comprehensive_balance_protection_desc3">Pays your instalments for up to 12 months (provided it is not in arrears), up to a maximum of R100 000, in the event of Total Loss of Income or Temporary Disability.</string>
 
     <string name="additional_death_cover">Additional Death Cover</string>
     <string name="additional_death_cover_desc">For an extra monthly premium of only R13.70 per month, you can also take out additional death benefit, which pays R20 000 to your next of kin in the event of your death, to help them handle unforeseen expenses.</string>
