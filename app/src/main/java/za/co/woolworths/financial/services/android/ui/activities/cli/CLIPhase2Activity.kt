@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.models.service.event.BusStati
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.cli.SupplyIncomeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.cli.*
 import za.co.woolworths.financial.services.android.util.DeclineOfferInterface
 import za.co.woolworths.financial.services.android.util.FragmentUtils
@@ -94,16 +93,21 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
 
     private fun loadFragment(nextStep: String?) {
         when (nextStep) {
-            getString(R.string.status_consents) -> {
+            bindString(R.string.status_consents) -> {
                 showView(imBack)
                 openNextFragment(CLIEligibilityAndPermissionFragment())
             }
-            getString(R.string.status_poi_problem) -> {
+            bindString(R.string.status_poi_problem) -> {
                 hideBurgerButton()
                 hideView(imBack)
                 openNextFragment(CLIPOIProblemFragment())
             }
+
             else -> {
+                if (nextStep == bindString(R.string.status_i_n_e) && mOfferActive) {
+                    openNextFragment(CLIMaritalStatusFragment.newInstance())
+                    return
+                }
                 showView(imBack)
                 moveToCLIAllStepsContainerFragment()
             }
@@ -115,14 +119,14 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
         val offerActive = mOfferActive
         val increaseLimitController = IncreaseLimitController(this@CLIPhase2Activity)
         val offerBundle = Bundle()
-        if (nextStep.equals(getString(R.string.status_consents), ignoreCase = true)) {
+        if (nextStep.equals(bindString(R.string.status_consents), ignoreCase = true)) {
             val cLIEligibilityAndPermissionFragment = SupplyIncomeFragment()
             cLIEligibilityAndPermissionFragment.setStepIndicatorListener(cliStepIndicatorListener)
             eventStatus = EventStatus.CREATE_APPLICATION
             openFragment(cLIEligibilityAndPermissionFragment)
             return
         }
-        if (nextStep.equals(getString(R.string.status_i_n_e), ignoreCase = true) && offerActive) {
+        if (nextStep.equals(bindString(R.string.status_i_n_e), ignoreCase = true) && offerActive) {
             val incomeHashMap = increaseLimitController.incomeHashMap(mCLICreateOfferResponse)
             val expenseHashMap = increaseLimitController.expenseHashMap(mCLICreateOfferResponse)
             val supplyIncomeDetailFragment = SupplyIncomeFragment()
@@ -134,14 +138,14 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
             openFragment(supplyIncomeDetailFragment)
             return
         }
-        if (nextStep.equals(getString(R.string.status_i_n_e), ignoreCase = true) && !offerActive) {
+        if (nextStep.equals(bindString(R.string.status_i_n_e), ignoreCase = true) && !offerActive) {
             val supplyIncomeDetailFragment = SupplyIncomeFragment()
             supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener)
             eventStatus = EventStatus.CREATE_APPLICATION
             openFragment(supplyIncomeDetailFragment)
             return
         }
-        if (nextStep.equals(getString(R.string.status_offer), ignoreCase = true)) {
+        if (nextStep.equals(bindString(R.string.status_offer), ignoreCase = true)) {
             val icomeHashMap = increaseLimitController.incomeHashMap(mCLICreateOfferResponse)
             val expenseHashMap = increaseLimitController.expenseHashMap(mCLICreateOfferResponse)
             offerBundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, icomeHashMap)
@@ -154,7 +158,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
             openFragment(offerCalculationFragment)
             return
         }
-        if (nextStep.equals(getString(R.string.status_poi_required), ignoreCase = true)) {
+        if (nextStep.equals(bindString(R.string.status_poi_required), ignoreCase = true)) {
             val bundle = Bundle()
             bundle.putString("OFFER_ACTIVE_PAYLOAD", mOfferActivePayload)
             val documentFragment = DocumentFragment()
@@ -163,7 +167,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
             openFragment(documentFragment)
             return
         }
-        if (nextStep.equals(getString(R.string.status_complete), ignoreCase = true)) {
+        if (nextStep.equals(bindString(R.string.status_complete), ignoreCase = true)) {
             val processCompleteNoPOIFragment = ProcessCompleteNoPOIFragment()
             processCompleteNoPOIFragment.setStepIndicatorListener(cliStepIndicatorListener)
             openFragment(processCompleteNoPOIFragment)
@@ -184,10 +188,9 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
             finishActivity()
         } else {
             supportFragmentManager.apply {
-                if (backStackEntryCount > 0) {
-                    popBackStack()
-                } else {
-                    finishActivity()
+                when{
+                    (backStackEntryCount > 0) -> popBackStack()
+                    else -> finishActivity()
                 }
             }
         }
@@ -330,8 +333,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     }
 
     override fun onCreditDecreaseProceedWithMaximum() {
-        val offerCalculationFragment =
-                supportFragmentManager.findFragmentById(R.id.cli_steps_container) as? OfferCalculationFragment
+        val offerCalculationFragment = supportFragmentManager.findFragmentById(R.id.cli_steps_container) as? OfferCalculationFragment
         offerCalculationFragment?.animSeekBarToMaximum()
     }
 
