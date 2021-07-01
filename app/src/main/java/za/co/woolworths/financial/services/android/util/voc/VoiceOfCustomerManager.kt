@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util.voc
 import android.content.Context
 import android.content.Intent
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -14,6 +15,9 @@ class VoiceOfCustomerManager {
     companion object {
         fun showVocSurveyIfNeeded(context: Context?, triggerEvent: VocTriggerEvent? = null) {
             if (triggerEvent == null) return
+            val allowedTriggerEvents = WoolworthsApplication.getCustomerFeedback().triggerEvents ?: return
+            if (!allowedTriggerEvents.contains(triggerEvent.value)) return
+
             val getVocSurveyRequest = OneAppService.getVocSurvey(triggerEvent)
             getVocSurveyRequest.enqueue(CompletionHandler(object : IResponseListener<SurveyDetailsResponse> {
                 override fun onSuccess(response: SurveyDetailsResponse?) {

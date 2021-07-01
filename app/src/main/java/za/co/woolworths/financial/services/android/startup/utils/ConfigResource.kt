@@ -123,6 +123,8 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 WoolworthsApplication.setClickAndCollect(clickAndCollect)
                 WoolworthsApplication.setProductDetailsPage(productDetailsPage)
 
+                WoolworthsApplication.setCustomerFeedback(customerFeedback)
+
                 creditView?.apply {
                     isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                     WoolworthsApplication.setCreditView(creditView)
