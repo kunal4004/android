@@ -24,7 +24,7 @@ class MakePrimaryOrUnlinkDeviceBottomSheetFragment : WBottomSheetDialogFragment(
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.apply {
-            unlinkDeviceTitle.text = getString("DEVICE_NAME", null)
+            unlinkDeviceTitle.text = getString(ViewAllLinkedDevicesFragment.DEVICE_NAME, null)
         }
 
         unlinkDeviceCancel.setOnClickListener {
@@ -39,14 +39,14 @@ class MakePrimaryOrUnlinkDeviceBottomSheetFragment : WBottomSheetDialogFragment(
 
         when (v?.id) {
             R.id.deleteDeviceLayout -> {
-                System.err.println("TEST: deleteDeviceLayout ")
-                setFragmentResult(ViewAllLinkedDevicesFragment.DELETE_DEVICE, bundleOf(
+                setFragmentResult(ViewAllLinkedDevicesFragment.DELETE_DEVICE_NO_OTP, bundleOf(
                         ViewAllLinkedDevicesFragment.KEY_BOOLEAN_UNLINK_DEVICE to true
                 ))
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)
             }
             R.id.changePrimaryDeviceLayout -> {
+                //Do OTP to add this chosen device as primary device
                 System.err.println("TEST: changePrimaryDeviceLayout ")
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)

@@ -4,14 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_unlink_primary_device_bottom_sheet.*
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class UnlinkPrimaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -20,6 +23,12 @@ class UnlinkPrimaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), Vie
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        arguments?.getSerializable(ViewAllLinkedDevicesFragment.DEVICE_LIST)?.let { list ->
+            if (list is ArrayList<*> && list[0] is UserDevice) {
+                deviceList = list as ArrayList<UserDevice>
+            }
+        }
 
         unlinkDeviceCancel.setOnClickListener {
             dismissAllowingStateLoss()
@@ -32,12 +41,21 @@ class UnlinkPrimaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), Vie
 
         when (v?.id) {
             R.id.choosePrimaryDeviceContinue -> {
-                setFragmentResult(ViewAllLinkedDevicesFragment.CHOOSE_PRIMARY_DEVICE, Bundle.EMPTY)
+                if(hasNoOtherDevices() == true) {
+                    //Do OTP to delete the primary device
+                    setFragmentResult(ViewAllLinkedDevicesFragment.DELETE_DEVICE_OTP, bundleOf(
+                        ViewAllLinkedDevicesFragment.KEY_BOOLEAN_UNLINK_DEVICE to true
+                    ))
+                } else {
+                    setFragmentResult(ViewAllLinkedDevicesFragment.CHOOSE_PRIMARY_DEVICE, Bundle.EMPTY)
+                }
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)
             }
         }
     }
 
-
+    private fun hasNoOtherDevices(): Boolean? {
+        return deviceList?.none { userDevice -> userDevice.primarydDevice == false }
+    }
 }
