@@ -24,9 +24,6 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // TODO: add param to be either right to left, or bottom to top
-//        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
 
         Utils.updateStatusBarBackground(this)
@@ -84,8 +81,6 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
 
     private fun finishActivity() {
         finish()
-        // TODO: add param to be either left to right, or top to bottom
-//        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
