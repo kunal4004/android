@@ -435,12 +435,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         }
     }
 
-    override fun onDialogDismiss() {
+    override fun onTempStoreCardDialogDismiss() {
         requestBlockCard()
-    }
-
-    override fun onRegenerateBarcode() {
-        initPayWithCard()
     }
 
     private fun requestBlockCard() {
