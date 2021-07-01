@@ -64,7 +64,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.queryServiceGetStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField)
     }
 
-    fun getStoresForNPC(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String, npc: Boolean): Call<LocationResponse> {
+    fun getStoresForNPC(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String, npc: Boolean?): Call<LocationResponse> {
         return mApiInterface.getStoresForNPC(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField, npc)
     }
 
@@ -313,7 +313,8 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getStoreCards(storeCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse> {
-        return mApiInterface.getStoreCards(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), storeCardsRequestBody)
+        val lastSavedLocation = Utils.getLastSavedLocation()
+        return mApiInterface.getStoreCards(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),lastSavedLocation?.latitude, lastSavedLocation?.longitude, storeCardsRequestBody)
     }
 
     fun getLinkNewCardOTP(otpMethodType: OTPMethodType): Call<LinkNewCardOTP> {
@@ -427,6 +428,10 @@ object OneAppService : RetrofitConfig() {
 
     fun deleteOrUnlinkDevice(deviceIdentityId: String): Call<ViewAllLinkedDeviceResponse> {
         return mApiInterface.deleteOrUnlinkDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceIdentityId)
+    }
+
+    fun confirmStoreCardEmail(body: StoreCardEmailConfirmBody): Call<GenericResponse> {
+        return mApiInterface.confirmStoreCardEmail(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),  body)
     }
 
     fun getVocSurvey(triggerEvent: VocTriggerEvent): Call<SurveyDetailsResponse> {

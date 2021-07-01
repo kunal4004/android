@@ -10,9 +10,9 @@ apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 android {
 
     def major = "8"
-    def minor = "1"
+    def minor = "2"
     def fix = "0"
-    def jobNumber = 11406
+    def jobNumber = 512
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -89,7 +89,7 @@ android {
             jobNumber = 1
         } else {
             //assume prod
-            jobNumber = 161
+            jobNumber = 163
         }
 
         defaultConfig {
@@ -245,6 +245,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.fragment:fragment-ktx:1.3.3'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'com.huawei.hms:location:5.1.0.303'
 
     // Amplify core dependency
     implementation 'com.amplifyframework:aws-api:1.3.2'

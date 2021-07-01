@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardRes
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.*
+import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
@@ -122,25 +123,25 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initListener()
-        populateView()
-        uniqueIdsForCardDetails()
+            initListener()
+            populateView()
+            uniqueIdsForCardDetails()
 
-        initTemporaryFreezeCard()
+            initTemporaryFreezeCard()
 
-        temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
-            if (compoundButton.isPressed){
-                when (isChecked) {
-                    true -> temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
-                    false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
+            temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
+                if (compoundButton.isPressed) {
+                    when (isChecked) {
+                        true -> temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
+                        false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
+                    }
                 }
             }
-        }
 
-        // call to unblock/unfreeze store Card
-        if (mShouldActivateBlockCardOnLanding) {
-            temporaryFreezeCard?.unblockStoreCardRequest()
-        }
+            // call to unblock/unfreeze store Card
+            if (mShouldActivateBlockCardOnLanding) {
+                temporaryFreezeCard?.unblockStoreCardRequest()
+            }
     }
 
     private fun initTemporaryFreezeCard() {
@@ -314,7 +315,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                     temporaryCardFreezeRelativeLayout?.visibility = GONE
                     cardNumberLayout?.visibility = GONE
                     tvCardNumberHeader?.visibility = INVISIBLE
-                    cardStatus?.text = getString(R.string.store_card_status_temporay)
+                    cardStatus?.text = getString(R.string.store_card_status_temporary)
                     cardExpireDate?.text = WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
                 }
                 false -> {
@@ -424,14 +425,18 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             val otp = data?.getStringExtra(OTP_VALUE)
             otp?.let { requestUnblockCard(it) }
         }
+        //When blocked card and on success My card should refresh
+        else if(requestCode == BlockMyCardActivity.REQUEST_CODE_BLOCK_MY_CARD
+                && resultCode == MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE) {
+            activity?.apply {
+                setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE, data)
+                finish() // will close previous activity in stack
+            }
+        }
     }
 
-    override fun onDialogDismiss() {
+    override fun onTempStoreCardDialogDismiss() {
         requestBlockCard()
-    }
-
-    override fun onRegenerateBarcode() {
-        initPayWithCard()
     }
 
     private fun requestBlockCard() {
@@ -465,7 +470,8 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun isUserGotVirtualCard(storeCardsData: StoreCardsData?): Boolean {
-        return (storeCardsData?.virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+        // virtual card should not be blocked.
+        return (storeCardsData?.virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true && !TemporaryFreezeStoreCard.PERMANENT.equals(storeCardsData?.virtualCard?.blockType, ignoreCase = true))
     }
 
     private fun isApiCallInProgress(): Boolean {

@@ -55,6 +55,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     companion object {
         const val DEFAULT_RAND_CURRENCY = "R 0.00"
+        const val MAX_AMOUNT_LIMIT = 50000
     }
 
     private fun createCard(): AddCardResponse {
@@ -245,7 +246,9 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun isConfirmPaymentButtonEnabled(cvvLength: Int, amountEntered: String?): Boolean {
-        return cvvLength > 2 && isChangeIconEnabled(amountEntered)
+        return cvvLength > 2 &&
+                isChangeIconEnabled(amountEntered) &&
+                isAmountBelowMaxLimit(amountEntered)
     }
 
     fun isMaxCVVLength(size: Int): Boolean {
@@ -518,5 +521,9 @@ class PayMyAccountViewModel : ViewModel() {
             val maskedCardNumber = "**** **** **** $number"
             return Triple(cardHolderName, expiredMonthYear, maskedCardNumber)
         }
+    }
+
+    fun isAmountBelowMaxLimit(amount: String?): Boolean {
+        return convertRandFormatToDouble(amount) <= MAX_AMOUNT_LIMIT
     }
 }

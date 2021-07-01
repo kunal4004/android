@@ -1083,6 +1083,8 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Query("lat") latitude: Double?,
+            @Query("lon") longitude: Double?,
             @Body getStoreCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1101,7 +1103,7 @@ interface ApiInterface {
             @Path("productOfferingId") productOfferingId: String,
             @Body requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse>
 
-    @GET("user/locations")
+    @GET("user/locations/geofence")
     fun getStoresForNPC(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -1116,7 +1118,7 @@ interface ApiInterface {
             @Query("lat") lat: String,
             @Query("lon") lon: String,
             @Query("searchString") searchString: String,
-            @Query("npc") npc: Boolean
+            @Query("npc") npc: Boolean?
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1488,6 +1490,21 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("deviceIdentityId") deviceIdentityId: String
     ): Call<ViewAllLinkedDeviceResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("accounts/storecard/email")
+    fun confirmStoreCardEmail(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body storeCardEmailConfirmBody: StoreCardEmailConfirmBody): Call<GenericResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("survey")
