@@ -55,13 +55,13 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 )) {
                     ARREARS_PAY_NOW_BUTTON -> onPayMyAccountButtonTap()
                     ARREARS_CHAT_TO_US_BUTTON -> {
-                        val chatBubble = payMyAccountViewModel.getApplyNowState()
-                            ?.let { applyNowState ->
-                                ChatFloatingActionButtonBubbleView(
-                                    activity = activity as? AccountSignedInActivity,
-                                    applyNowState = applyNowState
-                                )
-                            }
+                        val chatBubble = payMyAccountViewModel.getApplyNowState()?.let { applyNowState ->
+                            ChatFloatingActionButtonBubbleView(
+                                activity = activity as? AccountSignedInActivity,
+                                applyNowState = applyNowState,
+                                vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
+                            )
+                        }
                         chatBubble?.navigateToChatActivity(
                             activity,
                             payMyAccountViewModel.getCardDetail()?.account?.second

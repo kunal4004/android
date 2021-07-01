@@ -11,6 +11,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
@@ -21,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.ConnectException
 import java.util.*
 import javax.annotation.Nullable
@@ -285,6 +287,42 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun triggerFirebaseEventForPaymentComplete() {
         getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode) }
+    }
+
+    fun getVocTriggerEventPaymentOptions(): VocTriggerEvent? {
+        getAccount()?.productGroupCode?.let {
+            return when {
+                it.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_SC_PAYMENTOPTIONS
+                }
+                it.equals(AccountsProductGroupCode.PERSONAL_LOAN.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_PL_PAYMENTOPTIONS
+                }
+                else -> {
+                    VocTriggerEvent.CHAT_CC_PAYMENTOPTIONS
+                }
+            }
+        } ?: kotlin.run {
+            return null
+        }
+    }
+
+    fun getVocTriggerEventMyAccounts(): VocTriggerEvent? {
+        getAccount()?.productGroupCode?.let {
+            return when {
+                it.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_SC_MYACCOUNTS
+                }
+                it.equals(AccountsProductGroupCode.PERSONAL_LOAN.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_PL_MYACCOUNTS
+                }
+                else -> {
+                    VocTriggerEvent.CHAT_CC_MYACCOUNTS
+                }
+            }
+        } ?: kotlin.run {
+            return null
+        }
     }
 
     @Nullable
