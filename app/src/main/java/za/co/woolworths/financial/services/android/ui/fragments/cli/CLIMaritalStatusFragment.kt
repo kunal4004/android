@@ -18,7 +18,6 @@ import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Ac
 import za.co.woolworths.financial.services.android.util.FragmentUtils
 import za.co.woolworths.financial.services.android.util.picker.WheelView
 
-
 class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<Any>, View.OnClickListener {
 
     private var isChecked: Boolean = false
