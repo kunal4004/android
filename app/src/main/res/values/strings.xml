@@ -1977,6 +1977,10 @@
     <string name="remove_device_title">Please select a new primary device to link to your profile.</string>
     <string name="remove_device_desc">To remove this device, you need to select a new primary device.</string>
 
+    <!--  Unlink Device Confirmation  -->
+    <string name="unlink_device_unlinking_processing">Unlinking Your Device</string>
+    <string name="unlink_device_result_success">Your Device Has \nBeen Successfully Unlinked.</string>
+
     <!--  Link Device Confirmation  -->
     <string name="link_device_confirm_title">Please confirm this is your primary device.</string>
     <string name="link_device_confirm_desc">Transactions, statements and balance messages will only be sent to this device and future transactions will be quicker and easier with less verification steps required.</string>
@@ -1985,7 +1989,7 @@
     <string name="link_device_linking_processing">Linking Your Device</string>
     <string name="link_device_result_success">Your Device Has \nBeen Successfully Linked.</string>
     <string name="ok_cool">Ok, cool!</string>
-    <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your prferences.</string>
+    <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your preferences.</string>
     <string name="link_device_this_is_linked">This device is linked</string>
 
     <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>

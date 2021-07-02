@@ -6,8 +6,6 @@ import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Paint
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -25,19 +23,19 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.iid.InstanceIdResult
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
 import kotlinx.android.synthetic.main.fragment_link_device_otp.*
+import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
+import kotlinx.android.synthetic.main.fragment_unlink_device_otp.sendinOTPLayout
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.layout_sending_otp_request.*
+import kotlinx.android.synthetic.main.layout_unlink_device_result.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -53,11 +51,8 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
-import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
@@ -190,7 +185,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
         }
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_link_device_otp, container, false)
+        return inflater.inflate(R.layout.fragment_unlink_device_otp, container, false)
     }
 
     private fun resetOTPView() {
@@ -343,7 +338,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
         private const val OTP_CALL_CENTER = "CALL CENTER"
         const val RETRY_GET_OTP: String = "GET_OTP"
         const val RETRY_VALIDATE: String = "VALIDATE_OTP"
-        const val RETRY_LINK_DEVICE: String = "LINK_DEVICE"
+        const val RETRY_UNLINK_DEVICE: String = "UNLINK_DEVICE"
     }
 
     override fun onClick(v: View?) {
@@ -444,7 +439,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                             return
                         }
                         sendinOTPLayout?.visibility = View.GONE
-                        linkDeviceOTPScreen?.visibility = View.VISIBLE
+                        unlinkDeviceOTPScreen?.visibility = View.VISIBLE
                         retrieveOTPResponse.otpSentTo?.let {
                             if (otpMethod.equals(OTPMethodType.SMS.name, true)) {
                                 otpNumber = it
@@ -471,13 +466,13 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                             sendOTPFailedGroup?.visibility = View.GONE
                             sendinOTPLayout?.visibility = View.GONE
-                            linkDeviceOTPScreen?.visibility = View.VISIBLE
+                            unlinkDeviceOTPScreen?.visibility = View.VISIBLE
                             enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
                             retryApiCall = RETRY_GET_OTP
                             return
                         }
                         sendOTPProcessingGroup?.visibility = View.GONE
-                        linkDeviceResultScreen?.visibility = View.GONE
+                        unlinkDeviceResultScreen?.visibility = View.GONE
                         sendOTPFailedGroup?.visibility = View.VISIBLE
                         sendOTPFailedImageView?.visibility = View.VISIBLE
                         sendOTPFailedTitle?.visibility = View.VISIBLE
@@ -492,14 +487,14 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                 if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
                     sendOTPFailedGroup?.visibility = View.GONE
                     sendinOTPLayout?.visibility = View.GONE
-                    linkDeviceOTPScreen?.visibility = View.VISIBLE
+                    unlinkDeviceOTPScreen?.visibility = View.VISIBLE
                     enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
                     retryApiCall = RETRY_GET_OTP
                     return
                 }
 
                 sendOTPProcessingGroup?.visibility = View.GONE
-                linkDeviceResultScreen?.visibility = View.GONE
+                unlinkDeviceResultScreen?.visibility = View.GONE
                 sendOTPFailedGroup?.visibility = View.VISIBLE
                 sendOTPFailedImageView?.visibility = View.VISIBLE
                 sendOTPFailedTitle?.visibility = View.VISIBLE
@@ -521,7 +516,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
         }
 
         showValidatingProcessing()
-        linkDeviceOTPScreen?.visibility = View.GONE
+        unlinkDeviceOTPScreen?.visibility = View.GONE
         isOTPValidated = false
         mValidateLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
@@ -572,7 +567,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
 
     private fun showValidateOTPError(msg: String) {
         sendinOTPLayout?.visibility = View.GONE
-        linkDeviceOTPScreen?.visibility = View.VISIBLE
+        unlinkDeviceOTPScreen?.visibility = View.VISIBLE
         buttonNext?.visibility = View.VISIBLE
         didNotReceiveOTPTextView?.visibility = View.VISIBLE
 
@@ -611,18 +606,18 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
             sendinOTPLayout?.visibility = View.GONE
-            linkDeviceOTPScreen?.visibility = View.VISIBLE
+            unlinkDeviceOTPScreen?.visibility = View.VISIBLE
             enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            retryApiCall = RETRY_LINK_DEVICE
+            retryApiCall = RETRY_UNLINK_DEVICE
             return
         }
 
-        linkDeviceOTPScreen?.visibility = View.GONE
+        unlinkDeviceOTPScreen?.visibility = View.GONE
 
         if (!isOTPValidated) {
             return
         }
-        showLinkingDeviceProcessing()
+        showUnlinkingDeviceProcessing()
         //Location permission granted but no current location found.
         if (checkLocationPermission() && Utils.isLocationEnabled(context) && currentLocation == null) {
             startLocationUpdates()
@@ -631,7 +626,6 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
 
         //Unlink device here
         System.err.println("TEST: unlink primary device here")
-        sendinOTPLayout?.visibility = View.GONE
         unlinkDevice()
     }
 
@@ -646,6 +640,8 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE,
                                 hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
                                     FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)))
+
+                            showDeviceUnLinked()
 
                             setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
                                 "isUpdate" to true
@@ -663,21 +659,27 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
             class.java))
     }
 
-    private fun showLinkingDeviceProcessing() {
+    private fun showUnlinkingDeviceProcessing() {
         sendOTPTitle?.visibility = View.GONE
         sendOTPSubtitle?.visibility = View.GONE
 
         context?.let {
-            sendOTPProcessingReq?.text = it.getString(R.string.link_device_linking_processing)
+            sendOTPProcessingReq?.text = it.getString(R.string.unlink_device_unlinking_processing)
         }
         sendinOTPLayout?.visibility = View.VISIBLE
     }
 
+    private fun showDeviceUnLinked() {
+        sendinOTPLayout?.visibility = View.GONE
+        unlinkDeviceOTPScreen?.visibility = View.GONE
+        unlinkDeviceResultSubtitle?.visibility = View.GONE
+        unlinkDeviceResultScreen?.visibility = View.VISIBLE
+    }
 
     private fun showSendingOTPProcessing() {
         sendOTPTitle?.visibility = View.VISIBLE
         sendOTPSubtitle?.visibility = View.VISIBLE
-        linkDeviceOTPScreen?.visibility = View.GONE
+        unlinkDeviceOTPScreen?.visibility = View.GONE
         sendOTPFailedGroup?.visibility = View.GONE
 
         context?.let {
@@ -707,7 +709,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
 
         if (resultCode == Activity.RESULT_CANCELED) {
             resetOTPView()
-            linkDeviceOTPScreen?.visibility = View.VISIBLE
+            unlinkDeviceOTPScreen?.visibility = View.VISIBLE
         }
 
         when (requestCode) {
@@ -757,7 +759,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                 RETRY_VALIDATE -> {
                     makeValidateOTPRequest()
                 }
-                RETRY_LINK_DEVICE -> {
+                RETRY_UNLINK_DEVICE -> {
                     callUnlinkingDeviceAPI()
                 }
             }
