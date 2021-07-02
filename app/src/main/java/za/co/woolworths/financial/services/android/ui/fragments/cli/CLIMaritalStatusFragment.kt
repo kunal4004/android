@@ -17,6 +17,8 @@ import za.co.woolworths.financial.services.android.models.dto.MaritalStatus
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.util.FragmentUtils
 import za.co.woolworths.financial.services.android.util.picker.WheelView
+
+
 class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<Any>, View.OnClickListener {
 
     private var isChecked: Boolean = false
