@@ -7,17 +7,17 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_make_primary_or_unlink_device_bottom_sheet.*
+import kotlinx.android.synthetic.main.fragment_secondary_device_bottom_sheet.*
 import kotlinx.android.synthetic.main.fragment_unlink_primary_device_bottom_sheet.unlinkDeviceCancel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-class MakePrimaryOrUnlinkDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickListener {
+class SecondaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_make_primary_or_unlink_device_bottom_sheet, container, false)
+        return inflater.inflate(R.layout.fragment_secondary_device_bottom_sheet, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

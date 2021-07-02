@@ -91,7 +91,7 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
                 //Do OTP to add this selected device as primary device
                 System.err.println("TEST: changePrimaryDeviceButton " + deviceSelected?.deviceName)
                 setFragmentResult(ViewAllLinkedDevicesFragment.CHANGE_TO_PRIMARY_DEVICE_OTP,
-                    bundleOf(ViewAllLinkedDevicesFragment.CHOSEN_PRIMARY_DEVICE to deviceSelected))
+                    bundleOf(ViewAllLinkedDevicesFragment.PRIMARY_DEVICE to deviceSelected))
             }
         }
     }

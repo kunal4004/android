@@ -31,12 +31,15 @@
         <action
             android:id="@+id/action_to_selectPrimaryDeviceFragment"
             app:destination="@id/selectPrimaryDeviceFragment" />
+        <action
+            android:id="@+id/action_to_delete_primary_device_otp"
+            app:destination="@id/unlink_device_otp_navigation" />
     </dialog>
 
     <dialog
-        android:id="@+id/makePrimaryOrDeleteDeviceBottomSheetFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MakePrimaryOrUnlinkDeviceBottomSheetFragment"
-        android:label="makePrimaryOrDeleteDeviceBottomSheetFragment" />
+        android:id="@+id/secondaryDeviceBottomSheetFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.SecondaryDeviceBottomSheetFragment"
+        android:label="SecondaryDeviceBottomSheetFragment" />
 
     <fragment
         android:id="@+id/viewAllLinkedDevicesFragment"
@@ -47,8 +50,8 @@
             android:id="@+id/action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment"
             app:destination="@id/deletePrimaryDeviceBottomSheetFragment" />
         <action
-            android:id="@+id/action_viewAllLinkedDevicesFragment_to_makePrimaryOrDeleteDeviceBottomSheetFragment"
-            app:destination="@id/makePrimaryOrDeleteDeviceBottomSheetFragment" />
+            android:id="@+id/action_viewAllLinkedDevicesFragment_to_secondaryDeviceBottomSheetFragment"
+            app:destination="@id/secondaryDeviceBottomSheetFragment" />
     </fragment>
 
     <fragment
@@ -57,4 +60,6 @@
         android:label="SelectPrimaryDevice"
         tools:layout="@layout/fragment_select_primary_device" >
     </fragment>
+
+    <include app:graph="@navigation/graph_unlink_device_otp" />
 </navigation>

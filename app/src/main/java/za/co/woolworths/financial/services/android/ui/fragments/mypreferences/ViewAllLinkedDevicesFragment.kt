@@ -54,13 +54,13 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(DELETE_DEVICE_OTP) { requestKey, bundle ->
-            val isUnlinkSuccess = bundle.getBoolean(KEY_BOOLEAN_UNLINK_DEVICE)
-            if (isUnlinkSuccess) {
-                //unlinkDevice()
-            }
+            val navController = view?.findNavController()
+            System.err.println("TEST: action_to_delete_primary_device_otp " + deviceIdentityId)
+            navController?.navigate(R.id.action_to_delete_primary_device_otp, bundleOf(
+                PRIMARY_DEVICE to deviceIdentityId))
         }
 
-        setFragmentResultListener(CHOOSE_PRIMARY_DEVICE) { requestKey, bundle ->
+        setFragmentResultListener(CHOOSE_PRIMARY_DEVICE_FRAGMENT) { requestKey, bundle ->
             val navController = view?.findNavController()
             navController?.navigate(R.id.action_to_selectPrimaryDeviceFragment,
                 bundleOf(
@@ -70,7 +70,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
 
         setFragmentResultListener(CHANGE_TO_PRIMARY_DEVICE_OTP) { requestKey, bundle ->
-
+            System.err.println("TEST: CHANGE_TO_PRIMARY_DEVICE_OTP")
         }
 
         // Inflate the layout for this fragment
@@ -85,7 +85,9 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
                         when (response?.httpCode) {
                             AppConstant.HTTP_OK -> {
-                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)))
+                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE,
+                                    hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)))
 
                                 setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
                                         "isUpdate" to true
@@ -176,9 +178,9 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         const val DELETE_DEVICE_OTP = "deleteDeviceOTP"
         const val DELETE_DEVICE_NO_OTP = "deleteDevice"
         const val KEY_BOOLEAN_UNLINK_DEVICE = "isUnlinkSuccess"
-        const val CHOOSE_PRIMARY_DEVICE = "choosePrimaryDevice"
+        const val CHOOSE_PRIMARY_DEVICE_FRAGMENT = "choosePrimaryDeviceFragment"
         const val CHANGE_TO_PRIMARY_DEVICE_OTP = "changeToPrimaryDeviceOTP"
-        const val CHOSEN_PRIMARY_DEVICE = "chosenPrimaryDevice"
+        const val PRIMARY_DEVICE = "primaryDevice"
     }
 
     override fun onClick(v: View?) {
@@ -198,7 +200,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                 ))
             }
             R.id.viewAllDeviceEditImageView -> {
-                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_makePrimaryOrDeleteDeviceBottomSheetFragment, bundleOf(
+                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_secondaryDeviceBottomSheetFragment, bundleOf(
                     DEVICE_NAME to userDevice.deviceName
                 ))
             }
