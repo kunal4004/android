@@ -2061,7 +2061,7 @@
     <string name="death_cover_required_submit_4">Claimant\'s Bank Statement</string>
 
     <string name="total_loss_of_income_title">Total Loss of Income</string>
-    <string name="total_loss_of_income_desc">Pays your instalments for up to 12 months in the event of Total Loss of Income (such as Retrenchment or "no work, no pay")"</string>
+    <string name="total_loss_of_income_desc">Pays your instalments for up to 12 months in the event of Total Loss of Income (such as Retrenchment or \"no work, no pay\")</string>
     <string name="total_loss_of_income_form_1">Balance Protection Insurance Claim Form</string>
     <string name="total_loss_of_income_form_2">Retrenchment Form</string>
     <string name="total_loss_of_income_required_submit_1">Certified ID Copy</string>
