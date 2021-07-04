@@ -89,10 +89,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 else -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
             }
             AccountsProductGroupCode.PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
-            else -> throw RuntimeException("Invalid  productGroupCode ${account?.productGroupCode}")
+            else -> null
         }
 
-        getToolbarTitle(productGroupInfo.first)?.let { toolbarTitle -> mainView?.toolbarTitle(toolbarTitle) }
+        productGroupInfo?.first?.let { getToolbarTitle(it)?.let { toolbarTitle -> mainView?.toolbarTitle(toolbarTitle) } }
 
         return productGroupInfo
     }
@@ -142,6 +142,13 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val productOfferingGoodStanding = account?.productOfferingGoodStanding ?: false
         //  account?.productGroupCode?.toUpperCase() != CREDIT_CARD will hide payable now row for credit card options
         return !productOfferingGoodStanding && account?.productGroupCode?.toUpperCase() != AccountsProductGroupCode.CREDIT_CARD.groupCode.toUpperCase()
+    }
+
+    override fun isAccountInDelinquencyMoreThan6Months(): Boolean {
+        val accounts = getAccount()
+        val productOfferingStatus = accounts?.productOfferingStatus
+        val productOfferingGoodStanding = accounts?.productOfferingGoodStanding
+        return productOfferingGoodStanding == false && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
     }
 
     override fun chatWithCollectionAgent() {

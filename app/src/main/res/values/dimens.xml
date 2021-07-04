@@ -21,6 +21,7 @@
     <dimen name="unlinked_account_copy_padding_left_right">33dp</dimen>
     <dimen name="ten_dp">10dp</dimen>
     <dimen name="thirty_six_dp">36dp</dimen>
+    <dimen name="thirty_nine_dp">39dp</dimen>
 
     <dimen name="LoadingDots_dots_size_default">3dp</dimen>
     <dimen name="LoadingDots_dots_space_default">6dp</dimen>
@@ -84,6 +85,7 @@
     <dimen name="fifty_dp">50dp</dimen>
     <dimen name="thirty_three_dp">33dp</dimen>
     <dimen name="fifty_one_dp">51dp</dimen>
+    <dimen name="fourty_six_dp">46dp</dimen>
     <dimen name="fourty_seven_dp">47dp</dimen>
     <dimen name="fifteen_dp">15dp</dimen>
     <dimen name="twenty_two_dp">22dp</dimen>
@@ -115,6 +117,7 @@
     <dimen name="five_dp">5dp</dimen>
     <dimen name="five_sp">5sp</dimen>
     <dimen name="six_dp">6dp</dimen>
+    <dimen name="fourty_four_dp">44dp</dimen>
     <dimen name="fourty_five_dp">45dp</dimen>
     <dimen name="twenty_sp">20sp</dimen>
     <dimen name="eighteen_sp">18sp</dimen>
@@ -194,10 +197,12 @@
     <dimen name="twenty_nine_dp">29dp</dimen>
     <dimen name="one_sp">1sp</dimen>
     <dimen name="eighty_five_dp">85dp</dimen>
+    <dimen name="thirty_sp">30sp</dimen>
     <dimen name="fourty_five_sp">45sp</dimen>
     <dimen name="thirty_five_sp">35sp</dimen>
     <dimen name="thirty_six_sp">36sp</dimen>
     <dimen name="thirty_seven_dp">37dp</dimen>
+    <dimen name="thirty_eight_dp">38dp</dimen>
     <dimen name="two_hundred_and_fifty_dp">250dp</dimen>
     <dimen name="forty_four_dp">44dp</dimen>
     <dimen name="forty_eight_sp">48sp</dimen>

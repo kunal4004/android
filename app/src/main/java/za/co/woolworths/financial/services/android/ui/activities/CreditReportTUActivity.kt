@@ -27,7 +27,7 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
         Utils.updateStatusBarBackground(this, R.color.bg_e6e6e6)
         setUpActionBar()
         setupRecyclerView()
-        register_login_now_btn.setOnClickListener(this)
+        register_login_now_btn?.setOnClickListener(this)
     }
 
     private fun setupRecyclerView() {
