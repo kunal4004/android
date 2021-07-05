@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/thirty_two_dp"
-    android:paddingRight="@dimen/thirty_two_dp"
+    android:paddingStart="@dimen/thirty_two_dp"
+    android:paddingEnd="@dimen/thirty_two_dp"
     android:paddingBottom="@dimen/twenty_four_dp">
 
     <include
@@ -140,14 +140,14 @@
         android:contentDescription="@string/scan_barcode_toggle_card_details_button"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/fifteen_dp"
-        android:paddingRight="@dimen/fifteen_dp">
+        android:paddingStart="@dimen/fifteen_dp"
+        android:paddingEnd="@dimen/fifteen_dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivToggleCardDetailsLabelIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/fifteen_dp"
+            android:layout_marginEnd="@dimen/fifteen_dp"
             app:srcCompat="@drawable/ic_barcode_show" />
 
         <RelativeLayout
@@ -163,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"
                 android:gravity="left|center_vertical"
-                android:lineSpacingExtra="4sp"
+                android:lineSpacingExtra="@dimen/four_sp"
                 android:text="@string/dialog_scan_barcode_to_pay_toggle_details_visible" />
 
             <TextView
@@ -176,7 +176,7 @@
                 android:alpha="0"
                 android:background="@color/transparent"
                 android:gravity="left|center_vertical"
-                android:lineSpacingExtra="4sp"
+                android:lineSpacingExtra="@dimen/four_sp"
                 android:text="@string/dialog_scan_barcode_to_pay_toggle_details_hidden" />
 
         </RelativeLayout>
