@@ -91,13 +91,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
     private fun toggleCardDetailsVisibility() {
         isCardDetailsVisible = !isCardDetailsVisible
 
-        if (isCardDetailsVisible) {
-            btnToggleCardDetailsLabel.text = getString(R.string.dialog_scan_barcode_to_pay_toggle_details_hidden)
-            ivToggleCardDetailsLabelIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_barcode_hide, null))
-        } else {
-            btnToggleCardDetailsLabel.text = getString(R.string.dialog_scan_barcode_to_pay_toggle_details_visible)
-            ivToggleCardDetailsLabelIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_barcode_show, null))
-        }
+        toggleShowCardDetailsButtonState()
 
         rlCardBarcode
                 .animate()
@@ -117,6 +111,27 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
 
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_VIEWCARDNUMBERS)
         }
+    }
+
+    private fun toggleShowCardDetailsButtonState() {
+        ivToggleCardDetailsLabelIcon
+                .setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                                resources,
+                            if (isCardDetailsVisible) R.drawable.ic_barcode_hide else R.drawable.ic_barcode_show,
+                            null
+                        )
+                )
+        tvTapToViewLabel
+                .animate()
+                .setDuration(DURATION_FADE)
+                .alpha(if (isCardDetailsVisible) 0f else 1f)
+                .start()
+        tvTapToHideLabel
+                .animate()
+                .setDuration(DURATION_FADE)
+                .alpha(if (isCardDetailsVisible) 1f else 0f)
+                .start()
     }
 
     override fun onDismiss(dialog: DialogInterface) {
