@@ -69,18 +69,32 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         }
     }
 
-    fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) = liveData(Dispatchers.IO) {
-        emit(CheckoutResourceAddAddress.loading(data = null))
+    fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) =
+        liveData(Dispatchers.IO) {
+            emit(CheckoutResourceAddAddress.loading(data = null))
+            try {
+                emit(
+                    CheckoutResourceAddAddress.success(
+                        data = checkoutAddAddressNewUserInteractor.updateAddress(
+                            addAddressRequestBody, addressId
+                        ).body()
+                    )
+                )
+            } catch (exception: Exception) {
+                emit(CheckoutResourceAddAddress.error(data = null, msg = exception.toString()))
+            }
+        }
+
+    fun deleteAddress(addressId: String) = liveData(Dispatchers.IO) {
+        emit(CheckoutResourceDeleteAddress.loading(data = null))
         try {
             emit(
-                CheckoutResourceAddAddress.success(
-                    data = checkoutAddAddressNewUserInteractor.updateAddress(
-                        addAddressRequestBody, addressId
-                    ).body()
+                CheckoutResourceDeleteAddress.success(
+                    data = checkoutAddAddressNewUserInteractor.deleteAddress(addressId).body()
                 )
             )
         } catch (exception: Exception) {
-            emit(CheckoutResourceAddAddress.error(data = null, msg = exception.toString()))
+            emit(CheckoutResourceDeleteAddress.error(data = null, msg = exception.toString()))
         }
     }
 

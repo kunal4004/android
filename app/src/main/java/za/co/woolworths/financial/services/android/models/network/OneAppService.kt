@@ -4,14 +4,12 @@ import android.location.Location
 import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
-import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
-import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
-import za.co.woolworths.financial.services.android.checkout.service.network.ChangeAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.service.network.MockRetrofitConfig.Companion.mockApiInterface
-import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
@@ -169,6 +167,9 @@ object OneAppService : RetrofitConfig() {
     }
     fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String): Call<AddAddressResponse> {
         return mockApiInterface.updateAddress(addAddressRequestBody, addressId)
+    }
+    fun deleteAddress(addressId: String): Call<DeleteAddressResponse> {
+        return mockApiInterface.deleteAddress(addressId)
     }
     fun changeAddress(nickName: String): Call<ChangeAddressResponse>{
         return mockApiInterface.changeAddress(nickName)

@@ -39,6 +39,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
+        const val DELETE_SAVED_ADDRESS_REQUEST_KEY = "deleteSavedAddress"
     }
 
     override fun onCreateView(
@@ -99,6 +100,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
+            checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
+        }
+        setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY){ requestKey, bundle ->
             checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
         }
     }

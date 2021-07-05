@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UPDATE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
@@ -44,6 +45,7 @@ import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
 
 
@@ -672,7 +674,32 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             R.id.selectProvinceLayout, R.id.provinceAutocompleteEditText -> {
                 navigateToProvinceSelection()
             }
+            R.id.deleteTextView -> {
+                deleteAddress()
+            }
         }
+    }
+
+    private fun deleteAddress() {
+        checkoutAddAddressNewUserViewModel.deleteAddress(selectedAddressId).observe(this, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    if (it?.data != null) {
+                        if (it.data.httpCode?.equals(HTTP_OK) == true) {
+                            setFragmentResult(DELETE_SAVED_ADDRESS_REQUEST_KEY, Bundle())
+                            navController?.navigateUp()
+                            selectedAddressId = ""
+                        }
+                    }
+                }
+                ResponseStatus.LOADING -> {
+
+                }
+                ResponseStatus.ERROR -> {
+
+                }
+            }
+        })
     }
 
     private fun getSuburbs() {
