@@ -340,7 +340,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         bindString(R.string.replacement_card_label) -> {
                             activity?.apply {
                                 getStoreCardResponse()?.let {
-                                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD)
+                                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, this)
                                     Intent(this, SelectStoreActivity::class.java).apply {
                                         putExtra(
                                             SelectStoreActivity.STORE_DETAILS,
