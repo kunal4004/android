@@ -81,7 +81,8 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
     }
 
     fun clear() {
-        chatMessageList.clear()
+        chatMessageList?.clear()
+        notifyDataSetChanged()
     }
 
     inner class AgentMessageViewHolder(view: View) : MessageViewHolder(view) {

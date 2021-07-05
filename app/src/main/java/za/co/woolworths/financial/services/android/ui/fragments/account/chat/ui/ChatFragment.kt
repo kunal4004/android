@@ -104,7 +104,11 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 }
             }
         }, {
-            chatLoaderProgressBar?.visibility = GONE
+            activity?.runOnUiThread {
+                if (isAdded) {
+                    chatLoaderProgressBar?.visibility = GONE
+                }
+            }
         })
     }
 
