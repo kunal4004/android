@@ -89,7 +89,8 @@
         android:id="@+id/tempFreezeTextViewShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/endGuide"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/topGuide">
 
         <TextView
@@ -117,16 +118,27 @@
             android:letterSpacing="0.15"
             android:text="@string/label_card_details"
             android:textAllCaps="true"
-            android:textColor="@color/permanent_card_block_desc_color"
-            android:textSize="12sp"
-            android:visibility="visible"
+            android:clickable="true"
+            android:focusable="true"
+            android:enabled="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twelve_sp"
             tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/storeCardTagTextView"
+            style="@style/tag_badge_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
     </com.facebook.shimmer.ShimmerFrameLayout>
+
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/cardDetailImageShimmerFrameLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="8dp"
         android:adjustViewBounds="true"
         android:transitionName="accountCardImageViewTransition"
         app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
@@ -141,6 +153,7 @@
             android:adjustViewBounds="true"
             app:srcCompat="@drawable/w_black_credit_card"
             tools:ignore="ContentDescription" />
+
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <View
@@ -150,7 +163,7 @@
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/storeCardLoaderView"/>
+        app:layout_constraintTop_toBottomOf="@+id/storeCardLoaderView" />
 
     <TextView
         android:id="@+id/userNameTextView"
@@ -161,7 +174,7 @@
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:shadowColor="@color/black"
         android:shadowRadius="1"
-        android:text="Thuli Sandile"
+        tools:text="Thuli Sandile"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="12sp"
@@ -177,19 +190,6 @@
         app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
         app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
         app:layout_constraintTop_toBottomOf="@+id/cardDetailImageShimmerFrameLayout" />
-
-
-    <ProgressBar
-        android:id="@+id/loadStoreCardProgressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateDrawable="@drawable/progress_circle"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/storeCardLoaderView"
-        app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
-        app:layout_constraintStart_toStartOf="@+id/cardDetailImageShimmerFrameLayout"
-        app:layout_constraintTop_toTopOf="@+id/cardDetailImageShimmerFrameLayout" />
 
     <View
         android:id="@+id/manageCardDivider"
@@ -211,6 +211,7 @@
         android:layout_marginEnd="16dp"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/manageCardDivider" />
@@ -220,16 +221,49 @@
         android:layout_width="wrap_content"
         android:layout_height="16dp"
         android:background="@color/light_gray_background"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/includeLinkNewCard" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/manageCardGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="manageCardDivider,includeManageMyCard" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/manageLinkNewCardGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="linkNewCardDividerView,includeLinkNewCard" />
+
+    <View
+        android:id="@+id/linkNewCardDividerView"
+        style="@style/horizontal_divider_how_to_pay"
+        android:layout_height="1dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/includeManageMyCard" />
+
+    <include
+        android:id="@+id/includeLinkNewCard"
+        layout="@layout/link_new_card_layout"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/seventy_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/two_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:paddingStart="@dimen/twenty_four_dp"
+        android:paddingEnd="@dimen/twenty_four_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/includeManageMyCard" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/manageCardGroup"
-        android:layout_width="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="manageCardDivider,includeManageMyCard"
-        android:layout_height="wrap_content"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

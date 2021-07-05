@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.util
 
 
-import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent

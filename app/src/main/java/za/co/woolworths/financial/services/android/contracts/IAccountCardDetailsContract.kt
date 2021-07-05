@@ -85,6 +85,15 @@ interface IAccountCardDetailsContract {
         fun getStoreCardBlockType(): Boolean
         fun isProductCodeStoreCard(): Boolean
         fun onStartCreditLimitIncreaseFirebaseEvent(activity: Activity)
+        fun isVirtualCardEnabled(): Boolean
+        fun isVirtualCardObjectNotNull(): Boolean
+        fun isTemporaryCardEnabled(): Boolean
+        fun isInstantCardReplacementEnabled(): Boolean
+        fun isVirtualCardObjectBlockTypeNull(): Boolean
+        fun isGeneterateVTC(): Boolean
+        fun getPrimaryStoreCardBlockType(): String
+        fun isReplacementCardAndVirtualCardViewEnabled(): Boolean
+        fun isActivateVirtualTempCard(): Boolean
     }
 
     interface AccountCardDetailModel {

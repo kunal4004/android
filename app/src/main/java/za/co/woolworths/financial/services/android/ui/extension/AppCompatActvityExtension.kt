@@ -8,6 +8,7 @@ import android.graphics.Paint
 
 import android.os.CountDownTimer
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
@@ -29,6 +30,7 @@ import androidx.navigation.fragment.NavHostFragment
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
@@ -48,6 +50,7 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.ui.views.SafeClickListener
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 /**
@@ -386,5 +389,33 @@ fun Fragment.safeNavigateFromNavController(directions: NavDirections) {
     val destination = navController.currentDestination as? FragmentNavigator.Destination
     if (javaClass.name == destination?.className) {
         navController.navigate(directions)
+    }
+}
+
+fun View.setSafeOnClickListener(onSafeClick: (View) -> Unit) {
+    val safeClickListener = SafeClickListener {
+        onSafeClick(it)
+    }
+    setOnClickListener(safeClickListener)
+}
+
+/**
+ * maxLength extension function makes a filter that
+ * will constrain edits not to make the length of the text
+ * greater than the specified length.
+ *
+ * @param max
+ */
+fun EditText.maxLength(max: Int){
+    this.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(max))
+}
+
+fun NavController.navigateUpOrFinish(activity: AppCompatActivity?): Boolean {
+    return if (navigateUp()) {
+        true
+    } else {
+        activity?.finish()
+        activity?.overridePendingTransition(0, 0)
+        true
     }
 }

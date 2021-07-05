@@ -139,7 +139,9 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     }
 
     public void finishActivity() {
-        int currentCartCount = cartFragment.productCountMap.getTotalProductCount();
+        int currentCartCount = 0 ;
+        if (cartFragment.productCountMap != null && cartFragment.productCountMap.getTotalProductCount() != null)
+            currentCartCount = cartFragment.productCountMap.getTotalProductCount();
         // Check to prevent DISMISS_POP_WINDOW_CLICKED override setResult for toast clicked event
         if (!toastButtonWasClicked && localCartCount !=currentCartCount) {
             this.setResult(DISMISS_POP_WINDOW_CLICKED);

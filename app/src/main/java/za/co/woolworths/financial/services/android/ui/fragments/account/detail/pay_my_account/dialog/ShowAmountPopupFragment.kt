@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -76,6 +78,19 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 } else {
                     updateAmountEntered(card?.amountEntered)
                 }
+
+                pmaAmountEnteredTextView?.apply {
+                    if (!payMyAccountViewModel.isAmountBelowMaxLimit(card?.amountEntered)) {
+                        setTextColor(Color.RED)
+                        typeface = Typeface.DEFAULT_BOLD
+                        invalidPaymentAmountTextView?.visibility = VISIBLE
+                    } else{
+                        setTextColor(Color.BLACK)
+                        typeface = Typeface.DEFAULT
+                        invalidPaymentAmountTextView?.visibility = GONE
+                    }
+                }
+
                 // Enable/Disable confirm payment button
                 pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(cvvEditTextInput.length(), pmaAmountEnteredTextView?.text?.toString())
 
