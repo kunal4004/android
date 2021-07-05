@@ -103,6 +103,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
         }
         setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY){ requestKey, bundle ->
+            updateSavedAddress(bundle)
             checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
         }
     }

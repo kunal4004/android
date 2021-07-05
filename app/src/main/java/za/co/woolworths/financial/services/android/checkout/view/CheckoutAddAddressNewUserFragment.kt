@@ -19,6 +19,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
@@ -46,6 +48,7 @@ import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.net.HttpURLConnection.HTTP_OK
+import java.io.IOException
 import java.util.*
 
 
@@ -167,6 +170,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         if (selectedAddressId.isNotEmpty()) {
             //it's not empty means it's a edit address call.
             deleteTextView.visibility = View.VISIBLE
+            deleteTextView.setOnClickListener(this)
             saveAddress.text = bindString(R.string.change_details)
         }
         if (isShimmerRequired) {
@@ -355,7 +359,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.getSavedAddresses().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    savedAddressResponse = it?.data
+                    if (it?.data == null) {
+                        val jsonFileString = getJsonDataFromAsset(
+                            activity?.applicationContext,
+                            "mocks/savedAddress.json"
+                        )
+                        var mockSavedAddressResponse: SavedAddressResponse = Gson().fromJson(
+                            jsonFileString,
+                            object : TypeToken<SavedAddressResponse>() {}.type
+                        )
+                        savedAddressResponse = mockSavedAddressResponse
+                    } else
+                        savedAddressResponse = it?.data
                     if (cellphoneNumber?.text.toString().isEmpty())
                         cellphoneNumber.setText(savedAddressResponse?.primaryContactNo)
                 }
@@ -367,6 +382,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
         })
+    }
+
+    fun getJsonDataFromAsset(context: Context?, fileName: String): String? {
+        val jsonString: String
+        try {
+            jsonString =
+                context?.assets?.open(fileName)?.bufferedReader().use { it?.readText().toString() }
+        } catch (ioException: IOException) {
+            ioException.printStackTrace()
+            return null
+        }
+        return jsonString
     }
 
     private fun addFragmentResultListener() {
@@ -675,7 +702,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 navigateToProvinceSelection()
             }
             R.id.deleteTextView -> {
-                deleteAddress()
+                if (savedAddressResponse?.addresses?.size!! > 1)
+                    deleteAddress()
             }
         }
     }
@@ -686,7 +714,17 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 ResponseStatus.SUCCESS -> {
                     if (it?.data != null) {
                         if (it.data.httpCode?.equals(HTTP_OK) == true) {
-                            setFragmentResult(DELETE_SAVED_ADDRESS_REQUEST_KEY, Bundle())
+                            if (savedAddressResponse?.addresses != null) {
+                                savedAddressResponse?.addresses!!.forEachIndexed { index, it ->
+                                    if (it.id.equals(selectedAddressId)) {
+                                        savedAddressResponse?.addresses!!.removeAt(index)
+                                        return@forEachIndexed
+                                    }
+                                }
+                            }
+                            val bundle = Bundle()
+                            bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
+                            setFragmentResult(DELETE_SAVED_ADDRESS_REQUEST_KEY, bundle)
                             navController?.navigateUp()
                             selectedAddressId = ""
                         }
