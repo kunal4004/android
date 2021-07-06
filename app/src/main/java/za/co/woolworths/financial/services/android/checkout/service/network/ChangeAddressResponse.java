@@ -8,46 +8,46 @@ import java.util.List;
 public class ChangeAddressResponse {
 
     @SerializedName("suburbId")
-    private String suburbId;
+    public String suburbId;
 
     @SerializedName("hasDeliverySlotReservations")
-    private Boolean hasDeliverySlotReservations;
+    public Boolean hasDeliverySlotReservations;
 
     @SerializedName("unDeliverableCommerceItems")
-    private List<Object> unDeliverableCommerceItems = null;
+    public List<Object> unDeliverableCommerceItems = null;
 
     @SerializedName("stores")
-    private String stores;
+    public String stores;
 
     @SerializedName("navSuburbDetails")
-    private String navSuburbDetails;
+    public String navSuburbDetails;
 
     @SerializedName("deliverable")
-    private Boolean deliverable;
+    public Boolean deliverable;
 
     @SerializedName("deliverySlotsDetails")
-    private String deliverySlotsDetails;
+    public String deliverySlotsDetails;
 
     @SerializedName("firstAvailableFoodDeliveryDate")
-    private String firstAvailableFoodDeliveryDate;
+    public String firstAvailableFoodDeliveryDate;
 
     @SerializedName("firstAvailableOtherDeliveryDate")
-    private String firstAvailableOtherDeliveryDate;
+    public String firstAvailableOtherDeliveryDate;
 
     @SerializedName("quantityLimit")
-    private QuantityLimit quantityLimit;
+    public QuantityLimit quantityLimit;
 
     @SerializedName("unSellableCommerceItems")
-    private List<UnSellableCommerceItem> unSellableCommerceItems = null;
+    public List<UnSellableCommerceItem> unSellableCommerceItems = null;
 
     @SerializedName("deliveryStatus")
-    private DeliveryStatus deliveryStatus;
+    public DeliveryStatus deliveryStatus;
 
     @SerializedName("response")
-    private Response response;
+    public Response response;
 
     @SerializedName("httpCode")
-    private Integer httpCode;
+    public Integer httpCode;
 
     public String getSuburbId() {
         return suburbId;

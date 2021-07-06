@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,17 +14,22 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
-import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
-import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.models.dto.Province
+import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
+import java.io.IOException
 
 
 /**
@@ -102,7 +108,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             updateSavedAddress(bundle)
             checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
         }
-        setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY){ requestKey, bundle ->
+        setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
             checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
         }
@@ -148,25 +154,86 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
+    fun navigateToUnsellableItemsFragment(
+        unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
+        address: Address,
+        deliverable: Boolean
+    ) {
+        val suburb = Suburb()
+        suburb.apply {
+            id = address.suburbId
+            name = address.suburb
+            postalCode = address.postalCode
+            suburbDeliverable = deliverable
+        }
+        val province = Province()
+        province.apply {
+            name = address.city
+            id = address.region
+        }
+        val bundle = Bundle()
+        bundle?.apply {
+            putString(EditDeliveryLocationActivity.DELIVERY_TYPE, DeliveryType.DELIVERY.name)
+            putString("SUBURB", Utils.toJson(suburb))
+            putString("PROVINCE", Utils.toJson(province))
+            putString("UnSellableCommerceItems", Utils.toJson(unSellableCommerceItems))
+        }
+        navController?.navigate(
+            R.id.action_to_unsellableItemsFragment,
+            bundleOf("bundle" to bundle)
+        )
+    }
+
+    fun getJsonDataFromAsset(context: Context?, fileName: String): String? {
+        val jsonString: String
+        try {
+            jsonString =
+                context?.assets?.open(fileName)?.bufferedReader().use { it?.readText().toString() }
+        } catch (ioException: IOException) {
+            ioException.printStackTrace()
+            return null
+        }
+        return jsonString
+    }
+
     override fun hideErrorView() {
         addNewAddressErrorMsg.visibility = View.GONE
     }
 
-    override fun changeAddress(nickName: String) {
-        checkoutAddAddressNewUserViewModel.changeAddress(nickName).observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    if (it?.data != null && it?.data.deliverable) {
+    override fun changeAddress(address: Address) {
+        checkoutAddAddressNewUserViewModel.changeAddress(address.nickname)
+            .observe(viewLifecycleOwner, {
+                when (it.responseStatus) {
+                    ResponseStatus.SUCCESS -> {
+
+                        val jsonFileString = getJsonDataFromAsset(
+                            activity?.applicationContext,
+                            "mocks/unsellableItems.json"
+                        )
+                        var mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
+                            jsonFileString,
+                            object : TypeToken<ChangeAddressResponse>() {}.type
+                        )
+
+
+                        val changeAddressResponse = mockChangeAddressResponse //it?.data
+                        if (changeAddressResponse != null && changeAddressResponse?.deliverable) {
+                            if (changeAddressResponse?.unSellableCommerceItems?.size!! > 0) {
+                                navigateToUnsellableItemsFragment(
+                                    changeAddressResponse?.unSellableCommerceItems,
+                                    address,
+                                    changeAddressResponse?.deliverable
+                                )
+                            }
+                        }
+                    }
+                    ResponseStatus.LOADING -> {
+
+                    }
+                    ResponseStatus.ERROR -> {
 
                     }
                 }
-                ResponseStatus.LOADING -> {
-
-                }
-                ResponseStatus.ERROR -> {
-
-                }
-            }
-        })
+            })
     }
 }

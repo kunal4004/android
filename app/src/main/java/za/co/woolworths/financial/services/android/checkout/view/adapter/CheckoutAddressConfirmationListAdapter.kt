@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.util.Utils
@@ -65,14 +66,14 @@ class CheckoutAddressConfirmationListAdapter(
                             R.color.white
                         )
                     )
-                    if (selector.isChecked){
+                    if (selector.isChecked) {
                         listner.hideErrorView()
                     }
                 }
 
                 setOnClickListener {
                     savedAddress?.addresses?.get(position)?.let {
-                        listner.changeAddress(it.nickname)
+                        listner.changeAddress(it)
                     }
 
                     checkedItemPosition = position
@@ -80,7 +81,10 @@ class CheckoutAddressConfirmationListAdapter(
                 }
                 editAddressImageView.setOnClickListener {
                     val bundle = Bundle()
-                    bundle.putString("editSavedAddress", Utils.toJson(savedAddress?.addresses?.get(position)))
+                    bundle.putString(
+                        "editSavedAddress",
+                        Utils.toJson(savedAddress?.addresses?.get(position))
+                    )
                     navController?.navigate(
                         R.id.CheckoutAddAddressNewUserFragment,
                         bundleOf("bundle" to bundle)
@@ -93,6 +97,6 @@ class CheckoutAddressConfirmationListAdapter(
 
     interface EventListner {
         fun hideErrorView()
-        fun changeAddress(nickName: String)
+        fun changeAddress(address: Address)
     }
 }
