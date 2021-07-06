@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <stroke
+        android:width="@dimen/one_dp"
+        android:color="@color/non_editable_button_bg" />
+
+    <solid android:color="@color/checkout_delivering_title_background" />
+
+</shape>

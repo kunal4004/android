@@ -1,0 +1,54 @@
+{
+  "suburbId": "1894",
+  "hasDeliverySlotReservations": false,
+  "unDeliverableCommerceItems": [],
+  "stores": "",
+  "navSuburbDetails": "",
+  "deliverable": true,
+  "deliverySlotsDetails": "",
+  "firstAvailableFoodDeliveryDate": "Thursday, 13 May",
+  "firstAvailableOtherDeliveryDate": "Wednesday, 19 May",
+  "quantityLimit": {
+    "foodMaximumQuantity": -1,
+    "other": 0,
+    "foodLayoutColour": "",
+    "otherLayoutColour": "Blue",
+    "food": 0,
+    "otherMaximumQuantity": 30
+  },
+  "unSellableCommerceItems": [
+    {
+      "quantity": 1,
+      "productId": "2032130000009",
+      "displayCategory": "food",
+      "internalImageURL": "/images/elasticera/products/hero/2017-05-22/2032130000009_hero.jpg",
+      "commerceItemClassType": "foodCommerceItem",
+      "colour": "",
+      "detailPageURL": "/prod/Food/Meat-Poultry-Fish/Braai/Tuscan-Herb-Perfect-Chicken-Roast-Avg-1-2-kg/_/A-2032130000009",
+      "size": "NO SZ",
+      "productVariant": "noVariant",
+      "price": {
+        "amount": 101.59,
+        "wasPrice": 0,
+        "rawTotalPrice": 101.59,
+        "salePrice": 0,
+        "listPrice": 101.5873
+      },
+      "externalImageURL": "Tuscan-Herb-Perfect-Chicken-Roast-Avg-1-2-kg-2032130000009.jpg?V=KxoA&o=rYsnlMq2sNESNKf3gZSsGRJ2bZ4j&",
+      "productDisplayName": "Tuscan Herb Perfect Chicken Roast Avg 1.2 kg",
+      "fulfillerType": "01",
+      "productType": "FOODS"
+    }
+  ],
+  "deliveryStatus": {
+    "01": true,
+    "02": true,
+    "04": true,
+    "07": true
+  },
+  "response": {
+    "code": "-1",
+    "desc": "Success"
+  },
+  "httpCode": 200
+}

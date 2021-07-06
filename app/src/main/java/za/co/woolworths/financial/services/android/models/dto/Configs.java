@@ -6,6 +6,7 @@ import za.co.woolworths.financial.services.android.models.CreditCardDelivery;
 import javax.annotation.Nullable;
 
 import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
+import za.co.woolworths.financial.services.android.models.NativeCheckout;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
@@ -49,6 +50,8 @@ public class Configs {
     public ProductDetailsPage productDetailsPage;
     @Nullable
     public CreditView creditView;
+    @Nullable
+    public NativeCheckout nativeCheckout;
     @Nullable
     public DashConfig dashConfig;
     @Nullable

@@ -49,6 +49,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
@@ -367,9 +368,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         return;
                     }
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT);
-                    Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
+                    /*Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
                     getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
-                    checkOutActivity.overridePendingTransition(0, 0);
+                    checkOutActivity.overridePendingTransition(0, 0);*/
+                    startActivity(new Intent(getActivity(), CheckoutActivity.class));
                 }
                 break;
             case R.id.orderTotalLayout:

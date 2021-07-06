@@ -1,11 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -16,6 +12,8 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.province_selector_fragment.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.Companion.PROVINCE_SELECTION_BACK_PRESSED
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.ui.adapters.ProvinceListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -45,8 +43,17 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        if (activity is CheckoutActivity) {
+            setHasOptionsMenu(true)
+            (activity as? CheckoutActivity)?.apply { hideBackArrow() }
+        }
         activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_province)
         loadProvinceList()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_item, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun loadProvinceList() {
@@ -67,6 +74,13 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
             }
             setFragmentResult(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE, bundle)
             navController?.navigateUp()
+        }
+    }
+
+    fun onBackPressed() {
+        activity?.apply {
+            // Use the Kotlin extension in the fragment-ktx artifact
+            setFragmentResult(PROVINCE_SELECTION_BACK_PRESSED, Bundle())
         }
     }
 }
