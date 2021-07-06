@@ -2048,6 +2048,33 @@
     <string name="chat_notification_title">You have received a message.</string>
     <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
     <string name="woolies_chat_active">Chat is currently active</string>
+
+    <!--Native Checkout-->
+    <string name="name_colon_text_view">Name: *</string>
+    <string name="mobile_number_text_view">Mobile Number: *</string>
+    <string name="my_address_details">My Address Details</string>
+    <string name="address_nickname_text_view">Address Nickname: *</string>
+    <string name="unit_complex_floor_text_view">Unit No/Complex/Floor/Building:</string>
+    <string name="suburb_colon_text_view">Suburb: *</string>
+    <string name="province_colon_text_view">Province: *</string>
+    <string name="postal_code_colon_text_view">Postal Code: *</string>
+    <string name="optional_hint">Optional</string>
+    <string name="places_autocomplete_tv_hint">Enter a new address</string>
+    <string name="where_are_we_delivering">Where Are We Delivering?</string>
+    <string name="where_should_we_deliver">Where Should We Deliver?</string>
+    <string name="save_address">SAVE ADDRESS</string>
+    <string name="change_details">change details</string>
+    <string name="delete_address">delete address</string>
+    <string name="places_address_error_msg">Please enter a valid Address</string>
+    <string name="address_nickname_error_msg">This field is required.</string>
+    <string name="add_new_address_error_msg">Please select or add a delivery address.</string>
+    <string name="delivering_address_types_error_msg">Please select an address type.</string>
+    <string name="suburb_name_error_msg">Please select a suburb.</string>
+    <string name="province_name_error_msg">Please select a province.</string>
+    <string name="postal_code_error_msg">Please enter a Postal Code</string>
+    <string name="mobile_number_error_msg">Please enter a 10-digit South African mobile number.</string>
+    <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
+    <string name="add_a_new_address">Add A New Address</string>
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
     <string name="death_cover_title">Death Cover</string>

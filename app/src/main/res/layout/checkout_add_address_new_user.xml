@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/twelve_dp"
+        android:layout_marginBottom="@dimen/ten_dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/whereWeDeliveringTitle"
+                style="@style/futura_semi_bold_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/two_dp"
+                android:paddingBottom="@dimen/two_dp"
+                android:text="@string/where_are_we_delivering"
+                android:textSize="@dimen/twenty_sp"
+                app:layout_constraintStart_toStartOf="@+id/left_guideline"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <HorizontalScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/twenty_dp"
+                android:scrollbars="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/whereWeDeliveringTitle">
+
+                <LinearLayout
+                    android:id="@+id/delivering_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/twenty_dp"
+                    android:paddingEnd="@dimen/twelve_dp" />
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/deliveringAddressTypesErrorMsg"
+                style="@style/myriad_pro_regular"
+                android:layout_marginTop="@dimen/fifteen_dp"
+                android:lineSpacingMultiplier="1.40"
+                android:text="@string/delivering_address_types_error_msg"
+                android:textColor="@color/input_error_color_code"
+                android:textSize="@dimen/fourteen_sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/scrollView" />
+
+            <View
+                android:id="@+id/deliveringPartition"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/six_dp"
+                android:layout_marginTop="@dimen/fifteen_dp"
+                android:background="@color/color_D8D8D8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/deliveringAddressTypesErrorMsg" />
+
+            <include
+                android:id="@+id/recipientAddressLayout"
+                layout="@layout/checkout_new_user_address_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/addressDetailsPartition"
+                app:layout_constraintTop_toBottomOf="@+id/deliveringPartition" />
+
+            <View
+                android:id="@+id/addressDetailsPartition"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/six_dp"
+                android:layout_marginTop="@dimen/six_dp"
+                android:background="@color/color_D8D8D8"
+                app:layout_constraintTop_toBottomOf="@+id/recipientAddressLayout" />
+
+            <include
+                android:id="@+id/recipientDetailsLayout"
+                layout="@layout/checkout_new_user_recipient_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/recipientDetailsPartition"
+                app:layout_constraintTop_toBottomOf="@+id/addressDetailsPartition" />
+
+            <View
+                android:id="@+id/recipientDetailsPartition"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/six_dp"
+                android:layout_marginTop="@dimen/six_dp"
+                android:background="@color/color_D8D8D8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recipientDetailsLayout" />
+
+            <Button
+                android:id="@+id/saveAddress"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/fifty_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:background="@drawable/order_add_to_cart_button_bg"
+                android:fontFamily="@font/futura_semi_bold"
+                android:letterSpacing="0.13"
+                android:text="@string/save_address"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twelve_sp"
+                app:layout_constraintBottom_toTopOf="@+id/deleteTextView"
+                app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+                app:layout_constraintStart_toStartOf="@+id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/recipientDetailsPartition" />
+
+            <TextView
+                android:id="@+id/deleteTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/twenty_six_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:layout_marginEnd="@dimen/twenty_six_dp"
+                android:fontFamily="@font/futura_medium"
+                android:gravity="center"
+                android:letterSpacing="@integer/point_one"
+                android:paddingTop="@dimen/two_dp"
+                android:paddingBottom="@dimen/two_dp"
+                android:text="@string/delete_address"
+                android:textAllCaps="true"
+                android:textColor="@color/text_description_color"
+                android:textSize="@dimen/twelve_sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_guideline"
+                app:layout_constraintEnd_toEndOf="@+id/right_guideline"
+                app:layout_constraintStart_toStartOf="@+id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/saveAddress" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/left_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/twenty_six_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/right_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/bottom_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="@dimen/twenty_dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

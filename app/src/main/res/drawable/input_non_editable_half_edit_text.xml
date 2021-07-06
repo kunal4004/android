@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/non_editable_button_bg" />
+        </shape>
+    </item>
+
+    <item
+        android:bottom="@dimen/one_dp"
+        android:left="@dimen/one_dp"
+        android:right="0dp"
+        android:top="@dimen/one_dp">
+        <shape>
+            <solid android:color="@color/checkout_delivering_title_background" />
+        </shape>
+    </item>
+</layer-list>
