@@ -1484,7 +1484,7 @@
         <item name="android:layout_marginTop">@dimen/sixteen_dp</item>
         <item name="android:paddingTop">@dimen/sixteen_dp</item>
         <item name="android:paddingBottom">@dimen/sixteen_dp</item>
-        <item name="android:background">@drawable/input_box_inactive_bg</item>
+        <item name="android:background">@drawable/input_box_active_bg</item>
         <item name="android:imeOptions">actionDone</item>
         <item name="android:maxLength">19</item>
         <item name="android:paddingStart">24dp</item>
