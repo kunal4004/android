@@ -1978,6 +1978,9 @@
     <string name="remove_device_desc">To remove this device, you need to select a new primary device.</string>
 
     <!--  Unlink Device Confirmation  -->
+    <string name="changing_primary_device_processing">Changing Primary Device</string>
+
+    <!--  Unlink Device Confirmation  -->
     <string name="unlink_device_unlinking_processing">Unlinking Your Device</string>
     <string name="unlink_device_result_success">Your Device Has \nBeen Successfully Unlinked.</string>
 

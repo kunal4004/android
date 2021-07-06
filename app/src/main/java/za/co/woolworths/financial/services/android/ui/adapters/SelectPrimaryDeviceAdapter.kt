@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_select_primary_device.view.*
 import kotlinx.android.synthetic.main.item_select_primary_device_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 
@@ -59,7 +58,6 @@ class SelectPrimaryDeviceAdapter(val context: Context, val onClickListener: View
                         it
                     )
                     itemView.selectPrimaryDeviceConstraintLayout?.setOnClickListener(onClickListener)
-                    itemView.changePrimaryDeviceButton?.setOnClickListener(onClickListener)
                 }
             }
         }

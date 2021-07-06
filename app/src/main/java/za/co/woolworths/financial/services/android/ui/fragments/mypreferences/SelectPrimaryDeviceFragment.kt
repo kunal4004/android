@@ -1,14 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -31,7 +28,6 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         arguments?.getSerializable(ViewAllLinkedDevicesFragment.DEVICE_LIST)?.let { list ->
             if (list is ArrayList<*> && list[0] is UserDevice) {
                 deviceList = list as ArrayList<UserDevice>
-                System.err.println("TEST select: "+ deviceList?.size)
             }
         }
     }
@@ -49,6 +45,8 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         if (selectPrimaryDeviceAdapter == null) {
             initRecyclerView()
         }
+
+        changePrimaryDeviceButton?.setOnClickListener(this)
     }
 
     private fun setupToolbar() {
@@ -88,10 +86,13 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.changePrimaryDeviceButton -> {
-                //Do OTP to add this selected device as primary device
-                System.err.println("TEST: changePrimaryDeviceButton " + deviceSelected?.deviceName)
-                setFragmentResult(ViewAllLinkedDevicesFragment.CHANGE_TO_PRIMARY_DEVICE_OTP,
-                    bundleOf(ViewAllLinkedDevicesFragment.PRIMARY_DEVICE to deviceSelected))
+                val bundle = Bundle()
+                bundle.putSerializable("newPrimaryDevice", deviceSelected)
+                bundle.putSerializable("oldPrimaryDevice",
+                    deviceList?.filter { device -> device.primarydDevice == true }?.get(0)
+                )
+                val navController = view?.findNavController()
+                navController?.navigate(R.id.action_link_new_primary_device, bundle)
             }
         }
     }
