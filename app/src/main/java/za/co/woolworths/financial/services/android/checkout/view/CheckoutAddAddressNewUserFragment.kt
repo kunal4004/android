@@ -37,7 +37,9 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
+import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse
 import za.co.woolworths.financial.services.android.models.dto.Suburb
+import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
@@ -370,7 +372,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         )
                         savedAddressResponse = mockSavedAddressResponse
                     } else
-                        savedAddressResponse = it?.data
+                        savedAddressResponse = it?.data as? SavedAddressResponse
                     if (cellphoneNumber?.text.toString().isEmpty())
                         cellphoneNumber.setText(savedAddressResponse?.primaryContactNo)
                 }
@@ -514,7 +516,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.initGetProvince().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    if (it?.data?.regions.isNullOrEmpty()) {
+                    if ((it?.data as ProvincesResponse)?.regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
                         it?.data?.regions?.let { it1 ->
@@ -713,7 +715,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     if (it?.data != null) {
-                        if (it.data.httpCode?.equals(HTTP_OK) == true) {
+                        if ((it.data as? DeleteAddressResponse)?.httpCode?.equals(HTTP_OK) == true) {
                             if (savedAddressResponse?.addresses != null) {
                                 savedAddressResponse?.addresses!!.forEachIndexed { index, it ->
                                     if (it.id.equals(selectedAddressId)) {
@@ -746,10 +748,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     hideSetSuburbProgressBar()
-                    if (it?.data?.suburbs.isNullOrEmpty()) {
+                    if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
-                        it?.data?.suburbs?.let { it1 -> navigateToSuburbSelection(it1) }
+                        (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
+                            navigateToSuburbSelection(
+                                it1
+                            )
+                        }
                     }
                 }
                 ResponseStatus.LOADING -> {
@@ -831,7 +837,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
                             if (savedAddressResponse != null && it?.data != null)
-                                savedAddressResponse?.addresses?.add(it.data.address)
+                                savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
                             if (isAddNewAddress)
                                 navController?.navigateUp()
                             else
@@ -902,7 +908,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     if (savedAddressResponse != null && it?.data != null) {
-                        savedAddressResponse?.addresses?.add(it.data.address)
+                        savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
                         val bundle = Bundle()
                         bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
                         setFragmentResult(UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundle)
