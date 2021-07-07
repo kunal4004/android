@@ -10,14 +10,14 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.item_select_primary_device_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 
-class SelectPrimaryDeviceAdapter(val context: Context, val onClickListener: View.OnClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SelectPrimaryDeviceAdapter(val onClickListener: View.OnClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     enum class DeviceListViewType(val value: Int) { PRIMARY_DEVICE(0), OTHER_DEVICE(1) }
     private var deviceList: List<UserDevice>? = ArrayList(0)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        return SelectPrimaryDeviceViewHolder(LayoutInflater.from(context).inflate(R.layout.item_select_primary_device_layout, parent, false))
+        return SelectPrimaryDeviceViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_select_primary_device_layout, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

@@ -614,21 +614,13 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun getUpdatedDevicesList() {
-        OneAppService.getAllLinkedDevices(false)
-            .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
-
-            @SuppressLint("RestrictedApi")
-            override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                when (response?.httpCode) {
-                    200 -> {
-                        Handler().postDelayed({
-                            view?.findNavController()?.navigateUp()
-                            view?.findNavController()?.navigateUp()
-                        }, AppConstant.DELAY_1500_MS)
-                    }
-                }
-            }
-        }, ViewAllLinkedDeviceResponse::class.java))
+        setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+            "isUpdate" to true
+        ))
+        Handler().postDelayed({
+            view?.findNavController()?.navigateUp()
+            view?.findNavController()?.navigateUp()
+        }, AppConstant.DELAY_1500_MS)
     }
 
     private fun getLocationAddress(latitude: Double?, longitude: Double?): String? {
