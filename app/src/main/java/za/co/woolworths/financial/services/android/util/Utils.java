@@ -127,6 +127,7 @@ import static za.co.woolworths.financial.services.android.models.dao.SessionDao.
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
+import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
 
 public class Utils {
 
@@ -526,13 +527,13 @@ public class Utils {
         }
 
         mFirebaseAnalytics.logEvent(eventName, params);
-        KotlinUtils.Companion.requestInAppReview(eventName, activity);
+        requestInAppReview(eventName, activity);
     }
 
     public static void triggerFireBaseEvents(String eventName, Activity activity) {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
         mFirebaseAnalytics.logEvent(eventName, null);
-        KotlinUtils.Companion.requestInAppReview(eventName, activity);
+        requestInAppReview(eventName, activity);
     }
 
     public static void setScreenName(Activity activity, String screenName) {
