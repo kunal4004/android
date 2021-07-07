@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.fragment_select_primary_device.*
 import kotlinx.android.synthetic.main.item_select_primary_device_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.IOnBoardingContract
 import za.co.woolworths.financial.services.android.ui.adapters.SelectPrimaryDeviceAdapter
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
 
@@ -87,10 +88,11 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
             }
             R.id.changePrimaryDeviceButton -> {
                 val bundle = Bundle()
-                bundle.putSerializable("newPrimaryDevice", deviceSelected)
-                bundle.putSerializable("oldPrimaryDevice",
+                bundle.putSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE, deviceSelected)
+                bundle.putSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE,
                     deviceList?.filter { device -> device.primarydDevice == true }?.get(0)
                 )
+                bundle.putBoolean(ViewAllLinkedDevicesFragment.DELETE_PRIMARY_DEVICE, true)
                 val navController = view?.findNavController()
                 navController?.navigate(R.id.action_link_new_primary_device, bundle)
             }

@@ -9,11 +9,14 @@ import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_secondary_device_bottom_sheet.*
 import kotlinx.android.synthetic.main.fragment_unlink_primary_device_bottom_sheet.unlinkDeviceCancel
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class SecondaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
+    private var newPrimaryDevice: UserDevice? = null
+    private var oldPrimaryDevice: UserDevice? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -22,9 +25,10 @@ class SecondaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.On
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         arguments?.apply {
-            unlinkDeviceTitle.text = getString(ViewAllLinkedDevicesFragment.DEVICE_NAME, null)
+            newPrimaryDevice = getSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE) as UserDevice?
+            oldPrimaryDevice = getSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE) as UserDevice?
+            unlinkDeviceTitle.text = newPrimaryDevice?.deviceName
         }
 
         unlinkDeviceCancel.setOnClickListener {
@@ -46,8 +50,10 @@ class SecondaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.On
                 AnimationUtilExtension.animateViewPushDown(v)
             }
             R.id.changePrimaryDeviceLayout -> {
-                //Do OTP to add this chosen device as primary device
-                System.err.println("TEST: changePrimaryDeviceLayout ")
+                val bundle = Bundle()
+                bundle.putSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE, newPrimaryDevice)
+                bundle.putSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE, oldPrimaryDevice)
+                setFragmentResult(ViewAllLinkedDevicesFragment.CHANGE_PRIMARY_DEVICE_OTP, bundle)
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)
             }
