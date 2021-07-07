@@ -219,8 +219,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 when (v?.id) {
 
                     R.id.editAmountImageView -> {
-                        triggerFirebaseEventForEditAmount(activity as PayMyAccountActivity
-                        )
+                        triggerFirebaseEventForEditAmount(activity as PayMyAccountActivity)
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
                     }
 
