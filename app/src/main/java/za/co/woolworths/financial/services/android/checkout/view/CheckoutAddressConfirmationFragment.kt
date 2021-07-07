@@ -219,18 +219,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         )
     }
 
-    fun getJsonDataFromAsset(context: Context?, fileName: String): String? {
-        val jsonString: String
-        try {
-            jsonString =
-                context?.assets?.open(fileName)?.bufferedReader().use { it?.readText().toString() }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
-            return null
-        }
-        return jsonString
-    }
-
     override fun hideErrorView() {
         addNewAddressErrorMsg.visibility = View.GONE
     }
@@ -241,7 +229,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
 
-                        val jsonFileString = getJsonDataFromAsset(
+                        val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/unsellableItems.json"
                         )

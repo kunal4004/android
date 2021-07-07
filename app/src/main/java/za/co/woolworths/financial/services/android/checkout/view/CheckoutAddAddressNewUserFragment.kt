@@ -5,6 +5,7 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -41,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -362,7 +364,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     if (it?.data == null) {
-                        val jsonFileString = getJsonDataFromAsset(
+                        val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/savedAddress.json"
                         )
@@ -384,18 +386,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
         })
-    }
-
-    fun getJsonDataFromAsset(context: Context?, fileName: String): String? {
-        val jsonString: String
-        try {
-            jsonString =
-                context?.assets?.open(fileName)?.bufferedReader().use { it?.readText().toString() }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
-            return null
-        }
-        return jsonString
     }
 
     private fun addFragmentResultListener() {
@@ -998,5 +988,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
             }
         }
+    }
+
+    @VisibleForTesting
+    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
+        checkoutAddAddressNewUserViewModel = viewModel
+    }
+
+    @VisibleForTesting
+    fun testSetBundleArguments(bundle: Bundle){
+        arguments?.putBundle("bundle", bundle)
     }
 }
