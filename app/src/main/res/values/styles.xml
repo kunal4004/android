@@ -1538,6 +1538,16 @@
         <item name="android:fontFamily">@font/myriad_pro_regular</item>
     </style>
 
+    <style name="card_item_barcode_number_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/thirty_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/museo_slab_700</item>
+        <item name="android:textColor">@color/card_details_value_color</item>
+    </style>
+
     <style name="card_item_semi_bold_text_style" parent="card_item_regular_text_style">
         <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
     </style>
@@ -2545,7 +2555,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowActionBarOverlay">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:selectableItemBackground">@android:color/transparent</item>

@@ -4,7 +4,6 @@ import com.amplifyframework.api.aws.AWSApiPlugin
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.AmplifyConfiguration
-import com.amplifyframework.devmenu.DeveloperMenu
 import com.amplifyframework.logging.AndroidLoggingPlugin
 import com.amplifyframework.logging.LogLevel
 import com.awfs.coordination.BuildConfig
@@ -43,12 +42,14 @@ class AmplifyInit {
 
                 api.put("endpoint", inAppChat.apiURI)
 
-                val awsConfiguration = AmplifyConfiguration.fromJson(awsConfigurationJSONObject)
+                val awsConfiguration = AmplifyConfiguration
+                    .builder(awsConfigurationJSONObject)
+                    .devMenuEnabled(false)
+                    .build()
                 Amplify.addPlugin(AWSCognitoAuthPlugin())
                 Amplify.addPlugin(AWSApiPlugin())
                 Amplify.addPlugin(AndroidLoggingPlugin(if (BuildConfig.DEBUG) LogLevel.VERBOSE else LogLevel.NONE))
                 Amplify.configure(awsConfiguration, context)
-                DeveloperMenu.singletonInstance(context).setVisible(false)
             } catch (ex: Exception) {
                 FirebaseManager.logException(ex)
             }
