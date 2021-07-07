@@ -9,8 +9,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Paint
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -45,7 +43,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
@@ -134,7 +131,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
 
     private var mLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
     private var mValidateLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
-    private var mlinkDeviceReq: Call<LinkedDeviceResponse>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -567,18 +563,28 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                         .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
                             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
                                 unlinkDeviceOTPScreen?.visibility = View.GONE
-                                mlinkDeviceReq?.enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
-                                    override fun onSuccess(linkedDeviceResponse: LinkedDeviceResponse?) {
+                                OneAppService.linkDeviceApi(newPrimaryDevice?.deviceName.toString(),
+                                    newPrimaryDevice?.appInstanceId.toString(),
+                                    newPrimaryDevice?.locationLinked,
+                                    true, token)
+                                    .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
+                                    override fun onSuccess(response: LinkedDeviceResponse?) {
                                         sendinOTPLayout?.visibility = View.GONE
-                                        when (linkedDeviceResponse?.httpCode) {
+                                        when (response?.httpCode) {
                                             AppConstant.HTTP_OK_201.toString() -> {
                                                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
                                                     hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
                                                         FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)))
                                                 showDeviceChanged()
-                                                linkedDeviceResponse.deviceIdentityId?.let { saveDeviceId(it) }
+                                                response.deviceIdentityId?.let { saveDeviceId(it) }
 
-                                                getUpdatedDevicesList()
+                                                setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                                                    "isUpdate" to true
+                                                ))
+                                                Handler().postDelayed({
+                                                    view?.findNavController()?.navigateUp()
+                                                    view?.findNavController()?.navigateUp()
+                                                }, AppConstant.DELAY_1500_MS)
 
                                             }
                                             AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
@@ -586,10 +592,10 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                                                     if (!isFinishing) {
                                                         SessionUtilities.getInstance().setSessionState(
                                                             SessionDao.SESSION_STATE.INACTIVE,
-                                                            linkedDeviceResponse.response.stsParams, this)
+                                                            response.response.stsParams, this)
                                                     }
                                                 }
-                                            else -> linkedDeviceResponse?.response?.desc?.let { desc ->
+                                            else -> response?.response?.desc?.let { desc ->
                                                 unlinkDeviceOTPScreen?.visibility = View.VISIBLE
                                                 buttonNext?.visibility = View.VISIBLE
                                                 didNotReceiveOTPTextView?.visibility = View.VISIBLE
@@ -607,46 +613,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                                 }, LinkedDeviceResponse::class.java))
                             } }, ViewAllLinkedDeviceResponse::class.java))
                 } }, ViewAllLinkedDeviceResponse::class.java))
-        mlinkDeviceReq = OneAppService.linkDeviceApi(newPrimaryDevice?.deviceName.toString(),
-            newPrimaryDevice?.deviceIdentityId.toString(),
-            getLocationAddress(currentLocation?.latitude, currentLocation?.longitude),
-            true, token)
-    }
-
-    private fun getUpdatedDevicesList() {
-        setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-            "isUpdate" to true
-        ))
-        Handler().postDelayed({
-            view?.findNavController()?.navigateUp()
-            view?.findNavController()?.navigateUp()
-        }, AppConstant.DELAY_1500_MS)
-    }
-
-    private fun getLocationAddress(latitude: Double?, longitude: Double?): String? {
-
-        var location = ""
-        if (latitude == null || longitude == null) {
-            return location
-        }
-        val gcd = Geocoder(context, Locale.getDefault())
-        val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
-        if (addresses.isNotEmpty()) {
-            location =
-                    if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
-                        for (address in addresses) {
-                            if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
-                                return address.locality + ", " + address.countryName
-                            } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
-                                return address.subLocality + ", " + address.countryName
-                            }
-                        }
-                        return addresses[0].countryName
-                    } else
-                        return addresses[0].locality + ", " + addresses[0].countryName
-
-        }
-        return location
     }
 
     private fun saveDeviceId(deviceIdentityId: Long) {
