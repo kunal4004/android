@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesIn
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
@@ -335,6 +336,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         showSendingOTPProcessing()
         mLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
+                if (!isAdded || activity == null) return
                 context?.let { didNotReceiveOTPTextView?.setTextColor(ContextCompat.getColor(it, R.color.black)) }
 
                 when (retrieveOTPResponse?.httpCode) {
@@ -752,6 +754,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     override fun onDestroy() {
         super.onDestroy()
+        cancelRetrofitRequest(mLinkDeviceOTPReq)
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
     }
 

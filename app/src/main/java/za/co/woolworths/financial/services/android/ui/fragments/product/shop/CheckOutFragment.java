@@ -103,7 +103,7 @@ public class CheckOutFragment extends Fragment {
 
 	@NonNull
 	private String getUrl() {
-		return WoolworthsApplication.getCartCheckoutLink();
+		return WoolworthsApplication.getCartCheckoutLinkWithParams();
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")

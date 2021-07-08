@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
@@ -388,23 +389,22 @@ class KotlinUtils {
         }
 
         fun updateCheckOutLink(jSessionId: String?) {
+            val appVersionParam = "appVersion"
+            val jSessionIdParam = "JSESSIONID"
             val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
+
             val context = WoolworthsApplication.getAppContext()
             val packageManager = context.packageManager
-            val packageInfo: PackageInfo =
-                packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
+            val packageInfo: PackageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
 
             val versionName = packageInfo.versionName
-            val versionCode =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
+            val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
             val appVersion = "$versionName.$versionCode"
 
-            val checkOutLink = when (checkoutLink.contains("?")) {
-                true -> "$checkoutLink&appVersion=$appVersion&JSESSIONID=$jSessionId"
-                else -> "$checkoutLink?appVersion=$appVersion&JSESSIONID=$jSessionId"
-            }
+            val symbolType= if(checkoutLink.contains("?")) "&" else "?"
+            val checkOutLink = "$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId"
 
-            WoolworthsApplication.setCartCheckoutLink(checkOutLink)
+            WoolworthsApplication.setCartCheckoutLinkWithParams(checkOutLink)
         }
 
         fun sendEmail(activity: Activity?, emailId: String, subject: String?) {
@@ -749,6 +749,15 @@ class KotlinUtils {
                 return (!storePickup && suburb != null && WoolworthsApplication.getLiquor()?.suburbs?.contains(suburb.id) == true)
             }
             return false
+        }
+
+        fun openLinkInInternalWebView(activity: Activity?, url: String?) {
+            activity?.apply {
+                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                openInternalWebView.putExtra("externalLink", url)
+                startActivity(openInternalWebView)
+            }
         }
     }
 }

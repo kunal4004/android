@@ -30,6 +30,7 @@ import androidx.navigation.fragment.NavHostFragment
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
@@ -407,4 +408,14 @@ fun View.setSafeOnClickListener(onSafeClick: (View) -> Unit) {
  */
 fun EditText.maxLength(max: Int){
     this.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(max))
+}
+
+fun NavController.navigateUpOrFinish(activity: AppCompatActivity?): Boolean {
+    return if (navigateUp()) {
+        true
+    } else {
+        activity?.finish()
+        activity?.overridePendingTransition(0, 0)
+        true
+    }
 }

@@ -10,11 +10,12 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewOverviewImpl.Companion.ACCOUNT_INFO
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtension
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
@@ -65,10 +66,10 @@ class MyAccountsScreenNavigator {
                 }
 
                 productGroupCode?.let { Utils.triggerFireBaseEvents(it) }
-                val navigateToBalanceProtectionInsurance = Intent(this, BPIBalanceProtectionActivity::class.java)
-                navigateToBalanceProtectionInsurance.putExtra("account_info", accountInfo)
+                val navigateToBalanceProtectionInsurance = Intent(this, BalanceProtectionInsuranceActivity::class.java)
+                navigateToBalanceProtectionInsurance.putExtra(ACCOUNT_INFO, accountInfo)
                 startActivity(navigateToBalanceProtectionInsurance)
-                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+                overridePendingTransition(0, 0)
             }
         }
 
