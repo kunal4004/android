@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -36,8 +37,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -45,6 +46,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import java.net.ConnectException
+
 
 open class AvailableFundFragment : Fragment(), IAvailableFundsContract.AvailableFundsView {
     private lateinit var mAvailableFundPresenter: AvailableFundsPresenterImpl
@@ -82,14 +84,23 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         setPushViewDownAnimation(incViewStatementButton)
         setPushViewDownAnimation(incPayMyAccountButton)
 
-        val bottomViewGuideline = view.findViewById<Guideline>(R.id.bottomGuide)
+        val bottomViewGuideline = view.findViewById<Guideline>(R.id.bottomSliderGuideline)
         val constParam: ConstraintLayout.LayoutParams = bottomViewGuideline.layoutParams as ConstraintLayout.LayoutParams
+
+        val sliderGuidelineArrearsTypeValue = TypedValue()
+        activity?.resources?.getValue(R.dimen.slider_guideline_percent_for_arrears_account_product, sliderGuidelineArrearsTypeValue, true)
+        val sliderGuidelineForArrears : Float = sliderGuidelineArrearsTypeValue.float
+
+        val sliderGuidelineTypeValue = TypedValue()
+        activity?.resources?.getValue(R.dimen.slider_guideline_percent_for_account_product, sliderGuidelineTypeValue, true)
+        val sliderGuidelineForGoodStanding : Float = sliderGuidelineTypeValue.float
+
         constParam.guidePercent = if ((activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.isAccountInArrearsState() == true) {
             paymentOverdueGroup?.visibility = VISIBLE
-            0.82f
+            sliderGuidelineForArrears
         } else {
             paymentOverdueGroup?.visibility = INVISIBLE
-            0.72f
+            sliderGuidelineForGoodStanding
         }
         bottomViewGuideline.layoutParams = constParam
 
@@ -98,7 +109,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
             (activity as? AppCompatActivity)?.windowManager?.defaultDisplay?.getMetrics(dm)
             val deviceHeight = dm.heightPixels
             val location = IntArray(2)
-            bottomGuide?.getLocationOnScreen(location)
+            bottomSliderGuideline?.getLocationOnScreen(location)
             val bottomGuidelineVerticalPosition = location[1]
             val displayBottomSheetBehaviorWithinRemainingHeight = deviceHeight - bottomGuidelineVerticalPosition + Utils.dp2px(20f)
             bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(displayBottomSheetBehaviorWithinRemainingHeight)
