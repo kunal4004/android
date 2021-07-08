@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +29,6 @@ import za.co.woolworths.financial.services.android.ui.activities.click_and_colle
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
-import java.io.IOException
 
 
 /**
@@ -47,6 +45,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
         const val DELETE_SAVED_ADDRESS_REQUEST_KEY = "deleteSavedAddress"
+        const val ADD_A_NEW_ADDRESS_REQUEST_KEY = "addNewAddress"
     }
 
     override fun onCreateView(
@@ -108,6 +107,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private fun navigateToAddAddress() {
         val bundle = Bundle()
         bundle.putBoolean("addNewAddress", true)
+        bundle.putString("savedAddressResponse", Utils.toJson(savedAddress))
         navController?.navigate(
             R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
             bundleOf("bundle" to bundle)
@@ -118,11 +118,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
-            checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
         }
         setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
-            checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
+        }
+        setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
+            updateSavedAddress(bundle)
         }
     }
 
@@ -137,6 +138,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     ) as? SavedAddressResponse)
             }
         }
+        checkoutAddressConfirmationListAdapter?.setData(savedAddress)
+        checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
     }
 
     private fun initView() {

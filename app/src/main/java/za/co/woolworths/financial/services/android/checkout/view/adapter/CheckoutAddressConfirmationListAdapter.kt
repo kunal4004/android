@@ -53,6 +53,10 @@ class CheckoutAddressConfirmationListAdapter(
         holder.bindItem(position)
     }
 
+    fun setData(savedAddressResponse: SavedAddressResponse?) {
+        savedAddress = savedAddressResponse
+    }
+
     inner class CheckoutAddressConfirmationViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         fun bindItem(position: Int) {
@@ -81,10 +85,8 @@ class CheckoutAddressConfirmationListAdapter(
                 }
                 editAddressImageView.setOnClickListener {
                     val bundle = Bundle()
-                    bundle.putString(
-                        "editSavedAddress",
-                        Utils.toJson(savedAddress?.addresses?.get(position))
-                    )
+                    bundle.putString("editSavedAddressResponse", Utils.toJson(savedAddress))
+                    bundle.putInt("position", position)
                     navController?.navigate(
                         R.id.CheckoutAddAddressNewUserFragment,
                         bundleOf("bundle" to bundle)

@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_A_NEW_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UPDATE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
@@ -93,15 +94,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
         val bundle = arguments?.getBundle("bundle")
         bundle?.apply {
-            if (containsKey("editSavedAddress")) {
+            if (containsKey("editSavedAddressResponse")) {
                 //Edit new Address from delivery
-                val editSavedAddress = getString("editSavedAddress")
+                val editSavedAddress = getString("editSavedAddressResponse")
                 if (!editSavedAddress.isNullOrEmpty() && !editSavedAddress.equals("null", true)) {
-                    savedAddress =
-                        (Utils.jsonStringToObject(
-                            editSavedAddress,
-                            Address::class.java
-                        ) as? Address)
+                    savedAddressResponse = (Utils.jsonStringToObject(
+                        editSavedAddress,
+                        SavedAddressResponse::class.java
+                    ) as? SavedAddressResponse)
+                    savedAddress = savedAddressResponse?.addresses?.get(getInt("position"))
                     selectedAddressId = savedAddress?.id.toString()
                     setHasOptionsMenu(true)
                     isShimmerRequired = false
@@ -109,6 +110,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             } else if (containsKey("addNewAddress")) {
                 //Add new Address from delivery.
                 isAddNewAddress = getBoolean("addNewAddress")
+                savedAddressResponse = (Utils.jsonStringToObject(
+                    getString("savedAddressResponse"),
+                    SavedAddressResponse::class.java
+                ) as? SavedAddressResponse)
             }
         }
     }
@@ -707,10 +712,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     if (it?.data != null) {
                         if ((it.data as? DeleteAddressResponse)?.httpCode?.equals(HTTP_OK) == true) {
                             if (savedAddressResponse?.addresses != null) {
-                                savedAddressResponse?.addresses!!.forEachIndexed { index, it ->
-                                    if (it.id.equals(selectedAddressId)) {
-                                        savedAddressResponse?.addresses!!.removeAt(index)
-                                        return@forEachIndexed
+                                val iterator = savedAddressResponse?.addresses?.iterator()
+                                while (iterator?.hasNext() == true) {
+                                    val item = iterator?.next()
+                                    if (item.id.equals(selectedAddressId)) {
+                                        iterator.remove()
+                                        break
                                     }
                                 }
                             }
@@ -828,8 +835,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         ResponseStatus.SUCCESS -> {
                             if (savedAddressResponse != null && it?.data != null)
                                 savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
-                            if (isAddNewAddress)
+                            if (isAddNewAddress) {
+                                val bundle = Bundle()
+                                bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
+                                setFragmentResult(ADD_A_NEW_ADDRESS_REQUEST_KEY, bundle)
                                 navController?.navigateUp()
+                            }
                             else
                                 navigateToAddressConfirmation()
                         }
@@ -872,22 +883,22 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getAddAddressRequestBody(): AddAddressRequestBody {
         return AddAddressRequestBody(
-            selectedAddress.nickname,
-            recipientName?.text.toString(),
-            selectedAddress.address1,
-            selectedAddress.unitComplexFloor,
-            selectedAddress.postalCode,
-            cellphoneNumber?.text.toString(),
+            addressNicknameEditText?.text.toString().trim(),
+            recipientName?.text.toString().trim(),
+            autoCompleteTextView?.text.toString().trim(),
+            unitComplexFloorEditText?.text.toString().trim(),
+            postalCode?.text.toString().trim(),
+            cellphoneNumber?.text.toString().trim(),
             "",
-            selectedAddress.region,
-            selectedAddress.suburbId,
-            selectedAddress.city,
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.region else savedAddress?.region ?: "",
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.suburbId else savedAddress?.suburbId ?: "",
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.city else savedAddress?.city ?: "",
             suburbEditText?.text.toString(),
             selectedDeliveryAddressType.toString(),
             "",
             false,
-            selectedAddress.latitude,
-            selectedAddress.longitude
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.latitude else savedAddress?.latitude ?: 0.0,
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.longitude else savedAddress?.longitude ?: 0.0
         )
     }
 
@@ -898,7 +909,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     if (savedAddressResponse != null && it?.data != null) {
-                        savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
+                        arguments?.getBundle("bundle")?.getInt("position")?.let { it1 ->
+                            savedAddressResponse?.addresses?.removeAt(it1)
+                            savedAddressResponse?.addresses?.add(
+                                it1, (it.data as? AddAddressResponse)?.address
+                            )
+                        }
                         val bundle = Bundle()
                         bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
                         setFragmentResult(UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundle)
@@ -996,7 +1012,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     @VisibleForTesting
-    fun testSetBundleArguments(bundle: Bundle){
+    fun testSetBundleArguments(bundle: Bundle) {
         arguments?.putBundle("bundle", bundle)
     }
 }
