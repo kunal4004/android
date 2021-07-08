@@ -55,5 +55,6 @@ public class Configs {
     public CreditLimitIncrease creditLimitIncrease;
     @Nullable
     public Liquor liquor;
+    @Nullable
     public BalanceProtectionInsurance balanceProtectionInsurance;
 }
