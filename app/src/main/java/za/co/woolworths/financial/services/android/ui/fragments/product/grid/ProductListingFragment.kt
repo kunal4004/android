@@ -344,6 +344,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             headerProduct.numberOfItems = numItemsInTotal
             mProductList?.add(0, headerProduct)
         }
+
+        mProductAdapter = activity?.let { ProductListingAdapter(this, mProductList, it) }
         val mRecyclerViewLayoutManager: GridLayoutManager?
         mRecyclerViewLayoutManager = GridLayoutManager(activity, 2)
         // Set up a GridLayoutManager to change the SpanSize of the header and footer
@@ -368,7 +370,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
         }
         mProductAdapter = null
-        mProductAdapter = ProductListingAdapter(this@ProductListingFragment, mProductList)
+        mProductAdapter = activity?.let { ProductListingAdapter(this@ProductListingFragment, mProductList, it) }
         productsRecyclerView?.apply {
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
@@ -544,7 +546,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
                 R.id.refineProducts -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED, activity)
                     /*val intent = Intent(activity, ProductsRefineActivity::class.java)
                     intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
                     intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(productRequestBody))
@@ -556,7 +558,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
                 R.id.sortProducts -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED, activity)
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
                 }
                 else -> return
@@ -600,12 +602,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (sortOptionDialog != null && sortOptionDialog?.isShowing == true) {
             sortOptionDialog?.dismiss()
             val arguments = HashMap<String, String>()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] = sortOption.label
+            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments, this) }
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] =
                 sortOption.label
-            Utils.triggerFireBaseEvents(
+            activity?.apply {  Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED,
-                arguments
-            )
+                arguments,this
+            )}
             updateProductRequestBodyForSort(sortOption.sortOption)
             reloadProductsWithSortAndFilter()
         }

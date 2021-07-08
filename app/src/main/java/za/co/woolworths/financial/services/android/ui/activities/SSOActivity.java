@@ -404,7 +404,7 @@ public class SSOActivity extends WebViewActivity {
 					"redirectURIString isNull: " + (redirectURIString == null ? "true" : "false") + ";" +
 							"this.state isNull: " + (this.state == null ? "true" : "false"));
 
-			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CRASH_CAUTION, arguments);
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CRASH_CAUTION, arguments, SSOActivity.this);
 			return false;
 		}
 
@@ -610,7 +610,7 @@ public class SSOActivity extends WebViewActivity {
 					JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 					Map<String, String> arguments = new HashMap<>();
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments, SSOActivity.this);
 
 					NotificationUtils.getInstance().sendRegistrationToServer();
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);

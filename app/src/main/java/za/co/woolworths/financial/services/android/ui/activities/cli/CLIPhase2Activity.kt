@@ -72,7 +72,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
             mOfferActive = getBoolean("OFFER_IS_ACTIVE")
             applyNowState = getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
             mCLICreateOfferResponse = offerActiveObject()
-            mFirebaseCreditLimitIncreaseEvent = FirebaseCreditLimitIncreaseEvent(applyNowState)
+            mFirebaseCreditLimitIncreaseEvent = FirebaseCreditLimitIncreaseEvent(applyNowState,this@CLIPhase2Activity)
             mCLICreateOfferResponse?.apply {
                 mNextStep = nextStep
                 loadFragment(mNextStep)

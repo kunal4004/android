@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.card
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View.GONE
@@ -292,6 +293,10 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true)
     }
 
+    override fun onStartCreditLimitIncreaseFirebaseEvent(activity: Activity) {
+        FirebaseCreditLimitIncreaseEvent(mApplyNowAccountKeyPair?.first, activity).forCLIStart()
+    }
+
     override fun isVirtualCardEnabled(): Boolean {
         val response = getStoreCardResponse()
         return response?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard()?.isEnabled ?: false
@@ -336,10 +341,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
         return !storeCardsData?.generateVirtualCard && WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true
                 && TemporaryFreezeStoreCard.PERMANENT.equals(blockType, ignoreCase = true)
-    }
-
-    override fun onStartCreditLimitIncreaseFirebaseEvent() {
-        FirebaseCreditLimitIncreaseEvent(mApplyNowAccountKeyPair?.first).forCLIStart()
     }
 
     override fun isActivateVirtualTempCard(): Boolean {

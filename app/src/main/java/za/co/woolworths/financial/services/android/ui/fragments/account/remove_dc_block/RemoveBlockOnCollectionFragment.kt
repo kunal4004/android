@@ -148,7 +148,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
     private fun navigatePayMyAccountStoreCard() {
         payMyAccountViewModel.resetAmountEnteredToDefault()
 
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC, this) }
 
         if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
             try {
@@ -171,7 +171,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigatePayMyAccountPersonalLoan() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
+        activity?.apply {Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL, this) }
 
         if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
             navController.navigate(R.id.payMyAccountRetryErrorFragment)
@@ -208,7 +208,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS
                 else -> ""
             }
-            Utils.triggerFireBaseEvents(propertyName)
+            activity?.apply {Utils.triggerFireBaseEvents(propertyName, this) }
             accountData?.second?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
                 intent.putExtra("productOfferingId", productOfferingId.toString())
@@ -232,7 +232,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS
                 else -> ""
             }
-            Utils.triggerFireBaseEvents(propertyName)
+            activity?.apply {Utils.triggerFireBaseEvents(propertyName, this) }
 
             activity?.apply {
                 val openStatement = Intent(this, StatementActivity::class.java)

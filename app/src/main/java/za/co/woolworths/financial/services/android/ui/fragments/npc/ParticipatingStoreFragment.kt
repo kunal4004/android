@@ -138,7 +138,7 @@ class ParticipatingStoreFragment : Fragment() {
             override fun onClick(textView: View) {
                 activity?.apply {
 
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_VTC_CARD_REPLACEMENT_START)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_VTC_CARD_REPLACEMENT_START, this)
 
                     view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_storeAddressFragment, bundleOf(
                             PRODUCT_NAME to bindString(R.string.participating_stores),

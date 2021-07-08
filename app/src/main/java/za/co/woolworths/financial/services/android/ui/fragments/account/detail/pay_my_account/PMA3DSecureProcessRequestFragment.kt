@@ -216,8 +216,8 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
     }
 
     private fun finishActivity() {
-        payMyAccountViewModel.triggerFirebaseEventForPaymentComplete()
         activity?.apply {
+            payMyAccountViewModel.triggerFirebaseEventForPaymentComplete(this)
             setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE, Intent().putExtra(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE, payMyAccountViewModel.getCardDetailInStringFormat()))
             finish()
             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
