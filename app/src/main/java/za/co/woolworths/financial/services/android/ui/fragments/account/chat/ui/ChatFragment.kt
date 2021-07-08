@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
@@ -104,7 +105,11 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 }
             }
         }, {
-            chatLoaderProgressBar?.visibility = GONE
+            activity?.runOnUiThread {
+                if (isAdded) {
+                    chatLoaderProgressBar?.visibility = GONE
+                }
+            }
         })
     }
 
@@ -252,8 +257,8 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
     private fun autoConnectToNetwork() {
         activity?.let { activity ->
-            ConnectivityLiveData.observe(viewLifecycleOwner, { hasConnection ->
-                if (hasConnection && !isConnectedToNetwork) {
+            ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
+                if (isNetworkAvailable && !isConnectedToNetwork) {
                     isConnectedToNetwork = true
                     with(chatViewModel) {
                         liveChatListAllAgentConversation.messageListFromAgent({ messagesByConversation ->
@@ -272,7 +277,8 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                         })
                     }
                 } else {
-                    isConnectedToNetwork = false
+                    if (!isNetworkAvailable)
+                        isConnectedToNetwork = false
                 }
             })
         }
@@ -294,7 +300,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                     is SendMessageResponse -> message.content
                 }
                 if (!TextUtils.isEmpty(content)) {
-                    it.addMessage(message)
+                    it.addMessage(activity, message)
                     messageListRecyclerView?.scrollToPosition(it.itemCount - 1)
                 }
             }
