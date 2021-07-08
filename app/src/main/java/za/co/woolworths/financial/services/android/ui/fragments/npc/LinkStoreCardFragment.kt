@@ -141,7 +141,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         account.productOfferingId = storeDetails?.productOfferingId?.toInt() ?: 0
                         when (mLinkCardType) {
                             LinkCardType.LINK_NEW_CARD.type -> {
-                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_CONFIRM)
+                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_CONFIRM, mCurrentActivity)
                             }
                         }
                         // Make store card call

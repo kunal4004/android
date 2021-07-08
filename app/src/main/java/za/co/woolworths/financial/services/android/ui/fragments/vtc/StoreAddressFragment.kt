@@ -192,7 +192,7 @@ class StoreAddressFragment : Fragment() {
                         return@setOnClickListener
                     }
 
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_SC_REPLACE_CARD_F2F)
+                    activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_SC_REPLACE_CARD_F2F, this) }
 
                     var resp: StoreCardsResponse? = null
                     arguments?.apply {

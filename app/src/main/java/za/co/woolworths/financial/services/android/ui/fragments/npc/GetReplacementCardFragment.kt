@@ -134,6 +134,7 @@ class GetReplacementCardFragment : MyCardExtension() {
     @TargetApi(Build.VERSION_CODES.M)
     private fun checkForLocationPermission() {
         activity?.apply {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_STORES, this)
             //Check if user has location services enabled. If not, notify user as per current store locator functionality.
             if (!Utils.isLocationEnabled(this)) {
                 val enableLocationSettingsFragment: EnableLocationSettingsFragment? = EnableLocationSettingsFragment()
@@ -173,7 +174,7 @@ class GetReplacementCardFragment : MyCardExtension() {
                                         ?: mutableListOf()
                                 if (npcStores?.size ?: 0 > 0) {
 
-                                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_STORES)
+                                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_STORES, this)
 
                                     val storeCardResponse = arguments?.getString(SelectStoreActivity.STORE_DETAILS)
                                     view?.findNavController()?.navigate(R.id.action_getReplacementCardFragment_to_participatingStoreFragment, bundleOf(
