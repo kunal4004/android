@@ -343,7 +343,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         Map<String, String> arguments = new HashMap<>();
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
                         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments, this);
                         pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
                     }
                     break;
@@ -600,20 +600,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_TODAY);
                     hideToolbar();
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU);
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU, BottomNavigationActivity.this);
                     return true;
 
                 case R.id.navigate_to_shop:
                     replaceAccountIcon(item);
                     setCurrentSection(R.id.navigate_to_shop);
                     switchTab(INDEX_PRODUCT);
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU);
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
                     return true;
 
                 case R.id.navigate_to_cart:
                     setCurrentSection(R.id.navigate_to_cart);
                     identifyTokenValidationAPI();
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU);
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU, BottomNavigationActivity.this);
                     return false;
 
                 case R.id.navigate_to_wreward:
@@ -621,7 +621,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     currentSection = R.id.navigate_to_wreward;
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_REWARD);
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU);
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU, BottomNavigationActivity.this);
                     return true;
 
                 case R.id.navigate_to_account:
@@ -636,7 +636,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     } else {
                         setToolbarBackgroundColor(R.color.white);
                         switchTab(INDEX_ACCOUNT);
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU);
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU, BottomNavigationActivity.this);
                         return true;
                     }
             }
@@ -672,14 +672,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     clearStack();
                     WTodayFragment wTodayFragment = (WTodayFragment) mNavController.getCurrentFrag();
                     wTodayFragment.scrollToTop();
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU);
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU, BottomNavigationActivity.this);
                     break;
 
                 case R.id.navigate_to_shop:
                     clearStack();
                     ShopFragment shopFragment = (ShopFragment) mNavController.getCurrentFrag();
                     shopFragment.scrollToTop();
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU);
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
                     break;
 
                 case R.id.navigate_to_cart:
@@ -697,7 +697,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     } else {
                         ((WRewardsLoggedOutFragment) currentChildFragment).scrollToTop();
                     }
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU);
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU, BottomNavigationActivity.this);
                     break;
 
                 case R.id.navigate_to_account:
@@ -705,7 +705,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     if (mNavController.getCurrentFrag() instanceof MyAccountsFragment) {
                         MyAccountsFragment currentAccountFragment = (MyAccountsFragment) mNavController.getCurrentFrag();
                         currentAccountFragment.scrollToTop();
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU);
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU, BottomNavigationActivity.this);
                     }
                     break;
             }

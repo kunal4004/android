@@ -15,6 +15,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
@@ -218,7 +219,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 when (v?.id) {
 
                     R.id.editAmountImageView -> {
-                        triggerFirebaseEventForEditAmount()
+                        triggerFirebaseEventForEditAmount(activity as PayMyAccountActivity)
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
                     }
 
@@ -238,7 +239,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             } else {
                 when (v?.id) {
                     R.id.editAmountImageView -> {
-                        triggerFirebaseEventForEditAmount()
+                        activity?.let { triggerFirebaseEventForEditAmount(it) }
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
                     }
                     R.id.changeTextView -> {

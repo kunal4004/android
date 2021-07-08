@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
+import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -133,7 +134,24 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     override fun bottomSheetBehaviourPeekHeight(): Int {
         val height = deviceHeight()
-        return (height.div(100)).times(if (isAccountInArrearsState()) 14 else 23)
+        val availableFundHeightPercent = if (isAccountInArrearsState()) {
+            val sliderGuidelineArrearsTypeValue = TypedValue()
+            WoolworthsApplication.getInstance()?.resources?.getValue(
+                R.dimen.slider_guideline_percent_for_arrears_account_product,
+                sliderGuidelineArrearsTypeValue,
+                true
+            )
+            sliderGuidelineArrearsTypeValue.float
+        } else {
+            val sliderGuidelineTypeValue = TypedValue()
+            WoolworthsApplication.getInstance()?.resources?.getValue(
+                R.dimen.slider_guideline_percent_for_account_product,
+                sliderGuidelineTypeValue,
+                true
+            )
+            sliderGuidelineTypeValue.float
+        }
+        return height - (height * availableFundHeightPercent).toInt()
     }
 
     @SuppressLint("DefaultLocale")

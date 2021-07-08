@@ -35,13 +35,13 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
             R.id.incRecentTransactionButton -> {
                 activity?.runOnUiThread {
                     activity?.runOnUiThread {
-                        FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                        activity?.apply { FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS, this) }
                         navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
                     }
                 }
             }
             R.id.incPayMyAccountButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC, this) }
                 navigateToPayMyAccountActivity()
             }
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()

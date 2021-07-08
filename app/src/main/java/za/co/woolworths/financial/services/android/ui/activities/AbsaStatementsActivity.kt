@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.absa_statements_activity.*
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import kotlinx.android.synthetic.main.empty_state_template.*
 import kotlinx.android.synthetic.main.payment_options_activity.*
-import kotlinx.android.synthetic.main.store_details_layout_common.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaBalanceEnquiryFacadeGetAllBalances
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetArchivedStatementListRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetIndividualStatementRequest
@@ -104,7 +103,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             }
 
             override fun onFailure(errorMessage: String?) {
-               FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+               FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this@AbsaStatementsActivity)
                 showErrorView()
             }
 
@@ -137,7 +136,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     fun showStatementsList(archivedStatementList: ArrayList<ArchivedStatement>?) {
-        FirebaseEventDetailManager.success(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+        FirebaseEventDetailManager.success(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
         archivedStatementList?.let {
             if (it.size > 0) {
                 hideProgress()
@@ -204,7 +203,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     override fun onViewStatement(item: ArchivedStatement) {
         if (pbCircular.visibility != View.VISIBLE) {
             KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_GET_STATEMENT, OneAppEvents.FeatureName.ABSA)
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_INDIVIDUAL_STATEMENT)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_INDIVIDUAL_STATEMENT, this)
             getIndividualStatement(item)
         }
     }
