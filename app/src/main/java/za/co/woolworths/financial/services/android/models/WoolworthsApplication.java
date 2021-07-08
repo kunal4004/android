@@ -70,13 +70,11 @@ import za.co.woolworths.financial.services.android.models.dto.contact_us.Contact
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.ui.activities.WChatActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
+import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
-import za.co.woolworths.financial.services.android.util.ServiceTools;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
 
@@ -102,6 +100,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String howToSaveLink;
     private static String wrewardsTCLink;
     private static String cartCheckoutLink;
+    private static String cartCheckoutLinkWithParams;
     private static JsonElement storeCardBlockReasons;
     private static String authenticVersionReleaseNote;
     private Set<Class<Activity>> visibleActivities = new HashSet<>();
@@ -283,6 +282,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
+        ConnectivityLiveData.INSTANCE.init(this);
         FirebaseApp.initializeApp(getApplicationContext());
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
         if (FirebaseCrashlytics.getInstance().didCrashOnPreviousExecution()) {
@@ -700,4 +700,29 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public static void setLiquor(Liquor liquor) {
         WoolworthsApplication.liquor = liquor;
     }
+
+    public static void setProductItemForInventory(ProductList productList) {
+        productItemForLiquorInvetory = productList;
+    }
+
+    public static void setCallForLiquorInventory(Boolean isPending) {
+        isProductItemForLiquorInvetoryPending = isPending;
+    }
+
+    public static Boolean isProductItemForLiquorInvetoryPending() {
+        return isProductItemForLiquorInvetoryPending;
+    }
+
+    public static ProductList getProductItemForInventory() {
+        return productItemForLiquorInvetory;
+    }
+
+    public static void setCartCheckoutLinkWithParams(String cartCheckoutLinkWithParams) {
+        WoolworthsApplication.cartCheckoutLinkWithParams = cartCheckoutLinkWithParams;
+    }
+
+    public static String getCartCheckoutLinkWithParams() {
+        return cartCheckoutLinkWithParams;
+    }
+
 }

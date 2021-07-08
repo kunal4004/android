@@ -12,7 +12,7 @@ android {
     def major = "8"
     def minor = "2"
     def fix = "0"
-    def jobNumber = 510
+    def jobNumber = 514
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -32,7 +32,6 @@ android {
     }
 
     flavorDimensions "default"
-
     lintOptions {
         abortOnError false
     }

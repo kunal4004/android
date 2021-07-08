@@ -299,50 +299,14 @@
     <string name="submit_a_claim">Submit a Claim</string>
     <string name="submit_a_claim_desc">Critical Illness/Death Cover/Retrenchment etc. Submit a Claim</string>
 
-    <string name="select_claim_reason">select your claim reason</string>
-    <string name="death_cover">Death Cover</string>
-    <string name="death_cover_desc">Pays the outstanding balance on your account</string>
-    <string name="retrenchment">Retrenchment</string>
-    <string name="retrenchment_desc">Pays up to 12 months of installments from first day of retrenchment.</string>
-    <string name="temporary_disability">Temporary Disability</string>
-    <string name="temporary_disability_desc">Pays up to 12 months of installments from the first day of disability</string>
-
-    <string name="permanent_disability">Permanent Disability</string>
-    <string name="permanent_disability_desc">Pays the outstanding balance on your account</string>
-
-    <string name="critical_illness">Critical Illness</string>
-    <string name="critical_illness_desc">Pays the outstanding balance on your account.</string>
-    <string name="apply_loan_info">In order to process your claim we will need the following documents.</string>
-    <string name="required_form">required forms (available from woolworths financials solutions)</string>
-    <string name="you_will_also_need">IN ADDITION, YOU WILL ALSO NEED TO SUBMIT THE BELOW DOCUMENTS</string>
-    <string name="balance_protection_claim_form">Balance Protection Claim Form</string>
-    <string name="new_disability_claim_form">New Disability Claim Form</string>
-    <string name="confidential_medical_specialist_report">Confidential Medical Specialist Report</string>
-    <string name="medical_reports_from_doctor">Medical Reports from Doctor</string>
-    <string name="death_certificate">Death Certificate</string>
-
-    <string name="certified_id">Certified ID</string>
-    <string name="certified_id_claimant">Certified ID Copy of next of Kin/Claimant</string>
-    <string name="investigation_results_from_doctor">Investigation Results from Doctor</string>
-    <string name="retrenchement_form">Retrenchment Form</string>
-    <string name="certified_id_copy">Certified ID Copy</string>
-    <string name="UI19_form">UI19 Form</string>
-    <string name="certified_letter_of_retrenchment_from_employer">Certified Letter of Retrenchment from Employer</string>
-    <string name="employee_declaration_form">Employee Declaration Form</string>
-    <string name="sick_note_from_doctor">Sick Note from Doctor</string>
-    <string name="personal_medical_attendants_report">Personal Medical Attendants Report</string>
-    <string name="boarding_letter_from_employer">Boarding Letter from Employer</string>
-    <string name="balance_protection_title">balance insurance</string>
-    <string name="get_the_documents">Get the documents</string>
-    <string name="balance_insurance_overview">Balance Insurance Overview</string>
 
     <string name="features_and_benefit">FEATURES AND BENEFITS</string>
-    <string name="features_and_benefit_desc">Your peace of mind is important to us, so we offer you comprehensive balance protection on your Woolies Store Card, Credit Card or Personal Loan.</string>
+    <string name="features_and_benefit_desc">Your peace of mind is important to us, so we offer you comprehensive balance protection insurance on your Woolies Store Card, Credit Card or Personal Loan.</string>
 
-    <string name="comprehensive_balance_protection">Comprehensive Balance Protection</string>
-    <string name="comprehensive_balance_protection_desc1">Your Comprehensive balance protection covers you in the event of death, retrenchment, critical illness, temporary and permanent disability.</string>
-    <string name="comprehensive_balance_protection_desc2">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death or permanent disability, or if you are diagnosed with a critical illness.</string>
-    <string name="comprehensive_balance_protection_desc3">Pays your instalments for up to 12 months if you are retrenched or temporary disabled.</string>
+    <string name="comprehensive_balance_protection">Comprehensive Balance Protection Insurance</string>
+    <string name="comprehensive_balance_protection_desc1">Covers you in the event of Death, Total Loss of Income, Critical Illness, Temporary and Permanent Disability.</string>
+    <string name="comprehensive_balance_protection_desc2">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100 000, in the event of your Death, Permanent Disability, or if you are diagnosed with a Critical Illness.</string>
+    <string name="comprehensive_balance_protection_desc3">Pays your instalments for up to 12 months (provided it is not in arrears), up to a maximum of R100 000, in the event of Total Loss of Income or Temporary Disability.</string>
 
     <string name="additional_death_cover">Additional Death Cover</string>
     <string name="additional_death_cover_desc">For an extra monthly premium of only R13.70 per month, you can also take out additional death benefit, which pays R20 000 to your next of kin in the event of your death, to help them handle unforeseen expenses.</string>
@@ -606,9 +570,9 @@
     <string name="bpi_covered">Covered</string>
     <string name="bpi_not_covered">not covered</string>
     <string name="bpi_balance_protection_title">Balance Protection</string>
-    <string name="bpi_balance_protection_desc">Cover in the event of your death, retrenchment, disability or a critical illness.</string>
+    <string name="bpi_balance_protection_desc">Cover in the event of your Death, Total Loss of Income, Disability or Critical Illness.</string>
     <string name="bpi_partner_cover_title">Partner Cover</string>
-    <string name="bpi_partner_cover_desc">Covers you in the event of your partners death, permanent disability or a critical illness.</string>
+    <string name="bpi_partner_cover_desc">Covers in the event of your Partner’s Death, Total Loss of Income, Disability or Critical Illness.</string>
     <string name="bpi_additional_death_cover_title">Additional Death Cover</string>
     <string name="bpi_additional_death_cover_desc">Helps pay for unforeseen expenses in the event of your death.</string>
     <string name="bpi_additional_death_cover_for_partner_title">Additional Death Cover for Partner</string>
@@ -620,14 +584,14 @@
     <string name="bpi_how_to_claim">how to claim</string>
 
 
-    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
-    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
-    <string name="bpi_balance_protection_benefit_3">All cover ceases at the age of 65, except death and critical illness.</string>
+    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100 000, in the event of your Death, Permanent Disability, or if you are diagnosed with a Critical Illness.</string>
+    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months, up to a maximum of R100 000, in the event of Total Loss of Income or Temporary Disability.</string>
+    <string name="bpi_balance_protection_benefit_3">All cover ceases at the age of 65, except Death and Critical Illness.</string>
 
 
-    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away, becomes permanently disabled, or is diagnosed with a critical illness.</string>
-    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months starting from the date your partner is retrenched or temporarily disabled.</string>
-    <string name="bpi_partner_cover_benefit_3">All cover ceases at the age of 65, except death and a critical illness.</string>
+    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100 000,in the event of your Partner’s Death, Permanent Disability, or if they are diagnosed with a Critical Illness.</string>
+    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months, up to a maximum of R100 000, in the event of Total Loss of Income or Temporary Disability.</string>
+    <string name="bpi_partner_cover_benefit_3">All cover ceases at the age of 65, except Death and Critical Illness.</string>
 
     <string name="bpi_additional_death_cover_1">Pays R20 000 cash to a nominated beneficiary when you pass away.</string>
     <string name="bpi_additional_death_cover_2">Helps your family handle any unforeseen expenses in the event of your passing.</string>
@@ -662,7 +626,7 @@
     <string name="bpi_loan_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
     <string name="bpi_companion_care_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your partner’s death.</string>
     <string name="bpi_partner_cover_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away or if your partner is diagnosed with a critical illness.</string>
-    <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.></string>
+    <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.</string>
     <string name="walkthrough_refine_title">Filter Your Search</string>
     <string name="walkthrough_refine_desc">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, Carb Clever.</string>
     <string name="walkthrough_refine_action">REFINE NOW</string>
@@ -817,9 +781,6 @@
     <string name="error_passcode_locked_desc">You have entered your Passcode incorrectly 3 times. To log in, please reset your Passcode using your Credit Card ATM PIN.</string>
     <string name="forgot_passcode">Forgot Passcode</string>
     <string name="forgot_passcode_dialog_desc">You can reset your passcode for this device using your Woolies Credit Card Pin.</string>
-    <string name="police_report">Police Report</string>
-    <string name="certified_id_deceased">Certified ID Deceased</string>
-    <string name="claimant_bank_statement">Claimant\'s Bank Statement</string>
     <string name="npc_block_card_desc">There was a problem blocking your card</string>
     <string name="credit_limit_decrease">Credit Limit Decrease</string>
     <string name="credit_limit_decrease_desc_part_1">You will only be able to apply for a limit increase 6 month after this application has been concluded. You will need to go through a credit and affordability assessment at the time.</string>
@@ -900,8 +861,11 @@
     <string name="temp_card_how_to_use4">You can make a payment to your Store Card account at POS.  Just advise the operator you would like to make a payment and they will take you through the process.  Scan your card when asked.  ID is not required to make a payment.</string>
     <string name="temp_card_how_to_use5">To get a refund, please advise the operator of your card number, which is contained in the app, and don’t scan the barcode. The operator will key enter your details and process your refund as normal.</string>
     <string name="temp_card_how_to_use6">The Woolworths Virtual Temp Store Card will only be usable within selected Woolies stores. You have been selected to enjoy this new feature. Feedback can be given at appfeedback@woolworths.co.za.</string>
-    <string name="dialog_scan_barcode_to_pay_title">Scan the Barcode to Pay</string>
-    <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. to the cashier to use your temporary card.</string>
+    <string name="dialog_scan_barcode_to_pay_barcode_title">Scan your barcode to buy at a cashier or pay your account.</string>
+    <string name="dialog_scan_barcode_to_pay_barcode_desc">If processing a refund, please show your card details. Please remember your SA ID or Driver\'s license when using your virtual temp card.</string>
+    <string name="dialog_scan_barcode_to_pay_card_details_title">Show card details to buy, get a refund or pay your account.</string>
+    <string name="dialog_scan_barcode_to_pay_toggle_details_visible">Tap to view card details</string>
+    <string name="dialog_scan_barcode_to_pay_toggle_details_hidden">Tap to hide card details</string>
     <string name="card_details">card details</string>
     <string name="card_holder">Cardholder</string>
     <string name="temp_card_expires">Temp Card Expires</string>
@@ -1115,10 +1079,17 @@
     <string name="info_card_expire_date">info card expire date</string>
     <string name="layout_pay_with_card">layout pay with card</string>
     <string name="layout_how_it_works">layout how it works</string>
+    <string name="scan_barcode_toggle_card_details_button">scan barcode toggle card details button</string>
+    <string name="scan_barcode_dismiss_button">scan barcode dismiss button</string>
     <string name="scan_barcode_title">barcode title</string>
     <string name="scan_barcode_description">barcode description</string>
-    <string name="barcode_image">barcode image</string>
-    <string name="scan_barcode_regenerate">regenerate barcode</string>
+    <string name="scan_barcode_image">barcode image</string>
+    <string name="card_details_title">card details title</string>
+    <string name="card_details_number">card details number</string>
+    <string name="card_details_cardholder_label">card details cardholder label</string>
+    <string name="card_details_cardholder_value">card details cardholder value</string>
+    <string name="card_details_sequence_label">card details sequence number label</string>
+    <string name="card_details_sequence_value">card details sequence number value</string>
 
     <!-- storeCardMoreBenefits -->
 
@@ -2077,6 +2048,70 @@
     <string name="chat_notification_title">You have received a message.</string>
     <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
     <string name="woolies_chat_active">Chat is currently active</string>
-    <string name="shop_liquor_in_our_app">Shop liquor in our app</string>
+
+    <string name="shop_liquor_in_our_app">Shop Liquor</string>
     <string name="select_suburb">Select Suburb</string>
+    <string name="delivery_liquor_description"><![CDATA[Liquor is not available for Click & Collect.]]></string>
+
+    <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
+
+    <string name="death_cover_title">Death Cover</string>
+    <string name="death_cover_desc">Pays the outstanding balance on your account</string>
+    <string name="death_cover_required_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="death_cover_required_form_2">Personal Medical Attendants Report</string>
+    <string name="death_cover_required_form_3">Police Report</string>
+    <string name="death_cover_required_submit_1">Certified ID Copy of next of Kin/Claimant</string>
+    <string name="death_cover_required_submit_2">Death Certificate</string>
+    <string name="death_cover_required_submit_3">Certified ID Deceased</string>
+    <string name="death_cover_required_submit_4">Claimant\'s Bank Statement</string>
+
+    <string name="total_loss_of_income_title">Total Loss of Income</string>
+    <string name="total_loss_of_income_desc">Pays your instalments for up to 12 months in the event of Total Loss of Income (such as Retrenchment or \"no work, no pay\")</string>
+    <string name="total_loss_of_income_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="total_loss_of_income_form_2">Retrenchment Form</string>
+    <string name="total_loss_of_income_required_submit_1">Certified ID Copy</string>
+    <string name="total_loss_of_income_required_submit_2">UI19 Form</string>
+    <string name="total_loss_of_income_required_submit_3">Certified Letter of Retrenchment from Employer</string>
+
+    <string name="temporary_disability_title">Temporary Disability</string>
+    <string name="temporary_disability_desc">Pays up to 12 months of installments from the first day of disability</string>
+    <string name="temporary_disability_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="temporary_disability_form_2">Employee Declaration Form</string>
+    <string name="temporary_disability_form_3">New Disability Claim Form</string>
+    <string name="temporary_disability_form_4">Confidential Medical Specialist Report</string>
+    <string name="temporary_disability_form_5">Personal Medical Attendants Report</string>
+    <string name="temporary_disability_required_submit_1">Medical Reports from Doctor</string>
+    <string name="temporary_disability_required_submit_2">Certified ID</string>
+    <string name="temporary_disability_required_submit_3">Sick Note from Doctor</string>
+    <string name="temporary_disability_required_submit_4">Investigation Results from Doctor</string>
+
+    <string name="permanent_disability_title">Permanent Disability</string>
+    <string name="permanent_disability_desc">Pays the outstanding balance on your account</string>
+    <string name="permanent_disability_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="permanent_disability_form_2">Employee Declaration Form</string>
+    <string name="permanent_disability_form_3">New Disability Claim Form</string>
+    <string name="permanent_disability_form_4">Confidential Medical Specialist Report</string>
+    <string name="permanent_disability_form_5">Personal Medical Attendants Report</string>
+    <string name="permanent_disability_required_submit_1">Medical Reports from Doctor</string>
+    <string name="permanent_disability_required_submit_2">Certified ID</string>
+    <string name="permanent_disability_required_submit_3">Boarding Letter from Employer</string>
+    <string name="permanent_disability_required_submit_4">Investigation Results from Doctor</string>
+
+    <string name="critical_illness_title">Critical Illness</string>
+    <string name="critical_illness_desc">Pays the outstanding balance on your account.</string>
+    <string name="critical_illness_form_1">Balance Protection Insurance Claim Form</string>
+    <string name="critical_illness_form_2">New Disability Claim Form</string>
+    <string name="critical_illness_form_3">Confidentail Medical Specialist Report</string>
+    <string name="critical_illness_form_4">Personal Medical Attendants Report</string>
+    <string name="critical_illness_required_submit_1">Medical Reports from Doctor</string>
+    <string name="critical_illness_required_submit_2">Certified ID</string>
+    <string name="critical_illness_required_submit_3">Investigation Results from Doctor</string>
+
+    <string name="claimReasonTitle">select your claim reason</string>
+    <string name="overviewTitle">overview</string>
+    <string name="howToClaim">how to claim</string>
+    <string name="requiredDocuments">Get the required documents</string>
+    <string name="requiredForm">required forms</string>
+    <string name="submitForm">You will also need to submit</string>
+    <string name="submitDescription">In order to process your claim we will need the following documents.</string>
 </resources>

@@ -124,6 +124,7 @@
     <color name="color_e1e1e1">#E1E1E1</color>
     <color name="reward_benefit_background">#2C2C2D</color>
     <color name="tab_text_color">#80ffffff</color>
+    <color name="card_details_value_color">#030303</color>
 
     <color name="link_text_color">#7F7F7F</color>
     <color name="color_222222">#222222</color>
@@ -133,5 +134,9 @@
     <color name="color_333333">#333333</color>
     <color name="color_f1f1f1">#F1F1F1</color>
     <color name="color_808080">#808080</color>
+
+    <color name="color_primary">#212121</color>
+    <color name="color_primary_dark">@android:color/black</color>
+    <color name="color_accent">#4285F4</color>
     <color name="color_cccccc">#CCCCCC</color>
 </resources>
