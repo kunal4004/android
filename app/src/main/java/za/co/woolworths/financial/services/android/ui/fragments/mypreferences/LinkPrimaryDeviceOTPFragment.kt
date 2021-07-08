@@ -564,22 +564,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         else {
             changePrimaryDevice(token)
         }
-
-    }
-
-    private fun deletePrimaryDevice(token: String) {
-        // Remove new primary device from secondary devices
-        OneAppService.deleteOrUnlinkDevice(newPrimaryDevice?.deviceIdentityId.toString())
-            .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
-                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                    // Remove old primary device completely
-                    OneAppService.deleteOrUnlinkDevice(oldPrimaryDevice?.deviceIdentityId.toString())
-                        .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
-                            override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                                // Re-add the new primary device as primaryDevice=true
-                                linkNewPrimaryDevice(token)
-                            } }, ViewAllLinkedDeviceResponse::class.java))
-                } }, ViewAllLinkedDeviceResponse::class.java))
     }
 
     private fun changePrimaryDevice(token: String) {
@@ -599,19 +583,44 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                                     .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
                                         override fun onSuccess(response: LinkedDeviceResponse?) {
                                             // Re-add the new primary device as primaryDevice=true
-                                            linkNewPrimaryDevice(token)
+                                            performLinkDevice(token, newPrimaryDevice, true)
                                         }
                                     }, LinkedDeviceResponse::class.java))
                             } }, ViewAllLinkedDeviceResponse::class.java))
                 } }, ViewAllLinkedDeviceResponse::class.java))
     }
 
-    private fun linkNewPrimaryDevice(token: String) {
+
+    private fun deletePrimaryDevice(token: String) {
+        // Remove new primary device from secondary devices
+        performDeleteOrUnlinkDevice(newPrimaryDevice
+        ) {
+            // Remove old primary device completely
+            performDeleteOrUnlinkDevice(oldPrimaryDevice
+            ) {
+                // Re-add the new primary device as primaryDevice=true
+                performLinkDevice(token, newPrimaryDevice, true)
+            }
+        }
+    }
+
+    private fun performDeleteOrUnlinkDevice(device: UserDevice?, onSuccess: () -> Unit){
+        OneAppService.deleteOrUnlinkDevice(device?.deviceIdentityId.toString())
+            .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                    onSuccess()
+                }
+                override fun onFailure(error: Throwable?) {
+                    APICallFailure()
+                } }, ViewAllLinkedDeviceResponse::class.java))
+    }
+
+    private fun performLinkDevice(token: String, device: UserDevice?, primaryDevice: Boolean) {
         unlinkDeviceOTPScreen?.visibility = View.GONE
-        OneAppService.linkDeviceApi(newPrimaryDevice?.deviceName.toString(),
-            newPrimaryDevice?.appInstanceId.toString(),
-            newPrimaryDevice?.locationLinked,
-            true, token)
+        OneAppService.linkDeviceApi(device?.deviceName.toString(),
+            device?.appInstanceId.toString(),
+            device?.locationLinked,
+            primaryDevice, token)
             .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
                 override fun onSuccess(response: LinkedDeviceResponse?) {
                     sendinOTPLayout?.visibility = View.GONE
@@ -650,12 +659,16 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    unlinkDeviceOTPScreen?.visibility = View.VISIBLE
-                    buttonNext?.visibility = View.VISIBLE
-                    didNotReceiveOTPTextView?.visibility = View.VISIBLE
-                    showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                    APICallFailure()
                 }
             }, LinkedDeviceResponse::class.java))
+    }
+
+    private fun APICallFailure() {
+        unlinkDeviceOTPScreen?.visibility = View.VISIBLE
+        buttonNext?.visibility = View.VISIBLE
+        didNotReceiveOTPTextView?.visibility = View.VISIBLE
+        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
     }
 
     private fun saveDeviceId(deviceIdentityId: Long) {
