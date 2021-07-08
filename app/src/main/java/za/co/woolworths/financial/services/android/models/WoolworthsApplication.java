@@ -91,8 +91,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Nullable
     private static PayMyAccount mPayMyAccount;
     private static InAppChat inAppChat;
-    private static Boolean isProductItemForLiquorInvetoryPending;
-    private static ProductList productItemForLiquorInvetory;
+    private static Boolean isProductItemForLiquorInvetoryPending = false;
+    private static ProductList productItemForLiquorInvetory = null;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;

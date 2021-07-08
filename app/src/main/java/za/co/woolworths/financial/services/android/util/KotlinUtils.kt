@@ -786,6 +786,14 @@ class KotlinUtils {
             }
         }
 
+        fun openLinkInInternalWebView(activity: Activity?, url: String?) {
+            activity?.apply {
+                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                openInternalWebView.putExtra("externalLink", url)
+                startActivity(openInternalWebView)
+            }
+        }
 
     }
 }
