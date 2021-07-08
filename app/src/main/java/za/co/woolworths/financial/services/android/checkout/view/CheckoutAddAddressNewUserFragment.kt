@@ -5,6 +5,7 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -37,8 +38,11 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
+import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse
 import za.co.woolworths.financial.services.android.models.dto.Suburb
+import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -360,7 +364,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     if (it?.data == null) {
-                        val jsonFileString = getJsonDataFromAsset(
+                        val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/savedAddress.json"
                         )
@@ -370,7 +374,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         )
                         savedAddressResponse = mockSavedAddressResponse
                     } else
-                        savedAddressResponse = it?.data
+                        savedAddressResponse = it?.data as? SavedAddressResponse
                     if (cellphoneNumber?.text.toString().isEmpty())
                         cellphoneNumber.setText(savedAddressResponse?.primaryContactNo)
                 }
@@ -382,18 +386,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
         })
-    }
-
-    fun getJsonDataFromAsset(context: Context?, fileName: String): String? {
-        val jsonString: String
-        try {
-            jsonString =
-                context?.assets?.open(fileName)?.bufferedReader().use { it?.readText().toString() }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
-            return null
-        }
-        return jsonString
     }
 
     private fun addFragmentResultListener() {
@@ -514,7 +506,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.initGetProvince().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    if (it?.data?.regions.isNullOrEmpty()) {
+                    if ((it?.data as ProvincesResponse)?.regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
                         it?.data?.regions?.let { it1 ->
@@ -713,7 +705,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     if (it?.data != null) {
-                        if (it.data.httpCode?.equals(HTTP_OK) == true) {
+                        if ((it.data as? DeleteAddressResponse)?.httpCode?.equals(HTTP_OK) == true) {
                             if (savedAddressResponse?.addresses != null) {
                                 savedAddressResponse?.addresses!!.forEachIndexed { index, it ->
                                     if (it.id.equals(selectedAddressId)) {
@@ -746,10 +738,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     hideSetSuburbProgressBar()
-                    if (it?.data?.suburbs.isNullOrEmpty()) {
+                    if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
-                        it?.data?.suburbs?.let { it1 -> navigateToSuburbSelection(it1) }
+                        (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
+                            navigateToSuburbSelection(
+                                it1
+                            )
+                        }
                     }
                 }
                 ResponseStatus.LOADING -> {
@@ -831,7 +827,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
                             if (savedAddressResponse != null && it?.data != null)
-                                savedAddressResponse?.addresses?.add(it.data.address)
+                                savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
                             if (isAddNewAddress)
                                 navController?.navigateUp()
                             else
@@ -902,7 +898,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     if (savedAddressResponse != null && it?.data != null) {
-                        savedAddressResponse?.addresses?.add(it.data.address)
+                        savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
                         val bundle = Bundle()
                         bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
                         setFragmentResult(UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundle)
@@ -992,5 +988,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
             }
         }
+    }
+
+    @VisibleForTesting
+    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
+        checkoutAddAddressNewUserViewModel = viewModel
+    }
+
+    @VisibleForTesting
+    fun testSetBundleArguments(bundle: Bundle){
+        arguments?.putBundle("bundle", bundle)
     }
 }

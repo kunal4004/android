@@ -16,6 +16,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.unsellable_items_fragment.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -79,6 +80,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
         selectedSuburb?.let {
             OneAppService.setSuburb(it.id).enqueue(CompletionHandler(object : IResponseListener<SetDeliveryLocationSuburbResponse> {
                 override fun onSuccess(response: SetDeliveryLocationSuburbResponse?) {
+                    hideSetSuburbProgressBar()
                     when (response?.httpCode) {
                         200 -> {
                             QueryBadgeCounter.instance.queryCartSummaryCount()
@@ -88,7 +90,10 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
                                     Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, null, Store(it.id, it.name, it.fulfillmentStores, it.storeAddress.address1)))
                                 }
                             }
-                            navigateToSuburbConfirmationFragment()
+                            if (activity is CheckoutActivity) {
+                                navController?.navigateUp()
+                            } else
+                                navigateToSuburbConfirmationFragment()
                         }
                         else -> {
                             showErrorDialog()
@@ -106,7 +111,6 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     }
 
     fun navigateToSuburbConfirmationFragment() {
-        hideSetSuburbProgressBar()
         bundle?.apply {
             putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType?.name)
             putString("SUBURB", Utils.toJson(selectedSuburb))

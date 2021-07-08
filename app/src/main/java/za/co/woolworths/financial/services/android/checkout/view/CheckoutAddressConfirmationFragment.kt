@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 import java.io.IOException
@@ -88,18 +89,27 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 addressConfirmationDelivery.visibility = View.GONE
             }
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
-                val bundle = Bundle()
-                bundle.putBoolean("addNewAddress", true)
-                navController?.navigate(
-                    R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
-                    bundleOf("bundle" to bundle)
-                )
+                navigateToAddAddress()
             }
             R.id.btnAddressConfirmation -> {
-                if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
+                if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
+                    navigateToAddAddress()
+                } else if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
                     addNewAddressErrorMsg.visibility = View.VISIBLE
+                else {
+                    //TO DO next screen
+                }
             }
         }
+    }
+
+    private fun navigateToAddAddress() {
+        val bundle = Bundle()
+        bundle.putBoolean("addNewAddress", true)
+        navController?.navigate(
+            R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
+            bundleOf("bundle" to bundle)
+        )
     }
 
     private fun addFragmentResultListener() {
@@ -128,18 +138,43 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun initView() {
-        checkoutAddressConfirmationListAdapter =
-            CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
-        saveAddressRecyclerView?.apply {
-            addItemDecoration(object : ItemDecoration() {})
-            layoutManager = activity?.let { LinearLayoutManager(it) }
-            checkoutAddressConfirmationListAdapter?.let { adapter = it }
+        if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
+            hideAddressListView()
+        } else {
+            showAddressListView()
+            checkoutAddressConfirmationListAdapter =
+                CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
+            saveAddressRecyclerView?.apply {
+                addItemDecoration(object : ItemDecoration() {})
+                layoutManager = activity?.let { LinearLayoutManager(it) }
+                checkoutAddressConfirmationListAdapter?.let { adapter = it }
+            }
         }
         deliveryTab.setOnClickListener(this)
         collectionTab.setOnClickListener(this)
         plusImgAddAddress.setOnClickListener(this)
         addNewAddressTextView.setOnClickListener(this)
         btnAddressConfirmation.setOnClickListener(this)
+    }
+
+    private fun hideAddressListView() {
+        btnAddressConfirmation.text = bindString(R.string.add_address)
+        whereWeDeliveringTitle.text = bindString(R.string.no_saved_addresses)
+        saveAddressRecyclerView.visibility = View.GONE
+        addressListPartition.visibility = View.GONE
+        plusImgAddAddress.visibility = View.GONE
+        confirmAddressPartition.visibility = View.GONE
+        addNewAddressTextView.visibility = View.GONE
+    }
+
+    private fun showAddressListView() {
+        saveAddressRecyclerView.visibility = View.VISIBLE
+        addressListPartition.visibility = View.VISIBLE
+        plusImgAddAddress.visibility = View.VISIBLE
+        addNewAddressTextView.visibility = View.VISIBLE
+        confirmAddressPartition.visibility = View.VISIBLE
+        btnAddressConfirmation.text = bindString(R.string.confirm)
+        whereWeDeliveringTitle.text = bindString(R.string.where_should_we_deliver)
     }
 
     private fun setupViewModel() {
@@ -172,7 +207,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             id = address.region
         }
         val bundle = Bundle()
-        bundle?.apply {
+        bundle.apply {
             putString(EditDeliveryLocationActivity.DELIVERY_TYPE, DeliveryType.DELIVERY.name)
             putString("SUBURB", Utils.toJson(suburb))
             putString("PROVINCE", Utils.toJson(province))
@@ -182,18 +217,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             R.id.action_to_unsellableItemsFragment,
             bundleOf("bundle" to bundle)
         )
-    }
-
-    fun getJsonDataFromAsset(context: Context?, fileName: String): String? {
-        val jsonString: String
-        try {
-            jsonString =
-                context?.assets?.open(fileName)?.bufferedReader().use { it?.readText().toString() }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
-            return null
-        }
-        return jsonString
     }
 
     override fun hideErrorView() {
@@ -206,7 +229,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
 
-                        val jsonFileString = getJsonDataFromAsset(
+                        val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/unsellableItems.json"
                         )

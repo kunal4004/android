@@ -14,102 +14,102 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
     ViewModel() {
 
     fun initGetSuburbs(provinceId: String) = liveData(Dispatchers.IO) {
-        emit(CheckoutResourceGetSuburb.loading(data = null))
+        emit(NativeCheckoutResource.loading(data = null))
         try {
             emit(
-                CheckoutResourceGetSuburb.success(
+                NativeCheckoutResource.success(
                     data = checkoutAddAddressNewUserInteractor.getSuburbs(
                         provinceId
                     ).body()
                 )
             )
         } catch (exception: Exception) {
-            emit(CheckoutResourceGetSuburb.error(data = null, msg = exception.toString()))
+            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
         }
     }
 
     fun initGetProvince() = liveData(Dispatchers.IO) {
-        emit(CheckoutResourceGetProvince.loading(data = null))
+        emit(NativeCheckoutResource.loading(data = null))
         try {
             emit(
-                CheckoutResourceGetProvince.success(
+                NativeCheckoutResource.success(
                     data = checkoutAddAddressNewUserInteractor.getProvince().body()
                 )
             )
         } catch (exception: Exception) {
-            emit(CheckoutResourceGetProvince.error(data = null, msg = exception.toString()))
+            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
         }
     }
 
     fun getSavedAddresses() = liveData(Dispatchers.IO) {
-        emit(CheckoutResourceSavedAddress.loading(data = null))
+        emit(NativeCheckoutResource.loading(data = null))
         try {
             emit(
-                CheckoutResourceSavedAddress.success(
+                NativeCheckoutResource.success(
                     data = checkoutAddAddressNewUserInteractor.getSavedAddresses().body()
                 )
             )
         } catch (exception: Exception) {
-            emit(CheckoutResourceSavedAddress.error(data = null, msg = exception.toString()))
+            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
         }
     }
 
     fun addAddress(addAddressRequestBody: AddAddressRequestBody) = liveData(Dispatchers.IO) {
-        emit(CheckoutResourceAddAddress.loading(data = null))
+        emit(NativeCheckoutResource.loading(data = null))
         try {
             emit(
-                CheckoutResourceAddAddress.success(
+                NativeCheckoutResource.success(
                     data = checkoutAddAddressNewUserInteractor.addAddress(
                         addAddressRequestBody
                     ).body()
                 )
             )
         } catch (exception: Exception) {
-            emit(CheckoutResourceAddAddress.error(data = null, msg = exception.toString()))
+            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
         }
     }
 
     fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) =
         liveData(Dispatchers.IO) {
-            emit(CheckoutResourceAddAddress.loading(data = null))
+            emit(NativeCheckoutResource.loading(data = null))
             try {
                 emit(
-                    CheckoutResourceAddAddress.success(
+                    NativeCheckoutResource.success(
                         data = checkoutAddAddressNewUserInteractor.updateAddress(
                             addAddressRequestBody, addressId
                         ).body()
                     )
                 )
             } catch (exception: Exception) {
-                emit(CheckoutResourceAddAddress.error(data = null, msg = exception.toString()))
+                emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
             }
         }
 
     fun deleteAddress(addressId: String) = liveData(Dispatchers.IO) {
-        emit(CheckoutResourceDeleteAddress.loading(data = null))
+        emit(NativeCheckoutResource.loading(data = null))
         try {
             emit(
-                CheckoutResourceDeleteAddress.success(
+                NativeCheckoutResource.success(
                     data = checkoutAddAddressNewUserInteractor.deleteAddress(addressId).body()
                 )
             )
         } catch (exception: Exception) {
-            emit(CheckoutResourceDeleteAddress.error(data = null, msg = exception.toString()))
+            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
         }
     }
 
     fun changeAddress(nickName: String) = liveData(Dispatchers.IO) {
-        emit(CheckoutResourceChangeAddress.loading(data = null))
+        emit(NativeCheckoutResource.loading(data = null))
         try {
             emit(
-                CheckoutResourceChangeAddress.success(
+                NativeCheckoutResource.success(
                     data = checkoutAddAddressNewUserInteractor.changeAddress(
                         nickName
                     ).body()
                 )
             )
         } catch (exception: Exception) {
-            emit(CheckoutResourceChangeAddress.error(data = null, msg = exception.toString()))
+            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
         }
     }
 }
