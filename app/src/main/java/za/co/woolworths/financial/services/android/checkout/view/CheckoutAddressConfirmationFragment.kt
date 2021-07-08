@@ -82,11 +82,13 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 deliveryTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
                 collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
                 addressConfirmationDelivery.visibility = View.VISIBLE
+                addressConfirmationClicknCollect.visibility = View.GONE
             }
             R.id.collectionTab -> {
                 collectionTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
                 deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
                 addressConfirmationDelivery.visibility = View.GONE
+                addressConfirmationClicknCollect.visibility = View.VISIBLE
             }
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
                 navigateToAddAddress()
