@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.models.dto.InstantCardReplace
 import za.co.woolworths.financial.services.android.models.dto.Liquor;
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
@@ -90,6 +91,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Nullable
     private static PayMyAccount mPayMyAccount;
     private static InAppChat inAppChat;
+    private static Boolean isProductItemForLiquorInvetoryPending;
+    private static ProductList productItemForLiquorInvetory;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;
