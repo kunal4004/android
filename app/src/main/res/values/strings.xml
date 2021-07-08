@@ -584,13 +584,13 @@
     <string name="bpi_how_to_claim">how to claim</string>
 
 
-    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100,000, in the event of your Death, Permanent Disability, or if you are diagnosed with a Critical Illness.</string>
-    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months, up to a maximum of R100,000, in the event of Total Loss of Income or Temporary Disability.</string>
+    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100 000, in the event of your Death, Permanent Disability, or if you are diagnosed with a Critical Illness.</string>
+    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months, up to a maximum of R100 000, in the event of Total Loss of Income or Temporary Disability.</string>
     <string name="bpi_balance_protection_benefit_3">All cover ceases at the age of 65, except Death and Critical Illness.</string>
 
 
-    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100,000,in the event of your Partner’s Death, Permanent Disability, or if they are diagnosed with a Critical Illness.</string>
-    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months, up to a maximum of R100,000, in the event of Total Loss of Income or Temporary Disability.</string>
+    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears), up to a maximum of R100 000,in the event of your Partner’s Death, Permanent Disability, or if they are diagnosed with a Critical Illness.</string>
+    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months, up to a maximum of R100 000, in the event of Total Loss of Income or Temporary Disability.</string>
     <string name="bpi_partner_cover_benefit_3">All cover ceases at the age of 65, except Death and Critical Illness.</string>
 
     <string name="bpi_additional_death_cover_1">Pays R20 000 cash to a nominated beneficiary when you pass away.</string>
