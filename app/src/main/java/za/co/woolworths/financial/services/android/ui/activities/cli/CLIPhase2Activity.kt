@@ -45,6 +45,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     private var mOfferActive = false
     private var mCloseButtonEnabled = false
     private var mNextStep: String? = null
+    var selectedMaritalStatusPosition : Int? = null
     var applyNowState: ApplyNowState? = ApplyNowState.STORE_CARD
     var eventStatus = EventStatus.NONE
 
