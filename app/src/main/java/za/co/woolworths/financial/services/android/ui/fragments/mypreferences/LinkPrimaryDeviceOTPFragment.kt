@@ -135,8 +135,8 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            oldPrimaryDevice = it.getSerializable("oldPrimaryDevice") as UserDevice
-            newPrimaryDevice = it.getSerializable("newPrimaryDevice") as UserDevice
+            oldPrimaryDevice = it.getSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE) as UserDevice
+            newPrimaryDevice = it.getSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE) as UserDevice
         }
     }
 
@@ -556,63 +556,87 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun sendTokenToLinkNewDevice(token: String) {
-        OneAppService.deleteOrUnlinkDevice(newPrimaryDevice?.deviceIdentityId.toString())
+        deletePrimaryDevice(token)
+    }
+
+    private fun deletePrimaryDevice(token: String) {
+        // Remove new primary device from secondary devices
+        performDeleteOrUnlinkDevice(newPrimaryDevice
+        ) {
+            // Remove old primary device completely
+            performDeleteOrUnlinkDevice(oldPrimaryDevice
+            ) {
+                // Re-add the new primary device as primaryDevice=true
+                performLinkDevice(token, newPrimaryDevice, true)
+            }
+        }
+    }
+
+    private fun performDeleteOrUnlinkDevice(device: UserDevice?, onSuccess: () -> Unit){
+        OneAppService.deleteOrUnlinkDevice(device?.deviceIdentityId.toString())
             .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
                 override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                    OneAppService.deleteOrUnlinkDevice(oldPrimaryDevice?.deviceIdentityId.toString())
-                        .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
-                            override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                                unlinkDeviceOTPScreen?.visibility = View.GONE
-                                OneAppService.linkDeviceApi(newPrimaryDevice?.deviceName.toString(),
-                                    newPrimaryDevice?.appInstanceId.toString(),
-                                    newPrimaryDevice?.locationLinked,
-                                    true, token)
-                                    .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
-                                    override fun onSuccess(response: LinkedDeviceResponse?) {
-                                        sendinOTPLayout?.visibility = View.GONE
-                                        when (response?.httpCode) {
-                                            AppConstant.HTTP_OK_201.toString() -> {
-                                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
-                                                    hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                                                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)))
-                                                showDeviceChanged()
-                                                response.deviceIdentityId?.let { saveDeviceId(it) }
-
-                                                setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                                    "isUpdate" to true
-                                                ))
-                                                Handler().postDelayed({
-                                                    view?.findNavController()?.navigateUp()
-                                                    view?.findNavController()?.navigateUp()
-                                                }, AppConstant.DELAY_1500_MS)
-
-                                            }
-                                            AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
-                                                activity?.apply {
-                                                    if (!isFinishing) {
-                                                        SessionUtilities.getInstance().setSessionState(
-                                                            SessionDao.SESSION_STATE.INACTIVE,
-                                                            response.response.stsParams, this)
-                                                    }
-                                                }
-                                            else -> response?.response?.desc?.let { desc ->
-                                                unlinkDeviceOTPScreen?.visibility = View.VISIBLE
-                                                buttonNext?.visibility = View.VISIBLE
-                                                didNotReceiveOTPTextView?.visibility = View.VISIBLE
-                                                showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
-                                            }
-                                        }
-                                    }
-
-                                    override fun onFailure(error: Throwable?) {
-                                        unlinkDeviceOTPScreen?.visibility = View.VISIBLE
-                                        buttonNext?.visibility = View.VISIBLE
-                                        didNotReceiveOTPTextView?.visibility = View.VISIBLE
-                                        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
-                                    }
-                                }, LinkedDeviceResponse::class.java))
-                            } }, ViewAllLinkedDeviceResponse::class.java))
+                    onSuccess()
+                }
+                override fun onFailure(error: Throwable?) {
+                    APICallFailure()
                 } }, ViewAllLinkedDeviceResponse::class.java))
+    }
+
+    private fun performLinkDevice(token: String, device: UserDevice?, primaryDevice: Boolean) {
+        unlinkDeviceOTPScreen?.visibility = View.GONE
+        OneAppService.linkDeviceApi(device?.deviceName.toString(),
+            device?.appInstanceId.toString(),
+            device?.locationLinked,
+            primaryDevice, token)
+            .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
+                override fun onSuccess(response: LinkedDeviceResponse?) {
+                    sendinOTPLayout?.visibility = View.GONE
+                    when (response?.httpCode) {
+                        AppConstant.HTTP_OK_201.toString() -> {
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
+                                hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)))
+                            showDeviceChanged()
+                            response.deviceIdentityId?.let { saveDeviceId(it) }
+
+                            setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                                "isUpdate" to true
+                            ))
+                            Handler().postDelayed({
+                                view?.findNavController()?.navigateUp()
+                                view?.findNavController()?.navigateUp()
+                            }, AppConstant.DELAY_1500_MS)
+
+                        }
+                        AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
+                            activity?.apply {
+                                if (!isFinishing) {
+                                    SessionUtilities.getInstance().setSessionState(
+                                        SessionDao.SESSION_STATE.INACTIVE,
+                                        response.response.stsParams, this)
+                                }
+                            }
+                        else -> response?.response?.desc?.let { desc ->
+                            unlinkDeviceOTPScreen?.visibility = View.VISIBLE
+                            buttonNext?.visibility = View.VISIBLE
+                            didNotReceiveOTPTextView?.visibility = View.VISIBLE
+                            showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                        }
+                    }
+                }
+
+                override fun onFailure(error: Throwable?) {
+                    APICallFailure()
+                }
+            }, LinkedDeviceResponse::class.java))
+    }
+
+    private fun APICallFailure() {
+        unlinkDeviceOTPScreen?.visibility = View.VISIBLE
+        buttonNext?.visibility = View.VISIBLE
+        didNotReceiveOTPTextView?.visibility = View.VISIBLE
+        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
     }
 
     private fun saveDeviceId(deviceIdentityId: Long) {
