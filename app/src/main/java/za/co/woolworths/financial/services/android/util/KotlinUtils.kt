@@ -37,7 +37,8 @@ import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -745,6 +746,15 @@ class KotlinUtils {
 
         }
 
+        /**
+         * This function should satisfy below conditions
+         * - It should not be a store pick up &&
+         * - Selected suburb [AppInstanceObject.User.preferredShoppingDeliveryLocation] should match up with suburb id's in mobile config
+         * @return Returns boolean value indicating if current suburb delivers liquors
+         * [Boolean.true]  if above conditions match else [Boolean.false]
+         *
+         * @see [za.co.woolworths.financial.services.android.models.dao.AppInstanceObject.User.preferredShoppingDeliveryLocation]
+         */
         fun isCurrentSuburbDeliversLiquor(): Boolean {
             Utils.getPreferredDeliveryLocation()?.apply {
                 return (!storePickup && suburb != null && WoolworthsApplication.getLiquor()?.suburbs?.contains(suburb.id) == true)
@@ -762,27 +772,20 @@ class KotlinUtils {
          * @see SessionDao
          */
         fun isLiquorModalShown(): Boolean {
-            val firstTime = Utils.getSessionDaoValue(SessionDao.KEY.LIQUOR_MODAL_SHOWN)
+            val firstTime = Utils.getSessionDaoValue(KEY.LIQUOR_MODAL_SHOWN)
             return firstTime != null
         }
 
         fun setLiquorModalShown() {
             try {
-                val firstTime = Utils.getSessionDaoValue(SessionDao.KEY.LIQUOR_MODAL_SHOWN)
+                val firstTime = Utils.getSessionDaoValue(KEY.LIQUOR_MODAL_SHOWN)
                 if (firstTime == null) {
-                    Utils.sessionDaoSave(SessionDao.KEY.LIQUOR_MODAL_SHOWN, "1")
+                    Utils.sessionDaoSave(KEY.LIQUOR_MODAL_SHOWN, "1")
                 }
             } catch (ignored: NullPointerException) {
             }
         }
 
-        fun openLinkInInternalWebView(activity: Activity?, url: String?) {
-            activity?.apply {
-                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
-                openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                openInternalWebView.putExtra("externalLink", url)
-                startActivity(openInternalWebView)
-            }
-        }
+
     }
 }
