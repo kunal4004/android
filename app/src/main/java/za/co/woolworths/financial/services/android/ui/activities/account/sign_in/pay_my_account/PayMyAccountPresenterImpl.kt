@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account
 
+import android.app.Activity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -15,6 +16,7 @@ import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import java.lang.RuntimeException
+import kotlin.jvm.Throws
 
 class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.PayMyAccountView?, private var model: IPaymentOptionContract.PayMyAccountModel) : IPaymentOptionContract.PayMyAccountPresenter, IPaymentOptionContract.PayMyAccountModel {
 
@@ -138,11 +140,11 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
     }
 
     @Throws(RuntimeException::class)
-    override fun setFirebaseEventForPayByCardNow() {
+    override fun setFirebaseEventForPayByCardNow(activity: Activity) {
         return when (mAccountDetails?.first) {
-            ApplyNowState.STORE_CARD -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_PAY)
-            ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_PAY)
-            ApplyNowState.PERSONAL_LOAN -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_PAY)
+            ApplyNowState.STORE_CARD -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_SC_PAY, activity)
+            ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_CC_PAY, activity)
+            ApplyNowState.PERSONAL_LOAN -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.PMA_PL_PAY, activity)
             else -> throw RuntimeException("Invalid ApplyNowState ${mAccountDetails?.first}")
         }
     }

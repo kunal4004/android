@@ -87,7 +87,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
             if (fiveDigitPin.toInt() == mBundleFiveDigitCodePinCode) {
                 navigateToAbsaPinCodeSuccessFragment(mAliasId, fiveDigitPin)
             } else {
-                FirebaseEventDetailManager.passcode(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+                activity?.apply { FirebaseEventDetailManager.passcode(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
                 ErrorHandlerView(activity).showToast(getString(R.string.passcode_not_match_alert))
                 clearPin()
             }
@@ -95,7 +95,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun navigateToAbsaPinCodeSuccessFragment(aliasId: String?, fiveDigitPin: String) {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_COMPLETE_SETUP)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_COMPLETE_SETUP, this) }
         hideKeyboard()
         replaceFragment(
                 fragment = AbsaPinCodeSuccessFragment.newInstance(aliasId, fiveDigitPin, mCreditAccountInfo),

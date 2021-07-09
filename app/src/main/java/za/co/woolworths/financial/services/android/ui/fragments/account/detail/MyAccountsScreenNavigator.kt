@@ -65,7 +65,7 @@ class MyAccountsScreenNavigator {
                     else -> null
                 }
 
-                productGroupCode?.let { Utils.triggerFireBaseEvents(it) }
+                productGroupCode?.let { Utils.triggerFireBaseEvents(it, this) }
                 val navigateToBalanceProtectionInsurance = Intent(this, BalanceProtectionInsuranceActivity::class.java)
                 navigateToBalanceProtectionInsurance.putExtra(ACCOUNT_INFO, accountInfo)
                 startActivity(navigateToBalanceProtectionInsurance)
