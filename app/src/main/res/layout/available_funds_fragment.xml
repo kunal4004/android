@@ -69,6 +69,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        app:layout_constraintGuide_percent="@dimen/bottom_guideline_percent_for_available_fund_transaction_statement_pma_button" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottomSliderGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.7" />
 
     <androidx.constraintlayout.widget.Guideline

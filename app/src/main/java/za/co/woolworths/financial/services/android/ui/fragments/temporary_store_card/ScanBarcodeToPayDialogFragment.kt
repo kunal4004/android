@@ -109,7 +109,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
             val cardDisplayTimeoutInSeconds = WoolworthsApplication.getVirtualTempCard().cardDisplayTimeoutInSeconds ?: 10L
             timerCardDetailsVisibility.postDelayed({ toggleCardDetailsVisibility() }, cardDisplayTimeoutInSeconds * 1000)
 
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_VIEWCARDNUMBERS)
+            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_VIEWCARDNUMBERS, this) }
         }
     }
 
