@@ -234,17 +234,17 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
 
-                        val jsonFileString = Utils.getJsonDataFromAsset(
+                        /*val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/unsellableItems.json"
                         )
                         var mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
                             jsonFileString,
                             object : TypeToken<ChangeAddressResponse>() {}.type
-                        )
+                        )*/
 
 
-                        val changeAddressResponse = mockChangeAddressResponse //it?.data
+                        val changeAddressResponse =  it?.data as? ChangeAddressResponse
                         if (changeAddressResponse != null && changeAddressResponse?.deliverable) {
                             if (changeAddressResponse?.unSellableCommerceItems?.size!! > 0) {
                                 navigateToUnsellableItemsFragment(
