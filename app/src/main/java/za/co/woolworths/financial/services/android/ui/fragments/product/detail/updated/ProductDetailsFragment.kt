@@ -316,8 +316,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
-        if(productDetails?.isLiquor == false && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
-//            KotlinUtils.setLiquorModalShown()
+        if(productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
+            KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
         }
 

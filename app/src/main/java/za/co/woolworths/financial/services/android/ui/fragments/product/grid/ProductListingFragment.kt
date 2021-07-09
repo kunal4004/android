@@ -856,8 +856,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         this.mSelectedProductList = productList
         val activity = activity ?: return
 
-        if(productList.isLiquor == false && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
-//            KotlinUtils.setLiquorModalShown()
+        if(productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
+            KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
             WoolworthsApplication.setProductItemForInventory(productList)
             return
