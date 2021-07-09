@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -29,14 +28,13 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesIn
 import za.co.woolworths.financial.services.android.ui.adapters.SelectPrimaryDeviceAdapter
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
-import java.net.UnknownServiceException
 
 class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
 
     private var deviceIdentityId: String = ""
     private var unlinkOrDeleteDeviceReq: Call<ViewAllLinkedDeviceResponse>? = null
     private var selectPrimaryDeviceAdapter: SelectPrimaryDeviceAdapter? = null
-    private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
+    private var deviceList: ArrayList<UserDevice> = ArrayList(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +74,7 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
                                         "isUpdate" to true
                                 ))
 
-                                deviceList = response?.userDevices
+                                deviceList = response.userDevices!!
                                 if (deviceList.isNullOrEmpty()) {
                                     view?.findNavController()?.navigateUp()
                                     return
@@ -106,7 +104,7 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
                 progressLoadDevices.visibility = View.GONE
                 deviceList = ArrayList(0)
-                deviceList = response?.userDevices
+                deviceList = response?.userDevices!!
                 if (deviceList.isNullOrEmpty()) {
                     setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
                             "isUpdate" to true
