@@ -319,6 +319,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         if (savedAddressResponse?.addresses.isNullOrEmpty()) {
             getSavedAddresses()
         }
+        else{
+            if (cellphoneNumber?.text.toString().isEmpty())
+                cellphoneNumber.setText(savedAddressResponse?.primaryContactNo)
+        }
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let { context ->
@@ -652,7 +656,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             titleTextView?.setOnClickListener {
                 resetOtherDeliveringTitle(it.tag as Int)
-                selectedDeliveryAddressType = (it as TextView).text as String
+                selectedDeliveryAddressType = (it as TextView).text as? String
                 deliveringAddressTypesErrorMsg.visibility = View.GONE
                 // change background of selected textView
                 it.background =
