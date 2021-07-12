@@ -14,7 +14,7 @@
         tools:layout="@layout/fragment_my_preferences" >
         <action
             android:id="@+id/action_myPreferencesFragment_to_unlinkDeviceBottomSheetFragment"
-            app:destination="@id/unlinkDeviceBottomSheetFragment" />
+            app:destination="@id/deletePrimaryDeviceBottomSheetFragment" />
 
         <action
             android:id="@+id/action_myPreferencesFragment_to_navigation"
@@ -25,16 +25,36 @@
     </fragment>
 
     <dialog
-        android:id="@+id/unlinkDeviceBottomSheetFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.UnlinkDeviceBottomSheetFragment"
-        android:label="UnlinkDeviceBottomSheetFragment" />
+        android:id="@+id/deletePrimaryDeviceBottomSheetFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.UnlinkPrimaryDeviceBottomSheetFragment"
+        android:label="deletePrimaryDeviceBottomSheetFragment">
+        <action
+            android:id="@+id/action_to_selectPrimaryDeviceFragment"
+            app:destination="@id/selectPrimaryDeviceFragment" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/makePrimaryOrDeleteDeviceBottomSheetFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MakePrimaryOrUnlinkDeviceBottomSheetFragment"
+        android:label="makePrimaryOrDeleteDeviceBottomSheetFragment" />
+
     <fragment
         android:id="@+id/viewAllLinkedDevicesFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.ViewAllLinkedDevicesFragment"
         android:label="fragment_view_all_linked_devices"
         tools:layout="@layout/fragment_view_all_linked_devices" >
         <action
-            android:id="@+id/action_viewAllLinkedDevicesFragment_to_unlinkDeviceBottomSheetFragment"
-            app:destination="@id/unlinkDeviceBottomSheetFragment" />
+            android:id="@+id/action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment"
+            app:destination="@id/deletePrimaryDeviceBottomSheetFragment" />
+        <action
+            android:id="@+id/action_viewAllLinkedDevicesFragment_to_makePrimaryOrDeleteDeviceBottomSheetFragment"
+            app:destination="@id/makePrimaryOrDeleteDeviceBottomSheetFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/selectPrimaryDeviceFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.SelectPrimaryDeviceFragment"
+        android:label="SelectPrimaryDevice"
+        tools:layout="@layout/fragment_select_primary_device" >
     </fragment>
 </navigation>
