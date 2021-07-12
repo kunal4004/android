@@ -28,8 +28,13 @@ import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_A_NEW_ADDRESS_REQUEST_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_NEW_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UPDATE_SAVED_ADDRESS_REQUEST_KEY
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter.Companion.EDIT_ADDRESS_POSITION_KEY
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter.Companion.EDIT_SAVED_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
 import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressComponentEnum.*
@@ -43,7 +48,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
-import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -94,24 +98,24 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
         val bundle = arguments?.getBundle("bundle")
         bundle?.apply {
-            if (containsKey("editSavedAddressResponse")) {
+            if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
-                val editSavedAddress = getString("editSavedAddressResponse")
+                val editSavedAddress = getString(EDIT_SAVED_ADDRESS_RESPONSE_KEY)
                 if (!editSavedAddress.isNullOrEmpty() && !editSavedAddress.equals("null", true)) {
                     savedAddressResponse = (Utils.jsonStringToObject(
                         editSavedAddress,
                         SavedAddressResponse::class.java
                     ) as? SavedAddressResponse)
-                    savedAddress = savedAddressResponse?.addresses?.get(getInt("position"))
+                    savedAddress = savedAddressResponse?.addresses?.get(getInt(EDIT_ADDRESS_POSITION_KEY))
                     selectedAddressId = savedAddress?.id.toString()
                     setHasOptionsMenu(true)
                     isShimmerRequired = false
                 }
-            } else if (containsKey("addNewAddress")) {
+            } else if (containsKey(ADD_NEW_ADDRESS_KEY)) {
                 //Add new Address from delivery.
-                isAddNewAddress = getBoolean("addNewAddress")
+                isAddNewAddress = getBoolean(ADD_NEW_ADDRESS_KEY)
                 savedAddressResponse = (Utils.jsonStringToObject(
-                    getString("savedAddressResponse"),
+                    getString(SAVED_ADDRESS_RESPONSE_KEY),
                     SavedAddressResponse::class.java
                 ) as? SavedAddressResponse)
             }
@@ -136,7 +140,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             selectProvinceLayout,
             postalCode,
             recipientName,
-            cellphoneNumber
+            cellphoneNumberEditText
         )
         setupViewModel()
         init()
@@ -218,7 +222,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
         }
         recipientName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        cellphoneNumber?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        cellphoneNumberEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
     }
 
     private fun setUpShimmer() {
@@ -320,8 +324,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             getSavedAddresses()
         }
         else{
-            if (cellphoneNumber?.text.toString().isEmpty())
-                cellphoneNumber.setText(savedAddressResponse?.primaryContactNo)
+            if (cellphoneNumberEditText?.text.toString().isEmpty())
+                cellphoneNumberEditText.setText(savedAddressResponse?.primaryContactNo)
         }
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
@@ -384,8 +388,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         savedAddressResponse = mockSavedAddressResponse
                     } else
                         savedAddressResponse = it?.data as? SavedAddressResponse
-                    if (cellphoneNumber?.text.toString().isEmpty())
-                        cellphoneNumber.setText(savedAddressResponse?.primaryContactNo)
+                    if (cellphoneNumberEditText?.text.toString().isEmpty())
+                        cellphoneNumberEditText.setText(savedAddressResponse?.primaryContactNo)
                 }
                 ResponseStatus.LOADING -> {
 
@@ -813,8 +817,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onSaveAddressClicked() {
-        if (cellphoneNumber?.text.toString().trim().isNotEmpty()
-            && cellphoneNumber?.text.toString().trim().length < 10
+        if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
+            && cellphoneNumberEditText?.text.toString().trim().length < 10
         ) {
             showErrorPhoneNumber()
         }
@@ -824,9 +828,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 .isNotEmpty() && provinceAutocompleteEditText?.text.toString().trim()
                 .isNotEmpty() && postalCode?.text.toString().trim()
                 .isNotEmpty() && recipientName?.text.toString().trim()
-                .isNotEmpty() && cellphoneNumber?.text.toString().trim()
+                .isNotEmpty() && cellphoneNumberEditText?.text.toString().trim()
                 .isNotEmpty() && selectedDeliveryAddressType != null
-            && cellphoneNumber?.text.toString().trim().length == 10
+            && cellphoneNumberEditText?.text.toString().trim().length == 10
         ) {
             if (isNickNameExist())
                 return
@@ -892,7 +896,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             autoCompleteTextView?.text.toString().trim(),
             unitComplexFloorEditText?.text.toString().trim(),
             postalCode?.text.toString().trim(),
-            cellphoneNumber?.text.toString().trim(),
+            cellphoneNumberEditText?.text.toString().trim(),
             "",
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.region else savedAddress?.region ?: "",
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.suburbId else savedAddress?.suburbId ?: "",
@@ -920,7 +924,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             )
                         }
                         val bundle = Bundle()
-                        bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
+                        bundle.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddressResponse))
                         setFragmentResult(UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundle)
                         navController?.navigateUp()
                         selectedAddressId = ""
@@ -1003,7 +1007,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             R.id.recipientName -> {
                 recipientNameErrorMsg?.visibility = visible
             }
-            R.id.cellphoneNumber -> {
+            R.id.cellphoneNumberEditText -> {
                 cellphoneNumberErrorMsg?.visibility = visible
                 cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
             }

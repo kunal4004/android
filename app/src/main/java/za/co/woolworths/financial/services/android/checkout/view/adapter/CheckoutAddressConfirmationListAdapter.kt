@@ -26,6 +26,11 @@ class CheckoutAddressConfirmationListAdapter(
 
     var checkedItemPosition = -1
 
+    companion object{
+       const val EDIT_SAVED_ADDRESS_RESPONSE_KEY = "editSavedAddressResponse"
+       const val EDIT_ADDRESS_POSITION_KEY = "position"
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -85,8 +90,8 @@ class CheckoutAddressConfirmationListAdapter(
                 }
                 editAddressImageView.setOnClickListener {
                     val bundle = Bundle()
-                    bundle.putString("editSavedAddressResponse", Utils.toJson(savedAddress))
-                    bundle.putInt("position", position)
+                    bundle.putString(EDIT_SAVED_ADDRESS_RESPONSE_KEY, Utils.toJson(savedAddress))
+                    bundle.putInt(EDIT_ADDRESS_POSITION_KEY, position)
                     navController?.navigate(
                         R.id.CheckoutAddAddressNewUserFragment,
                         bundleOf("bundle" to bundle)

@@ -72,7 +72,7 @@
             app:layout_constraintTop_toBottomOf="@id/recipientNameErrorMsg" />
 
         <EditText
-            android:id="@+id/cellphoneNumber"
+            android:id="@+id/cellphoneNumberEditText"
             style="@style/credi_card_delivery_edittext_style"
             android:contentDescription="@string/cd_ccd_txtcellphonenumber"
             android:inputType="number"
@@ -92,7 +92,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/cellphoneNumber" />
+            app:layout_constraintTop_toBottomOf="@id/cellphoneNumberEditText" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"

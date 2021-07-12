@@ -46,6 +46,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
         const val DELETE_SAVED_ADDRESS_REQUEST_KEY = "deleteSavedAddress"
         const val ADD_A_NEW_ADDRESS_REQUEST_KEY = "addNewAddress"
+        const val ADD_NEW_ADDRESS_KEY = "addNewAddress"
+        const val SAVED_ADDRESS_KEY = "savedAddress"
+        const val SAVED_ADDRESS_RESPONSE_KEY = "savedAddressResponse"
     }
 
     override fun onCreateView(
@@ -106,8 +109,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun navigateToAddAddress() {
         val bundle = Bundle()
-        bundle.putBoolean("addNewAddress", true)
-        bundle.putString("savedAddressResponse", Utils.toJson(savedAddress))
+        bundle.putBoolean(ADD_NEW_ADDRESS_KEY, true)
+        bundle.putString(SAVED_ADDRESS_RESPONSE_KEY, Utils.toJson(savedAddress))
         navController?.navigate(
             R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
             bundleOf("bundle" to bundle)
@@ -129,8 +132,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun updateSavedAddress(bundle: Bundle?) {
         bundle?.apply {
-            if (containsKey("savedAddress")) {
-                val addressString = getString("savedAddress")
+            if (containsKey(SAVED_ADDRESS_KEY)) {
+                val addressString = getString(SAVED_ADDRESS_KEY)
                 if (!addressString.isNullOrEmpty() && !addressString.equals("null", true))
                     savedAddress = (Utils.jsonStringToObject(
                         addressString,
