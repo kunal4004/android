@@ -1047,45 +1047,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         ) {
                             updateStockAvailability(true)
                             reloadFragment()
-                        }
-                        addItemToCart()
-                    }
-                    REQUEST_SUBURB_CHANGE_FOR_LIQUOR -> {
-
-                        updateStockAvailabilityLocation()
-
-                        Utils.getPreferredDeliveryLocation()?.let {
-                            if (!this.productDetails?.productType.equals(
-                                    getString(R.string.food_product_type),
-                                    ignoreCase = true
-                                ) && it.storePickup
-                            ) {
-                                storeIdForInventory = ""
-                                clearStockAvailability()
-                                showProductUnavailable()
-                                showProductNotAvailableForCollection()
-                                reloadFragment()
-                                return
-                            }
-                        }
-
-                        if (Utils.retrieveStoreId(productDetails?.fulfillmentType)
-                                .isNullOrEmpty()
-                        ) {
-                            storeIdForInventory = ""
-                            clearStockAvailability()
-                            showProductUnavailable()
-                            reloadFragment()
-                            return
-                        }
-
-                        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType)
-                                .equals(storeIdForInventory, ignoreCase = true)
-                        ) {
-                            updateStockAvailability(true)
-                            reloadFragment()
+                            addItemToCart()
                         }
                     }
+
                 }
             }
             SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
