@@ -40,9 +40,9 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         super.onCreate(savedInstanceState)
 
         arguments?.getSerializable(DEVICE_LIST)?.let { list ->
-            if (list is ArrayList<*> && list?.get(0) is UserDevice) {
+            if (list is ArrayList<*> && list[0] is UserDevice) {
                 deviceList = list as ArrayList<UserDevice>
-                System.err.println("TEST select: "+ deviceList?.size)
+                System.err.println("TEST select: "+ deviceList.size)
             }
         }
     }
@@ -147,8 +147,10 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         }
         context?.let {
             selectPrimaryDeviceRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
-            selectPrimaryDeviceAdapter = SelectPrimaryDeviceAdapter(it, this)
-            selectPrimaryDeviceAdapter?.setDeviceList(deviceList)
+            selectPrimaryDeviceAdapter = SelectPrimaryDeviceAdapter(
+                it,
+                deviceList.filter { it.primarydDevice != true } as ArrayList<UserDevice>,
+                this)
         }
         selectPrimaryDeviceRecyclerView.adapter = selectPrimaryDeviceAdapter
     }
