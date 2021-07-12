@@ -42,7 +42,6 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         arguments?.getSerializable(DEVICE_LIST)?.let { list ->
             if (list is ArrayList<*> && list[0] is UserDevice) {
                 deviceList = list as ArrayList<UserDevice>
-                System.err.println("TEST select: "+ deviceList.size)
             }
         }
     }
@@ -169,12 +168,10 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
 
                 if(v.deviceCheckbox.isChecked) {
                     val userSelectedDevice = v.getTag(R.id.selectPrimaryDeviceConstraintLayout) as UserDevice
-                    System.err.println("TEST: selectPrimaryDeviceConstraintLayout " + userSelectedDevice.deviceName)
                 }
             }
             R.id.changePrimaryDeviceButton -> {
                 val userSelectedDevice = v.getTag(R.id.selectPrimaryDeviceConstraintLayout) as UserDevice
-                System.err.println("TEST: changePrimaryDeviceButton " + userSelectedDevice.deviceName)
             }
         }
     }
