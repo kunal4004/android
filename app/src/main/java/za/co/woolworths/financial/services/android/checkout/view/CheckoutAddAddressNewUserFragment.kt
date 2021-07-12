@@ -106,7 +106,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         editSavedAddress,
                         SavedAddressResponse::class.java
                     ) as? SavedAddressResponse)
-                    savedAddress = savedAddressResponse?.addresses?.get(getInt(EDIT_ADDRESS_POSITION_KEY))
+                    savedAddress =
+                        savedAddressResponse?.addresses?.get(getInt(EDIT_ADDRESS_POSITION_KEY))
                     selectedAddressId = savedAddress?.id.toString()
                     setHasOptionsMenu(true)
                     isShimmerRequired = false
@@ -322,10 +323,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
         if (savedAddressResponse?.addresses.isNullOrEmpty()) {
             getSavedAddresses()
-        }
-        else{
-            if (cellphoneNumberEditText?.text.toString().isEmpty())
-                cellphoneNumberEditText.setText(savedAddressResponse?.primaryContactNo)
+        } else if (cellphoneNumberEditText?.text.toString().isEmpty()) {
+            cellphoneNumberEditText.setText(savedAddressResponse?.primaryContactNo)
         }
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
@@ -848,8 +847,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                 bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
                                 setFragmentResult(ADD_A_NEW_ADDRESS_REQUEST_KEY, bundle)
                                 navController?.navigateUp()
-                            }
-                            else
+                            } else
                                 navigateToAddressConfirmation()
                         }
                         ResponseStatus.LOADING -> {
@@ -898,15 +896,20 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             postalCode?.text.toString().trim(),
             cellphoneNumberEditText?.text.toString().trim(),
             "",
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.region else savedAddress?.region ?: "",
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.suburbId else savedAddress?.suburbId ?: "",
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.city else savedAddress?.city ?: "",
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.region else savedAddress?.region
+                ?: "",
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.suburbId else savedAddress?.suburbId
+                ?: "",
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.city else savedAddress?.city
+                ?: "",
             suburbEditText?.text.toString(),
             selectedDeliveryAddressType.toString(),
             "",
             false,
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.latitude else savedAddress?.latitude ?: 0.0,
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.longitude else savedAddress?.longitude ?: 0.0
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.latitude else savedAddress?.latitude
+                ?: 0.0,
+            if (selectedAddressId.isNullOrEmpty()) selectedAddress.longitude else savedAddress?.longitude
+                ?: 0.0
         )
     }
 
@@ -917,12 +920,13 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     if (savedAddressResponse != null && it?.data != null) {
-                        arguments?.getBundle("bundle")?.getInt("position")?.let { it1 ->
-                            savedAddressResponse?.addresses?.removeAt(it1)
-                            savedAddressResponse?.addresses?.add(
-                                it1, (it.data as? AddAddressResponse)?.address
-                            )
-                        }
+                        arguments?.getBundle("bundle")?.getInt(EDIT_ADDRESS_POSITION_KEY)
+                            ?.let { it1 ->
+                                savedAddressResponse?.addresses?.removeAt(it1)
+                                savedAddressResponse?.addresses?.add(
+                                    it1, (it.data as? AddAddressResponse)?.address
+                                )
+                            }
                         val bundle = Bundle()
                         bundle.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddressResponse))
                         setFragmentResult(UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundle)
