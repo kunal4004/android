@@ -1047,7 +1047,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         ) {
                             updateStockAvailability(true)
                             reloadFragment()
-                            addItemToCart()
                         }
                     }
 
