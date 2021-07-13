@@ -125,13 +125,14 @@ class EditDeliveryLocationFragment : Fragment(),
             onProvinceSelected(selectedProvince)
             // Liquor is only available with Delivery
             disableClickAndCollect()
-            // If there is only one region in config
-            // change background of province to grey and disable tap
+
             initLiquorUI()
         }
     }
 
     private fun initLiquorUI() {
+        // If there is only one region in config
+        // change background of province to grey
         context?.let {
             when (WoolworthsApplication.getLiquor()?.regions?.size) {
                 1 -> {
