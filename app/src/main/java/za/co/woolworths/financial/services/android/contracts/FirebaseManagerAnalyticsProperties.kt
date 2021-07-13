@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.contracts
 
 open class FirebaseManagerAnalyticsProperties {
     companion object {
-
         const val WTODAYMENU = "wtodaymenu"
         const val SHOPMENU: String = "shopmenu"
         const val MYCARTMENU: String = "mycartmenu"
@@ -365,8 +364,12 @@ open class FirebaseManagerAnalyticsProperties {
             const val linkDeviceConfirmed = "OTP entered and confirmed to link device"
             const val linkDeviceViewList = "View linked devices"
             const val linkDeviceDelete = "Device unlinked / deleted"
+        }
+    }
 
-
+    class PropertyValues {
+        companion object {
+            const val notApplicable: String = "N/A"
         }
     }
 
