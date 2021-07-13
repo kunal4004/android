@@ -69,7 +69,6 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
             selectPrimaryDeviceRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
             selectPrimaryDeviceRecyclerView.setDivider(R.drawable.recycler_view_divider_light_gray_1dp)
             selectPrimaryDeviceAdapter = SelectPrimaryDeviceAdapter(
-                it,
                 deviceList.filter { it.primarydDevice != true } as ArrayList<UserDevice>,
                 this)
         }
