@@ -27,6 +27,9 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.IS_LIQUOR
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_PROVINCE
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SUBURB
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
@@ -607,12 +610,12 @@ class EditDeliveryLocationFragment : Fragment(),
         bundle?.apply {
             putString(DELIVERY_TYPE, deliveryType.name)
             putString(
-                "SUBURB",
+                KEY_ARGS_SUBURB,
                 Utils.toJson(if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)
             )
-            putString("PROVINCE", Utils.toJson(selectedProvince))
+            putString(KEY_ARGS_PROVINCE, Utils.toJson(selectedProvince))
             putString(
-                "UnSellableCommerceItems",
+                KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS,
                 Utils.toJson((if (deliveryType == DeliveryType.DELIVERY) validatedSuburbProductsForDelivery else validatedSuburbProductsForStore)?.unSellableCommerceItems)
             )
         }
