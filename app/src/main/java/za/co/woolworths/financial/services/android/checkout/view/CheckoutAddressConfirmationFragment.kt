@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +29,6 @@ import za.co.woolworths.financial.services.android.ui.activities.click_and_colle
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
-import java.io.IOException
 
 
 /**
@@ -47,6 +45,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
         const val DELETE_SAVED_ADDRESS_REQUEST_KEY = "deleteSavedAddress"
+        const val ADD_A_NEW_ADDRESS_REQUEST_KEY = "addNewAddress"
+        const val ADD_NEW_ADDRESS_KEY = "addNewAddress"
+        const val SAVED_ADDRESS_KEY = "savedAddress"
+        const val SAVED_ADDRESS_RESPONSE_KEY = "savedAddressResponse"
     }
 
     override fun onCreateView(
@@ -82,11 +84,13 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 deliveryTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
                 collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
                 addressConfirmationDelivery.visibility = View.VISIBLE
+                addressConfirmationClicknCollect.visibility = View.GONE
             }
             R.id.collectionTab -> {
                 collectionTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
                 deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
                 addressConfirmationDelivery.visibility = View.GONE
+                addressConfirmationClicknCollect.visibility = View.VISIBLE
             }
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
                 navigateToAddAddress()
@@ -105,7 +109,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun navigateToAddAddress() {
         val bundle = Bundle()
-        bundle.putBoolean("addNewAddress", true)
+        bundle.putBoolean(ADD_NEW_ADDRESS_KEY, true)
+        bundle.putString(SAVED_ADDRESS_RESPONSE_KEY, Utils.toJson(savedAddress))
         navController?.navigate(
             R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
             bundleOf("bundle" to bundle)
@@ -116,18 +121,19 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
-            checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
         }
         setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
-            checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
+        }
+        setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
+            updateSavedAddress(bundle)
         }
     }
 
     private fun updateSavedAddress(bundle: Bundle?) {
         bundle?.apply {
-            if (containsKey("savedAddress")) {
-                val addressString = getString("savedAddress")
+            if (containsKey(SAVED_ADDRESS_KEY)) {
+                val addressString = getString(SAVED_ADDRESS_KEY)
                 if (!addressString.isNullOrEmpty() && !addressString.equals("null", true))
                     savedAddress = (Utils.jsonStringToObject(
                         addressString,
@@ -135,6 +141,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     ) as? SavedAddressResponse)
             }
         }
+        checkoutAddressConfirmationListAdapter?.setData(savedAddress)
+        checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
     }
 
     private fun initView() {
@@ -229,17 +237,17 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
 
-                        val jsonFileString = Utils.getJsonDataFromAsset(
+                        /*val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/unsellableItems.json"
                         )
                         var mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
                             jsonFileString,
                             object : TypeToken<ChangeAddressResponse>() {}.type
-                        )
+                        )*/
 
 
-                        val changeAddressResponse = mockChangeAddressResponse //it?.data
+                        val changeAddressResponse =  it?.data as? ChangeAddressResponse
                         if (changeAddressResponse != null && changeAddressResponse?.deliverable) {
                             if (changeAddressResponse?.unSellableCommerceItems?.size!! > 0) {
                                 navigateToUnsellableItemsFragment(

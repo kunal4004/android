@@ -146,4 +146,5 @@
     <color name="color_accent">#4285F4</color>
     <color name="color_cccccc">#CCCCCC</color>
     <color name="color_444444">#444444</color>
+    <color name="search_store_color">#999999</color>
 </resources>

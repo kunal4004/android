@@ -57,4 +57,12 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/fifty_two_dp" />
 
+    <include
+        android:id="@+id/addressConfirmationClicknCollect"
+        layout="@layout/checkout_address_confirmation_click_and_collect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/fifty_two_dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
