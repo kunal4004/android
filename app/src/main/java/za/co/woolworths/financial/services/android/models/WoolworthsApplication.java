@@ -91,8 +91,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Nullable
     private static PayMyAccount mPayMyAccount;
     private static InAppChat inAppChat;
-    private static Boolean isProductItemForLiquorInvetoryPending = false;
-    private static ProductList productItemForLiquorInvetory = null;
+    private static Boolean isProductItemForLiquorInventoryPending = false;
+    private static ProductList productItemForLiquorInventory = null;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;
@@ -705,19 +705,19 @@ public class WoolworthsApplication extends Application implements Application.Ac
     }
 
     public static void setProductItemForInventory(ProductList productList) {
-        productItemForLiquorInvetory = productList;
+        productItemForLiquorInventory = productList;
     }
 
     public static void setCallForLiquorInventory(Boolean isPending) {
-        isProductItemForLiquorInvetoryPending = isPending;
+        isProductItemForLiquorInventoryPending = isPending;
     }
 
     public static Boolean isProductItemForLiquorInvetoryPending() {
-        return isProductItemForLiquorInvetoryPending;
+        return isProductItemForLiquorInventoryPending;
     }
 
     public static ProductList getProductItemForInventory() {
-        return productItemForLiquorInvetory;
+        return productItemForLiquorInventory;
     }
 
     public static void setCartCheckoutLinkWithParams(String cartCheckoutLinkWithParams) {

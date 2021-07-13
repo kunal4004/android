@@ -352,7 +352,7 @@
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <TextView
-        android:id="@+id/confirmLocation"
+        android:id="@+id/confirmLocationTextView"
         style="@style/call_to_action_text_style"
         android:layout_height="@dimen/fifty_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
@@ -371,7 +371,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/twenty_four_dp"
-        app:layout_constraintBottom_toTopOf="@id/confirmLocation"
+        app:layout_constraintBottom_toTopOf="@id/confirmLocationTextView"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline" />
 

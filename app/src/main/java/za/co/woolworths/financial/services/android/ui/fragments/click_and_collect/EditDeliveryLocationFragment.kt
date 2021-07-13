@@ -102,7 +102,7 @@ class EditDeliveryLocationFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        confirmLocation?.setOnClickListener(this)
+        confirmLocationTextView?.setOnClickListener(this)
         selectProvince?.setOnClickListener(this)
         selectSuburb?.setOnClickListener(this)
         tvSelectedProvince?.setOnClickListener(this)
@@ -179,7 +179,7 @@ class EditDeliveryLocationFragment : Fragment(),
     override fun onClick(v: View?) {
         if (progressGetProvinces.visibility == View.VISIBLE || progressGetSuburb.visibility == View.VISIBLE) return
         when (v?.id) {
-            R.id.confirmLocation -> {
+            R.id.confirmLocationTextView -> {
                 if (selectedSuburb != null || selectedStore != null) {
                     when (deliveryType) {
                         DeliveryType.STORE_PICKUP -> {
@@ -390,7 +390,7 @@ class EditDeliveryLocationFragment : Fragment(),
             bindString(if (deliveryType == DeliveryType.STORE_PICKUP) R.string.select_your_collection_store else R.string.select_your_delivery_location)
         maxItemsInfoMessageLayout?.visibility =
             if (deliveryType == DeliveryType.STORE_PICKUP) View.VISIBLE else View.GONE
-        confirmLocation.text =
+        confirmLocationTextView.text =
             bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.confirm_suburb else R.string.confirm_store)
         when (type) {
             DeliveryType.DELIVERY -> {
@@ -436,10 +436,10 @@ class EditDeliveryLocationFragment : Fragment(),
 
     override fun validateConfirmLocationButtonAvailability() {
         if (deliveryType == DeliveryType.DELIVERY)
-            confirmLocation?.isEnabled =
+            confirmLocationTextView?.isEnabled =
                 (selectedProvince != null && selectedSuburb != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE && !tvSelectedSuburb.text.isNullOrEmpty())
         else
-            confirmLocation?.isEnabled =
+            confirmLocationTextView?.isEnabled =
                 (selectedProvince != null && selectedStore != null && progressGetSuburb?.visibility == View.INVISIBLE && progressGetProvinces?.visibility == View.INVISIBLE && !tvSelectedSuburb.text.isNullOrEmpty())
     }
 
