@@ -3,22 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_background"
+    android:background="@color/white"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.SelectPrimaryDeviceFragment">
-    
-    <ProgressBar
-        android:id="@+id/progressLoadDevices"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="@dimen/twenty_four_dp"
-        android:layout_height="@dimen/twenty_four_dp"
-        android:layout_centerVertical="true"
-        android:elevation="@dimen/two_dp"
-        android:indeterminateTint="@color/black"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/removeDeviceTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:text="@string/remove_device_title"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/removeDeviceDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:lineSpacingExtra="@dimen/eight_sp"
+        android:text="@string/remove_device_desc"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/removeDeviceTitle" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/selectPrimaryDeviceRecyclerView"
@@ -26,9 +44,12 @@
         android:layout_height="0dp"
         android:paddingTop="@dimen/fifteen_dp"
         android:paddingBottom="@dimen/fifteen_dp"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/twenty_six_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/removeDeviceDescription"
         app:layout_constraintBottom_toTopOf="@id/changePrimaryDeviceButton"/>
 
     <Button

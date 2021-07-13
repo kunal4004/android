@@ -46,22 +46,29 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        setFragmentResultListener(DELETE_DEVICE) { requestKey, bundle ->
-
+        setFragmentResultListener(DELETE_DEVICE_NO_OTP) { requestKey, bundle ->
             val isUnlinkSuccess = bundle.getBoolean(KEY_BOOLEAN_UNLINK_DEVICE)
             if (isUnlinkSuccess) {
                 unlinkDevice()
             }
         }
 
-        setFragmentResultListener(CHOOSE_PRIMARY_DEVICE) { requestKey, bundle ->
+        setFragmentResultListener(DELETE_DEVICE_OTP) { requestKey, bundle ->
+            val navController = view?.findNavController()
+            navController?.navigate(R.id.action_to_delete_primary_device_otp, bundleOf(
+                PRIMARY_DEVICE to deviceIdentityId))
+        }
 
-            System.err.println("TEST fragmentresultlistener")
+        setFragmentResultListener(CHOOSE_PRIMARY_DEVICE_FRAGMENT) { requestKey, bundle ->
             val navController = view?.findNavController()
             navController?.navigate(R.id.action_to_selectPrimaryDeviceFragment,
                 bundleOf(
-                    SelectPrimaryDeviceFragment.DEVICE_LIST to deviceList
+                    DEVICE_LIST to deviceList
                 ))
+        }
+
+
+        setFragmentResultListener(CHANGE_TO_PRIMARY_DEVICE_OTP) { requestKey, bundle ->
         }
 
         // Inflate the layout for this fragment
@@ -163,9 +170,13 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
     companion object {
         const val DEVICE_LIST = "deviceList"
-        const val DELETE_DEVICE = "deleteDevice"
+        const val DEVICE_NAME = "deviceName"
+        const val DELETE_DEVICE_OTP = "deleteDeviceOTP"
+        const val DELETE_DEVICE_NO_OTP = "deleteDevice"
         const val KEY_BOOLEAN_UNLINK_DEVICE = "isUnlinkSuccess"
-        const val CHOOSE_PRIMARY_DEVICE = "choosePrimaryDevice"
+        const val CHOOSE_PRIMARY_DEVICE_FRAGMENT = "choosePrimaryDeviceFragment"
+        const val CHANGE_TO_PRIMARY_DEVICE_OTP = "changeToPrimaryDeviceOTP"
+        const val PRIMARY_DEVICE = "primaryDevice"
     }
 
     override fun onClick(v: View?) {
@@ -173,19 +184,21 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         val navController = view?.findNavController()
         val userDevice = v?.getTag(v.id) as UserDevice
 
-        if (TextUtils.isEmpty(userDevice?.deviceIdentityId.toString())) {
+        if (TextUtils.isEmpty(userDevice.deviceIdentityId.toString())) {
             return
         }
-        deviceIdentityId = userDevice?.deviceIdentityId?.toString() ?: ""
+        deviceIdentityId = userDevice.deviceIdentityId?.toString() ?: ""
 
-        when (v?.id) {
+        when (v.id) {
             R.id.viewAllDeviceDeleteImageView -> {
-                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment)
+                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment, bundleOf(
+                    DEVICE_LIST to deviceList
+                ))
             }
             R.id.viewAllDeviceEditImageView -> {
-                val bundle = Bundle()
-                bundle.putString("DEVICE_NAME", userDevice.deviceName)
-                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_makePrimaryOrDeleteDeviceBottomSheetFragment, bundle)
+                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_secondaryDeviceBottomSheetFragment, bundleOf(
+                    DEVICE_NAME to userDevice.deviceName
+                ))
             }
         }
     }

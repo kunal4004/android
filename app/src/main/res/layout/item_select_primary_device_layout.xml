@@ -8,13 +8,14 @@
     android:layout_marginBottom="@dimen/fifteen_dp"
     android:background="@color/white">
 
-    <CheckBox
-        android:id="@+id/deviceCheckbox"
-        android:layout_width="@dimen/thirty_dp"
-        android:layout_height="@dimen/thirty_dp"
+    <RadioButton
+        android:id="@+id/deviceRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:checked="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/deviceNameTextView" />
+        app:layout_constraintTop_toTopOf="@id/deviceNameTextView"
+        app:layout_constraintBottom_toBottomOf="@id/deviceNameTextView" />
 
     <TextView
         android:id="@+id/deviceNameTextView"
@@ -22,10 +23,10 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/myriad_pro_regular"
         android:paddingStart="@dimen/fifteen_dp"
-        android:paddingTop="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
-        app:layout_constraintStart_toEndOf="@id/deviceCheckbox"
+        app:layout_constraintStart_toEndOf="@id/deviceRadioButton"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Matt's iPhone" />
 
@@ -35,10 +36,10 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/myriad_pro_regular"
         android:paddingStart="@dimen/fifteen_dp"
-        android:paddingTop="@dimen/ten_dp"
+        android:paddingTop="@dimen/five_dp"
         android:textColor="@color/black_50"
         android:textSize="@dimen/twelve_sp"
-        app:layout_constraintStart_toEndOf="@id/deviceCheckbox"
+        app:layout_constraintStart_toEndOf="@id/deviceRadioButton"
         app:layout_constraintTop_toBottomOf="@id/deviceNameTextView"
         tools:text="Linked 12/01/2021" />
 
@@ -51,25 +52,9 @@
         android:paddingTop="@dimen/three_dp"
         android:textColor="@color/black_50"
         android:textSize="@dimen/twelve_sp"
-        app:layout_constraintStart_toEndOf="@id/deviceCheckbox"
+        android:layout_marginBottom="@dimen/fifteen_dp"
+        app:layout_constraintStart_toEndOf="@id/deviceRadioButton"
         app:layout_constraintTop_toBottomOf="@id/deviceSubtitleTextView"
         tools:text="Linked 12/01/2021" />
 
-    <ImageView
-        android:id="@+id/deviceDeleteImageView"
-        android:layout_width="@dimen/twenty_four_dp"
-        android:layout_height="@dimen/twenty_four_dp"
-        android:layout_margin="@dimen/twenty_four_dp"
-        android:src="@drawable/ic_delete_grey"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/deviceNameTextView" />
-
-    <View
-        android:id="@+id/devicesTitleSeparator2"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/one_dp"
-        android:layout_marginTop="@dimen/fifteen_dp"
-        android:background="@color/color_separator_light_grey"
-        app:layout_constraintTop_toBottomOf="@id/deviceLocationTextView"
-        app:layout_goneMarginTop="0dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1984,6 +1984,8 @@
     <string name="link_device_error_desc">Try activating your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
     <string name="unlink_device_change_to_primary">Change to Primary Device</string>
     <string name="unlink_device_delete">Delete Device</string>
+    <string name="remove_device_title">Please select a new primary device to link to your profile.</string>
+    <string name="remove_device_desc">To remove this device, you need to select a new primary device.</string>
 
     <!--  Link Device Confirmation  -->
     <string name="link_device_confirm_title">Please confirm this is your primary device.</string>
