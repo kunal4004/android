@@ -266,16 +266,16 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
 
 
     private fun askToEnableLocationSettings() {
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE,
-            hashMapOf(
-                Pair(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated
-                )
-            )
-        )
         activity?.apply {
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE,
+                hashMapOf(
+                    Pair(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated
+                    )
+                ), this
+            )
             val locationRequest = LocationRequest.create()?.apply {
                 interval = 100
                 fastestInterval = 500
@@ -642,7 +642,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                         AppConstant.HTTP_OK -> {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE,
                                 hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)))
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)), activity)
 
                             setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
                                 "isUpdate" to true
