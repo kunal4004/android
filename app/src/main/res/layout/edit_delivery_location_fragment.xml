@@ -207,7 +207,7 @@
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@+id/foodDeliveryDateMessage">
+        app:layout_constraintTop_toBottomOf="@+id/txtFoodDeliveryDateMessage">
 
         <RelativeLayout
             android:id="@+id/earliestDateTitleLayout"
@@ -288,7 +288,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/foodDeliveryDateMessage"
+        android:id="@+id/txtFoodDeliveryDateMessage"
         style="@style/myriad_pro_regular"
         android:layout_marginTop="@dimen/fourteen_dp"
         android:lineSpacingMultiplier="1.40"
@@ -311,7 +311,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/foodDeliveryDateMessage" />
+        app:layout_constraintTop_toBottomOf="@id/txtFoodDeliveryDateMessage" />
 
     <TextView
         android:id="@+id/title"
@@ -334,7 +334,7 @@
         app:layout_constraintTop_toBottomOf="@id/delivery" />
 
     <TextView
-        android:id="@+id/newFeature"
+        android:id="@+id/txtNewFeature"
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
         android:paddingLeft="@dimen/five_dp"

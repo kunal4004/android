@@ -174,9 +174,9 @@ class EditDeliveryLocationFragment : Fragment(),
     private fun disableClickAndCollect() {
         context?.let {
             txtclickAndCollect?.setTextColor(ContextCompat.getColor(it, R.color.button_disable))
-            newFeature?.setBackgroundColor(ContextCompat.getColor(it, R.color.button_disable))
-            foodDeliveryDateMessage?.visibility = View.VISIBLE
-            foodDeliveryDateMessage?.text = it.getString(R.string.delivery_liquor_description)
+            txtNewFeature?.setBackgroundColor(ContextCompat.getColor(it, R.color.button_disable))
+            txtFoodDeliveryDateMessage?.visibility = View.VISIBLE
+            txtFoodDeliveryDateMessage?.text = it.getString(R.string.delivery_liquor_description)
         }
     }
 
