@@ -207,7 +207,7 @@
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@+id/txtFoodDeliveryDateMessage">
+        app:layout_constraintTop_toBottomOf="@+id/storeClosedMsg">
 
         <RelativeLayout
             android:id="@+id/earliestDateTitleLayout"

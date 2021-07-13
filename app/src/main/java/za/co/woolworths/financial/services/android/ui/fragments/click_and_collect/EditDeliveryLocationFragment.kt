@@ -552,6 +552,7 @@ class EditDeliveryLocationFragment : Fragment(),
                             if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                     }
                 }
+                txtFoodDeliveryDateMessage?.visibility = View.GONE
                 earliestDateTitle?.text =
                     bindString(if (deliveryType == DeliveryType.DELIVERY) R.string.earliest_delivery_date else R.string.earliest_collection_date)
                 deliveryDateLayout?.visibility =
