@@ -46,8 +46,6 @@ class SecondaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.On
                 AnimationUtilExtension.animateViewPushDown(v)
             }
             R.id.changePrimaryDeviceLayout -> {
-                //Do OTP to add this chosen device as primary device
-                System.err.println("TEST: changePrimaryDeviceLayout ")
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)
             }

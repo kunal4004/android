@@ -160,7 +160,6 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
         arguments?.let {
             deviceIdentityId = it.getString(ViewAllLinkedDevicesFragment.PRIMARY_DEVICE, null)
         }
-        System.err.println("TEST: " + deviceIdentityId)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -629,8 +628,6 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
             return
         }
 
-        //Unlink device here
-        System.err.println("TEST: unlink primary device here")
         sendinOTPLayout?.visibility = View.GONE
         unlinkDevice()
     }

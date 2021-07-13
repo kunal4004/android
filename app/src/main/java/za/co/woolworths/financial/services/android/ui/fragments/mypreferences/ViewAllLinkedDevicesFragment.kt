@@ -55,7 +55,6 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
         setFragmentResultListener(DELETE_DEVICE_OTP) { requestKey, bundle ->
             val navController = view?.findNavController()
-            System.err.println("TEST: action_to_delete_primary_device_otp " + deviceIdentityId)
             navController?.navigate(R.id.action_to_delete_primary_device_otp, bundleOf(
                 PRIMARY_DEVICE to deviceIdentityId))
         }
@@ -70,7 +69,6 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
 
         setFragmentResultListener(CHANGE_TO_PRIMARY_DEVICE_OTP) { requestKey, bundle ->
-            System.err.println("TEST: CHANGE_TO_PRIMARY_DEVICE_OTP")
         }
 
         // Inflate the layout for this fragment
