@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelect
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
@@ -1482,7 +1483,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         else -> ""
                     }
                     val message =
-                        "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
+                        bindString(R.string.product_details_out_of_stock, suburbName ?: "")
                     OutOfStockMessageDialogFragment.newInstance(message).show(
                         this@ProductDetailsFragment.childFragmentManager,
                         OutOfStockMessageDialogFragment::class.java.simpleName
