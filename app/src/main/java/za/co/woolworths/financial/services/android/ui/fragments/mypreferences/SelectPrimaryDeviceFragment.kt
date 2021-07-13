@@ -1,14 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -22,7 +20,7 @@ import za.co.woolworths.financial.services.android.ui.extension.setDivider
 class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
 
     private var selectPrimaryDeviceAdapter: SelectPrimaryDeviceAdapter? = null
-    private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
+    private var deviceList: ArrayList<UserDevice> = ArrayList(0)
     private var deviceSelected: UserDevice? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +29,6 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         arguments?.getSerializable(ViewAllLinkedDevicesFragment.DEVICE_LIST)?.let { list ->
             if (list is ArrayList<*> && list[0] is UserDevice) {
                 deviceList = list as ArrayList<UserDevice>
-                System.err.println("TEST select: "+ deviceList?.size)
             }
         }
     }
