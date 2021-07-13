@@ -68,8 +68,10 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         context?.let {
             selectPrimaryDeviceRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
             selectPrimaryDeviceRecyclerView.setDivider(R.drawable.recycler_view_divider_light_gray_1dp)
-            selectPrimaryDeviceAdapter = SelectPrimaryDeviceAdapter(it, this)
-            selectPrimaryDeviceAdapter?.setDeviceList(deviceList)
+            selectPrimaryDeviceAdapter = SelectPrimaryDeviceAdapter(
+                it,
+                deviceList.filter { it.primarydDevice != true } as ArrayList<UserDevice>,
+                this)
         }
         selectPrimaryDeviceRecyclerView.adapter = selectPrimaryDeviceAdapter
     }
@@ -85,8 +87,6 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.changePrimaryDeviceButton -> {
-                //Do OTP to add this selected device as primary device
-                System.err.println("TEST: changePrimaryDeviceButton " + deviceSelected?.deviceName)
                 setFragmentResult(ViewAllLinkedDevicesFragment.CHANGE_TO_PRIMARY_DEVICE_OTP,
                     bundleOf(ViewAllLinkedDevicesFragment.PRIMARY_DEVICE to deviceSelected))
             }
