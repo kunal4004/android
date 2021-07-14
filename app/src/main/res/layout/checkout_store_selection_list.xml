@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/addressSelectionLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:minHeight="@dimen/sixty_four_dp"
+    android:paddingStart="@dimen/ten_dp"
+    android:paddingEnd="@dimen/ten_dp"
+    android:paddingBottom="@dimen/four_dp_"
+    android:layout_marginBottom="@dimen/four_dp_"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <CheckBox
+        android:id="@+id/selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/shopping_list_item_selector"
+        android:clickable="false"
+        app:layout_constraintTop_toBottomOf="@+id/top_guideline"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twelve_dp"
+        android:layout_marginEnd="@dimen/twenty_eight_dp"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/selector"
+        app:layout_constraintTop_toBottomOf="@+id/top__title_guideline"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/subTitle"
+        style="@style/myriad_pro_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twelve_dp"
+        android:layout_marginTop="@dimen/two_dp"
+        android:layout_marginEnd="@dimen/twenty_eight_dp"
+        android:maxLines="2"
+        android:textColor="@color/checkout_delivering_title"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/selector"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/eighteen_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top__title_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/ten_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
