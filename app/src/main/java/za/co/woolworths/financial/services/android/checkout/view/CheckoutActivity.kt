@@ -70,7 +70,7 @@ class CheckoutActivity : AppCompatActivity() {
             graph.startDestination = R.id.CheckoutAddAddressNewUserFragment
         else
             graph.startDestination = R.id.CheckoutAddAddressReturningUserFragment
-        findNavController(R.id.navHostFragment).graph = graph
+        findNavController(R.id.navHostFragment).setGraph(graph, intent?.extras)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

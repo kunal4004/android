@@ -52,7 +52,6 @@ import retrofit2.Call;
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
-import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -81,7 +80,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -106,13 +104,12 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static android.app.Activity.RESULT_OK;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.KEY_ARGS_ORDER_SUMMARY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
-import static za.co.woolworths.financial.services.android.ui.activities.CartActivity.TAG;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
@@ -371,7 +368,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     /*Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
                     getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
                     checkOutActivity.overridePendingTransition(0, 0);*/
-                    startActivity(new Intent(getActivity(), CheckoutActivity.class));
+                    Intent checkoutActivityIntent = new Intent(getContext(), CheckoutActivity.class);
+                    Bundle args = new Bundle();
+                    args.putSerializable(KEY_ARGS_ORDER_SUMMARY, orderSummary);
+                    startActivity(checkoutActivityIntent, args);
                 }
                 break;
             case R.id.orderTotalLayout:

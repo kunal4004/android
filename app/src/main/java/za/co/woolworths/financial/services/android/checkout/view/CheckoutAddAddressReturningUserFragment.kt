@@ -11,6 +11,11 @@ import com.awfs.coordination.R
  * Created by Kunal Uttarwar on 27/05/21.
  */
 class CheckoutAddAddressReturningUserFragment: Fragment() {
+
+    companion object {
+        const val KEY_ARGS_ORDER_SUMMARY = "ORDER_SUMMARY"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
