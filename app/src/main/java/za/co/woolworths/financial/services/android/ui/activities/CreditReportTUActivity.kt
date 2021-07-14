@@ -27,7 +27,7 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
         Utils.updateStatusBarBackground(this, R.color.bg_e6e6e6)
         setUpActionBar()
         setupRecyclerView()
-        register_login_now_btn.setOnClickListener(this)
+        register_login_now_btn?.setOnClickListener(this)
     }
 
     private fun setupRecyclerView() {
@@ -66,7 +66,7 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CREDIT_REPORT_CREDITVIEW_COMPLETE)
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CREDIT_REPORT_CREDITVIEW_COMPLETE, this)
         openBrowserWithUrl(WoolworthsApplication.getCreditView()?.transUnionLink, this)
     }
 }

@@ -413,6 +413,7 @@
         <item name="android:layout_marginStart">@dimen/default_margin</item>
         <item name="android:layout_marginEnd">@dimen/default_margin</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
     </style>
 
 
@@ -422,13 +423,18 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:gravity">center|start</item>
-        <item name="android:lineSpacingExtra">0.2sp</item>
+        <item name="android:lineSpacingExtra">0.12sp</item>
         <item name="WTextView_font">myriadpro_semibold</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:layout_marginTop">18dp</item>
-        <item name="android:layout_marginBottom">18dp</item>
-        <item name="android:layout_marginStart">@dimen/default_margin</item>
-        <item name="android:layout_marginEnd">@dimen/default_margin</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:layout_marginBottom">0dp</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
     </style>
 
@@ -1025,12 +1031,6 @@
         <item name="android:textColor">@color/black_50</item>
     </style>
 
-    <style name="BalanceProtectionInsuranceStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowIsTranslucent">false</item>
-    </style>
-
     <style name="ABSAOnlineBankingToDeviceStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -1283,6 +1283,27 @@
         <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
 
+    <style name="ConfirmStoreStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+    </style>
+
+    <style name="StoreAddressStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="statusBarBackground">@color/black</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+    </style>
+
     <style name="SignInRegisterLinkStyle" parent="android:Theme">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
@@ -1515,6 +1536,16 @@
         <item name="android:layout_centerVertical">true</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:fontFamily">@font/myriad_pro_regular</item>
+    </style>
+
+    <style name="card_item_barcode_number_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/thirty_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/museo_slab_700</item>
+        <item name="android:textColor">@color/card_details_value_color</item>
     </style>
 
     <style name="card_item_semi_bold_text_style" parent="card_item_regular_text_style">
@@ -1763,8 +1794,8 @@
     </style>
 
     <style name="accountPaymentOptionsRootStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">100dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:background">@drawable/ripple_button_background</item>
     </style>
 
@@ -2510,5 +2541,34 @@
     <style name="retryImageViewStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="bpi_menu_item_style"  parent="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Menu">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:fontFamily">@font/futura_medium_ttf</item>
+        <item name="android:background">#FFFFFF</item>
+    </style>
+
+    <style name="BalanceProtectionInsuranceStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+    <style name="LocationPermissionActivityTheme"  parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 </resources>

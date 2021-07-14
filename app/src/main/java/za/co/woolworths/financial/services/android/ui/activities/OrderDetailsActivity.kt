@@ -54,8 +54,8 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
     private fun configureUI() {
         isNavigatedFromMyAccounts = intent.getBooleanExtra(NAVIGATED_FROM_MY_ACCOUNTS, false)
         when (isNavigatedFromMyAccounts){
-            true -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders_DT)
-            false -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Shop_My_Orders_DT)
+            true -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders_DT, this)
+            false -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Shop_My_Orders_DT, this)
         }
         intent.getStringExtra("order")?.apply {
             order = Utils.jsonStringToObject(this, Order::class.java) as? Order
@@ -146,6 +146,6 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
     fun triggerFirebaseEvent(properties: String) {
         val arguments = HashMap<String, String>()
         arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = properties
-        Utils.triggerFireBaseEvents(if (isNavigatedFromMyAccounts) FirebaseManagerAnalyticsProperties.Acc_My_Orders_Cancel_Order else FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER, arguments)
+        Utils.triggerFireBaseEvents(if (isNavigatedFromMyAccounts) FirebaseManagerAnalyticsProperties.Acc_My_Orders_Cancel_Order else FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER, arguments, this)
     }
 }

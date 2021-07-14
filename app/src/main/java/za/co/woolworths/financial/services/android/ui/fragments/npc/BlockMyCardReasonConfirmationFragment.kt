@@ -42,15 +42,17 @@ class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvCancel?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        tvCancel?.setOnClickListener {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CANCEL)
-            dismiss()
-        }
-        btnBlockPermanentCard?.setOnClickListener {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CONFIRM)
-            mStoreCardListenerCallback?.onBlockPermanentCardPermissionGranted()
-            dismiss()
+        activity?.apply {
+            tvCancel?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            tvCancel?.setOnClickListener {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CANCEL, this)
+                dismiss()
+            }
+            btnBlockPermanentCard?.setOnClickListener {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CONFIRM, this)
+                mStoreCardListenerCallback?.onBlockPermanentCardPermissionGranted()
+                dismiss()
+            }
         }
     }
 }

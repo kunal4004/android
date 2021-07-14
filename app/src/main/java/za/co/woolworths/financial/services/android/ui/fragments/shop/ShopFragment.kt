@@ -90,10 +90,12 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             override fun onPageSelected(position: Int) {
                 shopPagerAdapter?.notifyDataSetChanged()
                 updateTabIconUI(position)
-                when(position){
-                    0->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES)
-                    1->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS)
-                    2->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS)
+                activity?.apply {
+                    when (position) {
+                        0 -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES, this)
+                        1 -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS, this)
+                        2 -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS, this)
+                    }
                 }
             }
         })
@@ -102,7 +104,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     }
 
     private fun checkCameraPermission() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPBARCODE)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPBARCODE, this) }
         permissionUtils?.check_permission(permissions, "Explain here why the app needs permissions", 1)
     }
 
@@ -123,7 +125,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     private fun navigateToProductSearch() {
         activity?.apply {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPSEARCHBAR)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPSEARCHBAR, this)
             val openProductSearch = Intent(this, ProductSearchActivity::class.java)
             startActivity(openProductSearch)
             overridePendingTransition(0, 0)

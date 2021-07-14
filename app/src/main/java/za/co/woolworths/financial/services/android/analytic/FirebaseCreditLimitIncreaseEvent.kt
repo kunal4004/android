@@ -1,10 +1,11 @@
 package za.co.woolworths.financial.services.android.analytic
 
+import android.app.Activity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.util.Utils
 
-class FirebaseCreditLimitIncreaseEvent(private var applyNowState: ApplyNowState?) : FirebaseManagerAnalyticsProperties() {
+class FirebaseCreditLimitIncreaseEvent(private var applyNowState: ApplyNowState?, var activity: Activity) : FirebaseManagerAnalyticsProperties() {
 
     //Customer selects MyAccounts/ Credit Card / Increase My Limit
     private val cLIStart = mutableListOf(
@@ -75,6 +76,6 @@ class FirebaseCreditLimitIncreaseEvent(private var applyNowState: ApplyNowState?
             ApplyNowState.SILVER_CREDIT_CARD -> eventName?.get(4)
             else -> null
         }
-        name?.let { n -> Utils.triggerFireBaseEvents(n) }
+        name?.let { n -> Utils.triggerFireBaseEvents(n,activity) }
     }
 }

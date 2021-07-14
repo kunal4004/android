@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncreas
 import za.co.woolworths.financial.services.android.models.dto.EligibilityQuestions
 import za.co.woolworths.financial.services.android.models.dto.Permissions
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.util.FragmentUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -37,7 +38,7 @@ class CLIEligibilityAndPermissionFragment : Fragment(), View.OnClickListener {
         val creditLimitIncrease: CreditLimitIncrease? = WoolworthsApplication.getInstance()?.creditLimitIncrease
         val eligibilityQuestions: EligibilityQuestions? = creditLimitIncrease?.eligibilityQuestions
         val permissions: Permissions? = creditLimitIncrease?.permissions
-
+        (activity as? CLIPhase2Activity)?.selectedMaritalStatusPosition = null
         var eligibilityQuestionsDesc = ""
         eligibilityQuestions?.description?.forEach {
              it?.let { eligibilityQuestionsDesc += "• $it \n" }

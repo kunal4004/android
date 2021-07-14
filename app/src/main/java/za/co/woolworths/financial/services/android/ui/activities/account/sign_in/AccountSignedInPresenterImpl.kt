@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
+import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -89,10 +90,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 else -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
             }
             AccountsProductGroupCode.PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
-            else -> throw RuntimeException("Invalid  productGroupCode ${account?.productGroupCode}")
+            else -> null
         }
 
-        getToolbarTitle(productGroupInfo.first)?.let { toolbarTitle -> mainView?.toolbarTitle(toolbarTitle) }
+        productGroupInfo?.first?.let { getToolbarTitle(it)?.let { toolbarTitle -> mainView?.toolbarTitle(toolbarTitle) } }
 
         return productGroupInfo
     }
@@ -133,7 +134,24 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     override fun bottomSheetBehaviourPeekHeight(): Int {
         val height = deviceHeight()
-        return (height.div(100)).times(if (isAccountInArrearsState()) 14 else 23)
+        val availableFundHeightPercent = if (isAccountInArrearsState()) {
+            val sliderGuidelineArrearsTypeValue = TypedValue()
+            WoolworthsApplication.getInstance()?.resources?.getValue(
+                R.dimen.slider_guideline_percent_for_arrears_account_product,
+                sliderGuidelineArrearsTypeValue,
+                true
+            )
+            sliderGuidelineArrearsTypeValue.float
+        } else {
+            val sliderGuidelineTypeValue = TypedValue()
+            WoolworthsApplication.getInstance()?.resources?.getValue(
+                R.dimen.slider_guideline_percent_for_account_product,
+                sliderGuidelineTypeValue,
+                true
+            )
+            sliderGuidelineTypeValue.float
+        }
+        return height - (height * availableFundHeightPercent).toInt()
     }
 
     @SuppressLint("DefaultLocale")
@@ -142,6 +160,13 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val productOfferingGoodStanding = account?.productOfferingGoodStanding ?: false
         //  account?.productGroupCode?.toUpperCase() != CREDIT_CARD will hide payable now row for credit card options
         return !productOfferingGoodStanding && account?.productGroupCode?.toUpperCase() != AccountsProductGroupCode.CREDIT_CARD.groupCode.toUpperCase()
+    }
+
+    override fun isAccountInDelinquencyMoreThan6Months(): Boolean {
+        val accounts = getAccount()
+        val productOfferingStatus = accounts?.productOfferingStatus
+        val productOfferingGoodStanding = accounts?.productOfferingGoodStanding
+        return productOfferingGoodStanding == false && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
     }
 
     override fun chatWithCollectionAgent() {

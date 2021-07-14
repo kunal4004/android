@@ -6,7 +6,7 @@ import android.view.View
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
+import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.GlobalScope
 
@@ -62,11 +62,11 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         KotlinUtils.avoidDoubleClicks(view)
         when (view?.id) {
             R.id.incRecentTransactionButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS, this) }
                 navigateToRecentTransactionActivity(AccountsProductGroupCode.STORE_CARD.groupCode)
             }
             R.id.incViewStatementButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS, this) }
                 navigateToStatementActivity()
             }
             R.id.incPayMyAccountButton -> onStoreCardButtonTap()
@@ -76,9 +76,8 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
     private fun onStoreCardButtonTap() {
         if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC, this) }
         payMyAccountViewModel.resetAmountEnteredToDefault()
-
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC)
 
         if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
             try {
