@@ -3,22 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:paddingBottom="@dimen/twenty_four_dp">
 
     <TextView
         android:id="@+id/txtNeedBags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:text="Need shopping bags? 62c per bag"
+        android:text="@string/native_checkout_delivery_instructions_need_bags"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:layout_width="@dimen/fourty_dp"
-        android:layout_height="@dimen/twenty_four_dp"
+    <Switch
+        android:id="@+id/switchNeedBags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:checked="true"
+        android:theme="@style/SwitchTheme"
         app:layout_constraintBottom_toBottomOf="@id/txtNeedBags"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtNeedBags" />
@@ -36,16 +40,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:text="Special Delivery Instructions"
+        android:text="@string/native_checkout_delivery_special_instructions"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator1" />
 
-    <androidx.appcompat.widget.SwitchCompat
+    <Switch
         android:id="@+id/switchSpecialDeliveryInstruction"
-        android:layout_width="@dimen/fourty_dp"
-        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:checked="true"
+        android:theme="@style/SwitchTheme"
         app:layout_constraintBottom_toBottomOf="@id/txtSpecialDeliveryInstruction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtSpecialDeliveryInstruction" />
@@ -55,7 +61,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
+        android:visibility="gone"
+        android:background="@drawable/bg_input_edittext"
+        android:gravity="start|top"
+        android:hint="@string/native_checkout_delivery_special_instructions_hint"
         android:minHeight="@dimen/hundred_and_thirty_dp"
+        android:padding="@dimen/ten_dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/color_666666"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,16 +88,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:text="Is this a Gift?"
+        android:text="@string/native_checkout_delivery_gift_instructions"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator2" />
 
-    <androidx.appcompat.widget.SwitchCompat
+    <Switch
         android:id="@+id/switchGiftInstructions"
-        android:layout_width="@dimen/fourty_dp"
-        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:checked="true"
+        android:theme="@style/SwitchTheme"
         app:layout_constraintBottom_toBottomOf="@id/txtGiftInstructions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtGiftInstructions" />
@@ -93,8 +109,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
+        android:background="@drawable/bg_input_edittext"
         android:fontFamily="@font/myriad_pro_regular"
-        android:hint="Please type gifting message here."
+        android:gravity="start|top"
+        android:visibility="gone"
+        android:hint="@string/native_checkout_delivery_gift_instructions_hint"
         android:minHeight="@dimen/hundred_and_thirty_dp"
         android:padding="@dimen/ten_dp"
         android:textColor="@color/black"
@@ -104,13 +123,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtGiftInstructions" />
-
-    <View
-        android:id="@+id/viewHorizontalSeparator3"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/one_dp"
-        android:layout_marginTop="@dimen/twenty_four_dp"
-        android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@id/edtTxtGiftInstructions" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2140,4 +2140,11 @@
     <string name="submitForm">You will also need to submit</string>
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
 
+    <!-- Native Checkout : delivery Instructions -->
+    <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
+    <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
+    <string name="native_checkout_delivery_special_instructions_hint">Please type delivery instructions here.</string>
+    <string name="native_checkout_delivery_gift_instructions">Is this a Gift?</string>
+    <string name="native_checkout_delivery_gift_instructions_hint">Please type gifting message here.</string>
+
 </resources>
