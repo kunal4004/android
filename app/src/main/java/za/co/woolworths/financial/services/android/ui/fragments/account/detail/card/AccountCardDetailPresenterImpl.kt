@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.card
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
@@ -83,7 +85,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
         if (productGroupCode == AccountsProductGroupCode.CREDIT_CARD.groupCode.toLowerCase() || productGroupCode == AccountsProductGroupCode.PERSONAL_LOAN.groupCode.toLowerCase()) return
-        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> acc?.accountNumber?.let { StoreCardsRequestBody(it, acc.productOfferingId) } }
+        val storeCardsRequest: StoreCardsRequestBody? = account?.let { acc -> acc.accountNumber?.let { StoreCardsRequestBody(it, acc.productOfferingId) } }
         mainView?.showStoreCardProgress()
         mStoreCardCall = model?.queryServiceGetAccountStoreCardCards(storeCardsRequest, object : IGenericAPILoaderView<Any> {
             override fun onSuccess(response: Any?) {
@@ -210,7 +212,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun navigateToTemporaryStoreCard() {
-        when (getStoreCardResponse()?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard().isEnabled) {
+        when (isVirtualCardEnabled()) {
             true -> navigateToGetTemporaryStoreCardPopupActivity()
             false -> navigateToMyCardDetailActivity()
         }
@@ -291,7 +293,91 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return getAccount()?.productGroupCode.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true)
     }
 
-    override fun onStartCreditLimitIncreaseFirebaseEvent() {
-        FirebaseCreditLimitIncreaseEvent(mApplyNowAccountKeyPair?.first).forCLIStart()
+    override fun onStartCreditLimitIncreaseFirebaseEvent(activity: Activity) {
+        FirebaseCreditLimitIncreaseEvent(mApplyNowAccountKeyPair?.first, activity).forCLIStart()
     }
+
+    override fun isVirtualCardEnabled(): Boolean {
+        val response = getStoreCardResponse()
+        return response?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard()?.isEnabled ?: false
+    }
+
+    override fun isVirtualCardObjectNotNull(): Boolean {
+        val response = getStoreCardResponse()
+        return response?.storeCardsData?.virtualCard != null
+    }
+
+    override fun isVirtualCardObjectBlockTypeNull(): Boolean {
+        val response = getStoreCardResponse()
+        return response?.storeCardsData?.virtualCard != null
+                && (TextUtils.isEmpty(response?.storeCardsData?.virtualCard?.blockType)
+                    || TemporaryFreezeStoreCard.TEMPORARY.equals(response?.storeCardsData?.virtualCard?.blockType, ignoreCase = true))
+    }
+
+    override fun isGeneterateVTC(): Boolean {
+        val response = getStoreCardResponse()
+        return response?.storeCardsData?.generateVirtualCard ?: false
+    }
+
+    override fun getPrimaryStoreCardBlockType(): String {
+        val storeCardResponse = getStoreCardResponse()
+        val storeCardsData = storeCardResponse?.storeCardsData
+        if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
+            return ""
+        }
+        val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
+        val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
+        return blockType ?: ""
+    }
+
+    // Determine if card is blocked: if blockCode is not null, card is blocked.
+    override fun isReplacementCardAndVirtualCardViewEnabled(): Boolean {
+        val storeCardResponse = getStoreCardResponse()
+        val storeCardsData = storeCardResponse?.storeCardsData
+        if (storeCardsData == null || storeCardsData.primaryCards.isNullOrEmpty()) {
+            return false
+        }
+        val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
+        val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
+        return !storeCardsData?.generateVirtualCard && WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true
+                && TemporaryFreezeStoreCard.PERMANENT.equals(blockType, ignoreCase = true)
+    }
+
+    override fun isActivateVirtualTempCard(): Boolean {
+        val storeCardResponse = getStoreCardResponse()
+        val storeCardsData = storeCardResponse?.storeCardsData ?: return false
+
+        //Conditions to Activate VTC
+        //generateVirtualCard = true && vtc enabled from config.
+        return (storeCardsData.generateVirtualCard
+                && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+    }
+
+    override fun isTemporaryCardEnabled(): Boolean {
+        val response = getStoreCardResponse()
+        if (response?.storeCardsData?.virtualCard != null
+                && response?.storeCardsData?.virtualCard?.number != null
+                && (TemporaryFreezeStoreCard.TEMPORARY.equals(response?.storeCardsData?.virtualCard?.blockType, ignoreCase = true))) {
+            return true
+        }
+        return false
+    }
+
+    override fun isInstantCardReplacementEnabled(): Boolean {
+        val response = getStoreCardResponse()
+        if (response?.storeCardsData?.primaryCards.isNullOrEmpty()) {
+            return false
+        }
+        val primaryCard = response?.storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
+
+        if (response?.storeCardsData?.generateVirtualCard == false
+                && !TextUtils.isEmpty(primaryCard?.blockType)
+                && TemporaryFreezeStoreCard.PERMANENT.equals(primaryCard?.blockType, ignoreCase = true)
+                && WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
+            return true
+        }
+        return false
+    }
+
+
 }

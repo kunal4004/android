@@ -117,11 +117,11 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			@Override
 			public void onTabSelected(TabLayout.Tab tab) {
 				if (tab.getPosition() == TabState.OVERVIEW.tabState && tab.getCustomView() != null) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW, getActivity());
 				} else if (tab.getPosition() == TabState.VOUCHERS.tabState) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSVOUCHERS);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSVOUCHERS, getActivity());
 				} else if (tab.getPosition() == TabState.SAVINGS.tabState) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS, getActivity());
 				}
 			}
 

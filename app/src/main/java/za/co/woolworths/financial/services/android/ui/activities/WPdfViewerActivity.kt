@@ -72,7 +72,7 @@ class WPdfViewerActivity : AppCompatActivity() {
     private fun shareInvoice() {
         gtmTag?.let {
             KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_SHARE_STATEMENT,OneAppEvents.FeatureName.ABSA)
-            Utils.triggerFireBaseEvents(it)
+            Utils.triggerFireBaseEvents(it, this)
         }
         try {
             cacheFile = File(cacheDir, "$fileName.pdf")

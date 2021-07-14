@@ -21,6 +21,8 @@ import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCar
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsNavigator
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 
@@ -61,12 +63,7 @@ open class MyCardExtension : Fragment() {
     }
 
     internal fun navigateToLinkNewCardActivity(activity: AppCompatActivity?, storeCard: String?) {
-        activity?.apply {
-            val openLinkNewCardActivity = Intent(this, InstantStoreCardReplacementActivity::class.java)
-            openLinkNewCardActivity.putExtra(STORE_CARD_DETAIL, storeCard)
-            startActivityForResult(openLinkNewCardActivity,INSTANT_STORE_CARD_REPLACEMENT_REQUEST_CODE)
-            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-        }
+        MyAccountsScreenNavigator.navigateToLinkNewCardActivity(activity, storeCard)
     }
 
     fun showSoftKeyboard(activity: Activity, editTextView: EditText) {
