@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/twenty_four_dp">
+
+    <TextView
+        android:id="@+id/txtOrderSummaryYourCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/native_checkout_delivery_order_summary_your_cart"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryYourCartValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryYourCart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txtOrderSummaryYourCart"
+        tools:text="R 72.86" />
+
+    <View
+        android:id="@+id/viewHorizontalSeparator1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryYourCart" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/native_checkout_delivery_order_summary_discounts"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator1" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryDiscountValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryDiscount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txtOrderSummaryDiscount"
+        tools:text="R 72.86" />
+
+    <View
+        android:id="@+id/viewHorizontalSeparator2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryDiscount" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryTotalDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/native_checkout_delivery_order_summary_total_discount"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator2" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryTotalDiscountValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryTotalDiscount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txtOrderSummaryTotalDiscount"
+        tools:text="R 72.86" />
+
+    <View
+        android:id="@+id/viewHorizontalSeparator3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryTotalDiscount" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryDeliveryFee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/native_checkout_delivery_order_summary_fee"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator3" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryDeliveryFeeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/native_checkout_delivery_order_summary_fee_value"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryDeliveryFee"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txtOrderSummaryDeliveryFee" />
+
+    <View
+        android:id="@+id/viewHorizontalSeparator4"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryDeliveryFee" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/fifteen_dp"
+        android:lineHeight="@dimen/twenty_two_dp"
+        android:text="@string/native_checkout_delivery_order_summary_note"
+        android:textSize="@dimen/twelve_sp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textColor="@color/color_666666"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator4" />
+
+    <View
+        android:id="@+id/viewHorizontalSeparator5"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryNote" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

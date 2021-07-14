@@ -2140,4 +2140,12 @@
     <string name="submitForm">You will also need to submit</string>
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
 
+    <!-- Native Checkout : Order Summary   -->
+    <string name="native_checkout_delivery_order_summary_note">* Items are not reserved until you checkout. \n* Delivery cost to be confirmed before payment</string>
+    <string name="native_checkout_delivery_order_summary_fee_value">TBC</string>
+    <string name="native_checkout_delivery_order_summary_fee">Delivery Fee</string>
+    <string name="native_checkout_delivery_order_summary_total_discount">Total Discount</string>
+    <string name="native_checkout_delivery_order_summary_discounts">Discounts</string>
+    <string name="native_checkout_delivery_order_summary_your_cart">Your Cart</string>
+
 </resources>
