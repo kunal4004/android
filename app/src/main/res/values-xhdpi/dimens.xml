@@ -30,12 +30,14 @@
     <dimen name="voucher_number_bottom_margin_19dp">19sp</dimen>
     <dimen name="valid_date_guideline_begin_42dp">42dp</dimen>
     <dimen name="voucher_number_top_margin_19dp">19dp</dimen>
-    <dimen name="minimum_spend_label_text_size_15sp">15sp</dimen>
     <dimen name="minimum_spend_view_height_45dp">45dp</dimen>
     <dimen name="minimum_spend_top_margin_16dp">16dp</dimen>
     <dimen name="voucher_number_barcode_value_text_size_17sp">17sp</dimen>
     <dimen name="voucher_off_value_25sp">25sp</dimen>
-    <item name="voucher_promo_value_thirty_percent" type="dimen" format="float">0.3</item>
-    <item name="voucher_description_guide_percent_60" type="dimen" format="float">0.6</item>
-    <item name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</item>
+    <dimen name="voucher_promo_value_thirty_percent" type="dimen" format="float">0.3</dimen>
+    <dimen name="voucher_description_guide_percent_60" type="dimen" format="float">0.6</dimen>
+    <dimen name="termsAndConditionsGuideLine_percent_90" type="dimen" format="float">0.95</dimen>
+    <dimen name="bottom_guideline_percent_for_available_fund_transaction_statement_pma_button" type="dimen" format="float">0.70</dimen>
+    <dimen name="slider_guideline_percent_for_arrears_account_product" type="dimen" format="float">0.81</dimen>
+    <dimen name="slider_guideline_percent_for_account_product" type="dimen" format="float">0.81</dimen>
 </resources>
