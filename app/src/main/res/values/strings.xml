@@ -2141,10 +2141,10 @@
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
 
     <!-- Native Checkout : Food Substitution    -->
-    <string name="native_checkout_delivery_food_subst_title">Food Substitutions</string>
-    <string name="native_checkout_delivery_food_subst_desc">If an item is out of stock, how should we handle substitutes for you? If no substitutes are found the difference is not charged.</string>
-    <string name="native_checkout_delivery_food_subst_phone_confirm">Phone me to confirm any substitutions</string>
-    <string name="native_checkout_delivery_food_subst_similar_subst">Substitute for similar items if one is available</string>
-    <string name="native_checkout_delivery_food_subst_no_thanks">No thanks, don’t substitute</string>
+    <string name="native_checkout_delivery_food_substitution_title">Food Substitutions</string>
+    <string name="native_checkout_delivery_food_substitution_desc">If an item is out of stock, how should we handle substitutes for you? If no substitutes are found the difference is not charged.</string>
+    <string name="native_checkout_delivery_food_substitution_phone_confirm">Phone me to confirm any substitutions</string>
+    <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
+    <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
 
 </resources>
