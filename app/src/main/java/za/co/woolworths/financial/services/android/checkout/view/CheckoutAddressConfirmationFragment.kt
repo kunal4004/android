@@ -14,13 +14,9 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
-import kotlinx.android.synthetic.main.suburb_selector_fragment.*
-import kotlinx.android.synthetic.main.suburb_selector_fragment.suburbInputValue
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
@@ -32,11 +28,8 @@ import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.util.DeliveryType
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -110,7 +103,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             R.id.btnAddressConfirmation -> {
                 if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
                     navigateToAddAddress()
-                } else if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
+                } else if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1  && addressConfirmationDelivery.visibility == View.VISIBLE)
                     addNewAddressErrorMsg.visibility = View.VISIBLE
                 else {
                     //TO DO next screen
