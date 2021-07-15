@@ -5,12 +5,11 @@
     android:id="@+id/addressSelectionLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/four_dp_"
     android:background="@color/white"
     android:minHeight="@dimen/sixty_four_dp"
     android:paddingStart="@dimen/ten_dp"
-    android:paddingEnd="@dimen/ten_dp"
     android:paddingBottom="@dimen/four_dp_"
-    android:layout_marginBottom="@dimen/four_dp_"
     app:layout_constraintTop_toTopOf="parent">
 
     <CheckBox
@@ -35,8 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/selector"
-        app:layout_constraintTop_toBottomOf="@+id/top__title_guideline"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toBottomOf="@+id/top__title_guideline" />
 
     <TextView
         android:id="@+id/subTitle"
@@ -45,8 +43,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
         android:layout_marginTop="@dimen/two_dp"
-        android:layout_marginEnd="@dimen/twenty_eight_dp"
         android:maxLines="2"
+        android:paddingEnd="@dimen/fifty_six_dp"
         android:textColor="@color/checkout_delivering_title"
         android:textSize="@dimen/fourteen_sp"
         app:layout_constraintEnd_toEndOf="parent"

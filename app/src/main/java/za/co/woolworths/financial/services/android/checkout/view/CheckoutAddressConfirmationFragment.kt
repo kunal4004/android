@@ -51,6 +51,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private var storeListAdapter: CheckoutStoreSelectionAdapter? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var navController: NavController? = null
+    private var localSuburbId = ""
 
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
@@ -205,36 +206,41 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun showStoreListView() {
+        storesFoundTitle.text = getString(R.string.stores_near_me, "0")
         val suburbId = Utils.getPreferredDeliveryLocation().suburb?.id
-        suburbId?.let {
-            checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
-                .observe(viewLifecycleOwner, {
-                    when (it.responseStatus) {
-                        ResponseStatus.SUCCESS -> {
-                            if (it?.data != null) {
-                                val response = it?.data as? ValidateSelectedSuburbResponse
-                                rcvStoreRecyclerView?.apply {
-                                    storeListAdapter =
-                                        response?.validatedSuburbProducts?.stores?.let { it1 ->
-                                            CheckoutStoreSelectionAdapter(it1)
-                                        }
-                                    storesFoundTitle.text = getString(
-                                        R.string.stores_near_me,
-                                        response?.validatedSuburbProducts?.stores?.size.toString()
-                                    )
-                                    layoutManager = activity?.let { LinearLayoutManager(it) }
-                                    storeListAdapter?.let { adapter = it }
+        if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
+            suburbId?.let {
+                localSuburbId = suburbId
+                checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
+                    .observe(viewLifecycleOwner, {
+                        when (it.responseStatus) {
+                            ResponseStatus.SUCCESS -> {
+                                if (it?.data != null) {
+                                    val response = it?.data as? ValidateSelectedSuburbResponse
+                                    rcvStoreRecyclerView?.apply {
+                                        storeListAdapter =
+                                            response?.validatedSuburbProducts?.stores?.let { it1 ->
+                                                CheckoutStoreSelectionAdapter(it1)
+                                            }
+                                        storesFoundTitle.text = getString(
+                                            R.string.stores_near_me,
+                                            (response?.validatedSuburbProducts?.stores?.size
+                                                ?: 0).toString()
+                                        )
+                                        layoutManager = activity?.let { LinearLayoutManager(it) }
+                                        storeListAdapter?.let { adapter = it }
+                                    }
                                 }
                             }
-                        }
-                        ResponseStatus.LOADING -> {
+                            ResponseStatus.LOADING -> {
 
-                        }
-                        ResponseStatus.ERROR -> {
+                            }
+                            ResponseStatus.ERROR -> {
 
+                            }
                         }
-                    }
-                })
+                    })
+            }
         }
     }
 

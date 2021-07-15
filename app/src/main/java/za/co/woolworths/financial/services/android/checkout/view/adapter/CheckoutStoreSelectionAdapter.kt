@@ -61,12 +61,6 @@ class CheckoutStoreSelectionAdapter(
                     )
                     title.paintFlags =
                         if (!it.deliverable) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
-                    title.setTextColor(
-                        if (!it.deliverable) bindColor(R.color.black_50) else bindColor(
-                            R.color.black60
-                        )
-                    )
-                    itemView.alpha = if (!it.deliverable) 0.5f else 1f
                 }
                 setOnClickListener {
                     if (!storeFilterList[position].deliverable) return@setOnClickListener
