@@ -928,9 +928,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             }
 
                             // else functionality complete.
-                            val bundle = Bundle()
-                            bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
-                            setFragmentResult(ADD_A_NEW_ADDRESS_REQUEST_KEY, bundle)
+                            setFragmentResult(ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
+                                SAVED_ADDRESS_KEY to Utils.toJson(savedAddressResponse)
+                            ))
                             navController?.navigateUp()
                         }
                     }
