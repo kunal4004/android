@@ -165,6 +165,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         context?.let {
             viewAllLinkedDevicesRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
             viewAllDevicesAdapter = ViewAllLinkedDevicesAdapter(it, this)
+            deviceList?.sortByDescending { userDevice -> userDevice.primarydDevice }
             viewAllDevicesAdapter?.setDeviceList(deviceList)
         }
         viewAllLinkedDevicesRecyclerView.adapter = viewAllDevicesAdapter

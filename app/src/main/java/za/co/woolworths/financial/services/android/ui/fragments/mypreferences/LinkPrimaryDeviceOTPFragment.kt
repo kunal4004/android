@@ -562,26 +562,9 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             deletePrimaryDevice(token)
         }
         else {
-            changePrimaryDevice(token)
+            performChangePrimaryDevice(newPrimaryDevice)
         }
     }
-
-    private fun changePrimaryDevice(token: String) {
-        // Remove new primary device from secondary devices
-        performDeleteOrUnlinkDevice(newPrimaryDevice) {
-            // Remove old primary device from primary devices
-            performDeleteOrUnlinkDevice(oldPrimaryDevice) {
-                // Re-add the old primary device as primaryDevice=false
-                performLinkDevice(token, oldPrimaryDevice, false) {
-                    // Re-add the new primary device as primaryDevice=true
-                    performLinkDevice(token, newPrimaryDevice, true) {
-                        changePrimaryDeviceSuccess(it)
-                    }
-                }
-            }
-        }
-    }
-
 
     private fun deletePrimaryDevice(token: String) {
         // Remove new primary device from secondary devices
@@ -590,10 +573,21 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             performDeleteOrUnlinkDevice(oldPrimaryDevice) {
                 // Re-add the new primary device as primaryDevice=true
                 performLinkDevice(token, newPrimaryDevice, true) {
-                    changePrimaryDeviceSuccess(it)
+                    deletePrimaryDeviceSuccess(it)
                 }
             }
         }
+    }
+
+    private fun performChangePrimaryDevice(device: UserDevice?){
+        OneAppService.changePrimaryDeviceApi(device?.deviceIdentityId.toString())
+            .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                    saveNewPrimaryDeviceIdSuccess(response)
+                }
+                override fun onFailure(error: Throwable?) {
+                    APICallFailure()
+                } }, ViewAllLinkedDeviceResponse::class.java))
     }
 
     private fun performDeleteOrUnlinkDevice(device: UserDevice?, onSuccess: () -> Unit){
@@ -627,7 +621,45 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             }, LinkedDeviceResponse::class.java))
     }
 
-    private fun changePrimaryDeviceSuccess(response: LinkedDeviceResponse?) {
+    private fun saveNewPrimaryDeviceIdSuccess(response: ViewAllLinkedDeviceResponse?) {
+        sendinOTPLayout?.visibility = View.GONE
+        when (response?.httpCode) {
+            AppConstant.HTTP_OK -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
+                    hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), activity)
+                showDeviceChanged()
+
+                response.userDevices?.filter {
+                        userDevice -> userDevice.primarydDevice == true }?.get(0)?.deviceIdentityId?.let {
+                    saveDeviceId(
+                        it
+                    )
+                }
+
+                setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                    "isUpdate" to true
+                ))
+                Handler().postDelayed({
+                    view?.findNavController()?.navigateUp()
+                }, AppConstant.DELAY_1500_MS)
+
+            }
+            AppConstant.HTTP_SESSION_TIMEOUT_440 ->
+                activity?.apply {
+                    if (!isFinishing) {
+                        SessionUtilities.getInstance().setSessionState(
+                            SessionDao.SESSION_STATE.INACTIVE,
+                            response.response?.stsParams, this)
+                    }
+                }
+            else -> response?.response?.desc?.let { desc ->
+                APICallFailure()
+            }
+        }
+    }
+
+    private fun deletePrimaryDeviceSuccess(response: LinkedDeviceResponse?) {
         sendinOTPLayout?.visibility = View.GONE
         when (response?.httpCode) {
             AppConstant.HTTP_OK_201.toString() -> {
