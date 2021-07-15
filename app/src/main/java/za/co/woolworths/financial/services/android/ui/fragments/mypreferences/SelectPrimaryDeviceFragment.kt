@@ -90,7 +90,7 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
                 val bundle = Bundle()
                 bundle.putSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE, deviceSelected)
                 bundle.putSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE,
-                    deviceList?.filter { device -> device.primarydDevice == true }?.get(0)
+                    deviceList.filter { device -> device.primarydDevice == true }[0]
                 )
                 val navController = view?.findNavController()
                 navController?.navigate(R.id.action_link_new_primary_device, bundle)
