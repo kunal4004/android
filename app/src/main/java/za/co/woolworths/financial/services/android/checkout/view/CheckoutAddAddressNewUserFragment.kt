@@ -56,6 +56,10 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_BUNDLE
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_PROVINCE
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_SUBURB
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -988,11 +992,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         navController?.navigate(
             R.id.action_to_unsellableItemsFragment,
             bundleOf(
-                "bundle" to bundleOf(
+                KEY_ARGS_BUNDLE to bundleOf(
                     EditDeliveryLocationActivity.DELIVERY_TYPE to DeliveryType.DELIVERY.name,
-                    "SUBURB" to Utils.toJson(suburb),
-                    "PROVINCE" to Utils.toJson(province),
-                    "UnSellableCommerceItems" to Utils.toJson(unSellableCommerceItems)
+                    KEY_BUNDLE_SUBURB to Utils.toJson(suburb),
+                    KEY_BUNDLE_PROVINCE to Utils.toJson(province),
+                    KEY_BUNDLE_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems)
                 )
             )
         )
