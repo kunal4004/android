@@ -4,9 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -14,6 +13,7 @@ import kotlinx.android.synthetic.main.fragment_select_primary_device.*
 import kotlinx.android.synthetic.main.item_select_primary_device_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.activities.onboarding.IOnBoardingContract
 import za.co.woolworths.financial.services.android.ui.adapters.SelectPrimaryDeviceAdapter
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
 
@@ -46,6 +46,8 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         if (selectPrimaryDeviceAdapter == null) {
             initRecyclerView()
         }
+
+        changePrimaryDeviceButton?.setOnClickListener(this)
     }
 
     private fun setupToolbar() {
@@ -86,8 +88,14 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.changePrimaryDeviceButton -> {
-                setFragmentResult(ViewAllLinkedDevicesFragment.CHANGE_TO_PRIMARY_DEVICE_OTP,
-                    bundleOf(ViewAllLinkedDevicesFragment.PRIMARY_DEVICE to deviceSelected))
+                val bundle = Bundle()
+                bundle.putSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE, deviceSelected)
+                bundle.putSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE,
+                    deviceList?.filter { device -> device.primarydDevice == true }?.get(0)
+                )
+                bundle.putBoolean(ViewAllLinkedDevicesFragment.DELETE_PRIMARY_DEVICE, true)
+                val navController = view?.findNavController()
+                navController?.navigate(R.id.action_link_new_primary_device, bundle)
             }
         }
     }

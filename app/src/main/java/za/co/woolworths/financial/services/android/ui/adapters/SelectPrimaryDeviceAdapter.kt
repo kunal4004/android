@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import android.content.Context
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.fragment_select_primary_device.view.*
 import kotlinx.android.synthetic.main.item_select_primary_device_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 
@@ -52,7 +50,6 @@ class SelectPrimaryDeviceAdapter(val deviceList: ArrayList<UserDevice>,
                     device
                 )
                 itemView.selectPrimaryDeviceConstraintLayout?.setOnClickListener(onClickListener)
-                itemView.changePrimaryDeviceButton?.setOnClickListener(onClickListener)
             }
         }
     }

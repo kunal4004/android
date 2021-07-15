@@ -3,7 +3,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Paint
 import android.location.Location
@@ -14,7 +17,6 @@ import android.text.TextUtils
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -23,15 +25,15 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.iid.InstanceIdResult
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
-import kotlinx.android.synthetic.main.fragment_link_device_otp.*
+import kotlinx.android.synthetic.main.fragment_my_preferences.*
 import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
-import kotlinx.android.synthetic.main.fragment_unlink_device_otp.sendinOTPLayout
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.layout_sending_otp_request.*
@@ -39,8 +41,11 @@ import kotlinx.android.synthetic.main.layout_unlink_device_result.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
@@ -55,50 +60,31 @@ import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
 
-class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
+class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
 
-    private var deviceIdentityId: String = ""
     private var mConnectionBroadCast: BroadcastReceiver? = null
+    private var newPrimaryDevice: UserDevice? = null
+    private var oldPrimaryDevice: UserDevice? = null
     private var otpNumber: String? = null
     private var retryApiCall: String? = null
     private var otpMethod: String? = "SMS"
     private var currentLocation: Location? = null
     private var isOTPValidated: Boolean = false
-    private var unlinkOrDeleteDeviceReq: Call<ViewAllLinkedDeviceResponse>? = null
+    private var deleteOldPrimaryDevice: Boolean = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationRequest = createLocationRequest()
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult?) {
             locationResult ?: return
             for (location in locationResult.locations) {
-                this@UnlinkDeviceOTPFragment.currentLocation = location
+                this@LinkPrimaryDeviceOTPFragment.currentLocation = location
                 stopLocationUpdates()
-                callUnlinkingDeviceAPI()
+                callLinkingDeviceAPI()
                 break
             }
         }
     }
-    // Register the permissions callback, which handles the user's response to the
-    // system permissions dialog. Save the return value, an instance of
-    // ActivityResultLauncher. You can use either a val, as shown in this snippet,
-    // or a lateinit var in your onAttach() or onCreate() method.
-    val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app.
-                askToEnableLocationSettings()
-            } else {
-                // Explain to the user that the feature is unavailable because the
-                // features requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
-                callGetOTPAPI(OTPMethodType.SMS.name)
-            }
-        }
+
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             when {
@@ -150,7 +136,9 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            deviceIdentityId = it.getString(ViewAllLinkedDevicesFragment.DEVICE, null)
+            oldPrimaryDevice = it.getSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE) as UserDevice
+            newPrimaryDevice = it.getSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE) as UserDevice
+            deleteOldPrimaryDevice = it.getBoolean(ViewAllLinkedDevicesFragment.DELETE_PRIMARY_DEVICE)
         }
     }
 
@@ -224,85 +212,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
 
         buttonNext?.setOnClickListener(this)
 
-        askLocationPermission()
-    }
-
-    private fun askLocationPermission() {
-        context?.let { context ->
-            when {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    // You can use the API that requires the permission.
-                    askToEnableLocationSettings()
-                }
-                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                    // In an educational UI, explain to the user why your app requires this
-                    // permission for a specific feature to behave as expected. In this UI,
-                    // include a "cancel" or "no thanks" button that allows the user to
-                    // continue using your app without granting the permission.
-                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                }
-                else -> {
-                    // You can directly ask for the permission.
-                    // The registered ActivityResultCallback gets the result of this request.
-                    requestPermissionLauncher.launch(
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    )
-                }
-            }
-        }
-
-    }
-
-
-    private fun askToEnableLocationSettings() {
-        activity?.apply {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE,
-                hashMapOf(
-                    Pair(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceInitiated
-                    )
-                ), this
-            )
-            val locationRequest = LocationRequest.create()?.apply {
-                interval = 100
-                fastestInterval = 500
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            }
-            val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-            val client: SettingsClient = LocationServices.getSettingsClient(this)
-            val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
-            task.addOnSuccessListener { locationSettingsResponse ->
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                callGetOTPAPI(OTPMethodType.SMS.name)
-            }
-
-            task.addOnFailureListener { exception ->
-                if (exception is ResolvableApiException) {
-                    // Location settings are not satisfied, but this can be fixed
-                    // by showing the user a dialog.
-                    try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
-                        exception.startResolutionForResult(
-                            this,
-                            FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
-                        )
-                    } catch (sendEx: IntentSender.SendIntentException) {
-                        // Ignore the error.
-                    }
-                }
-                //Even if fails to enable location settings navigate to link device
-                callGetOTPAPI(OTPMethodType.SMS.name)
-            }
-
-        }
-
+        callGetOTPAPI(OTPMethodType.SMS.name)
     }
 
     private fun setToolbar() {
@@ -334,7 +244,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
         private const val OTP_CALL_CENTER = "CALL CENTER"
         const val RETRY_GET_OTP: String = "GET_OTP"
         const val RETRY_VALIDATE: String = "VALIDATE_OTP"
-        const val RETRY_UNLINK_DEVICE: String = "UNLINK_DEVICE"
+        const val RETRY_LINK_DEVICE: String = "LINK_DEVICE"
     }
 
     override fun onClick(v: View?) {
@@ -343,7 +253,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                 if (!isRetrieveOTPCallInProgress()) {
                     v?.isEnabled = false
                     Handler().postDelayed({ v?.isEnabled = true }, AppConstant.DELAY_1000_MS)
-                    view?.findNavController()?.navigate(R.id.action_unlinkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
+                    view?.findNavController()?.navigate(R.id.action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
                             ResendOTPBottomSheetFragment.OTP_NUMBER to otpNumber
                     ))
                 }
@@ -528,7 +438,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                         }
 
                         isOTPValidated = true
-                        callUnlinkingDeviceAPI()
+                        callLinkingDeviceAPI()
                     }
                     AppConstant.HTTP_SESSION_TIMEOUT_440 ->
                         activity?.apply {
@@ -598,13 +508,13 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
         linkDeviceOTPEdtTxt5?.text?.clear()
     }
 
-    private fun callUnlinkingDeviceAPI() {
+    private fun callLinkingDeviceAPI() {
 
         if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
             sendinOTPLayout?.visibility = View.GONE
             unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
             enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            retryApiCall = RETRY_UNLINK_DEVICE
+            retryApiCall = RETRY_LINK_DEVICE
             return
         }
 
@@ -613,63 +523,184 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
         if (!isOTPValidated) {
             return
         }
-        showUnlinkingDeviceProcessing()
+        showLinkingDeviceProcessing()
         //Location permission granted but no current location found.
         if (checkLocationPermission() && Utils.isLocationEnabled(context) && currentLocation == null) {
             startLocationUpdates()
             return
         }
 
-        unlinkDevice()
+        retrieveTokenAndCallLinkDevice()
     }
 
-    private fun unlinkDevice() {
-        unlinkOrDeleteDeviceReq = OneAppService.deleteOrUnlinkDevice(deviceIdentityId)
-        unlinkOrDeleteDeviceReq?.enqueue(CompletionHandler(
-            object : IResponseListener<ViewAllLinkedDeviceResponse> {
-                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-
-                    when (response?.httpCode) {
-                        AppConstant.HTTP_OK -> {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE,
-                                hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)), activity)
-
-                            showDeviceUnlinked()
-
-                            setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                "isUpdate" to true
-                            ))
-                            Handler().postDelayed({
-                                if (response.userDevices.isNullOrEmpty()) {
-                                    view?.findNavController()?.navigateUp()
-                                    return@postDelayed
-                                }
-                            }, AppConstant.DELAY_1500_MS)
+    private fun retrieveTokenAndCallLinkDevice() {
+        if (TextUtils.isEmpty(Utils.getToken())) {
+            if (Utils.isGooglePlayServicesAvailable()) {
+                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task: Task<InstanceIdResult?> ->
+                    if (task.isSuccessful) {
+                        task.result?.token?.let {
+                            // Save fb token in DB.
+                            Utils.setToken(it)
+                            sendTokenToLinkNewDevice(it)
+                            return@addOnCompleteListener
                         }
                     }
+                    // token is null show error message to user
+                    showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                }
+            } else {
+                // token is null show error message to user
+                showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+            }
+        } else {
+            sendTokenToLinkNewDevice(Utils.getToken())
+        }
+    }
+
+    private fun sendTokenToLinkNewDevice(token: String) {
+        if(deleteOldPrimaryDevice) {
+            deletePrimaryDevice(token)
+        }
+        else {
+            changePrimaryDevice(token)
+        }
+    }
+
+    private fun changePrimaryDevice(token: String) {
+        // Remove new primary device from secondary devices
+        performDeleteOrUnlinkDevice(newPrimaryDevice) {
+            // Remove old primary device from primary devices
+            performDeleteOrUnlinkDevice(oldPrimaryDevice) {
+                // Re-add the old primary device as primaryDevice=false
+                performLinkDevice(token, oldPrimaryDevice, false) {
+                    // Re-add the new primary device as primaryDevice=true
+                    performLinkDevice(token, newPrimaryDevice, true) {
+                        changePrimaryDeviceSuccess(it)
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun deletePrimaryDevice(token: String) {
+        // Remove new primary device from secondary devices
+        performDeleteOrUnlinkDevice(newPrimaryDevice) {
+            // Remove old primary device completely
+            performDeleteOrUnlinkDevice(oldPrimaryDevice) {
+                // Re-add the new primary device as primaryDevice=true
+                performLinkDevice(token, newPrimaryDevice, true) {
+                    changePrimaryDeviceSuccess(it)
+                }
+            }
+        }
+    }
+
+    private fun performDeleteOrUnlinkDevice(device: UserDevice?, onSuccess: () -> Unit){
+        OneAppService.deleteOrUnlinkDevice(device?.deviceIdentityId.toString())
+            .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                    onSuccess()
+                }
+                override fun onFailure(error: Throwable?) {
+                    APICallFailure()
+                } }, ViewAllLinkedDeviceResponse::class.java))
+    }
+
+    private fun performLinkDevice(token: String,
+                                  device: UserDevice?,
+                                  primaryDevice: Boolean,
+                                  onSuccess: (response: LinkedDeviceResponse?) -> Unit) {
+        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
+        OneAppService.linkDeviceApi(device?.deviceName.toString(),
+            device?.appInstanceId.toString(),
+            device?.locationLinked,
+            primaryDevice, token)
+            .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
+                override fun onSuccess(response: LinkedDeviceResponse?) {
+                    onSuccess(response)
                 }
 
-            }, ViewAllLinkedDeviceResponse::
-            class.java))
+                override fun onFailure(error: Throwable?) {
+                    APICallFailure()
+                }
+            }, LinkedDeviceResponse::class.java))
     }
 
-    private fun showUnlinkingDeviceProcessing() {
-        sendOTPTitle?.visibility = View.GONE
-        sendOTPSubtitle?.visibility = View.GONE
+    private fun changePrimaryDeviceSuccess(response: LinkedDeviceResponse?) {
+        sendinOTPLayout?.visibility = View.GONE
+        when (response?.httpCode) {
+            AppConstant.HTTP_OK_201.toString() -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
+                    hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), activity)
+                showDeviceChanged()
+                response.deviceIdentityId?.let { saveDeviceId(it) }
 
-        context?.let {
-            sendOTPProcessingReq?.text = it.getString(R.string.unlink_device_unlinking_processing)
+                setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                    "isUpdate" to true
+                ))
+                Handler().postDelayed({
+                    view?.findNavController()?.navigateUp()
+                    view?.findNavController()?.navigateUp()
+                }, AppConstant.DELAY_1500_MS)
+
+            }
+            AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
+                activity?.apply {
+                    if (!isFinishing) {
+                        SessionUtilities.getInstance().setSessionState(
+                            SessionDao.SESSION_STATE.INACTIVE,
+                            response.response.stsParams, this)
+                    }
+                }
+            else -> response?.response?.desc?.let { desc ->
+                unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
+                buttonNext?.visibility = View.VISIBLE
+                didNotReceiveOTPTextView?.visibility = View.VISIBLE
+                showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+            }
         }
-        sendinOTPLayout?.visibility = View.VISIBLE
     }
 
-    private fun showDeviceUnlinked() {
+    private fun APICallFailure() {
+        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
+        buttonNext?.visibility = View.VISIBLE
+        didNotReceiveOTPTextView?.visibility = View.VISIBLE
+        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+    }
+
+    private fun saveDeviceId(deviceIdentityId: Long) {
+        if (deviceIdentityId < 0) return
+        val currentUserObject = AppInstanceObject.get().currentUserObject
+        currentUserObject.linkedDeviceIdentityId = deviceIdentityId
+        currentUserObject.save()
+    }
+
+    private fun showDeviceChanged() {
         sendinOTPLayout?.visibility = View.GONE
         unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
         unlinkDeviceResultSubtitle?.visibility = View.GONE
         unlinkDeviceResultScreen?.visibility = View.VISIBLE
+        context?.let {
+            if(deleteOldPrimaryDevice) {
+                unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
+            } else{
+                unlinkDeviceResultTitle?.text = it.getString(R.string.changing_primary_device_result_success)
+            }
+        }
     }
+
+    private fun showLinkingDeviceProcessing() {
+        sendOTPTitle?.visibility = View.GONE
+        sendOTPSubtitle?.visibility = View.GONE
+
+        context?.let {
+            sendOTPProcessingReq?.text = it.getString(R.string.changing_primary_device_processing)
+        }
+        sendinOTPLayout?.visibility = View.VISIBLE
+    }
+
 
     private fun showSendingOTPProcessing() {
         sendOTPTitle?.visibility = View.VISIBLE
@@ -695,6 +726,20 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
         sendinOTPLayout?.visibility = View.VISIBLE
     }
 
+    private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
+
+        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+            retryApiCall = RETRY_LINK_DEVICE
+        }
+
+        activity?.let {
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage", errorMessage)
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
     private fun connectionDetector() {
         mConnectionBroadCast = Utils.connectionBroadCast(activity, this)
     }
@@ -711,7 +756,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
                     ErrorHandlerActivity.RESULT_RETRY -> {
-                        callUnlinkingDeviceAPI()
+                        callLinkingDeviceAPI()
                     }
                     ErrorHandlerActivity.RESULT_CALL_CENTER -> {
                         Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
@@ -754,8 +799,8 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                 RETRY_VALIDATE -> {
                     makeValidateOTPRequest()
                 }
-                RETRY_UNLINK_DEVICE -> {
-                    callUnlinkingDeviceAPI()
+                RETRY_LINK_DEVICE -> {
+                    callLinkingDeviceAPI()
                 }
             }
         }
