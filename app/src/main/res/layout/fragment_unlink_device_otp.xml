@@ -39,7 +39,7 @@
         tools:visibility="visible" />
 
     <include
-        android:id="@+id/linkDeviceOTPScreen"
+        android:id="@+id/unlinkDeviceOTPScreenConstraintLayout"
         layout="@layout/layout_link_device_validate_otp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -52,8 +52,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
-        android:id="@+id/linkDeviceResultScreen"
-        layout="@layout/layout_link_device_result"
+        android:id="@+id/unlinkDeviceResultScreen"
+        layout="@layout/layout_unlink_device_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
