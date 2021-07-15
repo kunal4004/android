@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.models.dto.InstantCardReplace
 import za.co.woolworths.financial.services.android.models.dto.Liquor;
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
@@ -90,6 +91,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Nullable
     private static PayMyAccount mPayMyAccount;
     private static InAppChat inAppChat;
+    private static Boolean isProductItemForLiquorInventoryPending = false;
+    private static ProductList productItemForLiquorInventory = null;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;
@@ -701,6 +704,22 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.liquor = liquor;
     }
 
+    public static void setProductItemForInventory(ProductList productList) {
+        productItemForLiquorInventory = productList;
+    }
+
+    public static void setCallForLiquorInventory(Boolean isPending) {
+        isProductItemForLiquorInventoryPending = isPending;
+    }
+
+    public static Boolean isProductItemForLiquorInvetoryPending() {
+        return isProductItemForLiquorInventoryPending;
+    }
+
+    public static ProductList getProductItemForInventory() {
+        return productItemForLiquorInventory;
+    }
+
     public static void setCartCheckoutLinkWithParams(String cartCheckoutLinkWithParams) {
         WoolworthsApplication.cartCheckoutLinkWithParams = cartCheckoutLinkWithParams;
     }
@@ -708,4 +727,5 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public static String getCartCheckoutLinkWithParams() {
         return cartCheckoutLinkWithParams;
     }
+
 }

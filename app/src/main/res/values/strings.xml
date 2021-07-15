@@ -2048,8 +2048,11 @@
     <string name="chat_notification_title">You have received a message.</string>
     <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
     <string name="woolies_chat_active">Chat is currently active</string>
-    <string name="shop_liquor_in_our_app">Shop liquor in our app</string>
+
+    <string name="shop_liquor_in_our_app">Shop Liquor</string>
     <string name="select_suburb">Select Suburb</string>
+    <string name="delivery_liquor_description"><![CDATA[Liquor is not available for Click & Collect.]]></string>
+
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
     <string name="death_cover_title">Death Cover</string>
@@ -2111,5 +2114,6 @@
     <string name="requiredForm">required forms</string>
     <string name="submitForm">You will also need to submit</string>
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
+    <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
 
 </resources>

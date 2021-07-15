@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelect
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
@@ -94,6 +95,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private val SSO_REQUEST_ADD_TO_CART = 1010
     private val REQUEST_SUBURB_CHANGE = 153
     private val REQUEST_SUBURB_CHANGE_FOR_STOCK = 155
+    private val REQUEST_SUBURB_CHANGE_FOR_LIQUOR = 156
     private val SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011
     private val SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK = 1012
     private var permissionUtils: PermissionUtils? = null
@@ -229,8 +231,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             //loadProductDetails.
             productDetailsPresenter?.loadProductDetails(ProductRequest(productDetails?.productId, productDetails?.sku))
         }
-
-
     }
 
     fun addItemToCart() {
@@ -317,6 +317,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
+        if(productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
+            KotlinUtils.setLiquorModalShown()
+            showLiquorDialog()
+        }
 
         if ((!hasColor && !hasSize)) {
             setSelectedSku(this.defaultSku)
@@ -583,9 +587,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showProductOutOfStock()
             return
         }
-
-        if (!KotlinUtils.isCurrentSuburbDeliversLiquor() && isInventoryCalled)
-            showLiquorDialog()
     }
 
     private fun setBrandText(it: ProductDetails) {
@@ -668,9 +669,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         }
                     }
                     setSelectedSku(otherSku)
-                    if (getSelectedSku() == null) productSizeSelectorAdapter?.clearSelection() else productSizeSelectorAdapter?.setSelection(getSelectedSku())
-                    if (getSelectedSku() == null) defaultSku = otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
-                    if (getSelectedSku() == null) updateUIForSelectedSKU(defaultSku) else updateUIForSelectedSKU(getSelectedSku())
+                    if (getSelectedSku() == null) productSizeSelectorAdapter?.clearSelection() else productSizeSelectorAdapter?.setSelection(
+                        getSelectedSku()
+                    )
+                    if (getSelectedSku() == null) defaultSku =
+                        otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
+                    if (getSelectedSku() == null) updateUIForSelectedSKU(defaultSku) else updateUIForSelectedSKU(
+                        getSelectedSku()
+                    )
                 }
                 else -> {
                     setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(index))
@@ -732,7 +738,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun updateUIForSelectedSKU(otherSku: OtherSkus?) {
         otherSku?.let {
-            BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, "", it.kilogramPrice)
+            BaseProductUtils.displayPrice(
+                fromPricePlaceHolder,
+                textPrice,
+                textActualPrice,
+                it.price,
+                it.wasPrice,
+                "",
+                it.kilogramPrice
+            )
         }
         updateAddToCartButtonForSelectedSKU()
     }
@@ -780,7 +794,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 auxiliaryImagesForGroupKey.add(it)
         }
 
-        val allAuxImages = Gson().fromJson<Map<String, AuxiliaryImage>>(this.productDetails?.auxiliaryImages, object : TypeToken<Map<String, AuxiliaryImage>>() {}.type)
+        val allAuxImages = Gson().fromJson<Map<String, AuxiliaryImage>>(
+            this.productDetails?.auxiliaryImages,
+            object : TypeToken<Map<String, AuxiliaryImage>>() {}.type
+        )
 
         getImageCodeForAuxiliaryImages(groupKey).forEach { imageCode ->
             allAuxImages.entries.forEach { entry ->
@@ -826,7 +843,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             return
         }
         activity?.apply {
-            Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc)
+            Utils.displayValidationMessage(
+                this,
+                CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+                response.desc
+            )
         }
     }
 
@@ -845,7 +866,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onSetNewLocation() {
-        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE) }
+        activity?.apply {
+            KotlinUtils.presentEditDeliveryLocationActivity(
+                this,
+                REQUEST_SUBURB_CHANGE
+            )
+        }
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
@@ -856,7 +882,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 productDetails?.apply {
                     otherSkus?.let {
                         val multiSKUs = it.joinToString(separator = "-") { it.sku }
-                        productDetailsPresenter?.loadStockAvailability(storeIdForInventory!!, multiSKUs, isDefaultRequest)
+                        productDetailsPresenter?.loadStockAvailability(
+                            storeIdForInventory!!,
+                            multiSKUs,
+                            isDefaultRequest
+                        )
                     }
                 }
             }
@@ -937,7 +967,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         showToastMessage(getActivity(), listSize);*/
                     }
                     SET_DELIVERY_LOCATION_REQUEST_CODE -> {
-                        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE) }
+                        activity?.apply {
+                            KotlinUtils.presentEditDeliveryLocationActivity(
+                                this,
+                                REQUEST_SUBURB_CHANGE
+                            )
+                        }
                     }
                     FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS -> {
                         findItemInStore()
@@ -947,7 +982,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         updateStockAvailabilityLocation()
 
                         Utils.getPreferredDeliveryLocation()?.let {
-                            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.storePickup) {
+                            if (!this.productDetails?.productType.equals(
+                                    getString(R.string.food_product_type),
+                                    ignoreCase = true
+                                ) && it.storePickup
+                            ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
                                 showProductUnavailable()
@@ -957,7 +996,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             }
                         }
 
-                        if (Utils.retrieveStoreId(productDetails?.fulfillmentType).isNullOrEmpty()) {
+                        if (Utils.retrieveStoreId(productDetails?.fulfillmentType)
+                                .isNullOrEmpty()
+                        ) {
                             storeIdForInventory = ""
                             clearStockAvailability()
                             showProductUnavailable()
@@ -965,11 +1006,51 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             return
                         }
 
-                        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
+                        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType)
+                                .equals(storeIdForInventory, ignoreCase = true)
+                        ) {
                             updateStockAvailability(true)
                             reloadFragment()
                         }
                     }
+
+                    REQUEST_SUBURB_CHANGE_FOR_LIQUOR -> {
+
+                        updateStockAvailabilityLocation()
+
+                        Utils.getPreferredDeliveryLocation()?.let {
+                            if (!this.productDetails?.productType.equals(
+                                    getString(R.string.food_product_type),
+                                    ignoreCase = true
+                                ) && it.storePickup
+                            ) {
+                                storeIdForInventory = ""
+                                clearStockAvailability()
+                                showProductUnavailable()
+                                showProductNotAvailableForCollection()
+                                reloadFragment()
+                                return
+                            }
+                        }
+
+                        if (Utils.retrieveStoreId(productDetails?.fulfillmentType)
+                                .isNullOrEmpty()
+                        ) {
+                            storeIdForInventory = ""
+                            clearStockAvailability()
+                            showProductUnavailable()
+                            reloadFragment()
+                            return
+                        }
+
+                        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType)
+                                .equals(storeIdForInventory, ignoreCase = true)
+                        ) {
+                            updateStockAvailability(true)
+                            reloadFragment()
+                        }
+                    }
+
                 }
             }
             SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
@@ -984,10 +1065,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         activity?.apply { ScreenManager.presentBiometricWalkthrough(this) }
                     }
                     SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK -> {
-                        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK) }
+                        activity?.apply {
+                            KotlinUtils.presentEditDeliveryLocationActivity(
+                                this,
+                                REQUEST_SUBURB_CHANGE_FOR_STOCK
+                            )
+                        }
                     }
-                    LOGIN_REQUEST_SUBURB_CHANGE ->{
-                        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK, DeliveryType.DELIVERY_LIQUOR) }
+                    LOGIN_REQUEST_SUBURB_CHANGE -> {
+                        activity?.apply {
+                            KotlinUtils.presentEditDeliveryLocationActivity(
+                                this,
+                                REQUEST_SUBURB_CHANGE_FOR_LIQUOR,
+                                DeliveryType.DELIVERY_LIQUOR
+                            )
+                        }
                     }
                 }
             }
@@ -1019,7 +1111,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                 }
                 else -> {
-                    Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "")
+                    Utils.displayValidationMessage(
+                        this,
+                        CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF,
+                        ""
+                    )
                     return
                 }
             }
@@ -1045,7 +1141,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         findItemInStore()
     }
 
-    override fun PartialPermissionGranted(request_code: Int, granted_permissions: ArrayList<String>?) {
+    override fun PartialPermissionGranted(
+        request_code: Int,
+        granted_permissions: ArrayList<String>?
+    ) {
     }
 
     override fun PermissionDenied(request_code: Int) {
@@ -1070,7 +1169,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -1172,7 +1275,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showErrorWhileLoadingProductDetails() {
         activity?.apply {
             showProductUnavailable()
-            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc))
+            Utils.displayValidationMessage(
+                activity,
+                CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR,
+                getString(R.string.statement_send_email_false_desc)
+            )
         }
     }
 
@@ -1190,11 +1297,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     @SuppressLint("SetTextI18n")
     private fun showSelectedSize() {
         getSelectedSku().let {
-            selectedSizePlaceholder.text = getString(if (it != null) R.string.product_placeholder_selected_size else R.string.product_placeholder_select_size)
+            selectedSizePlaceholder.text =
+                getString(if (it != null) R.string.product_placeholder_selected_size else R.string.product_placeholder_select_size)
             selectedSize.text = if (it != null) " - ${it.size}" else ""
             activity?.apply {
                 if (it != null)
-                    selectedSizePlaceholder.setTextColor(ContextCompat.getColor(this, R.color.black))
+                    selectedSizePlaceholder.setTextColor(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.black
+                        )
+                    )
             }
         }
     }
@@ -1202,7 +1315,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun updateDeliveryLocation() {
         activity?.apply {
             when (SessionUtilities.getInstance().isUserAuthenticated) {
-                true -> KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK)
+                true -> KotlinUtils.presentEditDeliveryLocationActivity(
+                    this,
+                    REQUEST_SUBURB_CHANGE_FOR_STOCK
+                )
                 false -> ScreenManager.presentSSOSignin(this, SSO_REQUEST_FOR_SUBURB_CHANGE_STOCK)
             }
 
@@ -1216,12 +1332,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     is ShoppingDeliveryLocation -> {
                         when (it.storePickup) {
                             true -> {
-                                currentDeliveryLocation.text = resources?.getString(R.string.store) + it.store?.name
-                                defaultLocationPlaceholder.text = getString(R.string.collecting_from) + " "
+                                currentDeliveryLocation.text =
+                                    resources?.getString(R.string.store) + it.store?.name
+                                defaultLocationPlaceholder.text =
+                                    getString(R.string.collecting_from) + " "
                             }
                             else -> {
-                                currentDeliveryLocation.text = it.suburb?.name + "," + it.province?.name
-                                defaultLocationPlaceholder.text = getString(R.string.delivering_to_pdp)
+                                currentDeliveryLocation.text =
+                                    it.suburb?.name + "," + it.province?.name
+                                defaultLocationPlaceholder.text =
+                                    getString(R.string.delivering_to_pdp)
                             }
                         }
                     }
@@ -1237,8 +1357,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun showDetailsInformation(productInformationType: ProductInformationActivity.ProductInformationType) {
         activity?.apply {
             val intent = Intent(this, ProductInformationActivity::class.java)
-            intent.putExtra(ProductInformationActivity.PRODUCT_DETAILS, Utils.toJson(productDetails))
-            intent.putExtra(ProductInformationActivity.PRODUCT_INFORMATION_TYPE, productInformationType)
+            intent.putExtra(
+                ProductInformationActivity.PRODUCT_DETAILS,
+                Utils.toJson(productDetails)
+            )
+            intent.putExtra(
+                ProductInformationActivity.PRODUCT_INFORMATION_TYPE,
+                productInformationType
+            )
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
@@ -1283,12 +1409,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     promoImages?.reduced -> {
                         val width = deviceWidth() / 5
                         layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                            val promotionImageView = view.findViewById<ImageView>(R.id.promotionImage)
+                            val promotionImageView =
+                                view.findViewById<ImageView>(R.id.promotionImage)
                             promotionImageView?.apply {
                                 adjustViewBounds = true
                                 scaleType = ImageView.ScaleType.FIT_CENTER
                                 layoutParams?.width = width
-                                ImageManager.setPictureOverrideWidthHeight(view.promotionImage, image)
+                                ImageManager.setPictureOverrideWidthHeight(
+                                    view.promotionImage,
+                                    image
+                                )
                                 promotionalImages?.addView(view)
                             }
                         }
@@ -1296,12 +1426,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     promoImages?.save -> {
                         val width = deviceWidth() / 10
                         layoutInflater.inflate(R.layout.promotional_image, null)?.let { view ->
-                            val promotionImageView = view.findViewById<ImageView>(R.id.promotionImage)
+                            val promotionImageView =
+                                view.findViewById<ImageView>(R.id.promotionImage)
                             promotionImageView?.apply {
                                 adjustViewBounds = true
                                 scaleType = ImageView.ScaleType.FIT_CENTER
                                 layoutParams?.width = width
-                                ImageManager.setPictureOverrideWidthHeight(view.promotionImage, image)
+                                ImageManager.setPictureOverrideWidthHeight(
+                                    view.promotionImage,
+                                    image
+                                )
                                 promotionalImages?.addView(view)
                             }
                         }
@@ -1348,8 +1482,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         is QuickShopDefaultValues -> it.suburb.name
                         else -> ""
                     }
-                    val message = "Unfortunately this item is out of stock in $suburbName. Try changing your delivery location and try again."
-                    OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
+                    val message =
+                        bindString(R.string.product_details_out_of_stock, suburbName ?: "")
+                    OutOfStockMessageDialogFragment.newInstance(message).show(
+                        this@ProductDetailsFragment.childFragmentManager,
+                        OutOfStockMessageDialogFragment::class.java.simpleName
+                    )
                     updateAddToCartButtonForSelectedSKU()
                 }
             }
@@ -1376,40 +1514,58 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun setUniqueIds() {
         resources?.apply {
             productLayout?.contentDescription = getString(R.string.pdp_layout)
-            productImagesViewPagerIndicator?.contentDescription = getString(R.string.store_card_image)
+            productImagesViewPagerIndicator?.contentDescription =
+                getString(R.string.store_card_image)
             closePage?.contentDescription = getString(R.string.pdp_layout)
             productName?.contentDescription = getString(R.string.pdp_textViewProductName)
             priceLayout?.contentDescription = getString(R.string.pdp_textViewPrice)
             colorPlaceholder?.contentDescription = getString(R.string.pdp_textViewColourPlaceHolder)
             selectedColor?.contentDescription = getString(R.string.pdp_textSelectedColour)
-            colorSelectorRecycleView?.contentDescription = getString(R.string.pdp_colorSelectorRecycleView)
+            colorSelectorRecycleView?.contentDescription =
+                getString(R.string.pdp_colorSelectorRecycleView)
             addToCartAction?.contentDescription = getString(R.string.pdp_buttonAddToCart)
             quantitySelector?.contentDescription = getString(R.string.pdp_quantitySelector)
             quantityText?.contentDescription = getString(R.string.pdp_quantitySelected)
-            sizeColorSelectorLayout?.contentDescription = getString(R.string.pdp_sizeColourSelectorLayout)
-            sizeSelectorRecycleView?.contentDescription = getString(R.string.pdp_sizeSelectorRecycleView)
-            selectedSizePlaceholder?.contentDescription = getString(R.string.pdp_selectedSizePlaceholder)
+            sizeColorSelectorLayout?.contentDescription =
+                getString(R.string.pdp_sizeColourSelectorLayout)
+            sizeSelectorRecycleView?.contentDescription =
+                getString(R.string.pdp_sizeSelectorRecycleView)
+            selectedSizePlaceholder?.contentDescription =
+                getString(R.string.pdp_selectedSizePlaceholder)
             selectedSize?.contentDescription = getString(R.string.pdp_textViewSelectedSize)
-            stockAvailabilityPlaceholder?.contentDescription = getString(R.string.pdp_stockAvailabilityPlaceholder)
-            deliveryLocationLayout?.contentDescription = getString(R.string.pdp_deliveryLocationLayout)
-            currentDeliveryLocation?.contentDescription = getString(R.string.pdp_txtCurrentDeliveryLocation)
-            defaultLocationPlaceholder?.contentDescription = getString(R.string.pdp_defaultLocationPlaceholder)
-            editDeliveryLocation?.contentDescription = getString(R.string.pdp_buttoneditDeliveryLocationn)
-            productDetailOptionsAndInformation?.contentDescription = getString(R.string.pdp_productDetailOptionsAndInformationLayout)
-            headerProductOptions?.contentDescription = getString(R.string.pdp_headerProductOptionsLayout)
-            checkInStoreAvailability?.contentDescription = getString(R.string.pdp_checkInStoreAvailabilityLayout)
+            stockAvailabilityPlaceholder?.contentDescription =
+                getString(R.string.pdp_stockAvailabilityPlaceholder)
+            deliveryLocationLayout?.contentDescription =
+                getString(R.string.pdp_deliveryLocationLayout)
+            currentDeliveryLocation?.contentDescription =
+                getString(R.string.pdp_txtCurrentDeliveryLocation)
+            defaultLocationPlaceholder?.contentDescription =
+                getString(R.string.pdp_defaultLocationPlaceholder)
+            editDeliveryLocation?.contentDescription =
+                getString(R.string.pdp_buttoneditDeliveryLocationn)
+            productDetailOptionsAndInformation?.contentDescription =
+                getString(R.string.pdp_productDetailOptionsAndInformationLayout)
+            headerProductOptions?.contentDescription =
+                getString(R.string.pdp_headerProductOptionsLayout)
+            checkInStoreAvailability?.contentDescription =
+                getString(R.string.pdp_checkInStoreAvailabilityLayout)
             buttonView?.contentDescription = getString(R.string.pdp_buttonView)
             addToShoppingList?.contentDescription = getString(R.string.pdp_addToShoppingListLayout)
-            headerProductInformation?.contentDescription = getString(R.string.pdp_headerProductInformationLayout)
-            productDetailsInformation?.contentDescription = getString(R.string.pdp_productDetailsInformationLayout)
-            nutritionalInformation?.contentDescription = getString(R.string.pdp_productIngredientsInformationLayout)
-            productIngredientsInformation?.contentDescription = getString(R.string.pdp_nutritionalInformationLayout)
+            headerProductInformation?.contentDescription =
+                getString(R.string.pdp_headerProductInformationLayout)
+            productDetailsInformation?.contentDescription =
+                getString(R.string.pdp_productDetailsInformationLayout)
+            nutritionalInformation?.contentDescription =
+                getString(R.string.pdp_productIngredientsInformationLayout)
+            productIngredientsInformation?.contentDescription =
+                getString(R.string.pdp_nutritionalInformationLayout)
         }
     }
 
     private fun reloadFragment() {
         val currentFragment = activity?.supportFragmentManager?.findFragmentByTag(TAG)
-        val fragmentTransaction: FragmentTransaction? = activity?.supportFragmentManager?.beginTransaction()
+        val fragmentTransaction: FragmentTransaction? =
+            activity?.supportFragmentManager?.beginTransaction()
         if (fragmentTransaction != null && currentFragment != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 fragmentTransaction?.detach(currentFragment!!).commitNow()
@@ -1420,12 +1576,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showDeliveryOptionDialog() {
-        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(fragmentTransaction, DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName) }
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
+            ?.let { fragmentTransaction ->
+                DeliveryOrClickAndCollectSelectorDialogFragment.newInstance(this).show(
+                    fragmentTransaction,
+                    DeliveryOrClickAndCollectSelectorDialogFragment::class.java.simpleName
+                )
+            }
     }
 
     override fun onDeliveryOptionSelected(deliveryType: DeliveryType) {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE, deliveryType) }
+            activity?.apply {
+                KotlinUtils.presentEditDeliveryLocationActivity(
+                    this,
+                    REQUEST_SUBURB_CHANGE,
+                    deliveryType
+                )
+            }
         } else {
             ScreenManager.presentSSOSignin(activity, EDIT_LOCATION_LOGIN_REQUEST)
         }
@@ -1442,7 +1610,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun showProductNotAvailableForCollection() {
         activity?.apply {
             if (!ProductNotAvailableForCollectionDialog.dialogInstance.isVisible)
-                 ProductNotAvailableForCollectionDialog.newInstance().show(this@ProductDetailsFragment.childFragmentManager, ProductNotAvailableForCollectionDialog::class.java.simpleName)
+                ProductNotAvailableForCollectionDialog.newInstance().show(
+                    this@ProductDetailsFragment.childFragmentManager,
+                    ProductNotAvailableForCollectionDialog::class.java.simpleName
+                )
         }
     }
 
@@ -1463,9 +1634,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun shareProduct() {
         activity?.apply {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID, productDetails?.productId
-                    ?: "")))
-            val message = WoolworthsApplication.getProductDetailsPage()?.shareItemMessage + " " + productDetails?.productId?.let { WoolworthsApplication.getProductDetailsPage()?.shareItemURITemplate?.replace("{product_id}", it, true) }
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE, hashMapOf(
+                    Pair(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID,
+                        productDetails?.productId
+                            ?: ""
+                    )
+                )
+            )
+            val message =
+                WoolworthsApplication.getProductDetailsPage()?.shareItemMessage + " " + productDetails?.productId?.let {
+                    WoolworthsApplication.getProductDetailsPage()?.shareItemURITemplate?.replace(
+                        "{product_id}",
+                        it,
+                        true
+                    )
+                }
             val shareIntent = Intent()
             shareIntent.apply {
                 action = Intent.ACTION_SEND
@@ -1476,7 +1661,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    fun showLiquorDialog(){
+    /**
+     * Conditions to show liquor popup
+     * This should be checked before inventory call
+     * 1. isLiquor flag from service response. /wfs/app/v4/searchSortAndFilterV2
+     * 2. Current suburb doesn't match up with config suburbs.
+     * 3. It is showing for the first time
+     */
+    fun showLiquorDialog() {
 
         liquorDialog = activity?.let { activity -> Dialog(activity) }
         liquorDialog?.apply {
@@ -1492,14 +1684,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
                     ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
                 } else {
-                    activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, REQUEST_SUBURB_CHANGE_FOR_STOCK, DeliveryType.DELIVERY_LIQUOR) }
+                    activity?.apply {
+                        KotlinUtils.presentEditDeliveryLocationActivity(
+                            this,
+                            REQUEST_SUBURB_CHANGE_FOR_LIQUOR,
+                            DeliveryType.DELIVERY_LIQUOR
+                        )
+                    }
                 }
             }
             setContentView(view)
             window?.apply {
                 setLayout(
-                        WindowManager.LayoutParams.WRAP_CONTENT,
-                        WindowManager.LayoutParams.WRAP_CONTENT
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT
                 )
                 setBackgroundDrawableResource(R.color.transparent)
                 setGravity(Gravity.CENTER)
