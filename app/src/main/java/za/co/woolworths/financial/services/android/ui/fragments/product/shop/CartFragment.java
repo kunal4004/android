@@ -369,9 +369,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
                     checkOutActivity.overridePendingTransition(0, 0);*/
                     Intent checkoutActivityIntent = new Intent(getContext(), CheckoutActivity.class);
-                    Bundle args = new Bundle();
-                    args.putSerializable(KEY_ARGS_ORDER_SUMMARY, orderSummary);
-                    startActivity(checkoutActivityIntent, args);
+                    checkoutActivityIntent.putExtra(KEY_ARGS_ORDER_SUMMARY, orderSummary);
+                    startActivity(checkoutActivityIntent);
                 }
                 break;
             case R.id.orderTotalLayout:

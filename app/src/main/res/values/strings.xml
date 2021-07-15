@@ -2147,5 +2147,6 @@
     <string name="native_checkout_delivery_order_summary_total_discount">Total Discount</string>
     <string name="native_checkout_delivery_order_summary_discounts">Discounts</string>
     <string name="native_checkout_delivery_order_summary_your_cart">Your Cart</string>
+    <string name="default_discount_value">- R 0.00</string>
 
 </resources>

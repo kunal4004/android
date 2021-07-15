@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,8 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
 
 /**
  * Created by Kunal Uttarwar on 27/05/21.
@@ -37,14 +40,15 @@ class CheckoutAddAddressReturningUserFragment : Fragment() {
      */
     private fun initOrderSummary() {
         arguments?.apply {
-            val orderSummary = getSerializable(KEY_ARGS_ORDER_SUMMARY) as? OrderSummary
+            val orderSummary = getParcelable(KEY_ARGS_ORDER_SUMMARY) as? OrderSummary
             orderSummary?.let { orderSummary ->
-                txtOrderSummaryYourCartValue?.text = "R ${orderSummary.basketTotal}"
-                orderSummary?.discountDetails?.let { discountDetails ->
+                txtOrderSummaryYourCartValue?.text =
+                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(orderSummary.basketTotal)
+                orderSummary.discountDetails?.let { discountDetails ->
                     txtOrderSummaryDiscountValue?.text =
-                        "- R ${discountDetails.otherDiscount}"
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
                     txtOrderSummaryTotalDiscountValue?.text =
-                        "- R ${discountDetails.totalDiscount}"
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
                 }
             }
         }
