@@ -67,10 +67,6 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                 ))
         }
 
-
-        setFragmentResultListener(CHANGE_TO_PRIMARY_DEVICE_OTP) { requestKey, bundle ->
-        }
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_view_all_linked_devices, container, false)
     }
@@ -175,7 +171,6 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         const val DELETE_DEVICE_NO_OTP = "deleteDevice"
         const val KEY_BOOLEAN_UNLINK_DEVICE = "isUnlinkSuccess"
         const val CHOOSE_PRIMARY_DEVICE_FRAGMENT = "choosePrimaryDeviceFragment"
-        const val CHANGE_TO_PRIMARY_DEVICE_OTP = "changeToPrimaryDeviceOTP"
         const val PRIMARY_DEVICE = "primaryDevice"
     }
 

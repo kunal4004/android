@@ -59,7 +59,12 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.SelectPrimaryDeviceFragment"
         android:label="SelectPrimaryDevice"
         tools:layout="@layout/fragment_select_primary_device" >
+        <action
+            android:id="@+id/action_link_new_primary_device"
+            app:destination="@id/linkPrimaryDeviceOtpNavigation" />
     </fragment>
 
     <include app:graph="@navigation/graph_unlink_device_otp" />
+
+    <include app:graph="@navigation/graph_link_primary_device_otp" />
 </navigation>
