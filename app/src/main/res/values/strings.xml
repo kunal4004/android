@@ -1989,6 +1989,7 @@
 
     <!--  Changing Device Confirmation  -->
     <string name="changing_primary_device_processing">Changing Primary Device</string>
+    <string name="changing_primary_device_result_success">Your Device Has \nBeen Successfully Changed.</string>
 
     <!--  Unlink Device Confirmation  -->
     <string name="unlink_device_unlinking_processing">Unlinking Your Device</string>

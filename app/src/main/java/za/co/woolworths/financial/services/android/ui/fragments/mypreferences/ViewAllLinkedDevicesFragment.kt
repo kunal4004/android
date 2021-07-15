@@ -56,7 +56,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         setFragmentResultListener(DELETE_DEVICE_OTP) { requestKey, bundle ->
             val navController = view?.findNavController()
             navController?.navigate(R.id.action_to_delete_primary_device_otp, bundleOf(
-                PRIMARY_DEVICE to deviceIdentityId))
+                DEVICE to deviceIdentityId))
         }
 
         setFragmentResultListener(CHOOSE_PRIMARY_DEVICE_FRAGMENT) { requestKey, bundle ->
@@ -65,6 +65,12 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                 bundleOf(
                     DEVICE_LIST to deviceList
                 ))
+        }
+
+        setFragmentResultListener(CHANGE_PRIMARY_DEVICE_OTP) { requestKey, bundle ->
+            val navController = view?.findNavController()
+            bundle.putBoolean(DELETE_PRIMARY_DEVICE, false)
+            navController?.navigate(R.id.action_change_to_primary_device, bundle)
         }
 
         // Inflate the layout for this fragment
@@ -166,14 +172,15 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
     companion object {
         const val DEVICE_LIST = "deviceList"
-        const val DEVICE_NAME = "deviceName"
         const val DELETE_DEVICE_OTP = "deleteDeviceOTP"
         const val DELETE_DEVICE_NO_OTP = "deleteDevice"
         const val KEY_BOOLEAN_UNLINK_DEVICE = "isUnlinkSuccess"
         const val CHOOSE_PRIMARY_DEVICE_FRAGMENT = "choosePrimaryDeviceFragment"
-        const val PRIMARY_DEVICE = "primaryDevice"
+        const val DEVICE = "device"
         const val NEW_DEVICE = "newPrimaryDevice"
         const val OLD_DEVICE = "oldPrimaryDevice"
+        const val CHANGE_PRIMARY_DEVICE_OTP = "changePrimaryDevice"
+        const val DELETE_PRIMARY_DEVICE = "deleteOldPrimaryDevice"
     }
 
     override fun onClick(v: View?) {
@@ -193,9 +200,12 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                 ))
             }
             R.id.viewAllDeviceEditImageView -> {
-                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_secondaryDeviceBottomSheetFragment, bundleOf(
-                    DEVICE_NAME to userDevice.deviceName
-                ))
+                val bundle = Bundle()
+                bundle.putSerializable(NEW_DEVICE, userDevice)
+                bundle.putSerializable(OLD_DEVICE,
+                    deviceList?.filter { device -> device.primarydDevice == true }?.get(0)
+                )
+                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_secondaryDeviceBottomSheetFragment, bundle)
             }
         }
     }

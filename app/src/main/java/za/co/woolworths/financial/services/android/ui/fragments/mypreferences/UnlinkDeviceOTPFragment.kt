@@ -150,7 +150,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            deviceIdentityId = it.getString(ViewAllLinkedDevicesFragment.PRIMARY_DEVICE, null)
+            deviceIdentityId = it.getString(ViewAllLinkedDevicesFragment.DEVICE, null)
         }
     }
 

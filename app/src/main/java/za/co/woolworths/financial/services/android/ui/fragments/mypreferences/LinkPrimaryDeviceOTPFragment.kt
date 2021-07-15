@@ -70,6 +70,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     private var otpMethod: String? = "SMS"
     private var currentLocation: Location? = null
     private var isOTPValidated: Boolean = false
+    private var deleteOldPrimaryDevice: Boolean = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationRequest = createLocationRequest()
     private val locationCallback = object : LocationCallback() {
@@ -137,6 +138,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         arguments?.let {
             oldPrimaryDevice = it.getSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE) as UserDevice
             newPrimaryDevice = it.getSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE) as UserDevice
+            deleteOldPrimaryDevice = it.getBoolean(ViewAllLinkedDevicesFragment.DELETE_PRIMARY_DEVICE)
         }
     }
 
@@ -556,63 +558,104 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun sendTokenToLinkNewDevice(token: String) {
+        if(deleteOldPrimaryDevice) {
+            deletePrimaryDevice(token)
+        }
+        else {
+            changePrimaryDevice(token)
+        }
+
+    }
+
+    private fun deletePrimaryDevice(token: String) {
+        // Remove new primary device from secondary devices
         OneAppService.deleteOrUnlinkDevice(newPrimaryDevice?.deviceIdentityId.toString())
             .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
                 override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                    // Remove old primary device completely
                     OneAppService.deleteOrUnlinkDevice(oldPrimaryDevice?.deviceIdentityId.toString())
                         .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
                             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                                unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
-                                OneAppService.linkDeviceApi(newPrimaryDevice?.deviceName.toString(),
-                                    newPrimaryDevice?.appInstanceId.toString(),
-                                    newPrimaryDevice?.locationLinked,
-                                    true, token)
-                                    .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
-                                    override fun onSuccess(response: LinkedDeviceResponse?) {
-                                        sendinOTPLayout?.visibility = View.GONE
-                                        when (response?.httpCode) {
-                                            AppConstant.HTTP_OK_201.toString() -> {
-                                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
-                                                    hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                                                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), activity)
-                                                showDeviceChanged()
-                                                response.deviceIdentityId?.let { saveDeviceId(it) }
-
-                                                setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                                    "isUpdate" to true
-                                                ))
-                                                Handler().postDelayed({
-                                                    view?.findNavController()?.navigateUp()
-                                                    view?.findNavController()?.navigateUp()
-                                                }, AppConstant.DELAY_1500_MS)
-
-                                            }
-                                            AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
-                                                activity?.apply {
-                                                    if (!isFinishing) {
-                                                        SessionUtilities.getInstance().setSessionState(
-                                                            SessionDao.SESSION_STATE.INACTIVE,
-                                                            response.response.stsParams, this)
-                                                    }
-                                                }
-                                            else -> response?.response?.desc?.let { desc ->
-                                                unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
-                                                buttonNext?.visibility = View.VISIBLE
-                                                didNotReceiveOTPTextView?.visibility = View.VISIBLE
-                                                showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
-                                            }
-                                        }
-                                    }
-
-                                    override fun onFailure(error: Throwable?) {
-                                        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
-                                        buttonNext?.visibility = View.VISIBLE
-                                        didNotReceiveOTPTextView?.visibility = View.VISIBLE
-                                        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
-                                    }
-                                }, LinkedDeviceResponse::class.java))
+                                // Re-add the new primary device as primaryDevice=true
+                                linkNewPrimaryDevice(token)
                             } }, ViewAllLinkedDeviceResponse::class.java))
                 } }, ViewAllLinkedDeviceResponse::class.java))
+    }
+
+    private fun changePrimaryDevice(token: String) {
+        // Remove new primary device from secondary devices
+        OneAppService.deleteOrUnlinkDevice(newPrimaryDevice?.deviceIdentityId.toString())
+            .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                    // Remove old primary device from primary devices
+                    OneAppService.deleteOrUnlinkDevice(oldPrimaryDevice?.deviceIdentityId.toString())
+                        .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                            override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                                // Re-add the old primary device as primaryDevice=false
+                                OneAppService.linkDeviceApi(oldPrimaryDevice?.deviceName.toString(),
+                                    oldPrimaryDevice?.appInstanceId.toString(),
+                                    oldPrimaryDevice?.locationLinked,
+                                    false, token)
+                                    .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
+                                        override fun onSuccess(response: LinkedDeviceResponse?) {
+                                            // Re-add the new primary device as primaryDevice=true
+                                            linkNewPrimaryDevice(token)
+                                        }
+                                    }, LinkedDeviceResponse::class.java))
+                            } }, ViewAllLinkedDeviceResponse::class.java))
+                } }, ViewAllLinkedDeviceResponse::class.java))
+    }
+
+    private fun linkNewPrimaryDevice(token: String) {
+        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
+        OneAppService.linkDeviceApi(newPrimaryDevice?.deviceName.toString(),
+            newPrimaryDevice?.appInstanceId.toString(),
+            newPrimaryDevice?.locationLinked,
+            true, token)
+            .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
+                override fun onSuccess(response: LinkedDeviceResponse?) {
+                    sendinOTPLayout?.visibility = View.GONE
+                    when (response?.httpCode) {
+                        AppConstant.HTTP_OK_201.toString() -> {
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
+                                hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), activity)
+                            showDeviceChanged()
+                            response.deviceIdentityId?.let { saveDeviceId(it) }
+
+                            setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                                "isUpdate" to true
+                            ))
+                            Handler().postDelayed({
+                                view?.findNavController()?.navigateUp()
+                                view?.findNavController()?.navigateUp()
+                            }, AppConstant.DELAY_1500_MS)
+
+                        }
+                        AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
+                            activity?.apply {
+                                if (!isFinishing) {
+                                    SessionUtilities.getInstance().setSessionState(
+                                        SessionDao.SESSION_STATE.INACTIVE,
+                                        response.response.stsParams, this)
+                                }
+                            }
+                        else -> response?.response?.desc?.let { desc ->
+                            unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
+                            buttonNext?.visibility = View.VISIBLE
+                            didNotReceiveOTPTextView?.visibility = View.VISIBLE
+                            showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                        }
+                    }
+                }
+
+                override fun onFailure(error: Throwable?) {
+                    unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
+                    buttonNext?.visibility = View.VISIBLE
+                    didNotReceiveOTPTextView?.visibility = View.VISIBLE
+                    showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                }
+            }, LinkedDeviceResponse::class.java))
     }
 
     private fun saveDeviceId(deviceIdentityId: Long) {
@@ -627,6 +670,13 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
         unlinkDeviceResultSubtitle?.visibility = View.GONE
         unlinkDeviceResultScreen?.visibility = View.VISIBLE
+        context?.let {
+            if(deleteOldPrimaryDevice) {
+                unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
+            } else{
+                unlinkDeviceResultTitle?.text = it.getString(R.string.changing_primary_device_result_success)
+            }
+        }
     }
 
     private fun showLinkingDeviceProcessing() {
