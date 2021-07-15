@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.app.Activity
 import android.net.UrlQuerySanitizer
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -53,6 +54,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     companion object {
         const val DEFAULT_RAND_CURRENCY = "R 0.00"
+        const val MAX_AMOUNT_LIMIT = 50000
     }
 
     private fun createCard(): AddCardResponse {
@@ -243,7 +245,9 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun isConfirmPaymentButtonEnabled(cvvLength: Int, amountEntered: String?): Boolean {
-        return cvvLength > 2 && isChangeIconEnabled(amountEntered)
+        return cvvLength > 2 &&
+                isChangeIconEnabled(amountEntered) &&
+                isAmountBelowMaxLimit(amountEntered)
     }
 
     fun isMaxCVVLength(size: Int): Boolean {
@@ -279,12 +283,12 @@ class PayMyAccountViewModel : ViewModel() {
         return paymentMethodList?.isEmpty() == true
     }
 
-    fun triggerFirebaseEventForEditAmount() {
-        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForAmountEdit(productGroupCode) }
+    fun triggerFirebaseEventForEditAmount(activity: Activity) {
+        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForAmountEdit(productGroupCode, activity) }
     }
 
-    fun triggerFirebaseEventForPaymentComplete() {
-        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode) }
+    fun triggerFirebaseEventForPaymentComplete(activity: Activity) {
+        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode, activity) }
     }
 
     @Nullable
@@ -480,5 +484,9 @@ class PayMyAccountViewModel : ViewModel() {
             val maskedCardNumber = "**** **** **** $number"
             return Triple(cardHolderName, expiredMonthYear, maskedCardNumber)
         }
+    }
+
+    fun isAmountBelowMaxLimit(amount: String?): Boolean {
+        return convertRandFormatToDouble(amount) <= MAX_AMOUNT_LIMIT
     }
 }

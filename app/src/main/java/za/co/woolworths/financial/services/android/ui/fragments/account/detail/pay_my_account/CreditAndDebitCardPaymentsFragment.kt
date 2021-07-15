@@ -9,6 +9,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -220,7 +221,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             R.id.payByDebitCardNowButton -> {
                 val cardInfo = payMyAccountViewModel.getCardDetail()
                 val payUMethodType = cardInfo?.payuMethodType
-                payMyAccountPresenter?.setFirebaseEventForPayByCardNow()
+                activity?.let { payMyAccountPresenter?.setFirebaseEventForPayByCardNow(it) }
 
                 payMyAccountViewModel.resetAmountEnteredToDefault()
                 when {
@@ -258,7 +259,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                     whatsAppUnavailableFragment.show(childFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName)
                     return
                 }
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION, activity)
                 ScreenManager.presentWhatsAppChatToUsActivity(activity, WhatsAppChatToUs.FEATURE_WHATSAPP, payMyAccountPresenter?.getAppScreenName())
             }
         }

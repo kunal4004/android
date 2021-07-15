@@ -6,5 +6,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.mod
 
 interface IListAllAgentMessage {
     fun messageListFromAgent(onSuccess:(Pair<MutableList<ChatMessage>?, SendMessageResponse?>) -> Unit, onFailure: (ApiException) -> Unit)
+    fun fetchAllAgentConversation(onSuccess:(Int, SendMessageResponse?) -> Unit)
 
 }

@@ -141,7 +141,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         account.productOfferingId = storeDetails?.productOfferingId?.toInt() ?: 0
                         when (mLinkCardType) {
                             LinkCardType.LINK_NEW_CARD.type -> {
-                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_CONFIRM)
+                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_CONFIRM, mCurrentActivity)
                             }
                         }
                         // Make store card call
@@ -319,7 +319,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                     displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
                     activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
                     activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-                    activity.setResult(ProcessBlockCardFragment.RESULT_CODE_BLOCK_CODE_SUCCESS)
+                    activity.setResult(MyCardDetailActivity.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE)
                 }
             }
 

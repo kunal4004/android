@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.contracts
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
@@ -83,7 +84,16 @@ interface IAccountCardDetailsContract {
         fun navigateToPayMyAccountActivity()
         fun getStoreCardBlockType(): Boolean
         fun isProductCodeStoreCard(): Boolean
-        fun onStartCreditLimitIncreaseFirebaseEvent()
+        fun onStartCreditLimitIncreaseFirebaseEvent(activity: Activity)
+        fun isVirtualCardEnabled(): Boolean
+        fun isVirtualCardObjectNotNull(): Boolean
+        fun isTemporaryCardEnabled(): Boolean
+        fun isInstantCardReplacementEnabled(): Boolean
+        fun isVirtualCardObjectBlockTypeNull(): Boolean
+        fun isGeneterateVTC(): Boolean
+        fun getPrimaryStoreCardBlockType(): String
+        fun isReplacementCardAndVirtualCardViewEnabled(): Boolean
+        fun isActivateVirtualTempCard(): Boolean
     }
 
     interface AccountCardDetailModel {

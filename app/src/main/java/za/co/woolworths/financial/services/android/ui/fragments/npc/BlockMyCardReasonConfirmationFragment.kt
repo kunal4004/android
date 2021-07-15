@@ -51,12 +51,12 @@ class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment(), View
     override fun onClick(v: View?) {
         when(v?.id) {
             R.id.yesBlockCardButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CONFIRM)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CONFIRM, activity)
                 mStoreCardListenerCallback?.onBlockPermanentCardPermissionGranted()
                 dismiss()
             }
             R.id.tvCancel -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CANCEL)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CANCEL, activity)
                 dismiss()
             }
         }

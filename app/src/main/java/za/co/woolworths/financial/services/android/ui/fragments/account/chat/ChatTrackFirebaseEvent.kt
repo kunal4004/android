@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.chat
 
+import android.app.Activity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.util.Utils
@@ -7,7 +8,7 @@ import za.co.woolworths.financial.services.android.util.wenum.ActivityType
 
 class ChatTrackFirebaseEvent {
 
-    fun chatOnline(applyNowState: ApplyNowState, activityType: ActivityType?) {
+    fun chatOnline(applyNowState: ApplyNowState, activityType: ActivityType?, activity: Activity) {
         val propertyName: String? = when (activityType) {
             ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_MYACCOUNTS_CHAT_ONLINE
@@ -35,10 +36,10 @@ class ChatTrackFirebaseEvent {
             else -> null
         }
 
-        propertyName?.let { event -> Utils.triggerFireBaseEvents(event) }
+        propertyName?.let { event -> Utils.triggerFireBaseEvents(event, activity) }
     }
 
-    fun chatBreak(applyNowState: ApplyNowState, activityType: ActivityType?) {
+    fun chatBreak(applyNowState: ApplyNowState, activityType: ActivityType?, activity: Activity) {
         val propertyName: String? = when (activityType) {
             ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_MYACCOUNTS_CHAT_BREAK
@@ -66,10 +67,10 @@ class ChatTrackFirebaseEvent {
             else -> null
         }
 
-        propertyName?.let { event -> Utils.triggerFireBaseEvents(event) }
+        propertyName?.let { event -> Utils.triggerFireBaseEvents(event, activity) }
     }
 
-    fun chatEnd(applyNowState: ApplyNowState, activityType: ActivityType?) {
+    fun chatEnd(applyNowState: ApplyNowState, activityType: ActivityType?, activity: Activity) {
         val propertyName: String? = when (activityType) {
             ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_MYACCOUNTS_CHAT_END
@@ -97,10 +98,10 @@ class ChatTrackFirebaseEvent {
             else -> null
         }
 
-        propertyName?.let { event -> Utils.triggerFireBaseEvents(event) }
+        propertyName?.let { event -> Utils.triggerFireBaseEvents(event, activity) }
     }
 
-    fun chatOffline(applyNowState: ApplyNowState, activityType: ActivityType?) {
+    fun chatOffline(applyNowState: ApplyNowState, activityType: ActivityType?, activity: Activity) {
         val propertyName: String? = when (activityType) {
             ActivityType.ACCOUNT_LANDING, ActivityType.PRODUCT_LANDING -> when (applyNowState) {
                 ApplyNowState.STORE_CARD -> FirebaseManagerAnalyticsProperties.SC_MYACCOUNTS_CHAT_OFFLINE
@@ -128,6 +129,6 @@ class ChatTrackFirebaseEvent {
             else -> null
         }
 
-        propertyName?.let { event -> Utils.triggerFireBaseEvents(event) }
+        propertyName?.let { event -> Utils.triggerFireBaseEvents(event, activity) }
     }
 }
