@@ -138,8 +138,8 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            oldPrimaryDevice = it.getSerializable("oldPrimaryDevice") as UserDevice
-            newPrimaryDevice = it.getSerializable("newPrimaryDevice") as UserDevice
+            oldPrimaryDevice = it.getSerializable(ViewAllLinkedDevicesFragment.OLD_DEVICE) as UserDevice
+            newPrimaryDevice = it.getSerializable(ViewAllLinkedDevicesFragment.NEW_DEVICE) as UserDevice
         }
     }
 

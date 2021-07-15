@@ -172,6 +172,8 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         const val KEY_BOOLEAN_UNLINK_DEVICE = "isUnlinkSuccess"
         const val CHOOSE_PRIMARY_DEVICE_FRAGMENT = "choosePrimaryDeviceFragment"
         const val PRIMARY_DEVICE = "primaryDevice"
+        const val NEW_DEVICE = "newPrimaryDevice"
+        const val OLD_DEVICE = "oldPrimaryDevice"
     }
 
     override fun onClick(v: View?) {
