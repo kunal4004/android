@@ -16,5 +16,5 @@
     <item name="point_two" format="float" type="integer">0.2</item>
     <item name="point_five" format="float" type="integer">0.5</item>
     <item name="one_point_five" format="float" type="integer">1.5</item>
-    <item name="zero_point_seven" format="float" type="integer">0.7</item>
+    <item name="my_account_apply_now_bottom_sheet_slider_peek_height" format="float" type="integer">0.7</item>
 </resources>
