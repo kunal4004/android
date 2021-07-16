@@ -7,6 +7,7 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -24,6 +25,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountSal
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentAtPosition
+import za.co.woolworths.financial.services.android.ui.extension.underline
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragmentViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 import za.co.woolworths.financial.services.android.ui.views.ConfigureViewPagerWithTab
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -36,6 +39,8 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     var mBottomSheetBehaviorState: Int = BottomSheetBehavior.STATE_COLLAPSED
 
+    private val myAccountsFragmentViewModel: MyAccountsFragmentViewModel by viewModels()
+
     @SuppressLint("SourceLockedOrientationActivity", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +48,11 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         KotlinUtils.setTransparentStatusBar(this)
 
+        viewApplicationStatusTextView?.apply {
+            underline()
+            AnimationUtilExtension.animateViewPushDown(this)
+            setOnClickListener(this@AccountSalesActivity)
+        }
         mAccountSalesModelImpl = AccountSalesPresenterImpl(this, AccountSalesModelImpl())
         mAccountSalesModelImpl?.apply {
             setAccountSalesIntent(intent)
@@ -165,6 +175,9 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
                 mAccountSalesModelImpl?.onApplyNowButtonTapped()?.let { url -> KotlinUtils.openBrowserWithUrl(url, this) }
             }
             R.id.navigateBackImageButton -> onBackPressed()
+
+            R.id.viewApplicationStatusTextView -> myAccountsFragmentViewModel.myAccountsPresenter?.viewApplicationStatusLinkInExternalBrowser(this)
+
         }
     }
 
