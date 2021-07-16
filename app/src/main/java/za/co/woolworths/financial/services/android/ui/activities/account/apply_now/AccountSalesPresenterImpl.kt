@@ -100,7 +100,7 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
         val deviceHeight = deviceHeight()
         val bottomGuidelineTypeValue = TypedValue()
         WoolworthsApplication.getInstance()?.resources?.getValue(
-            R.integer.zero_point_seven,
+            R.integer.my_account_apply_now_bottom_sheet_slider_peek_height,
             bottomGuidelineTypeValue,
             true
         )
