@@ -576,7 +576,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                         showDeviceLinked()
                         linkedDeviceResponse.deviceIdentityId?.let { saveDeviceId(it) }
                         setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                "isLinked" to true
+                            MyPreferencesFragment.IS_DEVICE_LINKED to true
                         ))
                         Handler().postDelayed({
 
@@ -732,8 +732,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     }
                     ErrorHandlerActivity.RESULT_CALL_CENTER -> {
                         Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
-                        setFragmentResult("linkDevice", bundleOf(
-                                "isLinked" to false
+                        setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                            MyPreferencesFragment.IS_DEVICE_LINKED to false
                         ))
                         view?.findNavController()?.navigateUp()
                     }

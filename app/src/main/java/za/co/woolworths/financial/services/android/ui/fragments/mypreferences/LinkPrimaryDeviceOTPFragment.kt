@@ -251,8 +251,8 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         when (v?.id) {
             R.id.didNotReceiveOTPTextView -> {
                 if (!isRetrieveOTPCallInProgress()) {
-                    v?.isEnabled = false
-                    Handler().postDelayed({ v?.isEnabled = true }, AppConstant.DELAY_1000_MS)
+                    v.isEnabled = false
+                    Handler().postDelayed({ v.isEnabled = true }, AppConstant.DELAY_1000_MS)
                     view?.findNavController()?.navigate(R.id.action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
                             ResendOTPBottomSheetFragment.OTP_NUMBER to otpNumber
                     ))
@@ -562,26 +562,9 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             deletePrimaryDevice(token)
         }
         else {
-            changePrimaryDevice(token)
+            performChangePrimaryDevice(newPrimaryDevice)
         }
     }
-
-    private fun changePrimaryDevice(token: String) {
-        // Remove new primary device from secondary devices
-        performDeleteOrUnlinkDevice(newPrimaryDevice) {
-            // Remove old primary device from primary devices
-            performDeleteOrUnlinkDevice(oldPrimaryDevice) {
-                // Re-add the old primary device as primaryDevice=false
-                performLinkDevice(token, oldPrimaryDevice, false) {
-                    // Re-add the new primary device as primaryDevice=true
-                    performLinkDevice(token, newPrimaryDevice, true) {
-                        changePrimaryDeviceSuccess(it)
-                    }
-                }
-            }
-        }
-    }
-
 
     private fun deletePrimaryDevice(token: String) {
         // Remove new primary device from secondary devices
@@ -590,10 +573,21 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             performDeleteOrUnlinkDevice(oldPrimaryDevice) {
                 // Re-add the new primary device as primaryDevice=true
                 performLinkDevice(token, newPrimaryDevice, true) {
-                    changePrimaryDeviceSuccess(it)
+                    deletePrimaryDeviceSuccess(it)
                 }
             }
         }
+    }
+
+    private fun performChangePrimaryDevice(device: UserDevice?){
+        OneAppService.changePrimaryDeviceApi(device?.deviceIdentityId.toString())
+            .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                    saveNewPrimaryDeviceIdSuccess(response)
+                }
+                override fun onFailure(error: Throwable?) {
+                    handleChangeOrDeletePrimaryDeviceFailure()
+                } }, ViewAllLinkedDeviceResponse::class.java))
     }
 
     private fun performDeleteOrUnlinkDevice(device: UserDevice?, onSuccess: () -> Unit){
@@ -603,7 +597,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     onSuccess()
                 }
                 override fun onFailure(error: Throwable?) {
-                    APICallFailure()
+                    handleChangeOrDeletePrimaryDeviceFailure()
                 } }, ViewAllLinkedDeviceResponse::class.java))
     }
 
@@ -622,12 +616,61 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    APICallFailure()
+                    handleChangeOrDeletePrimaryDeviceFailure()
                 }
             }, LinkedDeviceResponse::class.java))
     }
 
-    private fun changePrimaryDeviceSuccess(response: LinkedDeviceResponse?) {
+    private fun saveNewPrimaryDeviceIdSuccess(response: ViewAllLinkedDeviceResponse?) {
+        sendinOTPLayout?.visibility = View.GONE
+        when (response?.httpCode) {
+            AppConstant.HTTP_OK -> {
+                val primaryDevice = getPrimaryDevice(response)
+                if(primaryDevice != null){
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
+                        hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), activity)
+                    showDeviceChanged()
+
+                    primaryDevice.deviceIdentityId?.let { saveDeviceId(it) }
+
+                    setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                        ViewAllLinkedDevicesFragment.IS_UPDATE to true
+                    ))
+                    Handler().postDelayed({
+                        view?.findNavController()?.navigateUp()
+                    }, AppConstant.DELAY_1500_MS)
+                } else{
+                    handleChangeOrDeletePrimaryDeviceFailure()
+                }
+            }
+            AppConstant.HTTP_SESSION_TIMEOUT_440 ->
+                activity?.apply {
+                    if (!isFinishing) {
+                        SessionUtilities.getInstance().setSessionState(
+                            SessionDao.SESSION_STATE.INACTIVE,
+                            response.response?.stsParams, this)
+                    }
+                }
+            else -> response?.response?.desc?.let { desc ->
+                handleChangeOrDeletePrimaryDeviceFailure()
+            }
+        }
+    }
+
+    private fun getPrimaryDevice(response: ViewAllLinkedDeviceResponse): UserDevice? {
+        if (response.userDevices != null &&
+            response.userDevices?.isNotEmpty() == true){
+            val primaryDevice = response.userDevices?.filter { userDevice -> userDevice.primarydDevice == true }
+            if (primaryDevice?.isNotEmpty() == true) {
+                return primaryDevice[0]
+            }
+        }
+        return null
+    }
+
+
+    private fun deletePrimaryDeviceSuccess(response: LinkedDeviceResponse?) {
         sendinOTPLayout?.visibility = View.GONE
         when (response?.httpCode) {
             AppConstant.HTTP_OK_201.toString() -> {
@@ -638,7 +681,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                 response.deviceIdentityId?.let { saveDeviceId(it) }
 
                 setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                    "isUpdate" to true
+                    ViewAllLinkedDevicesFragment.IS_UPDATE to true
                 ))
                 Handler().postDelayed({
                     view?.findNavController()?.navigateUp()
@@ -663,7 +706,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         }
     }
 
-    private fun APICallFailure() {
+    private fun handleChangeOrDeletePrimaryDeviceFailure() {
         unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
         buttonNext?.visibility = View.VISIBLE
         didNotReceiveOTPTextView?.visibility = View.VISIBLE
@@ -760,8 +803,8 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     }
                     ErrorHandlerActivity.RESULT_CALL_CENTER -> {
                         Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
-                        setFragmentResult("linkDevice", bundleOf(
-                                "isLinked" to false
+                        setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                            MyPreferencesFragment.IS_DEVICE_LINKED to false
                         ))
                         view?.findNavController()?.navigateUp()
                     }
