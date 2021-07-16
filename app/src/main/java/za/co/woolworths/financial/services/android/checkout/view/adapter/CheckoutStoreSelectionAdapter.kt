@@ -60,12 +60,12 @@ class CheckoutStoreSelectionAdapter(
                         )
                     )
                     title.paintFlags =
-                        if (!it.deliverable) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
+                        if (it.deliverable == false) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
                 }
                 setOnClickListener {
-                    if (!storeFilterList[position].deliverable) return@setOnClickListener
+                    if (storeFilterList[position].deliverable == false) return@setOnClickListener
                     checkedItemPosition = position
-                    checkedItemStoreId = storeFilterList[position].storeId
+                    checkedItemStoreId = storeFilterList[position].storeId.toString()
                     notifyDataSetChanged()
                 }
             }
