@@ -28,7 +28,7 @@
             android:textSize="@dimen/twenty_sp" />
 
         <TextView
-            android:id="@+id/change"
+            android:id="@+id/changeTextView"
             style="@style/futura_semi_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
