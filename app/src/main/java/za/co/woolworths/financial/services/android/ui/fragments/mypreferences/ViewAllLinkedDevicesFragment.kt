@@ -88,7 +88,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                 activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)), this) }
 
                                 setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                        "isUpdate" to true
+                                        IS_UPDATE to true
                                 ))
 
                                 deviceList = response?.userDevices
@@ -124,7 +124,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                 deviceList = response?.userDevices
                 if (deviceList.isNullOrEmpty()) {
                     setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                            "isUpdate" to true
+                            IS_UPDATE to true
                     ))
                     view?.findNavController()?.navigateUp()
                     return
@@ -182,6 +182,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         const val OLD_DEVICE = "oldPrimaryDevice"
         const val CHANGE_PRIMARY_DEVICE_OTP = "changePrimaryDevice"
         const val DELETE_PRIMARY_DEVICE = "deleteOldPrimaryDevice"
+        const val IS_UPDATE = "isUpdate"
     }
 
     override fun onClick(v: View?) {

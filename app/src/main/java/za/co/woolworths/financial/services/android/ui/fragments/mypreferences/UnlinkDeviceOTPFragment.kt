@@ -638,7 +638,7 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                             showDeviceUnlinked()
 
                             setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                "isUpdate" to true
+                                ViewAllLinkedDevicesFragment.IS_UPDATE to true
                             ))
                             Handler().postDelayed({
                                 if (response.userDevices.isNullOrEmpty()) {
@@ -715,8 +715,8 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
                     }
                     ErrorHandlerActivity.RESULT_CALL_CENTER -> {
                         Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
-                        setFragmentResult("linkDevice", bundleOf(
-                                "isLinked" to false
+                        setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                                MyPreferencesFragment.IS_DEVICE_LINKED to false
                         ))
                         view?.findNavController()?.navigateUp()
                     }
