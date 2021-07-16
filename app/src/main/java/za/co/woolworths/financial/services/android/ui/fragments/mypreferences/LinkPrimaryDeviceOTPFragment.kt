@@ -586,7 +586,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     saveNewPrimaryDeviceIdSuccess(response)
                 }
                 override fun onFailure(error: Throwable?) {
-                    apiCallFailure()
+                    handleChangeOrDeletePrimaryDeviceFailure()
                 } }, ViewAllLinkedDeviceResponse::class.java))
     }
 
@@ -597,7 +597,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     onSuccess()
                 }
                 override fun onFailure(error: Throwable?) {
-                    apiCallFailure()
+                    handleChangeOrDeletePrimaryDeviceFailure()
                 } }, ViewAllLinkedDeviceResponse::class.java))
     }
 
@@ -616,7 +616,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    apiCallFailure()
+                    handleChangeOrDeletePrimaryDeviceFailure()
                 }
             }, LinkedDeviceResponse::class.java))
     }
@@ -641,7 +641,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                         view?.findNavController()?.navigateUp()
                     }, AppConstant.DELAY_1500_MS)
                 } else{
-                    apiCallFailure()
+                    handleChangeOrDeletePrimaryDeviceFailure()
                 }
             }
             AppConstant.HTTP_SESSION_TIMEOUT_440 ->
@@ -653,7 +653,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     }
                 }
             else -> response?.response?.desc?.let { desc ->
-                apiCallFailure()
+                handleChangeOrDeletePrimaryDeviceFailure()
             }
         }
     }
@@ -706,7 +706,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         }
     }
 
-    private fun apiCallFailure() {
+    private fun handleChangeOrDeletePrimaryDeviceFailure() {
         unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
         buttonNext?.visibility = View.VISIBLE
         didNotReceiveOTPTextView?.visibility = View.VISIBLE
