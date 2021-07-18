@@ -2078,6 +2078,7 @@
     <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
     <string name="add_a_new_address">Add A New Address</string>
     <string name="add_address">Add Address</string>
+    <string name="change_location">change location</string>
     <string name="no_saved_addresses">No Saved Addresses</string>
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
