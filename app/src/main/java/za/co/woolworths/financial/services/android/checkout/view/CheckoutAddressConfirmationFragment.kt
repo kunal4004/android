@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -26,7 +27,6 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -48,7 +48,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private var storeListAdapter: CheckoutStoreSelectionAdapter? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var navController: NavController? = null
-    private var localSuburbId = ""
+    private var localSuburbId: String? = null
     private var selectedProvince: Province? = Province()
 
     companion object {
@@ -93,7 +93,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 showDeliveryTab()
             }
             R.id.collectionTab -> {
-                showCollectionTab()
+                showCollectionTab(localSuburbId)
             }
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
                 navigateToAddAddress()
@@ -123,12 +123,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         }
     }
 
-    private fun showCollectionTab() {
+    private fun showCollectionTab(suburbId: String?) {
         collectionTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
         deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         addressConfirmationDelivery.visibility = View.GONE
         addressConfirmationClicknCollect.visibility = View.VISIBLE
-        showStoreListView()
+        showStoreListView(suburbId)
     }
 
     private fun showDeliveryTab() {
@@ -136,6 +136,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         addressConfirmationDelivery.visibility = View.VISIBLE
         addressConfirmationClicknCollect.visibility = View.GONE
+        earliestDateTitleLayout.visibility = View.GONE
     }
 
     private fun navigateToAddAddress() {
@@ -161,19 +162,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         }
 
         setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
-            showCollectionTab()
             val result = bundle.getString("Suburb")
             val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
-            Utils.savePreferredDeliveryLocation(
-                ShoppingDeliveryLocation(
-                    selectedProvince,
-                    suburb,
-                    null
-                )
-            )
+            suburb?.id?.let { showCollectionTab(it) }
         }
         setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
-            showCollectionTab()
+            showCollectionTab(localSuburbId)
             val result = bundle.getString("Province")
             selectedProvince = Utils.strToJson(result, Province::class.java) as? Province
             if (selectedProvince != null)
@@ -181,10 +175,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         }
 
         setFragmentResultListener(CheckoutAddAddressNewUserFragment.PROVINCE_SELECTION_BACK_PRESSED) { requestKey, bundle ->
-            showCollectionTab()
+            showCollectionTab(localSuburbId)
         }
         setFragmentResultListener(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED) { requestKey, bundle ->
-            showCollectionTab()
+            showCollectionTab(localSuburbId)
         }
     }
 
@@ -282,18 +276,23 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         whereWeDeliveringTitle.text = bindString(R.string.where_should_we_deliver)
     }
 
-    private fun showStoreListView() {
-        val suburbId = Utils.getPreferredDeliveryLocation().suburb?.id
-        if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
-            storesFoundTitle.text = getString(R.string.stores_near_me, "0")
-            suburbId?.let {
-                localSuburbId = suburbId
+    private fun showStoreListView(suburbId: String?) {
+        var selectedSuburbId = suburbId
+        if (selectedSuburbId.isNullOrEmpty())
+            selectedSuburbId = Utils.getPreferredDeliveryLocation().suburb?.id.toString()
+        if (!localSuburbId.equals(selectedSuburbId)) { //equals means only tab change happens. No suburb changed.
+            localSuburbId = selectedSuburbId
+            storesFoundTitle.text = getString(R.string.zero_stores_near_me)
+            localSuburbId?.let {
                 checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
                     .observe(viewLifecycleOwner, {
                         when (it.responseStatus) {
                             ResponseStatus.SUCCESS -> {
+                                loadingProgressBar.visibility = View.GONE
                                 if (it?.data != null) {
                                     val response = it?.data as? ValidateSelectedSuburbResponse
+                                    earliestDateTitleLayout.visibility = View.VISIBLE
+                                    earliestDateValue?.text = response?.validatedSuburbProducts?.firstAvailableFoodDeliveryDate ?: ""
                                     rcvStoreRecyclerView?.apply {
                                         storeListAdapter =
                                             response?.validatedSuburbProducts?.stores?.let { it1 ->
@@ -310,10 +309,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 }
                             }
                             ResponseStatus.LOADING -> {
-
+                                loadingProgressBar.visibility = View.VISIBLE
                             }
                             ResponseStatus.ERROR -> {
-
+                                loadingProgressBar.visibility = View.GONE
                             }
                         }
                     })

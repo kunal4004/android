@@ -2063,6 +2063,7 @@
     <string name="where_are_we_delivering">Where Are We Delivering?</string>
     <string name="where_should_we_deliver">Where Should We Deliver?</string>
     <string name="stores_near_me">%s Stores near me</string>
+    <string name="zero_stores_near_me">0 Stores near me</string>
     <string name="save_address">SAVE ADDRESS</string>
     <string name="change_details">change details</string>
     <string name="delete_address">delete address</string>
