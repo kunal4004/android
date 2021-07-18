@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
+import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -50,6 +51,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private var navController: NavController? = null
     private var localSuburbId: String? = null
     private var selectedProvince: Province? = Province()
+    private var validatedSuburbProductResponse: ValidatedSuburbProducts? = null
 
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
@@ -290,22 +292,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                             ResponseStatus.SUCCESS -> {
                                 loadingProgressBar.visibility = View.GONE
                                 if (it?.data != null) {
-                                    val response = it?.data as? ValidateSelectedSuburbResponse
-                                    earliestDateTitleLayout.visibility = View.VISIBLE
-                                    earliestDateValue?.text = response?.validatedSuburbProducts?.firstAvailableFoodDeliveryDate ?: ""
-                                    rcvStoreRecyclerView?.apply {
-                                        storeListAdapter =
-                                            response?.validatedSuburbProducts?.stores?.let { it1 ->
-                                                CheckoutStoreSelectionAdapter(it1)
-                                            }
-                                        storesFoundTitle.text = getString(
-                                            R.string.stores_near_me,
-                                            (response?.validatedSuburbProducts?.stores?.size
-                                                ?: 0).toString()
-                                        )
-                                        layoutManager = activity?.let { LinearLayoutManager(it) }
-                                        storeListAdapter?.let { adapter = it }
-                                    }
+                                    validatedSuburbProductResponse = (it?.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
+                                    showStoreList()
                                 }
                             }
                             ResponseStatus.LOADING -> {
@@ -317,6 +305,33 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         }
                     })
             }
+        }
+        else if (localSuburbId != null && validatedSuburbProductResponse != null){
+            showStoreList()
+        }
+    }
+
+    private fun showStoreList() {
+        if(!validatedSuburbProductResponse?.stores.isNullOrEmpty()) {
+            searchLayout.visibility = View.VISIBLE
+        }
+        else{
+
+        }
+        earliestDateTitleLayout.visibility = View.VISIBLE
+        earliestDateValue?.text = validatedSuburbProductResponse?.firstAvailableFoodDeliveryDate ?: ""
+        rcvStoreRecyclerView?.apply {
+            storeListAdapter =
+                validatedSuburbProductResponse?.stores?.let { it1 ->
+                    CheckoutStoreSelectionAdapter(it1)
+                }
+            storesFoundTitle.text = getString(
+                R.string.stores_near_me,
+                (validatedSuburbProductResponse?.stores?.size
+                    ?: 0).toString()
+            )
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            storeListAdapter?.let { adapter = it }
         }
     }
 
