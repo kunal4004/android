@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
@@ -264,7 +265,18 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 if (it?.data != null) {
                                     validatedSuburbProductResponse =
                                         (it.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
-                                    showStoreList()
+                                    if (validatedSuburbProductResponse != null) {
+                                        if (validatedSuburbProductResponse?.unSellableCommerceItems?.size!! > 0) {
+                                            val address = Address()
+                                            address.suburbId = localSuburbId
+                                            navigateToUnsellableItemsFragment(
+                                                validatedSuburbProductResponse?.unSellableCommerceItems!!,
+                                                address,
+                                                validatedSuburbProductResponse?.unDeliverableProducts == false
+                                            )
+                                        } else
+                                            showStoreList()
+                                    }
                                 }
                             }
                             ResponseStatus.LOADING -> {
@@ -321,7 +333,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
+        unSellableCommerceItems: List<UnSellableCommerceItem>,
         address: Address,
         deliverable: Boolean
     ) {
