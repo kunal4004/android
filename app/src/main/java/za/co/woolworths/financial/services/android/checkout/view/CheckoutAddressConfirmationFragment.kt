@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
@@ -13,15 +14,16 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
+import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -39,8 +41,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     var savedAddress: SavedAddressResponse? = null
     var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? = null
+    private var storeListAdapter: CheckoutStoreSelectionAdapter? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var navController: NavController? = null
+    private var localSuburbId = ""
 
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
@@ -91,6 +95,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
                 addressConfirmationDelivery.visibility = View.GONE
                 addressConfirmationClicknCollect.visibility = View.VISIBLE
+                showStoreListView()
             }
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
                 navigateToAddAddress()
@@ -98,7 +103,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             R.id.btnAddressConfirmation -> {
                 if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
                     navigateToAddAddress()
-                } else if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
+                } else if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1  && addressConfirmationDelivery.visibility == View.VISIBLE)
                     addNewAddressErrorMsg.visibility = View.VISIBLE
                 else {
                     //TO DO next screen
@@ -147,8 +152,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun initView() {
         if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
+            //Show No Address view
             hideAddressListView()
         } else {
+            // Show Delivery View
             showAddressListView()
             checkoutAddressConfirmationListAdapter =
                 CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
@@ -163,6 +170,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         plusImgAddAddress.setOnClickListener(this)
         addNewAddressTextView.setOnClickListener(this)
         btnAddressConfirmation.setOnClickListener(this)
+
+        storeInputValue?.apply {
+            addTextChangedListener {
+                storeListAdapter?.filter?.filter(it.toString())
+            }
+        }
     }
 
     private fun hideAddressListView() {
@@ -183,6 +196,45 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         confirmAddressPartition.visibility = View.VISIBLE
         btnAddressConfirmation.text = bindString(R.string.confirm)
         whereWeDeliveringTitle.text = bindString(R.string.where_should_we_deliver)
+    }
+
+    private fun showStoreListView() {
+        storesFoundTitle.text = getString(R.string.stores_near_me, "0")
+        val suburbId = Utils.getPreferredDeliveryLocation().suburb?.id
+        if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
+            suburbId?.let {
+                localSuburbId = suburbId
+                checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
+                    .observe(viewLifecycleOwner, {
+                        when (it.responseStatus) {
+                            ResponseStatus.SUCCESS -> {
+                                if (it?.data != null) {
+                                    val response = it?.data as? ValidateSelectedSuburbResponse
+                                    rcvStoreRecyclerView?.apply {
+                                        storeListAdapter =
+                                            response?.validatedSuburbProducts?.stores?.let { it1 ->
+                                                CheckoutStoreSelectionAdapter(it1)
+                                            }
+                                        storesFoundTitle.text = getString(
+                                            R.string.stores_near_me,
+                                            (response?.validatedSuburbProducts?.stores?.size
+                                                ?: 0).toString()
+                                        )
+                                        layoutManager = activity?.let { LinearLayoutManager(it) }
+                                        storeListAdapter?.let { adapter = it }
+                                    }
+                                }
+                            }
+                            ResponseStatus.LOADING -> {
+
+                            }
+                            ResponseStatus.ERROR -> {
+
+                            }
+                        }
+                    })
+            }
+        }
     }
 
     private fun setupViewModel() {
@@ -247,7 +299,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         )*/
 
 
-                        val changeAddressResponse =  it?.data as? ChangeAddressResponse
+                        val changeAddressResponse = it?.data as? ChangeAddressResponse
                         if (changeAddressResponse != null && changeAddressResponse?.deliverable) {
                             if (changeAddressResponse?.unSellableCommerceItems?.size!! > 0) {
                                 navigateToUnsellableItemsFragment(
