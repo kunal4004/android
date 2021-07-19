@@ -22,16 +22,17 @@ import kotlinx.android.synthetic.main.account_sales_detail_fragment.*
 import kotlinx.android.synthetic.main.account_sign_out_activity.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentAtPosition
 import za.co.woolworths.financial.services.android.ui.extension.underline
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountSection
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragmentViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 import za.co.woolworths.financial.services.android.ui.views.ConfigureViewPagerWithTab
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-
 
 class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit {
 
@@ -176,7 +177,17 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
             }
             R.id.navigateBackImageButton -> onBackPressed()
 
-            R.id.viewApplicationStatusTextView -> myAccountsFragmentViewModel.myAccountsPresenter?.viewApplicationStatusLinkInExternalBrowser(this)
+            R.id.viewApplicationStatusTextView -> {
+               val applyNowSection =  when(mAccountSalesModelImpl?.getApplyNowState()) {
+                 ApplyNowState.STORE_CARD -> MyAccountSection.StoreCardLanding
+                   ApplyNowState.PERSONAL_LOAN -> MyAccountSection.PersonalLoanLanding
+                   ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD  -> MyAccountSection.CreditCardLanding
+                   else -> MyAccountSection.AccountLanding
+
+               }
+
+                myAccountsFragmentViewModel.myAccountsPresenter?.viewApplicationStatusLinkInExternalBrowser(applyNowSection, this)
+            }
 
         }
     }

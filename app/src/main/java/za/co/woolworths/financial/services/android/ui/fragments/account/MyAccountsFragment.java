@@ -87,6 +87,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.ViewApplicationStatusImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
@@ -898,7 +899,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
         switch (v.getId()) {
             case R.id.viewApplicationStatusRelativeLayout:
-                myAccountsPresenter.viewApplicationStatusLinkInExternalBrowser(activity);
+                myAccountsPresenter.viewApplicationStatusLinkInExternalBrowser(MyAccountSection.AccountLanding.INSTANCE,activity);
                 break;
 
             case R.id.openMessageActivity:
