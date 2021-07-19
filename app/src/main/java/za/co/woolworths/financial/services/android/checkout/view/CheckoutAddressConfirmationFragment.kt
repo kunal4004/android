@@ -267,6 +267,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         when (it.responseStatus) {
                             ResponseStatus.SUCCESS -> {
                                 loadingProgressBar.visibility = View.GONE
+                                changeTextView.visibility = View.VISIBLE
+                                btnAddressConfirmation.text = getString(R.string.confirm)
                                 if (it?.data != null) {
                                     validatedSuburbProductResponse =
                                         (it.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
@@ -295,9 +297,13 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                             }
                             ResponseStatus.LOADING -> {
                                 loadingProgressBar.visibility = View.VISIBLE
+                                changeTextView.visibility = View.GONE
+                                btnAddressConfirmation.text = getString(R.string.change_location)
                             }
                             ResponseStatus.ERROR -> {
                                 loadingProgressBar.visibility = View.GONE
+                                changeTextView.visibility = View.VISIBLE
+                                btnAddressConfirmation.text = getString(R.string.confirm)
                             }
                         }
                     })
