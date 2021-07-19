@@ -2062,8 +2062,6 @@
     <string name="places_autocomplete_tv_hint">Enter a new address</string>
     <string name="where_are_we_delivering">Where Are We Delivering?</string>
     <string name="where_should_we_deliver">Where Should We Deliver?</string>
-    <string name="stores_near_me">%s Stores near me</string>
-    <string name="zero_stores_near_me">0 Stores near me</string>
     <string name="save_address">SAVE ADDRESS</string>
     <string name="change_details">change details</string>
     <string name="delete_address">delete address</string>
@@ -2141,5 +2139,11 @@
     <string name="requiredForm">required forms</string>
     <string name="submitForm">You will also need to submit</string>
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
+
+    <plurals name="stores_near_me">
+        <item quantity="zero">%d Stores near me</item>
+        <item quantity="one">%d Store near me</item>
+        <item quantity="other">%d Stores near me</item>
+    </plurals>
 
 </resources>

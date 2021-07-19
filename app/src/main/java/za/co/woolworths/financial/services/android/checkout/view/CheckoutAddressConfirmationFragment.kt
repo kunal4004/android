@@ -27,7 +27,6 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
-import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
@@ -185,36 +184,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         }
     }
 
-    private fun getSuburb(province: Province?) {
-        province?.id?.let {
-            checkoutAddAddressNewUserViewModel.initGetSuburbs(it).observe(viewLifecycleOwner, {
-                when (it.responseStatus) {
-                    ResponseStatus.SUCCESS -> {
-                        if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
-                            //showNoStoresError()
-                        } else {
-                            (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
-                                val bundle = Bundle()
-                                bundle.apply {
-                                    putString("SuburbList", Utils.toJson(it1))
-                                    putSerializable("deliveryType", DeliveryType.DELIVERY)
-                                }
-                                navController?.navigate(
-                                    R.id.action_suburbSelectorFragment,
-                                    bundleOf("bundle" to bundle)
-                                )
-                            }
-                        }
-                    }
-                    ResponseStatus.LOADING -> {
-                    }
-                    ResponseStatus.ERROR -> {
-                    }
-                }
-            })
-        }
-    }
-
     private fun updateSavedAddress(bundle: Bundle?) {
         bundle?.apply {
             if (containsKey(SAVED_ADDRESS_KEY)) {
@@ -285,8 +254,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             selectedSuburbId = Utils.getPreferredDeliveryLocation().suburb?.id.toString()
         if (!localSuburbId.equals(selectedSuburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = selectedSuburbId
-            storesFoundTitle.text = getString(R.string.zero_stores_near_me)
-            localSuburbId?.let {
+            storesFoundTitle.text = resources.getQuantityString(R.plurals.stores_near_me, 0, 0)
+            localSuburbId?.let { it ->
                 checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
                     .observe(viewLifecycleOwner, {
                         when (it.responseStatus) {
@@ -294,7 +263,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 loadingProgressBar.visibility = View.GONE
                                 if (it?.data != null) {
                                     validatedSuburbProductResponse =
-                                        (it?.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
+                                        (it.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
                                     showStoreList()
                                 }
                             }
@@ -331,11 +300,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 validatedSuburbProductResponse?.stores?.let { it1 ->
                     CheckoutStoreSelectionAdapter(it1)
                 }
-            storesFoundTitle.text = getString(
-                R.string.stores_near_me,
-                (validatedSuburbProductResponse?.stores?.size
-                    ?: 0).toString()
-            )
+            val storesCount = (validatedSuburbProductResponse?.stores?.size ?: 0)
+            storesFoundTitle.text =
+                resources.getQuantityString(R.plurals.stores_near_me, storesCount, storesCount)
             layoutManager = activity?.let { LinearLayoutManager(it) }
             storeListAdapter?.let { adapter = it }
         }
@@ -404,12 +371,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
 
                         val changeAddressResponse = it?.data as? ChangeAddressResponse
-                        if (changeAddressResponse != null && changeAddressResponse?.deliverable) {
-                            if (changeAddressResponse?.unSellableCommerceItems?.size!! > 0) {
+                        if (changeAddressResponse != null && changeAddressResponse.deliverable) {
+                            if (changeAddressResponse.unSellableCommerceItems?.size!! > 0) {
                                 navigateToUnsellableItemsFragment(
-                                    changeAddressResponse?.unSellableCommerceItems,
+                                    changeAddressResponse.unSellableCommerceItems,
                                     address,
-                                    changeAddressResponse?.deliverable
+                                    changeAddressResponse.deliverable
                                 )
                             }
                         }
