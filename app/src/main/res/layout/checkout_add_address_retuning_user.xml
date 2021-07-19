@@ -17,4 +17,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <include layout="@layout/layout_native_checkout_delivery_food_substitution"
+        android:id="@+id/nativeCheckoutFoodSubstitutionLayout"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
