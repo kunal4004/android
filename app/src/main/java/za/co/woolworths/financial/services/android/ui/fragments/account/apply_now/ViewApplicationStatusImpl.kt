@@ -12,8 +12,7 @@ class ViewApplicationStatusImpl(private val accountsResponse: AccountsResponse?)
     override fun isViewApplicationStatusVisible(): Boolean =  accountsResponse?.products?.size ?: 0 != 3
 
     override fun viewApplicationStatusLinkInExternalBrowser(activity: Activity?) {
-        // TODO:: on next push rename to openUrlInPhoneBrowser
-        KotlinUtils.openBrowserWithUrl(url, activity)
+        KotlinUtils.openUrlInPhoneBrowser(url, activity)
     }
 
 }

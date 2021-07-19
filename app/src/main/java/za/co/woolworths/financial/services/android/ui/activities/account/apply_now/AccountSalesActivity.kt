@@ -172,7 +172,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.storeCardApplyNowButton, R.id.bottomApplyNowButton -> {
-                mAccountSalesModelImpl?.onApplyNowButtonTapped()?.let { url -> KotlinUtils.openBrowserWithUrl(url, this) }
+                mAccountSalesModelImpl?.onApplyNowButtonTapped()?.let { url -> KotlinUtils.openUrlInPhoneBrowser(url, this) }
             }
             R.id.navigateBackImageButton -> onBackPressed()
 
