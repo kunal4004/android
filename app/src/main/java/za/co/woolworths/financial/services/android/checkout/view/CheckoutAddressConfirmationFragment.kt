@@ -14,6 +14,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
@@ -59,6 +61,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         const val ADD_NEW_ADDRESS_KEY = "addNewAddress"
         const val SAVED_ADDRESS_KEY = "savedAddress"
         const val SAVED_ADDRESS_RESPONSE_KEY = "savedAddressResponse"
+        const val UNSELLABLE_CHANGE_STORE_REQUEST_KEY = "unsellableChangeStore"
     }
 
     override fun onCreateView(
@@ -170,7 +173,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
         }
-
+        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY){ requestKey, bundle ->
+            showCollectionTab(localSuburbId)
+        }
         setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
             val result = bundle.getString("Suburb")
             val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
@@ -265,6 +270,15 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 if (it?.data != null) {
                                     validatedSuburbProductResponse =
                                         (it.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
+                                    /*val jsonFileString = Utils.getJsonDataFromAsset(
+                                        activity?.applicationContext,
+                                        "mocks/validateSuburbWithUnsellable.json"
+                                    )
+                                    var mockAddressResponse: ValidatedSuburbProducts = Gson().fromJson(
+                                        jsonFileString,
+                                        object : TypeToken<ValidatedSuburbProducts>() {}.type
+                                    )
+                                    validatedSuburbProductResponse= mockAddressResponse*/
                                     if (validatedSuburbProductResponse != null) {
                                         if (validatedSuburbProductResponse?.unSellableCommerceItems?.size!! > 0) {
                                             val address = Address()
