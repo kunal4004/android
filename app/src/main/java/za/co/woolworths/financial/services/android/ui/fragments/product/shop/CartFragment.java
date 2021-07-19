@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
+import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode;
@@ -761,6 +762,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                                 cartProductAdapter.setEditMode(true);
                             }
                             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+                            Suburb suburb = new Suburb();
+                            if (shoppingCartResponse.data[0].suburbId.contains("st"))
+                                suburb.id = shoppingCartResponse.data[0].suburbId.replace("st", "");
+                            else
+                                suburb.id = shoppingCartResponse.data[0].suburbId;
+                            suburb.name = shoppingCartResponse.data[0].suburbName;
+                            Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(Utils.getPreferredDeliveryLocation().province, suburb, Utils.getPreferredDeliveryLocation().store));
                             setItemLimitsBanner();
                             break;
                         case 440:
