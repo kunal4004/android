@@ -60,12 +60,12 @@ class CheckoutStoreSelectionAdapter(
                         )
                     )
                     title.paintFlags =
-                        if (!it.deliverable) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
+                        if (!it.deliverable!!) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
                 }
                 setOnClickListener {
-                    if (!storeFilterList[position].deliverable) return@setOnClickListener
+                    if (!storeFilterList[position].deliverable!!) return@setOnClickListener
                     checkedItemPosition = position
-                    checkedItemStoreId = storeFilterList[position].storeId
+                    checkedItemStoreId = storeFilterList[position].storeId!!
                     notifyDataSetChanged()
                 }
             }
@@ -89,7 +89,7 @@ class CheckoutStoreSelectionAdapter(
                 val filterResults = FilterResults()
                 filterResults.values = storeFilterList
                 var localItemPosition = -1
-                (filterResults.values as List<ValidateStoreList>).forEachIndexed { index, it ->
+                (filterResults.values as? List<ValidateStoreList>)?.forEachIndexed { index, it ->
                     if (it.storeId.equals(checkedItemStoreId)) {
                         localItemPosition = index  // To manage checkbox while search.
                     }
