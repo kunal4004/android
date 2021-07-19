@@ -519,7 +519,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingProgressBar.visibility = View.GONE
-                    if ((it?.data as? ProvincesResponse)?.regions.isNullOrEmpty()) {
+                    if ((it?.data as ProvincesResponse)?.regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
                         it?.data?.regions?.let { it1 ->
