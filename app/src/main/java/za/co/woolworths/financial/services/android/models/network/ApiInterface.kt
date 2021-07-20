@@ -464,9 +464,9 @@ interface ApiInterface {
             @Header("latitude") lat: Double?,
             @Header("longitude") long: Double?,
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?
+            @Query("storeId") storeId: String?,
+            @Query("fulFillmentStoreId") fulFillmentStoreId: String?
     ): Call<RootCategories>
-
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("categories/{cat}")
@@ -481,7 +481,12 @@ interface ApiInterface {
             @Header("apiKey") apiKey: String,
             @Header("sessionToken") sessionToken: String,
             @Path("cat") category: String,
-            @Query("version") version: String): Call<SubCategories>
+            @Query("version") version: String,
+            //Optional params
+            @Query("suburbId") suburbId: String?,
+            @Query("storeId") storeId: String?,
+            @Query("fulFillmentStoreId") fulFillmentStoreId: String?
+    ): Call<SubCategories>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30", "Accept-Encoding: gzip")
