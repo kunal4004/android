@@ -850,10 +850,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         ResponseStatus.SUCCESS -> {
                             if (savedAddressResponse != null && it?.data != null)
                                 savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
-                            if (isAddNewAddress) {
-                                onAddNewAddress(body.nickname)
-                            } else
-                                navigateToAddressConfirmation()
+                            onAddNewAddress(body.nickname)
                         }
                         ResponseStatus.LOADING -> {
 
@@ -932,10 +929,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             }
 
                             // else functionality complete.
-                            setFragmentResult(ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
-                                SAVED_ADDRESS_KEY to Utils.toJson(savedAddressResponse)
-                            ))
-                            navController?.navigateUp()
+                            if (isAddNewAddress) {
+                                setFragmentResult(
+                                    ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
+                                        SAVED_ADDRESS_KEY to Utils.toJson(savedAddressResponse)
+                                    )
+                                )
+                                navController?.navigateUp()
+                            } else
+                                navigateToAddressConfirmation()
+
                         }
                     }
                 }
