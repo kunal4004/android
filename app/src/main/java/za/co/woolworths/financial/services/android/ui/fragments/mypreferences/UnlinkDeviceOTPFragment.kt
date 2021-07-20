@@ -64,7 +64,6 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
     private var otpMethod: String? = "SMS"
     private var currentLocation: Location? = null
     private var isOTPValidated: Boolean = false
-    private var unlinkOrDeleteDeviceReq: Call<ViewAllLinkedDeviceResponse>? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationRequest = createLocationRequest()
     private val locationCallback = object : LocationCallback() {
@@ -624,34 +623,33 @@ class UnlinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeL
     }
 
     private fun unlinkDevice() {
-        unlinkOrDeleteDeviceReq = OneAppService.deleteOrUnlinkDevice(deviceIdentityId)
-        unlinkOrDeleteDeviceReq?.enqueue(CompletionHandler(
-            object : IResponseListener<ViewAllLinkedDeviceResponse> {
-                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+        OneAppService.deleteDevice(deviceIdentityId, null, null, null)
+            .enqueue(CompletionHandler(
+                object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                    override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
 
-                    when (response?.httpCode) {
-                        AppConstant.HTTP_OK -> {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE,
-                                hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                                    FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)), activity)
+                        when (response?.httpCode) {
+                            AppConstant.HTTP_OK -> {
+                                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE,
+                                    hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                                        FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)), activity)
 
-                            showDeviceUnlinked()
+                                showDeviceUnlinked()
 
-                            setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                ViewAllLinkedDevicesFragment.IS_UPDATE to true
-                            ))
-                            Handler().postDelayed({
-                                if (response.userDevices.isNullOrEmpty()) {
-                                    view?.findNavController()?.navigateUp()
-                                    return@postDelayed
-                                }
-                            }, AppConstant.DELAY_1500_MS)
+                                setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                                    ViewAllLinkedDevicesFragment.IS_UPDATE to true
+                                ))
+                                Handler().postDelayed({
+                                    if (response.userDevices.isNullOrEmpty()) {
+                                        view?.findNavController()?.navigateUp()
+                                        return@postDelayed
+                                    }
+                                }, AppConstant.DELAY_1500_MS)
+                            }
                         }
                     }
-                }
 
-            }, ViewAllLinkedDeviceResponse::
-            class.java))
+                }, ViewAllLinkedDeviceResponse::class.java))
     }
 
     private fun showUnlinkingDeviceProcessing() {

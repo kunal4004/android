@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
     private var deviceIdentityId: String = ""
-    private var unlinkOrDeleteDeviceReq: Call<ViewAllLinkedDeviceResponse>? = null
     private var viewAllDevicesAdapter: ViewAllLinkedDevicesAdapter? = null
     private var deviceList: ArrayList<UserDevice>? = ArrayList(0)
 
@@ -78,8 +77,8 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun unlinkDevice() {
-        unlinkOrDeleteDeviceReq = OneAppService.deleteOrUnlinkDevice(deviceIdentityId)
-        unlinkOrDeleteDeviceReq?.enqueue(CompletionHandler(
+        OneAppService.deleteDevice(deviceIdentityId, null, null, null)
+            .enqueue(CompletionHandler(
                 object : IResponseListener<ViewAllLinkedDeviceResponse> {
                     override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
 
