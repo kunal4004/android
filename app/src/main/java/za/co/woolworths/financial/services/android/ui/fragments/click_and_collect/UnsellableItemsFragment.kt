@@ -9,6 +9,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +18,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.unsellable_items_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -70,7 +72,10 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.changeStore -> navController?.navigateUp()
+            R.id.changeStore -> {
+                setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, Bundle())
+                navController?.navigateUp()
+            }
             R.id.removeItems -> executeSetSuburb()
         }
     }
@@ -91,6 +96,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
                                 }
                             }
                             if (activity is CheckoutActivity) {
+                                setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, Bundle())
                                 navController?.navigateUp()
                             } else
                                 navigateToSuburbConfirmationFragment()

@@ -14,6 +14,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
@@ -27,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
@@ -58,6 +61,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         const val ADD_NEW_ADDRESS_KEY = "addNewAddress"
         const val SAVED_ADDRESS_KEY = "savedAddress"
         const val SAVED_ADDRESS_RESPONSE_KEY = "savedAddressResponse"
+        const val UNSELLABLE_CHANGE_STORE_REQUEST_KEY = "unsellableChangeStore"
     }
 
     override fun onCreateView(
@@ -169,7 +173,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
         }
-
+        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY){ requestKey, bundle ->
+            showCollectionTab(localSuburbId)
+        }
         setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
             val result = bundle.getString("Suburb")
             val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
@@ -261,17 +267,43 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         when (it.responseStatus) {
                             ResponseStatus.SUCCESS -> {
                                 loadingProgressBar.visibility = View.GONE
+                                changeTextView.visibility = View.VISIBLE
+                                btnAddressConfirmation.text = getString(R.string.confirm)
                                 if (it?.data != null) {
                                     validatedSuburbProductResponse =
                                         (it.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
-                                    showStoreList()
+                                    /*val jsonFileString = Utils.getJsonDataFromAsset(
+                                        activity?.applicationContext,
+                                        "mocks/validateSuburbWithUnsellable.json"
+                                    )
+                                    var mockAddressResponse: ValidatedSuburbProducts = Gson().fromJson(
+                                        jsonFileString,
+                                        object : TypeToken<ValidatedSuburbProducts>() {}.type
+                                    )
+                                    validatedSuburbProductResponse= mockAddressResponse*/
+                                    if (validatedSuburbProductResponse != null) {
+                                        if (validatedSuburbProductResponse?.unSellableCommerceItems?.size!! > 0) {
+                                            val address = Address()
+                                            address.suburbId = localSuburbId
+                                            navigateToUnsellableItemsFragment(
+                                                validatedSuburbProductResponse?.unSellableCommerceItems!!,
+                                                address,
+                                                validatedSuburbProductResponse?.unDeliverableProducts == false
+                                            )
+                                        } else
+                                            showStoreList()
+                                    }
                                 }
                             }
                             ResponseStatus.LOADING -> {
                                 loadingProgressBar.visibility = View.VISIBLE
+                                changeTextView.visibility = View.GONE
+                                btnAddressConfirmation.text = getString(R.string.change_location)
                             }
                             ResponseStatus.ERROR -> {
                                 loadingProgressBar.visibility = View.GONE
+                                changeTextView.visibility = View.VISIBLE
+                                btnAddressConfirmation.text = getString(R.string.confirm)
                             }
                         }
                     })
@@ -321,7 +353,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     fun navigateToUnsellableItemsFragment(
-        unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
+        unSellableCommerceItems: List<UnSellableCommerceItem>,
         address: Address,
         deliverable: Boolean
     ) {
