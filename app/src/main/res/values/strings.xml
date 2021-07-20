@@ -2146,6 +2146,10 @@
     <string name="native_checkout_delivery_food_substitution_phone_confirm">Phone me to confirm any substitutions</string>
     <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
     <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
+    <string name="delivery_timeslot_title_food_items">Delivery 1 - Food Items</string>
+    <string name="select_your_preferred_delivery_time">Select your preferred delivery time</string>
+    <string name="previous_week_text">Previous Week</string>
+    <string name="next_week_text">Next Week</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>
         <item quantity="one">%d Store near me</item>
