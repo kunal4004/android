@@ -39,6 +39,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 
 import androidx.viewpager2.widget.ViewPager2
+import com.amplifyframework.core.Amplify
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -51,7 +52,6 @@ import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderVi
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.ui.views.SafeClickListener
-import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 /**
  * Method to add the fragment. The [fragment] is added to the container view with id
@@ -419,3 +419,12 @@ fun NavController.navigateUpOrFinish(activity: AppCompatActivity?): Boolean {
         true
     }
 }
+
+/**
+ * Amplify has prevented configuration be initiated twice, but there is still no way for
+ * programmers to distinguish whether the configs has been initialed.
+ * To be able to tell Amplify is already configured will be perfect! For now I've implemented
+ * this extension method as a temporary workaround:
+ */
+fun isAWSAmplifyConfigured() = Amplify.API.plugins.isEmpty()
+        &&  Amplify.Auth.plugins.isEmpty()
