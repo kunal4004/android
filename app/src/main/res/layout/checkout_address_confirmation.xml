@@ -55,14 +55,81 @@
         layout="@layout/checkout_address_confirmation_delivery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/fifty_two_dp" />
+        android:layout_marginTop="@dimen/fifty_two_dp"
+        android:layout_marginBottom="@dimen/hundred_and_four_dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnConfirmLayout" />
 
     <include
         android:id="@+id/addressConfirmationClicknCollect"
         layout="@layout/checkout_address_confirmation_click_and_collect"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:layout_marginTop="@dimen/fifty_two_dp" />
+        android:layout_marginTop="@dimen/fifty_two_dp"
+        android:layout_marginBottom="@dimen/hundred_and_four_dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/btnConfirmLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/twenty_six_dp"
+        android:layout_marginEnd="@dimen/twenty_six_dp"
+        android:background="@color/white"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_guideline">
+
+        <View
+            android:id="@+id/confirmAddressPartition"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_dp"
+            android:layout_marginBottom="@dimen/twelve_dp"
+            android:background="@color/sign_in_register_button_border" />
+
+        <RelativeLayout
+            android:id="@+id/earliestDateTitleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/ten_dp"
+            android:paddingLeft="@dimen/twenty_four_dp"
+            android:paddingRight="@dimen/twenty_four_dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/earliestDateTitle"
+                style="@style/myriad_pro_regular_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/earliest_delivery_date"
+                android:textColor="@color/checkout_delivering_title"
+                android:textSize="@dimen/fifteen_sp" />
+
+            <TextView
+                android:id="@+id/earliestDateValue"
+                style="@style/myriad_pro_semi_bold_black_15_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textSize="@dimen/fifteen_sp" />
+
+        </RelativeLayout>
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnAddressConfirmation"
+            style="@style/blackButtonStyle"
+            android:background="@drawable/black_button_drawable_state"
+            android:text="@string/confirm"
+            app:WButton_font="medium_bold" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

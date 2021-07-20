@@ -2062,7 +2062,6 @@
     <string name="places_autocomplete_tv_hint">Enter a new address</string>
     <string name="where_are_we_delivering">Where Are We Delivering?</string>
     <string name="where_should_we_deliver">Where Should We Deliver?</string>
-    <string name="stores_near_me">%s Stores near me</string>
     <string name="save_address">SAVE ADDRESS</string>
     <string name="change_details">change details</string>
     <string name="delete_address">delete address</string>
@@ -2077,6 +2076,7 @@
     <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
     <string name="add_a_new_address">Add A New Address</string>
     <string name="add_address">Add Address</string>
+    <string name="change_location">change location</string>
     <string name="no_saved_addresses">No Saved Addresses</string>
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
@@ -2139,5 +2139,21 @@
     <string name="requiredForm">required forms</string>
     <string name="submitForm">You will also need to submit</string>
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
+
+    <!-- Native Checkout : Food Substitution    -->
+    <string name="native_checkout_delivery_food_substitution_title">Food Substitutions</string>
+    <string name="native_checkout_delivery_food_substitution_desc">If an item is out of stock, how should we handle substitutes for you? If no substitutes are found the difference is not charged.</string>
+    <string name="native_checkout_delivery_food_substitution_phone_confirm">Phone me to confirm any substitutions</string>
+    <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
+    <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
+    <string name="delivery_timeslot_title_food_items">Delivery 1 - Food Items</string>
+    <string name="select_your_preferred_delivery_time">Select your preferred delivery time</string>
+    <string name="previous_week_text">Previous Week</string>
+    <string name="next_week_text">Next Week</string>
+    <plurals name="stores_near_me">
+        <item quantity="zero">%d Stores near me</item>
+        <item quantity="one">%d Store near me</item>
+        <item quantity="other">%d Stores near me</item>
+    </plurals>
 
 </resources>

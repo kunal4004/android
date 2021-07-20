@@ -382,6 +382,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.getSavedAddresses().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
+                    loadingProgressBar.visibility = View.GONE
                     if (it?.data == null) {
                         val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
@@ -398,10 +399,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         cellphoneNumberEditText.setText(savedAddressResponse?.primaryContactNo)
                 }
                 ResponseStatus.LOADING -> {
-
+                    loadingProgressBar.visibility = View.VISIBLE
                 }
                 ResponseStatus.ERROR -> {
-
+                    loadingProgressBar.visibility = View.GONE
                 }
             }
         })
@@ -525,6 +526,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.initGetProvince().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
+                    loadingProgressBar.visibility = View.GONE
                     if ((it?.data as ProvincesResponse)?.regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
@@ -535,8 +537,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 }
                 ResponseStatus.LOADING -> {
+                    loadingProgressBar.visibility = View.VISIBLE
                 }
                 ResponseStatus.ERROR -> {
+                    loadingProgressBar.visibility = View.GONE
                 }
             }
         })
@@ -723,6 +727,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.deleteAddress(selectedAddressId).observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
+                    loadingProgressBar.visibility = View.GONE
                     if (it?.data != null) {
                         if ((it.data as? DeleteAddressResponse)?.httpCode?.equals(HTTP_OK) == true) {
                             if (savedAddressResponse?.addresses != null) {
@@ -744,10 +749,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 }
                 ResponseStatus.LOADING -> {
-
+                    loadingProgressBar.visibility = View.VISIBLE
                 }
                 ResponseStatus.ERROR -> {
-
+                    loadingProgressBar.visibility = View.GONE
                 }
             }
         })
@@ -848,15 +853,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 ).observe(this, {
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
+                            loadingProgressBar.visibility = View.GONE
                             if (savedAddressResponse != null && it?.data != null)
                                 savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
                             onAddNewAddress(body.nickname)
                         }
                         ResponseStatus.LOADING -> {
-
+                            loadingProgressBar.visibility = View.VISIBLE
                         }
                         ResponseStatus.ERROR -> {
-
+                            loadingProgressBar.visibility = View.GONE
                         }
                     }
                 })
@@ -1037,6 +1043,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         ).observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
+                    loadingProgressBar.visibility = View.GONE
                     if (savedAddressResponse != null && it?.data != null) {
                         arguments?.getBundle("bundle")?.getInt(EDIT_ADDRESS_POSITION_KEY)
                             ?.let { it1 ->
@@ -1053,10 +1060,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 }
                 ResponseStatus.LOADING -> {
-
+                    loadingProgressBar.visibility = View.VISIBLE
                 }
                 ResponseStatus.ERROR -> {
-
+                    loadingProgressBar.visibility = View.GONE
                 }
             }
         })
