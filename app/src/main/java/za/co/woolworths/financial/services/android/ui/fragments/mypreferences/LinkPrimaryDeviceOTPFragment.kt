@@ -105,7 +105,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     linkDeviceOTPEdtTxt4?.requestFocus(View.FOCUS_DOWN)
                 }
             }
-            true
         }
         false
     }
@@ -127,7 +126,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private var mLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
-    private var mValidateLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -419,11 +417,9 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         }, AppConstant.DELAY_1000_MS)
 
         Handler().postDelayed({
-            unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
-        }, AppConstant.DELAY_1000_MS)
-
-        Handler().postDelayed({
             sendinOTPLayout?.visibility = View.GONE
+            unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
+            showLinkingDeviceProcessing()
         }, AppConstant.DELAY_1000_MS)
 
         callLinkingDeviceAPI()

@@ -27,7 +27,6 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import com.google.firebase.iid.FirebaseInstanceId
@@ -420,13 +419,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             showValidatingProcessing()
         }, AppConstant.DELAY_1000_MS)
 
-        Handler().postDelayed({
-            linkDeviceOTPScreen?.visibility = View.GONE
-        }, AppConstant.DELAY_1000_MS)
-
-        Handler().postDelayed({
-            sendinOTPLayout?.visibility = View.GONE
-        }, AppConstant.DELAY_1000_MS)
+        linkDeviceOTPScreen?.visibility = View.GONE
+        sendinOTPLayout?.visibility = View.GONE
 
         callLinkingDeviceAPI()
     }
