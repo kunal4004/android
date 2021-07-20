@@ -66,7 +66,7 @@ class CheckoutActivity : AppCompatActivity() {
         navHostFrag = navHostFragment as NavHostFragment
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
-        if (false)
+        if (true)
             graph.startDestination = R.id.CheckoutAddAddressNewUserFragment
         else
             graph.startDestination = R.id.CheckoutAddAddressReturningUserFragment
