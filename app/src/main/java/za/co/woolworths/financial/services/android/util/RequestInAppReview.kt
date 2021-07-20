@@ -22,9 +22,10 @@ fun launchInAppReviewFlow(activity: Activity?) {
 }
 
 fun requestInAppReview(eventName: String, activity: Activity?) {
-    if (WoolworthsApplication.getInAppReview().isEnabled && WoolworthsApplication.getInAppReview()?.triggerEvents?.contains(eventName) == true && !Utils.isInAppReviewRequested()) {
+    if (WoolworthsApplication.getInAppReview()?.isEnabled == true && WoolworthsApplication.getInAppReview()?.triggerEvents?.contains(eventName) == true && !Utils.isInAppReviewRequested()) {
         launchInAppReviewFlow(activity)
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.inAppReviewRequest, activity)
     }
 }
+
 
