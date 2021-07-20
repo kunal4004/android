@@ -164,6 +164,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private BottomNavigationItemView accountNavigationView;
     private View notificationBadgeOne;
     private ImageView onlineIconImageView;
+    private Boolean isDeeplinkAction = false;
 
     @Override
     public int getLayoutId() {
@@ -263,6 +264,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return;
         }
         appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
+        isDeeplinkAction = true;
     }
 
     private void queryBadgeCountOnStart() {
@@ -612,8 +614,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     setCurrentSection(R.id.navigate_to_cart);
                     identifyTokenValidationAPI();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU);
-                    if(WoolworthsApplication.isIsBadgesRequired())
+                    if(WoolworthsApplication.isIsBadgesRequired() && !isDeeplinkAction)
                         queryBadgeCountOnStart();
+                    isDeeplinkAction = false;
                     return false;
 
                 case R.id.navigate_to_wreward:
@@ -622,15 +625,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_REWARD);
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU);
-                    if(WoolworthsApplication.isIsBadgesRequired())
+                    if(WoolworthsApplication.isIsBadgesRequired() && !isDeeplinkAction)
                         queryBadgeCountOnStart();
+                    isDeeplinkAction = false;
                     return true;
 
                 case R.id.navigate_to_account:
                     setCurrentSection(R.id.navigate_to_account);
                     replaceAccountIcon(item);
-                    if(WoolworthsApplication.isIsBadgesRequired())
+                    if(WoolworthsApplication.isIsBadgesRequired() && !isDeeplinkAction)
                         queryBadgeCountOnStart();
+                    isDeeplinkAction = false;
                     if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
                         try {
                             AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
