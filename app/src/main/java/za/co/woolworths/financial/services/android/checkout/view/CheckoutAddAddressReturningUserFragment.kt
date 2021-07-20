@@ -6,12 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 
 /**
  * Created by Kunal Uttarwar on 27/05/21.
  */
-class CheckoutAddAddressReturningUserFragment : Fragment() {
+class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener {
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -34,6 +35,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment() {
     }
 
     private fun initViews() {
+        initializeDeliveryFoodItems()
         initializeFoodSubstitution()
     }
 
@@ -55,6 +57,22 @@ class CheckoutAddAddressReturningUserFragment : Fragment() {
                 R.id.radioBtnNoThanks -> {
                     selectedFoodSubstitution = FoodSubstitution.NO_THANKS
                 }
+            }
+        }
+    }
+
+    private fun initializeDeliveryFoodItems() {
+        previousImgBtn.setOnClickListener(this)
+        nextImgBtn.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.previousImgBtn -> {
+
+            }
+            R.id.nextImgBtn -> {
+
             }
         }
     }
