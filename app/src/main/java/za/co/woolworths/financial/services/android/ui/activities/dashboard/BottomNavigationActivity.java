@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -201,10 +203,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mBundle = getIntent().getExtras();
         parseDeepLinkData();
         new AmplifyInit();
