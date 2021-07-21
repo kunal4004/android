@@ -412,14 +412,48 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getLinkDeviceOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), otpMethod)
     }
 
-    fun changePrimaryDeviceApi(deviceIdentityId: String): Call<ViewAllLinkedDeviceResponse> {
-        return mApiInterface.changePrimaryDeviceApi(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceIdentityId)
+    fun changePrimaryDeviceApi(deviceIdentityId: String, otp: String?, otpMethod: String?): Call<ViewAllLinkedDeviceResponse> {
+        return mApiInterface.changePrimaryDeviceApi(
+            getApiId(),
+            getSha1Password(),
+            getDeviceManufacturer(),
+            getDeviceModel(),
+            getNetworkCarrier(),
+            getOS(),
+            getOsVersion(),
+            "",
+            "",
+            getSessionToken(),
+            deviceIdentityId,
+            otp,
+            otpMethod)
     }
 
-    fun linkDeviceApi(deviceName: String, appInstanceId: String, location: String?, primaryDevice: Boolean, firebaseToken: String): Call<LinkedDeviceResponse> {
+    fun linkDeviceApi(
+        deviceName: String,
+        appInstanceId: String,
+        location: String?,
+        primaryDevice: Boolean,
+        firebaseToken: String,
+        otp: String?,
+        otpMethod: String?): Call<LinkedDeviceResponse> {
         val body = LinkDeviceBody(appInstanceId, location, primaryDevice, firebaseToken)
 
-        return mApiInterface.linkDeviceApi(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceName, body)
+        return mApiInterface.linkDeviceApi(
+            getApiId(),
+            getSha1Password(),
+            getDeviceManufacturer(),
+            getDeviceModel(),
+            getNetworkCarrier(),
+            getOS(),
+            getOsVersion(),
+            "",
+            "",
+            getSessionToken(),
+            deviceName,
+            body,
+            otp,
+            otpMethod)
     }
 
     fun getAllLinkedDevices(isForced: Boolean): Call<ViewAllLinkedDeviceResponse> {
@@ -428,8 +462,25 @@ object OneAppService : RetrofitConfig() {
 
     }
 
-    fun deleteOrUnlinkDevice(deviceIdentityId: String): Call<ViewAllLinkedDeviceResponse> {
-        return mApiInterface.deleteOrUnlinkDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), deviceIdentityId)
+    fun deleteDevice(deviceIdentityId: String,
+                     newPrimaryDeviceIdentityId: String?,
+                     otp: String?,
+                     otpMethod: String?): Call<ViewAllLinkedDeviceResponse> {
+        return mApiInterface.deleteDevice(
+            getApiId(),
+            getSha1Password(),
+            getDeviceManufacturer(),
+            getDeviceModel(),
+            getNetworkCarrier(),
+            getOS(),
+            getOsVersion(),
+            "",
+            "",
+            getSessionToken(),
+            deviceIdentityId,
+            newPrimaryDeviceIdentityId,
+            otp,
+            otpMethod)
     }
 
     fun confirmStoreCardEmail(body: StoreCardEmailConfirmBody): Call<GenericResponse> {
