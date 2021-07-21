@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -205,62 +207,59 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState !=null) {
-            super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
-            mBundle = getIntent().getExtras();
-            parseDeepLinkData();
-            new AmplifyInit();
-            mNavController = FragNavController.newBuilder(savedInstanceState,
-                    getSupportFragmentManager(),
-                    R.id.frag_container)
-                    .fragmentHideStrategy(FragNavController.HIDE)
-                    .transactionListener(this)
-                    .switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, (index, transactionOptions) -> getBottomNavigationById().setCurrentItem(index))
-                    .eager(true)
-                    .rootFragmentListener(this, 5)
-                    .build();
-            renderUI();
+        super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
+        mBundle = getIntent().getExtras();
+        parseDeepLinkData();
+        new AmplifyInit();
+        mNavController = FragNavController.newBuilder(savedInstanceState,
+                getSupportFragmentManager(),
+                R.id.frag_container)
+                .fragmentHideStrategy(FragNavController.HIDE)
+                .transactionListener(this)
+                .switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, (index, transactionOptions) -> getBottomNavigationById().setCurrentItem(index))
+                .eager(true)
+                .rootFragmentListener(this, 5)
+                .build();
+        renderUI();
 
-            /***
-             * Update bottom navigation view counter
-             */
-            initBadgeCounter();
+        /***
+         * Update bottom navigation view counter
+         */
+        initBadgeCounter();
 
-            observableOn((Consumer<Object>) object -> {
-                if (object instanceof LoadState) {
-                    String searchProduct = ((LoadState) object).getSearchProduct();
-                    if (!TextUtils.isEmpty((searchProduct))) {
-                        pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
-                    }
-                } else if (object instanceof CartSummaryResponse) {
-                    // product item successfully added to cart
-                    cartSummaryAPI();
-                    closeSlideUpPanel();
-                    setToast(getResources().getString(R.string.added_to), getResources().getString(R.string.cart), null, 0);
-                } else if (object instanceof BadgeState) {
-                    // call observer to update independent count
-                    BadgeState badgeState = (BadgeState) object;
-                    switch (badgeState.getPosition()) {
-                        case CART_COUNT_TEMP:
-                            addBadge(INDEX_CART, badgeState.getCount());
-                            break;
-                        case CART_COUNT:
-                            cartSummaryAPI();
-                            break;
-                        default:
-                            break;
-                    }
+        observableOn((Consumer<Object>) object -> {
+            if (object instanceof LoadState) {
+                String searchProduct = ((LoadState) object).getSearchProduct();
+                if (!TextUtils.isEmpty((searchProduct))) {
+                    pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
                 }
-            });
-
-            if (mBundle != null && mBundle.containsKey("OnBoardingLoginBadge")) {
-                QueryBadgeCounter.getInstance().queryCartSummaryCount();
-                QueryBadgeCounter.getInstance().queryVoucherCount();
+            } else if (object instanceof CartSummaryResponse) {
+                // product item successfully added to cart
+                cartSummaryAPI();
+                closeSlideUpPanel();
+                setToast(getResources().getString(R.string.added_to), getResources().getString(R.string.cart), null, 0);
+            } else if (object instanceof BadgeState) {
+                // call observer to update independent count
+                BadgeState badgeState = (BadgeState) object;
+                switch (badgeState.getPosition()) {
+                    case CART_COUNT_TEMP:
+                        addBadge(INDEX_CART, badgeState.getCount());
+                        break;
+                    case CART_COUNT:
+                        cartSummaryAPI();
+                        break;
+                    default:
+                        break;
+                }
             }
-            queryBadgeCountOnStart();
-            addDrawerFragment();
-        }
+        });
 
+        if (mBundle != null && mBundle.containsKey("OnBoardingLoginBadge")) {
+            QueryBadgeCounter.getInstance().queryCartSummaryCount();
+            QueryBadgeCounter.getInstance().queryVoucherCount();
+        }
+        queryBadgeCountOnStart();
+        addDrawerFragment();
     }
 
     private void parseDeepLinkData() {
