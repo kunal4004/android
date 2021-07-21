@@ -31,9 +31,6 @@
         <action
             android:id="@+id/action_to_selectPrimaryDeviceFragment"
             app:destination="@id/selectPrimaryDeviceFragment" />
-        <action
-            android:id="@+id/action_to_delete_primary_device_otp"
-            app:destination="@id/unlink_device_otp_navigation" />
     </dialog>
 
     <dialog
@@ -67,8 +64,6 @@
             android:id="@+id/action_link_new_primary_device"
             app:destination="@id/linkPrimaryDeviceOtpNavigation" />
     </fragment>
-
-    <include app:graph="@navigation/graph_unlink_device_otp" />
 
     <include app:graph="@navigation/graph_link_primary_device_otp" />
 </navigation>

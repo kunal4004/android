@@ -525,6 +525,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     ))
                     Handler().postDelayed({
                         view?.findNavController()?.navigateUp()
+                        view?.findNavController()?.navigateUp()
                     }, AppConstant.DELAY_1500_MS)
                 } else{
                     handleChangeOrDeletePrimaryDeviceFailure()
@@ -539,7 +540,12 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     }
                 }
             else -> response?.response?.desc?.let { desc ->
-                handleChangeOrDeletePrimaryDeviceFailure()
+                showValidateOTPError(getString(R.string.icr_wrong_otp_error))
+                Handler().postDelayed({
+                    linkDeviceOTPEdtTxt5.requestFocus()
+                    val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                }, AppConstant.DELAY_200_MS)
             }
         }
     }

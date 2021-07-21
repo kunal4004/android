@@ -14,6 +14,9 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
+import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
+import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
 import kotlinx.android.synthetic.main.fragment_view_all_linked_devices.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -52,12 +55,6 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
             }
         }
 
-        setFragmentResultListener(DELETE_DEVICE_OTP) { requestKey, bundle ->
-            val navController = view?.findNavController()
-            navController?.navigate(R.id.action_to_delete_primary_device_otp, bundleOf(
-                DEVICE to deviceIdentityId))
-        }
-
         setFragmentResultListener(CHOOSE_PRIMARY_DEVICE_FRAGMENT) { requestKey, bundle ->
             val navController = view?.findNavController()
             navController?.navigate(R.id.action_to_selectPrimaryDeviceFragment,
@@ -90,7 +87,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                         IS_UPDATE to true
                                 ))
 
-                                deviceList = response?.userDevices
+                                deviceList = response.userDevices
                                 if (deviceList.isNullOrEmpty()) {
                                     view?.findNavController()?.navigateUp()
                                     return
@@ -102,10 +99,11 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                     }
 
                     override fun onFailure(error: Throwable?) {
-                        super.onFailure(error)
+                        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
+                        buttonNext?.visibility = View.VISIBLE
+                        didNotReceiveOTPTextView?.visibility = View.VISIBLE
                     }
-                }, ViewAllLinkedDeviceResponse::
-        class.java))
+                }, ViewAllLinkedDeviceResponse::class.java))
     }
 
     private fun callRetrieveDevices() {
@@ -172,7 +170,6 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
     companion object {
         const val DEVICE_LIST = "deviceList"
-        const val DELETE_DEVICE_OTP = "deleteDeviceOTP"
         const val DELETE_DEVICE_NO_OTP = "deleteDevice"
         const val KEY_BOOLEAN_UNLINK_DEVICE = "isUnlinkSuccess"
         const val CHOOSE_PRIMARY_DEVICE_FRAGMENT = "choosePrimaryDeviceFragment"
