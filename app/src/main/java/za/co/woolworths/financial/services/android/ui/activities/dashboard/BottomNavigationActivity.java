@@ -197,18 +197,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         try {
-            super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
+            if (savedInstanceState != null)
+                super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         } catch (NullPointerException ex) {
             FirebaseManager.Companion.logException(ex);
         }
     }
 
-    @SuppressLint("SourceLockedOrientationActivity")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mBundle = getIntent().getExtras();
         parseDeepLinkData();
         new AmplifyInit();
@@ -261,7 +260,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
         queryBadgeCountOnStart();
         addDrawerFragment();
-
     }
 
     private void parseDeepLinkData() {
@@ -322,35 +320,35 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     public void renderUI() {
-        getToolbar();
-        setActionBar();
-        bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
-        bottomNavigationViewModel.setNavigator(this);
-        bottomNavConfig();
-        slideUpPanelListener();
-        setUpRuntimePermission();
-        getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        getBottomNavigationById().setOnNavigationItemReselectedListener(mOnNavigationItemReSelectedListener);
-        removeToolbar();
-        if (mBundle != null && mBundle.get("feature") != null && !TextUtils.isEmpty(mBundle.get("feature").toString())) {
-            String deepLinkType = mBundle.get("feature").toString();
+            getToolbar();
+            setActionBar();
+            bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
+            bottomNavigationViewModel.setNavigator(this);
+            bottomNavConfig();
+            slideUpPanelListener();
+            setUpRuntimePermission();
+            getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+            getBottomNavigationById().setOnNavigationItemReselectedListener(mOnNavigationItemReSelectedListener);
+            removeToolbar();
+            if (mBundle != null && mBundle.get("feature") != null && !TextUtils.isEmpty(mBundle.get("feature").toString())) {
+                String deepLinkType = mBundle.get("feature").toString();
 
-            switch (deepLinkType) {
-                case AppConstant.DP_LINKING_PRODUCT_LISTING:
-                    if (appLinkData.get("url") == null) {
-                        return;
-                    }
+                switch (deepLinkType) {
+                    case AppConstant.DP_LINKING_PRODUCT_LISTING:
+                        if (appLinkData.get("url") == null) {
+                            return;
+                        }
 
-                    Uri linkData = Uri.parse(appLinkData.get("url").getAsString());
-                    ProductSearchTypeAndTerm productSearchTypeAndSearchTerm = DeepLinkingUtils.Companion.getProductSearchTypeAndSearchTerm(linkData.toString());
-                    if (!productSearchTypeAndSearchTerm.getSearchTerm().isEmpty() && !productSearchTypeAndSearchTerm.getSearchTerm().equalsIgnoreCase(DeepLinkingUtils.WHITE_LISTED_DOMAIN)) {
-                        Map<String, String> arguments = new HashMap<>();
-                        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
-                        arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments, this);
-                        pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
-                    }
-                    break;
+                        Uri linkData = Uri.parse(appLinkData.get("url").getAsString());
+                        ProductSearchTypeAndTerm productSearchTypeAndSearchTerm = DeepLinkingUtils.Companion.getProductSearchTypeAndSearchTerm(linkData.toString());
+                        if (!productSearchTypeAndSearchTerm.getSearchTerm().isEmpty() && !productSearchTypeAndSearchTerm.getSearchTerm().equalsIgnoreCase(DeepLinkingUtils.WHITE_LISTED_DOMAIN)) {
+                            Map<String, String> arguments = new HashMap<>();
+                            arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.ENTRY_POINT, FirebaseManagerAnalyticsProperties.EntryPoint.DEEP_LINK.getValue());
+                            arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DEEP_LINK_URL, linkData.toString());
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments, this);
+                            pushFragment(ProductListingFragment.Companion.newInstance(productSearchTypeAndSearchTerm.getSearchType(), "", productSearchTypeAndSearchTerm.getSearchTerm()));
+                        }
+                        break;
 
                     /*Deep link to PDP disabled*/
                 /*case AppConstant.DP_LINKING_PRODUCT_DETAIL:
@@ -360,25 +358,25 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     intent.putExtra("deepLinkRequestCode", DEEP_LINK_REQUEST_CODE);
                     startActivityForResult(intent, DEEP_LINK_REQUEST_CODE);
                     break;*/
-                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
-                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT:
-                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
-                case AppConstant.DP_LINKING_MY_ACCOUNTS:
-                    BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
-                    new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_100_MS);
-                    break;
+                    case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
+                    case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT:
+                    case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
+                    case AppConstant.DP_LINKING_MY_ACCOUNTS:
+                        BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
+                        new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_100_MS);
+                        break;
 
+                }
             }
-        }
 
-        bottomNavigationMenu = getBottomNavigationById().getBottomNavigationMenuView();
-        accountNavigationView = (BottomNavigationItemView) bottomNavigationMenu.getChildAt(INDEX_ACCOUNT);
-        notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.green_circle_icon, accountNavigationView, false);
-         onlineIconImageView = notificationBadgeOne.findViewById(R.id.onlineIconImageView);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
-        params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
-        notificationBadgeOne.setLayoutParams(params);
+            bottomNavigationMenu = getBottomNavigationById().getBottomNavigationMenuView();
+            accountNavigationView = (BottomNavigationItemView) bottomNavigationMenu.getChildAt(INDEX_ACCOUNT);
+            notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.green_circle_icon, accountNavigationView, false);
+            onlineIconImageView = notificationBadgeOne.findViewById(R.id.onlineIconImageView);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            params.addRule(RelativeLayout.ALIGN_END, RelativeLayout.TRUE);
+            params.addRule(RelativeLayout.ALIGN_BOTTOM, RelativeLayout.TRUE);
+            notificationBadgeOne.setLayoutParams(params);
     }
 
     @Override
