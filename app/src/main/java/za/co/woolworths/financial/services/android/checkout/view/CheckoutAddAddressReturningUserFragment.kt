@@ -10,9 +10,11 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
+import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
-import za.co.woolworths.financial.services.android.checkout.view.adapter.DeliveryGridViewAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.DeliverySlotsGridViewAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsTitleGridViewAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.DeliveryGridModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
@@ -25,11 +27,6 @@ import za.co.woolworths.financial.services.android.service.network.ResponseStatu
 class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener {
 
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
-
-    companion object{
-        const val GRID_COLUMNS_COUNT = 3
-    }
-
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -85,7 +82,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         nextImgBtn.setOnClickListener(this)
     }
 
-    private fun initializeGrid() {
+    private fun initializeGrid(availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?, weekNumber: Int) {
         //TODO: Need to change this harcode to response. Will do in next PR.
         val deliveryGridList: ArrayList<DeliveryGridModel> = ArrayList()
         deliveryGridList. add(DeliveryGridModel("A", R.color.selected_address_background_color, 1, false))
@@ -95,8 +92,17 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         deliveryGridList.add(DeliveryGridModel("E", R.color.selected_address_background_color, 5, false))
         deliveryGridList.add(DeliveryGridModel("F", R.color.selected_address_background_color, 6, false))
 
-        val adapter = context?.let { DeliveryGridViewAdapter(it, R.layout.delivery_grid_card_item, deliveryGridList) }
-        timeSlotsGridView.numColumns = GRID_COLUMNS_COUNT
+        val adapter = context?.let { DeliverySlotsGridViewAdapter(it, R.layout.delivery_grid_card_item, deliveryGridList) }
+        val hoursSlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.hourSlots
+        timingsGridView.numColumns = hoursSlots?.size ?: 0 + 1 // Adding 1 only to match slots title grid with actual slots
+        timingsGridView.adapter = context?.let { hoursSlots?.let { it1 ->
+            SlotsTitleGridViewAdapter(
+                it,
+                R.layout.checkout_delivery_slot_timedate_item,
+                it1
+            )
+        } }
+        timeSlotsGridView.numColumns = hoursSlots?.size ?: 0
         timeSlotsGridView.setAdapter(adapter)
 
         timeSlotsGridView.setOnItemClickListener { parent, view, position, id ->
@@ -126,7 +132,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
-                    initializeGrid()
+                    if(it.data != null) {
+                        initializeGrid(it.data as? AvailableDeliverySlotsResponse, 0)
+                    }
                 }
                 ResponseStatus.LOADING -> {
                     loadingBar.visibility = View.VISIBLE
