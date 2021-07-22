@@ -147,4 +147,6 @@
     <color name="color_cccccc">#CCCCCC</color>
     <color name="color_444444">#444444</color>
     <color name="search_store_color">#999999</color>
+    <color name="light_green">#D7F0E1</color>
+    <color name="dark_green">#4ABB77</color>
 </resources>
