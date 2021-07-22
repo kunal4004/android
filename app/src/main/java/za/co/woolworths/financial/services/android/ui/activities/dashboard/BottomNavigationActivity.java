@@ -257,7 +257,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             QueryBadgeCounter.getInstance().queryVoucherCount();
         }
         queryBadgeCountOnStart();
-        addDrawerFragment();}
+        addDrawerFragment();
     }
     private void parseDeepLinkData() {
         if (mBundle == null) {

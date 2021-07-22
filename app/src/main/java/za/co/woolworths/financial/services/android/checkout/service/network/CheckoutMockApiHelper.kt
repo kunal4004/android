@@ -11,4 +11,5 @@ class CheckoutMockApiHelper: MockRetrofitConfig() {
     fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) = OneAppService.updateAddress(addAddressRequestBody, addressId).execute()
     fun deleteAddress(addressId: String) = OneAppService.deleteAddress(addressId).execute()
     fun changeAddress(nickName: String) = OneAppService.changeAddress(nickName).execute()
+    fun getAvailableDeliverySlots() = OneAppService.getAvailableDeliverySlots().execute()
 }

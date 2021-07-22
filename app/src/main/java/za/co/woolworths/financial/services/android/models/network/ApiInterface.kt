@@ -653,6 +653,10 @@ interface ApiInterface {
     fun changeAddress(@Path("nickName") nickName: String): Call<ChangeAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("availableDeliverySlots")
+    fun getAvailableDeliverySlots(): Call<AvailableDeliverySlotsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/{locationId}")
     fun getSuburbs(
             @Header("apiId") apiId: String,
