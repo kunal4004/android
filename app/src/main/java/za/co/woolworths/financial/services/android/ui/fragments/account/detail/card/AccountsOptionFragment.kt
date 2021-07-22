@@ -214,7 +214,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     navigateToTemporaryStoreCard()
                 }
                 R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
-                    onStartCreditLimitIncreaseFirebaseEvent()
+                    activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
                     val applyNowState = mApplyNowAccountKeyPair?.first
                     creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
                 }
@@ -351,7 +351,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     override fun navigateToLoanWithdrawalActivity() {
         activity?.apply {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.personalLoanDrawdownStart)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.personalLoanDrawdownStart, this)
             val intentWithdrawalActivity = Intent(this, LoanWithdrawalActivity::class.java)
             intentWithdrawalActivity.putExtra("account_info", Gson().toJson(mCardPresenterImpl?.getAccount()))
             startActivityForResult(intentWithdrawalActivity, 0)
@@ -431,8 +431,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     private fun navigateToCreditCardActivation() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(ACTION_LOWER_CASE, activationInitiated)))
         activity?.apply {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(ACTION_LOWER_CASE, activationInitiated)), this)
             val mIntent = Intent(this, CreditCardActivationActivity::class.java)
             val mBundle = Bundle()
             mBundle.putString("absaCardToken", cardWithPLCState?.absaCardToken)

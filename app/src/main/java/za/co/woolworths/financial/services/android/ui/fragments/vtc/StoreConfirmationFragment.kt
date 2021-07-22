@@ -132,10 +132,12 @@ class StoreConfirmationFragment : Fragment() {
         val emailRequest = OneAppService.confirmStoreCardEmail(body)
         emailRequest.enqueue(CompletionHandler(object : IResponseListener<GenericResponse> {
             override fun onSuccess(response: GenericResponse?) {
-                if(isConfirmStore){
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_STORE_DELIVERY)
-                } else {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_F2F)
+                activity?.apply {
+                    if (isConfirmStore) {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_STORE_DELIVERY, this)
+                    } else {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_F2F, this)
+                    }
                 }
 
                 processingViewGroup?.visibility = View.GONE
@@ -156,10 +158,12 @@ class StoreConfirmationFragment : Fragment() {
             }
 
             override fun onFailure(error: Throwable?) {
-                if(isConfirmStore){
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_STORE_DELIVERY)
-                } else {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_F2F)
+                activity?.apply {
+                    if (isConfirmStore) {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_STORE_DELIVERY, this)
+                    } else {
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_REPLACE_CARD_F2F, this)
+                    }
                 }
                 processingViewGroup?.visibility = View.GONE
                 showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)

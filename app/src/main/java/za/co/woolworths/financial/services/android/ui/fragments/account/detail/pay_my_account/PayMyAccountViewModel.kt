@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.app.Activity
 import android.net.UrlQuerySanitizer
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -284,12 +285,12 @@ class PayMyAccountViewModel : ViewModel() {
         return paymentMethodList?.isEmpty() == true
     }
 
-    fun triggerFirebaseEventForEditAmount() {
-        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForAmountEdit(productGroupCode) }
+    fun triggerFirebaseEventForEditAmount(activity: Activity) {
+        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForAmountEdit(productGroupCode, activity) }
     }
 
-    fun triggerFirebaseEventForPaymentComplete() {
-        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode) }
+    fun triggerFirebaseEventForPaymentComplete(activity: Activity) {
+        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode, activity) }
     }
 
     fun getVocTriggerEventPaymentOptions(): VocTriggerEvent? {

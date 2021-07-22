@@ -140,8 +140,10 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
             chatScreenType = getSerializable(CHAT_TYPE) as? ChatType ?: ChatType.DEFAULT
         }
 
+
+
         chatViewModel.setScreenType()
-        chatViewModel.triggerFirebaseOnlineOfflineChatEvent()
+        chatViewModel.triggerFirebaseOnlineOfflineChatEvent(this)
         chatViewModel.postChatEventInitiateSession()
     }
 

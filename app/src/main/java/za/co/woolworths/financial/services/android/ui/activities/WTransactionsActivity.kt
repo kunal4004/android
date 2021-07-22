@@ -113,9 +113,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                     when (response?.httpCode) {
                         200 -> {
                             if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
-                                FirebaseEventDetailManager.success(
-                                    FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS
-                                )
+                                FirebaseEventDetailManager.success(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS,this@WTransactionsActivity)
                             }
 
                             if (response.transactions.size > 0) {
@@ -128,9 +126,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         440 -> if (!this@WTransactionsActivity.isFinishing) {
                             if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
-                                FirebaseEventDetailManager.timeout(
-                                    FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS
-                                )
+                                FirebaseEventDetailManager.timeout(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS, this@WTransactionsActivity)
                             }
                             SessionUtilities.getInstance().setSessionState(
                                 SessionDao.SESSION_STATE.INACTIVE,
@@ -140,9 +136,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         else -> response?.response?.desc?.let { desc ->
                             if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
-                                FirebaseEventDetailManager.undefined(
-                                    FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS
-                                )
+                                FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS, this@WTransactionsActivity)
                             }
                             try {
                                 val accountsErrorHandlerFragment =
@@ -162,7 +156,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
             override fun onFailure(error: Throwable?) {
                 if (this@WTransactionsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                     if (cardType?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode) == true) {
-                        FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS)
+                        FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDTRANSACTIONS, this@WTransactionsActivity)
                     }
                     error?.message?.let { errorMessage -> networkFailureHandler(errorMessage) }
                 }

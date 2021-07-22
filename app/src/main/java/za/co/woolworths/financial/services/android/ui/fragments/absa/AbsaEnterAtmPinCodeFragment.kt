@@ -191,18 +191,21 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         cancelRequest()
         progressIndicator(INVISIBLE)
         clearPin()
-        when {
-            responseMessage.trim().contains("card number and pin validation failed!", true) -> {
-                FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
-                ErrorHandlerView(activity).showToast(getString(R.string.incorrect_pin_alert))
-            }
-            responseMessage.trim().contains("218-invalid card status.", true) -> {
-                FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
-                showErrorScreen(ErrorHandlerActivity.ATM_PIN_LOCKED)
-            }
-            else -> {
-                FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
-                showErrorScreen(ErrorHandlerActivity.COMMON, responseMessage)
+
+        activity?.apply {
+            when {
+                responseMessage.trim().contains("card number and pin validation failed!", true) -> {
+                    FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
+                    ErrorHandlerView(activity).showToast(getString(R.string.incorrect_pin_alert))
+                }
+                responseMessage.trim().contains("218-invalid card status.", true) -> {
+                    FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
+                    showErrorScreen(ErrorHandlerActivity.ATM_PIN_LOCKED)
+                }
+                else -> {
+                    FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
+                    showErrorScreen(ErrorHandlerActivity.COMMON, responseMessage)
+                }
             }
         }
 

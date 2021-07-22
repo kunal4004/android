@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
+class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
     private var mStoreCardListenerCallback: IStoreCardListener? = null
 
@@ -42,15 +42,23 @@ class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvCancel?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        tvCancel?.setOnClickListener {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CANCEL)
-            dismiss()
-        }
-        btnBlockPermanentCard?.setOnClickListener {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CONFIRM)
-            mStoreCardListenerCallback?.onBlockPermanentCardPermissionGranted()
-            dismiss()
+            tvCancel?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            tvCancel?.setOnClickListener(this)
+            yesBlockCardButton?.setOnClickListener(this)
+
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id) {
+            R.id.yesBlockCardButton -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CONFIRM, activity)
+                mStoreCardListenerCallback?.onBlockPermanentCardPermissionGranted()
+                dismiss()
+            }
+            R.id.tvCancel -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CANCEL, activity)
+                dismiss()
+            }
         }
     }
 }
