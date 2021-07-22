@@ -13,8 +13,10 @@ import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutA
 import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.HeaderDate
 import za.co.woolworths.financial.services.android.checkout.view.adapter.DeliverySlotsGridViewAdapter
-import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsTitleGridViewAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsDateGridViewAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsTimeGridViewAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.DeliveryGridModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
@@ -94,14 +96,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
         val adapter = context?.let { DeliverySlotsGridViewAdapter(it, R.layout.delivery_grid_card_item, deliveryGridList) }
         val hoursSlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.hourSlots
-        timingsGridView.numColumns = hoursSlots?.size ?: 0 + 1 // Adding 1 only to match slots title grid with actual slots
-        timingsGridView.adapter = context?.let { hoursSlots?.let { it1 ->
-            SlotsTitleGridViewAdapter(
-                it,
-                R.layout.checkout_delivery_slot_timedate_item,
-                it1
-            )
-        } }
+        val datesSlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)?. headerDates
+        createTimingsGrid(hoursSlots)
+        createDatesGrid(datesSlots)
         timeSlotsGridView.numColumns = hoursSlots?.size ?: 0
         timeSlotsGridView.setAdapter(adapter)
 
@@ -113,6 +110,27 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             deliveryGridModel.isSelected = true
             adapter?.notifyDataSetChanged()
         }
+    }
+
+    private fun createTimingsGrid(hoursSlots: List<String>?) {
+        timingsGridView.numColumns = hoursSlots?.size ?: 0 + 1 // Adding 1 only to match slots title grid with actual slots
+        timingsGridView.adapter = context?.let { hoursSlots?.let { it1 ->
+            SlotsTimeGridViewAdapter(
+                it,
+                R.layout.checkout_delivery_slot_timedate_item,
+                it1
+            )
+        } }
+    }
+
+    private fun createDatesGrid(datesSlots: List<HeaderDate>?) {
+        dateGridView.adapter = context?.let { datesSlots?.let { it1 ->
+            SlotsDateGridViewAdapter(
+                it,
+                R.layout.checkout_delivery_slot_timedate_item,
+                it1
+            )
+        } }
     }
 
     private fun setupViewModel() {
