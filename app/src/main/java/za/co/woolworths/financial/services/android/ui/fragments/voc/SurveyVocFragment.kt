@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -25,6 +27,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
         const val DIALOG_OPT_OUT_ID = 2
     }
 
+    private var navController: NavController? = null
     private var surveyQuestionAdapter: SurveyQuestionAdapter? = null
     private var surveyDetails: SurveyDetails? = null
     private val surveyAnswers = HashMap<Long, SurveyAnswer>()
@@ -32,6 +35,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        navController = NavHostFragment.findNavController(this)
         surveyDetails = activity?.intent?.extras?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_DETAILS) as? SurveyDetails
 
         // TODO: generate default answers for required questions... unless not necessary
@@ -118,7 +122,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     }
 
     override fun onSubmit() {
-        Toast.makeText(context, "Submit Tapped", Toast.LENGTH_SHORT).show()
+        navController?.navigate(R.id.action_surveyVocFragment_to_surveyProcessRequestVocFragment)
     }
 
     override fun onOptOut() {

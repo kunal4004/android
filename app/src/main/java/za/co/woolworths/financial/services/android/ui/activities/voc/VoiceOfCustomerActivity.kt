@@ -79,7 +79,7 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
         }
     }
 
-    private fun finishActivity() {
+    fun finishActivity() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
@@ -88,6 +88,10 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
         if (vocToolbar == null) return
         tvSkipSurvey.visibility = if (show) View.VISIBLE else View.GONE
         tvSkipSurvey.setOnClickListener { onSkipSurveyClicked() }
+    }
+
+    fun hideToolbarBackButton() {
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     private fun onSkipSurveyClicked() {
