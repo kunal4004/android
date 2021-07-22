@@ -47,6 +47,7 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_sales_activity)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        myAccountsFragmentViewModel.getAccountPresenter(null)
         KotlinUtils.setTransparentStatusBar(this)
 
         viewApplicationStatusTextView?.apply {
