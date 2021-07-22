@@ -1314,6 +1314,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                     mAccountsHashMap = mUpdateMyAccount.getProductAccountHashMap(mAccountResponse);
                             }
                         }
+                        displayViewApplicationStatus();
                     }
 
                     if (mAccountResponse == null) {
@@ -1332,6 +1333,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                             }
                         }
                     }
+
                     break;
 
                 case HTTP_SESSION_TIMEOUT_440:
@@ -1384,7 +1386,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             masterCache.setAccountsResponse(accountsResponse);
         }
 
-       myAccountsPresenter =  myAccountsFragmentViewModel.getAccountPresenter(mAccountResponse);
+        displayViewApplicationStatus();
+    }
+
+    private void displayViewApplicationStatus() {
+        myAccountsPresenter =  myAccountsFragmentViewModel.getAccountPresenter(mAccountResponse);
         ViewGroup.LayoutParams params = applyNowSpacingView.getLayoutParams();
         if (myAccountsPresenter != null && myAccountsPresenter.isViewApplicationStatusVisible()) {
             viewApplicationStatusVisibility(params, View.VISIBLE, 1);
