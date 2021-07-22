@@ -174,6 +174,9 @@ object OneAppService : RetrofitConfig() {
     fun changeAddress(nickName: String): Call<ChangeAddressResponse>{
         return mockApiInterface.changeAddress(nickName)
     }
+    fun getAvailableDeliverySlots(): Call<AvailableDeliverySlotsResponse>{
+        return mockApiInterface.getAvailableDeliverySlots()
+    }
 
     fun getCartSummary(): Call<CartSummaryResponse> {
         return mApiInterface.getCartSummary(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())

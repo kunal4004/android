@@ -259,7 +259,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         queryBadgeCountOnStart();
         addDrawerFragment();
     }
-
     private void parseDeepLinkData() {
         if (mBundle == null) {
             return;
