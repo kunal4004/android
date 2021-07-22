@@ -45,6 +45,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
     private var mOfferActive = false
     private var mCloseButtonEnabled = false
     private var mNextStep: String? = null
+    var selectedMaritalStatusPosition : Int? = null
     var applyNowState: ApplyNowState? = ApplyNowState.STORE_CARD
     var eventStatus = EventStatus.NONE
 
@@ -71,7 +72,7 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
             mOfferActive = getBoolean("OFFER_IS_ACTIVE")
             applyNowState = getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
             mCLICreateOfferResponse = offerActiveObject()
-            mFirebaseCreditLimitIncreaseEvent = FirebaseCreditLimitIncreaseEvent(applyNowState)
+            mFirebaseCreditLimitIncreaseEvent = FirebaseCreditLimitIncreaseEvent(applyNowState,this@CLIPhase2Activity)
             mCLICreateOfferResponse?.apply {
                 mNextStep = nextStep
                 loadFragment(mNextStep)

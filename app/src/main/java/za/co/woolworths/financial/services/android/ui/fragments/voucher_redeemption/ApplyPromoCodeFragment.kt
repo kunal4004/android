@@ -58,7 +58,7 @@ class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyProm
         activity?.apply {
             etPromoCode?.text.toString().trim().let {
                 if (it.isNotEmpty()) {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_apply)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_apply, this)
                     etPromoCode.hideKeyboard(activity as AppCompatActivity)
                     Handler().postDelayed({
                         showApplyPromoCodeProgress()
@@ -107,7 +107,7 @@ class ApplyPromoCodeFragment : Fragment(), VoucherAndPromoCodeContract.ApplyProm
             R.id.cancel -> activity?.finish()
             R.id.applyPromoCode -> applyPromoCode()
             R.id.clear -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_clear)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_clear, this) }
                 etPromoCode?.text?.clear()
             }
         }

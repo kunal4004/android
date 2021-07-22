@@ -164,7 +164,7 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
         } else if (TextUtils.isEmpty(getBaseNavigationState()) && TextUtils.isEmpty(getRefinedNavigationState())) {
             setResultForProductListing(emptyNavigationState)
         }
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_SEE_RESULT)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_SEE_RESULT, this) }
         this.closeDownPage()
     }
 

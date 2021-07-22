@@ -71,7 +71,7 @@ class CreditCardActivationProgressFragment : Fragment(), CreditCardActivationCon
     }
 
     override fun onCreditCardActivationSuccess() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATION_COMPLETE, hashMapOf(Pair(ACTION_LOWER_CASE, activationConfirmed)))
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATION_COMPLETE, hashMapOf(Pair(ACTION_LOWER_CASE, activationConfirmed)), this) }
         getProgressState()?.animateSuccessEnd(true)
         activationProcessingLayout?.visibility = View.GONE
         activationSuccessView?.visibility = View.VISIBLE

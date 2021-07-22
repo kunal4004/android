@@ -125,7 +125,9 @@ import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
+import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
 
 public class Utils {
 
@@ -516,7 +518,7 @@ public class Utils {
         mTooltip.show();
     }
 
-    public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments) {
+    public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments, Activity activity) {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
 
         Bundle params = new Bundle();
@@ -525,22 +527,13 @@ public class Utils {
         }
 
         mFirebaseAnalytics.logEvent(eventName, params);
+        requestInAppReview(eventName, activity);
     }
 
-    public static void triggerFireBaseEvent(String eventName, Map<String, Boolean> argument) {
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
-
-        Bundle params = new Bundle();
-        for (Map.Entry<String, Boolean> entry : argument.entrySet()) {
-            params.putBoolean(entry.getKey(), entry.getValue());
-        }
-
-        mFirebaseAnalytics.logEvent(eventName, params);
-    }
-
-    public static void triggerFireBaseEvents(String eventName) {
+    public static void triggerFireBaseEvents(String eventName, Activity activity) {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
         mFirebaseAnalytics.logEvent(eventName, null);
+        requestInAppReview(eventName, activity);
     }
 
     public static void setScreenName(Activity activity, String screenName) {
@@ -1619,6 +1612,15 @@ public class Utils {
         }
 
         return token;
+    }
+
+    public static void setInAppReviewRequested() {
+        Utils.sessionDaoSave(IN_APP_REVIEW, "1");
+    }
+
+    public static boolean isInAppReviewRequested() {
+        String firstTime = Utils.getSessionDaoValue(IN_APP_REVIEW);
+        return (firstTime != null);
     }
 
     public static Boolean isGooglePlayServicesAvailable() {

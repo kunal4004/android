@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncreas
 import za.co.woolworths.financial.services.android.models.dto.CreditView;
 import za.co.woolworths.financial.services.android.models.dto.CustomerFeedback;
 import za.co.woolworths.financial.services.android.models.dto.DashConfig;
+import za.co.woolworths.financial.services.android.models.dto.InAppReview;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
@@ -77,7 +78,6 @@ import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
-
 
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
@@ -144,6 +144,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static CreditView creditView;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
+    private static InAppReview inAppReview;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -699,6 +700,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @VisibleForTesting
     public static void testSetContext(Context context) {
         mContextApplication = context;
+    }
+
+    public static InAppReview getInAppReview() {
+        return inAppReview;
+    }
+
+    public static void setInAppReview(InAppReview inAppReview) {
+        WoolworthsApplication.inAppReview = inAppReview;
     }
 
     public static void setCartCheckoutLinkWithParams(String cartCheckoutLinkWithParams) {
