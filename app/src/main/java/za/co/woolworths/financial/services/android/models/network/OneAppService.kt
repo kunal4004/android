@@ -148,7 +148,9 @@ object OneAppService : RetrofitConfig() {
 //            location.longitude = 18.408380
         }
 
-        return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, fulFillmentStoreId)
+        return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(),
+            getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android",
+            getSessionToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, fulFillmentStoreId)
     }
 
     fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
@@ -156,7 +158,9 @@ object OneAppService : RetrofitConfig() {
         // Pass storeId value of 01 fulfillment type
         val fulFillmentStoreId = Utils.retrieveStoreId("01")
 
-        return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), category_id, version, suburbId, storeId, fulFillmentStoreId)
+        return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(),
+            getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android",
+            getSessionToken(), category_id, version, suburbId, storeId, fulFillmentStoreId)
     }
 
     fun getProvinces(): Call<ProvincesResponse> {
