@@ -218,6 +218,7 @@
     <dimen name="three_hundred_dp">300dp</dimen>
     <dimen name="sixty_three_dp">63dp</dimen>
     <dimen name="eight_sp">8sp</dimen>
+    <dimen name="hundred_and_twenty_dp">120dp</dimen>
     <item name="bottom_guideline_percent_for_available_fund_transaction_statement_pma_button" type="dimen" format="float">0.7</item>
     <item name="slider_guideline_percent_for_arrears_account_product" type="dimen" format="float">0.82</item>
     <item name="slider_guideline_percent_for_account_product" type="dimen" format="float">0.72</item>

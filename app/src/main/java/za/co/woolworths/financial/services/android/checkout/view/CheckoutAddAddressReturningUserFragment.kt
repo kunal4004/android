@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
+import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
@@ -47,13 +49,28 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViews()
     }
 
     private fun initViews() {
         initializeDeliveryFoodItems()
         initializeFoodSubstitution()
+
+        activity?.apply {
+            view?.setOnClickListener {
+                Utils.hideSoftKeyboard(this)
+            }
+        }
+
+        switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { buttonView, isChecked ->
+            edtTxtSpecialDeliveryInstruction?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+        }
+
+        switchGiftInstructions?.setOnCheckedChangeListener { buttonView, isChecked ->
+            edtTxtGiftInstructions?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+        }
     }
 
     /**

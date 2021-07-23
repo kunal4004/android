@@ -2140,6 +2140,13 @@
     <string name="submitForm">You will also need to submit</string>
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
 
+    <!-- Native Checkout : delivery Instructions -->
+    <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
+    <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
+    <string name="native_checkout_delivery_special_instructions_hint">Please type delivery instructions here.</string>
+    <string name="native_checkout_delivery_gift_instructions">Is this a Gift?</string>
+    <string name="native_checkout_delivery_gift_instructions_hint">Please type gifting message here.</string>
+
     <!-- Native Checkout : Food Substitution    -->
     <string name="native_checkout_delivery_food_substitution_title">Food Substitutions</string>
     <string name="native_checkout_delivery_food_substitution_desc">If an item is out of stock, how should we handle substitutes for you? If no substitutes are found the difference is not charged.</string>
