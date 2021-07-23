@@ -264,7 +264,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return;
         }
         appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
-        isDeeplinkAction = true;
     }
 
     private void queryBadgeCountOnStart() {
@@ -360,6 +359,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
                 case AppConstant.DP_LINKING_MY_ACCOUNTS:
+                    isDeeplinkAction = true;
                     BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
                     new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_100_MS);
                     break;
@@ -614,9 +614,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     setCurrentSection(R.id.navigate_to_cart);
                     identifyTokenValidationAPI();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU);
-                    if(WoolworthsApplication.isIsBadgesRequired() && !isDeeplinkAction)
+                    if(WoolworthsApplication.isIsBadgesRequired())
                         queryBadgeCountOnStart();
-                    isDeeplinkAction = false;
                     return false;
 
                 case R.id.navigate_to_wreward:
@@ -625,9 +624,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_REWARD);
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU);
-                    if(WoolworthsApplication.isIsBadgesRequired() && !isDeeplinkAction)
+                    if(WoolworthsApplication.isIsBadgesRequired())
                         queryBadgeCountOnStart();
-                    isDeeplinkAction = false;
                     return true;
 
                 case R.id.navigate_to_account:
