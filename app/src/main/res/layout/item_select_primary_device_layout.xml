@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:checked="false"
         android:clickable="false"
+        android:button="@drawable/radio_button_tick_drawable"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/deviceNameTextView"
         app:layout_constraintBottom_toBottomOf="@id/deviceNameTextView" />
