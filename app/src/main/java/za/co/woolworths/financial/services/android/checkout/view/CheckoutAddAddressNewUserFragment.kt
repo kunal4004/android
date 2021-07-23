@@ -5,6 +5,7 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.annotation.NonNull
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -43,15 +44,17 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPl
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.Province
-import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse
-import za.co.woolworths.financial.services.android.models.dto.Suburb
-import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_BUNDLE
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_PROVINCE
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_SUBURB
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -839,21 +842,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 return
 
             if (selectedAddressId.isNullOrEmpty()) {
+                val body = getAddAddressRequestBody()
                 checkoutAddAddressNewUserViewModel.addAddress(
-                    getAddAddressRequestBody()
+                    body
                 ).observe(this, {
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
                             if (savedAddressResponse != null && it?.data != null)
                                 savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
-                            if (isAddNewAddress) {
-                                val bundle = Bundle()
-                                bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
-                                setFragmentResult(ADD_A_NEW_ADDRESS_REQUEST_KEY, bundle)
-                                navController?.navigateUp()
-                            } else
-                                navigateToAddressConfirmation()
+                            onAddNewAddress(body.nickname)
                         }
                         ResponseStatus.LOADING -> {
                             loadingProgressBar.visibility = View.VISIBLE
@@ -890,6 +888,122 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    /**
+     * This function should perform following tasks:
+     * On successful add address,
+     * - request the API  GET [{base_url}/changeAddress/{nickname}]. Use [@param nickName] of newly added address
+     * - If Change Address comes back with deliverable: [false] then Display an info dialog
+     *  with message “we don't deliver to this suburb, please add a different address “ as per design.
+     * - Don't allow user to navigate to Checkout page when deliverable : [false].
+     * - Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
+     * ( Reference :  We use  similar kind of functionality on edit delivery location when user switches
+     * from delivery to CNC or vice versa).
+     * - User selects REMOVE AND CONTINUE navigate to Checkout page
+     *
+     * @param nickName  unique address name used to identify individual address
+     */
+    private fun onAddNewAddress(@NonNull nickName: String) {
+
+        checkoutAddAddressNewUserViewModel.changeAddress(
+            nickName
+        ).observe(this, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    it?.data?.let { anyResponse ->
+                        (anyResponse as? ChangeAddressResponse)?.let { response ->
+                            // If deliverable false then show cant deliver popup
+                            // Don't allow user to navigate to Checkout page when deliverable : [false].
+                            if (!response.deliverable) {
+                                //TODO: Work on this pop up on ticket https://wigroup2.atlassian.net/browse/WOP-11688
+                                return@observe
+                            }
+
+                            // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
+                            if (!response.unSellableCommerceItems.isNullOrEmpty()) {
+                                navigateToUnsellableItemsFragment(
+                                    response.unSellableCommerceItems,
+                                    response.deliverable
+                                )
+                                return@observe
+                            }
+
+                            // else functionality complete.
+                            if (isAddNewAddress) {
+                                setFragmentResult(
+                                    ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
+                                        SAVED_ADDRESS_KEY to Utils.toJson(savedAddressResponse)
+                                    )
+                                )
+                                navController?.navigateUp()
+                            } else
+                                navigateToAddressConfirmation()
+
+                        }
+                    }
+                }
+                ResponseStatus.LOADING -> {
+
+                }
+                ResponseStatus.ERROR -> {
+
+                }
+            }
+        })
+    }
+
+    /**
+     * This function is to navigate to Unsellable Items screen.
+     * @param [unSellableCommerceItems] list of items that are not deliverable in the selected location
+     * @param [deliverable] boolean flag to determine if provided list of items are deliverable
+     *
+     * @see [Suburb]
+     * @see [Province]
+     * @see [UnSellableCommerceItem]
+     */
+    fun navigateToUnsellableItemsFragment(
+        unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
+        deliverable: Boolean
+    ) {
+        val suburb = Suburb()
+        val province = Province()
+
+        if (selectedAddressId.isEmpty()) {
+            suburb.apply {
+                id = selectedAddress.suburbId
+                name = selectedAddress.suburb
+                postalCode = selectedAddress.postalCode
+                suburbDeliverable = deliverable
+            }
+            province.apply {
+                name = selectedAddress.city
+                id = selectedAddress.region
+            }
+        } else {
+            suburb.apply {
+                id = savedAddress?.suburbId ?: ""
+                name = savedAddress?.suburb ?: ""
+                postalCode = savedAddress?.postalCode ?: ""
+                suburbDeliverable = deliverable
+            }
+            province.apply {
+                name = savedAddress?.city ?: ""
+                id = savedAddress?.region ?: ""
+            }
+        }
+
+        navController?.navigate(
+            R.id.action_to_unsellableItemsFragment,
+            bundleOf(
+                KEY_ARGS_BUNDLE to bundleOf(
+                    EditDeliveryLocationActivity.DELIVERY_TYPE to DeliveryType.DELIVERY.name,
+                    KEY_BUNDLE_SUBURB to Utils.toJson(suburb),
+                    KEY_BUNDLE_PROVINCE to Utils.toJson(province),
+                    KEY_BUNDLE_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems)
+                )
+            )
+        )
     }
 
     private fun getAddAddressRequestBody(): AddAddressRequestBody {

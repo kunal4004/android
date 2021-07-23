@@ -111,6 +111,19 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         }
     }
 
+    fun getAvailableDeliverySlots() = liveData(Dispatchers.IO) {
+        emit(NativeCheckoutResource.loading(data = null))
+        try {
+            emit(
+                NativeCheckoutResource.success(
+                    data = checkoutAddAddressNewUserInteractor.getAvailableDeliverySlots().body()
+                )
+            )
+        } catch (exception: Exception) {
+            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
+        }
+    }
+
     fun changeAddress(nickName: String) = liveData(Dispatchers.IO) {
         emit(NativeCheckoutResource.loading(data = null))
         try {
