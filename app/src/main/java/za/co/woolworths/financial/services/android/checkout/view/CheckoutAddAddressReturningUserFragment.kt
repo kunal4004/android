@@ -152,6 +152,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             )
         }
         timeSlotsGridView.numColumns = deliverySlots?.hourSlots?.size ?: 0
+        timeSlotsGridView.setViewExpanded(true)
         timeSlotsGridView.adapter = adapter
 
         timeSlotsGridView.setOnItemClickListener { parent, view, position, id ->
@@ -181,6 +182,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun createDatesGrid(datesSlots: List<HeaderDate>?) {
+        dateGridView.setViewExpanded(true)
         dateGridView.adapter = context?.let {
             datesSlots?.let { it1 ->
                 SlotsDateGridViewAdapter(
