@@ -38,7 +38,7 @@
     <GridView
         android:id="@+id/timingsGridView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/twenty_six_dp"
         android:layout_marginStart="@dimen/seventy_dp"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:layout_marginEnd="@dimen/twenty_dp"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
         android:layout_marginEnd="@dimen/twenty_dp"
-        android:gravity="left"
+        android:gravity="start"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/timingsGridView">
 
@@ -66,16 +66,16 @@
             android:id="@+id/timeSlotsGridView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:horizontalSpacing="@dimen/two_dp"
+            android:horizontalSpacing="@dimen/three_dp"
             android:isScrollContainer="false"
-            android:verticalSpacing="@dimen/two_dp" />
+            android:verticalSpacing="@dimen/three_dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
-        android:layout_marginEnd="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/fourteen_dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/dateGridLayout">
