@@ -446,6 +446,19 @@ object OneAppService : RetrofitConfig() {
                 surveyId = surveyDetails.id,
                 participantReplies = surveyAnswers.values.toList()
         )
-        return mApiInterface.submitVocSurveyReplies(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), surveyDetails.id, surveyRepliesBody)
+        return mApiInterface.submitVocSurveyReplies(
+                apiId = getApiId(),
+                sha1Password = getSha1Password(),
+                deviceVersion = getDeviceManufacturer(),
+                deviceModel = getDeviceModel(),
+                network = getNetworkCarrier(),
+                os = getOS(),
+                osVersion = getOsVersion(),
+                userAgent = "",
+                userAgentVersion =  "",
+                sessionToken = getSessionToken(),
+                surveyId = surveyDetails.id,
+                surveyReplies = surveyRepliesBody
+        )
     }
 }
