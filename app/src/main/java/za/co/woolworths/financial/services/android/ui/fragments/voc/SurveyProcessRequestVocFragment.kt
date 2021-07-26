@@ -84,7 +84,17 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
             surveyAnswers = getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_ANSWERS) as? HashMap<Long, SurveyAnswer>
         }
         surveyDetails?.questions?.forEach { question ->
+            // Pass some data required by Genex
             surveyAnswers?.get(question.id)?.matrix = question.matrix
+            surveyAnswers?.get(question.id)?.column = question.column
+            surveyAnswers?.get(question.id)?.group = question.group
+
+            if (question.type == SurveyQuestion.QuestionType.RATE_SLIDER.type) {
+                // Add back offset removed to draw slider
+                surveyAnswers?.get(question.id)?.answerId?.let {
+                    surveyAnswers?.get(question.id)?.answerId = it + 1
+                }
+            }
 
             // Set default answer value for required questions
             if (question.required == true) {

@@ -438,14 +438,22 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getVocSurvey(triggerEvent: VocTriggerEvent): Call<SurveyDetailsResponse> {
-        return mApiInterface.getVocSurvey(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), triggerEvent.value)
+        return mApiInterface.getVocSurvey(
+                apiId = getApiId(),
+                sha1Password = getSha1Password(),
+                deviceVersion = getDeviceManufacturer(),
+                deviceModel = getDeviceModel(),
+                network = getNetworkCarrier(),
+                os = getOS(),
+                osVersion = getOsVersion(),
+                userAgent = "",
+                userAgentVersion =  "",
+                sessionToken = getSessionToken(),
+                triggerEvent = triggerEvent.value
+        )
     }
 
     fun submitVocSurveyReplies(surveyDetails: SurveyDetails, surveyAnswers: HashMap<Long, SurveyAnswer>): Call<Void> {
-        var surveyRepliesBody = SurveyRepliesBody(
-                surveyId = surveyDetails.id,
-                participantReplies = surveyAnswers.values.toList()
-        )
         return mApiInterface.submitVocSurveyReplies(
                 apiId = getApiId(),
                 sha1Password = getSha1Password(),
@@ -458,7 +466,10 @@ object OneAppService : RetrofitConfig() {
                 userAgentVersion =  "",
                 sessionToken = getSessionToken(),
                 surveyId = surveyDetails.id,
-                surveyReplies = surveyRepliesBody
+                surveyReplies = SurveyRepliesBody(
+                        surveyId = surveyDetails.id,
+                        participantReplies = surveyAnswers.values.toList()
+                )
         )
     }
 }
