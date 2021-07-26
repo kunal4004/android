@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.voc
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
+import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.EXTRA_SURVEY_ANSWERS
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerInterface
 import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
@@ -122,7 +122,9 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     }
 
     override fun onSubmit() {
-        navController?.navigate(R.id.action_surveyVocFragment_to_surveyProcessRequestVocFragment)
+        val bundle = Bundle()
+        bundle.putSerializable(EXTRA_SURVEY_ANSWERS, surveyAnswers)
+        navController?.navigate(R.id.action_surveyVocFragment_to_surveyProcessRequestVocFragment, bundle)
     }
 
     override fun onOptOut() {

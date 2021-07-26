@@ -13,12 +13,21 @@ import android.view.View.VISIBLE
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.fragment_store_confirmation.*
 import kotlinx.android.synthetic.main.pma_process_detail_layout.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.processRequestTitleTextView
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.view.*
 import kotlinx.android.synthetic.main.processing_request_fragment.*
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.GenericResponse
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
+import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.DEFAULT_VALUE_RATE_SLIDER_MAX
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.ProcessYourRequestFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -32,6 +41,8 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
 
     private var menuItem: MenuItem? = null
     private var navController: NavController? = null
+    private var surveyDetails: SurveyDetails? = null
+    private var surveyAnswers: HashMap<Long, SurveyAnswer>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +52,7 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        configureSurveyDetailsAndAnswers()
         configureUI()
 
         navController = Navigation.findNavController(view)
@@ -61,6 +73,30 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
         }
 
         autoConnection()
+    }
+
+    private fun configureSurveyDetailsAndAnswers() {
+        surveyDetails = activity?.intent?.extras?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_DETAILS) as? SurveyDetails
+        arguments?.apply {
+            surveyAnswers = getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_ANSWERS) as? HashMap<Long, SurveyAnswer>
+        }
+        // Set default answer value for required questions
+        surveyDetails?.questions?.forEach { question ->
+            if (question.required == true) {
+                when (question.type) {
+                    SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
+                        if (surveyAnswers?.get(question.id)?.answerId == null) {
+                            surveyAnswers?.get(question.id)?.answerId = (question.maxValue ?: DEFAULT_VALUE_RATE_SLIDER_MAX) - 1
+                        }
+                    }
+                    SurveyQuestion.QuestionType.FREE_TEXT.type -> {
+                        if (surveyAnswers?.get(question.id)?.textAnswer == null) {
+                            surveyAnswers?.get(question.id)?.textAnswer = ""
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun configureUI() {
@@ -93,10 +129,28 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
         includePMAProcessing?.visibility = VISIBLE
         processRequestTitleTextView?.text = bindString(R.string.voc_processing_request_title)
 
-        Handler(getMainLooper()).postDelayed({
-            onRequestSuccessful()
-//            onRequestFailed()
-        }, 3000)
+        if (surveyDetails == null || surveyAnswers == null) {
+            onRequestFailed()
+            return
+        }
+
+        val submitVocSurveyRepliesRequest = OneAppService.submitVocSurveyReplies(surveyDetails!!, surveyAnswers!!)
+        submitVocSurveyRepliesRequest.enqueue(CompletionHandler(object : IResponseListener<GenericResponse> {
+            override fun onSuccess(response: GenericResponse?) {
+                when (response?.httpCode?.toString() ?: response?.response?.code?.toString() ?: "0") {
+                    AppConstant.HTTP_OK_201.toString(), AppConstant.HTTP_OK.toString() -> {
+                        onRequestSuccessful()
+                    }
+                    else -> {
+                        onRequestFailed()
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                onRequestFailed()
+            }
+        }, GenericResponse::class.java))
     }
 
     private fun onRequestSuccessful() {

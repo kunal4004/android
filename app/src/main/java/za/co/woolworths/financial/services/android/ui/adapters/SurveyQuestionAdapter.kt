@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
-import androidx.core.view.doOnLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.row_survey_footer.view.*
@@ -17,8 +16,9 @@ import kotlinx.android.synthetic.main.row_survey_question_free_text.view.*
 import kotlinx.android.synthetic.main.row_survey_question_rate_slider.view.*
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
+import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.DEFAULT_VALUE_RATE_SLIDER_MAX
+import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.DEFAULT_VALUE_RATE_SLIDER_MIN
 import za.co.woolworths.financial.services.android.ui.fragments.voc.SurveyAnswerDelegate
-
 
 class SurveyQuestionAdapter(
         val context: Context,
@@ -77,8 +77,8 @@ class SurveyQuestionAdapter(
     inner class RateSliderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(question: SurveyQuestion, answer: SurveyAnswer?, callback: (Long, Int) -> Unit) {
             itemView.apply {
-                val minValue = (question.minValue ?: 1) - 1
-                val maxValue = (question.maxValue ?: 10) - 1
+                val minValue = (question.minValue ?: DEFAULT_VALUE_RATE_SLIDER_MIN) - 1
+                val maxValue = (question.maxValue ?: DEFAULT_VALUE_RATE_SLIDER_MAX) - 1
 
                 tvTitleRateSlider.text = question.title ?: ""
                 tvDescRateSlider.text = resources.getString(R.string.voc_question_slider_desc, minValue, maxValue)
