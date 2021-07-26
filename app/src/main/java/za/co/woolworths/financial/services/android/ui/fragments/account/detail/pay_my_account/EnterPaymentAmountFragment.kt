@@ -144,6 +144,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     reducePaymentAmountTextView?.visibility = GONE
+                    highlightAmountBlock()
                 }
             })
 
@@ -295,5 +296,26 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     override fun onResume() {
         super.onResume()
         showKeyboard()
+    }
+
+    fun highlightAmountBlock() {
+        with(payMyAccountViewModel) {
+            when {
+                convertRandFormatToDouble(paymentAmountInputEditText?.text.toString())
+                    .equals(convertRandFormatToDouble(totalAmountDueValueTextView?.text.toString())) -> {
+                    totalAmountDueValueTextView?.isActivated = true
+                    amountOutstandingValueTextView?.isActivated =false
+                }
+                convertRandFormatToDouble(paymentAmountInputEditText?.text.toString())
+                    .equals(convertRandFormatToDouble(amountOutstandingValueTextView?.text.toString())) -> {
+                    amountOutstandingValueTextView?.isActivated = true
+                    totalAmountDueValueTextView?.isActivated = false
+                }
+                else -> {
+                    amountOutstandingValueTextView?.isActivated = false
+                    totalAmountDueValueTextView?.isActivated = false
+                }
+            }
+        }
     }
 }

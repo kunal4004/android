@@ -33,10 +33,10 @@ class ICREnterCardNumberFragment : MyCardExtension() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         inputTextWatcher()
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_START)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_START, this) }
         navigateToEnterOTPFragmentImageView?.setOnClickListener {
             if (shouldDisableUINavigation) return@setOnClickListener
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_CARD)
+            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_LINK_CARD, this) }
             navigateToOTPScreen()
         }
 

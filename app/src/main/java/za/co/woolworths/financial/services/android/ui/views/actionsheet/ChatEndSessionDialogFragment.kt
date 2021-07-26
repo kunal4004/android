@@ -17,7 +17,7 @@ class ChatEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        chatViewModel.triggerFirebaseEventChatBreak()
+        activity?.apply { chatViewModel.triggerFirebaseEventChatBreak(this) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,7 +43,7 @@ class ChatEndSessionDialogFragment : WBottomSheetDialogFragment(), View.OnClickL
         when (view?.id) {
             R.id.endSessionButton -> {
                 with(chatViewModel) {
-                    triggerFirebaseEventEndSession()
+                    activity?.apply { triggerFirebaseEventEndSession(this) }
                     isCustomerSignOut.value = true
                     postChatEventEndSession()
                 }

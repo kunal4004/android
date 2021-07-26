@@ -115,6 +115,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.CartActi
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
@@ -361,11 +362,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 Activity checkOutActivity = getActivity();
                 if ((checkOutActivity != null) && btnCheckOut.isEnabled() && orderSummary != null) {
                     if (Utils.getPreferredDeliveryLocation().storePickup && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT);
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT,checkOutActivity);
                         showMaxItemView();
                         return;
                     }
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT);
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,checkOutActivity);
                     Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
                     getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
                     checkOutActivity.overridePendingTransition(0, 0);
@@ -1143,7 +1144,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         } else if (requestCode == CART_BACK_PRESSED_CODE) {
             reloadFragment();
             return;
-        } else if (requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE) {
+        } else if (requestCode == PDP_LOCATION_CHANGED_BACK_PRESSED_CODE || requestCode == SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {
             checkLocationChangeAndReload();
         }
 
@@ -1186,6 +1187,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
         String currentSuburbId = null;
         String currentStoreId = null;
+        int currentCartCount = QueryBadgeCounter.getInstance().getCartCount();
         if (deliveryLocation.suburb != null)
             currentSuburbId = deliveryLocation.suburb.id;
         if (deliveryLocation.store != null)
@@ -1203,6 +1205,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             localStoreId = null;
             reloadFragment();
             return;
+        }
+        else if (productCountMap.getTotalProductCount() != currentCartCount){
+            reloadFragment();
         }
     }
 
@@ -1479,7 +1484,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
             break;
             case TAG_AVAILABLE_VOUCHERS_TOAST: {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_popup_view);
+				Activity activity = getActivity();
+				if (activity == null) return;
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_popup_view, activity);
                 navigateToAvailableVouchersPage();
             }
             break;
@@ -1627,13 +1634,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     @Override
     public void onEnterPromoCode() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_enter);
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_enter, activity);
         navigateToApplyPromoCodePage();
     }
 
     @Override
     public void onRemovePromoCode(String promoCode) {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove);
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove, activity);
         showProgressBar();
         OneAppService.INSTANCE.removePromoCode(new CouponClaimCode(promoCode)).enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
             @Override

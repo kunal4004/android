@@ -73,7 +73,7 @@ open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
                                                                             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
                                                                         }
                                                                         else -> {
-                                                                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_SCAN_CODE)
+                                                                            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_SCAN_CODE, this) }
                                                                             sendResultBack(it.searchType.name, this)
                                                                         }
                                                                     }

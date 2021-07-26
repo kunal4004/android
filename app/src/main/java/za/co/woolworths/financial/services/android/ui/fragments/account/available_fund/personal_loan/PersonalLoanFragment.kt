@@ -3,10 +3,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.availab
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.observe
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.account_available_fund_overview_fragment.*
+import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -75,15 +76,14 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
     override fun onClick(view: View?) {
         KotlinUtils.avoidDoubleClicks(view)
         when (view?.id) {
-
             R.id.incPayMyAccountButton -> onPayMyAccountButtonTap()
 
             R.id.incRecentTransactionButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS, this) }
                 navigateToRecentTransactionActivity(AccountsProductGroupCode.PERSONAL_LOAN.groupCode)
             }
             R.id.incViewStatementButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS, this) }
                 navigateToStatementActivity()
             }
         }
@@ -92,7 +92,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
     private fun onPayMyAccountButtonTap() {
         if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL, this) }
 
         if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
             navController.navigate(R.id.payMyAccountRetryErrorFragment)

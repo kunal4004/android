@@ -131,6 +131,11 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 creditLimitIncrease?.apply {
                     WoolworthsApplication.getInstance().setCreditLimitsIncrease(this)
                 }
+
+                inAppReview?.apply {
+                    isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    WoolworthsApplication.setInAppReview(this)
+                }
             }
         }
     }

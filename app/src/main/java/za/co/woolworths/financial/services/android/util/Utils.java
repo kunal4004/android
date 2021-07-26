@@ -125,7 +125,9 @@ import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
+import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
 
 public class Utils {
 
@@ -170,12 +172,19 @@ public class Utils {
     };
 
     public static void saveLastLocation(Location loc, Context mContext) {
-
         try {
             JSONObject locationJson = new JSONObject();
 
-            locationJson.put("lat", loc.getLatitude());
-            locationJson.put("lon", loc.getLongitude());
+            Double latitude = null;
+            Double longitude = null;
+
+            if (loc != null) {
+                latitude = loc.getLatitude();
+                longitude = loc.getLongitude();
+            }
+
+            locationJson.put("lat", latitude);
+            locationJson.put("lon", longitude);
 
             sessionDaoSave(SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
         } catch (JSONException e) {
@@ -426,7 +435,6 @@ public class Utils {
         context.startActivity(openInternalWebView);
     }
 
-
     public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
         //IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
         BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -510,7 +518,7 @@ public class Utils {
         mTooltip.show();
     }
 
-    public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments) {
+    public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments, Activity activity) {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
 
         Bundle params = new Bundle();
@@ -519,22 +527,13 @@ public class Utils {
         }
 
         mFirebaseAnalytics.logEvent(eventName, params);
+        requestInAppReview(eventName, activity);
     }
 
-    public static void triggerFireBaseEvent(String eventName, Map<String, Boolean> argument) {
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
-
-        Bundle params = new Bundle();
-        for (Map.Entry<String, Boolean> entry : argument.entrySet()) {
-            params.putBoolean(entry.getKey(), entry.getValue());
-        }
-
-        mFirebaseAnalytics.logEvent(eventName, params);
-    }
-
-    public static void triggerFireBaseEvents(String eventName) {
+    public static void triggerFireBaseEvents(String eventName, Activity activity) {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
         mFirebaseAnalytics.logEvent(eventName, null);
+        requestInAppReview(eventName, activity);
     }
 
     public static void setScreenName(Activity activity, String screenName) {
@@ -1613,6 +1612,15 @@ public class Utils {
         }
 
         return token;
+    }
+
+    public static void setInAppReviewRequested() {
+        Utils.sessionDaoSave(IN_APP_REVIEW, "1");
+    }
+
+    public static boolean isInAppReviewRequested() {
+        String firstTime = Utils.getSessionDaoValue(IN_APP_REVIEW);
+        return (firstTime != null);
     }
 
     public static Boolean isGooglePlayServicesAvailable() {

@@ -150,7 +150,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         val parameterName = eventName.replace("wtoday_", "")
         val arguments = HashMap<String, String>()
         arguments.put(parameterName, parameter)
-        Utils.triggerFireBaseEvents(eventName, arguments)
+        activity?.apply {Utils.triggerFireBaseEvents(eventName, arguments, this) }
     }
 
     override fun onResume() {

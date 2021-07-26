@@ -54,7 +54,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW)
+        activity?.apply { triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW, this) }
         return inflater.inflate(R.layout.wrewards_overview_fragment, container, false)
     }
 
@@ -65,8 +65,6 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             mErrorHandlerView = ErrorHandlerView(activity, no_connection_layout)
             mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
         }
-
-        loadDefaultCardType()
 
         voucherResponse?.tierInfo?.apply {
             handleTireHistoryView(this)
@@ -90,7 +88,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
     private fun uniqueIdsForWRewardOverview() {
         activity?.resources?.apply {
-            wRewardCardFrameLayout?.contentDescription = getString(R.string.wreward_flip_card_framelayout)
+//            wRewardCardFrameLayout?.contentDescription = getString(R.string.wreward_flip_card_framelayout)
             flipCardBackLayout?.contentDescription = getString(R.string.flipCardBackLayout)
             cardBackgroundLinearLayout?.contentDescription = getString(R.string.cardBackgroundLinearLayout)
             cardFrameLayout?.contentDescription = getString(R.string.card_frame_layout)
@@ -101,11 +99,6 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             promotionsLayout?.contentDescription = getString(R.string.featured_promotions)
             vipLogo?.contentDescription = getString(R.string.vipLogoLayout)
         }
-    }
-
-    private fun loadDefaultCardType() {
-        flipCardFrontLayout?.setBackgroundResource(R.drawable.wrewards_card)
-        flipCardBackLayout?.setBackgroundResource(R.drawable.wrewards_card_flipped)
     }
 
     fun scrollToTop() = scrollWRewardsOverview?.let { ObjectAnimator.ofInt(it, "scrollY", it.scrollY, 0).setDuration(500).start() }
@@ -185,7 +178,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     private fun flipCard() {
-        triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSFLIP)
+        activity?.apply { triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSFLIP, this) }
         mIsBackVisible = if (!mIsBackVisible) {
             mSetRightOut?.setTarget(flipCardFrontLayout)
             mSetLeftIn?.setTarget(flipCardBackLayout)
