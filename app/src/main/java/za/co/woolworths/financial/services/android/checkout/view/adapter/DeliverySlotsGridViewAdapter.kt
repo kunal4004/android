@@ -9,12 +9,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.checkout.viewmodel.DeliveryGridModel
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
 
 /**
  * Created by Kunal Uttarwar on 20/07/21.
  */
-class DeliveryGridViewAdapter(
+class DeliverySlotsGridViewAdapter(
     context: Context, resource: Int, deliveryGridModelList: ArrayList<DeliveryGridModel>
 ) : ArrayAdapter<DeliveryGridModel>(context, resource, deliveryGridModelList) {
 
@@ -40,13 +41,12 @@ class DeliveryGridViewAdapter(
         } else {
             mHolder = convrtView.tag as GridViewHolder
         }
-        mHolder.grid_title?.text =  deliveryGridModelList[position].grid_title
-        if (deliveryGridModelList[position].isSelected){
+        mHolder.grid_title?.text = deliveryGridModelList[position].grid_title
+        mHolder.cardLayout?.setBackgroundColor(bindColor(deliveryGridModelList[position].backgroundImgColor))
+        if (deliveryGridModelList[position].isSelected)
             mHolder.grid_title?.setTextColor(android.graphics.Color.WHITE)
-            mHolder.cardLayout?.setBackgroundColor(android.graphics.Color.GREEN)
-        }
         else
-            mHolder.cardLayout?.setBackgroundColor(deliveryGridModelList[position].backgroundImgColor)
+            mHolder.grid_title?.setTextColor(bindColor(R.color.checkout_delivering_title))
         return convrtView!!
     }
 
@@ -65,6 +65,6 @@ class DeliveryGridViewAdapter(
     internal class GridViewHolder {
         var grid_title: TextView? = null
         var cardLayout: LinearLayout? = null
-        var id: Int = 0
+        var id: String = "0"
     }
 }

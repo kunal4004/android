@@ -102,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:text="@string/earliest_delivery_date"
+                android:text="@string/earliest_collection_date"
                 android:textColor="@color/checkout_delivering_title"
                 android:textSize="@dimen/fifteen_sp" />
 
