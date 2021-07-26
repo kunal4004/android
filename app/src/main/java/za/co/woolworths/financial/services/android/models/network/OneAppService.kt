@@ -472,4 +472,20 @@ object OneAppService : RetrofitConfig() {
                 )
         )
     }
+
+    fun optOutVocSurvey(triggerEvent: VocTriggerEvent): Call<Void> {
+        return mApiInterface.optOutVocSurvey(
+                apiId = getApiId(),
+                sha1Password = getSha1Password(),
+                deviceVersion = getDeviceManufacturer(),
+                deviceModel = getDeviceModel(),
+                network = getNetworkCarrier(),
+                os = getOS(),
+                osVersion = getOsVersion(),
+                userAgent = "",
+                userAgentVersion =  "",
+                sessionToken = getSessionToken(),
+                triggerEvent = triggerEvent.value
+        )
+    }
 }

@@ -12,14 +12,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_survey_voc.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.EXTRA_SURVEY_ANSWERS
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerInterface
 import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCancelDialogFragment.IActionOrCancel {
 
@@ -141,7 +146,24 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
 
     override fun onDialogActionClicked(dialogId: Int) {
         if (dialogId == DIALOG_OPT_OUT_ID) {
-            Toast.makeText(context, "Opt Out Confirmation Tapped", Toast.LENGTH_SHORT).show()
+            performOptOutRequest()
+            (activity as? VoiceOfCustomerActivity)?.apply {
+                finishActivity()
+            }
+        }
+    }
+
+    fun performOptOutRequest() {
+        (activity?.intent?.extras?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_TRIGGER_EVENT) as? VocTriggerEvent)?.let { triggerEvent ->
+            val optOutVocSurveyRequest = OneAppService.optOutVocSurvey(triggerEvent)
+            optOutVocSurveyRequest.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    // TODO VOC: log error
+                }
+            })
         }
     }
 }

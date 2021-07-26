@@ -18,6 +18,7 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
     companion object {
         const val EXTRA_SURVEY_DETAILS = "extraSurveyDetails"
         const val EXTRA_SURVEY_ANSWERS = "extraSurveyAnswers"
+        const val EXTRA_SURVEY_TRIGGER_EVENT = "extraSurveyTriggerEvent"
         const val DIALOG_SKIP_ID = 1
         const val DEFAULT_VALUE_RATE_SLIDER_MIN = 1
         const val DEFAULT_VALUE_RATE_SLIDER_MAX = 11
@@ -111,7 +112,7 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
 
     override fun onDialogActionClicked(dialogId: Int) {
         if (dialogId == DIALOG_SKIP_ID) {
-            Toast.makeText(this, "On Skip Survey Clicked", Toast.LENGTH_SHORT).show()
+            finishActivity()
         }
     }
 }

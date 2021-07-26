@@ -23,7 +23,7 @@ class VoiceOfCustomerManager {
             getVocSurveyRequest.enqueue(CompletionHandler(object : IResponseListener<SurveyDetailsResponse> {
                 override fun onSuccess(response: SurveyDetailsResponse?) {
                     response?.survey?.let {
-                        showVocSurvey(context, it)
+                        showVocSurvey(context, triggerEvent, it)
                     }
                 }
 
@@ -33,11 +33,12 @@ class VoiceOfCustomerManager {
             }, SurveyDetailsResponse::class.java))
         }
 
-        private fun showVocSurvey(context: Context?, survey: SurveyDetails) {
+        private fun showVocSurvey(context: Context?, triggerEvent: VocTriggerEvent, survey: SurveyDetails) {
             if (survey.questions == null || survey.questions.isEmpty()) return
             context?.apply {
                 Intent(this, VoiceOfCustomerActivity::class.java).apply {
                     putExtra(VoiceOfCustomerActivity.EXTRA_SURVEY_DETAILS, survey)
+                    putExtra(VoiceOfCustomerActivity.EXTRA_SURVEY_TRIGGER_EVENT, triggerEvent)
                     startActivity(this)
                 }
             }
