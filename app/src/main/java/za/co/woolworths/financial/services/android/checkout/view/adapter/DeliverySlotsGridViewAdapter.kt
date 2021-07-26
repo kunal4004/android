@@ -41,7 +41,7 @@ class DeliverySlotsGridViewAdapter(
         mHolder.gridTitle?.setBackgroundResource(R.drawable.rounded_grid_text_view)
         val drawable = mHolder.gridTitle?.background as? GradientDrawable
         drawable?.setColor(bindColor(deliveryGridModelList[position].backgroundImgColor))
-        if (deliveryGridModelList[position].isSelected)
+        if (deliveryGridModelList[position].slot.selected == true)
             mHolder.gridTitle?.setTextColor(android.graphics.Color.WHITE)
         else
             mHolder.gridTitle?.setTextColor(bindColor(R.color.checkout_delivering_title))

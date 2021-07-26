@@ -18,7 +18,8 @@ class ExpandableGrid(val fragment: Fragment) {
     enum class SlotGridColors(val color: Int) {
         LIGHT_GREEN(R.color.light_green),
         DARK_GREEN(R.color.dark_green),
-        LIGHT_GREY(R.color.checkout_delivering_title_background)
+        LIGHT_GREY(R.color.checkout_delivering_title_background),
+        WHITE(R.color.white)
     }
 
     fun createTimeSlotGridView(deliverySlots: SortedJoinDeliverySlot?) {
@@ -29,27 +30,32 @@ class ExpandableGrid(val fragment: Fragment) {
                 val slotsList = weekItem.slots
                 if (!slotsList.isNullOrEmpty()) {
                     for (slot in slotsList) {
-                        var gridTitle: String
+                        var gridTitle = ""
                         var gridColor = SlotGridColors.LIGHT_GREY.color
-                        var isSelected = slot.selected
-                        if (slot.freeDeliverySlot == true) {
-                            gridTitle = fragment.getString(R.string.free_delivery_slot)
-                            gridColor = SlotGridColors.LIGHT_GREEN.color
-                        } else
-                            gridTitle = slot.slotCost.toString()
-                        if (slot.hasReservation == true) {
-                            isSelected = true
-                            gridColor = SlotGridColors.DARK_GREEN.color
+                        var currentSlot = slot
+                        if (currentSlot.available == true) {
+                            if (currentSlot.freeDeliverySlot == true) {
+                                gridTitle = fragment.getString(R.string.free_delivery_slot)
+                                if (currentSlot.selected == true)
+                                    gridColor = SlotGridColors.DARK_GREEN.color
+                                else
+                                    gridColor = SlotGridColors.LIGHT_GREEN.color
+                            } else {
+                                gridTitle = currentSlot.slotCost.toString()
+                                gridColor = SlotGridColors.WHITE.color
+                            }
+                        } else {
+                            gridColor = SlotGridColors.LIGHT_GREY.color
                         }
-                        if (slot.available == true) {
-                            //TODO  enable the click for grid slot
+                        if (currentSlot.hasReservation == true) {
+                            currentSlot.selected = true
+                            gridColor = SlotGridColors.DARK_GREEN.color
                         }
                         deliveryGridList.add(
                             DeliveryGridModel(
                                 gridTitle,
                                 gridColor,
-                                slot.slotId,
-                                isSelected == true
+                                currentSlot
                             )
                         )
                     }
@@ -68,14 +74,23 @@ class ExpandableGrid(val fragment: Fragment) {
         fragment.timeSlotsGridView.adapter = adapter
 
         fragment.timeSlotsGridView.setOnItemClickListener { parent, view, position, id ->
-            for (model in deliveryGridList) {
-                model.isSelected = false
-                model.backgroundImgColor = SlotGridColors.LIGHT_GREEN.color
+            if (deliveryGridList[position].slot.available == true) {
+                for (model in deliveryGridList) {
+                    model.slot.selected = false
+                    if (model.slot.available == true) {
+                        if (model.slot.freeDeliverySlot == true)
+                            model.backgroundImgColor = SlotGridColors.LIGHT_GREEN.color
+                        else
+                            model.backgroundImgColor = SlotGridColors.WHITE.color
+                    } else {
+                        model.backgroundImgColor = SlotGridColors.LIGHT_GREY.color
+                    }
+                }
+                val deliveryGridModel: DeliveryGridModel = deliveryGridList[position]
+                deliveryGridModel.slot.selected = true
+                deliveryGridModel.backgroundImgColor = SlotGridColors.DARK_GREEN.color
+                adapter?.notifyDataSetChanged()
             }
-            val deliveryGridModel: DeliveryGridModel = deliveryGridList[position]
-            deliveryGridModel.isSelected = true
-            deliveryGridModel.backgroundImgColor = SlotGridColors.DARK_GREEN.color
-            adapter?.notifyDataSetChanged()
         }
     }
 
