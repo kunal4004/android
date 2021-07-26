@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.activities.voc
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -42,7 +41,7 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
         setNavHostStartDestination()
 
         // Hide keyboard in case it was visible from a previous screen
-        KeyboardUtils.hideKeyboard(this)
+        KeyboardUtils.hideKeyboardIfVisible(this)
     }
 
     private fun setActionBar() {
