@@ -1,10 +1,11 @@
 
 package za.co.woolworths.financial.services.android.checkout.service.network;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class SavedAddressResponse {
+public class SavedAddressResponse implements Serializable {
 
     @SerializedName("addresses")
     private List<Address> addresses = null;

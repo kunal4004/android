@@ -3,7 +3,9 @@ package za.co.woolworths.financial.services.android.checkout.service.network;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Address {
+import java.io.Serializable;
+
+public class Address implements Serializable {
 
     @SerializedName("lastName")
     private String lastName;

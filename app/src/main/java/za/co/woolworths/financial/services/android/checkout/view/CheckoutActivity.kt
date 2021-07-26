@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_checkout.*
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 
@@ -18,11 +20,19 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 class CheckoutActivity : AppCompatActivity() {
 
     var navHostFrag = NavHostFragment()
+    var savedAddressResponse: SavedAddressResponse? = null
+
+    companion object {
+        const val KEY_EXTRA_SAVED_ADDRESS = "savedAddress"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checkout)
         setActionBar()
+        intent?.extras?.apply {
+            savedAddressResponse = getSerializable(KEY_EXTRA_SAVED_ADDRESS) as? SavedAddressResponse
+        }
         loadNavHostFragment()
     }
 
@@ -66,11 +76,12 @@ class CheckoutActivity : AppCompatActivity() {
         navHostFrag = navHostFragment as NavHostFragment
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
-        if (true)
+
+        if (savedAddressResponse?.addresses.isNullOrEmpty())
             graph.startDestination = R.id.CheckoutAddAddressNewUserFragment
         else
             graph.startDestination = R.id.CheckoutAddAddressReturningUserFragment
-        findNavController(R.id.navHostFragment).graph = graph
+        findNavController(R.id.navHostFragment).setGraph(graph, intent?.extras)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
