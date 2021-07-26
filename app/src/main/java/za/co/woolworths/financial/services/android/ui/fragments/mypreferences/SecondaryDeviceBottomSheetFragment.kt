@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_secondary_device_bottom_sheet.*
@@ -43,11 +42,11 @@ class SecondaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), View.On
 
         when (v?.id) {
             R.id.deleteDeviceLayout -> {
-                setFragmentResult(ViewAllLinkedDevicesFragment.DELETE_DEVICE_NO_OTP, bundleOf(
-                        ViewAllLinkedDevicesFragment.KEY_BOOLEAN_UNLINK_DEVICE to true
-                ))
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)
+
+                setFragmentResult(ViewAllLinkedDevicesFragment.CONFIRM_DELETE_SECONDARY_DEVICE, Bundle.EMPTY)
+
             }
             R.id.changePrimaryDeviceLayout -> {
                 val bundle = Bundle()

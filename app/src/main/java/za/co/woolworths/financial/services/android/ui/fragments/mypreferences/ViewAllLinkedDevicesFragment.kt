@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.mypreferences
 
 import android.os.Bundle
+import android.os.Handler
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -18,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
 import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
 import kotlinx.android.synthetic.main.fragment_view_all_linked_devices.*
+import kotlinx.android.synthetic.main.layout_unlink_device_result.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -48,6 +51,13 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        setFragmentResultListener(CONFIRM_DELETE_SECONDARY_DEVICE) { requestKey, bundle ->
+            val navController = view?.findNavController()
+            navController?.navigate(R.id.action_confirm_delete_device, bundleOf(
+                DEVICE_LIST to null
+            ))
+        }
+
         setFragmentResultListener(DELETE_DEVICE_NO_OTP) { requestKey, bundle ->
             val isUnlinkSuccess = bundle.getBoolean(KEY_BOOLEAN_UNLINK_DEVICE)
             if (isUnlinkSuccess) {
@@ -83,17 +93,27 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                             AppConstant.HTTP_OK -> {
                                 activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_DELETE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceDelete)), this) }
 
-                                setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                        IS_UPDATE to true
-                                ))
-
                                 deviceList = response.userDevices
-                                if (deviceList.isNullOrEmpty()) {
-                                    view?.findNavController()?.navigateUp()
-                                    return
-                                }
 
-                                initRecyclerView()
+                                showDeviceUnlinked()
+
+                                Handler().postDelayed({
+                                    context?.let { it ->
+                                        viewAllDeviceConstraintLayout.background = AppCompatResources.getDrawable(it, R.color.default_background)
+                                    }
+                                    unlinkDeviceConfirmationConstraintLayout?.visibility = View.GONE
+                                    viewAllLinkedDevicesRecyclerView.visibility = View.VISIBLE
+
+                                    setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                                        IS_UPDATE to true
+                                    ))
+                                    if (deviceList.isNullOrEmpty()) {
+                                        view?.findNavController()?.navigateUp()
+                                        return@postDelayed
+                                    }
+
+                                    initRecyclerView()
+                                }, AppConstant.DELAY_1000_MS)
                             }
                         }
                     }
@@ -168,6 +188,16 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         viewAllLinkedDevicesRecyclerView.adapter = viewAllDevicesAdapter
     }
 
+    private fun showDeviceUnlinked() {
+        viewAllLinkedDevicesRecyclerView.visibility = View.GONE
+        unlinkDeviceConfirmationConstraintLayout?.visibility = View.VISIBLE
+        unlinkDeviceResultSubtitle.visibility = View.GONE
+        context?.let { it ->
+            viewAllDeviceConstraintLayout.background = AppCompatResources.getDrawable(it, R.color.white)
+            unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
+        }
+    }
+
     companion object {
         const val DEVICE_LIST = "deviceList"
         const val DELETE_DEVICE_NO_OTP = "deleteDevice"
@@ -179,6 +209,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         const val CHANGE_PRIMARY_DEVICE_OTP = "changePrimaryDevice"
         const val DELETE_PRIMARY_DEVICE = "deleteOldPrimaryDevice"
         const val IS_UPDATE = "isUpdate"
+        const val CONFIRM_DELETE_SECONDARY_DEVICE = "CONFIRM_DELETE_SECONDARY_DEVICE"
     }
 
     override fun onClick(v: View?) {
