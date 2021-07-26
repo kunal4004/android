@@ -19,6 +19,9 @@ import kotlinx.android.synthetic.main.processing_request_failure_fragment.*
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.processRequestTitleTextView
 import kotlinx.android.synthetic.main.processing_request_failure_fragment.view.*
 import kotlinx.android.synthetic.main.processing_request_fragment.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
@@ -80,8 +83,10 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
         arguments?.apply {
             surveyAnswers = getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_ANSWERS) as? HashMap<Long, SurveyAnswer>
         }
-        // Set default answer value for required questions
         surveyDetails?.questions?.forEach { question ->
+            surveyAnswers?.get(question.id)?.matrix = question.matrix
+
+            // Set default answer value for required questions
             if (question.required == true) {
                 when (question.type) {
                     SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
@@ -91,7 +96,7 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
                     }
                     SurveyQuestion.QuestionType.FREE_TEXT.type -> {
                         if (surveyAnswers?.get(question.id)?.textAnswer == null) {
-                            surveyAnswers?.get(question.id)?.textAnswer = ""
+                            surveyAnswers?.get(question.id)?.textAnswer = "N/A" // TODO VOC: UI must reflect this validation
                         }
                     }
                 }
@@ -135,22 +140,19 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
         }
 
         val submitVocSurveyRepliesRequest = OneAppService.submitVocSurveyReplies(surveyDetails!!, surveyAnswers!!)
-        submitVocSurveyRepliesRequest.enqueue(CompletionHandler(object : IResponseListener<GenericResponse> {
-            override fun onSuccess(response: GenericResponse?) {
-                when (response?.httpCode?.toString() ?: response?.response?.code?.toString() ?: "0") {
-                    AppConstant.HTTP_OK_201.toString(), AppConstant.HTTP_OK.toString() -> {
-                        onRequestSuccessful()
-                    }
-                    else -> {
-                        onRequestFailed()
-                    }
+        submitVocSurveyRepliesRequest.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    onRequestSuccessful()
+                } else {
+                    onRequestFailed()
                 }
             }
 
-            override fun onFailure(error: Throwable?) {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
                 onRequestFailed()
             }
-        }, GenericResponse::class.java))
+        })
     }
 
     private fun onRequestSuccessful() {

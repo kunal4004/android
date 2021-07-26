@@ -37,8 +37,6 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
 
         navController = NavHostFragment.findNavController(this)
         surveyDetails = activity?.intent?.extras?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_DETAILS) as? SurveyDetails
-
-        // TODO: generate default answers for required questions... unless not necessary
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

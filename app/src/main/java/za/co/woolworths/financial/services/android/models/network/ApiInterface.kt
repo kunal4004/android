@@ -1538,5 +1538,5 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("surveyId") surveyId: Long,
             @Body surveyReplies: SurveyRepliesBody
-    ): Call<GenericResponse>
+    ): Call<Void>
 }

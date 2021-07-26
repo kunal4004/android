@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 class VoiceOfCustomerManager {
     companion object {
         fun showVocSurveyIfNeeded(context: Context?, triggerEvent: VocTriggerEvent? = null) {
+            // TODO VOC: check minimum support from App Config
             if (triggerEvent == null) return
             val allowedTriggerEvents = WoolworthsApplication.getCustomerFeedback().triggerEvents ?: return
             if (!allowedTriggerEvents.contains(triggerEvent.value)) return
