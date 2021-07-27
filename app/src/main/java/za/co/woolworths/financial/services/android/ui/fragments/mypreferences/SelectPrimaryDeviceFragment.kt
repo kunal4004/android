@@ -79,12 +79,18 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.selectPrimaryDeviceConstraintLayout -> {
-                v.deviceRadioButton.isChecked = !v.deviceRadioButton.isChecked
-                changePrimaryDeviceButton.isEnabled = !changePrimaryDeviceButton.isEnabled
-
-                if(v.deviceRadioButton.isChecked) {
-                    deviceSelected = v.getTag(R.id.selectPrimaryDeviceConstraintLayout) as UserDevice
+                selectPrimaryDeviceAdapter?.deviceList?.forEach {
+                    it.primarydDevice = false
                 }
+                v.deviceRadioButton.isChecked = !v.deviceRadioButton.isChecked
+                changePrimaryDeviceButton.isEnabled = v.deviceRadioButton.isChecked
+                val position = v.getTag(R.id.selectPrimaryDeviceConstraintLayout) as Int
+                selectPrimaryDeviceAdapter?.deviceList?.get(position)?.primarydDevice = v.deviceRadioButton.isChecked
+                selectPrimaryDeviceAdapter?.notifyDataSetChanged()
+
+                deviceSelected = if(changePrimaryDeviceButton.isEnabled)
+                    selectPrimaryDeviceAdapter?.deviceList?.get(position) else null
+
             }
             R.id.changePrimaryDeviceButton -> {
                 val bundle = Bundle()

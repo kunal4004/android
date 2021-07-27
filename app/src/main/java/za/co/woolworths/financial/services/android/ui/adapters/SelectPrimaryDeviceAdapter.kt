@@ -23,12 +23,12 @@ class SelectPrimaryDeviceAdapter(val deviceList: ArrayList<UserDevice>,
 
         when (holder) {
             is SelectPrimaryDeviceViewHolder -> {
-                holder.bind(deviceList[position])
+                holder.bind(position)
             }
         }
     }
 
-    override fun getItemCount(): Int = if(deviceList.isNullOrEmpty()) 0 else deviceList.filter { it.primarydDevice != true }.size
+    override fun getItemCount(): Int = if(deviceList.isNullOrEmpty()) 0 else deviceList.size
 
     override fun getItemViewType(position: Int): Int =
             if (position != deviceList.size && deviceList[position].primarydDevice == true)
@@ -36,7 +36,8 @@ class SelectPrimaryDeviceAdapter(val deviceList: ArrayList<UserDevice>,
 
 
     inner class SelectPrimaryDeviceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(device: UserDevice) {
+        fun bind(position: Int) {
+            val device: UserDevice = deviceList[position]
             itemView.apply {
                 itemView.deviceNameTextView?.text = device.deviceName
                 itemView.deviceSubtitleTextView?.text =
@@ -47,8 +48,9 @@ class SelectPrimaryDeviceAdapter(val deviceList: ArrayList<UserDevice>,
                     else device.locationLinked
                 itemView.selectPrimaryDeviceConstraintLayout?.setTag(
                     R.id.selectPrimaryDeviceConstraintLayout,
-                    device
+                    position
                 )
+                itemView.deviceRadioButton.isChecked = device.primarydDevice == true
                 itemView.selectPrimaryDeviceConstraintLayout?.setOnClickListener(onClickListener)
             }
         }
