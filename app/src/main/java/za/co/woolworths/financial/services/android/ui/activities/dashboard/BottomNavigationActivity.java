@@ -197,7 +197,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         try {
-            if (savedInstanceState != null)
+            if (savedInstanceState != null
+                    && getFragmentManager()!=null
+                    && SavedInstanceFragment.getInstance(getFragmentManager()).popData() != null)
                 super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         } catch (NullPointerException ex) {
             FirebaseManager.Companion.logException(ex);
