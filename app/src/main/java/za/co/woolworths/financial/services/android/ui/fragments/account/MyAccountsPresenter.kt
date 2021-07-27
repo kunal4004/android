@@ -4,7 +4,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.apply_no
 import za.co.woolworths.financial.services.android.util.application.ApplicationInfoInterface
 
 class MyAccountsPresenter(private val viewApplicationStatus: ViewApplicationStatusInterface,
-private val appVersion: ApplicationInfoInterface) :
+private val applicationInfo: ApplicationInfoInterface) :
     ViewApplicationStatusInterface by viewApplicationStatus,
-        ApplicationInfoInterface by appVersion
+        ApplicationInfoInterface by applicationInfo
 
