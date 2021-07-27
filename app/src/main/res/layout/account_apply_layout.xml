@@ -16,7 +16,7 @@
 
         <variable
             name="viewModel"
-            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsViewModel"/>
+            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragmentViewModel"/>
     </data>
 
     <LinearLayout
@@ -148,8 +148,9 @@
         </RelativeLayout>
 
         <View
+            android:id="@+id/applyNowSpacingView"
             android:layout_width="match_parent"
-            android:layout_height="16dp"
+            android:layout_height="@dimen/sixteen_dp"
             android:background="@android:color/transparent"
             android:focusable="false"
             android:focusableInTouchMode="false" />

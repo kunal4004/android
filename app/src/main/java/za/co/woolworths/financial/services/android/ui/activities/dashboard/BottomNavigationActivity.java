@@ -54,6 +54,7 @@ import java.util.Set;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -167,6 +168,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private BottomNavigationItemView accountNavigationView;
     private View notificationBadgeOne;
     private ImageView onlineIconImageView;
+    private Boolean isDeeplinkAction = false;
 
     @Override
     public int getLayoutId() {
@@ -197,7 +199,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         try {
-            if (savedInstanceState != null)
+            if (savedInstanceState != null
+                    && getFragmentManager()!=null
+                    && SavedInstanceFragment.getInstance(getFragmentManager()).popData() != null)
                 super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
         } catch (NullPointerException ex) {
             FirebaseManager.Companion.logException(ex);
@@ -254,10 +258,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         });
 
-        if (mBundle != null && mBundle.containsKey("OnBoardingLoginBadge")) {
-            QueryBadgeCounter.getInstance().queryCartSummaryCount();
-            QueryBadgeCounter.getInstance().queryVoucherCount();
-        }
         queryBadgeCountOnStart();
         addDrawerFragment();
     }
@@ -274,9 +274,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     private void queryBadgeCountOnStart() {
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+        if (SessionUtilities.getInstance().isUserAuthenticated() && WoolworthsApplication.isIsBadgesRequired()) {
             mQueryBadgeCounter.queryVoucherCount();
             mQueryBadgeCounter.queryCartSummaryCount();
+            mQueryBadgeCounter.queryMessageCount();
+            WoolworthsApplication.setIsBadgesRequired(false);
+        } else if (!WoolworthsApplication.isIsBadgesRequired()) {
+            WoolworthsApplication.setIsBadgesRequired(true);
         }
     }
 
@@ -358,13 +362,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     intent.putExtra("deepLinkRequestCode", DEEP_LINK_REQUEST_CODE);
                     startActivityForResult(intent, DEEP_LINK_REQUEST_CODE);
                     break;*/
-                    case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
-                    case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT:
-                    case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
-                    case AppConstant.DP_LINKING_MY_ACCOUNTS:
-                        BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
-                        new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_100_MS);
-                        break;
+                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT:
+                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT:
+                case AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT:
+                case AppConstant.DP_LINKING_MY_ACCOUNTS:
+                    isDeeplinkAction = true;
+                    BottomNavigationItemView itemView = getBottomNavigationById().getBottomNavigationItemView(INDEX_ACCOUNT);
+                    new Handler().postDelayed(itemView::performClick, AppConstant.DELAY_100_MS);
+                    break;
 
                 }
             }
@@ -615,6 +620,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 case R.id.navigate_to_cart:
                     setCurrentSection(R.id.navigate_to_cart);
                     identifyTokenValidationAPI();
+                    if(WoolworthsApplication.isIsBadgesRequired())
+                        queryBadgeCountOnStart();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU, BottomNavigationActivity.this);
                     return false;
 
@@ -623,12 +630,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     currentSection = R.id.navigate_to_wreward;
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_REWARD);
+                    if(WoolworthsApplication.isIsBadgesRequired())
+                        queryBadgeCountOnStart();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU, BottomNavigationActivity.this);
                     return true;
 
                 case R.id.navigate_to_account:
                     setCurrentSection(R.id.navigate_to_account);
                     replaceAccountIcon(item);
+                    if(WoolworthsApplication.isIsBadgesRequired() && !isDeeplinkAction)
+                        queryBadgeCountOnStart();
+                    isDeeplinkAction = false;
                     if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
                         try {
                             AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
@@ -1330,7 +1342,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     break;
 
                 default:
-                    badgeCount();
+                    queryBadgeCountOnStart();
                     break;
             }
         }

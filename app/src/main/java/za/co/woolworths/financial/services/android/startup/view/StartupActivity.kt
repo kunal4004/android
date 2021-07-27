@@ -213,6 +213,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val isFirstTime = startupViewModel.getSessionDao(SessionDao.KEY.ON_BOARDING_SCREEN)
         var appLinkData: Any? = deeplinkIntent.data
 
+        WoolworthsApplication.setIsBadgesRequired(deeplinkIntent.extras?.containsKey("google.message_id") != true)
+
         if (appLinkData == null && deeplinkIntent.extras != null) {
             appLinkData = deeplinkIntent.extras
             deeplinkIntent.action = Intent.ACTION_VIEW
