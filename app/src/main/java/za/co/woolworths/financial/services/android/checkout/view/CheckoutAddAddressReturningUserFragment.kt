@@ -106,7 +106,7 @@ open class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickLis
         expandableGrid.apply {
             createTimingsGrid(deliverySlots?.hourSlots)
             createDatesGrid(deliverySlots?.headerDates)
-            createTimeSlotGridView(deliverySlots)
+            createTimeSlotGridView(deliverySlots, weekNumber)
         }
     }
 
@@ -140,6 +140,17 @@ open class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickLis
                 }
             }
         })
+    }
+
+    fun setSlotSelection(weekNumber: Int, position: Int, isSelected: Boolean) {
+        val hrsSlotSize =
+            selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.hourSlots?.size ?: 0
+        val weekPosition = position / hrsSlotSize
+        val remainder = position % hrsSlotSize
+        selectedSlotResponse = expandableGrid.setAllSlotSelection(selectedSlotResponse, false)
+        selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
+            remainder
+        )?.selected = isSelected
     }
 
     override fun onClick(v: View?) {

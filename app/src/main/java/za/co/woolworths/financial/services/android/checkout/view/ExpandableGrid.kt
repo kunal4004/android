@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.checkout.view
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
+import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.HeaderDate
 import za.co.woolworths.financial.services.android.checkout.service.network.SortedJoinDeliverySlot
 import za.co.woolworths.financial.services.android.checkout.view.adapter.DeliverySlotsGridViewAdapter
@@ -22,7 +23,7 @@ class ExpandableGrid(val fragment: Fragment) {
         WHITE(R.color.white)
     }
 
-    fun createTimeSlotGridView(deliverySlots: SortedJoinDeliverySlot?) {
+    fun createTimeSlotGridView(deliverySlots: SortedJoinDeliverySlot?, weekNumber: Int) {
         val deliveryGridList: ArrayList<DeliveryGridModel> = ArrayList()
         val weekList = deliverySlots?.week
         if (!weekList.isNullOrEmpty()) {
@@ -86,12 +87,39 @@ class ExpandableGrid(val fragment: Fragment) {
                         model.backgroundImgColor = SlotGridColors.LIGHT_GREY.color
                     }
                 }
+                //set selected slot in Main list
+                if (fragment is CheckoutAddAddressReturningUserFragment) {
+                    fragment.setSlotSelection(weekNumber, position, true)
+                }
                 val deliveryGridModel: DeliveryGridModel = deliveryGridList[position]
                 deliveryGridModel.slot.selected = true
                 deliveryGridModel.backgroundImgColor = SlotGridColors.DARK_GREEN.color
                 adapter?.notifyDataSetChanged()
             }
         }
+    }
+
+    fun setAllSlotSelection(
+        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
+        isSelected: Boolean
+    ): AvailableDeliverySlotsResponse? {
+        val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots
+        if (deliverySlots != null) {
+            for (slots in deliverySlots) {
+                val week = slots.week
+                if (week != null) {
+                    for (weeks in week) {
+                        val slot = weeks.slots
+                        if (slot != null) {
+                            for (slots in slot) {
+                                slots.selected = isSelected
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return availableDeliverySlotsResponse
     }
 
     fun createTimingsGrid(hoursSlots: List<String>?) {
