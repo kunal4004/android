@@ -32,7 +32,7 @@
                     android:layout_height="match_parent"
                     android:background="@color/recent_search_bg"
                     android:orientation="vertical"
-                    android:paddingBottom="20dp">
+                    android:paddingBottom="@dimen/sixteen_dp">
 
                     <LinearLayout
                         android:id="@+id/loggedOutHeaderLayout"
