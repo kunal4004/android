@@ -17,7 +17,6 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
     companion object {
         const val EXTRA_SURVEY_DETAILS = "extraSurveyDetails"
         const val EXTRA_SURVEY_ANSWERS = "extraSurveyAnswers"
-        const val EXTRA_SURVEY_TRIGGER_EVENT = "extraSurveyTriggerEvent"
         const val DIALOG_SKIP_ID = 1
         const val DEFAULT_VALUE_RATE_SLIDER_MIN = 1
         const val DEFAULT_VALUE_RATE_SLIDER_MAX = 11

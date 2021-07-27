@@ -155,6 +155,10 @@ class SurveyQuestionAdapter(
     inner class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(delegate: SurveyAnswerDelegate, submitCallback: () -> Unit, optOutCallback: () -> Unit) {
             itemView.apply {
+                val isSurveyAnswersValid = delegate.isSurveyAnswersValid()
+                btnSurveySubmit.alpha = if (isSurveyAnswersValid) 1f else 0.5f
+                btnSurveySubmit.isEnabled = isSurveyAnswersValid
+
                 btnSurveySubmit.setOnClickListener {
                     submitCallback.invoke()
                 }
@@ -167,7 +171,6 @@ class SurveyQuestionAdapter(
                     // Fill remaining vertical space, if any
                     val heightDifference = delegate.getRecyclerViewHeight() - bottom
                     vEmptySpace.layoutParams.height = if (heightDifference > 0)  heightDifference else 0
-                    vEmptySpace.visibility = if (heightDifference > 0) View.VISIBLE else View.GONE
                 }
             }
         }

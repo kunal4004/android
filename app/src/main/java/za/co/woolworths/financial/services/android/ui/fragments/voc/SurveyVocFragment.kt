@@ -23,7 +23,6 @@ import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCust
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerInterface
 import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
-import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCancelDialogFragment.IActionOrCancel {
 
@@ -88,6 +87,12 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
         return questions.filter { item -> allowedQuestionTypes.contains(item.type) }
     }
 
+    private fun updateSubmitButtonState() {
+        surveyQuestionAdapter?.apply {
+            notifyItemChanged(itemCount - 1, Unit)
+        }
+    }
+
     override fun getRecyclerViewHeight(): Int {
         return rvSurveyQuestions.height
     }
@@ -115,12 +120,32 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
         return answer
     }
 
+    override fun isSurveyAnswersValid(): Boolean {
+        val questions = surveyDetails?.questions ?: run { return false }
+        for (question: SurveyQuestion in questions) {
+            if (question.required == true) {
+                val answer = getAnswer(question.id) ?: run { return false }
+                when (question.type) {
+                    SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
+                        if (answer.answerId == null) return false
+                    }
+                    else -> {
+                        if (answer.textAnswer.isNullOrBlank()) return false
+                    }
+                }
+            }
+        }
+        return true
+    }
+
     override fun onInputRateSlider(questionId: Long, value: Int) {
         getAnswer(questionId)?.answerId = value
+        updateSubmitButtonState()
     }
 
     override fun onInputFreeText(questionId: Long, value: String) {
         getAnswer(questionId)?.textAnswer = value
+        updateSubmitButtonState()
     }
 
     override fun onSubmit() {
@@ -153,16 +178,14 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     }
 
     fun performOptOutRequest() {
-        (activity?.intent?.extras?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_TRIGGER_EVENT) as? VocTriggerEvent)?.let { triggerEvent ->
-            val optOutVocSurveyRequest = OneAppService.optOutVocSurvey(triggerEvent)
-            optOutVocSurveyRequest.enqueue(object : Callback<Void> {
-                override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                }
+        val optOutVocSurveyRequest = OneAppService.optOutVocSurvey()
+        optOutVocSurveyRequest.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            }
 
-                override fun onFailure(call: Call<Void>, t: Throwable) {
-                    // TODO VOC: log error
-                }
-            })
-        }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                // TODO VOC: log error
+            }
+        })
     }
 }

@@ -82,28 +82,30 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
         }
         surveyDetails?.questions?.forEach { question ->
             // Pass some data required by Genex
-            surveyAnswers?.get(question.id)?.matrix = question.matrix
-            surveyAnswers?.get(question.id)?.column = question.column
-            surveyAnswers?.get(question.id)?.group = question.group
+            surveyAnswers?.get(question.id)?.apply {
+                matrix = question.matrix
+                column = question.column
+                group = question.group
 
-            if (question.type == SurveyQuestion.QuestionType.RATE_SLIDER.type) {
-                // Add back offset removed to draw slider
-                surveyAnswers?.get(question.id)?.answerId?.let {
-                    surveyAnswers?.get(question.id)?.answerId = it + 1
-                }
-            }
-
-            // Set default answer value for required questions
-            if (question.required == true) {
-                when (question.type) {
-                    SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
-                        if (surveyAnswers?.get(question.id)?.answerId == null) {
-                            surveyAnswers?.get(question.id)?.answerId = (question.maxValue ?: DEFAULT_VALUE_RATE_SLIDER_MAX) - 1
-                        }
+                if (question.type == SurveyQuestion.QuestionType.RATE_SLIDER.type) {
+                    // Add back offset removed to draw slider
+                    answerId?.let {
+                        answerId = it + 1
                     }
-                    SurveyQuestion.QuestionType.FREE_TEXT.type -> {
-                        if (surveyAnswers?.get(question.id)?.textAnswer == null) {
-                            surveyAnswers?.get(question.id)?.textAnswer = "N/A" // TODO VOC: UI must reflect this validation
+                }
+
+                // Set default answer value for required questions
+                if (question.required == true) {
+                    when (question.type) {
+                        SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
+                            if (answerId == null) {
+                                answerId = (question.maxValue ?: DEFAULT_VALUE_RATE_SLIDER_MAX) - 1
+                            }
+                        }
+                        SurveyQuestion.QuestionType.FREE_TEXT.type -> {
+                            if (textAnswer == null) {
+                                textAnswer = "N/A" // TODO VOC: UI must reflect this validation
+                            }
                         }
                     }
                 }
