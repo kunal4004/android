@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.adapters.CreditReportTUAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.openBrowserWithUrl
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.openUrlInPhoneBrowser
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -67,6 +67,6 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(view: View?) {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CREDIT_REPORT_CREDITVIEW_COMPLETE, this)
-        openBrowserWithUrl(WoolworthsApplication.getCreditView()?.transUnionLink, this)
+        openUrlInPhoneBrowser(WoolworthsApplication.getCreditView()?.transUnionLink, this)
     }
 }

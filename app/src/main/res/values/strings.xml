@@ -2109,5 +2109,6 @@
     <string name="requiredForm">required forms</string>
     <string name="submitForm">You will also need to submit</string>
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
+    <string name="view_application_status">View Application Status</string>
 
 </resources>
