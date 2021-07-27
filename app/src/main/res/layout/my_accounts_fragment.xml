@@ -434,9 +434,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:paddingTop="@dimen/sixteen_dp"
-                        android:paddingBottom="@dimen/sixteen_dp" />
-
+                        android:textSize="@dimen/fifteen_sp"
+                        android:textColor="@color/color_app_info"
+                        android:fontFamily="@font/myriad_pro_regular_otf"
+                        android:paddingTop="@dimen/sixteen_dp"/>
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
