@@ -112,6 +112,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity.KEY_EXTRA_SAVED_ADDRESS;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
@@ -388,20 +389,23 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         savedAddressCall.enqueue(new CompletionHandler<>(new IResponseListener<SavedAddressResponse>() {
             @Override
             public void onSuccess(@org.jetbrains.annotations.Nullable SavedAddressResponse response) {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
-                    /*Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
-                    getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
-                    checkOutActivity.overridePendingTransition(0, 0);*/
-                Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
-                checkoutActivityIntent.putExtra(KEY_EXTRA_SAVED_ADDRESS, response);
-                startActivity(checkoutActivityIntent);
+                navigateToCheckout(response);
             }
 
             @Override
             public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
-
             }
         }, SavedAddressResponse.class));
+    }
+
+    private void navigateToCheckout(SavedAddressResponse response) {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
+                    /*Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
+                    getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
+                    checkOutActivity.overridePendingTransition(0, 0);*/
+        Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
+        checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
+        startActivity(checkoutActivityIntent);
     }
 
     @Override

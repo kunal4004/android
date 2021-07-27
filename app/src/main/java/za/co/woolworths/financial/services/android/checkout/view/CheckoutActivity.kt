@@ -10,6 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_checkout.*
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 
@@ -22,16 +23,13 @@ class CheckoutActivity : AppCompatActivity() {
     var navHostFrag = NavHostFragment()
     var savedAddressResponse: SavedAddressResponse? = null
 
-    companion object {
-        const val KEY_EXTRA_SAVED_ADDRESS = "savedAddress"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checkout)
         setActionBar()
         intent?.extras?.apply {
-            savedAddressResponse = getSerializable(KEY_EXTRA_SAVED_ADDRESS) as? SavedAddressResponse
+            savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
         }
         loadNavHostFragment()
     }
