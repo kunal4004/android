@@ -428,6 +428,15 @@
                             android:layout_centerVertical="true"
                             android:background="@drawable/ic_caret_black" />
                     </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/appVersionNameInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="@dimen/sixteen_dp"
+                        android:paddingBottom="@dimen/sixteen_dp" />
+
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
