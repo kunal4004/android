@@ -98,6 +98,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                 showDeviceUnlinked()
 
                                 Handler().postDelayed({
+                                    setupToolbar()
                                     context?.let { it ->
                                         viewAllDeviceConstraintLayout.background = AppCompatResources.getDrawable(it, R.color.default_background)
                                     }
@@ -174,6 +175,18 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun clearToolbar() {
+        activity?.apply {
+            when (this) {
+                is MyPreferencesInterface -> {
+                    context?.let {
+                        setToolbarTitle("")
+                    }
+                }
+            }
+        }
+    }
+
     private fun initRecyclerView() {
 
         if (deviceList.isNullOrEmpty()) {
@@ -189,6 +202,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showDeviceUnlinked() {
+        clearToolbar()
         viewAllLinkedDevicesRecyclerView.visibility = View.GONE
         unlinkDeviceConfirmationConstraintLayout?.visibility = View.VISIBLE
         unlinkDeviceResultSubtitle.visibility = View.GONE
