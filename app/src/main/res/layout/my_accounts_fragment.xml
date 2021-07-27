@@ -32,7 +32,7 @@
                     android:layout_height="match_parent"
                     android:background="@color/recent_search_bg"
                     android:orientation="vertical"
-                    android:paddingBottom="20dp">
+                    android:paddingBottom="@dimen/sixteen_dp">
 
                     <LinearLayout
                         android:id="@+id/loggedOutHeaderLayout"
@@ -428,6 +428,16 @@
                             android:layout_centerVertical="true"
                             android:background="@drawable/ic_caret_black" />
                     </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/appVersionNameInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="@dimen/fifteen_sp"
+                        android:textColor="@color/color_app_info"
+                        android:fontFamily="@font/myriad_pro_regular_otf"
+                        android:paddingTop="@dimen/sixteen_dp"/>
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
