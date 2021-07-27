@@ -104,7 +104,8 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
                         }
                         SurveyQuestion.QuestionType.FREE_TEXT.type -> {
                             if (textAnswer == null) {
-                                textAnswer = "N/A" // TODO VOC: UI must reflect this validation
+                                // Validation is already done on UI
+                                textAnswer = "N/A"
                             }
                         }
                     }
