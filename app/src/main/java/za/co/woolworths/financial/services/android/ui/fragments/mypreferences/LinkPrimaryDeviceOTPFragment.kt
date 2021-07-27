@@ -412,9 +412,8 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             return
         }
 
-        Handler().postDelayed({
-            showValidatingProcessing()
-        }, AppConstant.DELAY_1000_MS)
+
+        showValidatingProcessing()
 
         Handler().postDelayed({
             sendinOTPLayout?.visibility = View.GONE
