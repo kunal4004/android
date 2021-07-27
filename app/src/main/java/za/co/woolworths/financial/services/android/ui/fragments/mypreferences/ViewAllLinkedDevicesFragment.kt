@@ -69,7 +69,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
             val navController = view?.findNavController()
             navController?.navigate(R.id.action_to_selectPrimaryDeviceFragment,
                 bundleOf(
-                    DEVICE_LIST to deviceList
+                    DEVICE_LIST to deviceList?.filter { it.primarydDevice != true }
                 ))
         }
 
