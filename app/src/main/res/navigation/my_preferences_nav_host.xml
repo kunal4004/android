@@ -37,9 +37,14 @@
         android:id="@+id/secondaryDeviceBottomSheetFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.SecondaryDeviceBottomSheetFragment"
         android:label="SecondaryDeviceBottomSheetFragment">
-    <action
-        android:id="@+id/action_change_to_primary_device"
-        app:destination="@id/linkPrimaryDeviceOtpNavigation" />
+
+        <action
+            android:id="@+id/action_change_to_primary_device"
+            app:destination="@id/linkPrimaryDeviceOtpNavigation" />
+
+        <action
+            android:id="@+id/action_confirm_delete_device"
+            app:destination="@id/deletePrimaryDeviceBottomSheetFragment" />
     </dialog>
 
     <fragment
