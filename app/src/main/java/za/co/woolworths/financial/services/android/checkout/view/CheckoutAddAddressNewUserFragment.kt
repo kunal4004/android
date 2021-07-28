@@ -933,7 +933,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             if (isAddNewAddress) {
                                 setFragmentResult(
                                     ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
-                                        SAVED_ADDRESS_KEY to Utils.toJson(savedAddressResponse)
+                                        SAVED_ADDRESS_KEY to savedAddressResponse
                                     )
                                 )
                                 navController?.navigateUp()
@@ -1047,9 +1047,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     it1, (it.data as? AddAddressResponse)?.address
                                 )
                             }
-                        val bundle = Bundle()
-                        bundle.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddressResponse))
-                        setFragmentResult(UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundle)
+                        setFragmentResult(
+                            UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
+                                SAVED_ADDRESS_KEY to savedAddressResponse
+                            )
+                        )
                         navController?.navigateUp()
                         selectedAddressId = ""
                     }

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -75,10 +76,15 @@ class CheckoutActivity : AppCompatActivity() {
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
-        if (savedAddressResponse?.addresses.isNullOrEmpty())
-            graph.startDestination = R.id.CheckoutAddAddressNewUserFragment
-        else
-            graph.startDestination = R.id.CheckoutAddAddressReturningUserFragment
+        graph.startDestination = when {
+            savedAddressResponse?.addresses.isNullOrEmpty() -> {
+                 R.id.CheckoutAddAddressNewUserFragment
+            }
+            TextUtils.isEmpty(savedAddressResponse?.defaultAddressNickname) -> {
+                R.id.checkoutAddressConfirmationFragment
+            }
+            else -> R.id.CheckoutAddAddressReturningUserFragment
+        }
         findNavController(R.id.navHostFragment).setGraph(graph, intent?.extras)
     }
 
