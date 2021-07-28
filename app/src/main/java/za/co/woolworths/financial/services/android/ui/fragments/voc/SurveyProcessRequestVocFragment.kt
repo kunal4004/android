@@ -161,6 +161,7 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 onRequestFailed()
+                FirebaseManager.logException(t)
             }
         })
     }

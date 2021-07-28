@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCust
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerInterface
 import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 
 class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCancelDialogFragment.IActionOrCancel {
 
@@ -181,10 +182,12 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
         val optOutVocSurveyRequest = OneAppService.optOutVocSurvey()
         optOutVocSurveyRequest.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                // Response not needed
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                // TODO VOC: log error
+                // Ignored if request fails
+                FirebaseManager.logException(t)
             }
         })
     }

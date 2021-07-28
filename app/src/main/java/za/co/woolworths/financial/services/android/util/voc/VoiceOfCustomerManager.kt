@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsR
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
@@ -33,8 +34,8 @@ class VoiceOfCustomerManager {
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    // ignored if request fails
-                    // TODO VOC: log error
+                    // Ignored if request fails
+                    FirebaseManager.logException(error)
                 }
             }, SurveyDetailsResponse::class.java))
         }
