@@ -27,12 +27,12 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.awfs.coordination.R;
-import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -87,6 +87,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.ViewApplicationStatusImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
@@ -211,6 +212,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
     private ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement;
+    private RelativeLayout viewApplicationStatusRelativeLayout;
+
+    MyAccountsFragmentViewModel myAccountsFragmentViewModel;
+    private MyAccountsPresenter myAccountsPresenter;
+    private View applyNowSpacingView;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -231,6 +237,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         //Trigger Firebase Tag.
         Activity activity = getActivity();
         if (activity == null) return;
+        myAccountsFragmentViewModel = new ViewModelProvider(requireActivity()).get(MyAccountsFragmentViewModel.class);
+        myAccountsPresenter =  myAccountsFragmentViewModel.getAccountPresenter(mAccountResponse);
         JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
         Map<String, String> arguments = new HashMap<>();
         arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
@@ -285,6 +293,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
             storeLocatorRelativeLayout = view.findViewById(R.id.storeLocator);
             allUserOptionsLayout = view.findViewById(R.id.parentOptionsLayout);
+            viewApplicationStatusRelativeLayout = view.findViewById(R.id.viewApplicationStatusRelativeLayout);
             loginUserOptionsLayout = view.findViewById(R.id.loginUserOptionsLayout);
             imgStoreCardStatusIndicator = view.findViewById(R.id.storeCardStatusIndicator);
             imgCreditCardStatusIndicator = view.findViewById(R.id.creditCardStatusIndicator);
@@ -300,6 +309,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             notificationBadge = view.findViewById(R.id.badge);
             creditReportView = view.findViewById(R.id.creditReport);
             creditReportIcon = view.findViewById(R.id.creditReportIcon);
+            applyNowSpacingView = view.findViewById(R.id.applyNowSpacingView);
 
 
             retryStoreCardTextView = view.findViewById(R.id.retryStoreCardTextView);
@@ -331,6 +341,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             storeLocatorRelativeLayout.setOnClickListener(this);
             myOrdersRelativeLayout.setOnClickListener(this);
             creditReportView.setOnClickListener(this);
+            viewApplicationStatusRelativeLayout.setOnClickListener(this);
 
             parseDeepLinkData();
 
@@ -510,13 +521,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     private void configureView() {
-
         this.isAccountsCallMade = true;
         this.unavailableAccounts.clear();
         this.unavailableAccounts.addAll(Arrays.asList(AccountsProductGroupCode.STORE_CARD.getGroupCode(),
                 AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode()));
         this.configureAndLayoutTopLayerView();
-
 
         //show content for all available products
         for (Map.Entry<Products, Account> item : mAccountsHashMap.entrySet()) {
@@ -832,6 +841,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
         } else {
             //user is signed out
+            ViewGroup.LayoutParams params = applyNowSpacingView.getLayoutParams();
+            viewApplicationStatusVisibility(params, View.VISIBLE, 1);
             mUpdateMyAccount.swipeToRefreshAccount(false);
             showView(loggedOutHeaderLayout);
         }
@@ -850,6 +861,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         hideView(loginUserOptionsLayout);
         hideView(preferenceRelativeLayout);
         hideView(creditReportView);
+        hideView(viewApplicationStatusRelativeLayout);
     }
 
     private final OnClickListener btnSignin_onClick = new OnClickListener() {
@@ -886,6 +898,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Activity activity = getActivity();
         if (activity == null || mUpdateMyAccount.accountUpdateActive()) return;
         switch (v.getId()) {
+            case R.id.viewApplicationStatusRelativeLayout:
+                myAccountsPresenter.viewApplicationStatusLinkInExternalBrowser(MyAccountSection.AccountLanding.INSTANCE,activity);
+                break;
+
             case R.id.openMessageActivity:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNT_INBOX, activity);
                 Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
@@ -1298,6 +1314,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                     mAccountsHashMap = mUpdateMyAccount.getProductAccountHashMap(mAccountResponse);
                             }
                         }
+                        displayViewApplicationStatus();
                     }
 
                     if (mAccountResponse == null) {
@@ -1316,6 +1333,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                             }
                         }
                     }
+
                     break;
 
                 case HTTP_SESSION_TIMEOUT_440:
@@ -1367,6 +1385,24 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             masterCache.resetAccountResponse();
             masterCache.setAccountsResponse(accountsResponse);
         }
+
+        displayViewApplicationStatus();
+    }
+
+    private void displayViewApplicationStatus() {
+        myAccountsPresenter =  myAccountsFragmentViewModel.getAccountPresenter(mAccountResponse);
+        ViewGroup.LayoutParams params = applyNowSpacingView.getLayoutParams();
+        if (myAccountsPresenter != null && myAccountsPresenter.isViewApplicationStatusVisible()) {
+            viewApplicationStatusVisibility(params, View.VISIBLE, 1);
+        }else {
+            viewApplicationStatusVisibility(params, View.GONE, 16);
+        }
+        applyNowSpacingView.requestLayout();
+    }
+
+    private void viewApplicationStatusVisibility(ViewGroup.LayoutParams params, int visibility, int topMargin) {
+        viewApplicationStatusRelativeLayout.setVisibility(visibility);
+        params.height = KotlinUtils.Companion.dpToPxConverter(topMargin);
     }
 
     @Override
