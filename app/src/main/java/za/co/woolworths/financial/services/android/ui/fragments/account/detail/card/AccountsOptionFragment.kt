@@ -538,15 +538,11 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         var isEnable = false
         if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
             val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
-            if (cardTypes != null) {
-                for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
-                    if (binNumber.equals(mCardPresenterImpl?.getAccount()?.accountNumberBin, ignoreCase = true)
-                            && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
-                        isEnable = true;
-                    }
+            for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
+                if (binNumber.equals(mCardPresenterImpl?.getAccount()?.accountNumberBin, ignoreCase = true)
+                        && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
+                    isEnable = true
                 }
-            } else {
-                isEnable = false
             }
         }
         return isEnable
