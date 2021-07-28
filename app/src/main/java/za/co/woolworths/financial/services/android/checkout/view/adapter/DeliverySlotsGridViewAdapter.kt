@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid
 import za.co.woolworths.financial.services.android.checkout.viewmodel.DeliveryGridModel
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
@@ -38,9 +39,13 @@ class DeliverySlotsGridViewAdapter(
             mHolder = convrtView.tag as GridViewHolder
         }
         mHolder.gridTitle?.text = deliveryGridModelList[position].grid_title
-        mHolder.gridTitle?.setBackgroundResource(R.drawable.rounded_grid_text_view)
+        val backgroundColor = deliveryGridModelList[position].backgroundImgColor
+        if (backgroundColor == ExpandableGrid.SlotGridColors.WHITE.color) {
+            mHolder.gridTitle?.setBackgroundResource(R.drawable.rounded_grid_border_text_view)
+        } else
+            mHolder.gridTitle?.setBackgroundResource(R.drawable.rounded_grid_text_view)
         val drawable = mHolder.gridTitle?.background as? GradientDrawable
-        drawable?.setColor(bindColor(deliveryGridModelList[position].backgroundImgColor))
+        drawable?.setColor(bindColor(backgroundColor))
         if (deliveryGridModelList[position].slot.selected == true)
             mHolder.gridTitle?.setTextColor(android.graphics.Color.WHITE)
         else

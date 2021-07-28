@@ -915,31 +915,31 @@
       ],
       "headerDates": [
         {
-          "dayInitial": "M",
+          "day": "Mon",
           "date": "19 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Tue",
           "date": "20 Apr"
         },
         {
-          "dayInitial": "W",
+          "day": "Wed",
           "date": "21 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Thu",
           "date": "22 Apr"
         },
         {
-          "dayInitial": "F",
+          "day": "Fri",
           "date": "23 Apr"
         },
         {
-          "dayInitial": "S",
+          "day": "Sat",
           "date": "24 Apr"
         },
         {
-          "dayInitial": "S",
+          "day": "Sun",
           "date": "25 Apr"
         }
       ],
@@ -1077,7 +1077,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 30,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -1139,7 +1139,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 40,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -1258,7 +1258,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 56,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -1282,7 +1282,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 198,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -1382,7 +1382,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 215,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -1482,7 +1482,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 62,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -1522,31 +1522,31 @@
       ],
       "headerDates": [
         {
-          "dayInitial": "M",
+          "day": "Mon",
           "date": "26 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Tue",
           "date": "27 Apr"
         },
         {
-          "dayInitial": "W",
+          "day": "Wed",
           "date": "28 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Thu",
           "date": "29 Apr"
         },
         {
-          "dayInitial": "F",
+          "day": "Fri",
           "date": "30 Apr"
         },
         {
-          "dayInitial": "S",
+          "day": "Sat",
           "date": "01 May"
         },
         {
-          "dayInitial": "S",
+          "day": "Sun",
           "date": "02 May"
         }
       ],
@@ -1584,7 +1584,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 26,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -1646,7 +1646,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 18,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -1765,7 +1765,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 27,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -1894,7 +1894,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 34,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -2094,7 +2094,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 29,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -2299,7 +2299,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 122,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -2361,7 +2361,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 41,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -2481,7 +2481,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 83,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -2600,7 +2600,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 73,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
@@ -2700,7 +2700,7 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 50,
+              "slotCost": 91,
               "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
