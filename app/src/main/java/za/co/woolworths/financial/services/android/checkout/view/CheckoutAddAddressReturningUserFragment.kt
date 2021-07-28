@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
@@ -23,7 +25,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 /**
  * Created by Kunal Uttarwar on 27/05/21.
  */
-open class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener {
+class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener {
 
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
@@ -127,10 +129,22 @@ open class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickLis
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
-                    if (it.data != null) {
-                        selectedSlotResponse = it.data as? AvailableDeliverySlotsResponse
+                    /*if (it.data != null) {
+                       selectedSlotResponse = it.data as? AvailableDeliverySlotsResponse
                         initializeGrid(selectedSlotResponse, 0)
-                    }
+                    }*/
+
+                    //use mock data from json file
+                    val jsonFileString = Utils.getJsonDataFromAsset(
+                        activity?.applicationContext,
+                        "mocks/confirmDelivery_Response.json"
+                    )
+                    val mockDeliverySlotResponse: AvailableDeliverySlotsResponse = Gson().fromJson(
+                        jsonFileString,
+                        object : TypeToken<AvailableDeliverySlotsResponse>() {}.type
+                    )
+                    selectedSlotResponse = mockDeliverySlotResponse
+                    initializeGrid(selectedSlotResponse, 0)
                 }
                 ResponseStatus.LOADING -> {
                     loadingBar.visibility = View.VISIBLE
@@ -142,15 +156,12 @@ open class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickLis
         })
     }
 
-    fun setSlotSelection(weekNumber: Int, position: Int, isSelected: Boolean) {
-        val hrsSlotSize =
-            selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.hourSlots?.size ?: 0
-        val weekPosition = position / hrsSlotSize
-        val remainder = position % hrsSlotSize
-        selectedSlotResponse = expandableGrid.setAllSlotSelection(selectedSlotResponse, false)
-        selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
-            remainder
-        )?.selected = isSelected
+    fun getSelectedSlotResponse(): AvailableDeliverySlotsResponse? {
+        return selectedSlotResponse
+    }
+
+    fun setSelectedSlotResponse(availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?) {
+        selectedSlotResponse = availableDeliverySlotsResponse
     }
 
     override fun onClick(v: View?) {

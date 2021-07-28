@@ -149,5 +149,6 @@
     <color name="search_store_color">#999999</color>
     <color name="light_green">#D7F0E1</color>
     <color name="dark_green">#4ABB77</color>
+    <color name="light_blue">#4284C3</color>
     <color name="color_666666">#666666</color>
 </resources>

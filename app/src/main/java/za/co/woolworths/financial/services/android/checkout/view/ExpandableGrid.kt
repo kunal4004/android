@@ -20,7 +20,8 @@ class ExpandableGrid(val fragment: Fragment) {
         LIGHT_GREEN(R.color.light_green),
         DARK_GREEN(R.color.dark_green),
         LIGHT_GREY(R.color.checkout_delivering_title_background),
-        WHITE(R.color.white)
+        WHITE(R.color.white),
+        LIGHT_BLUE(R.color.light_blue)
     }
 
     fun createTimeSlotGridView(deliverySlots: SortedJoinDeliverySlot?, weekNumber: Int) {
@@ -33,30 +34,32 @@ class ExpandableGrid(val fragment: Fragment) {
                     for (slot in slotsList) {
                         var gridTitle = ""
                         var gridColor = SlotGridColors.LIGHT_GREY.color
-                        var currentSlot = slot
-                        if (currentSlot.available == true) {
-                            if (currentSlot.freeDeliverySlot == true) {
-                                gridTitle = fragment.getString(R.string.free_delivery_slot)
-                                if (currentSlot.selected == true)
+                        if (slot.available == true) {
+                            if (slot.freeDeliverySlot == true) {
+                                if (slot.hasReservation == true || slot.selected == true) {
+                                    slot.selected = true
                                     gridColor = SlotGridColors.DARK_GREEN.color
-                                else
+                                } else {
                                     gridColor = SlotGridColors.LIGHT_GREEN.color
+                                }
+                                gridTitle = fragment.getString(R.string.free_delivery_slot)
                             } else {
-                                gridTitle = currentSlot.slotCost.toString()
-                                gridColor = SlotGridColors.WHITE.color
+                                if (slot.hasReservation == true || slot.selected == true) {
+                                    slot.selected = true
+                                    gridColor = SlotGridColors.LIGHT_BLUE.color
+                                } else {
+                                    gridColor = SlotGridColors.WHITE.color
+                                }
+                                gridTitle = slot.slotCost.toString()
                             }
                         } else {
                             gridColor = SlotGridColors.LIGHT_GREY.color
-                        }
-                        if (currentSlot.hasReservation == true) {
-                            currentSlot.selected = true
-                            gridColor = SlotGridColors.DARK_GREEN.color
                         }
                         deliveryGridList.add(
                             DeliveryGridModel(
                                 gridTitle,
                                 gridColor,
-                                currentSlot
+                                slot
                             )
                         )
                     }
@@ -89,14 +92,33 @@ class ExpandableGrid(val fragment: Fragment) {
                 }
                 //set selected slot in Main list
                 if (fragment is CheckoutAddAddressReturningUserFragment) {
-                    fragment.setSlotSelection(weekNumber, position, true)
+                    setSlotSelection(weekNumber, position, true, fragment.getSelectedSlotResponse())
                 }
                 val deliveryGridModel: DeliveryGridModel = deliveryGridList[position]
                 deliveryGridModel.slot.selected = true
-                deliveryGridModel.backgroundImgColor = SlotGridColors.DARK_GREEN.color
+                deliveryGridModel.backgroundImgColor =
+                    if (deliveryGridModel.slot.freeDeliverySlot == true) SlotGridColors.DARK_GREEN.color else SlotGridColors.LIGHT_BLUE.color
                 adapter?.notifyDataSetChanged()
             }
         }
+    }
+
+    fun setSlotSelection(
+        weekNumber: Int,
+        position: Int,
+        isSelected: Boolean,
+        selectedSlotResponse: AvailableDeliverySlotsResponse?
+    ) {
+        val hrsSlotSize =
+            selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.hourSlots?.size ?: 0
+        val weekPosition = position / hrsSlotSize
+        val remainder = position % hrsSlotSize
+        if (fragment is CheckoutAddAddressReturningUserFragment) {
+            fragment.setSelectedSlotResponse(setAllSlotSelection(selectedSlotResponse, false))
+        }
+        selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
+            remainder
+        )?.selected = isSelected
     }
 
     fun setAllSlotSelection(
