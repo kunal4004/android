@@ -2159,6 +2159,7 @@
     <string name="previous_week_text">Previous Week</string>
     <string name="next_week_text">Next Week</string>
     <string name="free_delivery_slot">FREE</string>
+    <string name="currency">R</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>
         <item quantity="one">%d Store near me</item>

@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutA
 import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -30,6 +31,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
     private var selectedSlotResponse: AvailableDeliverySlotsResponse? = null
+    private var selectedFoodSlot = Slot()
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -162,6 +164,10 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
     fun setSelectedSlotResponse(availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?) {
         selectedSlotResponse = availableDeliverySlotsResponse
+    }
+
+    fun setSelectedFoodSlot(selectedSlot: Slot){
+        this.selectedFoodSlot = selectedSlot
     }
 
     override fun onClick(v: View?) {

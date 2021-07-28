@@ -50,7 +50,7 @@ class ExpandableGrid(val fragment: Fragment) {
                                 } else {
                                     gridColor = SlotGridColors.WHITE.color
                                 }
-                                gridTitle = slot.slotCost.toString()
+                                gridTitle = fragment.getString(R.string.currency).plus(slot.slotCost.toString())
                             }
                         } else {
                             gridColor = SlotGridColors.LIGHT_GREY.color
@@ -90,14 +90,16 @@ class ExpandableGrid(val fragment: Fragment) {
                         model.backgroundImgColor = SlotGridColors.LIGHT_GREY.color
                     }
                 }
-                //set selected slot in Main list
-                if (fragment is CheckoutAddAddressReturningUserFragment) {
-                    setSlotSelection(weekNumber, position, true, fragment.getSelectedSlotResponse())
-                }
+
                 val deliveryGridModel: DeliveryGridModel = deliveryGridList[position]
                 deliveryGridModel.slot.selected = true
                 deliveryGridModel.backgroundImgColor =
                     if (deliveryGridModel.slot.freeDeliverySlot == true) SlotGridColors.DARK_GREEN.color else SlotGridColors.LIGHT_BLUE.color
+                //set selected slot in Main list
+                if (fragment is CheckoutAddAddressReturningUserFragment) {
+                    setSlotSelection(weekNumber, position, true, fragment.getSelectedSlotResponse())
+                    fragment.setSelectedFoodSlot(deliveryGridModel.slot)
+                }
                 adapter?.notifyDataSetChanged()
             }
         }
