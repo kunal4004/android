@@ -143,6 +143,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static NativeCheckout nativeCheckout;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
+    private static boolean isBadgesRequired;
     private static InAppReview inAppReview;
 
     public static String getApiId() {
@@ -700,6 +701,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @VisibleForTesting
     public static void testSetContext(Context context) {
         mContextApplication = context;
+    }
+
+    public static boolean isIsBadgesRequired() {
+        return isBadgesRequired;
+    }
+
+    public static void setIsBadgesRequired(boolean isBadgesRequired) {
+        WoolworthsApplication.isBadgesRequired = isBadgesRequired;
     }
 
     public static InAppReview getInAppReview() {
