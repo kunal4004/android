@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -150,9 +151,12 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     }
 
     override fun onSubmit() {
-        val bundle = Bundle()
-        bundle.putSerializable(EXTRA_SURVEY_ANSWERS, surveyAnswers)
-        navController?.navigate(R.id.action_surveyVocFragment_to_surveyProcessRequestVocFragment, bundle)
+        navController?.navigate(
+                R.id.action_surveyVocFragment_to_surveyProcessRequestVocFragment,
+                bundleOf(
+                        EXTRA_SURVEY_ANSWERS to surveyAnswers
+                )
+        )
     }
 
     override fun onOptOut() {

@@ -217,8 +217,10 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
-                activity?.finish()
-                activity?.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                activity?.apply {
+                    finish()
+                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
