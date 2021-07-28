@@ -17,7 +17,10 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
 
     companion object {
         const val EXTRA_SURVEY_DETAILS = "extraSurveyDetails"
+        const val EXTRA_SURVEY_ANSWERS = "extraSurveyAnswers"
         const val DIALOG_SKIP_ID = 1
+        const val DEFAULT_VALUE_RATE_SLIDER_MIN = 1
+        const val DEFAULT_VALUE_RATE_SLIDER_MAX = 11
     }
 
     private var navigationHost: NavController? = null
@@ -79,7 +82,7 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
         }
     }
 
-    private fun finishActivity() {
+    fun finishActivity() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
@@ -88,6 +91,10 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
         if (vocToolbar == null) return
         tvSkipSurvey.visibility = if (show) View.VISIBLE else View.GONE
         tvSkipSurvey.setOnClickListener { onSkipSurveyClicked() }
+    }
+
+    fun hideToolbarBackButton() {
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     private fun onSkipSurveyClicked() {

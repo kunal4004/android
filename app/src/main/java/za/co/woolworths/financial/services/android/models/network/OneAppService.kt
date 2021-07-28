@@ -26,6 +26,9 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyRepliesBody
+import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsResponse
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
@@ -435,6 +438,38 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getVocSurvey(triggerEvent: VocTriggerEvent): Call<SurveyDetailsResponse> {
-        return mApiInterface.getVocSurvey(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), triggerEvent.value)
+        return mApiInterface.getVocSurvey(
+                apiId = getApiId(),
+                sha1Password = getSha1Password(),
+                deviceVersion = getDeviceManufacturer(),
+                deviceModel = getDeviceModel(),
+                network = getNetworkCarrier(),
+                os = getOS(),
+                osVersion = getOsVersion(),
+                userAgent = "",
+                userAgentVersion =  "",
+                sessionToken = getSessionToken(),
+                triggerEvent = triggerEvent.value
+        )
+    }
+
+    fun submitVocSurveyReplies(surveyDetails: SurveyDetails, surveyAnswers: HashMap<Long, SurveyAnswer>): Call<Void> {
+        return mApiInterface.submitVocSurveyReplies(
+                apiId = getApiId(),
+                sha1Password = getSha1Password(),
+                deviceVersion = getDeviceManufacturer(),
+                deviceModel = getDeviceModel(),
+                network = getNetworkCarrier(),
+                os = getOS(),
+                osVersion = getOsVersion(),
+                userAgent = "",
+                userAgentVersion =  "",
+                sessionToken = getSessionToken(),
+                surveyId = surveyDetails.id,
+                surveyReplies = SurveyRepliesBody(
+                        surveyId = surveyDetails.id,
+                        participantReplies = surveyAnswers.values.toList()
+                )
+        )
     }
 }

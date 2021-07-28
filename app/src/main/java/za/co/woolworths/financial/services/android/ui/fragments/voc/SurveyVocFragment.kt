@@ -1,12 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.voc
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -15,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
+import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.EXTRA_SURVEY_ANSWERS
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerInterface
 import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
@@ -25,6 +27,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
         const val DIALOG_OPT_OUT_ID = 2
     }
 
+    private var navController: NavController? = null
     private var surveyQuestionAdapter: SurveyQuestionAdapter? = null
     private var surveyDetails: SurveyDetails? = null
     private val surveyAnswers = HashMap<Long, SurveyAnswer>()
@@ -32,9 +35,8 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        navController = NavHostFragment.findNavController(this)
         surveyDetails = activity?.intent?.extras?.getSerializable(VoiceOfCustomerActivity.EXTRA_SURVEY_DETAILS) as? SurveyDetails
-
-        // TODO: generate default answers for required questions... unless not necessary
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -118,7 +120,9 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     }
 
     override fun onSubmit() {
-        Toast.makeText(context, "Submit Tapped", Toast.LENGTH_SHORT).show()
+        val bundle = Bundle()
+        bundle.putSerializable(EXTRA_SURVEY_ANSWERS, surveyAnswers)
+        navController?.navigate(R.id.action_surveyVocFragment_to_surveyProcessRequestVocFragment, bundle)
     }
 
     override fun onOptOut() {

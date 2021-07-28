@@ -9,7 +9,9 @@ data class SurveyQuestion(
         val minValue: Int? = null,
         val maxValue: Int? = null,
         val required: Boolean?,
-        val matrix: Boolean? = null
+        val matrix: Boolean? = null,
+        val column: Int? = null,
+        val group: Int? = null
 ) : Serializable {
     enum class QuestionType(val type: String, val viewType: Int) {
         RATE_SLIDER("NUMERIC", 0),
