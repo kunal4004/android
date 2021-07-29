@@ -10,4 +10,5 @@ class CheckoutAddAddressNewUserApiHelper: RetrofitConfig() {
 
     fun getSuburbs(provinceId: String) = OneAppService.getSuburbs(provinceId).execute()
     fun getProvince() = OneAppService.getProvinces().execute()
+    fun validateSelectedSuburb(suburbId: String, isStore: Boolean) = OneAppService.validateSelectedSuburb(suburbId, isStore).execute()
 }

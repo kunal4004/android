@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/thirty_eight_dp"
+    android:layout_gravity="center"
+    android:background="@color/white"
+    app:cardCornerRadius="@dimen/four_dp_">
+
+    <LinearLayout
+        android:id="@+id/cardLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/thirty_eight_dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/cardTextView"
+            style="@style/myriad_pro_semi_bold_black_15_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/checkout_delivering_title"
+            android:textSize="@dimen/fourteen_sp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

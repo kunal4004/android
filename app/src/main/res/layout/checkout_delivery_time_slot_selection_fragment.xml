@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/selectDeliveryTimeSlotTitle"
+        style="@style/futura_semi_bold_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/eighteen_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:layout_weight="@integer/point_five"
+        android:padding="@dimen/six_dp"
+        android:text="@string/delivery_timeslot_title_food_items"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/selectDeliveryTimeSlotSubTitle"
+        style="@style/myriad_pro_regular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:layout_weight="@integer/point_five"
+        android:padding="@dimen/two_dp"
+        android:text="@string/select_your_preferred_delivery_time"
+        android:textColor="@color/checkout_delivering_title"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/selectDeliveryTimeSlotTitle" />
+
+    <GridView
+        android:id="@+id/timingsGridView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/seventy_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:layout_marginEnd="@dimen/twenty_dp"
+        app:layout_constraintTop_toBottomOf="@id/selectDeliveryTimeSlotSubTitle" />
+
+    <LinearLayout
+        android:id="@+id/dateGridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/twenty_dp"
+        android:gravity="left"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/timingsGridView">
+
+        <za.co.woolworths.financial.services.android.checkout.view.ExpandableGridViewScrollable
+            android:id="@+id/dateGridView"
+            android:layout_width="@dimen/fifty_dp"
+            android:layout_height="wrap_content"
+            android:horizontalSpacing="@dimen/two_dp"
+            android:isScrollContainer="false"
+            android:numColumns="1" />
+
+        <za.co.woolworths.financial.services.android.checkout.view.ExpandableGridViewScrollable
+            android:id="@+id/timeSlotsGridView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:horizontalSpacing="@dimen/two_dp"
+            android:isScrollContainer="false"
+            android:verticalSpacing="@dimen/two_dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/twenty_dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/dateGridLayout">
+
+        <ImageButton
+            android:id="@+id/previousImgBtn"
+            android:layout_width="@dimen/thirty_dp"
+            android:layout_height="@dimen/thirty_dp"
+            android:layout_margin="@dimen/eight_dp"
+            android:background="@drawable/rounded_view_grey_img_button"
+            android:padding="@dimen/ten_dp"
+            android:src="@drawable/back_arrow" />
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/two_dp"
+            android:text="@string/previous_week_text"
+            android:textColor="@color/checkout_delivering_title"
+            android:textSize="@dimen/fourteen_sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/two_dp"
+            android:text="@string/next_week_text"
+            android:textColor="@color/checkout_delivering_title"
+            android:textSize="@dimen/fourteen_sp" />
+
+        <ImageButton
+            android:id="@+id/nextImgBtn"
+            android:layout_width="@dimen/thirty_dp"
+            android:layout_height="@dimen/thirty_dp"
+            android:layout_margin="@dimen/eight_dp"
+            android:background="@drawable/rounded_view_grey_img_button"
+            android:padding="@dimen/ten_dp"
+            android:src="@drawable/next_arrow" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:indeterminateTint="@color/black"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

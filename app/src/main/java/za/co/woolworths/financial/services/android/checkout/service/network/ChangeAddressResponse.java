@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem;
+
 public class ChangeAddressResponse {
 
     @SerializedName("suburbId")

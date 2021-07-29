@@ -9,6 +9,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +18,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.unsellable_items_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -37,14 +39,22 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     var bundle: Bundle? = null
     private var commerceItems: ArrayList<UnSellableCommerceItem>? = null
     var navController: NavController? = null
+
+    companion object {
+        const val KEY_ARGS_BUNDLE = "bundle"
+        const val KEY_BUNDLE_SUBURB = "SUBURB"
+        const val KEY_BUNDLE_PROVINCE = "PROVINCE"
+        const val KEY_BUNDLE_UNSELLABLE_COMMERCE_ITEMS = "UnSellableCommerceItems"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bundle = arguments?.getBundle("bundle")
+        bundle = arguments?.getBundle(KEY_ARGS_BUNDLE)
         bundle?.apply {
             deliveryType = DeliveryType.valueOf(getString(EditDeliveryLocationActivity.DELIVERY_TYPE, DeliveryType.DELIVERY.name))
-            selectedSuburb = Utils.jsonStringToObject(getString("SUBURB"), Suburb::class.java) as Suburb?
-            selectedProvince = Utils.jsonStringToObject(getString("PROVINCE"), Province::class.java) as Province?
-            commerceItems = Gson().fromJson(getString("UnSellableCommerceItems"), object : TypeToken<List<UnSellableCommerceItem>>() {}.type)
+            selectedSuburb = Utils.jsonStringToObject(getString(KEY_BUNDLE_SUBURB), Suburb::class.java) as Suburb?
+            selectedProvince = Utils.jsonStringToObject(getString(KEY_BUNDLE_PROVINCE), Province::class.java) as Province?
+            commerceItems = Gson().fromJson(getString(KEY_BUNDLE_UNSELLABLE_COMMERCE_ITEMS), object : TypeToken<List<UnSellableCommerceItem>>() {}.type)
         }
     }
 
@@ -70,7 +80,10 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.changeStore -> navController?.navigateUp()
+            R.id.changeStore -> {
+                setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, Bundle())
+                navController?.navigateUp()
+            }
             R.id.removeItems -> executeSetSuburb()
         }
     }
@@ -91,6 +104,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
                                 }
                             }
                             if (activity is CheckoutActivity) {
+                                setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, Bundle())
                                 navController?.navigateUp()
                             } else
                                 navigateToSuburbConfirmationFragment()
