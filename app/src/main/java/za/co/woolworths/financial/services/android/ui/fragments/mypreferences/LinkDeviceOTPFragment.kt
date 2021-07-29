@@ -415,10 +415,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             return
         }
 
-        Handler().postDelayed({
-            showValidatingProcessing()
-        }, AppConstant.DELAY_1000_MS)
-
         linkDeviceOTPScreen?.visibility = View.GONE
         sendinOTPLayout?.visibility = View.GONE
 
@@ -471,8 +467,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             retryApiCall = RETRY_LINK_DEVICE
             return
         }
-
-        linkDeviceOTPScreen?.visibility = View.GONE
 
         showLinkingDeviceProcessing()
         //Location permission granted but no current location found.
@@ -621,8 +615,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun showLinkingDeviceProcessing() {
+        buttonNext?.visibility = View.GONE
         sendOTPTitle?.visibility = View.GONE
         sendOTPSubtitle?.visibility = View.GONE
+        didNotReceiveOTPTextView?.visibility = View.GONE
 
         context?.let {
             sendOTPProcessingReq?.text = it.getString(R.string.link_device_linking_processing)
@@ -639,18 +635,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
         context?.let {
             sendOTPProcessingReq?.text = it.getString(R.string.link_device_sending_otp_processing)
-        }
-        sendinOTPLayout?.visibility = View.VISIBLE
-    }
-
-    private fun showValidatingProcessing() {
-        sendOTPTitle?.visibility = View.GONE
-        sendOTPSubtitle?.visibility = View.GONE
-        buttonNext?.visibility = View.GONE
-        didNotReceiveOTPTextView?.visibility = View.GONE
-
-        context?.let {
-            sendOTPProcessingReq?.text = it.getString(R.string.validating_otp)
         }
         sendinOTPLayout?.visibility = View.VISIBLE
     }
