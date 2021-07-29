@@ -1,13 +1,14 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid
 import za.co.woolworths.financial.services.android.checkout.viewmodel.DeliveryGridModel
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
@@ -16,11 +17,9 @@ import za.co.woolworths.financial.services.android.ui.extension.bindColor
  * Created by Kunal Uttarwar on 20/07/21.
  */
 class DeliverySlotsGridViewAdapter(
-    context: Context, resource: Int, deliveryGridModelList: ArrayList<DeliveryGridModel>
+    context: Context, val resource: Int, val deliveryGridModelList: ArrayList<DeliveryGridModel>
 ) : ArrayAdapter<DeliveryGridModel>(context, resource, deliveryGridModelList) {
 
-    val resource: Int = resource
-    val deliveryGridModelList: ArrayList<DeliveryGridModel> = deliveryGridModelList
     val contxt: Context = context
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -33,20 +32,24 @@ class DeliverySlotsGridViewAdapter(
                     resource,
                     null
                 )
-            mHolder.grid_title =
+            mHolder.gridTitle =
                 convrtView.findViewById<View>(R.id.cardTextView) as? TextView
-            mHolder.cardLayout =
-                convrtView.findViewById<View>(R.id.cardLayout) as? LinearLayout
             convrtView.tag = mHolder
         } else {
             mHolder = convrtView.tag as GridViewHolder
         }
-        mHolder.grid_title?.text = deliveryGridModelList[position].grid_title
-        mHolder.cardLayout?.setBackgroundColor(bindColor(deliveryGridModelList[position].backgroundImgColor))
-        if (deliveryGridModelList[position].isSelected)
-            mHolder.grid_title?.setTextColor(android.graphics.Color.WHITE)
+        mHolder.gridTitle?.text = deliveryGridModelList[position].grid_title
+        val backgroundColor = deliveryGridModelList[position].backgroundImgColor
+        if (backgroundColor == ExpandableGrid.SlotGridColors.WHITE.color) {
+            mHolder.gridTitle?.setBackgroundResource(R.drawable.rounded_grid_border_text_view)
+        } else
+            mHolder.gridTitle?.setBackgroundResource(R.drawable.rounded_grid_text_view)
+        val drawable = mHolder.gridTitle?.background as? GradientDrawable
+        drawable?.setColor(bindColor(backgroundColor))
+        if (deliveryGridModelList[position].slot.selected == true)
+            mHolder.gridTitle?.setTextColor(android.graphics.Color.WHITE)
         else
-            mHolder.grid_title?.setTextColor(bindColor(R.color.checkout_delivering_title))
+            mHolder.gridTitle?.setTextColor(bindColor(R.color.checkout_delivering_title))
         return convrtView!!
     }
 
@@ -58,13 +61,12 @@ class DeliverySlotsGridViewAdapter(
         return position.toLong()
     }
 
-    override fun getItem(position: Int): DeliveryGridModel? {
+    override fun getItem(position: Int): DeliveryGridModel {
         return deliveryGridModelList[position]
     }
 
     internal class GridViewHolder {
-        var grid_title: TextView? = null
-        var cardLayout: LinearLayout? = null
+        var gridTitle: TextView? = null
         var id: String = "0"
     }
 }
