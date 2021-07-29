@@ -257,12 +257,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             }
             R.id.buttonNext -> {
 
-                makeValidateOTPRequest()
+                makeLinkDeviceRequest()
             }
         }
     }
 
-    private fun makeValidateOTPRequest() {
+    private fun makeLinkDeviceRequest() {
 
         otpNumber = getNumberFromEditText(linkDeviceOTPEdtTxt1)
                 .plus(getNumberFromEditText(linkDeviceOTPEdtTxt2))
@@ -279,7 +279,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5?.windowToken, 0)
 
-        showValidatingOtp()
+        linkDeviceOTPScreen?.visibility = View.GONE
+        sendinOTPLayout?.visibility = View.GONE
+
+        callLinkingDeviceAPI()
     }
 
 
@@ -406,19 +409,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 sendOTPFailedTitle?.text = "Failed to send OTP."
             }
         }, RetrieveOTPResponse::class.java))
-    }
-
-    private fun showValidatingOtp() {
-
-        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            return
-        }
-
-        linkDeviceOTPScreen?.visibility = View.GONE
-        sendinOTPLayout?.visibility = View.GONE
-
-        callLinkingDeviceAPI()
     }
 
     private fun showValidateOTPError(msg: String) {
@@ -710,7 +700,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     callGetOTPAPI(otpMethod)
                 }
                 RETRY_VALIDATE -> {
-                    makeValidateOTPRequest()
+                    makeLinkDeviceRequest()
                 }
                 RETRY_LINK_DEVICE -> {
                     callLinkingDeviceAPI()
