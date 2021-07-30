@@ -56,6 +56,15 @@
             app:destination="@id/CheckoutAddAddressNewUserFragment" />
 
         <action
+            android:id="@+id/action_getSuburb_suburbSelectorFragment"
+            app:destination="@id/suburbSelectorFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"
+            app:popUpTo="@id/checkoutAddressConfirmationFragment" />
+
+        <action
             android:id="@+id/action_provinceSelectorFragment"
             app:destination="@id/provinceSelectorFragment"
             app:enterAnim="@anim/slide_in_from_right"

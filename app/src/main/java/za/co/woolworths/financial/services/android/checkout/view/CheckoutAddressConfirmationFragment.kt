@@ -14,8 +14,6 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
-import com.google.common.reflect.TypeToken
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
@@ -27,10 +25,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.Province
-import za.co.woolworths.financial.services.android.models.dto.Suburb
-import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
-import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -257,8 +252,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private fun showStoreListView(suburbId: String?) {
         var selectedSuburbId = suburbId
         if (selectedSuburbId.isNullOrEmpty())
-            selectedSuburbId = Utils.getPreferredDeliveryLocation().suburb?.id.toString()
-        if (!localSuburbId.equals(selectedSuburbId)) { //equals means only tab change happens. No suburb changed.
+             showSuburbSelectionView()
+        else if (!localSuburbId.equals(selectedSuburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = selectedSuburbId
             storesFoundTitle.text = resources.getQuantityString(R.plurals.stores_near_me, 0, 0)
             localSuburbId?.let { it ->
@@ -310,6 +305,43 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             }
         } else if (localSuburbId != null && validatedSuburbProductResponse != null) {
             showStoreList()
+        }
+    }
+
+    private fun showSuburbSelectionView() {
+        getSuburb(Utils.getPreferredDeliveryLocation().province)
+    }
+
+    private fun getSuburb(province: Province?) {
+        province?.id?.let {
+            checkoutAddAddressNewUserViewModel.initGetSuburbs(it).observe(viewLifecycleOwner, {
+                when (it.responseStatus) {
+                    ResponseStatus.SUCCESS -> {
+                        loadingProgressBar.visibility = View.GONE
+                        if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
+                            //showNoStoresError()
+                        } else {
+                            (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
+                                val bundle = Bundle()
+                                bundle.apply {
+                                    putString("SuburbList", Utils.toJson(it1))
+                                    putSerializable("deliveryType", DeliveryType.DELIVERY)
+                                }
+                                navController?.navigate(
+                                    R.id.action_getSuburb_suburbSelectorFragment,
+                                    bundleOf("bundle" to bundle)
+                                )
+                            }
+                        }
+                    }
+                    ResponseStatus.LOADING -> {
+                        loadingProgressBar.visibility = View.VISIBLE
+                    }
+                    ResponseStatus.ERROR -> {
+                        loadingProgressBar.visibility = View.GONE
+                    }
+                }
+            })
         }
     }
 

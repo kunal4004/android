@@ -911,7 +911,19 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         ).observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    it?.data?.let { anyResponse ->
+                    var changeAddressResponse = it?.data as? ChangeAddressResponse
+                    if (changeAddressResponse == null){
+                        val jsonFileString = Utils.getJsonDataFromAsset(
+                            activity?.applicationContext,
+                            "mocks/changeAddressResponse.json"
+                        )
+                        var mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
+                            jsonFileString,
+                            object : TypeToken<ChangeAddressResponse>() {}.type
+                        )
+                        changeAddressResponse = mockChangeAddressResponse
+                    }
+                    changeAddressResponse.let { anyResponse ->
                         (anyResponse as? ChangeAddressResponse)?.let { response ->
                             // If deliverable false then show cant deliver popup
                             // Don't allow user to navigate to Checkout page when deliverable : [false].
