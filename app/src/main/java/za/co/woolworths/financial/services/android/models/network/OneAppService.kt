@@ -5,7 +5,6 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
@@ -139,7 +138,7 @@ object OneAppService : RetrofitConfig() {
     fun getRootCategory(locationEnabled: Boolean, location: Location?): Call<RootCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         // Pass storeId value of 01 fulfillment type
-        val fulFillmentStoreId = Utils.retrieveStoreId("01")
+        val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
         var locationCord = location
         if (!locationEnabled) {
             locationCord = null
@@ -150,17 +149,17 @@ object OneAppService : RetrofitConfig() {
 
         return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(),
             getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android",
-            getSessionToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, fulFillmentStoreId)
+            getSessionToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, fulFillmentStoreId01)
     }
 
     fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         // Pass storeId value of 01 fulfillment type
-        val fulFillmentStoreId = Utils.retrieveStoreId("01")
+        val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
 
         return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(),
             getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android",
-            getSessionToken(), category_id, version, suburbId, storeId, fulFillmentStoreId)
+            getSessionToken(), category_id, version, suburbId, storeId, fulFillmentStoreId01)
     }
 
     fun getProvinces(): Call<ProvincesResponse> {

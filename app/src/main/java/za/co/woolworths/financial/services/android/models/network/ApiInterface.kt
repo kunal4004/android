@@ -465,7 +465,7 @@ interface ApiInterface {
             @Header("longitude") long: Double?,
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
-            @Query("fulFillmentStoreId") fulFillmentStoreId: String?
+            @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
     ): Call<RootCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
@@ -485,7 +485,7 @@ interface ApiInterface {
             //Optional params
             @Query("suburbId") suburbId: String?,
             @Query("storeId") storeId: String?,
-            @Query("fulFillmentStoreId") fulFillmentStoreId: String?
+            @Query("fulFillmentStoreId01") fulFillmentStoreId01: String?
     ): Call<SubCategories>
 
 
