@@ -12,10 +12,8 @@ import com.awfs.coordination.R
  * Created by Kunal Uttarwar on 22/07/21.
  */
 class SlotsTimeGridViewAdapter(
-    context: Context, val resource: Int, deliveryGridTitleList: List<String>
+    context: Context, val resource: Int, val deliveryGridTitleList: List<String>
 ) : ArrayAdapter<String>(context, resource, deliveryGridTitleList) {
-
-    val deliveryGridList: List<String> = deliveryGridTitleList
     val contxt: Context = context
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -34,12 +32,12 @@ class SlotsTimeGridViewAdapter(
         } else {
             mHolder = convrtView.tag as GridViewHolder
         }
-        mHolder.gridTitle?.text = deliveryGridList[position]
+        mHolder.gridTitle?.text = deliveryGridTitleList[position]
         return convrtView!!
     }
 
     override fun getCount(): Int {
-        return deliveryGridList.size
+        return deliveryGridTitleList.size
     }
 
     override fun getItemId(position: Int): Long {
@@ -47,7 +45,7 @@ class SlotsTimeGridViewAdapter(
     }
 
     override fun getItem(position: Int): String {
-        return deliveryGridList[position]
+        return deliveryGridTitleList[position]
     }
 
     internal class GridViewHolder {

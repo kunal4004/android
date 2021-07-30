@@ -179,9 +179,11 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
         setFragmentResultListener(CheckoutAddAddressNewUserFragment.PROVINCE_SELECTION_BACK_PRESSED) { requestKey, bundle ->
             showCollectionTab(localSuburbId)
+            showStoreList()
         }
         setFragmentResultListener(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED) { requestKey, bundle ->
             showCollectionTab(localSuburbId)
+            showStoreList()
         }
     }
 
@@ -250,11 +252,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun showStoreListView(suburbId: String?) {
-        var selectedSuburbId = suburbId
-        if (selectedSuburbId.isNullOrEmpty())
+        if (suburbId.isNullOrEmpty())
              showSuburbSelectionView()
-        else if (!localSuburbId.equals(selectedSuburbId)) { //equals means only tab change happens. No suburb changed.
-            localSuburbId = selectedSuburbId
+        else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
+            localSuburbId = suburbId
             storesFoundTitle.text = resources.getQuantityString(R.plurals.stores_near_me, 0, 0)
             localSuburbId?.let { it ->
                 checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
@@ -271,7 +272,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                         activity?.applicationContext,
                                         "mocks/validateSuburbWithUnsellable.json"
                                     )
-                                    var mockAddressResponse: ValidatedSuburbProducts = Gson().fromJson(
+                                    val mockAddressResponse: ValidatedSuburbProducts = Gson().fromJson(
                                         jsonFileString,
                                         object : TypeToken<ValidatedSuburbProducts>() {}.type
                                     )
@@ -303,9 +304,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         }
                     })
             }
-        } else if (localSuburbId != null && validatedSuburbProductResponse != null) {
+        } /*else if (localSuburbId != null && validatedSuburbProductResponse != null) {
             showStoreList()
-        }
+        }*/
     }
 
     private fun showSuburbSelectionView() {
@@ -314,34 +315,36 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun getSuburb(province: Province?) {
         province?.id?.let {
-            checkoutAddAddressNewUserViewModel.initGetSuburbs(it).observe(viewLifecycleOwner, {
-                when (it.responseStatus) {
-                    ResponseStatus.SUCCESS -> {
-                        loadingProgressBar.visibility = View.GONE
-                        if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
-                            //showNoStoresError()
-                        } else {
-                            (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
-                                val bundle = Bundle()
-                                bundle.apply {
-                                    putString("SuburbList", Utils.toJson(it1))
-                                    putSerializable("deliveryType", DeliveryType.DELIVERY)
+            with(checkoutAddAddressNewUserViewModel) {
+                initGetSuburbs(it).observe(viewLifecycleOwner, {
+                        when (it.responseStatus) {
+                            ResponseStatus.SUCCESS -> {
+                                loadingProgressBar.visibility = View.GONE
+                                if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
+                                    //showNoStoresError()
+                                } else {
+                                    (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
+                                        val bundle = Bundle()
+                                        bundle.apply {
+                                            putString("SuburbList", Utils.toJson(it1))
+                                            putSerializable("deliveryType", DeliveryType.DELIVERY)
+                                        }
+                                        navController?.navigate(
+                                            R.id.action_getSuburb_suburbSelectorFragment,
+                                            bundleOf("bundle" to bundle)
+                                        )
+                                    }
                                 }
-                                navController?.navigate(
-                                    R.id.action_getSuburb_suburbSelectorFragment,
-                                    bundleOf("bundle" to bundle)
-                                )
+                            }
+                            ResponseStatus.LOADING -> {
+                                loadingProgressBar.visibility = View.VISIBLE
+                            }
+                            ResponseStatus.ERROR -> {
+                                loadingProgressBar.visibility = View.GONE
                             }
                         }
-                    }
-                    ResponseStatus.LOADING -> {
-                        loadingProgressBar.visibility = View.VISIBLE
-                    }
-                    ResponseStatus.ERROR -> {
-                        loadingProgressBar.visibility = View.GONE
-                    }
-                }
-            })
+                    })
+            }
         }
     }
 
@@ -428,11 +431,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                             activity?.applicationContext,
                             "mocks/unsellableItems.json"
                         )
-                        var mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
+                        val mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
                             jsonFileString,
                             object : TypeToken<ChangeAddressResponse>() {}.type
                         )*/
-
 
                         val changeAddressResponse = it?.data as? ChangeAddressResponse
                         if (changeAddressResponse != null && changeAddressResponse.deliverable) {
