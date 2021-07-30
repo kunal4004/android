@@ -220,5 +220,6 @@
     <item name="bottom_guideline_percent_for_available_fund_transaction_statement_pma_button" type="dimen" format="float">0.7</item>
     <item name="slider_guideline_percent_for_arrears_account_product" type="dimen" format="float">0.82</item>
     <item name="slider_guideline_percent_for_account_product" type="dimen" format="float">0.72</item>
+    <dimen name="twenty_two_sp">22sp</dimen>
 </resources>
 

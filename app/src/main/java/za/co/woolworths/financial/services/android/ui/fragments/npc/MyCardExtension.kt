@@ -18,10 +18,8 @@ import kotlinx.android.synthetic.main.link_card_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
-import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
@@ -127,7 +125,7 @@ open class MyCardExtension : Fragment() {
 
     fun validCardNumberUI() {
         activity?.apply {
-            cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_inactive_bg)
+            cardNumberEditText?.background = ContextCompat.getDrawable(this, R.drawable.input_box_active_bg)
             invalidCardNumberLabel?.visibility = View.GONE
             navigateToEnterOTPFragmentImageView?.isEnabled = true
         }

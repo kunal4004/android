@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.grid
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.location.Location
@@ -25,8 +26,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.skydoves.balloon.balloon
 import kotlinx.android.synthetic.main.grid_layout.*
+import kotlinx.android.synthetic.main.grid_layout.incNoConnectionHandler
+import kotlinx.android.synthetic.main.grid_layout.sortAndRefineLayout
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
+import kotlinx.android.synthetic.main.search_result_fragment.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
@@ -55,6 +59,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment.Companion.NAVIGATION_STATE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.Companion.REQUEST_SUBURB_CHANGE
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
@@ -99,7 +104,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSortOption: String = ""
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var mFulfilmentTypeId: String? = null
-
+    private var liquorDialog: Dialog? = null
+    private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -278,11 +284,68 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 if (!Utils.isDeliverySelectionModalShown()) {
                     showDeliveryOptionDialog()
                 }
+
+                if(WoolworthsApplication.isProductItemForLiquorInvetoryPending()){
+                    WoolworthsApplication.getProductItemForInventory()?.let { productList ->
+                            WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId?.let {
+                            dismissProgressBar()
+                            queryInventoryForStore(
+                                it,
+                                AddItemToCart(productList.productId, productList.sku, 0),
+                                productList
+                            )
+                        }
+
+                        WoolworthsApplication.setCallForLiquorInventory(false)
+                        WoolworthsApplication.setProductItemForInventory(null)
+                    }
+                }
             } else {
                 loadMoreData(productLists)
             }
         }
         mProductAdapter?.notifyDataSetChanged()
+    }
+
+    override fun showLiquorDialog() {
+
+        liquorDialog = activity?.let { activity -> Dialog(activity) }
+        liquorDialog?.apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val view = layoutInflater.inflate(R.layout.liquor_info_dialog, null)
+            val desc = view.findViewById<TextView>(R.id.desc)
+            val close = view.findViewById<Button>(R.id.close)
+            val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
+            desc?.text = WoolworthsApplication.getLiquor()?.message ?: ""
+            close?.setOnClickListener { dismiss() }
+            setSuburb?.setOnClickListener {
+                dismiss()
+                if (!SessionUtilities.getInstance().isUserAuthenticated) {
+                    ScreenManager.presentSSOSignin(activity, LOGIN_REQUEST_SUBURB_CHANGE)
+                } else {
+                    activity?.apply {
+                        KotlinUtils.presentEditDeliveryLocationActivity(
+                            this,
+                            LOGIN_REQUEST_SUBURB_CHANGE,
+                            DeliveryType.DELIVERY_LIQUOR
+                        )
+                    }
+                }
+            }
+            setContentView(view)
+            window?.apply {
+                setLayout(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT
+                )
+                setBackgroundDrawableResource(R.color.transparent)
+                setGravity(Gravity.CENTER)
+            }
+
+            setTitle(null)
+            setCancelable(true)
+            show()
+        }
     }
 
     private fun getCategoryNameAndSetTitle() {
@@ -684,13 +747,25 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     if (currentStoreId == null && currentSuburbId == null) {
                         //Fresh install with no location selection.
                         return
-                    }
-                    else if ((currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) || (currentStoreId == null && !(localSuburbId.equals(
+                    } else if ((currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) || (currentStoreId == null && !(localSuburbId.equals(
                             currentSuburbId
                         )))
                     )
                         isBackPressed =
                             true // if PDP closes or cart fragment closed with location change.
+                }
+            }
+            LOGIN_REQUEST_SUBURB_CHANGE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+                    activity?.apply {
+                        KotlinUtils.presentEditDeliveryLocationActivity(
+                            this,
+                            LOGIN_REQUEST_SUBURB_CHANGE,
+                            DeliveryType.DELIVERY_LIQUOR
+                        )
+                    }
+                } else if(resultCode == RESULT_OK){
+                    WoolworthsApplication.setCallForLiquorInventory(true)
                 }
             }
             else -> return
@@ -784,6 +859,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         this.mAddItemToCart = addItemToCart
         this.mSelectedProductList = productList
         val activity = activity ?: return
+
+        if(productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
+            KotlinUtils.setLiquorModalShown()
+            showLiquorDialog()
+            WoolworthsApplication.setProductItemForInventory(productList)
+            return
+        }
 
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
