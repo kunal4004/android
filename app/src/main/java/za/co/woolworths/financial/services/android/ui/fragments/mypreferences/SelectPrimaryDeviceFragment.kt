@@ -42,9 +42,7 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
-        if (selectPrimaryDeviceAdapter == null) {
-            initRecyclerView()
-        }
+        initRecyclerView()
 
         changePrimaryDeviceButton?.setOnClickListener(this)
     }
@@ -67,13 +65,20 @@ class SelectPrimaryDeviceFragment : Fragment(), View.OnClickListener {
             return
         }
         context?.let {
+            resetDevicesIfBackPressed()
             selectPrimaryDeviceRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
             selectPrimaryDeviceRecyclerView.setDivider(R.drawable.recycler_view_divider_light_gray_1dp)
             selectPrimaryDeviceAdapter = SelectPrimaryDeviceAdapter(
-                deviceList.filter { it.primarydDevice != true } as ArrayList<UserDevice>,
+                deviceList,
                 this)
         }
         selectPrimaryDeviceRecyclerView.adapter = selectPrimaryDeviceAdapter
+    }
+
+    private fun resetDevicesIfBackPressed() {
+        deviceList.forEach { userDevice ->
+            userDevice.primarydDevice = false
+        }
     }
 
     override fun onClick(v: View?) {
