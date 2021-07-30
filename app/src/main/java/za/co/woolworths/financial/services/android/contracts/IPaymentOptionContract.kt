@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.contracts
 
+import android.app.Activity
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -36,7 +37,7 @@ interface IPaymentOptionContract {
         fun getTotalAmountDue(totalAmountDue : Int): String
         fun getAmountOutstanding(amountOutstanding: Int): String
         fun getPayMyAccountSection(): ApplyNowState
-        fun setFirebaseEventForPayByCardNow()
+        fun setFirebaseEventForPayByCardNow(activity: Activity)
     }
 
     interface PayMyAccountModel {

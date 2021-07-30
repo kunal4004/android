@@ -294,6 +294,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val DEVICESECURITY_LINK_CONFIRMED = "devicesecurity_OTP"
         const val DEVICESECURITY_VIEW_LIST = "devicesecurity_view_list"
         const val DEVICESECURITY_DELETE = "devicesecurity_delete"
+        const val inAppReviewRequest = "in_app_review_request"
 
     }
 

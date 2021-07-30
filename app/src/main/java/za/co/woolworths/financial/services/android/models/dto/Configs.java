@@ -56,5 +56,7 @@ public class Configs {
     @Nullable
     public Liquor liquor;
     @Nullable
+    public InAppReview inAppReview;
+    @Nullable
     public BalanceProtectionInsurance balanceProtectionInsurance;
 }

@@ -68,7 +68,7 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.getTempStoreCardButton -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_GET)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_GET, this) }
                 when (mStoreCardsResponse?.oneTimePinRequired?.linkVirtualStoreCard) {
                     true -> navigateToOTPFragment()
                     else -> navigateToLinkCardFragment()
