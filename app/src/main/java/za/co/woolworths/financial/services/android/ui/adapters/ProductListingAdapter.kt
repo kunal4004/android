@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -11,10 +12,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.*
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ProductListingAdapter(
-    private val navigator: IProductListing?,
-    private val mProductListItems: List<ProductList>?
-) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
+class ProductListingAdapter(private val navigator: IProductListing?, private val mProductListItems: List<ProductList>?, val activity: FragmentActivity?) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewViewHolder {
         return when (ProductListingViewType.values()[viewType]) {
@@ -44,12 +42,10 @@ class ProductListingAdapter(
                     }
                     view.itemView.imQuickShopAddToCartIcon?.setOnClickListener {
                         if (!productList.quickShopButtonWasTapped) {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART)
-                            val fulfilmentTypeId =
-                                WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId
-                            val storeId = fulfilmentTypeId?.let { it1 ->
-                                RecyclerViewViewHolderItems.getFulFillmentStoreId(it1)
-                            }
+                            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this) }
+                            val fulfilmentTypeId = WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId
+                            val storeId = fulfilmentTypeId?.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
+                            fulfilmentTypeId?.let { id -> navigator?.queryInventoryForStore(id, AddItemToCart(productList.productId, productList.sku, 0), productList) }
                             fulfilmentTypeId?.let { id ->
                                 navigator?.queryInventoryForStore(
                                     id,

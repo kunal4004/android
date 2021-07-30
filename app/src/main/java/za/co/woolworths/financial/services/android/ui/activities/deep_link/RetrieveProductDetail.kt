@@ -49,7 +49,7 @@ open class RetrieveProductDetail(private val activity: Activity?, private val pr
                                 arguments[this] = "NO PRICE INFO"
                                 arguments[this] = "From WTodayFragment Promotions"
                             }
-                            Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.VIEW_ITEM, arguments)
+                            Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.VIEW_ITEM, arguments, activity)
                         }
                     }
                 }

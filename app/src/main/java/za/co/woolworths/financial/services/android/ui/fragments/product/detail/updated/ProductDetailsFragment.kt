@@ -299,7 +299,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val listOfItems = ArrayList<AddItemToCart>()
         item?.let { listOfItems.add(it) }
         if (listOfItems.isNotEmpty()) {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_ADD_TO_CART)
+            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_ADD_TO_CART, this) }
             productDetailsPresenter?.postAddItemToCart(listOfItems)
         }
     }
@@ -768,7 +768,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onQuantitySelection(quantity: Int) {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_SELECT_QUANTITY)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_SELECT_QUANTITY, this) }
         setSelectedQuantity(quantity)
         quantityText.text = quantity.toString()
     }
@@ -912,7 +912,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addItemToShoppingList() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPADDTOLIST)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPADDTOLIST, this) }
 
         if (getSelectedSku() == null) {
             if (getSelectedGroupKey().isNullOrEmpty())
@@ -1634,23 +1634,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun shareProduct() {
         activity?.apply {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE, hashMapOf(
-                    Pair(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID,
-                        productDetails?.productId
-                            ?: ""
-                    )
-                )
-            )
-            val message =
-                WoolworthsApplication.getProductDetailsPage()?.shareItemMessage + " " + productDetails?.productId?.let {
-                    WoolworthsApplication.getProductDetailsPage()?.shareItemURITemplate?.replace(
-                        "{product_id}",
-                        it,
-                        true
-                    )
-                }
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID, productDetails?.productId
+                    ?: "")), this)
+            val message = WoolworthsApplication.getProductDetailsPage()?.shareItemMessage + " " + productDetails?.productId?.let { WoolworthsApplication.getProductDetailsPage()?.shareItemURITemplate?.replace("{product_id}", it, true) }
             val shareIntent = Intent()
             shareIntent.apply {
                 action = Intent.ACTION_SEND

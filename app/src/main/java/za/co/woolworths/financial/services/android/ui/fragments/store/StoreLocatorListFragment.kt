@@ -51,7 +51,7 @@ class StoreLocatorListFragment : Fragment() {
     }
 
     private fun storeDetailItemClick(storeDetails: StoreDetails) {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_SC_REPLACE_CARD_STORE)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_SC_REPLACE_CARD_STORE, this) }
 
         view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_selectStoreDetailsFragment, bundleOf(
                 "store" to Gson().toJson(storeDetails),
