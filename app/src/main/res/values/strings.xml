@@ -2165,5 +2165,6 @@
         <item quantity="one">%d Store near me</item>
         <item quantity="other">%d Stores near me</item>
     </plurals>
+    <string name="suburb_selection_subtitle">This will show all collection stores near you.</string>
 
 </resources>

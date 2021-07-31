@@ -17,6 +17,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
+import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
@@ -28,7 +29,9 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment.Companion.CHECKOUT_CHANGE_LOCATION_KEY
 import za.co.woolworths.financial.services.android.util.DeliveryType
@@ -39,7 +42,7 @@ import za.co.woolworths.financial.services.android.util.Utils
  * Created by Kunal Uttarwar on 16/06/21.
  */
 class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
-    CheckoutAddressConfirmationListAdapter.EventListner {
+    CheckoutAddressConfirmationListAdapter.EventListner, SuburbListAdapter.ISuburbSelector {
 
     var savedAddress: SavedAddressResponse? = null
     var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? = null
@@ -48,6 +51,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private var navController: NavController? = null
     private var localSuburbId: String? = null
     private var validatedSuburbProductResponse: ValidatedSuburbProducts? = null
+    private var suburbListAdapter: SuburbListAdapter? = null
 
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
@@ -57,6 +61,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         const val SAVED_ADDRESS_KEY = "savedAddress"
         const val SAVED_ADDRESS_RESPONSE_KEY = "savedAddressResponse"
         const val UNSELLABLE_CHANGE_STORE_REQUEST_KEY = "unsellableChangeStore"
+        const val STORE_SELECTION_REQUEST_KEY = "storeSelectionResponse"
     }
 
     override fun onCreateView(
@@ -135,14 +140,22 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         collectionTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
         deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         addressConfirmationDelivery.visibility = View.GONE
+        suburbSelectionLayout.visibility = View.GONE
+        btnConfirmLayout.visibility = View.VISIBLE
+        clickNCollectTitleLayout.visibility = View.VISIBLE
         addressConfirmationClicknCollect.visibility = View.VISIBLE
         showStoreListView(suburbId)
+        if (!earliestDateValue?.text.isNullOrEmpty()) {
+            earliestDateTitleLayout.visibility = View.VISIBLE
+        }
     }
 
     private fun showDeliveryTab() {
         deliveryTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
         collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         addressConfirmationDelivery.visibility = View.VISIBLE
+        btnConfirmLayout.visibility = View.VISIBLE
+        suburbSelectionLayout.visibility = View.GONE
         addressConfirmationClicknCollect.visibility = View.GONE
         earliestDateTitleLayout.visibility = View.GONE
     }
@@ -168,7 +181,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
             updateSavedAddress(bundle)
         }
-        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY){ requestKey, bundle ->
+        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { requestKey, bundle ->
             showCollectionTab(localSuburbId)
         }
         setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
@@ -184,6 +197,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         setFragmentResultListener(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED) { requestKey, bundle ->
             showCollectionTab(localSuburbId)
             showStoreList()
+        }
+        setFragmentResultListener(STORE_SELECTION_REQUEST_KEY) { requestKey, bundle ->
+            val result = bundle.getString(STORE_SELECTION_REQUEST_KEY)
+            val validateStoreList: ValidateStoreList? =
+                Utils.strToJson(result, ValidateStoreList::class.java) as? ValidateStoreList
+            setEarliestDeliveryDates(validateStoreList)
         }
     }
 
@@ -253,7 +272,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun showStoreListView(suburbId: String?) {
         if (suburbId.isNullOrEmpty())
-             showSuburbSelectionView()
+            getSuburb(Utils.getPreferredDeliveryLocation().province)
         else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
             storesFoundTitle.text = resources.getQuantityString(R.plurals.stores_near_me, 0, 0)
@@ -309,41 +328,63 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         }*/
     }
 
-    private fun showSuburbSelectionView() {
-        getSuburb(Utils.getPreferredDeliveryLocation().province)
+    private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
+        btnConfirmLayout.visibility = View.GONE
+        addressConfirmationClicknCollect.visibility = View.GONE
+        suburbSelectionLayout.visibility = View.VISIBLE
+        suburbSelectionTitle.visibility = View.VISIBLE
+        suburbSelectionSubTitle.visibility = View.VISIBLE
+        suburbInputValue.setHint(R.string.hint_search_for_your_suburb)
+        suburbInputValue?.apply {
+            addTextChangedListener {
+                suburbListAdapter?.filter?.filter(it.toString())
+            }
+        }
+        rcvSuburbList?.apply {
+            suburbListAdapter = SuburbListAdapter(
+                suburbList as ArrayList<Suburb>,
+                this@CheckoutAddressConfirmationFragment,
+                DeliveryType.DELIVERY
+            )
+            setDivider(R.drawable.recycler_view_divider_gray_1dp)
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            suburbListAdapter?.let { adapter = it }
+        }
     }
 
     private fun getSuburb(province: Province?) {
+        clickNCollectTitleLayout.visibility = View.GONE
         province?.id?.let {
             with(checkoutAddAddressNewUserViewModel) {
                 initGetSuburbs(it).observe(viewLifecycleOwner, {
-                        when (it.responseStatus) {
-                            ResponseStatus.SUCCESS -> {
-                                loadingProgressBar.visibility = View.GONE
-                                if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
-                                    //showNoStoresError()
-                                } else {
-                                    (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
-                                        val bundle = Bundle()
-                                        bundle.apply {
-                                            putString("SuburbList", Utils.toJson(it1))
-                                            putSerializable("deliveryType", DeliveryType.DELIVERY)
-                                        }
-                                        navController?.navigate(
-                                            R.id.action_getSuburb_suburbSelectorFragment,
-                                            bundleOf("bundle" to bundle)
-                                        )
+                    when (it.responseStatus) {
+                        ResponseStatus.SUCCESS -> {
+                            loadingProgressBar.visibility = View.GONE
+                            if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
+                                //showNoStoresError()
+                            } else {
+                                (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
+                                    showSuburbSelectionView(it1)
+                                    /*val bundle = Bundle()
+                                    bundle.apply {
+                                        putString("SuburbList", Utils.toJson(it1))
+                                        putSerializable("deliveryType", DeliveryType.DELIVERY)
                                     }
+                                    navController?.navigate(
+                                        R.id.action_getSuburb_suburbSelectorFragment,
+                                        bundleOf("bundle" to bundle)
+                                    )*/
                                 }
                             }
-                            ResponseStatus.LOADING -> {
-                                loadingProgressBar.visibility = View.VISIBLE
-                            }
-                            ResponseStatus.ERROR -> {
-                                loadingProgressBar.visibility = View.GONE
-                            }
                         }
-                    })
+                        ResponseStatus.LOADING -> {
+                            loadingProgressBar.visibility = View.VISIBLE
+                        }
+                        ResponseStatus.ERROR -> {
+                            loadingProgressBar.visibility = View.GONE
+                        }
+                    }
+                })
             }
         }
     }
@@ -359,19 +400,24 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         }
         earliestDateValue?.text =
             validatedSuburbProductResponse?.firstAvailableFoodDeliveryDate ?: ""
-        if (!earliestDateValue?.text.isNullOrEmpty()) {
-            earliestDateTitleLayout.visibility = View.VISIBLE
-        }
+        storeListAdapter =
+            validatedSuburbProductResponse?.stores?.let { it1 ->
+                CheckoutStoreSelectionAdapter(it1, this)
+            }
         rcvStoreRecyclerView?.apply {
-            storeListAdapter =
-                validatedSuburbProductResponse?.stores?.let { it1 ->
-                    CheckoutStoreSelectionAdapter(it1)
-                }
             val storesCount = (validatedSuburbProductResponse?.stores?.size ?: 0)
             storesFoundTitle.text =
                 resources.getQuantityString(R.plurals.stores_near_me, storesCount, storesCount)
             layoutManager = activity?.let { LinearLayoutManager(it) }
             storeListAdapter?.let { adapter = it }
+        }
+    }
+
+    private fun setEarliestDeliveryDates(validateStoreList: ValidateStoreList?) {
+        earliestDateValue?.text =
+            validateStoreList?.firstAvailableFoodDeliveryDate ?: ""
+        if (!earliestDateValue?.text.isNullOrEmpty()) {
+            earliestDateTitleLayout.visibility = View.VISIBLE
         }
     }
 
@@ -455,5 +501,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     }
                 }
             })
+    }
+
+    override fun onSuburbSelected(suburb: Suburb) {
+        showCollectionTab(suburb.id)
     }
 }
