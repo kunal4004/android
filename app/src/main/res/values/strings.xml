@@ -2185,5 +2185,6 @@
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
     <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
     <string name="change_address">Change Address</string>
+    <string name="native_checkout_delivering_to_title">Delivering to</string>
 
 </resources>
