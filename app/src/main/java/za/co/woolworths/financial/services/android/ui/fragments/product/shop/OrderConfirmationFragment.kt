@@ -30,22 +30,17 @@ class OrderConfirmationFragment : Fragment()  {
         OneAppService.getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
-                    if (response != null) {
-                        response.orderSummary?.orderId?.let { setToolbar(it) }
-                    }
+                    response?.orderSummary?.orderId?.let { setToolbar(it) }
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    //TODO
+                    //TODO: handle error
                 }
             }, SubmittedOrderResponse::class.java))
     }
 
     private fun setToolbar(orderId: String) {
-        activity?.apply {
-            orderIdTextView.text = bindString(R.string.order_details_toolbar_title, orderId)
-        }
-
+        orderIdTextView.text = bindString(R.string.order_details_toolbar_title, orderId)
     }
 
 }
