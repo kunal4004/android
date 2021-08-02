@@ -49,11 +49,12 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
+import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor;
+import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper;
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse;
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
-import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -83,7 +84,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -108,15 +108,12 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static android.app.Activity.RESULT_OK;
-import static za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity.KEY_EXTRA_SAVED_ADDRESS;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
-import static za.co.woolworths.financial.services.android.ui.activities.CartActivity.TAG;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
@@ -385,7 +382,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void callSavedAddress() {
 
-        Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
+        /*Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
         savedAddressCall.enqueue(new CompletionHandler<>(new IResponseListener<SavedAddressResponse>() {
             @Override
             public void onSuccess(@org.jetbrains.annotations.Nullable SavedAddressResponse response) {
@@ -394,8 +391,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
             @Override
             public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
+
             }
-        }, SavedAddressResponse.class));
+        }, SavedAddressResponse.class));*/
+
+        // TODO: Remove this line
+        String string = "{\"addresses\":[{\"lastName\":\"Test1\",\"country\":\"\",\"suburbId\":\"1448\",\"address2\":\"\",\"city\":\"Western Cape\",\"address1\":\"St Martini Gardens Apartment Building\",\"postalCode\":\"8001\",\"primaryContactNo\":\"0123456789\",\"title\":\"\",\"ownerId\":\"352160704\",\"secondaryContactNo\":\"\",\"firstName\":\"Test1\",\"phoneNumber\":\"\",\"storeAddress\":false,\"nickname\":\"Test1\",\"recipientName\":\"Test1\",\"suburb\":\"Cape Town Central\",\"id\":\"353620124\",\"state\":\"\",\"region\":\"2000030\",\"displayName\":\"Test1\"},{\"lastName\":\"test\",\"country\":\"\",\"suburbId\":\"1235\",\"address2\":\"\",\"city\":\"WesternCape\",\"address1\":\"Test4Test\",\"postalCode\":\"7490\",\"primaryContactNo\":\"0813764713\",\"title\":\"\",\"ownerId\":\"352160704\",\"secondaryContactNo\":\"\",\"firstName\":\"test\",\"phoneNumber\":\"\",\"storeAddress\":false,\"nickname\":\"Test4\",\"recipientName\":\"test\",\"suburb\":\"AirportIndustria\",\"id\":\"353620129\",\"state\":\"\",\"region\":\"2000030\",\"displayName\":\"test\"}],\"primaryContactNo\":\"0813764713\",\"defaultAddressNickname\":\"Test1\",\"isStorePickup\":false,\"response\":{\"code\":\"-1\",\"desc\":\"Success\"},\"httpCode\":200}";
+        navigateToCheckout(new Gson().fromJson(string, SavedAddressResponse.class));
     }
 
     private void navigateToCheckout(SavedAddressResponse response) {
