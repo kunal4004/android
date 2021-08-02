@@ -2183,4 +2183,10 @@
     </plurals>
     <string name="suburb_selection_subtitle">This will show all collection stores near you.</string>
 
+    <!-- Native Checkout : Suburb not deliverable  -->
+    <string name="dismiss">Dismiss</string>
+    <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
+    <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
+    <string name="change_address">Change Address</string>
+
 </resources>

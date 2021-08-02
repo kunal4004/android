@@ -15,6 +15,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.android.gms.common.api.ApiException
@@ -47,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -55,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_PROVINCE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_SUBURB
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_UNSELLABLE_COMMERCE_ITEMS
+import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CancelOrToLateDeliveryDialog
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -823,6 +826,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onSaveAddressClicked() {
+
         if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
             && cellphoneNumberEditText?.text.toString().trim().length < 10
         ) {
@@ -905,7 +909,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
      * @param nickName  unique address name used to identify individual address
      */
     private fun onAddNewAddress(@NonNull nickName: String) {
-
         checkoutAddAddressNewUserViewModel.changeAddress(
             nickName
         ).observe(this, {
@@ -928,7 +931,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             // If deliverable false then show cant deliver popup
                             // Don't allow user to navigate to Checkout page when deliverable : [false].
                             if (!response.deliverable) {
-                                //TODO: Work on this pop up on ticket https://wigroup2.atlassian.net/browse/WOP-11688
+                                showSuburbNotDeliverableBottomSheetDialog()
                                 return@observe
                             }
 
@@ -945,7 +948,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             if (isAddNewAddress) {
                                 setFragmentResult(
                                     ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
-                                        SAVED_ADDRESS_KEY to Utils.toJson(savedAddressResponse)
+                                        SAVED_ADDRESS_KEY to savedAddressResponse
                                     )
                                 )
                                 navController?.navigateUp()
@@ -963,6 +966,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
         })
+    }
+
+    private fun showSuburbNotDeliverableBottomSheetDialog() {
+        view?.findNavController()?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment)
     }
 
     /**
@@ -1059,9 +1066,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     it1, (it.data as? AddAddressResponse)?.address
                                 )
                             }
-                        val bundle = Bundle()
-                        bundle.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddressResponse))
-                        setFragmentResult(UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundle)
+                        setFragmentResult(
+                            UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
+                                SAVED_ADDRESS_KEY to savedAddressResponse
+                            )
+                        )
                         navController?.navigateUp()
                         selectedAddressId = ""
                     }
