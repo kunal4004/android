@@ -37,7 +37,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private val expandableGrid = ExpandableGrid(this)
     private var selectedSlotResponse: AvailableDeliverySlotsResponse? = null
     private var selectedFoodSlot = Slot()
-    private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter ? = null
+    private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter? =
+        null
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -102,7 +103,17 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun initializeDeliveryTypeSelectionView(openDayDeliverySlots: List<Any>?) {
-         checkoutDeliveryTypeSelectionListAdapter =
+        val timeSlotListItem: MutableMap<Any, Any> = HashMap()
+        timeSlotListItem["deliveryType"] =
+            CheckoutDeliveryTypeSelectionListAdapter.DELIVERY_TYPE_TIMESLOT
+        timeSlotListItem["amount"] = (selectedSlotResponse?.timedDeliveryCosts?.other!!)
+
+        val date = selectedSlotResponse?.timedDeliveryStartDates?.other
+        val deliveryText = getString(R.string.earliest_delivery_date_text)
+        timeSlotListItem["description"] = "$deliveryText <b>$date</b>"
+
+        (openDayDeliverySlots as ArrayList).add(timeSlotListItem)
+        checkoutDeliveryTypeSelectionListAdapter =
             CheckoutDeliveryTypeSelectionListAdapter(openDayDeliverySlots, this)
         deliveryTypeSelectionRecyclerView?.apply {
             addItemDecoration(object : RecyclerView.ItemDecoration() {})
@@ -150,6 +161,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     /*if (it.data != null) {
                        selectedSlotResponse = it.data as? AvailableDeliverySlotsResponse
                         initializeGrid(selectedSlotResponse, 0)
+                        initializeDeliveryTypeSelectionView(selectedSlotResponse?.openDayDeliverySlots)
                     }*/
 
                     //use mock data from json file
@@ -183,7 +195,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         selectedSlotResponse = availableDeliverySlotsResponse
     }
 
-    fun setSelectedFoodSlot(selectedSlot: Slot){
+    fun setSelectedFoodSlot(selectedSlot: Slot) {
         this.selectedFoodSlot = selectedSlot
     }
 
