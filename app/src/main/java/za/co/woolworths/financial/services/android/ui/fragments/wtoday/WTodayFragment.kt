@@ -39,7 +39,6 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         super.onCreate(savedInstanceState)
         activity?.let {
             Utils.updateStatusBarBackground(it)
-            QueryBadgeCounter.instance.queryMessageCount()
         }
 
     }
