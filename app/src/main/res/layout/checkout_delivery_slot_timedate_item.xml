@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/gridTitleLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/thirty_eight_dp"
+        android:layout_height="@dimen/fourty_one_dp"
         android:gravity="center"
         android:orientation="vertical"
         tools:ignore="MissingConstraints">
@@ -18,7 +18,6 @@
             style="@style/myriad_pro_semi_bold_black_15_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/one_dp"
             android:textColor="@color/black"
             android:textSize="@dimen/eleven_sp" />
 

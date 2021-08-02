@@ -37,6 +37,9 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment"
+            app:destination="@id/suburbNotDeliverableBottomsheetDialogFragment" />
 
     </fragment>
 
@@ -58,6 +61,15 @@
         <action
             android:id="@+id/action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment"
             app:destination="@id/CheckoutAddAddressNewUserFragment" />
+
+        <action
+            android:id="@+id/action_getSuburb_suburbSelectorFragment"
+            app:destination="@id/suburbSelectorFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"
+            app:popUpTo="@id/checkoutAddressConfirmationFragment" />
 
         <action
             android:id="@+id/action_provinceSelectorFragment"
@@ -104,5 +116,9 @@
             app:popUpTo="@id/checkoutAddressConfirmationFragment" />
 
     </fragment>
+    <dialog
+        android:id="@+id/suburbNotDeliverableBottomsheetDialogFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.SuburbNotDeliverableBottomsheetDialogFragment"
+        android:label="SuburbNotDeliverableBottomsheetDialogFragment" />
 
 </navigation>

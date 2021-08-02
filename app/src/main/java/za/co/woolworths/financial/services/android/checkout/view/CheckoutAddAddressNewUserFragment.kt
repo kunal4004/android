@@ -15,6 +15,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.android.gms.common.api.ApiException
@@ -47,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -55,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_PROVINCE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_SUBURB
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_UNSELLABLE_COMMERCE_ITEMS
+import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CancelOrToLateDeliveryDialog
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -148,7 +151,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         setupViewModel()
         init()
         addFragmentResultListener()
-        // Show prepolute fields on edit address
+        // Show prepopulate fields on edit address
         if (savedAddress != null) {
             if (activity is CheckoutActivity)
                 (activity as CheckoutActivity).hideBackArrow()
@@ -220,7 +223,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
         postalCode?.apply {
             afterTextChanged {
-                if (it.length > 0)
+                if (it.isNotEmpty())
                     showErrorInputField(this, View.GONE)
             }
         }
@@ -315,7 +318,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun init() {
-        if (selectedAddress != null && selectedAddress.postalCode.isNullOrEmpty()) {
+        if (selectedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
         }
         if (recipientName?.text.toString().isEmpty()) {
@@ -378,18 +381,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingProgressBar.visibility = View.GONE
-                    if (it?.data == null) {
+                    savedAddressResponse = if (it?.data == null) {
                         val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/savedAddress.json"
                         )
-                        var mockSavedAddressResponse: SavedAddressResponse = Gson().fromJson(
+                        val mockSavedAddressResponse: SavedAddressResponse = Gson().fromJson(
                             jsonFileString,
                             object : TypeToken<SavedAddressResponse>() {}.type
                         )
-                        savedAddressResponse = mockSavedAddressResponse
+                        mockSavedAddressResponse
                     } else
-                        savedAddressResponse = it?.data as? SavedAddressResponse
+                        it.data as? SavedAddressResponse
                     if (cellphoneNumberEditText?.text.toString().isEmpty())
                         cellphoneNumberEditText.setText(savedAddressResponse?.primaryContactNo)
                 }
@@ -522,10 +525,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingProgressBar.visibility = View.GONE
-                    if ((it?.data as ProvincesResponse)?.regions.isNullOrEmpty()) {
+                    if ((it?.data as ProvincesResponse).regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
-                        it?.data?.regions?.let { it1 ->
+                        it.data?.regions?.let { it1 ->
                             provinceList = it1
                             checkIfSelectedProvinceExist(it1)
                         }
@@ -728,7 +731,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             if (savedAddressResponse?.addresses != null) {
                                 val iterator = savedAddressResponse?.addresses?.iterator()
                                 while (iterator?.hasNext() == true) {
-                                    val item = iterator?.next()
+                                    val item = iterator.next()
                                     if (item.id.equals(selectedAddressId)) {
                                         iterator.remove()
                                         break
@@ -823,6 +826,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onSaveAddressClicked() {
+
         if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
             && cellphoneNumberEditText?.text.toString().trim().length < 10
         ) {
@@ -905,18 +909,29 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
      * @param nickName  unique address name used to identify individual address
      */
     private fun onAddNewAddress(@NonNull nickName: String) {
-
         checkoutAddAddressNewUserViewModel.changeAddress(
             nickName
         ).observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    it?.data?.let { anyResponse ->
+                    var changeAddressResponse = it?.data as? ChangeAddressResponse
+                    if (changeAddressResponse == null){
+                        val jsonFileString = Utils.getJsonDataFromAsset(
+                            activity?.applicationContext,
+                            "mocks/changeAddressResponse.json"
+                        )
+                        val mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
+                            jsonFileString,
+                            object : TypeToken<ChangeAddressResponse>() {}.type
+                        )
+                        changeAddressResponse = mockChangeAddressResponse
+                    }
+                    changeAddressResponse.let { anyResponse ->
                         (anyResponse as? ChangeAddressResponse)?.let { response ->
                             // If deliverable false then show cant deliver popup
                             // Don't allow user to navigate to Checkout page when deliverable : [false].
                             if (!response.deliverable) {
-                                //TODO: Work on this pop up on ticket https://wigroup2.atlassian.net/browse/WOP-11688
+                                showSuburbNotDeliverableBottomSheetDialog()
                                 return@observe
                             }
 
@@ -951,6 +966,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
         })
+    }
+
+    private fun showSuburbNotDeliverableBottomSheetDialog() {
+        view?.findNavController()?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment)
     }
 
     /**
