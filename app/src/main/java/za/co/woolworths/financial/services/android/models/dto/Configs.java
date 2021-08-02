@@ -54,9 +54,9 @@ public class Configs {
     @Nullable
     public CreditLimitIncrease creditLimitIncrease;
     @Nullable
-    public InAppReview inAppReview;
-    @Nullable
     public Liquor liquor;
+    @Nullable
+    public InAppReview inAppReview;
     @Nullable
     public BalanceProtectionInsurance balanceProtectionInsurance;
 }

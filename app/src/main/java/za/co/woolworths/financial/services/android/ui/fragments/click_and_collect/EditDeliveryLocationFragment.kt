@@ -583,8 +583,14 @@ class EditDeliveryLocationFragment : Fragment(),
         activity?.apply {
             if (deliveryType == DeliveryType.STORE_PICKUP) {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_CConfirm, this)
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Prov, hashMapOf(Pair(provinceName, selectedProvince?.name!!)), this)
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Stor, hashMapOf(Pair(storeName, selectedStore?.name!!)), this)
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Prov,
+                hashMapOf(Pair(provinceName, selectedProvince?.name!!))
+            , this)
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SHOP_Click_Collect_Stor,
+                hashMapOf(Pair(storeName, selectedStore?.name!!))
+            , this)
             }
         }
     }
