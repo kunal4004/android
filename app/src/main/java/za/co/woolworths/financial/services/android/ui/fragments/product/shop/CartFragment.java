@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -395,9 +396,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
         }, SavedAddressResponse.class));*/
 
-        // TODO: Remove this line
-        String string = "{\"addresses\":[{\"lastName\":\"Test1\",\"country\":\"\",\"suburbId\":\"1448\",\"address2\":\"\",\"city\":\"Western Cape\",\"address1\":\"St Martini Gardens Apartment Building\",\"postalCode\":\"8001\",\"primaryContactNo\":\"0123456789\",\"title\":\"\",\"ownerId\":\"352160704\",\"secondaryContactNo\":\"\",\"firstName\":\"Test1\",\"phoneNumber\":\"\",\"storeAddress\":false,\"nickname\":\"Test1\",\"recipientName\":\"Test1\",\"suburb\":\"Cape Town Central\",\"id\":\"353620124\",\"state\":\"\",\"region\":\"2000030\",\"displayName\":\"Test1\"},{\"lastName\":\"test\",\"country\":\"\",\"suburbId\":\"1235\",\"address2\":\"\",\"city\":\"WesternCape\",\"address1\":\"Test4Test\",\"postalCode\":\"7490\",\"primaryContactNo\":\"0813764713\",\"title\":\"\",\"ownerId\":\"352160704\",\"secondaryContactNo\":\"\",\"firstName\":\"test\",\"phoneNumber\":\"\",\"storeAddress\":false,\"nickname\":\"Test4\",\"recipientName\":\"test\",\"suburb\":\"AirportIndustria\",\"id\":\"353620129\",\"state\":\"\",\"region\":\"2000030\",\"displayName\":\"test\"}],\"primaryContactNo\":\"0813764713\",\"defaultAddressNickname\":\"Test1\",\"isStorePickup\":false,\"response\":{\"code\":\"-1\",\"desc\":\"Success\"},\"httpCode\":200}";
-        navigateToCheckout(new Gson().fromJson(string, SavedAddressResponse.class));
+        // TODO: Remove this code once API is integrated.
+        Context context = getActivity() != null ? getActivity().getApplicationContext() : null;
+        if(context != null) {
+            String jsonFileString = Utils.getJsonDataFromAsset(context, "mocks/changeAddressResponse.json");
+            SavedAddressResponse mockChangeAddressResponse = new Gson().fromJson(
+                    jsonFileString,
+                    SavedAddressResponse.class);
+            navigateToCheckout(mockChangeAddressResponse);
+        }
     }
 
     private void navigateToCheckout(SavedAddressResponse response) {
