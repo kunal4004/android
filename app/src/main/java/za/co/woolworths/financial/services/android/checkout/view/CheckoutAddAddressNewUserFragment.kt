@@ -854,7 +854,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
                             if (savedAddressResponse != null && it?.data != null)
-                                savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
+                                (it.data as? AddAddressResponse)?.address?.let { it1 ->
+                                    savedAddressResponse?.addresses?.add(
+                                        it1
+                                    )
+                                }
                             onAddNewAddress(body.nickname)
                         }
                         ResponseStatus.LOADING -> {
@@ -1062,9 +1066,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         arguments?.getBundle("bundle")?.getInt(EDIT_ADDRESS_POSITION_KEY)
                             ?.let { it1 ->
                                 savedAddressResponse?.addresses?.removeAt(it1)
-                                savedAddressResponse?.addresses?.add(
-                                    it1, (it.data as? AddAddressResponse)?.address
-                                )
+                                (it.data as? AddAddressResponse)?.address?.let { it2 ->
+                                    savedAddressResponse?.addresses?.add(
+                                        it1, it2
+                                    )
+                                }
                             }
                         setFragmentResult(
                             UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
