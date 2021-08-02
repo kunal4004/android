@@ -16,17 +16,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.credit_card_deli
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SuburbNotDeliverableBottomsheetDialogFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class SuburbNotDeliverableBottomsheetDialogFragment : WBottomSheetDialogFragment(),
     View.OnClickListener {
-
-    companion object {
-        fun newInstance() = SuburbNotDeliverableBottomsheetDialogFragment()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
