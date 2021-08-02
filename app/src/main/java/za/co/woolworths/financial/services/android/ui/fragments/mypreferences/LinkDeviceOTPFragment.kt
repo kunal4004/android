@@ -69,7 +69,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
     private var retryApiCall: String? = null
-    private var otpMethod: String? = "SMS"
+    private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationRequest = createLocationRequest()
@@ -270,7 +270,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
                 .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
 
-        otpMethod = otpMethod ?: "SMS"
+        otpMethod = otpMethod ?: OTPMethodType.SMS.name
 
         if (TextUtils.isEmpty(otpNumber) || otpNumber!!.length < 5) {
             return
