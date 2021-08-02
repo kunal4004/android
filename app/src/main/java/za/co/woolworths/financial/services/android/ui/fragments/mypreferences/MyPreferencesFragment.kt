@@ -443,6 +443,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
         const val RESULT_LISTENER_DELETE_DEVICE: String = "deleteDevice"
         const val RESULT_LISTENER_LINK_DEVICE = "linkDevice"
+        const val IS_DEVICE_LINKED = "isLinked"
         const val LOCK_REQUEST_CODE_TO_ENABLE = 222
         const val LOCK_REQUEST_CODE_TO_DISABLE = 333
         const val SECURITY_SETTING_REQUEST_CODE = 232
