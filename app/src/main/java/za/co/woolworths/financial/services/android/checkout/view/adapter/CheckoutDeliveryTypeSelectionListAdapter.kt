@@ -59,6 +59,12 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                         (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue("deliveryType")
                     subTitle.text =
                         (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue("deliveryDate")
+                    editAddressImageView.visibility = View.GONE
+                    slotPriceButton.visibility = View.VISIBLE
+                    slotPriceButton.text = context.getString(R.string.currency).plus(
+                        (openDayDeliverySlotsList?.get(position) as Map<Any, Int>).getValue("amount")
+                            .toString()
+                    )
                     selector.isChecked = checkedItemPosition == position
                     addressSelectionLayout.setBackgroundColor(
                         if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
