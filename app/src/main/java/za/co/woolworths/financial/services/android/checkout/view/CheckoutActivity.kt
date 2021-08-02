@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_checkout.*
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 
 
 /**
@@ -85,11 +86,25 @@ class CheckoutActivity : AppCompatActivity() {
         super.onBackPressed()
         val fragmentList: MutableList<androidx.fragment.app.Fragment> =
             navHostFrag.childFragmentManager.fragments
-        if (fragmentList.size > 0 && fragmentList[0] is ProvinceSelectorFragment) {
-            (fragmentList[0] as ProvinceSelectorFragment).onBackPressed()
+
+        if (fragmentList.isNullOrEmpty()) {
+            finish()
+            return
         }
-        if (fragmentList.size > 0 && fragmentList[0] is SuburbSelectorFragment) {
-            (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
+
+        when {
+            fragmentList[0] is ProvinceSelectorFragment -> {
+                (fragmentList[0] as ProvinceSelectorFragment).onBackPressed()
+            }
+            fragmentList[0] is SuburbSelectorFragment -> {
+                (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
+            }
+            fragmentList[0] is UnsellableItemsFragment -> {
+                finish()
+            }
+            else -> {
+                navHostFrag?.navController?.navigateUp()
+            }
         }
     }
 }
