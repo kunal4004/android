@@ -1981,7 +1981,7 @@
     <string name="link_device_sending_otp_processing_desc">This may take a few seconds</string>
     <string name="link_device_sending_otp_processing">Processing Request</string>
     <string name="link_device_error_title">There was a Problem Linking Your Device.</string>
-    <string name="link_device_error_desc">Try activating your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="link_device_error_desc">Try linking your device again, or call us on 0861 50 20 20 for further assistance.</string>
     <string name="unlink_device_change_to_primary">Change to Primary Device</string>
     <string name="unlink_device_delete">Delete Device</string>
     <string name="remove_device_title">Please select a new primary device to link to your profile.</string>

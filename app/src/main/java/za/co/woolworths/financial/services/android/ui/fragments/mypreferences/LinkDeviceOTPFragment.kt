@@ -69,7 +69,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
     private var retryApiCall: String? = null
-    private var otpMethod: String? = "SMS"
+    private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationRequest = createLocationRequest()
@@ -270,7 +270,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
                 .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
 
-        otpMethod = otpMethod ?: "SMS"
+        otpMethod = otpMethod ?: OTPMethodType.SMS.name
 
         if (TextUtils.isEmpty(otpNumber) || otpNumber!!.length < 5) {
             return
@@ -513,6 +513,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             return
                         }
                         showDeviceLinked()
+                        response.deviceIdentityToken?.let{ SessionUtilities.getInstance().deviceIdentityToken =
+                            it }
                         response.deviceIdentityId?.let { saveDeviceId(it) }
                         setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
                             MyPreferencesFragment.IS_DEVICE_LINKED to true
@@ -555,6 +557,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             }
 
             override fun onFailure(error: Throwable?) {
+                sendinOTPLayout?.visibility = View.GONE
                 linkDeviceOTPScreen?.visibility = View.VISIBLE
                 buttonNext?.visibility = View.VISIBLE
                 didNotReceiveOTPTextView?.visibility = View.VISIBLE
@@ -651,7 +654,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_CANCELED) {
-            resetOTPView()
+            Handler().postDelayed({
+                linkDeviceOTPEdtTxt5.requestFocus()
+                val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+            }, AppConstant.DELAY_200_MS)
             linkDeviceOTPScreen?.visibility = View.VISIBLE
         }
 
