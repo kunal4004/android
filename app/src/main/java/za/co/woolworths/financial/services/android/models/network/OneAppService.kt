@@ -9,7 +9,10 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
@@ -26,9 +29,11 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
+import za.co.woolworths.financial.services.android.models.dto.voc.*
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 object OneAppService : RetrofitConfig() {
 
@@ -658,5 +663,60 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.confirmStoreCardEmail(getApiId(), getSha1Password(), getDeviceManufacturer(),
             getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",
             getSessionToken(), getDeviceIdentityToken(),  body)
+    }
+
+    fun getVocSurvey(triggerEvent: VocTriggerEvent): Call<SurveyDetailsResponse> {
+        return mApiInterface.getVocSurvey(
+                apiId = getApiId(),
+                sha1Password = getSha1Password(),
+                deviceVersion = getDeviceManufacturer(),
+                deviceModel = getDeviceModel(),
+                network = getNetworkCarrier(),
+                os = getOS(),
+                osVersion = getOsVersion(),
+                userAgent = "",
+                userAgentVersion =  "",
+                sessionToken = getSessionToken(),
+                triggerEvent = triggerEvent.value
+        )
+    }
+
+    fun submitVocSurveyReplies(surveyDetails: SurveyDetails, surveyAnswers: HashMap<Long, SurveyAnswer>): Call<Void> {
+        return mApiInterface.submitVocSurveyReplies(
+                apiId = getApiId(),
+                sha1Password = getSha1Password(),
+                deviceVersion = getDeviceManufacturer(),
+                deviceModel = getDeviceModel(),
+                network = getNetworkCarrier(),
+                os = getOS(),
+                osVersion = getOsVersion(),
+                userAgent = "",
+                userAgentVersion =  "",
+                sessionToken = getSessionToken(),
+                surveyId = surveyDetails.id,
+                surveyReplies = SurveyRepliesBody(
+                        surveyId = surveyDetails.id,
+                        appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().applicationContext),
+                        participantReplies = surveyAnswers.values.toList()
+                )
+        )
+    }
+
+    fun optOutVocSurvey(): Call<Void> {
+        return mApiInterface.optOutVocSurvey(
+                apiId = getApiId(),
+                sha1Password = getSha1Password(),
+                deviceVersion = getDeviceManufacturer(),
+                deviceModel = getDeviceModel(),
+                network = getNetworkCarrier(),
+                os = getOS(),
+                osVersion = getOsVersion(),
+                userAgent = "",
+                userAgentVersion =  "",
+                sessionToken = getSessionToken(),
+                optOutBody = SurveyOptOutBody(
+                        appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().applicationContext)
+                )
+        )
     }
 }

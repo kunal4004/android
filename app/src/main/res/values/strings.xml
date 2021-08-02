@@ -2061,6 +2061,7 @@
     <string name="chat_notification_title">You have received a message.</string>
     <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
     <string name="woolies_chat_active">Chat is currently active</string>
+
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
     <string name="death_cover_title">Death Cover</string>
@@ -2124,4 +2125,23 @@
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
     <string name="view_application_status">View Application Status</string>
 
+    <!--  Voice of Customer  -->
+    <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
+    <string name="voc_question_freetext_hint_optional">Describe your experience in detail (optional)</string>
+    <string name="voc_question_freetext_hint_required">Describe your experience in detail</string>
+    <string name="voc_survey_submit">SUBMIT</string>
+    <string name="voc_survey_opt_out">DON\'T ASK AGAIN</string>
+    <string name="voc_survey_skip">NOT NOW</string>
+    <string name="voc_opt_out_dialog_title">Are You Sure You Don’t Want To Take This Survey?</string>
+    <string name="voc_opt_out_dialog_desc">If you proceed, we won’t ask you to take this survey again.</string>
+    <string name="voc_opt_out_dialog_action">YES, PROCEED</string>
+    <string name="voc_opt_out_dialog_cancel">CANCEL</string>
+    <string name="voc_skip_dialog_title">Are You Sure You Want To Skip This Survey?</string>
+    <string name="voc_skip_dialog_desc">You can skip for now, and we\'ll ask you again later.</string>
+    <string name="voc_skip_dialog_action">YES</string>
+    <string name="voc_skip_dialog_cancel">CANCEL</string>
+    <string name="voc_processing_request_title">Processing Request</string>
+    <string name="voc_processing_request_desc">This may take a few seconds</string>
+    <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
+    <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
 </resources>
