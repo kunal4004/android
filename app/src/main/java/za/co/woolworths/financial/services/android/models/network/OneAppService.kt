@@ -7,6 +7,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
@@ -430,5 +431,17 @@ object OneAppService : RetrofitConfig() {
 
     fun confirmStoreCardEmail(body: StoreCardEmailConfirmBody): Call<GenericResponse> {
         return mApiInterface.confirmStoreCardEmail(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),  body)
+    }
+
+    fun getSubmittedOrder(): Call<SubmittedOrderResponse> {
+        return mApiInterface.getSubmittedOrder(
+            getApiId(),
+            getSha1Password(),
+            getDeviceManufacturer(),
+            getDeviceModel(),
+            getNetworkCarrier(),
+            getOS(),
+            getOsVersion(),
+            getSessionToken())
     }
 }

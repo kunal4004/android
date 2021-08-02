@@ -2111,4 +2111,7 @@
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
     <string name="view_application_status">View Application Status</string>
 
+    <!--order details-->
+    <string name="order_details_toolbar_title">ORDER #%1$s</string>
+
 </resources>
