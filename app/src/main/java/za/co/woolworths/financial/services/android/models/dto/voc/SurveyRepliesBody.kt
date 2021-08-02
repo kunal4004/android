@@ -4,5 +4,6 @@ import java.io.Serializable
 
 class SurveyRepliesBody(
         val surveyId: Long,
+        val appInstanceId: String,
         val participantReplies: List<SurveyAnswer>? = null
 ) : Serializable

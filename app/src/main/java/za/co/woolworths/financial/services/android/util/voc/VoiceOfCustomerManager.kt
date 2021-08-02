@@ -9,13 +9,19 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsR
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
+import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 class VoiceOfCustomerManager {
     companion object {
         fun showVocSurveyIfNeeded(context: Context?, triggerEvent: VocTriggerEvent? = null) {
-            // TODO VOC: check minimum support from App Config
             if (triggerEvent == null) return
+
+            // Check minimum app version support
+            if (!Utils.isFeatureEnabled(WoolworthsApplication.getCustomerFeedback().minimumSupportedAppBuildNumber)) return
+
+            // Check for allowed trigger events
             val allowedTriggerEvents = WoolworthsApplication.getCustomerFeedback().triggerEvents ?: return
             if (!allowedTriggerEvents.contains(triggerEvent.value)) return
 
@@ -28,7 +34,8 @@ class VoiceOfCustomerManager {
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    // ignored if request fails
+                    // Ignored if request fails
+                    FirebaseManager.logException(error)
                 }
             }, SurveyDetailsResponse::class.java))
         }

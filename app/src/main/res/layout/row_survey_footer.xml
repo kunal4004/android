@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:alpha="0.3"
-        android:background="@color/color_separator_light_grey"
-        android:visibility="gone" />
+        android:background="@color/color_separator_light_grey" />
 
     <LinearLayout
         android:layout_width="match_parent"

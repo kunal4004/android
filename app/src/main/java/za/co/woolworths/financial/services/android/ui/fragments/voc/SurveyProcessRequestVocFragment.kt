@@ -22,12 +22,9 @@ import kotlinx.android.synthetic.main.processing_request_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity
 import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity.Companion.DEFAULT_VALUE_RATE_SLIDER_MAX
@@ -85,28 +82,31 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
         }
         surveyDetails?.questions?.forEach { question ->
             // Pass some data required by Genex
-            surveyAnswers?.get(question.id)?.matrix = question.matrix
-            surveyAnswers?.get(question.id)?.column = question.column
-            surveyAnswers?.get(question.id)?.group = question.group
+            surveyAnswers?.get(question.id)?.apply {
+                matrix = question.matrix
+                column = question.column
+                group = question.group
 
-            if (question.type == SurveyQuestion.QuestionType.RATE_SLIDER.type) {
-                // Add back offset removed to draw slider
-                surveyAnswers?.get(question.id)?.answerId?.let {
-                    surveyAnswers?.get(question.id)?.answerId = it + 1
-                }
-            }
-
-            // Set default answer value for required questions
-            if (question.required == true) {
-                when (question.type) {
-                    SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
-                        if (surveyAnswers?.get(question.id)?.answerId == null) {
-                            surveyAnswers?.get(question.id)?.answerId = (question.maxValue ?: DEFAULT_VALUE_RATE_SLIDER_MAX) - 1
-                        }
+                if (question.type == SurveyQuestion.QuestionType.RATE_SLIDER.type) {
+                    // Add back offset removed to draw slider
+                    answerId?.let {
+                        answerId = it + 1
                     }
-                    SurveyQuestion.QuestionType.FREE_TEXT.type -> {
-                        if (surveyAnswers?.get(question.id)?.textAnswer == null) {
-                            surveyAnswers?.get(question.id)?.textAnswer = "N/A" // TODO VOC: UI must reflect this validation
+                }
+
+                // Set default answer value for required questions
+                if (question.required == true) {
+                    when (question.type) {
+                        SurveyQuestion.QuestionType.RATE_SLIDER.type -> {
+                            if (answerId == null) {
+                                answerId = (question.maxValue ?: DEFAULT_VALUE_RATE_SLIDER_MAX) - 1
+                            }
+                        }
+                        SurveyQuestion.QuestionType.FREE_TEXT.type -> {
+                            if (textAnswer == null) {
+                                // Validation is already done on UI
+                                textAnswer = "N/A"
+                            }
                         }
                     }
                 }
@@ -161,6 +161,7 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 onRequestFailed()
+                FirebaseManager.logException(t)
             }
         })
     }
@@ -216,8 +217,10 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.closeIcon -> {
-                activity?.finish()
-                activity?.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                activity?.apply {
+                    finish()
+                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
