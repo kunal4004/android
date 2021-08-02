@@ -17,6 +17,7 @@ class StartupApiHelper : RetrofitConfig() {
             getOS(),
             getOsVersion(),
             getSessionToken(),
+            getDeviceIdentityToken(),
             WoolworthsApplication.getAppVersionName())
 
     fun isConnectedToInternet(context: Context) = NetworkManager.getInstance().isConnectedToNetwork(context)
