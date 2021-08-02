@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.adapters.ViewAllLinkedDevicesAdapter
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
@@ -109,6 +110,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                         IS_UPDATE to true
                                     ))
                                     if (deviceList.isNullOrEmpty()) {
+                                        SessionUtilities.getInstance().deviceIdentityToken = ""
                                         view?.findNavController()?.navigateUp()
                                         return@postDelayed
                                     }

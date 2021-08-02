@@ -1548,7 +1548,6 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
-            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Header("deviceName") deviceName: String,
             @Body linkDeviceValidateBody: LinkDeviceBody,
             @Query("otp") otp: String?,

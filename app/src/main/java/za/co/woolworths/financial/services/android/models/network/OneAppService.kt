@@ -609,7 +609,6 @@ object OneAppService : RetrofitConfig() {
             "",
             "",
             getSessionToken(),
-            getDeviceIdentityToken(),
             deviceName,
             body,
             otp,
