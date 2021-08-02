@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
+import kotlinx.android.synthetic.main.checkout_grid_layout.*
 import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.HeaderDate
 import za.co.woolworths.financial.services.android.checkout.service.network.SortedJoinDeliverySlot

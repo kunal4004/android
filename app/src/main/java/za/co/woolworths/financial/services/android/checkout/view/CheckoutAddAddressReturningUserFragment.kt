@@ -6,10 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
+import kotlinx.android.synthetic.main.checkout_grid_layout.*
+import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
@@ -17,6 +20,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Avai
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.Slot
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -26,12 +30,14 @@ import za.co.woolworths.financial.services.android.util.Utils
 /**
  * Created by Kunal Uttarwar on 27/05/21.
  */
-class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener {
+class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener,
+    CheckoutDeliveryTypeSelectionListAdapter.EventListner {
 
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
     private var selectedSlotResponse: AvailableDeliverySlotsResponse? = null
     private var selectedFoodSlot = Slot()
+    private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter ? = null
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -95,6 +101,16 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         }
     }
 
+    private fun initializeDeliveryTypeSelectionView(openDayDeliverySlots: List<Any>?) {
+         checkoutDeliveryTypeSelectionListAdapter =
+            CheckoutDeliveryTypeSelectionListAdapter(openDayDeliverySlots, this)
+        deliveryTypeSelectionRecyclerView?.apply {
+            addItemDecoration(object : RecyclerView.ItemDecoration() {})
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            checkoutDeliveryTypeSelectionListAdapter?.let { adapter = it }
+        }
+    }
+
     private fun initializeDeliveryFoodItems() {
         setupViewModel()
         getAvailableDeliverySlots()
@@ -147,6 +163,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     )
                     selectedSlotResponse = mockDeliverySlotResponse
                     initializeGrid(selectedSlotResponse, 0)
+                    initializeDeliveryTypeSelectionView(selectedSlotResponse?.openDayDeliverySlots)
                 }
                 ResponseStatus.LOADING -> {
                     loadingBar.visibility = View.VISIBLE
@@ -179,5 +196,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 initializeGrid(selectedSlotResponse, 1)
             }
         }
+    }
+
+    override fun selectedDeliveryType(deliveryType: Any) {
+
     }
 }
