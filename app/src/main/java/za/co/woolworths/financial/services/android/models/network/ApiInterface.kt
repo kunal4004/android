@@ -48,7 +48,8 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<AccountsResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<AccountsResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -64,6 +65,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productOfferingId") productOfferingId: String): Call<TransactionHistoryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -79,6 +81,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("productOfferingId") productOfferingId: String): Call<AccountsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
@@ -93,7 +96,8 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<VoucherResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<VoucherResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -108,7 +112,8 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<VoucherCount>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<VoucherCount>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/session")
@@ -123,6 +128,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body loginRequest: LoginRequest): Call<LoginResponse>
 
 
@@ -140,6 +146,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body issueLoan: IssueLoan): Call<IssueLoanResponse>
 
 
@@ -156,6 +163,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body authoriseLoanRequest: AuthoriseLoanRequest): Call<AuthoriseLoanResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600")
@@ -169,6 +177,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Header("appVersion") appVersion: String
     ):ConfigResponse
 
@@ -185,6 +194,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("lat") lat: String,
             @Query("lon") lon: String,
             @Query("searchString") searchString: String
@@ -203,6 +213,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("lat") lat: String,
             @Query("lon") lon: String,
             @Query("searchString") searchString: String,
@@ -225,6 +236,7 @@ interface ApiInterface {
             @Header("latitude") latitude: String,
             @Header("longitude") longitude: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path(value = "sku", encoded = false) sku: String,
             @Query("startRadius") startRadius: String,
             @Query("endRadius") endRadius: String,
@@ -243,6 +255,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("pageSize") pageSize: Int,
             @Query("pageNumber") pageNumber: Int
 
@@ -261,6 +274,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String
     ): Call<DeleteMessageResponse>
 
@@ -277,6 +291,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body readMessages: MessageReadRequest
     ): Call<ReadMessagesResponse>
 
@@ -293,6 +308,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body device: CreateUpdateDevice
     ): Call<CreateUpdateDeviceResponse>
 
@@ -309,6 +325,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("pageSize") pageSize: Int,
             @Query("pageNumber") pageNumber: Int
     ): Call<DeaBanks>
@@ -326,6 +343,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("pageSize") pageSize: Int,
             @Query("pageNumber") pageNumber: Int
     ): Call<BankAccountTypes>
@@ -343,6 +361,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body createOfferRequest: CreateOfferRequest): Call<OfferActive>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -358,6 +377,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("cliId") cliId: String,
             @Body createOfferRequest: CreateOfferRequest): Call<OfferActive>
 
@@ -374,6 +394,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("cliId") cliId: String,
             @Body createOfferDecision: CLIOfferDecision): Call<OfferActive>
 
@@ -390,6 +411,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body attachments: MultipartBody.Part, response: Callback<CLICreateOfferResponse>): Call<CLICreateOfferResponse>
 
     //WOP-650 Set cacheTime to zero to allow correct status of CLI getOfferActive
@@ -406,6 +428,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("productOfferingId") productOfferingId: String): Call<OfferActive>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -418,7 +441,8 @@ interface ApiInterface {
             @Header("network") network: String,
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<CLIEmailResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CLIEmailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/cli/offer/bankingDetails")
@@ -433,6 +457,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body updateBankDetail: UpdateBankDetail): Call<UpdateBankDetailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:900")
@@ -447,7 +472,8 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<PromotionsResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<PromotionsResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
@@ -462,6 +488,7 @@ interface ApiInterface {
             @Header("deviceVersion") deviceVersion: String,
             @Header("apiKey") userAgent: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             //Optional params
             @Header("latitude") lat: Double?,
             @Header("longitude") long: Double?,
@@ -482,6 +509,7 @@ interface ApiInterface {
             @Header("deviceVersion") deviceVersion: String,
             @Header("apiKey") apiKey: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("cat") category: String,
             @Query("version") version: String): Call<SubCategories>
 
@@ -498,7 +526,8 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<FAQ>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<FAQ>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
@@ -514,6 +543,7 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sha1Password") sha1Password: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productId") productId: String,
             @Query("sku") sku: String): Call<WProduct>
 
@@ -530,6 +560,7 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sha1Password") sha1Password: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productId") productId: String,
             @Query("sku") sku: String,
             callback: Callback<String>)
@@ -549,6 +580,7 @@ interface ApiInterface {
             @Header("longitude") longitude: Double,
             @Header("latitude") latitude: Double,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productId") productId: String,
             @Query("sku") sku: String,
             callback: Callback<String>)
@@ -563,7 +595,8 @@ interface ApiInterface {
             @Header("network") network: String,
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<CardDetailsResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CardDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/statements")
@@ -578,6 +611,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("productOfferingId") productOfferingId: String,
             @Query("accountNumber") accountNumber: String,
             @Query("startDate") startDate: String,
@@ -597,6 +631,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("docId") docId: String,
             @Query("productOfferingId") productOfferingId: String,
             @Query("docDesc") docDesc: String): Call<ResponseBody>
@@ -614,6 +649,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body sendUserStatementRequest: SendUserStatementRequest): Call<SendUserStatementResponse>
 
 
@@ -629,7 +665,8 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ProvincesResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -669,6 +706,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("locationId") locationId: String
     ): Call<SuburbsResponse>
 
@@ -683,6 +721,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body suburbRequest: SetDeliveryLocationSuburbRequest): Call<SetDeliveryLocationSuburbResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -695,7 +734,8 @@ interface ApiInterface {
             @Header("network") network: String,
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
-            @Header("sessionToken") sessionToken: String
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -711,6 +751,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -724,6 +765,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("commerceId") commerceId: String): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -738,7 +780,8 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<CartSummaryResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CartSummaryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("cartV2/item")
@@ -750,7 +793,8 @@ interface ApiInterface {
             @Header("network") network: String,
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<ShoppingCartResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<ShoppingCartResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -766,6 +810,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("commerceId") commerceId: String,
             @Body quantity: ChangeQuantity): Call<ShoppingCartResponse>
 
@@ -783,6 +828,7 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sha1Password") sha1Password: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productId") productId: String,
             @Query("sku") sku: String,
             @Query("suburbId") suburbId: String?,
@@ -805,6 +851,7 @@ interface ApiInterface {
             @Header("longitude") longitude: Double,
             @Header("latitude") latitude: Double,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productId") productId: String,
             @Query("sku") sku: String,
             @Query("suburbId") suburbId: String?,
@@ -821,7 +868,8 @@ interface ApiInterface {
             @Header("network") network: String,
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<ShoppingListsResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<ShoppingListsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("list")
@@ -834,6 +882,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body name: CreateList): Call<ShoppingListsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -847,6 +896,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String): Call<ShoppingListItemsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -860,6 +910,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productId") productId: String,
             @Body addToListRequest: MutableList<AddToListRequest>): Call<ShoppingListItemsResponse>
 
@@ -874,6 +925,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String): Call<ShoppingListsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -887,6 +939,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("listId") listId: String,
             @Path("id") id: String,
             @Query("productId") productId: String,
@@ -903,6 +956,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("multipleSku") multipleSku: String): Call<SkuInventoryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -916,6 +970,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("store_id") store_id: String,
             @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
@@ -934,6 +989,7 @@ interface ApiInterface {
             @Header("longitude") longitude: String,
             @Header("latitude") latitude: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("searchTerm") searchTerm: String,
             @Query("searchType") searchType: String,
             @Query("responseType") responseType: String,
@@ -957,6 +1013,7 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sha1Password") sha1Password: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("searchTerm") searchTerm: String,
             @Query("searchType") searchType: String,
             @Query("responseType") responseType: String,
@@ -980,6 +1037,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body checkoutSuccess: CheckoutSuccess): Call<Void>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -992,7 +1050,8 @@ interface ApiInterface {
             @Header("network") network: String,
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<OrdersResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<OrdersResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("order/{id}")
@@ -1005,6 +1064,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String): Call<OrderDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1018,6 +1078,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String,
             @Body requestBody: OrderToShoppingListRequestBody): Call<OrderToListReponse>
 
@@ -1032,6 +1093,7 @@ interface ApiInterface {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("taxNoteNumber") taxNoteNumber: String): Call<OrderTaxInvoiceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1046,7 +1108,8 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<CreditCardTokenResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CreditCardTokenResponse>
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1062,6 +1125,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productOfferingId") productOfferingId: String,
             @Body blockCardRequestBody: BlockCardRequestBody): Call<BlockMyCardResponse>
 
@@ -1078,6 +1142,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("otpMethod") otpMethod: String): Call<LinkNewCardOTP>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1093,6 +1158,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body linkStoreCard: LinkStoreCard): Call<LinkNewCardResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1108,6 +1174,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("lat") latitude: Double?,
             @Query("lon") longitude: Double?,
             @Body getStoreCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse>
@@ -1125,6 +1192,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productOfferingId") productOfferingId: String,
             @Body requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse>
 
@@ -1140,6 +1208,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("lat") lat: String,
             @Query("lon") lon: String,
             @Query("searchString") searchString: String,
@@ -1159,6 +1228,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("orderId") orderId: String): Call<CancelOrderResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1174,6 +1244,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body requestBody: CreditCardActivationRequestBody): Call<CreditCardActivationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1189,6 +1260,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("otpMethod") otpMethod: String,
             @Query("productOfferingId") productOfferingId: String): Call<RetrieveOTPResponse>
 
@@ -1205,6 +1277,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body requestBody: ValidateOTPRequest,
             @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
 
@@ -1221,6 +1294,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("featureName") featureName: String,
             @Path("appScreen") appScreen: String): Call<Response>
 
@@ -1236,7 +1310,8 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String): Call<PaymentMethodsResponse>
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String): Call<PaymentMethodsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("payments/payu/pay")
@@ -1251,6 +1326,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body payUPay: PayUPay): Call<PayUResponse>
 
 
@@ -1267,6 +1343,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("customer") customer: String,
             @Query("payment_id") payment_id: String,
             @Query("charge_id") charge_id: String,
@@ -1287,6 +1364,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("suburbId") suburbId: String,
             @Query("isStore") isStore: Boolean): Call<ValidateSelectedSuburbResponse>
 
@@ -1303,6 +1381,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("paymenToken") paymenToken: String
     ): Call<DeleteResponse>
 
@@ -1319,6 +1398,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body vouchersList: List<SelectedVoucher>): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1334,6 +1414,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("envelopeReference") envelopeReference: String,
             @Query("productOfferingId") productOfferingId: String): Call<CreditCardDeliveryStatusResponse>
 
@@ -1350,6 +1431,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("searchPhrase") searchPhrase: String,
             @Query("envelopeNumber") envelopeNumber: String,
             @Query("productOfferingId") productOfferingId: String): Call<PossibleAddressResponse>
@@ -1367,6 +1449,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("envelopeNumber") envelopeNumber: String,
             @Query("productOfferingId") productOfferingId: String,
             @Query("x") x: String,
@@ -1386,6 +1469,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("productOfferingId") productOfferingId: String,
             @Query("envelopeNumber") envelopeNumber: String,
             @Query("schedule") schedule: Boolean,
@@ -1405,6 +1489,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1420,6 +1505,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1435,6 +1521,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("contentId") contentId: String
     ): Call<SizeGuideResponse>
 
@@ -1450,24 +1537,29 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Header("sessionToken") sessionToken: String,
             @Query("otpMethod") otpMethod: String
     ): Call<RetrieveOTPResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/otp/validate")
-    fun validateLinkDeviceOTP(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Body linkDeviceValidateBody: LinkDeviceValidateBody): Call<RetrieveOTPResponse>
+    @PUT("user/device/{deviceIdentityId}")
+    fun changePrimaryDeviceApi(
+        @Header("apiId") apiId: String,
+        @Header("sha1Password") sha1Password: String,
+        @Header("deviceVersion") deviceVersion: String,
+        @Header("deviceModel") deviceModel: String,
+        @Header("network") network: String,
+        @Header("os") os: String,
+        @Header("osVersion") osVersion: String,
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("deviceIdentityId") deviceIdentityId: String,
+        @Query("otp") otp: String?,
+        @Query("otpMethod") otpMethod: String?
+    ): Call<ViewAllLinkedDeviceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/device")
@@ -1483,7 +1575,9 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceName") deviceName: String,
-            @Body linkDeviceValidateBody: LinkDeviceBody): Call<LinkedDeviceResponse>
+            @Body linkDeviceValidateBody: LinkDeviceBody,
+            @Query("otp") otp: String?,
+            @Query("otpMethod") otpMethod: String?): Call<LinkedDeviceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
     @GET("user/device")
@@ -1497,12 +1591,13 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Header("sessionToken") sessionToken: String
     ): Call<ViewAllLinkedDeviceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("user/device/{deviceIdentityId}")
-    fun deleteOrUnlinkDevice(
+    fun deleteDevice(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
             @Header("deviceVersion") deviceVersion: String,
@@ -1513,7 +1608,11 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
-            @Path("deviceIdentityId") deviceIdentityId: String
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Path("deviceIdentityId") deviceIdentityId: String,
+            @Query("newPrimaryDeviceIdentityId") newPrimaryDeviceIdentityId: String?,
+            @Query("otp") otp: String?,
+            @Query("otpMethod") otpMethod: String?
     ): Call<ViewAllLinkedDeviceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -1529,5 +1628,6 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body storeCardEmailConfirmBody: StoreCardEmailConfirmBody): Call<GenericResponse>
 }

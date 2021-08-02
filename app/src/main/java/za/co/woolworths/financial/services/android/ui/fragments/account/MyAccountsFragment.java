@@ -846,6 +846,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             mUpdateMyAccount.swipeToRefreshAccount(false);
             showView(loggedOutHeaderLayout);
         }
+        displayViewApplicationStatus();
     }
 
     private void hideAllLayers() {
