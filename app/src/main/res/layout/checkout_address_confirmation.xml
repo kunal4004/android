@@ -9,9 +9,9 @@
         android:id="@+id/deliveryOrCollectionLayout"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/fourty_dp"
-        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginStart="@dimen/thirty_dp"
         android:layout_marginTop="@dimen/ten_dp"
-        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_dp"
         android:background="@drawable/rounded_view_grey_tab_bg"
         android:gravity="center_vertical"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,6 +60,15 @@
         app:layout_constraintBottom_toTopOf="@+id/btnConfirmLayout" />
 
     <include
+        android:id="@+id/suburbSelectionLayout"
+        layout="@layout/suburb_selector_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/sixty_three_dp"
+        android:layout_marginBottom="@dimen/ten_dp"
+        android:visibility="gone" />
+
+    <include
         android:id="@+id/addressConfirmationClicknCollect"
         layout="@layout/checkout_address_confirmation_click_and_collect"
         android:layout_width="match_parent"
@@ -92,8 +101,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/ten_dp"
-            android:paddingLeft="@dimen/twenty_four_dp"
-            android:paddingRight="@dimen/twenty_four_dp"
+            android:paddingLeft="@dimen/eighteen_dp"
+            android:paddingRight="@dimen/eighteen_dp"
             android:visibility="gone">
 
             <TextView

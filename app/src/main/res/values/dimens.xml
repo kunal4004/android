@@ -53,6 +53,7 @@
     <dimen name="two_dp">2dp</dimen>
     <dimen name="thirty_dp">30dp</dimen>
     <dimen name="fourty_dp">40dp</dimen>
+    <dimen name="fourty_one_dp">41dp</dimen>
 
     <!-- Range Seekbar -->
     <dimen name="zero_dp">0dp</dimen>

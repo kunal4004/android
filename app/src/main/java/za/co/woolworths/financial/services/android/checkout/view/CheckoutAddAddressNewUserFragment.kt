@@ -151,7 +151,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         setupViewModel()
         init()
         addFragmentResultListener()
-        // Show prepolute fields on edit address
+        // Show prepopulate fields on edit address
         if (savedAddress != null) {
             if (activity is CheckoutActivity)
                 (activity as CheckoutActivity).hideBackArrow()
@@ -223,7 +223,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
         postalCode?.apply {
             afterTextChanged {
-                if (it.length > 0)
+                if (it.isNotEmpty())
                     showErrorInputField(this, View.GONE)
             }
         }
@@ -318,7 +318,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun init() {
-        if (selectedAddress != null && selectedAddress.postalCode.isNullOrEmpty()) {
+        if (selectedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
         }
         if (recipientName?.text.toString().isEmpty()) {
@@ -381,18 +381,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingProgressBar.visibility = View.GONE
-                    if (it?.data == null) {
+                    savedAddressResponse = if (it?.data == null) {
                         val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/savedAddress.json"
                         )
-                        var mockSavedAddressResponse: SavedAddressResponse = Gson().fromJson(
+                        val mockSavedAddressResponse: SavedAddressResponse = Gson().fromJson(
                             jsonFileString,
                             object : TypeToken<SavedAddressResponse>() {}.type
                         )
-                        savedAddressResponse = mockSavedAddressResponse
+                        mockSavedAddressResponse
                     } else
-                        savedAddressResponse = it?.data as? SavedAddressResponse
+                        it.data as? SavedAddressResponse
                     if (cellphoneNumberEditText?.text.toString().isEmpty())
                         cellphoneNumberEditText.setText(savedAddressResponse?.primaryContactNo)
                 }
@@ -525,10 +525,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingProgressBar.visibility = View.GONE
-                    if ((it?.data as ProvincesResponse)?.regions.isNullOrEmpty()) {
+                    if ((it?.data as ProvincesResponse).regions.isNullOrEmpty()) {
                         //showNoStoresError()
                     } else {
-                        it?.data?.regions?.let { it1 ->
+                        it.data?.regions?.let { it1 ->
                             provinceList = it1
                             checkIfSelectedProvinceExist(it1)
                         }
@@ -731,7 +731,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             if (savedAddressResponse?.addresses != null) {
                                 val iterator = savedAddressResponse?.addresses?.iterator()
                                 while (iterator?.hasNext() == true) {
-                                    val item = iterator?.next()
+                                    val item = iterator.next()
                                     if (item.id.equals(selectedAddressId)) {
                                         iterator.remove()
                                         break
@@ -914,7 +914,19 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         ).observe(this, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    it?.data?.let { anyResponse ->
+                    var changeAddressResponse = it?.data as? ChangeAddressResponse
+                    if (changeAddressResponse == null){
+                        val jsonFileString = Utils.getJsonDataFromAsset(
+                            activity?.applicationContext,
+                            "mocks/changeAddressResponse.json"
+                        )
+                        val mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
+                            jsonFileString,
+                            object : TypeToken<ChangeAddressResponse>() {}.type
+                        )
+                        changeAddressResponse = mockChangeAddressResponse
+                    }
+                    changeAddressResponse.let { anyResponse ->
                         (anyResponse as? ChangeAddressResponse)?.let { response ->
                             // If deliverable false then show cant deliver popup
                             // Don't allow user to navigate to Checkout page when deliverable : [false].
