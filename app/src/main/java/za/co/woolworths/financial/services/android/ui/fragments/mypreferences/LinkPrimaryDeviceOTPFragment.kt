@@ -599,6 +599,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun handleChangeOrDeletePrimaryDeviceFailure() {
+        sendinOTPLayout?.visibility = View.GONE
         unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
         buttonNext?.visibility = View.VISIBLE
         didNotReceiveOTPTextView?.visibility = View.VISIBLE
@@ -675,7 +676,11 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_CANCELED) {
-            resetOTPView()
+            Handler().postDelayed({
+                linkDeviceOTPEdtTxt5.requestFocus()
+                val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+            }, AppConstant.DELAY_200_MS)
             unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
         }
 
