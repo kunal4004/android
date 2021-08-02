@@ -45,22 +45,18 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
 
     private fun setActionBar() {
         setSupportActionBar(vocToolbar)
-        val mActionBar = supportActionBar
-        if (mActionBar != null) {
-            mActionBar.setDisplayHomeAsUpEnabled(true)
-            mActionBar.setDisplayShowTitleEnabled(false)
-            mActionBar.setDisplayUseLogoEnabled(false)
-            mActionBar.setHomeAsUpIndicator(R.drawable.back24)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+            setHomeAsUpIndicator(R.drawable.back24)
         }
     }
 
     private fun setNavHostStartDestination() {
-        if (navigationHost == null) {
-            return
-        }
-        val graph = navigationHost!!.graph
+        val graph = navigationHost?.graph ?: return
         graph.startDestination = R.id.surveyVocFragment
-        navigationHost!!.setGraph(graph, if (intent != null) intent.extras else null)
+        navigationHost?.setGraph(graph, if (intent != null) intent.extras else null)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -74,10 +70,10 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
     }
 
     override fun onBackPressed() {
-        if (navigationHost!!.currentDestination == null) return
-        when (navigationHost!!.currentDestination!!.id) {
+        val currentDestination = navigationHost?.currentDestination ?: return
+        when (currentDestination.id) {
             R.id.surveyVocFragment -> finishActivity()
-            else -> navigationHost!!.popBackStack()
+            else -> navigationHost?.popBackStack()
         }
     }
 
