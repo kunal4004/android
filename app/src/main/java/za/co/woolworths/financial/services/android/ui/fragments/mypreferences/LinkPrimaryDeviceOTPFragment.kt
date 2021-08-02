@@ -276,7 +276,12 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5?.windowToken, 0)
 
-        showValidatingOtp()
+        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+            return
+        }
+
+        callLinkingDeviceAPI()
     }
 
 
@@ -405,25 +410,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         }, RetrieveOTPResponse::class.java))
     }
 
-    private fun showValidatingOtp() {
-
-        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            return
-        }
-
-
-        showValidatingProcessing()
-
-        Handler().postDelayed({
-            sendinOTPLayout?.visibility = View.GONE
-            unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
-            showLinkingDeviceProcessing()
-        }, AppConstant.DELAY_1000_MS)
-
-        callLinkingDeviceAPI()
-    }
-
     private fun showValidateOTPError(msg: String) {
         sendinOTPLayout?.visibility = View.GONE
         unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
@@ -470,8 +456,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
             retryApiCall = RETRY_LINK_DEVICE
             return
         }
-
-        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
 
         showLinkingDeviceProcessing()
         //Location permission granted but no current location found.
@@ -643,6 +627,10 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun showLinkingDeviceProcessing() {
+        sendinOTPLayout?.visibility = View.GONE
+        unlinkDeviceOTPScreenConstraintLayout?.visibility = View.GONE
+        buttonNext?.visibility = View.GONE
+        didNotReceiveOTPTextView?.visibility = View.GONE
         sendOTPTitle?.visibility = View.GONE
         sendOTPSubtitle?.visibility = View.GONE
 
@@ -661,18 +649,6 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
 
         context?.let {
             sendOTPProcessingReq?.text = it.getString(R.string.link_device_sending_otp_processing)
-        }
-        sendinOTPLayout?.visibility = View.VISIBLE
-    }
-
-    private fun showValidatingProcessing() {
-        sendOTPTitle?.visibility = View.GONE
-        sendOTPSubtitle?.visibility = View.GONE
-        buttonNext?.visibility = View.GONE
-        didNotReceiveOTPTextView?.visibility = View.GONE
-
-        context?.let {
-            sendOTPProcessingReq?.text = it.getString(R.string.validating_otp)
         }
         sendinOTPLayout?.visibility = View.VISIBLE
     }
