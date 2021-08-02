@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/viewAllDeviceConstraintLayout"
+    android:id="@+id/viewAllDeviceItemConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/fifteen_dp"
@@ -83,6 +83,15 @@
         app:layout_constraintTop_toBottomOf="@id/viewAllDevicesTitleSeparator"
         android:layout_margin="@dimen/twenty_four_dp"
         android:id="@+id/viewAllDeviceDeleteImageView"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp" />
+
+    <ImageView
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_edit"
+        app:layout_constraintTop_toBottomOf="@id/viewAllDevicesTitleSeparator"
+        android:layout_margin="@dimen/twenty_four_dp"
+        android:id="@+id/viewAllDeviceEditImageView"
         android:layout_width="@dimen/twenty_four_dp"
         android:layout_height="@dimen/twenty_four_dp" />
 
