@@ -309,7 +309,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 applyNowState = applyNowState,
                 scrollableView = creditDebitCardPaymentsScrollView,
                 notificationBadge = badge,
-                onlineChatImageViewIndicator = onlineIndicatorImageView
+                onlineChatImageViewIndicator = onlineIndicatorImageView,
+                vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventPaymentOptions()
             )
 
             mChatFloatingActionButtonBubbleView?.build()
