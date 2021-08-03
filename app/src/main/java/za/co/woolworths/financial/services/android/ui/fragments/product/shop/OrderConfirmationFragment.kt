@@ -13,11 +13,13 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
+import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 
 
 class OrderConfirmationFragment : Fragment()  {
@@ -40,6 +42,8 @@ class OrderConfirmationFragment : Fragment()  {
                     response?.orderSummary?.orderId?.let { setToolbar(it) }
 
                     setupDeliveryOrCollectionDetails(response)
+
+                    setupOrderTotalDetails(response)
                 }
 
                 override fun onFailure(error: Throwable?) {
@@ -84,6 +88,14 @@ class OrderConfirmationFragment : Fragment()  {
                 deliveryDateTimeTextView.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
             }
         }
+    }
+
+    private fun setupOrderTotalDetails(response: SubmittedOrderResponse?) {
+        orderTotalTextView.text = CurrencyFormatter
+            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.total)
+        yourCartTextView.text = CurrencyFormatter
+            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.basketTotal)
+
     }
 
     private fun applyBoldBeforeComma(deliveryDateAndTime: String?): Spannable {
