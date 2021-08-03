@@ -407,8 +407,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                         }
                     }
 
-                }?.run {
-                    showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
                 }
             }
         }
@@ -423,15 +421,15 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             CreditCardActivationState.FAILED,
             CreditCardActivationState.ACTIVATED -> {
                 stopCardActivationShimmer()
-                includeAccountDetailHeaderView.visibility = VISIBLE
+                includeAccountDetailHeaderView?.visibility = VISIBLE
             }
             CreditCardActivationState.UNAVAILABLE,
             CreditCardActivationState.AVAILABLE -> {
                 stopCardActivationShimmer()
-                creditCardActivationView.visibility = VISIBLE
-                activateCreditCard.visibility = VISIBLE
+                creditCardActivationView?.visibility = VISIBLE
+                activateCreditCard?.visibility = VISIBLE
                 KotlinUtils.roundCornerDrawable(creditCardStatusTextView, if (status == CreditCardActivationState.AVAILABLE) "#bad110" else "#b2b2b2")
-                creditCardStatusTextView.text = status.value
+                creditCardStatusTextView?.text = status.value
             }
         }
     }
@@ -511,7 +509,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     override fun onGetCreditCardDeliveryStatusFailure() {
         stopCardActivationShimmer()
-        includeAccountDetailHeaderView.visibility = VISIBLE
+        includeAccountDetailHeaderView?.visibility = VISIBLE
     }
 
     override fun showGetCreditCardDeliveryStatus(deliveryStatus: DeliveryStatus) {
@@ -571,7 +569,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     private fun showDefaultCreditCardStatusView() {
         stopCardActivationShimmer()
-        includeAccountDetailHeaderView.visibility = VISIBLE
+        includeAccountDetailHeaderView?.visibility = VISIBLE
     }
 
     private fun showScheduleYourDelivery() {
