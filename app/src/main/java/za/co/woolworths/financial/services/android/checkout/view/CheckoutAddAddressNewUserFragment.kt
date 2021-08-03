@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_RESPONSE_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UNSELLABLE_CHANGE_STORE_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UPDATE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter.Companion.EDIT_ADDRESS_POSITION_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter.Companion.EDIT_SAVED_ADDRESS_RESPONSE_KEY
@@ -426,6 +427,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         setFragmentResultListener(SUBURB_SELECTION_BACK_PRESSED) { requestKey, bundle ->
             enableSuburbSelection()
             enableProvinceSelection()
+        }
+
+        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { requestKey, bundle ->
+            onAddressChangeSucess()
         }
     }
 
@@ -912,7 +917,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     var changeAddressResponse = it?.data as? ChangeAddressResponse
-                    if (changeAddressResponse == null){
+                    if (changeAddressResponse == null) {
                         val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/changeAddressResponse.json"
@@ -942,15 +947,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             }
 
                             // else functionality complete.
-                            if (isAddNewAddress) {
-                                setFragmentResult(
-                                    ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
-                                        SAVED_ADDRESS_KEY to Utils.toJson(savedAddressResponse)
-                                    )
-                                )
-                                navController?.navigateUp()
-                            } else
-                                navigateToAddressConfirmation()
+                            onAddressChangeSucess()
 
                         }
                     }
@@ -963,6 +960,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 }
             }
         })
+    }
+
+    private fun onAddressChangeSucess() {
+        if (isAddNewAddress) {
+            setFragmentResult(
+                ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
+                    SAVED_ADDRESS_KEY to Utils.toJson(savedAddressResponse)
+                )
+            )
+            navController?.navigateUp()
+        } else
+            navigateToAddressConfirmation()
     }
 
     /**

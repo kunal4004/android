@@ -83,11 +83,11 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         val fragmentList: MutableList<androidx.fragment.app.Fragment> =
             navHostFrag.childFragmentManager.fragments
 
         if (fragmentList.isNullOrEmpty()) {
+            overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
             finish()
             return
         }
@@ -100,10 +100,11 @@ class CheckoutActivity : AppCompatActivity() {
                 (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
             }
             fragmentList[0] is UnsellableItemsFragment -> {
+                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
                 finish()
             }
             else -> {
-                navHostFrag?.navController?.navigateUp()
+                super.onBackPressed()
             }
         }
     }
