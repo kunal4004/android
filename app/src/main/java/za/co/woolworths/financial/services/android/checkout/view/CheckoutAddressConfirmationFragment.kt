@@ -87,8 +87,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val bundle = arguments?.getBundle("bundle")
-        updateSavedAddress(bundle)
+        updateSavedAddress(arguments)
     }
 
     override fun onClick(v: View?) {
@@ -209,12 +208,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private fun updateSavedAddress(bundle: Bundle?) {
         bundle?.apply {
             if (containsKey(SAVED_ADDRESS_KEY)) {
-                val addressString = getString(SAVED_ADDRESS_KEY)
-                if (!addressString.isNullOrEmpty() && !addressString.equals("null", true))
-                    savedAddress = (Utils.jsonStringToObject(
-                        addressString,
-                        SavedAddressResponse::class.java
-                    ) as? SavedAddressResponse)
+                savedAddress = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
             }
         }
         checkoutAddressConfirmationListAdapter?.setData(savedAddress)
