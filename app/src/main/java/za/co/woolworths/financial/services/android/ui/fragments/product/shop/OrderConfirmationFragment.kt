@@ -68,26 +68,36 @@ class OrderConfirmationFragment : Fragment()  {
                 optionLocation.text = response?.deliveryDetails?.shippingAddress?.address1
             }
 
-            if(response?.deliveryDetails?.deliveryInfos?.size!! >= 1){
-                val splitDateTime = response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime?.split(",", ignoreCase = false, limit = 2)
-
-                if(splitDateTime?.size == 2){
-                    val wordSpan: Spannable =
-                        SpannableString(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
-
-                    wordSpan.setSpan(
-                        StyleSpan(BOLD),
-                        0,
-                        splitDateTime[0].length+1,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    deliveryDateTime.text = wordSpan
-                }
-                else{
-                    deliveryDateTime.text =
-                        response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
-                }
+            if(response?.deliveryDetails?.deliveryInfos?.size == 2){
+                one_delivery.visibility = View.GONE
+                food_delivery.visibility = View.VISIBLE
+                other_delivery.visibility = View.VISIBLE
+                foodDeliveryDateTime.text = applyBoldBeforeComma(response
+                    .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+                otherDeliveryDateTime.text =
+                    response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
+            }
+            else if(response?.deliveryDetails?.deliveryInfos?.size == 1){
+                one_delivery.visibility = View.VISIBLE
+                food_delivery.visibility = View.GONE
+                other_delivery.visibility = View.GONE
+                deliveryDateTime.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
             }
         }
+    }
+
+    private fun applyBoldBeforeComma(deliveryDateAndTime: String?): Spannable {
+        val splitDateTime = deliveryDateAndTime?.split(",", ignoreCase = false, limit = 2)
+        val wordSpan: Spannable = SpannableString(deliveryDateAndTime)
+
+        if (splitDateTime?.size == 2) {
+            wordSpan.setSpan(
+                StyleSpan(BOLD),
+                0,
+                splitDateTime[0].length + 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        return wordSpan
     }
 }
