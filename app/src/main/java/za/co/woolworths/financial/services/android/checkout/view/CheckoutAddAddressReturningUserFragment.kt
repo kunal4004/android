@@ -146,12 +146,13 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         when (deliveryType) {
             DeliveryType.FOOD -> {
                 val deliverySlots =
-                    availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
+                    availableDeliverySlotsResponse?.sortedFoodDeliverySlots?.get(weekNumber)
                 expandableGrid.apply {
                     createTimingsGrid(deliverySlots?.hourSlots, timingsGridViewFood)
                     createDatesGrid(deliverySlots?.headerDates, dateGridViewFood)
                     createTimeSlotGridView(
-                        deliverySlots,
+                        deliverySlots?.week,
+                        deliverySlots?.hourSlots,
                         weekNumber,
                         timeSlotsGridViewFood,
                         DeliveryType.FOOD
@@ -165,7 +166,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     createTimingsGrid(deliverySlots?.hourSlots, timingsGridViewOther)
                     createDatesGrid(deliverySlots?.headerDates, dateGridViewOther)
                     createTimeSlotGridView(
-                        deliverySlots,
+                        deliverySlots?.week,
+                        deliverySlots?.hourSlots,
                         weekNumber,
                         timeSlotsGridViewOther,
                         DeliveryType.OTHER
@@ -237,7 +239,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             selectedSlotResponseOther = availableDeliverySlotsResponse
     }
 
-    fun setSelectedFoodSlot(selectedSlot: Slot, deliveryType: DeliveryType) {
+    fun setSelectedFoodOrOtherSlot(selectedSlot: Slot, deliveryType: DeliveryType) {
         if (deliveryType.equals(DeliveryType.FOOD))
             selectedFoodSlot = selectedSlot
         else

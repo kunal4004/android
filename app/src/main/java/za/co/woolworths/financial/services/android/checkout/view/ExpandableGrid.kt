@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.HeaderDate
-import za.co.woolworths.financial.services.android.checkout.service.network.SortedJoinDeliverySlot
+import za.co.woolworths.financial.services.android.checkout.service.network.Week
 import za.co.woolworths.financial.services.android.checkout.view.adapter.DeliverySlotsGridViewAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsDateGridViewAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsTimeGridViewAdapter
@@ -16,6 +16,8 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.DeliveryGr
  */
 class ExpandableGrid(val fragment: Fragment) {
 
+    val slotGridList: ArrayList<ArrayList<DeliveryGridModel>> = ArrayList()
+
     enum class SlotGridColors(val color: Int) {
         LIGHT_GREEN(R.color.light_green),
         DARK_GREEN(R.color.dark_green),
@@ -25,15 +27,15 @@ class ExpandableGrid(val fragment: Fragment) {
     }
 
     fun createTimeSlotGridView(
-        deliverySlots: SortedJoinDeliverySlot?,
+        deliveryWeekSlots: List<Week>?,
+        deliveryHoursSlots: List<String>?,
         weekNumber: Int,
         slotGridView: ExpandableGridViewScrollable,
         deliveryType: CheckoutAddAddressReturningUserFragment.DeliveryType
     ) {
         val deliveryGridList: ArrayList<DeliveryGridModel> = ArrayList()
-        val weekList = deliverySlots?.week
-        if (!weekList.isNullOrEmpty()) {
-            for (weekItem in weekList) {
+        if (!deliveryWeekSlots.isNullOrEmpty()) {
+            for (weekItem in deliveryWeekSlots) {
                 val slotsList = weekItem.slots
                 if (!slotsList.isNullOrEmpty()) {
                     for (slot in slotsList) {
@@ -71,6 +73,12 @@ class ExpandableGrid(val fragment: Fragment) {
                     }
                 }
             }
+            // This condition is to keep two diff list for slots.
+            if (deliveryType.equals(CheckoutAddAddressReturningUserFragment.DeliveryType.FOOD)) {
+                slotGridList.add(0, deliveryGridList)
+            } else {
+                slotGridList.add(1, deliveryGridList)
+            }
         }
         val adapter = fragment.context?.let {
             DeliverySlotsGridViewAdapter(
@@ -80,14 +88,20 @@ class ExpandableGrid(val fragment: Fragment) {
             )
         }
         slotGridView.apply {
-            numColumns = deliverySlots?.hourSlots?.size ?: 0
+            numColumns = deliveryHoursSlots?.size ?: 0
             setViewExpanded(true)
             this.adapter = adapter
         }
 
         slotGridView.setOnItemClickListener { parent, view, position, id ->
-            if (deliveryGridList[position].slot.available == true) {
-                for (model in deliveryGridList) {
+            var deliveryList: ArrayList<DeliveryGridModel>
+            if (deliveryType.equals(CheckoutAddAddressReturningUserFragment.DeliveryType.FOOD)) {
+                deliveryList = slotGridList[0]
+            } else
+                deliveryList = slotGridList[1]
+
+            if (deliveryList[position].slot.available == true) {
+                for (model in deliveryList) {
                     model.slot.selected = false
                     if (model.slot.available == true) {
                         if (model.slot.freeDeliverySlot == true)
@@ -99,14 +113,20 @@ class ExpandableGrid(val fragment: Fragment) {
                     }
                 }
 
-                val deliveryGridModel: DeliveryGridModel = deliveryGridList[position]
+                val deliveryGridModel: DeliveryGridModel = deliveryList[position]
                 deliveryGridModel.slot.selected = true
                 deliveryGridModel.backgroundImgColor =
                     if (deliveryGridModel.slot.freeDeliverySlot == true) SlotGridColors.DARK_GREEN.color else SlotGridColors.LIGHT_BLUE.color
                 //set selected slot in Main list
                 if (fragment is CheckoutAddAddressReturningUserFragment) {
-                    setSlotSelection(weekNumber, position, true, fragment.getSelectedSlotResponse(deliveryType), deliveryType)
-                    fragment.setSelectedFoodSlot(deliveryGridModel.slot, deliveryType)
+                    setSlotSelection(
+                        weekNumber,
+                        position,
+                        true,
+                        fragment.getSelectedSlotResponse(deliveryType),
+                        deliveryType
+                    )
+                    fragment.setSelectedFoodOrOtherSlot(deliveryGridModel.slot, deliveryType)
                 }
                 adapter?.notifyDataSetChanged()
             }
@@ -121,18 +141,29 @@ class ExpandableGrid(val fragment: Fragment) {
         deliveryType: CheckoutAddAddressReturningUserFragment.DeliveryType
     ) {
         val hrsSlotSize =
-            selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.hourSlots?.size ?: 0
+            if (deliveryType.equals(CheckoutAddAddressReturningUserFragment.DeliveryType.FOOD))
+                selectedSlotResponse?.sortedFoodDeliverySlots?.get(weekNumber)?.hourSlots?.size ?: 0
+            else
+                selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.hourSlots?.size ?: 0
         val weekPosition = position / hrsSlotSize
         val remainder = position % hrsSlotSize
         if (fragment is CheckoutAddAddressReturningUserFragment) {
-            fragment.setSelectedSlotResponse(setAllSlotSelection(selectedSlotResponse, false), deliveryType)
+            fragment.setSelectedSlotResponse(
+                setAllSlotSelection(selectedSlotResponse, false),
+                deliveryType
+            )
         }
-        selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
-            remainder
-        )?.selected = isSelected
+        if (deliveryType.equals(CheckoutAddAddressReturningUserFragment.DeliveryType.FOOD))
+            selectedSlotResponse?.sortedFoodDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
+                remainder
+            )?.selected = isSelected
+        else
+            selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
+                remainder
+            )?.selected = isSelected
     }
 
-    fun setAllSlotSelection(
+    private fun setAllSlotSelection(
         availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
         isSelected: Boolean
     ): AvailableDeliverySlotsResponse? {
