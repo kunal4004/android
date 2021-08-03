@@ -40,9 +40,7 @@ class CheckoutDeliveryTypeSelectionListAdapter(
     }
 
     override fun getItemCount(): Int {
-        if (openDayDeliverySlotsList?.isNullOrEmpty() == true)
-            return 0
-        return openDayDeliverySlotsList?.size!!
+        return openDayDeliverySlotsList?.size ?: 0
     }
 
     override fun onBindViewHolder(
@@ -55,8 +53,7 @@ class CheckoutDeliveryTypeSelectionListAdapter(
     fun getEstimatedDeliveryDates(deliverySlotsList: Map<Any, Double>, context: Context): String {
         val startDeliveryDay = ((deliverySlotsList).getValue("startDeliveryDay")).toInt().toString()
         val endDeliveryDay = ((deliverySlotsList).getValue("endDeliveryDay")).toInt().toString()
-        return startDeliveryDay.plus("-").plus(endDeliveryDay)
-            .plus(context.getString(R.string.working_days_text))
+        return context.getString(R.string.working_days_text, startDeliveryDay, endDeliveryDay)
     }
 
     inner class CheckoutDeliveryTypeSelectionViewHolder(itemView: View) :
