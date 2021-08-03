@@ -422,6 +422,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             CreditCardActivationState.ACTIVATED -> {
                 stopCardActivationShimmer()
                 includeAccountDetailHeaderView?.visibility = VISIBLE
+                includeManageMyCard?.visibility = GONE
+                myCardDetailTextView?.visibility = VISIBLE
             }
             CreditCardActivationState.UNAVAILABLE,
             CreditCardActivationState.AVAILABLE -> {
@@ -510,6 +512,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     override fun onGetCreditCardDeliveryStatusFailure() {
         stopCardActivationShimmer()
         includeAccountDetailHeaderView?.visibility = VISIBLE
+        includeManageMyCard?.visibility = GONE
+        myCardDetailTextView?.visibility = VISIBLE
     }
 
     override fun showGetCreditCardDeliveryStatus(deliveryStatus: DeliveryStatus) {
