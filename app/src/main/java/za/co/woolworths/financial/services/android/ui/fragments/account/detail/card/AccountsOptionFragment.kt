@@ -388,13 +388,27 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
             } else {
                 cardWithPLCState = mCardPresenterImpl?.getCardWithPLCState(cards)
-                if (cardWithPLCState == null) {
+                cards?.get(0)?.apply {
+                    when (envelopeNumber.isNullOrEmpty()) {
+                        true -> {
+                            when (cardStatus) {
+                                "PLC" -> {
+                                    when (isCreditCardEnable()) {
+                                        true -> executeCreditCardDeliveryStatusService()
+                                        false -> showGetCreditCardActivationStatus(if (Utils.isCreditCardActivationEndpointAvailable()) CreditCardActivationState.AVAILABLE else CreditCardActivationState.UNAVAILABLE)
+                                    }
+                                }
+                                "AAA" -> showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
+                            }
+                        }
+                        false -> {
+                            // envelope not null, call to get delivery status then show delivery journey()
+                            executeCreditCardDeliveryStatusService()
+                        }
+                    }
+
+                }?.run {
                     showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
-                } else {
-                    if (isCreditCardEnable()) {
-                        executeCreditCardDeliveryStatusService()
-                    } else
-                        showGetCreditCardActivationStatus(if (Utils.isCreditCardActivationEndpointAvailable()) CreditCardActivationState.AVAILABLE else CreditCardActivationState.UNAVAILABLE)
                 }
             }
         }
