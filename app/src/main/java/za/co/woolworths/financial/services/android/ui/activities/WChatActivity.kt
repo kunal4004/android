@@ -26,8 +26,6 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.*
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TO_COLLECTION_AGENT
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.CHAT_TYPE
@@ -37,10 +35,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_NO_INTERNET_RESULT
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_PACKAGE
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_SUBSCRIPTION_RESULT
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.util.*
 
 class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener {
@@ -62,6 +63,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener, View.OnClickListener
 
     companion object {
         const val DELAY: Long = 300
+        const val EXTRA_VOC_TRIGGER_EVENT = "extraVocTriggerEvent"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
