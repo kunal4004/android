@@ -393,7 +393,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                         true -> {
                             when (cardStatus) {
                                 "PLC" -> {
-                                    when (isCreditCardEnable()) {
+                                    when (isPLCGoodStanding()) {
                                         true -> executeCreditCardDeliveryStatusService()
                                         false -> showGetCreditCardActivationStatus(if (Utils.isCreditCardActivationEndpointAvailable()) CreditCardActivationState.AVAILABLE else CreditCardActivationState.UNAVAILABLE)
                                     }
@@ -546,7 +546,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         }
     }
 
-    private fun isCreditCardEnable(): Boolean {
+    private fun isPLCGoodStanding(): Boolean {
         var isEnable = false
         if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
             val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
