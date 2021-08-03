@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:padding="@dimen/twenty_four_dp">
+
+        <TextView
+            android:id="@+id/tvTitleFreeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/futura_semi_bold"
+            android:gravity="left"
+            android:lineSpacingExtra="@dimen/line_spacing_4sp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_20sp"
+            tools:text="Lorem ipsum sit dolor" />
+
+        <EditText
+            android:id="@+id/etValueFreeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/nineteen_dp"
+            android:background="@drawable/input_box_inactive_bg"
+            android:cursorVisible="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:gravity="top|left"
+            android:hint="@string/voc_question_freetext_hint_optional"
+            android:lines="5"
+            android:paddingStart="@dimen/thirteen_dp"
+            android:paddingTop="@dimen/twelve_dp"
+            android:paddingEnd="@dimen/fourteen_dp"
+            android:paddingBottom="@dimen/twelve_dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/unavailable"
+            android:textCursorDrawable="@drawable/cursor_custom_color"
+            android:textSize="@dimen/fifteen_sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/eight_dp"
+        android:alpha="0.3"
+        android:background="@color/color_separator_light_grey" />
+
+</LinearLayout>

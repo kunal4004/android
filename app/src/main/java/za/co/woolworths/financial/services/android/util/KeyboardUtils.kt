@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import java.lang.reflect.Method
 
 class KeyboardUtils {
     companion object {
@@ -18,6 +19,25 @@ class KeyboardUtils {
             activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
             val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+        }
+
+        fun hideKeyboardIfVisible(activity: Activity?) {
+            activity?.let {
+                if (isSystemKeyboardVisible(it)) {
+                    hideKeyboard(activity)
+                }
+            }
+        }
+
+        fun isSystemKeyboardVisible(activity: Activity): Boolean {
+            return try {
+                val manager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val windowHeightMethod: Method = InputMethodManager::class.java.getMethod("getInputMethodWindowVisibleHeight")
+                val height = windowHeightMethod.invoke(manager) as Int
+                height > 0
+            } catch (e: Exception) {
+                false
+            }
         }
     }
 }
