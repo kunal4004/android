@@ -734,7 +734,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     if (it?.data != null) {
                         if ((it.data as? DeleteAddressResponse)?.httpCode?.equals(HTTP_OK) == true) {
                             if (savedAddressResponse?.addresses != null) {
-                                val iterator = savedAddressResponse?.addresses?.iterator()
+                                val iterator = (savedAddressResponse?.addresses as? MutableList<Address>)?.iterator()
                                 while (iterator?.hasNext() == true) {
                                     val item = iterator.next()
                                     if (item.id.equals(selectedAddressId)) {
@@ -859,7 +859,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
                             if (savedAddressResponse != null && it?.data != null)
-                                savedAddressResponse?.addresses?.add((it.data as? AddAddressResponse)?.address)
+                                (it.data as? AddAddressResponse)?.address?.let { it1 ->
+                                    (savedAddressResponse?.addresses as? MutableList<Address>)?.add(
+                                        it1
+                                    )
+                                }
                             onAddNewAddress(body.nickname)
                         }
                         ResponseStatus.LOADING -> {
@@ -1070,10 +1074,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     if (savedAddressResponse != null && it?.data != null) {
                         arguments?.getBundle("bundle")?.getInt(EDIT_ADDRESS_POSITION_KEY)
                             ?.let { it1 ->
-                                savedAddressResponse?.addresses?.removeAt(it1)
-                                savedAddressResponse?.addresses?.add(
-                                    it1, (it.data as? AddAddressResponse)?.address
-                                )
+                                (savedAddressResponse?.addresses as? MutableList<Address>)?.removeAt(it1)
+                                (it.data as? AddAddressResponse)?.address?.let { it2 ->
+                                    (savedAddressResponse?.addresses as? MutableList<Address>)?.add(
+                                        it1, it2
+                                    )
+                                }
                             }
                         setFragmentResult(
                             UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
