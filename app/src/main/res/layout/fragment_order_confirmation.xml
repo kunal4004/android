@@ -2,6 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/default_background"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.Toolbar
@@ -33,6 +35,16 @@
             android:src="@drawable/close_24" />
 
     </androidx.appcompat.widget.Toolbar>
+
+    <include
+        android:id="@+id/deliveryCollectionDetails"
+        layout="@layout/delivering_to_collection_from"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/orderToolbar"
+        tools:visibility="visible"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
