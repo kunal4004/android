@@ -462,39 +462,41 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     override fun changeAddress(address: Address) {
-        checkoutAddAddressNewUserViewModel.changeAddress(address.nickname)
-            .observe(viewLifecycleOwner, {
-                when (it.responseStatus) {
-                    ResponseStatus.SUCCESS -> {
+        address.nickname?.let { nickname ->
+            checkoutAddAddressNewUserViewModel.changeAddress(nickname)
+                .observe(viewLifecycleOwner, {
+                    when (it.responseStatus) {
+                        ResponseStatus.SUCCESS -> {
 
-                        /*val jsonFileString = Utils.getJsonDataFromAsset(
-                            activity?.applicationContext,
-                            "mocks/unsellableItems.json"
-                        )
-                        val mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
-                            jsonFileString,
-                            object : TypeToken<ChangeAddressResponse>() {}.type
-                        )*/
-
-                        val changeAddressResponse = it?.data as? ChangeAddressResponse
-                        if (changeAddressResponse != null && changeAddressResponse.deliverable) {
-                            if (changeAddressResponse.unSellableCommerceItems?.size!! > 0) {
-                                navigateToUnsellableItemsFragment(
-                                    changeAddressResponse.unSellableCommerceItems,
-                                    address,
-                                    changeAddressResponse.deliverable
+                            /*val jsonFileString = Utils.getJsonDataFromAsset(
+                                    activity?.applicationContext,
+                                    "mocks/unsellableItems.json"
                                 )
+                                val mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
+                                    jsonFileString,
+                                    object : TypeToken<ChangeAddressResponse>() {}.type
+                                )*/
+
+                            val changeAddressResponse = it?.data as? ChangeAddressResponse
+                            if (changeAddressResponse != null && changeAddressResponse.deliverable) {
+                                if (changeAddressResponse.unSellableCommerceItems?.size!! > 0) {
+                                    navigateToUnsellableItemsFragment(
+                                        changeAddressResponse.unSellableCommerceItems,
+                                        address,
+                                        changeAddressResponse.deliverable
+                                    )
+                                }
                             }
                         }
-                    }
-                    ResponseStatus.LOADING -> {
+                        ResponseStatus.LOADING -> {
 
-                    }
-                    ResponseStatus.ERROR -> {
+                        }
+                        ResponseStatus.ERROR -> {
 
+                        }
                     }
-                }
-            })
+                })
+        }
     }
 
     override fun onSuburbSelected(suburb: Suburb) {
