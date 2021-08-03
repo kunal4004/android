@@ -37,7 +37,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <include
-        android:id="@+id/deliveryCollectionDetails"
+        android:id="@+id/deliveryCollectionDetailsConstraintLayout"
         layout="@layout/delivering_to_collection_from"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

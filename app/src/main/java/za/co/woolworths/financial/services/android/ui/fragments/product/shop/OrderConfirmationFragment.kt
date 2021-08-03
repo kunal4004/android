@@ -54,7 +54,7 @@ class OrderConfirmationFragment : Fragment()  {
 
     private fun setupDeliveryOrCollectionDetails(response: SubmittedOrderResponse?) {
         context?.let {
-            deliveryCollectionDetails.visibility = View.VISIBLE
+            deliveryCollectionDetailsConstraintLayout.visibility = View.VISIBLE
             if (response?.orderSummary?.store?.name != null) {
                 optionImage.background =
                     AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
@@ -69,19 +69,19 @@ class OrderConfirmationFragment : Fragment()  {
             }
 
             if(response?.deliveryDetails?.deliveryInfos?.size == 2){
-                one_delivery.visibility = View.GONE
-                food_delivery.visibility = View.VISIBLE
-                other_delivery.visibility = View.VISIBLE
-                foodDeliveryDateTime.text = applyBoldBeforeComma(response
+                oneDeliveryLinearLayout.visibility = View.GONE
+                foodDeliveryLinearLayout.visibility = View.VISIBLE
+                otherDeliveryLinearLayout.visibility = View.VISIBLE
+                foodDeliveryDateTimeTextView.text = applyBoldBeforeComma(response
                     .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
-                otherDeliveryDateTime.text =
+                otherDeliveryDateTimeTextView.text =
                     response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
             }
             else if(response?.deliveryDetails?.deliveryInfos?.size == 1){
-                one_delivery.visibility = View.VISIBLE
-                food_delivery.visibility = View.GONE
-                other_delivery.visibility = View.GONE
-                deliveryDateTime.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+                oneDeliveryLinearLayout.visibility = View.VISIBLE
+                foodDeliveryLinearLayout.visibility = View.GONE
+                otherDeliveryLinearLayout.visibility = View.GONE
+                deliveryDateTimeTextView.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
             }
         }
     }
