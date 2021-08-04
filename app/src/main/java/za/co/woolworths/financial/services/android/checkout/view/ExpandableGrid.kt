@@ -19,8 +19,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.DeliveryGr
  */
 class ExpandableGrid(val fragment: Fragment) {
 
-    private val slotGridList: ArrayList<ArrayList<DeliveryGridModel>> =
-        ArrayList(DeliveryFoodOrOther.values().size)
+    private val slotGridList: HashMap<DeliveryFoodOrOther, ArrayList<DeliveryGridModel>> = HashMap()
 
     enum class SlotGridColors(val color: Int) {
         LIGHT_GREEN(R.color.light_green),
@@ -84,9 +83,9 @@ class ExpandableGrid(val fragment: Fragment) {
             }
             // This condition is to keep two diff list for slots.
             if (deliveryType.equals(DeliveryType.FOOD)) {
-                slotGridList.add(FOOD.number, deliveryGridList)
+                slotGridList.put(FOOD, deliveryGridList)
             } else {
-                slotGridList.add(OTHER.number, deliveryGridList)
+                slotGridList.put(OTHER, deliveryGridList)
             }
         }
         val adapter = fragment.context?.let {
@@ -104,9 +103,9 @@ class ExpandableGrid(val fragment: Fragment) {
 
         slotGridView.setOnItemClickListener { parent, view, position, id ->
             val deliveryList =
-                if (deliveryType.equals(DeliveryType.FOOD)) slotGridList[FOOD.number] else slotGridList[OTHER.number]
+                if (deliveryType.equals(DeliveryType.FOOD)) slotGridList[FOOD] else slotGridList[OTHER]
 
-            if (deliveryList[position].slot.available == true) {
+            if (deliveryList?.get(position)?.slot?.available == true) {
                 for (model in deliveryList) {
                     model.slot.selected = false
                     if (model.slot.available == true) {

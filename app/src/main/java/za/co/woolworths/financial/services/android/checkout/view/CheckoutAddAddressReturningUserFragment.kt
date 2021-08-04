@@ -58,9 +58,14 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         OTHER("other")
     }
 
-    enum class WeekCounter(val week: Int){
+    enum class WeekCounter(val week: Int) {
         FIRST(0),
         SECOND(1)
+    }
+
+    enum class FulfillmentsType(val type: String) {
+        FOOD("1"),
+        OTHER("2")
     }
 
     override fun onCreateView(
@@ -120,6 +125,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun initializeDeliveryTypeSelectionView(openDayDeliverySlots: List<Any>?) {
+        // To show How would you like it to delivered.
         checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
         val timeSlotListItem: MutableMap<Any, Any> = HashMap()
         timeSlotListItem["deliveryType"] = DELIVERY_TYPE_TIMESLOT
@@ -152,6 +158,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
         weekNumber: Int, deliveryType: DeliveryType
     ) {
+        checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
         when (deliveryType) {
             FOOD -> {
                 val deliverySlots =
@@ -204,6 +211,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
                     /*if (it.data != null) {
+                    // Keeping two diff response not to get merge while showing 2 diff slots.
                        selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
                        selectedSlotResponseOther = it.data as? AvailableDeliverySlotsResponse
                         initializeGrid(selectedSlotResponseFood, FIRST.week)
@@ -221,8 +229,23 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     )
                     selectedSlotResponseFood = mockDeliverySlotResponse
                     selectedSlotResponseOther = mockDeliverySlotResponse
-                    initializeGrid(selectedSlotResponseFood, FIRST.week, FOOD)
-                    initializeDeliveryTypeSelectionView(selectedSlotResponseFood?.openDayDeliverySlots)
+                    if (selectedSlotResponseFood?.fulfillmentTypes?.join?.equals(FulfillmentsType.FOOD) == true) {
+                        //Only for Food
+                        initializeGrid(selectedSlotResponseFood, FIRST.week, FOOD)
+                    } else if (selectedSlotResponseFood?.fulfillmentTypes?.join?.equals(
+                            FulfillmentsType.OTHER
+                        ) == true && selectedSlotResponseFood?.fulfillmentTypes?.other?.equals(
+                            FulfillmentsType.OTHER
+                        ) == false
+                    ) {
+                        // For mix basket
+                        initializeGrid(selectedSlotResponseFood, FIRST.week, FOOD)
+                        initializeDeliveryTypeSelectionView(selectedSlotResponseFood?.openDayDeliverySlots)
+                    } else {
+                        // for Other
+                        initializeDeliveryTypeSelectionView(selectedSlotResponseFood?.openDayDeliverySlots)
+                    }
+
                 }
                 ResponseStatus.LOADING -> {
                     loadingBar.visibility = View.VISIBLE
