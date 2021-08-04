@@ -155,7 +155,7 @@ class ExpandableGrid(val fragment: Fragment) {
         val remainder = position % hrsSlotSize
         if (fragment is CheckoutAddAddressReturningUserFragment) {
             fragment.setSelectedSlotResponse(
-                setAllSlotSelection(selectedSlotResponse, false),
+                setAllSlotSelection(selectedSlotResponse, false, deliveryType),
                 deliveryType
             )
         }
@@ -171,25 +171,38 @@ class ExpandableGrid(val fragment: Fragment) {
 
     private fun setAllSlotSelection(
         availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
-        isSelected: Boolean
+        isSelected: Boolean,
+        deliveryType: DeliveryType
     ): AvailableDeliverySlotsResponse? {
-        val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots
-        if (deliverySlots != null) {
-            for (slots in deliverySlots) {
-                val week = slots.week
-                if (week != null) {
-                    for (weeks in week) {
-                        val slot = weeks.slots
-                        if (slot != null) {
-                            for (slots in slot) {
-                                slots.selected = isSelected
-                            }
-                        }
-                    }
+        if (deliveryType.equals(DeliveryType.FOOD)) {
+            val deliverySlots = availableDeliverySlotsResponse?.sortedFoodDeliverySlots
+            if (deliverySlots != null) {
+                for (slots in deliverySlots) {
+                    setweekSlotsResponse(slots.week, isSelected)
+                }
+            }
+        } else {
+            val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots
+            if (deliverySlots != null) {
+                for (slots in deliverySlots) {
+                    setweekSlotsResponse(slots.week, isSelected)
                 }
             }
         }
         return availableDeliverySlotsResponse
+    }
+
+    private fun setweekSlotsResponse(week: List<Week>?, isSelected: Boolean) {
+        if (week != null) {
+            for (weeks in week) {
+                val slot = weeks.slots
+                if (slot != null) {
+                    for (slots in slot) {
+                        slots.selected = isSelected
+                    }
+                }
+            }
+        }
     }
 
     fun createTimingsGrid(hoursSlots: List<String>?, timeGridView: GridView) {

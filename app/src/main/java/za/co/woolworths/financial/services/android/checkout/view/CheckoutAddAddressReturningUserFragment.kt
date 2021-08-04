@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Chec
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
@@ -55,6 +56,11 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     enum class DeliveryType(val type: String) {
         FOOD("food"),
         OTHER("other")
+    }
+
+    enum class WeekCounter(val week: Int){
+        FIRST(0),
+        SECOND(1)
     }
 
     override fun onCreateView(
@@ -200,7 +206,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     /*if (it.data != null) {
                        selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
                        selectedSlotResponseOther = it.data as? AvailableDeliverySlotsResponse
-                        initializeGrid(selectedSlotResponseFood, 0)
+                        initializeGrid(selectedSlotResponseFood, FIRST.week)
                         initializeDeliveryTypeSelectionView(selectedSlotResponseFood?.openDayDeliverySlots)
                     }*/
 
@@ -215,7 +221,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     )
                     selectedSlotResponseFood = mockDeliverySlotResponse
                     selectedSlotResponseOther = mockDeliverySlotResponse
-                    initializeGrid(selectedSlotResponseFood, 0, FOOD)
+                    initializeGrid(selectedSlotResponseFood, FIRST.week, FOOD)
                     initializeDeliveryTypeSelectionView(selectedSlotResponseFood?.openDayDeliverySlots)
                 }
                 ResponseStatus.LOADING -> {
@@ -252,16 +258,16 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.previousImgBtnFood -> {
-                initializeGrid(selectedSlotResponseFood, 0, FOOD)
+                initializeGrid(selectedSlotResponseFood, FIRST.week, FOOD)
             }
             R.id.nextImgBtnFood -> {
-                initializeGrid(selectedSlotResponseFood, 1, FOOD)
+                initializeGrid(selectedSlotResponseFood, SECOND.week, FOOD)
             }
             R.id.previousImgBtnOther -> {
-                initializeGrid(selectedSlotResponseOther, 0, OTHER)
+                initializeGrid(selectedSlotResponseOther, FIRST.week, OTHER)
             }
             R.id.nextImgBtnOther -> {
-                initializeGrid(selectedSlotResponseOther, 1, OTHER)
+                initializeGrid(selectedSlotResponseOther, SECOND.week, OTHER)
             }
         }
     }
@@ -272,8 +278,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             )
         ) {
             gridLayoutDeliveryOptions.visibility = View.VISIBLE
-            initializeGrid(selectedSlotResponseOther, 0, OTHER)
+            initializeGrid(selectedSlotResponseOther, FIRST.week, OTHER)
         } else {
+            selectedOtherSlot = Slot()
             gridLayoutDeliveryOptions.visibility = View.GONE
         }
     }
