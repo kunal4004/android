@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.widget.GridView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
+import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
 import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.HeaderDate
 import za.co.woolworths.financial.services.android.checkout.service.network.Week
@@ -32,6 +34,69 @@ class ExpandableGrid(val fragment: Fragment) {
     enum class DeliveryFoodOrOther(val number: Int) {
         FOOD(0),
         OTHER(1)
+    }
+
+    fun initialiseGridView(
+        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
+        weekNumber: Int,
+        deliveryType: DeliveryType
+    ) {
+        when (deliveryType) {
+            DeliveryType.MIXED_FOOD -> {
+                val deliverySlots =
+                    availableDeliverySlotsResponse?.sortedFoodDeliverySlots?.get(weekNumber)
+                createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewFood)
+                createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewFood)
+                createTimeSlotGridView(
+                    deliverySlots?.week,
+                    deliverySlots?.hourSlots,
+                    weekNumber,
+                    fragment.timeSlotsGridViewFood,
+                    deliveryType
+                )
+            }
+            DeliveryType.MIXED_OTHER -> {
+                val deliverySlots =
+                    availableDeliverySlotsResponse?.sortedOtherDeliverySlots?.get(weekNumber)
+                createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
+                createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewOther)
+                createTimeSlotGridView(
+                    deliverySlots?.week,
+                    deliverySlots?.hourSlots,
+                    weekNumber,
+                    fragment.timeSlotsGridViewOther,
+                    deliveryType
+                )
+            }
+            DeliveryType.ONLY_FOOD -> {
+                val deliverySlots =
+                    availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
+
+                createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewFood)
+                createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewFood)
+                createTimeSlotGridView(
+                    deliverySlots?.week,
+                    deliverySlots?.hourSlots,
+                    weekNumber,
+                    fragment.timeSlotsGridViewFood,
+                    deliveryType
+                )
+            }
+            DeliveryType.ONLY_OTHER -> {
+                val deliverySlots =
+                    availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
+
+                createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
+                createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewOther)
+                createTimeSlotGridView(
+                    deliverySlots?.week,
+                    deliverySlots?.hourSlots,
+                    weekNumber,
+                    fragment.timeSlotsGridViewOther,
+                    deliveryType
+                )
+            }
+        }
     }
 
     fun createTimeSlotGridView(
@@ -82,7 +147,7 @@ class ExpandableGrid(val fragment: Fragment) {
                 }
             }
             // This condition is to keep two diff list for slots.
-            if (deliveryType.equals(DeliveryType.FOOD)) {
+            if (deliveryType.equals(DeliveryType.ONLY_FOOD) || deliveryType.equals(DeliveryType.MIXED_FOOD)) {
                 slotGridList.put(FOOD, deliveryGridList)
             } else {
                 slotGridList.put(OTHER, deliveryGridList)
@@ -103,7 +168,7 @@ class ExpandableGrid(val fragment: Fragment) {
 
         slotGridView.setOnItemClickListener { parent, view, position, id ->
             val deliveryList =
-                if (deliveryType.equals(DeliveryType.FOOD)) slotGridList[FOOD] else slotGridList[OTHER]
+                if (deliveryType.equals(DeliveryType.ONLY_FOOD) || deliveryType.equals(DeliveryType.MIXED_FOOD)) slotGridList[FOOD] else slotGridList[OTHER]
 
             if (deliveryList?.get(position)?.slot?.available == true) {
                 for (model in deliveryList) {
@@ -146,10 +211,16 @@ class ExpandableGrid(val fragment: Fragment) {
         deliveryType: DeliveryType
     ) {
         val hrsSlotSize =
-            if (deliveryType.equals(DeliveryType.FOOD))
-                selectedSlotResponse?.sortedFoodDeliverySlots?.get(weekNumber)?.hourSlots?.size ?: 0
-            else
-                selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.hourSlots?.size ?: 0
+            when {
+                deliveryType.equals(DeliveryType.MIXED_FOOD) -> selectedSlotResponse?.sortedFoodDeliverySlots?.get(
+                    weekNumber
+                )?.hourSlots?.size ?: 0
+                deliveryType.equals(DeliveryType.MIXED_OTHER) -> selectedSlotResponse?.sortedOtherDeliverySlots?.get(
+                    weekNumber
+                )?.hourSlots?.size ?: 0
+                else -> selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.hourSlots?.size
+                    ?: 0
+            }
         val weekPosition = position / hrsSlotSize
         val remainder = position % hrsSlotSize
         if (fragment is CheckoutAddAddressReturningUserFragment) {
@@ -158,8 +229,12 @@ class ExpandableGrid(val fragment: Fragment) {
                 deliveryType
             )
         }
-        if (deliveryType.equals(DeliveryType.FOOD))
+        if (deliveryType.equals(DeliveryType.MIXED_FOOD))
             selectedSlotResponse?.sortedFoodDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
+                remainder
+            )?.selected = isSelected
+        else if (deliveryType.equals(DeliveryType.MIXED_OTHER))
+            selectedSlotResponse?.sortedOtherDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
                 remainder
             )?.selected = isSelected
         else
@@ -173,18 +248,29 @@ class ExpandableGrid(val fragment: Fragment) {
         isSelected: Boolean,
         deliveryType: DeliveryType
     ): AvailableDeliverySlotsResponse? {
-        if (deliveryType.equals(DeliveryType.FOOD)) {
-            val deliverySlots = availableDeliverySlotsResponse?.sortedFoodDeliverySlots
-            if (deliverySlots != null) {
-                for (slots in deliverySlots) {
-                    setweekSlotsResponse(slots.week, isSelected)
+        when (deliveryType) {
+            DeliveryType.MIXED_FOOD -> {
+                val deliverySlots = availableDeliverySlotsResponse?.sortedFoodDeliverySlots
+                if (deliverySlots != null) {
+                    for (slots in deliverySlots) {
+                        setweekSlotsResponse(slots.week, isSelected)
+                    }
                 }
             }
-        } else {
-            val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots
-            if (deliverySlots != null) {
-                for (slots in deliverySlots) {
-                    setweekSlotsResponse(slots.week, isSelected)
+            DeliveryType.MIXED_OTHER -> {
+                val deliverySlots = availableDeliverySlotsResponse?.sortedOtherDeliverySlots
+                if (deliverySlots != null) {
+                    for (slots in deliverySlots) {
+                        setweekSlotsResponse(slots.week, isSelected)
+                    }
+                }
+            }
+            else -> {
+                val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots
+                if (deliverySlots != null) {
+                    for (slots in deliverySlots) {
+                        setweekSlotsResponse(slots.week, isSelected)
+                    }
                 }
             }
         }
