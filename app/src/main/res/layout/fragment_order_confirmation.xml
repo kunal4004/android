@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/default_background"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/default_background">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/orderToolbar"
@@ -36,23 +36,36 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <include
-        android:id="@+id/deliveryCollectionDetailsConstraintLayout"
-        layout="@layout/delivering_to_collection_from"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/ten_dp"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@+id/orderToolbar"
-        tools:visibility="visible"/>
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/orderToolbar">
 
-    <include
-        android:id="@+id/otherOrderDetailsConstraintLayout"
-        layout="@layout/other_order_details"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/ten_dp"
-        app:layout_constraintTop_toBottomOf="@+id/deliveryCollectionDetailsConstraintLayout"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <include
+                android:id="@+id/deliveryCollectionDetailsConstraintLayout"
+                layout="@layout/delivering_to_collection_from"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:visibility="invisible"
+                tools:visibility="visible" />
+
+            <include
+                android:id="@+id/otherOrderDetailsConstraintLayout"
+                layout="@layout/other_order_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:visibility="invisible"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
