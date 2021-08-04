@@ -1,28 +1,18 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
-import android.R.attr.font
-import android.graphics.Color
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
-import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
-import kotlinx.android.synthetic.main.layout_delivering_to_details.*
+import kotlinx.android.synthetic.main.checkout_grid_layout.*
+import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
@@ -30,11 +20,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Avai
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.Slot
-import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
-import za.co.woolworths.financial.services.android.checkout.view.adapter.DeliverySlotsGridViewAdapter
-import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsDateGridViewAdapter
-import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsTimeGridViewAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -44,12 +30,15 @@ import za.co.woolworths.financial.services.android.util.Utils
 /**
  * Created by Kunal Uttarwar on 27/05/21.
  */
-class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener {
+class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener,
+    CheckoutDeliveryTypeSelectionListAdapter.EventListner {
 
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
     private var selectedSlotResponse: AvailableDeliverySlotsResponse? = null
     private var selectedFoodSlot = Slot()
+    private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter? =
+        null
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -71,7 +60,6 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun initViews() {
-        initializeDeliveringToView()
         initializeDeliveryFoodItems()
         initializeFoodSubstitution()
 
@@ -89,52 +77,6 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         switchGiftInstructions?.setOnCheckedChangeListener { buttonView, isChecked ->
             edtTxtGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
-        }
-    }
-
-    private fun initializeDeliveringToView() {
-        arguments?.apply {
-            context?.let { context ->
-                val savedAddress = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
-                savedAddress?.let { savedAddresses ->
-
-                    val deliveringToAddress = SpannableStringBuilder()
-                    // default address nickname
-                    val defaultAddressNickname =
-                        SpannableString(
-                            savedAddresses.defaultAddressNickname + " " + context.getString(
-                                R.string.bullet
-                            ) + " "
-                        )
-                    val typeface = ResourcesCompat.getFont(context, R.font.myriad_pro_semi_bold)
-                    defaultAddressNickname.setSpan(
-                        StyleSpan(typeface!!.style),
-                        0, defaultAddressNickname.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    defaultAddressNickname.setSpan(ForegroundColorSpan(Color.BLACK), 0, defaultAddressNickname.length
-                        , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    deliveringToAddress.append(defaultAddressNickname)
-
-                    // Extract default address display name
-                    savedAddresses.addresses?.forEach { address ->
-                        if(savedAddresses.defaultAddressNickname.equals(address.nickname)){
-                            val addressName = SpannableString(address?.displayName)
-                            val typeface1 = ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
-                            addressName.setSpan(
-                                StyleSpan(typeface1!!.style),
-                                0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                            deliveringToAddress.append(addressName)
-                            return@forEach
-                        }
-                    }
-                    tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
-
-                    checkoutDeliveryDetailsLayout?.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
-
-                }
-            }
         }
     }
 
@@ -157,6 +99,26 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     selectedFoodSubstitution = FoodSubstitution.NO_THANKS
                 }
             }
+        }
+    }
+
+    private fun initializeDeliveryTypeSelectionView(openDayDeliverySlots: List<Any>?) {
+        val timeSlotListItem: MutableMap<Any, Any> = HashMap()
+        timeSlotListItem["deliveryType"] =
+            CheckoutDeliveryTypeSelectionListAdapter.DELIVERY_TYPE_TIMESLOT
+        timeSlotListItem["amount"] = (selectedSlotResponse?.timedDeliveryCosts?.other!!)
+
+        val date = selectedSlotResponse?.timedDeliveryStartDates?.other
+        val deliveryText = getString(R.string.earliest_delivery_date_text)
+        timeSlotListItem["description"] = "$deliveryText <b>$date</b>"
+
+        (openDayDeliverySlots as ArrayList).add(timeSlotListItem)
+        checkoutDeliveryTypeSelectionListAdapter =
+            CheckoutDeliveryTypeSelectionListAdapter(openDayDeliverySlots, this)
+        deliveryTypeSelectionRecyclerView?.apply {
+            addItemDecoration(object : RecyclerView.ItemDecoration() {})
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            checkoutDeliveryTypeSelectionListAdapter?.let { adapter = it }
         }
     }
 
@@ -199,6 +161,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     /*if (it.data != null) {
                        selectedSlotResponse = it.data as? AvailableDeliverySlotsResponse
                         initializeGrid(selectedSlotResponse, 0)
+                        initializeDeliveryTypeSelectionView(selectedSlotResponse?.openDayDeliverySlots)
                     }*/
 
                     //use mock data from json file
@@ -212,6 +175,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     )
                     selectedSlotResponse = mockDeliverySlotResponse
                     initializeGrid(selectedSlotResponse, 0)
+                    initializeDeliveryTypeSelectionView(selectedSlotResponse?.openDayDeliverySlots)
                 }
                 ResponseStatus.LOADING -> {
                     loadingBar.visibility = View.VISIBLE
@@ -231,7 +195,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         selectedSlotResponse = availableDeliverySlotsResponse
     }
 
-    fun setSelectedFoodSlot(selectedSlot: Slot){
+    fun setSelectedFoodSlot(selectedSlot: Slot) {
         this.selectedFoodSlot = selectedSlot
     }
 
@@ -243,10 +207,10 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             R.id.nextImgBtn -> {
                 initializeGrid(selectedSlotResponse, 1)
             }
-            R.id.checkoutDeliveryDetailsLayout -> {
-                view?.findNavController()?.navigate(
-                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment, arguments)
-            }
         }
+    }
+
+    override fun selectedDeliveryType(deliveryType: Any) {
+
     }
 }

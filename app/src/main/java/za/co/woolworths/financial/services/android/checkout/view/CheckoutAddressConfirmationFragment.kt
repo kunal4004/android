@@ -229,18 +229,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 layoutManager = activity?.let { LinearLayoutManager(it) }
                 checkoutAddressConfirmationListAdapter?.let { adapter = it }
             }
-
-            // If there is a default address nickname present set it selected
-            savedAddress?.defaultAddressNickname?.let { nickName ->
-                var index = 0
-                savedAddress?.addresses?.forEach { address ->
-                    if (nickName == address?.nickname) {
-                        checkoutAddressConfirmationListAdapter?.onItemClick(index)
-                        return@forEach
-                    }
-                    index++
-                }
-            }
         }
         deliveryTab.setOnClickListener(this)
         collectionTab.setOnClickListener(this)
@@ -474,8 +462,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     override fun changeAddress(address: Address) {
-        address.nickname?.let {
-            checkoutAddAddressNewUserViewModel.changeAddress(it)
+        address.nickname?.let { nickname ->
+            checkoutAddAddressNewUserViewModel.changeAddress(nickname)
                 .observe(viewLifecycleOwner, {
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {

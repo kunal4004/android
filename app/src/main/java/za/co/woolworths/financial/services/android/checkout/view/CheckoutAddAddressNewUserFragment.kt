@@ -48,7 +48,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
-import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -57,7 +56,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_PROVINCE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_SUBURB
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_BUNDLE_UNSELLABLE_COMMERCE_ITEMS
-import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CancelOrToLateDeliveryDialog
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -729,7 +727,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     if (it?.data != null) {
                         if ((it.data as? DeleteAddressResponse)?.httpCode?.equals(HTTP_OK) == true) {
                             if (savedAddressResponse?.addresses != null) {
-                                val iterator = savedAddressResponse?.addresses?.iterator()
+                                val iterator =
+                                    (savedAddressResponse?.addresses as? MutableList<Address>)?.iterator()
                                 while (iterator?.hasNext() == true) {
                                     val item = iterator.next()
                                     if (item.id.equals(selectedAddressId)) {
@@ -854,11 +853,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
                             if (savedAddressResponse != null && it?.data != null)
-                                (it.data as? AddAddressResponse)?.address?.let { it1 ->
-                                    savedAddressResponse?.addresses?.add(
-                                        it1
-                                    )
-                                }
+                                savedAddressResponse?.addresses?.plus((it.data as? AddAddressResponse)?.address)
                             onAddNewAddress(body.nickname)
                         }
                         ResponseStatus.LOADING -> {
@@ -919,7 +914,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     var changeAddressResponse = it?.data as? ChangeAddressResponse
-                    if (changeAddressResponse == null){
+                    if (changeAddressResponse == null) {
                         val jsonFileString = Utils.getJsonDataFromAsset(
                             activity?.applicationContext,
                             "mocks/changeAddressResponse.json"
@@ -973,7 +968,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showSuburbNotDeliverableBottomSheetDialog() {
-        view?.findNavController()?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment)
+        view?.findNavController()
+            ?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment)
     }
 
     /**
@@ -1064,11 +1060,13 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     loadingProgressBar.visibility = View.GONE
                     if (savedAddressResponse != null && it?.data != null) {
                         arguments?.getBundle("bundle")?.getInt(EDIT_ADDRESS_POSITION_KEY)
-                            ?.let { it1 ->
-                                savedAddressResponse?.addresses?.removeAt(it1)
-                                (it.data as? AddAddressResponse)?.address?.let { it2 ->
-                                    savedAddressResponse?.addresses?.add(
-                                        it1, it2
+                            ?.let { position ->
+                                (savedAddressResponse?.addresses as? MutableList<Address>)?.removeAt(
+                                    position
+                                )
+                                (it.data as? AddAddressResponse)?.address?.let { address ->
+                                    (savedAddressResponse?.addresses as MutableList<Address>)?.add(
+                                        position, address
                                     )
                                 }
                             }
