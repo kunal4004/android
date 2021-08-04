@@ -2190,6 +2190,9 @@
     <string name="native_checkout_delivery_order_summary_total_discount">Total Discount</string>
     <string name="native_checkout_delivery_order_summary_discounts">Discounts</string>
     <string name="native_checkout_delivery_order_summary_your_cart">Your Cart</string>
+    <string name="native_checkout_delivery_order_summary_company_discounts">Company Discount</string>
+    <string name="native_checkout_delivery_order_summary_wrewards_vouchers">Your WRewards Vouchers</string>
+    <string name="native_checkout_delivery_order_summary_promo_code">Promo Code Applied</string>
     <string name="default_discount_value">- R 0.00</string>
 
     <!-- Native Checkout : Suburb not deliverable  -->

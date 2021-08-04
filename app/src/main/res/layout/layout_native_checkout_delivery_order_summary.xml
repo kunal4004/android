@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:padding="@dimen/twenty_four_dp">
 
     <TextView
@@ -23,9 +23,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/default_discount_value"
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
-        android:text="@string/default_discount_value"
         app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryYourCart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtOrderSummaryYourCart"
@@ -37,7 +37,7 @@
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryYourCart" />
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryYourCartValue" />
 
     <TextView
         android:id="@+id/txtOrderSummaryDiscount"
@@ -56,9 +56,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/default_discount_value"
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
-        android:text="@string/default_discount_value"
         app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryDiscount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtOrderSummaryDiscount"
@@ -70,7 +70,125 @@
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryDiscount" />
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryDiscountValue" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryCompanyDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/native_checkout_delivery_order_summary_company_discounts"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator2" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryCompanyDiscountValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/default_discount_value"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryCompanyDiscount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txtOrderSummaryCompanyDiscount"
+        tools:text="-R 0.0" />
+
+    <View
+        android:id="@+id/viewHorizontalSeparator3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryCompanyDiscountValue" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupCompanyDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="txtOrderSummaryCompanyDiscount, txtOrderSummaryCompanyDiscountValue, viewHorizontalSeparator3" />
+
+
+    <TextView
+        android:id="@+id/txtOrderSummaryPromoCodeDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/native_checkout_delivery_order_summary_promo_code"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator3" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryPromoCodeDiscountValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/default_discount_value"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryPromoCodeDiscount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txtOrderSummaryPromoCodeDiscount"
+        tools:text="R 72.86" />
+
+    <View
+        android:id="@+id/viewHorizontalSeparator4"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryPromoCodeDiscountValue" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupPromoCodeDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="txtOrderSummaryPromoCodeDiscount, txtOrderSummaryPromoCodeDiscountValue, viewHorizontalSeparator4" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryWRewardsVouchers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/native_checkout_delivery_order_summary_wrewards_vouchers"
+        android:textColor="@color/color_444444"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator4" />
+
+    <TextView
+        android:id="@+id/txtOrderSummaryWRewardsVouchersValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/default_discount_value"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryWRewardsVouchers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txtOrderSummaryWRewardsVouchers"
+        tools:text="R 72.86" />
+
+    <View
+        android:id="@+id/viewHorizontalSeparator5"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryWRewardsVouchersValue" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupWRewardsDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="txtOrderSummaryWRewardsVouchers, txtOrderSummaryWRewardsVouchersValue, viewHorizontalSeparator5" />
 
     <TextView
         android:id="@+id/txtOrderSummaryTotalDiscount"
@@ -82,28 +200,29 @@
         android:textColor="@color/color_444444"
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator2" />
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator5" />
 
     <TextView
         android:id="@+id/txtOrderSummaryTotalDiscountValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/default_discount_value"
         android:textColor="@color/black"
         android:textSize="@dimen/fifteen_sp"
-        android:text="@string/default_discount_value"
         app:layout_constraintBottom_toBottomOf="@id/txtOrderSummaryTotalDiscount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtOrderSummaryTotalDiscount"
         tools:text="R 72.86" />
 
     <View
-        android:id="@+id/viewHorizontalSeparator3"
+        android:id="@+id/viewHorizontalSeparator6"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryTotalDiscount" />
+        app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryTotalDiscountValue" />
+
 
     <TextView
         android:id="@+id/txtOrderSummaryDeliveryFee"
@@ -115,7 +234,7 @@
         android:textColor="@color/color_444444"
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator3" />
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator6" />
 
     <TextView
         android:id="@+id/txtOrderSummaryDeliveryFeeValue"
@@ -130,7 +249,7 @@
         app:layout_constraintTop_toTopOf="@id/txtOrderSummaryDeliveryFee" />
 
     <View
-        android:id="@+id/viewHorizontalSeparator4"
+        android:id="@+id/viewHorizontalSeparator7"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/fifteen_dp"
@@ -142,17 +261,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/fifteen_dp"
+        android:fontFamily="@font/myriad_pro_regular"
         android:lineHeight="@dimen/twenty_two_dp"
         android:text="@string/native_checkout_delivery_order_summary_note"
-        android:textSize="@dimen/twelve_sp"
-        android:fontFamily="@font/myriad_pro_regular"
         android:textColor="@color/color_666666"
+        android:textSize="@dimen/twelve_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator4" />
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator7" />
 
     <View
-        android:id="@+id/viewHorizontalSeparator5"
+        android:id="@+id/viewHorizontalSeparator8"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/fifteen_dp"

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,7 +71,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private fun initViews() {
         initializeDeliveryFoodItems()
         initializeFoodSubstitution()
-        initOrderSummary()
+        initializeOrderSummary()
 
         activity?.apply {
             view?.setOnClickListener {
@@ -141,7 +142,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     /**
      * Initializes Order Summary data from argument.
      */
-    private fun initOrderSummary() {
+    private fun initializeOrderSummary() {
         arguments?.apply {
             val orderSummary = getParcelable(KEY_ARGS_ORDER_SUMMARY) as? OrderSummary
             orderSummary?.let { orderSummary ->
@@ -152,6 +153,15 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
                     txtOrderSummaryTotalDiscountValue?.text =
                         "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                    groupPromoCodeDiscount?.visibility = if(discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupWRewardsDiscount?.visibility = if(discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupCompanyDiscount?.visibility = if(discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                    txtOrderSummaryWRewardsVouchersValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
+                    txtOrderSummaryCompanyDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
+                    txtOrderSummaryPromoCodeDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
                 }
             }
         }
