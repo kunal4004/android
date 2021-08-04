@@ -44,7 +44,7 @@ abstract class MockRetrofitConfig : NetworkConfig() {
 
     private fun getRetrofit(httpBuilder: OkHttpClient.Builder): ApiInterface {
         return Retrofit.Builder()
-            .baseUrl("https://50ad40ed-474f-4626-8b60-5de497cb7ff4.mock.pstmn.io/" + "/")
+        .baseUrl("https://8575ba83-72eb-4d28-9d4c-11ae953ea601.mock.pstmn.io/" + "/")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(httpBuilder.build())

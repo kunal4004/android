@@ -1833,6 +1833,7 @@
     <string name="chat_to_us_label">CHAT TO US</string>
 
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
+    <string name="earliest_delivery_date_text">Earliest Delivery date \u0020</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
@@ -2168,11 +2169,13 @@
     <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
     <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
     <string name="delivery_timeslot_title_food_items">Delivery 1 - Food Items</string>
+    <string name="slot_delivery_title">How Would You Like It Delivered?</string>
     <string name="select_your_preferred_delivery_time">Select your preferred delivery time</string>
     <string name="previous_week_text">Previous Week</string>
     <string name="next_week_text">Next Week</string>
     <string name="free_delivery_slot">FREE</string>
     <string name="currency">R</string>
+    <string name="working_days_text">%1$s - %2$s Working Days</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>
         <item quantity="one">%d Store near me</item>

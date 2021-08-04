@@ -462,10 +462,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     override fun changeAddress(address: Address) {
-        address.nickname?.let {
-            checkoutAddAddressNewUserViewModel.changeAddress(it)
-                .observe(viewLifecycleOwner, { it1 ->
-                    when (it1.responseStatus) {
+        address.nickname?.let { nickname ->
+            checkoutAddAddressNewUserViewModel.changeAddress(nickname)
+                .observe(viewLifecycleOwner, {
+                    when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
 
                             /*val jsonFileString = Utils.getJsonDataFromAsset(
@@ -477,7 +477,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                     object : TypeToken<ChangeAddressResponse>() {}.type
                                 )*/
 
-                            val changeAddressResponse = it1?.data as? ChangeAddressResponse
+                            val changeAddressResponse = it?.data as? ChangeAddressResponse
                             if (changeAddressResponse != null && changeAddressResponse.deliverable) {
                                 if (changeAddressResponse.unSellableCommerceItems?.size!! > 0) {
                                     navigateToUnsellableItemsFragment(
