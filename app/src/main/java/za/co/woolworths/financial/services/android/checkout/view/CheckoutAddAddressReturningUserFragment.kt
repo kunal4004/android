@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
 import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
@@ -21,6 +22,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Avai
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.Slot
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
@@ -112,6 +114,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun initializeDeliveryTypeSelectionView(openDayDeliverySlots: List<Any>?) {
+        checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
         val timeSlotListItem: MutableMap<Any, Any> = HashMap()
         timeSlotListItem["deliveryType"] = DELIVERY_TYPE_TIMESLOT
         timeSlotListItem["amount"] = (selectedSlotResponseFood?.timedDeliveryCosts?.other!!)
@@ -144,7 +147,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         weekNumber: Int, deliveryType: DeliveryType
     ) {
         when (deliveryType) {
-            DeliveryType.FOOD -> {
+            FOOD -> {
                 val deliverySlots =
                     availableDeliverySlotsResponse?.sortedFoodDeliverySlots?.get(weekNumber)
                 expandableGrid.apply {
@@ -155,11 +158,11 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         deliverySlots?.hourSlots,
                         weekNumber,
                         timeSlotsGridViewFood,
-                        DeliveryType.FOOD
+                        FOOD
                     )
                 }
             }
-            DeliveryType.OTHER -> {
+            OTHER -> {
                 val deliverySlots =
                     availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
                 expandableGrid.apply {
@@ -170,7 +173,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         deliverySlots?.hourSlots,
                         weekNumber,
                         timeSlotsGridViewOther,
-                        DeliveryType.OTHER
+                        OTHER
                     )
                 }
             }
@@ -193,7 +196,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         checkoutAddAddressNewUserViewModel.getAvailableDeliverySlots().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    loadingBarFood.visibility = View.GONE
+                    loadingBar.visibility = View.GONE
                     /*if (it.data != null) {
                        selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
                        selectedSlotResponseOther = it.data as? AvailableDeliverySlotsResponse
@@ -212,35 +215,35 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     )
                     selectedSlotResponseFood = mockDeliverySlotResponse
                     selectedSlotResponseOther = mockDeliverySlotResponse
-                    initializeGrid(selectedSlotResponseFood, 0, DeliveryType.FOOD)
+                    initializeGrid(selectedSlotResponseFood, 0, FOOD)
                     initializeDeliveryTypeSelectionView(selectedSlotResponseFood?.openDayDeliverySlots)
                 }
                 ResponseStatus.LOADING -> {
-                    loadingBarFood.visibility = View.VISIBLE
+                    loadingBar.visibility = View.VISIBLE
                 }
                 ResponseStatus.ERROR -> {
-                    loadingBarFood.visibility = View.GONE
+                    loadingBar.visibility = View.GONE
                 }
             }
         })
     }
 
     fun getSelectedSlotResponse(deliveryType: DeliveryType): AvailableDeliverySlotsResponse? {
-        return if (deliveryType.equals(DeliveryType.FOOD)) selectedSlotResponseFood else selectedSlotResponseOther
+        return if (deliveryType.equals(FOOD)) selectedSlotResponseFood else selectedSlotResponseOther
     }
 
     fun setSelectedSlotResponse(
         availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
         deliveryType: DeliveryType
     ) {
-        if (deliveryType.equals(DeliveryType.FOOD))
+        if (deliveryType.equals(FOOD))
             selectedSlotResponseFood = availableDeliverySlotsResponse
         else
             selectedSlotResponseOther = availableDeliverySlotsResponse
     }
 
     fun setSelectedFoodOrOtherSlot(selectedSlot: Slot, deliveryType: DeliveryType) {
-        if (deliveryType.equals(DeliveryType.FOOD))
+        if (deliveryType.equals(FOOD))
             selectedFoodSlot = selectedSlot
         else
             selectedOtherSlot = selectedSlot
@@ -249,16 +252,16 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.previousImgBtnFood -> {
-                initializeGrid(selectedSlotResponseFood, 0, DeliveryType.FOOD)
+                initializeGrid(selectedSlotResponseFood, 0, FOOD)
             }
             R.id.nextImgBtnFood -> {
-                initializeGrid(selectedSlotResponseFood, 1, DeliveryType.FOOD)
+                initializeGrid(selectedSlotResponseFood, 1, FOOD)
             }
             R.id.previousImgBtnOther -> {
-                initializeGrid(selectedSlotResponseOther, 0, DeliveryType.OTHER)
+                initializeGrid(selectedSlotResponseOther, 0, OTHER)
             }
             R.id.nextImgBtnOther -> {
-                initializeGrid(selectedSlotResponseOther, 1, DeliveryType.OTHER)
+                initializeGrid(selectedSlotResponseOther, 1, OTHER)
             }
         }
     }
@@ -269,7 +272,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             )
         ) {
             gridLayoutDeliveryOptions.visibility = View.VISIBLE
-            initializeGrid(selectedSlotResponseOther, 0, DeliveryType.OTHER)
+            initializeGrid(selectedSlotResponseOther, 0, OTHER)
         } else {
             gridLayoutDeliveryOptions.visibility = View.GONE
         }
