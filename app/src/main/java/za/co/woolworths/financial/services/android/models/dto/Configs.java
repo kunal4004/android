@@ -60,4 +60,6 @@ public class Configs {
     public InAppReview inAppReview;
     @Nullable
     public BalanceProtectionInsurance balanceProtectionInsurance;
+    @Nullable
+    public CustomerFeedback customerFeedback;
 }

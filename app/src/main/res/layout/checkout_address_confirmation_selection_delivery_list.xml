@@ -65,8 +65,24 @@
         android:minHeight="@dimen/sixteen_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_guideline"
-        app:srcCompat="@drawable/icon_edit"
+        app:srcCompat="@drawable/icon_edit_row"
         tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/slotPriceButton"
+        style="@style/futura_semi_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/four_dp_"
+        android:background="@drawable/slot_price_button"
+        android:paddingStart="@dimen/seven_dp"
+        android:paddingTop="@dimen/four_dp_"
+        android:paddingEnd="@dimen/seven_dp"
+        android:paddingBottom="@dimen/four_dp_"
+        android:textColor="@color/white"
+        android:textSize="@dimen/eleven_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_guideline" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/top_guideline"

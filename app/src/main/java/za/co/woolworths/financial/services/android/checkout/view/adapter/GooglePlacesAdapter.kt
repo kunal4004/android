@@ -43,7 +43,7 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
     }
 
     override fun getItem(position: Int): PlaceAutocomplete {
-        return mResultList.get(position)
+        return mResultList[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -59,7 +59,7 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
                 mContext.layoutInflater.inflate(R.layout.places_simple_item_list, null)
             mHolder.primaryTextView =
                 convrtView.findViewById<View>(R.id.primaryTextView) as? TextView
-            mHolder.SecondaryTextView =
+            mHolder.secondaryTextView =
                 convrtView.findViewById<View>(R.id.SecondaryTextView) as? TextView
             convrtView.tag = mHolder
         } else {
@@ -67,19 +67,19 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
         }
         mHolder.primaryTextViewShimmerFrameLayout =
             convrtView?.findViewById<View>(R.id.primaryTextViewShimmerFrameLayout) as? ShimmerFrameLayout
-        mHolder.SecondaryTextViewShimmerFrameLayout =
+        mHolder.secondaryTextViewShimmerFrameLayout =
             convrtView?.findViewById<View>(R.id.SecondaryTextViewShimmerFrameLayout) as? ShimmerFrameLayout
         mHolder.dividerRecyclerView =
             convrtView?.findViewById(R.id.dividerRecyclerView) as? View
         mHolder.dividerRecyclerView?.visibility = View.VISIBLE
         if (isShimmerShowing) {
             mHolder.primaryTextView?.visibility = View.INVISIBLE
-            mHolder.SecondaryTextView?.visibility = View.INVISIBLE
+            mHolder.secondaryTextView?.visibility = View.INVISIBLE
             val shimmer = Shimmer.AlphaHighlightBuilder().build()
             mHolder.primaryTextViewShimmerFrameLayout?.setShimmer(shimmer)
             mHolder.primaryTextViewShimmerFrameLayout?.startShimmer()
-            mHolder.SecondaryTextViewShimmerFrameLayout?.setShimmer(shimmer)
-            mHolder.SecondaryTextViewShimmerFrameLayout?.startShimmer()
+            mHolder.secondaryTextViewShimmerFrameLayout?.setShimmer(shimmer)
+            mHolder.secondaryTextViewShimmerFrameLayout?.startShimmer()
             Handler().postDelayed({
                 isShimmerShowing = false
                 notifyDataSetChanged()
@@ -87,13 +87,13 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
         } else {
             mHolder.primaryTextViewShimmerFrameLayout?.stopShimmer()
             mHolder.primaryTextViewShimmerFrameLayout?.setShimmer(null)
-            mHolder.SecondaryTextViewShimmerFrameLayout?.stopShimmer()
-            mHolder.SecondaryTextViewShimmerFrameLayout?.setShimmer(null)
+            mHolder.secondaryTextViewShimmerFrameLayout?.stopShimmer()
+            mHolder.secondaryTextViewShimmerFrameLayout?.setShimmer(null)
             mHolder.primaryTextView?.visibility = View.VISIBLE
-            mHolder.SecondaryTextView?.visibility = View.VISIBLE
+            mHolder.secondaryTextView?.visibility = View.VISIBLE
             val item = getItem(position)
             mHolder.primaryTextView?.text = item.primaryText
-            mHolder.SecondaryTextView?.text = item.secondaryText
+            mHolder.secondaryTextView?.text = item.secondaryText
         }
         return convrtView
     }
@@ -175,9 +175,9 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
 
 internal class ViewHolder {
     var primaryTextView: TextView? = null
-    var SecondaryTextView: TextView? = null
+    var secondaryTextView: TextView? = null
     var primaryTextViewShimmerFrameLayout: ShimmerFrameLayout? = null
-    var SecondaryTextViewShimmerFrameLayout: ShimmerFrameLayout? = null
+    var secondaryTextViewShimmerFrameLayout: ShimmerFrameLayout? = null
     var dividerRecyclerView: View? = null
 }
 

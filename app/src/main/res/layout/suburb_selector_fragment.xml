@@ -5,6 +5,37 @@
     android:layout_height="match_parent"
     android:background="@color/default_background">
 
+    <TextView
+        android:id="@+id/suburbSelectionTitle"
+        style="@style/futura_semi_bold_black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingStart="@dimen/twenty_four_dp"
+        android:text="@string/select_your_suburb"
+        android:textSize="@dimen/twenty_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/suburbSelectionSubTitle"
+        style="@style/myriad_pro_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingStart="@dimen/twenty_four_dp"
+        android:paddingTop="@dimen/twelve_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:text="@string/suburb_selection_subtitle"
+        android:textColor="@color/checkout_delivering_title"
+        android:textSize="@dimen/fifteen_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/suburbSelectionTitle" />
+
 
     <EditText
         android:id="@+id/suburbInputValue"
@@ -25,13 +56,13 @@
         android:textSize="@dimen/fifteen_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/suburbSelectionSubTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvSuburbList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/one_dp"
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

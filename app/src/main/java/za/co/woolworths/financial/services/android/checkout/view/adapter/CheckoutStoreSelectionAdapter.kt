@@ -1,22 +1,27 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
 import android.graphics.Paint
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.dto.ValidateStoreList
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import za.co.woolworths.financial.services.android.util.Utils
 
 /**
  * Created by Kunal Uttarwar on 13/07/21.
  */
 class CheckoutStoreSelectionAdapter(
-    private var storeList: List<ValidateStoreList>
+    private val storeList: List<ValidateStoreList>, private val fragment: Fragment
 ) : RecyclerView.Adapter<CheckoutStoreSelectionAdapter.StoreViewHolder>(),
     Filterable {
 
@@ -64,6 +69,11 @@ class CheckoutStoreSelectionAdapter(
                 }
                 setOnClickListener {
                     if (!storeFilterList[position].deliverable!!) return@setOnClickListener
+
+                    val bundle = Bundle()
+                    bundle.putString(CheckoutAddressConfirmationFragment.STORE_SELECTION_REQUEST_KEY, Utils.toJson(storeFilterList[position]))
+                    fragment.setFragmentResult(CheckoutAddressConfirmationFragment.STORE_SELECTION_REQUEST_KEY, bundle)
+
                     checkedItemPosition = position
                     checkedItemStoreId = storeFilterList[position].storeId!!
                     notifyDataSetChanged()

@@ -1,36 +1,40 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
-import za.co.woolworths.financial.services.android.models.dto.OrderSummary
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace
-import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
-import za.co.woolworths.financial.services.android.util.Utils
-import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.checkout_grid_layout.*
+import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.checkout.view.adapter.DeliverySlotsGridViewAdapter
-import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsDateGridViewAdapter
-import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsTimeGridViewAdapter
+import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.Slot
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
-import za.co.woolworths.financial.services.android.checkout.viewmodel.DeliveryGridModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.Utils
 
 
 /**
  * Created by Kunal Uttarwar on 27/05/21.
  */
-class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener {
+class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener,
+    CheckoutDeliveryTypeSelectionListAdapter.EventListner {
 
     companion object {
         const val KEY_ARGS_ORDER_SUMMARY = "ORDER_SUMMARY"
@@ -38,6 +42,11 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
 
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
+    private val expandableGrid = ExpandableGrid(this)
+    private var selectedSlotResponse: AvailableDeliverySlotsResponse? = null
+    private var selectedFoodSlot = Slot()
+    private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter? =
+        null
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -102,6 +111,26 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         }
     }
 
+    private fun initializeDeliveryTypeSelectionView(openDayDeliverySlots: List<Any>?) {
+        val timeSlotListItem: MutableMap<Any, Any> = HashMap()
+        timeSlotListItem["deliveryType"] =
+            CheckoutDeliveryTypeSelectionListAdapter.DELIVERY_TYPE_TIMESLOT
+        timeSlotListItem["amount"] = (selectedSlotResponse?.timedDeliveryCosts?.other!!)
+
+        val date = selectedSlotResponse?.timedDeliveryStartDates?.other
+        val deliveryText = getString(R.string.earliest_delivery_date_text)
+        timeSlotListItem["description"] = "$deliveryText <b>$date</b>"
+
+        (openDayDeliverySlots as ArrayList).add(timeSlotListItem)
+        checkoutDeliveryTypeSelectionListAdapter =
+            CheckoutDeliveryTypeSelectionListAdapter(openDayDeliverySlots, this)
+        deliveryTypeSelectionRecyclerView?.apply {
+            addItemDecoration(object : RecyclerView.ItemDecoration() {})
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            checkoutDeliveryTypeSelectionListAdapter?.let { adapter = it }
+        }
+    }
+
     private fun initializeDeliveryFoodItems() {
         setupViewModel()
         getAvailableDeliverySlots()
@@ -133,94 +162,10 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         weekNumber: Int
     ) {
         val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
-        createTimingsGrid(deliverySlots?.hourSlots)
-        createDatesGrid(deliverySlots?.headerDates)
-        createTimeSlotGridView(deliverySlots)
-    }
-
-    private fun createTimeSlotGridView(deliverySlots: SortedJoinDeliverySlot?) {
-        val deliveryGridList: ArrayList<DeliveryGridModel> = ArrayList()
-        val weekList = deliverySlots?.week
-        if (!weekList.isNullOrEmpty()) {
-            for (weekItem in weekList) {
-                val slotsList = weekItem.slots
-                if (!slotsList.isNullOrEmpty()) {
-                    for (slot in slotsList) {
-                        var gridTitle = ""
-                        var gridColor = R.color.checkout_delivering_title_background
-                        var isSelected = slot.selected
-                        if (slot.freeDeliverySlot == true) {
-                            gridTitle = getString(R.string.free_delivery_slot)
-                            gridColor = R.color.light_green
-                        }
-                        else
-                            gridTitle = slot.slotCost.toString()
-                        if (slot.hasReservation == true) {
-                            isSelected = true
-                            gridColor = R.color.dark_green
-                        }
-                        if (slot.available == true){
-                            //TODO  enable the click for grid slot
-                        }
-                        deliveryGridList.add(
-                            DeliveryGridModel(
-                                gridTitle,
-                                gridColor,
-                                slot.slotId,
-                                isSelected == true
-                            )
-                        )
-                    }
-                }
-            }
-        }
-        val adapter = context?.let {
-            DeliverySlotsGridViewAdapter(
-                it,
-                R.layout.delivery_grid_card_item,
-                deliveryGridList
-            )
-        }
-        timeSlotsGridView.numColumns = deliverySlots?.hourSlots?.size ?: 0
-        timeSlotsGridView.setViewExpanded(true)
-        timeSlotsGridView.adapter = adapter
-
-        timeSlotsGridView.setOnItemClickListener { parent, view, position, id ->
-            for (model in deliveryGridList) {
-                model.isSelected = false
-                model.backgroundImgColor = R.color.light_green
-            }
-            val deliveryGridModel: DeliveryGridModel = deliveryGridList[position]
-            deliveryGridModel.isSelected = true
-            deliveryGridModel.backgroundImgColor = R.color.dark_green
-            adapter?.notifyDataSetChanged()
-        }
-    }
-
-    private fun createTimingsGrid(hoursSlots: List<String>?) {
-        timingsGridView.numColumns =
-            hoursSlots?.size ?: 0 + 1 // Adding 1 only to match slots title grid with actual slots
-        timingsGridView.adapter = context?.let {
-            hoursSlots?.let { it1 ->
-                SlotsTimeGridViewAdapter(
-                    it,
-                    R.layout.checkout_delivery_slot_timedate_item,
-                    it1
-                )
-            }
-        }
-    }
-
-    private fun createDatesGrid(datesSlots: List<HeaderDate>?) {
-        dateGridView.setViewExpanded(true)
-        dateGridView.adapter = context?.let {
-            datesSlots?.let { it1 ->
-                SlotsDateGridViewAdapter(
-                    it,
-                    R.layout.checkout_delivery_slot_timedate_item,
-                    it1
-                )
-            }
+        expandableGrid.apply {
+            createTimingsGrid(deliverySlots?.hourSlots)
+            createDatesGrid(deliverySlots?.headerDates)
+            createTimeSlotGridView(deliverySlots, weekNumber)
         }
     }
 
@@ -241,9 +186,24 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
-                    if (it.data != null) {
-                        initializeGrid(it.data as? AvailableDeliverySlotsResponse, 0)
-                    }
+                    /*if (it.data != null) {
+                       selectedSlotResponse = it.data as? AvailableDeliverySlotsResponse
+                        initializeGrid(selectedSlotResponse, 0)
+                        initializeDeliveryTypeSelectionView(selectedSlotResponse?.openDayDeliverySlots)
+                    }*/
+
+                    //use mock data from json file
+                    val jsonFileString = Utils.getJsonDataFromAsset(
+                        activity?.applicationContext,
+                        "mocks/confirmDelivery_Response.json"
+                    )
+                    val mockDeliverySlotResponse: AvailableDeliverySlotsResponse = Gson().fromJson(
+                        jsonFileString,
+                        object : TypeToken<AvailableDeliverySlotsResponse>() {}.type
+                    )
+                    selectedSlotResponse = mockDeliverySlotResponse
+                    initializeGrid(selectedSlotResponse, 0)
+                    initializeDeliveryTypeSelectionView(selectedSlotResponse?.openDayDeliverySlots)
                 }
                 ResponseStatus.LOADING -> {
                     loadingBar.visibility = View.VISIBLE
@@ -255,14 +215,30 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         })
     }
 
+    fun getSelectedSlotResponse(): AvailableDeliverySlotsResponse? {
+        return selectedSlotResponse
+    }
+
+    fun setSelectedSlotResponse(availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?) {
+        selectedSlotResponse = availableDeliverySlotsResponse
+    }
+
+    fun setSelectedFoodSlot(selectedSlot: Slot) {
+        this.selectedFoodSlot = selectedSlot
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.previousImgBtn -> {
-
+                initializeGrid(selectedSlotResponse, 0)
             }
             R.id.nextImgBtn -> {
-
+                initializeGrid(selectedSlotResponse, 1)
             }
         }
+    }
+
+    override fun selectedDeliveryType(deliveryType: Any) {
+
     }
 }

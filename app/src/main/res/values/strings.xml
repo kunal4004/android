@@ -1833,6 +1833,7 @@
     <string name="chat_to_us_label">CHAT TO US</string>
 
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
+    <string name="earliest_delivery_date_text">Earliest Delivery date \u0020</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
@@ -1981,7 +1982,19 @@
     <string name="link_device_sending_otp_processing_desc">This may take a few seconds</string>
     <string name="link_device_sending_otp_processing">Processing Request</string>
     <string name="link_device_error_title">There was a Problem Linking Your Device.</string>
-    <string name="link_device_error_desc">Try activating your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="link_device_error_desc">Try linking your device again, or call us on 0861 50 20 20 for further assistance.</string>
+    <string name="unlink_device_change_to_primary">Change to Primary Device</string>
+    <string name="unlink_device_delete">Delete Device</string>
+    <string name="remove_device_title">Please select a new primary device to link to your profile.</string>
+    <string name="remove_device_desc">To remove this device, you need to select a new primary device.</string>
+
+    <!--  Changing Device Confirmation  -->
+    <string name="changing_primary_device_processing">Changing Primary Device</string>
+    <string name="changing_primary_device_result_success">Your Device Has \nBeen Successfully Changed.</string>
+
+    <!--  Unlink Device Confirmation  -->
+    <string name="unlink_device_unlinking_processing">Unlinking Your Device</string>
+    <string name="unlink_device_result_success">Your Device Has \nBeen Successfully Unlinked.</string>
 
     <!--  Link Device Confirmation  -->
     <string name="link_device_confirm_title">Please confirm this is your primary device.</string>
@@ -1991,7 +2004,7 @@
     <string name="link_device_linking_processing">Linking Your Device</string>
     <string name="link_device_result_success">Your Device Has \nBeen Successfully Linked.</string>
     <string name="ok_cool">Ok, cool!</string>
-    <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your prferences.</string>
+    <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your preferences.</string>
     <string name="link_device_this_is_linked">This device is linked</string>
 
     <string name="out_of_stock_502">Sorry, we\'re out of this product at the moment.</string>
@@ -2006,6 +2019,7 @@
 
     <!-- View All Linked Devices -->
     <string name="view_all_device_title">My Linked Devices</string>
+    <string name="select_primary_device_title">Select Primary Device</string>
     <string name="view_all_device_location_n_a">Location N/A</string>
     <string name="view_all_primary_device_title">Primary Device</string>
     <string name="view_all_other_device_title">Other Linked Devices</string>
@@ -2155,15 +2169,19 @@
     <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
     <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
     <string name="delivery_timeslot_title_food_items">Delivery 1 - Food Items</string>
+    <string name="slot_delivery_title">How Would You Like It Delivered?</string>
     <string name="select_your_preferred_delivery_time">Select your preferred delivery time</string>
     <string name="previous_week_text">Previous Week</string>
     <string name="next_week_text">Next Week</string>
     <string name="free_delivery_slot">FREE</string>
+    <string name="currency">R</string>
+    <string name="working_days_text">%1$s - %2$s Working Days</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>
         <item quantity="one">%d Store near me</item>
         <item quantity="other">%d Stores near me</item>
     </plurals>
+    <string name="suburb_selection_subtitle">This will show all collection stores near you.</string>
 
     <!-- Native Checkout : Order Summary   -->
     <string name="native_checkout_delivery_order_summary_note">* Items are not reserved until you checkout. \n* Delivery cost to be confirmed before payment</string>
@@ -2174,4 +2192,29 @@
     <string name="native_checkout_delivery_order_summary_your_cart">Your Cart</string>
     <string name="default_discount_value">- R 0.00</string>
 
+    <!-- Native Checkout : Suburb not deliverable  -->
+    <string name="dismiss">Dismiss</string>
+    <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
+    <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
+    <string name="change_address">Change Address</string>
+
+    <!--  Voice of Customer  -->
+    <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
+    <string name="voc_question_freetext_hint_optional">Describe your experience in detail (optional)</string>
+    <string name="voc_question_freetext_hint_required">Describe your experience in detail</string>
+    <string name="voc_survey_submit">SUBMIT</string>
+    <string name="voc_survey_opt_out">DON\'T ASK AGAIN</string>
+    <string name="voc_survey_skip">NOT NOW</string>
+    <string name="voc_opt_out_dialog_title">Are You Sure You Don’t Want To Take This Survey?</string>
+    <string name="voc_opt_out_dialog_desc">If you proceed, we won’t ask you to take this survey again.</string>
+    <string name="voc_opt_out_dialog_action">YES, PROCEED</string>
+    <string name="voc_opt_out_dialog_cancel">CANCEL</string>
+    <string name="voc_skip_dialog_title">Are You Sure You Want To Skip This Survey?</string>
+    <string name="voc_skip_dialog_desc">You can skip for now, and we\'ll ask you again later.</string>
+    <string name="voc_skip_dialog_action">YES</string>
+    <string name="voc_skip_dialog_cancel">CANCEL</string>
+    <string name="voc_processing_request_title">Processing Request</string>
+    <string name="voc_processing_request_desc">This may take a few seconds</string>
+    <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
+    <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
 </resources>

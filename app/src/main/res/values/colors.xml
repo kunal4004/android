@@ -125,6 +125,7 @@
     <color name="reward_benefit_background">#2C2C2D</color>
     <color name="tab_text_color">#80ffffff</color>
     <color name="card_details_value_color">#030303</color>
+    <color name="voc_slider_inner_progress">#99FFFFFF</color>
 
     <color name="link_text_color">#7F7F7F</color>
     <color name="color_222222">#222222</color>
@@ -150,4 +151,6 @@
     <color name="color_666666">#666666</color>
     <color name="light_green">#D7F0E1</color>
     <color name="dark_green">#4ABB77</color>
+    <color name="light_blue">#4284C3</color>
+    <color name="grid_border_color">#C2C2C2</color>
 </resources>
