@@ -392,7 +392,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void callSavedAddress() {
 
-        Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
+        /*Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
         savedAddressCall.enqueue(new CompletionHandler<>(new IResponseListener<SavedAddressResponse>() {
             @Override
             public void onSuccess(@org.jetbrains.annotations.Nullable SavedAddressResponse response) {
