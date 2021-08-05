@@ -2113,5 +2113,9 @@
 
     <!--order details-->
     <string name="order_details_toolbar_title">ORDER #%1$s</string>
+    <string name="collection_from">Collection from</string>
+    <string name="delivery_">Delivery:</string>
+    <string name="food_items_">Food Items:</string>
+    <string name="other_items_">Other Items:</string>
 
 </resources>
