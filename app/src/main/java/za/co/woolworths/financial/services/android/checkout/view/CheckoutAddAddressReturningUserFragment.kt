@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Chec
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
@@ -194,7 +195,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     )
                     selectedSlotResponseFood = mockDeliverySlotResponse
                     selectedSlotResponseOther = mockDeliverySlotResponse
-                    if (selectedSlotResponseFood?.fulfillmentTypes?.join?.equals(FulfillmentsType.FOOD.type) == true) {
+                    if (FOOD.type == selectedSlotResponseFood?.fulfillmentTypes?.join) {
                         //Only for Food
                         foodType = ONLY_FOOD
                         checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
@@ -203,12 +204,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                             FIRST.week,
                             ONLY_FOOD
                         )
-                    } else if (selectedSlotResponseFood?.fulfillmentTypes?.join?.equals(
-                            FulfillmentsType.OTHER.type
-                        ) == true && selectedSlotResponseFood?.fulfillmentTypes?.other?.equals(
-                            FulfillmentsType.OTHER.type
-                        ) == true
-                    ) {
+                    } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
                         // For mix basket
                         foodType = MIXED_FOOD
                         checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
