@@ -36,7 +36,6 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
-import za.co.woolworths.financial.services.android.models.dto.account.DeliveryStatusCode
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -495,25 +494,16 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     override fun onGetCreditCardDeliveryStatusSuccess(creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse) {
         this.creditCardDeliveryStatusResponse = creditCardDeliveryStatusResponse
-        when (DeliveryStatusCode.getEnum(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.code)) {
-            DeliveryStatusCode.CARD_DELIVERED -> {
-                when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
-                    CARD_NOT_RECEIVED -> {
-                        with(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus) {
-                            displayColour = "#bad110"
-                            displayTitle = CreditCardActivationState.AVAILABLE.value
-                        }
-                        showGetCreditCardDeliveryStatus(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus)
-                    }
-                    CARD_DELIVERED -> {
-                        if (cardWithPLCState?.cardStatus.equals("AAA")) {
-                            showOnlyCardVisibleState()
-                        } else {
-                            creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
-                        }
-                    }
-                    else -> onGetCreditCardDeliveryStatusFailure()
+        when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
+            CARD_DELIVERED -> {
+                if (cardWithPLCState?.cardStatus.equals("AAA")) {
+                    showOnlyCardVisibleState()
+                } else {
+                    creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
                 }
+            }
+            CARD_NOT_RECEIVED, AWAITING_INSTRUCTION -> {
+                showOnlyCardVisibleState()
             }
             else -> {
                 creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
