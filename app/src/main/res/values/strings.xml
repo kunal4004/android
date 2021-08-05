@@ -2117,5 +2117,7 @@
     <string name="delivery_">Delivery:</string>
     <string name="food_items_">Food Items:</string>
     <string name="other_items_">Other Items:</string>
+    <string name="order_total_">Order Total:</string>
+    <string name="missed_wrewards_savings">Missed WRewards Savings</string>
 
 </resources>
