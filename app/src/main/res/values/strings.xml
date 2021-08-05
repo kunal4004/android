@@ -2155,6 +2155,10 @@
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
     <string name="view_application_status">View Application Status</string>
 
+    <!-- Native Checkout   -->
+    <string name="native_checkout_continue_to_payment">Continue To Payment</string>
+    <string name="native_checkout_order_total_title">Order Total *</string>
+
     <!-- Native Checkout : delivery Instructions -->
     <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
     <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
@@ -2220,4 +2224,5 @@
     <string name="voc_processing_request_desc">This may take a few seconds</string>
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
+
 </resources>
