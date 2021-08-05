@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -149,6 +150,17 @@ class OrderConfirmationFragment : Fragment()  {
             otherDeliveryLinearLayout2.visibility = View.GONE
             deliveryDateTimeTextView2.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
         }
+
+        setNumberAndCostItemsBottomSheet(response?.items)
+
+    }
+
+    private fun setNumberAndCostItemsBottomSheet(items: OrderItems?) {
+        val other: Int = items?.other?.size ?: 0
+        val food: Int = items?.food?.size ?: 0
+        val number: Int = other.plus(food)
+        numberItemsTextView.text = bindString(R.string.number_items, number.toString())
+        costItemsTextView.text = orderTotalTextView.text
     }
 
     private fun setMissedRewardsSavings(amount: Double) {

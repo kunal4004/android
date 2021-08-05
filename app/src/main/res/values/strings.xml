@@ -2121,5 +2121,7 @@
     <string name="order_total_">Order Total:</string>
     <string name="missed_wrewards_savings">Missed WRewards Savings</string>
     <string name="delivery_location_">Delivery location:</string>
+    <string name="number_items">%1$s Items</string>
+    <string name="order_again">ORDER AGAIN</string>
 
 </resources>

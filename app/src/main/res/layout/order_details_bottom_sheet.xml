@@ -3,7 +3,7 @@
     android:id="@+id/bottom_sheet_layout"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     app:behavior_hideable="false"
     app:behavior_peekHeight="@dimen/ninety"
     android:background="@color/white"
@@ -212,6 +212,109 @@
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@+id/otherDeliveryLinearLayout2" />
 
+
+    <LinearLayout
+        android:id="@+id/shoppingListLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:paddingTop="@dimen/fifteen_dp"
+        android:paddingBottom="@dimen/fifteen_dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/otherDeliverySeparator">
+
+        <ImageView
+            android:id="@+id/logoAddToShoppingList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="1"
+            android:layout_marginEnd="@dimen/twenty_dp"
+            app:srcCompat="@drawable/ic_add_to_list_pdp_black" />
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:text="@string/add_to_a_shopping_list"
+            android:textColor="@color/account_amount_color"
+            android:textSize="@dimen/fourteen_sp"
+            android:layout_weight="1"/>
+
+        <TextView
+            style="@style/futura_semi_bold_white_12_text_style"
+            android:layout_width="@dimen/fifty_six_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:background="@drawable/black_background_with_corner_5"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:text="@string/add"
+            android:textAllCaps="true"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/shoppingListSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/shoppingListLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/itemsLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/shoppingListSeparator">
+
+        <TextView
+            android:id="@+id/numberItemsTextView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/number_items"
+            android:textSize="@dimen/fifteen_sp"
+            android:textColor="@color/black"
+            style="@style/futura_semi_bold_black"
+            android:layout_weight="0.5" />
+
+        <TextView
+            android:id="@+id/costItemsTextView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/fifteen_sp"
+            android:textColor="@color/black"
+            style="@style/futura_semi_bold_black"
+            android:gravity="end"
+            android:layout_weight="0.5"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/itemsRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/itemsLinearLayout"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/orderAgainButton"
+        style="@style/blackButtonStyle"
+        android:layout_width="0dp"
+        android:background="@drawable/black_button_drawable_state"
+        android:letterSpacing="0.2"
+        android:text="@string/order_again"
+        app:WButton_font="medium_bold"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginBottom="@dimen/twenty_dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemsRecyclerView" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
