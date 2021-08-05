@@ -697,6 +697,10 @@ interface ApiInterface {
     fun getAvailableDeliverySlots(): Call<AvailableDeliverySlotsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("confirmDeliveryAddress")
+    fun getConfirmDeliveryAddressDetails(): Call<ConfirmDeliveryAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/{locationId}")
     fun getSuburbs(
             @Header("apiId") apiId: String,

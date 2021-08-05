@@ -234,7 +234,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
 
     private fun getConfirmDeliveryAddressDetails() {
-        checkoutAddAddressNewUserViewModel.getAvailableDeliverySlots().observe(viewLifecycleOwner, {
+        checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE

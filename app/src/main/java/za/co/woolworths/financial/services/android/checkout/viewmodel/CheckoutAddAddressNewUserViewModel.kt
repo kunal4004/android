@@ -129,7 +129,7 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         try {
             emit(
                 NativeCheckoutResource.success(
-                    data = checkoutAddAddressNewUserInteractor.getAvailableDeliverySlots().body()
+                    data = checkoutAddAddressNewUserInteractor.getConfirmDeliveryAddressDetails().body()
                 )
             )
         } catch (exception: Exception) {
