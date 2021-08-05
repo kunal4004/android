@@ -32,7 +32,20 @@ enum class CreditCardActivationState(val value: String) {
 
 enum class CreditCardDeliveryStatus {
     CARD_RECEIVED, CARD_DELIVERED, APPOINTMENT_SCHEDULED, AWAITING_INSTRUCTION, CANCELLED, CARD_SHREDDED, CARD_NOT_RECEIVED, DEFAULT
+}
 
+enum class DeliveryStatusCode(val code: String) {
+    CARD_RECEIVED("0"),
+    CARD_DELIVERED("1"),
+    APPOINTMENT_SCHEDULED("2"),
+    AWAITING_INSTRUCTION("3"),
+    CANCELLED("4"),
+    CARD_SHREDDED("5"),
+    CARD_NOT_RECEIVED("6");
+
+    companion object {
+        fun getEnum(code: String?): DeliveryStatusCode? = DeliveryStatusCode.values().find { it.code == code }
+    }
 }
 
 enum class AccountsProductGroupCode(val groupCode: String) {
