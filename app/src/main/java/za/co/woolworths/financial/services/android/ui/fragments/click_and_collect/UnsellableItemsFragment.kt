@@ -39,7 +39,6 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     var bundle: Bundle? = null
     private var commerceItems: ArrayList<UnSellableCommerceItem>? = null
     var navController: NavController? = null
-
     companion object {
         const val KEY_ARGS_BUNDLE = "bundle"
         const val KEY_BUNDLE_SUBURB = "SUBURB"
