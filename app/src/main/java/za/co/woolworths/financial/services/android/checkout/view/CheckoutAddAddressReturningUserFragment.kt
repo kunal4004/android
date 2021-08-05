@@ -204,6 +204,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         //Only for Food
                         foodType = ONLY_FOOD
                         checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+                        selectDeliveryTimeSlotTitle.text = getString(R.string.slot_delivery_title_when)
+                        selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
                         expandableGrid.initialiseGridView(
                             selectedSlotResponseFood,
                             FIRST.week,
@@ -224,6 +226,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                             MIXED_FOOD
                         )
                         if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
+                            howWouldYouDeliveredTitle.text = getString(R.string.delivery_timeslot_title_other_items)
                             initializeDeliveryTypeSelectionView(
                                 selectedSlotResponseFood,
                                 MIXED_OTHER

@@ -65,7 +65,7 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                 openDayDeliverySlotsList?.get(position)?.let {
                     val deliveryType =
                         (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue("deliveryType")
-                    title.text = deliveryType
+                    title.text = deliveryType.capitalize()
                     subTitle.text = if (deliveryType.equals(DELIVERY_TYPE_TIMESLOT)) {
                         Html.fromHtml(
                             (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue(
