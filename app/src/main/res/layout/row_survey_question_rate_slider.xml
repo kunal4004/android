@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingTop="@dimen/twenty_two_dp"
+        android:paddingRight="@dimen/twenty_four_dp"
+        android:paddingBottom="@dimen/twenty_four_dp">
+
+        <TextView
+            android:id="@+id/tvTitleRateSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/futura_semi_bold"
+            android:gravity="left"
+            android:lineSpacingExtra="@dimen/line_spacing_4sp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_20sp"
+            tools:text="Lorem ipsum sit dolor" />
+
+        <TextView
+            android:id="@+id/tvDescRateSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:gravity="left"
+            android:lineSpacingExtra="@dimen/line_spacing_8sp"
+            android:text="@string/voc_question_slider_desc"
+            android:textColor="@color/text_description_color"
+            android:textSize="@dimen/sixteen_sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/nineteen_dp">
+
+            <ImageView
+                android:id="@+id/ivTooltipRateSliderBg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/tvTooltipRateSlider"
+                android:layout_alignBottom="@id/tvTooltipRateSlider"
+                android:scaleType="center"
+                android:src="@drawable/bg_voc_slider_tooltip" />
+
+            <TextView
+                android:id="@+id/tvTooltipRateSlider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/futura_semi_bold"
+                android:gravity="center"
+                android:paddingLeft="@dimen/fifteen_dp"
+                android:paddingTop="@dimen/five_dp"
+                android:paddingRight="@dimen/fifteen_dp"
+                android:paddingBottom="@dimen/twelve_dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twenty_sp"
+                tools:text="10" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/seekbar_background_voc_rating"
+            android:padding="@dimen/two_dp">
+
+            <SeekBar
+                android:id="@+id/sbRateSlider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:indeterminate="false"
+                android:paddingStart="@dimen/twenty_dp"
+                android:paddingEnd="@dimen/twenty_dp"
+                android:progressDrawable="@drawable/seekbar_progress_voc_rating"
+                android:splitTrack="false"
+                android:thumb="@drawable/seekbar_thumb_voc_rating"
+                android:thumbOffset="@dimen/twenty_dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/eight_dp"
+        android:alpha="0.3"
+        android:background="@color/color_separator_light_grey" />
+
+</LinearLayout>

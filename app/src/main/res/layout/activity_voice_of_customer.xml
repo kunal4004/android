@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:orientation="vertical"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCustomerActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/vocToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:background="@color/white"
+        android:gravity="center"
+        app:layout_scrollFlags="scroll|enterAlways">
+
+        <TextView
+            android:id="@+id/tvSkipSurvey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:fontFamily="@font/futura_medium"
+            android:letterSpacing="@integer/point_fifteen"
+            android:paddingStart="@dimen/eight_dp"
+            android:paddingTop="@dimen/eight_dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="@dimen/eight_dp"
+            android:text="@string/voc_survey_skip"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twelve_sp"
+            android:visibility="visible" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/vocNavHostFrag"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/voice_of_customer_nav_graph" />
+
+</LinearLayout>
