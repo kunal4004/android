@@ -11,6 +11,38 @@
   "fulfillmentTypes": {
     "join": "01"
   },
+  "orderSummary": {
+    "basketTotal": 99.98,
+    "discountDetails": {
+      "companyDiscount": 5.0,
+      "otherDiscount": 0,
+      "promoCodeDiscount": 12.0,
+      "totalDiscount": 0,
+      "totalOrderDiscount": 0,
+      "voucherDiscount": 2.0,
+      "wrewardsDiscount": 1.32
+    },
+    "estimatedDelivery": 0,
+    "savedAmount": 0,
+    "shippingAdjusted": true,
+    "suburb": {
+      "fulfillmentStores": {
+        "01": "3035",
+        "02": "3501",
+        "07": "3501"
+      },
+      "hasHeader": false,
+      "id": "920",
+      "name": "Bryanston",
+      "postalCode": "2191",
+      "storeDeliverable": false,
+      "storePickup": false,
+      "suburbDeliverable": false
+    },
+    "total": 99.98,
+    "totalItemsCount": 2,
+    "totalStaffDiscount": 0
+  },
   "requiredToDisplayODD": true,
   "hasDeliverySlotsConflict": false,
   "sortedFoodDeliverySlots": [

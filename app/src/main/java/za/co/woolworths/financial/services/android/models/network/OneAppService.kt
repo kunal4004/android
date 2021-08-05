@@ -237,6 +237,9 @@ object OneAppService : RetrofitConfig() {
     fun getAvailableDeliverySlots(): Call<AvailableDeliverySlotsResponse>{
         return mockApiInterface.getAvailableDeliverySlots()
     }
+    fun getConfirmDeliveryAddressDetails(): Call<AvailableDeliverySlotsResponse>{
+        return mockApiInterface.getAvailableDeliverySlots()
+    }
 
     fun getCartSummary(): Call<CartSummaryResponse> {
         return mApiInterface.getCartSummary(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(),
