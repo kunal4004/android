@@ -22,7 +22,7 @@ class AvailableDeliverySlotsResponse {
     var hasDeliverySlotsConflict: Boolean? = null
 
     @SerializedName("sortedFoodDeliverySlots")
-    var sortedFoodDeliverySlots: List<Any>? = null
+    var sortedFoodDeliverySlots: List<SortedFoodDeliverySlot>? = null
 
     @SerializedName("sortedJoinDeliverySlots")
     var sortedJoinDeliverySlots: List<SortedJoinDeliverySlot>? = null
@@ -43,7 +43,7 @@ class AvailableDeliverySlotsResponse {
     var links: List<Any>? = null
 
     @SerializedName("sortedOtherDeliverySlots")
-    var sortedOtherDeliverySlots: List<Any>? = null
+    var sortedOtherDeliverySlots: List<SortedOtherDeliverySlot>? = null
 
     @SerializedName("splitEnabled")
     var splitEnabled: Boolean? = null
