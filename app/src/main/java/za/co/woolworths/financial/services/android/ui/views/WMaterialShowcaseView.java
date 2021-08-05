@@ -161,7 +161,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         mWalkThroughAction = mContentView.findViewById(R.id.actionButton);
         windowContainer = mContentView.findViewById(R.id.windowContainer);
         mHideTutorialAction = mContentView.findViewById(R.id.hideFeatureTutorials);
-        mNewFeature = mContentView.findViewById(R.id.newFeature);
+        mNewFeature = mContentView.findViewById(R.id.txtNewFeature);
         mDismissButton.setOnClickListener(this);
         mWalkThroughAction.setOnClickListener(this);
         mHideTutorialAction.setOnClickListener(this);
