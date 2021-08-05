@@ -68,8 +68,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     enum class FulfillmentsType(val type: String) {
-        FOOD("1"),
-        OTHER("2")
+        FOOD("01"),
+        OTHER("02")
     }
 
     override fun onCreateView(
@@ -194,7 +194,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     )
                     selectedSlotResponseFood = mockDeliverySlotResponse
                     selectedSlotResponseOther = mockDeliverySlotResponse
-                    if (selectedSlotResponseFood?.fulfillmentTypes?.join?.equals(FulfillmentsType.FOOD) == true) {
+                    if (selectedSlotResponseFood?.fulfillmentTypes?.join?.equals(FulfillmentsType.FOOD.type) == true) {
                         //Only for Food
                         foodType = ONLY_FOOD
                         checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
@@ -204,10 +204,10 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                             ONLY_FOOD
                         )
                     } else if (selectedSlotResponseFood?.fulfillmentTypes?.join?.equals(
-                            FulfillmentsType.OTHER
+                            FulfillmentsType.OTHER.type
                         ) == true && selectedSlotResponseFood?.fulfillmentTypes?.other?.equals(
-                            FulfillmentsType.OTHER
-                        ) == false
+                            FulfillmentsType.OTHER.type
+                        ) == true
                     ) {
                         // For mix basket
                         foodType = MIXED_FOOD
@@ -219,8 +219,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         )
                         initializeDeliveryTypeSelectionView(
                             selectedSlotResponseFood?.openDayDeliverySlots,
-                            MIXED_FOOD
-                        )
+                            MIXED_OTHER
+                        ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
                     } else {
                         // for Other
                         initializeDeliveryTypeSelectionView(
@@ -288,7 +288,6 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             otherType = type
             expandableGrid.initialiseGridView(selectedSlotResponseOther, FIRST.week, type)
         } else {
-            selectedOtherSlot = Slot()
             gridLayoutDeliveryOptions.visibility = View.GONE
         }
     }
