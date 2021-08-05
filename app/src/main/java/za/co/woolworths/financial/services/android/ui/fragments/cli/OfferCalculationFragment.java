@@ -345,7 +345,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 						break;
 					default:
-						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
+                        showErrorMessage(getActivity(), mObjOffer.response);
 						break;
 				}
 
@@ -580,7 +580,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 							default:
 								Response response = mObjOffer.response;
 								if (response != null) {
-									Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+                                    showErrorMessage(getActivity(), response);
 								}
 								break;
 						}
@@ -632,15 +632,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					cliApplicationRequest(mEventStatus);
 				}
 				break;
-		}
-	}
-
-	private void displayServerResponse(OfferActive mObjOffer) {
-		if (mObjOffer != null) {
-			Response response = mObjOffer.response;
-			if (response != null) {
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
-			}
 		}
 	}
 
@@ -908,4 +899,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		if (length < 2) return Integer.parseInt(s);
 		return Integer.parseInt(s.substring(0, length - 2));
 	}
+
+    private void showErrorMessage(Activity activity, Response response) {
+        String description = response.desc;
+        Utils.showGeneralErrorDialog(activity, !TextUtils.isEmpty(description) ? description : response.message);
+    }
 }
