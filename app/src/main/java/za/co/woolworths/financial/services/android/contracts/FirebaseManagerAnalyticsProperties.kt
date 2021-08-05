@@ -369,7 +369,7 @@ open class FirebaseManagerAnalyticsProperties {
 
     class PropertyValues {
         companion object {
-            const val notApplicable: String = "N/A"
+            const val NOT_APPLICABLE: String = "N/A"
         }
     }
 
