@@ -76,16 +76,18 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
 
     fun setUpFirebaseEvents() {
         setupFirebaseUserProperty()
-        firebaseAnalytics?.apply {
-            val token = SessionUtilities.getInstance().jwt
-            token.AtgId?.apply {
-                val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
-                setUserId(atgId)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId)
-            }
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            firebaseAnalytics?.apply {
+                val token = SessionUtilities.getInstance().jwt
+                token.AtgId?.apply {
+                    val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
+                    setUserId(atgId)
+                    setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId)
+                }
 
-            token.C2Id?.apply {
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, this)
+                token.C2Id?.apply {
+                    setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, this)
+                }
             }
         }
     }

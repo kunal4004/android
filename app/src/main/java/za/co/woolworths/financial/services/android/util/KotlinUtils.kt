@@ -671,38 +671,45 @@ class KotlinUtils {
             firebaseInstance?.apply {
                 setUserProperty(
                         FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
-                        null
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
                         FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING,
-                        null
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
                         FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING,
-                        null
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
                         FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING,
-                        null
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
                         FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING,
-                        null
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
                         FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_STATE,
-                        null
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
                         FirebaseManagerAnalyticsProperties.PropertyNames.CREDIT_CARD_PRODUCT_STATE,
-                        null
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
                         FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_STATE,
-                        null
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, null)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, null)
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ATGId,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                )
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.C2ID,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                )
+                setUserId(FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE)
             }
         }
 
