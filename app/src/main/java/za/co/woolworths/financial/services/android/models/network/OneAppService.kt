@@ -192,6 +192,8 @@ object OneAppService : RetrofitConfig() {
 
     fun getRootCategory(locationEnabled: Boolean, location: Location?): Call<RootCategories> {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+        // Pass storeId value of 01 fulfillment type
+        val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
         var locationCord = location
         if (!locationEnabled) {
             locationCord = null
@@ -201,14 +203,21 @@ object OneAppService : RetrofitConfig() {
         }
 
         return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(),
-            getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(),
-            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId)
+            getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android",
+            getSessionToken(),
+            getDeviceIdentityToken(), locationCord?.latitude, locationCord?.longitude, suburbId, storeId, fulFillmentStoreId01)
     }
 
     fun getSubCategory(category_id: String, version: String): Call<SubCategories> {
-        return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(),
-            getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(), getDeviceIdentityToken(),
-            category_id, version)
+        val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+        // Pass storeId value of 01 fulfillment type
+        val fulFillmentStoreId01 = Utils.retrieveStoreId("01")
+
+        return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(),
+            getDeviceModel(),
+            getNetworkCarrier(), getDeviceManufacturer(), "Android",
+            getSessionToken(), getDeviceIdentityToken(),
+            category_id, version, suburbId, storeId, fulFillmentStoreId01)
     }
 
     fun getProvinces(): Call<ProvincesResponse> {
