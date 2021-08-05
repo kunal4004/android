@@ -1,0 +1,237 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet_layout"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="@dimen/ninety"
+    android:background="@color/white"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <TextView
+        android:id="@+id/orderDetailsTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/order_details"
+        android:textSize="@dimen/twenty_sp"
+        android:layout_marginTop="@dimen/thirty_dp"
+        android:textColor="@color/black"
+        style="@style/futura_semi_bold_black"
+        android:layout_weight="0.5"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator"/>
+
+    <LinearLayout
+        android:id="@+id/orderStatusLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/thirty_dp"
+        android:paddingBottom="@dimen/five_dp"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/orderDetailsTextView">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/order_status"
+            android:textColor="@color/gray"
+            style="@style/myriad_pro_regular"
+            android:textSize="@dimen/fourteen_sp"
+            android:layout_weight="0.3"/>
+
+        <TextView
+            android:id="@+id/orderStatusTextView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textColor="@color/black"
+            style="@style/futura_semi_bold_black"
+            android:textSize="@dimen/twelve_sp"
+            android:gravity="end"
+            android:layout_weight="0.7"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/deliveryLocationLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/orderStatusLinearLayout">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/delivery_location_"
+            android:textColor="@color/gray"
+            style="@style/myriad_pro_regular"
+            android:textSize="@dimen/fourteen_sp"
+            android:layout_weight="0.3"/>
+
+        <TextView
+            android:id="@+id/deliveryLocationTextView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textColor="@color/black"
+            style="@style/futura_semi_bold_black"
+            android:textSize="@dimen/twelve_sp"
+            android:gravity="end"
+            android:layout_weight="0.7"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/deliveryLocationSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/deliveryLocationLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/oneDeliveryLinearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/deliveryLocationSeparator">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/delivery_"
+            android:textColor="@color/gray"
+            style="@style/myriad_pro_regular"
+            android:textSize="@dimen/fourteen_sp"
+            android:layout_weight="0.3" />
+
+        <TextView
+            android:id="@+id/deliveryDateTimeTextView2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textColor="@color/black"
+            style="@style/myriad_pro_regular"
+            android:textSize="@dimen/twelve_sp"
+            android:gravity="end"
+            android:layout_weight="0.7"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/foodDeliveryLinearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/twenty_dp"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/deliveryLocationSeparator">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/food_items_"
+            android:textColor="@color/gray"
+            style="@style/myriad_pro_regular"
+            android:textSize="@dimen/fourteen_sp"
+            android:layout_weight="0.3"/>
+
+        <TextView
+            android:id="@+id/foodDeliveryDateTimeTextView2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textColor="@color/black"
+            style="@style/myriad_pro_regular"
+            android:textSize="@dimen/twelve_sp"
+            android:gravity="end"
+            android:layout_weight="0.7"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/otherDeliveryLinearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/foodDeliveryLinearLayout2">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/other_items_"
+            android:textColor="@color/gray"
+            style="@style/myriad_pro_regular"
+            android:textSize="@dimen/fourteen_sp"
+            android:layout_weight="0.3"/>
+
+        <TextView
+            android:id="@+id/otherDeliveryDateTimeTextView2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textColor="@color/black"
+            style="@style/myriad_pro_regular"
+            android:textSize="@dimen/twelve_sp"
+            android:gravity="end"
+            android:layout_weight="0.7"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/otherDeliverySeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/otherDeliveryLinearLayout2" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
