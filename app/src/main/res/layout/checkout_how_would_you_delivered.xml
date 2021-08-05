@@ -31,9 +31,10 @@
         app:layout_constraintTop_toBottomOf="@+id/howWouldYouDeliveredTitle" />
 
     <include
-        android:id="@+id/gridLayout"
-        layout="@layout/checkout_grid_layout"
+        android:id="@+id/gridLayoutDeliveryOptions"
+        layout="@layout/checkout_grid_layout_other"
         android:layout_width="match_parent"
+        android:paddingTop="@dimen/ten_dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/deliveryTypeSelectionRecyclerView" />
