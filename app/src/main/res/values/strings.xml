@@ -2155,7 +2155,7 @@
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
     <string name="view_application_status">View Application Status</string>
 
-    <!-- Native Checkout   -->
+    <!-- Native Checkout -->
     <string name="native_checkout_continue_to_payment">Continue To Payment</string>
     <string name="native_checkout_order_total_title">Order Total *</string>
 
