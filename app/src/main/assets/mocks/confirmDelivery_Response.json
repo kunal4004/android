@@ -1802,7 +1802,7 @@
     {
       "deliverySlotId": "12400001",
       "endDeliveryDay": 5,
-      "amount": 0,
+      "amount": 25,
       "deliveryType": "value",
       "endDeliveryDate": "06/10/2021 00:00:00 CAT",
       "startDeliveryDay": 3,
@@ -1812,7 +1812,7 @@
     {
       "deliverySlotId": "13700002",
       "endDeliveryDay": 3,
-      "amount": 0,
+      "amount": 70,
       "deliveryType": "standard",
       "endDeliveryDate": "06/08/2021 00:00:00 CAT",
       "startDeliveryDay": 1,

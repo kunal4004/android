@@ -35,11 +35,105 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/selectDeliveryTimeSlotTitle" />
 
-    <include
-        android:id="@+id/gridLayout"
-        layout="@layout/checkout_grid_layout"
+    <GridView
+        android:id="@+id/timingsGridViewFood"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/twenty_six_dp"
+        android:layout_marginStart="@dimen/seventy_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:layout_marginEnd="@dimen/twenty_dp"
+        app:layout_constraintTop_toBottomOf="@id/selectDeliveryTimeSlotSubTitle" />
+
+    <LinearLayout
+        android:id="@+id/dateGridLayoutFood"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/selectDeliveryTimeSlotSubTitle" />
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/twenty_dp"
+        android:gravity="start"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/timingsGridViewFood">
+
+        <za.co.woolworths.financial.services.android.checkout.view.ExpandableGridViewScrollable
+            android:id="@+id/dateGridViewFood"
+            android:layout_width="@dimen/fifty_dp"
+            android:layout_height="wrap_content"
+            android:horizontalSpacing="@dimen/two_dp"
+            android:isScrollContainer="false"
+            android:numColumns="1" />
+
+        <za.co.woolworths.financial.services.android.checkout.view.ExpandableGridViewScrollable
+            android:id="@+id/timeSlotsGridViewFood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:horizontalSpacing="@dimen/three_dp"
+            android:isScrollContainer="false"
+            android:verticalSpacing="@dimen/three_dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/fourteen_dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/dateGridLayoutFood">
+
+        <ImageButton
+            android:id="@+id/previousImgBtnFood"
+            android:layout_width="@dimen/thirty_dp"
+            android:layout_height="@dimen/thirty_dp"
+            android:layout_margin="@dimen/eight_dp"
+            android:background="@drawable/rounded_view_grey_img_button"
+            android:padding="@dimen/ten_dp"
+            android:src="@drawable/back_arrow" />
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/two_dp"
+            android:text="@string/previous_week_text"
+            android:textColor="@color/checkout_delivering_title"
+            android:textSize="@dimen/fourteen_sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/two_dp"
+            android:text="@string/next_week_text"
+            android:textColor="@color/checkout_delivering_title"
+            android:textSize="@dimen/fourteen_sp" />
+
+        <ImageButton
+            android:id="@+id/nextImgBtnFood"
+            android:layout_width="@dimen/thirty_dp"
+            android:layout_height="@dimen/thirty_dp"
+            android:layout_margin="@dimen/eight_dp"
+            android:background="@drawable/rounded_view_grey_img_button"
+            android:padding="@dimen/ten_dp"
+            android:src="@drawable/next_arrow" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loadingBarFood"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:indeterminateTint="@color/black"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
