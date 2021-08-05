@@ -90,7 +90,8 @@ class OrderConfirmationFragment : Fragment()  {
         val splitDateTime = deliveryDateAndTime?.split(",", ignoreCase = false, limit = 2)
         val wordSpan: Spannable = SpannableString(deliveryDateAndTime)
 
-        if (splitDateTime?.size == 2) {
+        if (!splitDateTime.isNullOrEmpty() &&
+            splitDateTime.size == 2) {
             wordSpan.setSpan(
                 StyleSpan(BOLD),
                 0,
