@@ -91,11 +91,49 @@ class OrderConfirmationFragment : Fragment()  {
     }
 
     private fun setupOrderTotalDetails(response: SubmittedOrderResponse?) {
+        otherOrderDetailsConstraintLayout.visibility = View.VISIBLE
+
         orderTotalTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.total)
+
         yourCartTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.basketTotal)
 
+        discountsTextView.text = CurrencyFormatter
+            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.otherDiscount)
+
+        companyDiscountTextView.text = CurrencyFormatter
+            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.companyDiscount)
+
+        wRewardsVouchersTextView.text = CurrencyFormatter
+            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
+
+        totalDiscountTextView.text = CurrencyFormatter
+            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.totalDiscount)
+
+        deliveryFeeTextView.text = CurrencyFormatter
+            .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
+
+        if(response?.wfsCardDetails?.isWFSCardAvailable == false) {
+            if(response.orderSummary?.discountDetails?.wrewardsDiscount!! > 0.0) {
+                setMissedRewardsSavings(response.orderSummary?.discountDetails?.wrewardsDiscount!!)
+            }
+            else if(response.orderSummary?.savedAmount!! > 10) {
+                setMissedRewardsSavings(response.orderSummary?.savedAmount!!.toDouble())
+            }
+        }
+        else{
+            missedRewardsLinearLayout.visibility = View.GONE
+        }
+
+        setMissedRewardsSavings(response?.orderSummary?.discountDetails?.wrewardsDiscount!!)
+
+    }
+
+    private fun setMissedRewardsSavings(amount: Double) {
+        missedRewardsLinearLayout.visibility = View.VISIBLE
+        missedRewardsTextView.text = CurrencyFormatter
+            .formatAmountToRandAndCentWithSpace(amount)
     }
 
     private fun applyBoldBeforeComma(deliveryDateAndTime: String?): Spannable {
