@@ -394,6 +394,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }, SavedAddressResponse.class));*/
 
         
+        navigateToCheckout(null);
     }
 
     private void navigateToCheckout(SavedAddressResponse response) {
