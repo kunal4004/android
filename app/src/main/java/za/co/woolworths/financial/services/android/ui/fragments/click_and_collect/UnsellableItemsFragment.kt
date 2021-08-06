@@ -53,7 +53,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
             deliveryType = DeliveryType.valueOf(getString(EditDeliveryLocationActivity.DELIVERY_TYPE, DeliveryType.DELIVERY.name))
             selectedSuburb = Utils.jsonStringToObject(getString(KEY_ARGS_SUBURB), Suburb::class.java) as Suburb?
             selectedProvince = Utils.jsonStringToObject(getString(KEY_ARGS_PROVINCE), Province::class.java) as Province?
-            commerceItems = Gson().fromJson(getString("UnSellableCommerceItems"), object : TypeToken<List<UnSellableCommerceItem>>() {}.type)
+            commerceItems = Gson().fromJson(getString(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS), object : TypeToken<List<UnSellableCommerceItem>>() {}.type)
         }
     }
 
