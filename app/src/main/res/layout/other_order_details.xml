@@ -22,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/order_total_"
+            android:text="@string/order_total_semicolon"
             android:textSize="@dimen/twenty_sp"
             android:layout_marginTop="@dimen/five_dp"
             android:textColor="@color/black"

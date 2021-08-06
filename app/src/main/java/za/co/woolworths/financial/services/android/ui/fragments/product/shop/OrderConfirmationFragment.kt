@@ -135,19 +135,19 @@ class OrderConfirmationFragment : Fragment()  {
         deliveryLocationTextView.text = optionLocation.text
 
         if(response?.deliveryDetails?.deliveryInfos?.size == 2){
-            oneDeliveryLinearLayout2.visibility = View.GONE
-            foodDeliveryLinearLayout2.visibility = View.VISIBLE
-            otherDeliveryLinearLayout2.visibility = View.VISIBLE
-            foodDeliveryDateTimeTextView2.text = applyBoldBeforeComma(response
+            oneDeliveryBottomSheetLinearLayout.visibility = View.GONE
+            foodDeliveryLinearLayout.visibility = View.VISIBLE
+            otherDeliveryBottomSheetLinearLayout.visibility = View.VISIBLE
+            foodDeliveryDateTimeBottomSheetTextView.text = applyBoldBeforeComma(response
                 .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
-            otherDeliveryDateTimeTextView2.text =
+            otherDeliveryDateTimeBottomSheetTextView.text =
                 response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
         }
         else if(response?.deliveryDetails?.deliveryInfos?.size == 1){
-            oneDeliveryLinearLayout2.visibility = View.VISIBLE
-            foodDeliveryLinearLayout2.visibility = View.GONE
-            otherDeliveryLinearLayout2.visibility = View.GONE
-            deliveryDateTimeTextView2.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+            oneDeliveryBottomSheetLinearLayout.visibility = View.VISIBLE
+            foodDeliveryBottomSheetLinearLayout.visibility = View.GONE
+            otherDeliveryBottomSheetLinearLayout.visibility = View.GONE
+            deliveryDateTimeBottomSheetTextView.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
         }
     }
 
