@@ -160,16 +160,21 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             txtOrderSummaryYourCartValue?.text =
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
             it.discountDetails?.let { discountDetails ->
-                txtOrderSummaryDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
-                txtOrderSummaryTotalDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                groupOrderSummaryDiscount?.visibility =
+                    if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
                 groupPromoCodeDiscount?.visibility =
                     if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
                 groupWRewardsDiscount?.visibility =
                     if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
                 groupCompanyDiscount?.visibility =
                     if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                groupTotalDiscount?.visibility =
+                    if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
+
+                txtOrderSummaryDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
+                txtOrderSummaryTotalDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
                 txtOrderSummaryWRewardsVouchersValue?.text =
                     "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
                 txtOrderSummaryCompanyDiscountValue?.text =
