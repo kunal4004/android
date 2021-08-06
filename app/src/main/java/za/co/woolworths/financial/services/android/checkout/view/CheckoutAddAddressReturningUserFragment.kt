@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Chec
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
@@ -44,6 +45,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private var selectedSlotResponseOther: AvailableDeliverySlotsResponse? = null
     private var selectedFoodSlot = Slot()
     private var selectedOtherSlot = Slot()
+    private var foodType = DeliveryType.ONLY_FOOD
+    private var otherType = DeliveryType.ONLY_OTHER
     private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter? =
         null
 
@@ -54,13 +57,20 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     enum class DeliveryType(val type: String) {
-        FOOD("food"),
-        OTHER("other")
+        ONLY_FOOD("only_food"),
+        MIXED_FOOD("mixed_food"),
+        MIXED_OTHER("mixed_other"),
+        ONLY_OTHER("only_other")
     }
 
-    enum class WeekCounter(val week: Int){
+    enum class WeekCounter(val week: Int) {
         FIRST(0),
         SECOND(1)
+    }
+
+    enum class FulfillmentsType(val type: String) {
+        FOOD("01"),
+        OTHER("02")
     }
 
     override fun onCreateView(
@@ -119,7 +129,11 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         }
     }
 
-    private fun initializeDeliveryTypeSelectionView(openDayDeliverySlots: List<Any>?) {
+    private fun initializeDeliveryTypeSelectionView(
+        openDayDeliverySlots: List<Any>?,
+        type: DeliveryType
+    ) {
+        // To show How would you like it to delivered.
         checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
         val timeSlotListItem: MutableMap<Any, Any> = HashMap()
         timeSlotListItem["deliveryType"] = DELIVERY_TYPE_TIMESLOT
@@ -131,7 +145,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
         (openDayDeliverySlots as ArrayList).add(timeSlotListItem)
         checkoutDeliveryTypeSelectionListAdapter =
-            CheckoutDeliveryTypeSelectionListAdapter(openDayDeliverySlots, this)
+            CheckoutDeliveryTypeSelectionListAdapter(openDayDeliverySlots, this, type)
         deliveryTypeSelectionRecyclerView?.apply {
             addItemDecoration(object : RecyclerView.ItemDecoration() {})
             layoutManager = activity?.let { LinearLayoutManager(it) }
@@ -146,44 +160,6 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         nextImgBtnFood.setOnClickListener(this)
         previousImgBtnOther.setOnClickListener(this)
         nextImgBtnOther.setOnClickListener(this)
-    }
-
-    private fun initializeGrid(
-        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
-        weekNumber: Int, deliveryType: DeliveryType
-    ) {
-        when (deliveryType) {
-            FOOD -> {
-                val deliverySlots =
-                    availableDeliverySlotsResponse?.sortedFoodDeliverySlots?.get(weekNumber)
-                expandableGrid.apply {
-                    createTimingsGrid(deliverySlots?.hourSlots, timingsGridViewFood)
-                    createDatesGrid(deliverySlots?.headerDates, dateGridViewFood)
-                    createTimeSlotGridView(
-                        deliverySlots?.week,
-                        deliverySlots?.hourSlots,
-                        weekNumber,
-                        timeSlotsGridViewFood,
-                        FOOD
-                    )
-                }
-            }
-            OTHER -> {
-                val deliverySlots =
-                    availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
-                expandableGrid.apply {
-                    createTimingsGrid(deliverySlots?.hourSlots, timingsGridViewOther)
-                    createDatesGrid(deliverySlots?.headerDates, dateGridViewOther)
-                    createTimeSlotGridView(
-                        deliverySlots?.week,
-                        deliverySlots?.hourSlots,
-                        weekNumber,
-                        timeSlotsGridViewOther,
-                        OTHER
-                    )
-                }
-            }
-        }
     }
 
     private fun setupViewModel() {
@@ -204,11 +180,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
                     /*if (it.data != null) {
+                    // Keeping two diff response not to get merge while showing 2 diff slots.
                        selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
-                       selectedSlotResponseOther = it.data as? AvailableDeliverySlotsResponse
-                        initializeGrid(selectedSlotResponseFood, FIRST.week)
-                        initializeDeliveryTypeSelectionView(selectedSlotResponseFood?.openDayDeliverySlots)
-                    }*/
+                       selectedSlotResponseOther = it.data as? AvailableDeliverySlotsResponse */
 
                     //use mock data from json file
                     val jsonFileString = Utils.getJsonDataFromAsset(
@@ -221,8 +195,37 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     )
                     selectedSlotResponseFood = mockDeliverySlotResponse
                     selectedSlotResponseOther = mockDeliverySlotResponse
-                    initializeGrid(selectedSlotResponseFood, FIRST.week, FOOD)
-                    initializeDeliveryTypeSelectionView(selectedSlotResponseFood?.openDayDeliverySlots)
+                    if (FOOD.type == selectedSlotResponseFood?.fulfillmentTypes?.join) {
+                        //Only for Food
+                        foodType = ONLY_FOOD
+                        checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+                        expandableGrid.initialiseGridView(
+                            selectedSlotResponseFood,
+                            FIRST.week,
+                            ONLY_FOOD
+                        )
+                    } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
+                        // For mix basket
+                        foodType = MIXED_FOOD
+                        checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+                        expandableGrid.initialiseGridView(
+                            selectedSlotResponseFood,
+                            FIRST.week,
+                            MIXED_FOOD
+                        )
+                        initializeDeliveryTypeSelectionView(
+                            selectedSlotResponseFood?.openDayDeliverySlots,
+                            MIXED_OTHER
+                        ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
+                    } else {
+                        // for Other
+                        initializeDeliveryTypeSelectionView(
+                            selectedSlotResponseFood?.openDayDeliverySlots,
+                            ONLY_OTHER
+                        )
+                    }
+                    //}
+
                 }
                 ResponseStatus.LOADING -> {
                     loadingBar.visibility = View.VISIBLE
@@ -235,21 +238,21 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     fun getSelectedSlotResponse(deliveryType: DeliveryType): AvailableDeliverySlotsResponse? {
-        return if (deliveryType.equals(FOOD)) selectedSlotResponseFood else selectedSlotResponseOther
+        return if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD)) selectedSlotResponseFood else selectedSlotResponseOther
     }
 
     fun setSelectedSlotResponse(
         availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
         deliveryType: DeliveryType
     ) {
-        if (deliveryType.equals(FOOD))
+        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD))
             selectedSlotResponseFood = availableDeliverySlotsResponse
         else
             selectedSlotResponseOther = availableDeliverySlotsResponse
     }
 
     fun setSelectedFoodOrOtherSlot(selectedSlot: Slot, deliveryType: DeliveryType) {
-        if (deliveryType.equals(FOOD))
+        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD))
             selectedFoodSlot = selectedSlot
         else
             selectedOtherSlot = selectedSlot
@@ -258,29 +261,29 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.previousImgBtnFood -> {
-                initializeGrid(selectedSlotResponseFood, FIRST.week, FOOD)
+                expandableGrid.initialiseGridView(selectedSlotResponseFood, FIRST.week, foodType)
             }
             R.id.nextImgBtnFood -> {
-                initializeGrid(selectedSlotResponseFood, SECOND.week, FOOD)
+                expandableGrid.initialiseGridView(selectedSlotResponseFood, SECOND.week, foodType)
             }
             R.id.previousImgBtnOther -> {
-                initializeGrid(selectedSlotResponseOther, FIRST.week, OTHER)
+                expandableGrid.initialiseGridView(selectedSlotResponseOther, FIRST.week, otherType)
             }
             R.id.nextImgBtnOther -> {
-                initializeGrid(selectedSlotResponseOther, SECOND.week, OTHER)
+                expandableGrid.initialiseGridView(selectedSlotResponseOther, SECOND.week, otherType)
             }
         }
     }
 
-    override fun selectedDeliveryType(deliveryType: Any) {
+    override fun selectedDeliveryType(deliveryType: Any, type: DeliveryType) {
         if (((deliveryType as Map<Any, String>).getValue("deliveryType")).equals(
                 DELIVERY_TYPE_TIMESLOT
             )
         ) {
             gridLayoutDeliveryOptions.visibility = View.VISIBLE
-            initializeGrid(selectedSlotResponseOther, FIRST.week, OTHER)
+            otherType = type
+            expandableGrid.initialiseGridView(selectedSlotResponseOther, FIRST.week, type)
         } else {
-            selectedOtherSlot = Slot()
             gridLayoutDeliveryOptions.visibility = View.GONE
         }
     }

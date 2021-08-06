@@ -14,6 +14,7 @@
 
         <include
             android:id="@+id/checkoutTimeSlotSelectionLayout"
+            android:visibility="gone"
             layout="@layout/checkout_delivery_time_slot_selection_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

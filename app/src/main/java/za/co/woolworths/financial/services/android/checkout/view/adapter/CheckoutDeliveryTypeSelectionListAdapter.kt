@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
 /**
@@ -15,7 +16,8 @@ import za.co.woolworths.financial.services.android.ui.extension.bindColor
  */
 class CheckoutDeliveryTypeSelectionListAdapter(
     private var openDayDeliverySlotsList: List<Any>?,
-    private val listner: EventListner
+    private val listner: EventListner,
+    private val type: CheckoutAddAddressReturningUserFragment.DeliveryType
 ) :
     RecyclerView.Adapter<CheckoutDeliveryTypeSelectionListAdapter.CheckoutDeliveryTypeSelectionViewHolder>() {
 
@@ -95,7 +97,7 @@ class CheckoutDeliveryTypeSelectionListAdapter(
 
                 setOnClickListener {
                     openDayDeliverySlotsList?.get(position)?.let {
-                        listner.selectedDeliveryType(it)
+                        listner.selectedDeliveryType(it, type)
                     }
 
                     checkedItemPosition = position
@@ -106,6 +108,9 @@ class CheckoutDeliveryTypeSelectionListAdapter(
     }
 
     interface EventListner {
-        fun selectedDeliveryType(deliveryType: Any)
+        fun selectedDeliveryType(
+            deliveryType: Any,
+            type: CheckoutAddAddressReturningUserFragment.DeliveryType
+        )
     }
 }
