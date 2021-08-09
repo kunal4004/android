@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -25,6 +26,8 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 
 
@@ -139,6 +142,7 @@ class OrderConfirmationFragment : Fragment()  {
     }
 
     private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
+        bottomSheetScrollView.visibility = View.VISIBLE
         orderStatusTextView.text = response?.orderSummary?.state
         deliveryLocationTextView.text = optionLocation.text
 
@@ -200,6 +204,17 @@ class OrderConfirmationFragment : Fragment()  {
         missedRewardsLinearLayout.visibility = View.VISIBLE
         missedRewardsTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(amount)
+
+        wrewardsIconImageView.setOnClickListener{
+            val bottomSheetFragment = WrewardsBottomSheetFragment()
+
+            val bundle = Bundle()
+            bundle.putString(WrewardsBottomSheetFragment.TAG, missedRewardsTextView.text.toString())
+            bottomSheetFragment.arguments = bundle
+
+            activity?.supportFragmentManager?.let { supportFragmentManager ->
+                bottomSheetFragment.show(supportFragmentManager, WrewardsBottomSheetFragment.TAG) }
+        }
     }
 
     private fun applyBoldBeforeComma(deliveryDateAndTime: String?): Spannable {

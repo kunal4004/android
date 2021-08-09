@@ -2123,5 +2123,11 @@
     <string name="delivery_location_semicolon">Delivery location:</string>
     <string name="number_items">%1$s Items</string>
     <string name="order_again">ORDER AGAIN</string>
+    <string name="you_could_have_saved">You could have saved</string>
+    <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
+    <string name="add_it_now">Add it now</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="rewards">REWARDS</string>
+    <string name="w">W</string>
 
 </resources>
