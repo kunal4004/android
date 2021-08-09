@@ -10,20 +10,28 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
+import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 
 
 class OrderConfirmationFragment : Fragment()  {
+
+    var itemsOrder: ArrayList<OrderItem>? = ArrayList(0)
+    var itemsOrderListAdapter: ItemsOrderListAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -149,6 +157,46 @@ class OrderConfirmationFragment : Fragment()  {
             otherDeliveryBottomSheetLinearLayout.visibility = View.GONE
             deliveryDateTimeBottomSheetTextView.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
         }
+
+        setNumberAndCostItemsBottomSheet(response?.items)
+
+        initRecyclerView(response?.items)
+
+    }
+
+    private fun initRecyclerView(items: OrderItems?) {
+
+        initialiseItemsOrder(items)
+
+        if (itemsOrder.isNullOrEmpty()) {
+            return
+        }
+
+        context?.let {
+            itemsRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
+            itemsOrderListAdapter = ItemsOrderListAdapter(itemsOrder!!)
+        }
+        itemsRecyclerView.adapter = itemsOrderListAdapter
+    }
+
+    private fun initialiseItemsOrder(items: OrderItems?) {
+        if(items?.other?.size!! > 0){
+            itemsOrder?.addAll(items.other!!)
+        }
+        if(items.food?.size!! > 0){
+            itemsOrder?.addAll(items.food!!)
+        }
+    }
+
+    private fun setNumberAndCostItemsBottomSheet(items: OrderItems?) {
+        val other: Int = items?.other?.size ?: 0
+        val food: Int = items?.food?.size ?: 0
+        val number: Int = other.plus(food)
+        numberItemsTextView.text = if(number>1)
+            bindString(R.string.number_items, number.toString())
+        else
+            bindString(R.string.number_item, number.toString())
+        costItemsTextView.text = orderTotalTextView.text
     }
 
     private fun setMissedRewardsSavings(amount: Double) {
