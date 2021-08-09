@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         style="@style/futura_semi_bold_black"
         android:textSize="@dimen/fourty_sp"
-        android:text="@string/w"
+        android:text="@string/wrewards_logo_w"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         style="@style/futura_medium_black"
         android:textSize="@dimen/fourty_sp"
-        android:text="@string/rewards"
+        android:text="@string/wrewards_logo_rewards"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/wTextView"/>
 
