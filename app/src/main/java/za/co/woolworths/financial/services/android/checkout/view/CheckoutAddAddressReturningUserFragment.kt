@@ -45,8 +45,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private var selectedSlotResponseOther: AvailableDeliverySlotsResponse? = null
     private var selectedFoodSlot = Slot()
     private var selectedOtherSlot = Slot()
-    private var foodType = DeliveryType.ONLY_FOOD
-    private var otherType = DeliveryType.ONLY_OTHER
+    private var foodType = ONLY_FOOD
+    private var otherType = ONLY_OTHER
     private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter? =
         null
 
@@ -130,22 +130,28 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun initializeDeliveryTypeSelectionView(
-        openDayDeliverySlots: List<Any>?,
+        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
         type: DeliveryType
     ) {
         // To show How would you like it to delivered.
         checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
-        val timeSlotListItem: MutableMap<Any, Any> = HashMap()
-        timeSlotListItem["deliveryType"] = DELIVERY_TYPE_TIMESLOT
-        timeSlotListItem["amount"] = (selectedSlotResponseFood?.timedDeliveryCosts?.other!!)
+        if (availableDeliverySlotsResponse?.requiredToDisplayOnlyODD == false) {
+            val timeSlotListItem: MutableMap<Any, Any> = HashMap()
+            timeSlotListItem["deliveryType"] = DELIVERY_TYPE_TIMESLOT
+            timeSlotListItem["amount"] = (selectedSlotResponseFood?.timedDeliveryCosts?.other!!)
 
-        val date = selectedSlotResponseFood?.timedDeliveryStartDates?.other
-        val deliveryText = getString(R.string.earliest_delivery_date_text)
-        timeSlotListItem["description"] = "$deliveryText <b>$date</b>"
+            val date = selectedSlotResponseFood?.timedDeliveryStartDates?.other
+            val deliveryText = getString(R.string.earliest_delivery_date_text)
+            timeSlotListItem["description"] = "$deliveryText <b>$date</b>"
 
-        (openDayDeliverySlots as ArrayList).add(timeSlotListItem)
+            (availableDeliverySlotsResponse.openDayDeliverySlots as ArrayList).add(timeSlotListItem)
+        }
         checkoutDeliveryTypeSelectionListAdapter =
-            CheckoutDeliveryTypeSelectionListAdapter(openDayDeliverySlots, this, type)
+            CheckoutDeliveryTypeSelectionListAdapter(
+                availableDeliverySlotsResponse?.openDayDeliverySlots,
+                this,
+                type
+            )
         deliveryTypeSelectionRecyclerView?.apply {
             addItemDecoration(object : RecyclerView.ItemDecoration() {})
             layoutManager = activity?.let { LinearLayoutManager(it) }
@@ -199,6 +205,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         //Only for Food
                         foodType = ONLY_FOOD
                         checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+                        selectDeliveryTimeSlotTitle.text = getString(R.string.slot_delivery_title_when)
+                        selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
                         expandableGrid.initialiseGridView(
                             selectedSlotResponseFood,
                             FIRST.week,
@@ -213,16 +221,21 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                             FIRST.week,
                             MIXED_FOOD
                         )
-                        initializeDeliveryTypeSelectionView(
-                            selectedSlotResponseFood?.openDayDeliverySlots,
-                            MIXED_OTHER
-                        ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
+                        if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
+                            howWouldYouDeliveredTitle.text = getString(R.string.delivery_timeslot_title_other_items)
+                            initializeDeliveryTypeSelectionView(
+                                selectedSlotResponseFood,
+                                MIXED_OTHER
+                            ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
+                        }
                     } else {
                         // for Other
-                        initializeDeliveryTypeSelectionView(
-                            selectedSlotResponseFood?.openDayDeliverySlots,
-                            ONLY_OTHER
-                        )
+                        if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
+                            initializeDeliveryTypeSelectionView(
+                                selectedSlotResponseFood,
+                                ONLY_OTHER
+                            )
+                        }
                     }
                     //}
 
