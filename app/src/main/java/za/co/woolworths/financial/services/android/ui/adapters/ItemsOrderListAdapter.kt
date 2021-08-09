@@ -1,5 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +31,17 @@ class ItemsOrderListAdapter(var items: ArrayList<OrderItem>) : RecyclerView.Adap
     class ItemsOrderListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(orderItem: OrderItem) {
             itemView.itemImageView.setImageURI(Utils.getExternalImageRef() + orderItem.commerceItemInfo?.externalImageURL + "w=85&q=85");
-            itemView.itemDescription.text = orderItem.commerceItemInfo?.productDisplayName
+
+            val itemDescriptionSpan: Spannable = SpannableString(orderItem.commerceItemInfo?.quantity.toString()
+                .plus(" X ")
+                .plus(orderItem.commerceItemInfo?.productDisplayName))
+            itemDescriptionSpan.setSpan(
+                StyleSpan(Typeface.BOLD),
+                0,
+                orderItem.commerceItemInfo?.quantity.toString().length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            itemView.itemDescription.text =  itemDescriptionSpan
+
             itemView.itemPrice.text = CurrencyFormatter
                 .formatAmountToRandAndCentWithSpace(orderItem.priceInfo?.amount)
         }
