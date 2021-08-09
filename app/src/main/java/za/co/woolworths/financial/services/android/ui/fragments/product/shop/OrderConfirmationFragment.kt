@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
+import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -44,6 +45,8 @@ class OrderConfirmationFragment : Fragment()  {
                     setupDeliveryOrCollectionDetails(response)
 
                     setupOrderTotalDetails(response)
+
+                    setupOrderDetailsBottomSheet(response)
                 }
 
                 override fun onFailure(error: Throwable?) {
@@ -125,9 +128,27 @@ class OrderConfirmationFragment : Fragment()  {
         else{
             missedRewardsLinearLayout.visibility = View.GONE
         }
+    }
 
-        setMissedRewardsSavings(response?.orderSummary?.discountDetails?.wrewardsDiscount!!)
+    private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
+        orderStatusTextView.text = response?.orderSummary?.state
+        deliveryLocationTextView.text = optionLocation.text
 
+        if(response?.deliveryDetails?.deliveryInfos?.size == 2){
+            oneDeliveryBottomSheetLinearLayout.visibility = View.GONE
+            foodDeliveryLinearLayout.visibility = View.VISIBLE
+            otherDeliveryBottomSheetLinearLayout.visibility = View.VISIBLE
+            foodDeliveryDateTimeBottomSheetTextView.text = applyBoldBeforeComma(response
+                .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+            otherDeliveryDateTimeBottomSheetTextView.text =
+                response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
+        }
+        else if(response?.deliveryDetails?.deliveryInfos?.size == 1){
+            oneDeliveryBottomSheetLinearLayout.visibility = View.VISIBLE
+            foodDeliveryBottomSheetLinearLayout.visibility = View.GONE
+            otherDeliveryBottomSheetLinearLayout.visibility = View.GONE
+            deliveryDateTimeBottomSheetTextView.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+        }
     }
 
     private fun setMissedRewardsSavings(amount: Double) {
