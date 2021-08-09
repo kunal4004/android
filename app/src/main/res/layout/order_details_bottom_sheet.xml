@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_height="wrap_content"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="@dimen/ninety"
+    app:behavior_peekHeight="@dimen/ninety_dp"
     android:background="@color/white"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -82,7 +82,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/delivery_location_"
+            android:text="@string/delivery_location_semicolon"
             android:textColor="@color/gray"
             style="@style/myriad_pro_regular"
             android:textSize="@dimen/fourteen_sp"
@@ -108,7 +108,7 @@
         app:layout_constraintTop_toBottomOf="@+id/deliveryLocationLinearLayout" />
 
     <LinearLayout
-        android:id="@+id/oneDeliveryLinearLayout2"
+        android:id="@+id/oneDeliveryBottomSheetLinearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/twenty_dp"
@@ -123,14 +123,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/delivery_"
+            android:text="@string/delivery_semicolon"
             android:textColor="@color/gray"
             style="@style/myriad_pro_regular"
             android:textSize="@dimen/fourteen_sp"
             android:layout_weight="0.3" />
 
         <TextView
-            android:id="@+id/deliveryDateTimeTextView2"
+            android:id="@+id/deliveryDateTimeBottomSheetTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:textColor="@color/black"
@@ -141,7 +141,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/foodDeliveryLinearLayout2"
+        android:id="@+id/foodDeliveryBottomSheetLinearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/twenty_dp"
@@ -155,14 +155,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/food_items_"
+            android:text="@string/food_items_semicolon"
             android:textColor="@color/gray"
             style="@style/myriad_pro_regular"
             android:textSize="@dimen/fourteen_sp"
             android:layout_weight="0.3"/>
 
         <TextView
-            android:id="@+id/foodDeliveryDateTimeTextView2"
+            android:id="@+id/foodDeliveryDateTimeBottomSheetTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:textColor="@color/black"
@@ -173,7 +173,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/otherDeliveryLinearLayout2"
+        android:id="@+id/otherDeliveryBottomSheetLinearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/twenty_dp"
@@ -181,20 +181,20 @@
         android:weightSum="1"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/foodDeliveryLinearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/foodDeliveryBottomSheetLinearLayout">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/other_items_"
+            android:text="@string/other_items_semicolon"
             android:textColor="@color/gray"
             style="@style/myriad_pro_regular"
             android:textSize="@dimen/fourteen_sp"
             android:layout_weight="0.3"/>
 
         <TextView
-            android:id="@+id/otherDeliveryDateTimeTextView2"
+            android:id="@+id/otherDeliveryDateTimeBottomSheetTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:textColor="@color/black"
@@ -210,7 +210,7 @@
         android:layout_width="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/otherDeliveryLinearLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/otherDeliveryBottomSheetLinearLayout" />
 
 
     <LinearLayout
