@@ -166,6 +166,29 @@ class OrderConfirmationFragment : Fragment()  {
 
         initRecyclerView(response?.items)
 
+        handleAddToShoppingListButton()
+    }
+
+    private fun handleAddToShoppingListButton() {
+        if (itemsOrder.isNullOrEmpty()) {
+            return
+        }
+
+        val listOfItems = ArrayList<AddToListRequest>()
+        itemsOrder!!.forEach {
+            val item = AddToListRequest()
+            item.apply {
+                quantity = it.quantity.toString()
+                catalogRefId = it.catalogRefId
+                giftListId = ""
+                skuID = ""
+            }
+            listOfItems.add(item)
+        }
+
+        addShoppingListButton.setOnClickListener{
+            NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
+        }
     }
 
     private fun initRecyclerView(items: OrderItems?) {
