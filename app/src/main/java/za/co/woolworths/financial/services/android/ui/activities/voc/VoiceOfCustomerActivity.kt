@@ -73,7 +73,6 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
         val currentDestination = navigationHost?.currentDestination ?: return
         when (currentDestination.id) {
             R.id.surveyVocFragment -> finishActivity()
-            else -> navigationHost?.popBackStack()
         }
     }
 
