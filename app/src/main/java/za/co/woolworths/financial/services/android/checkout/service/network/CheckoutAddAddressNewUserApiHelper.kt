@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.checkout.service.network
 
+import retrofit2.Response
+import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
+import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 
@@ -8,7 +11,6 @@ import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
  */
 class CheckoutAddAddressNewUserApiHelper: RetrofitConfig() {
 
-    fun getSuburbs(provinceId: String) = OneAppService.getSuburbs(provinceId).execute()
-    fun getProvince() = OneAppService.getProvinces().execute()
-    fun validateSelectedSuburb(suburbId: String, isStore: Boolean) = OneAppService.validateSelectedSuburb(suburbId, isStore).execute()
+    fun getSuburbs(provinceId: String): Response<SuburbsResponse> = OneAppService.getSuburbs(provinceId).execute()
+    fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Response<ValidateSelectedSuburbResponse> = OneAppService.validateSelectedSuburb(suburbId, isStore).execute()
 }

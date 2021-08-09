@@ -70,12 +70,11 @@ import java.util.*
 class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private var deliveringOptionsList: List<String>? = null
-    private var provinceList: List<Province>? = null
     private var navController: NavController? = null
     private lateinit var listOfInputFields: List<View>
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var selectedDeliveryAddressType: String? = null
-    var selectedAddress = SelectedPlacesAddress()
+    private var selectedAddress = SelectedPlacesAddress()
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var isShimmerRequired = true
@@ -515,31 +514,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             setSelection(autoCompleteTextView.length())
             autoCompleteTextView.dismissDropDown()
         }
-        getProvince()
-    }
-
-    private fun getProvince() {
-        checkoutAddAddressNewUserViewModel.initGetProvince().observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    loadingProgressBar.visibility = View.GONE
-                    if ((it?.data as ProvincesResponse).regions.isNullOrEmpty()) {
-                        //showNoStoresError()
-                    } else {
-                        it.data?.regions?.let { it1 ->
-                            provinceList = it1
-                            checkIfSelectedProvinceExist(it1)
-                        }
-                    }
-                }
-                ResponseStatus.LOADING -> {
-                    loadingProgressBar.visibility = View.VISIBLE
-                }
-                ResponseStatus.ERROR -> {
-                    loadingProgressBar.visibility = View.GONE
-                }
-            }
-        })
+        checkIfSelectedProvinceExist(WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>)
     }
 
     private fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
@@ -636,7 +611,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         showGetProvincesProgress()
         val bundle = Bundle()
         bundle.apply {
-            putString("ProvinceList", Utils.toJson(provinceList))
+            putString(
+                "ProvinceList",
+                Utils.toJson(WoolworthsApplication.getNativeCheckout()?.regions as? MutableList<Province>)
+            )
         }
         navController?.navigate(
             R.id.action_to_provinceSelectorFragment,
@@ -682,7 +660,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun resetOtherDeliveringTitle(selectedTag: Int) {
+    private fun resetOtherDeliveringTitle(selectedTag: Int) {
         //change background of unselected textview
         for ((index) in deliveringOptionsList!!.withIndex()) {
             if (index != selectedTag) {
@@ -804,22 +782,22 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun showGetSuburbProgress() {
+    private fun showGetSuburbProgress() {
         dropdownGetSuburbImg?.visibility = View.INVISIBLE
         progressbarGetSuburb?.visibility = View.VISIBLE
     }
 
-    fun hideSetSuburbProgressBar() {
+    private fun hideSetSuburbProgressBar() {
         progressbarGetSuburb?.visibility = View.INVISIBLE
         dropdownGetSuburbImg?.visibility = View.VISIBLE
     }
 
-    fun hideGetProvincesProgress() {
+    private fun hideGetProvincesProgress() {
         progressbarGetProvinces?.visibility = View.INVISIBLE
         dropdownGetProvincesImg?.visibility = View.VISIBLE
     }
 
-    fun showGetProvincesProgress() {
+    private fun showGetProvincesProgress() {
         dropdownGetProvincesImg?.visibility = View.INVISIBLE
         progressbarGetProvinces?.visibility = View.VISIBLE
     }
@@ -981,7 +959,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
      * @see [Province]
      * @see [UnSellableCommerceItem]
      */
-    fun navigateToUnsellableItemsFragment(
+    private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
         deliverable: Boolean
     ) {
@@ -1065,7 +1043,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     position
                                 )
                                 (it.data as? AddAddressResponse)?.address?.let { address ->
-                                    (savedAddressResponse?.addresses as MutableList<Address>)?.add(
+                                    (savedAddressResponse?.addresses as? MutableList<Address>)?.add(
                                         position, address
                                     )
                                 }
@@ -1093,7 +1071,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         var isExist = false
         if (!savedAddressResponse?.addresses.isNullOrEmpty() && selectedAddressId.isNullOrEmpty()) {
             for (address in savedAddressResponse?.addresses!!) {
-                if (addressNicknameEditText.text.toString().equals(address?.nickname, true)) {
+                if (addressNicknameEditText.text.toString().equals(address.nickname, true)) {
                     addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
                     addressNicknameErrorMsg?.visibility = View.VISIBLE
                     addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
@@ -1105,11 +1083,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigateToAddressConfirmation() {
-        val bundle = Bundle()
-        bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
         navController?.navigate(
             R.id.action_CheckoutAddAddressNewUserFragment_to_checkoutAddressConfirmationFragment,
-            bundleOf("bundle" to bundle)
+            bundleOf(SAVED_ADDRESS_KEY to savedAddressResponse)
         )
     }
 
