@@ -9,16 +9,18 @@ import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.edit_delivery_location_activity.*
+import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 
 class EditDeliveryLocationActivity : AppCompatActivity() {
 
     var bundle: Bundle? = null
-
+    var deliveryType: DeliveryType? = null
 
     companion object {
         var REQUEST_CODE = 1515
         var DELIVERY_TYPE = "DELIVERY_TYPE"
+        var IS_LIQUOR = "IS_LIQUOR"
     }
 
 
@@ -27,6 +29,13 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         setContentView(R.layout.edit_delivery_location_activity)
         Utils.updateStatusBarBackground(this)
         bundle = intent.getBundleExtra("bundle")
+        bundle?.apply {
+            deliveryType = DeliveryType.valueOf(getString(DELIVERY_TYPE, DeliveryType.DELIVERY.name))
+            if (deliveryType == DeliveryType.DELIVERY_LIQUOR) {
+                putString(DELIVERY_TYPE, DeliveryType.DELIVERY.name)
+                putBoolean(IS_LIQUOR, true)
+            }
+        }
         actionBar()
         loadNavHostFragment()
     }

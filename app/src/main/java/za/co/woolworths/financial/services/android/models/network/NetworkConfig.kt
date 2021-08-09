@@ -44,4 +44,8 @@ open class NetworkConfig {
 
     fun getMyLocation(): Location = Utils.getLastSavedLocation()
             ?: Location("myLocation")
+
+    fun getDeviceIdentityToken(): String {
+        return SessionUtilities.getInstance().deviceIdentityToken
+    }
 }

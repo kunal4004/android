@@ -1,0 +1,58 @@
+{
+  "addresses": [
+    {
+      "lastName": "Test1",
+      "country": "",
+      "suburbId": "1448",
+      "address2": "",
+      "city": "Western Cape",
+      "address1": "St Martini Gardens Apartment Building",
+      "postalCode": "8001",
+      "primaryContactNo": "0123456789",
+      "title": "",
+      "ownerId": "352160704",
+      "secondaryContactNo": "",
+      "firstName": "Test1",
+      "phoneNumber": "",
+      "storeAddress": false,
+      "nickname": "Test1",
+      "recipientName": "Test1",
+      "suburb": "Cape Town Central",
+      "id": "353620124",
+      "state": "",
+      "region": "2000030",
+      "displayName": "Test1"
+    },
+    {
+      "lastName": "test",
+      "country": "",
+      "suburbId": "1235",
+      "address2": "",
+      "city": "WesternCape",
+      "address1": "Test4Test",
+      "postalCode": "7490",
+      "primaryContactNo": "0813764713",
+      "title": "",
+      "ownerId": "352160704",
+      "secondaryContactNo": "",
+      "firstName": "test",
+      "phoneNumber": "",
+      "storeAddress": false,
+      "nickname": "Test4",
+      "recipientName": "test",
+      "suburb": "AirportIndustria",
+      "id": "353620129",
+      "state": "",
+      "region": "2000030",
+      "displayName": "test"
+    }
+  ],
+  "primaryContactNo": "0813764713",
+  "defaultAddressNickname": "Test1",
+  "isStorePickup": false,
+  "response": {
+    "code": "-1",
+    "desc": "Success"
+  },
+  "httpCode": 200
+}

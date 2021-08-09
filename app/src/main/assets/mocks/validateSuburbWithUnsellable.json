@@ -1,0 +1,207 @@
+{
+  "suburbId": "1506",
+  "hasDeliverySlotReservations": false,
+  "unDeliverableCommerceItems": [],
+  "stores": [{
+    "unDeliverableCommerceItems": [],
+    "storeAddress": "Stellenbosch Square, Cnr Webersvallei Rd \u0026 R44, Jamestown",
+    "quantityLimit": {
+      "foodMaximumQuantity": 64,
+      "other": 0,
+      "foodLayoutColour": "Blue",
+      "otherLayoutColour": "",
+      "food": 2,
+      "otherMaximumQuantity": -1
+    },
+    "navSuburbDetails": "",
+    "deliverable": true,
+    "storeName": "Stellenbosch Square",
+    "storeId": "252",
+    "deliverySlotsDetails": "",
+    "unSellableCommerceItems": [],
+    "deliveryStatus": {
+      "01": true,
+      "04": true
+    },
+    "firstAvailableFoodDeliveryDate": "Tuesday, 20 July"
+  }, {
+    "unDeliverableCommerceItems": [],
+    "storeAddress": "Cnr of De Beers Avenue, Somerset West",
+    "quantityLimit": {
+      "foodMaximumQuantity": 64,
+      "other": 0,
+      "foodLayoutColour": "Blue",
+      "otherLayoutColour": "",
+      "food": 2,
+      "otherMaximumQuantity": -1
+    },
+    "navSuburbDetails": "",
+    "deliverable": true,
+    "storeName": "The Sanctuary",
+    "storeId": "1044",
+    "deliverySlotsDetails": "",
+    "unSellableCommerceItems": [],
+    "deliveryStatus": {
+      "01": true,
+      "04": true
+    },
+    "firstAvailableFoodDeliveryDate": "Tuesday, 20 July"
+  }, {
+    "unDeliverableCommerceItems": [],
+    "storeAddress": "Everglen Shopping Centre, Cnr Vredekloof Rd \u0026 De Bron Rd, Brackenfell",
+    "quantityLimit": {
+      "foodMaximumQuantity": 64,
+      "other": 0,
+      "foodLayoutColour": "Blue",
+      "otherLayoutColour": "",
+      "food": 2,
+      "otherMaximumQuantity": -1
+    },
+    "navSuburbDetails": "",
+    "deliverable": true,
+    "storeName": "Glen Garry",
+    "storeId": "248",
+    "deliverySlotsDetails": "",
+    "unSellableCommerceItems": [],
+    "deliveryStatus": {
+      "01": true,
+      "04": true
+    },
+    "firstAvailableFoodDeliveryDate": "Tuesday, 20 July"
+  }, {
+    "unDeliverableCommerceItems": [],
+    "storeAddress": "Shop 46  Willowbridge Shopping Centre, Carel Cronje Rd, Tyger Valley",
+    "quantityLimit": {
+      "foodMaximumQuantity": 64,
+      "other": 0,
+      "foodLayoutColour": "Blue",
+      "otherLayoutColour": "",
+      "food": 2,
+      "otherMaximumQuantity": -1
+    },
+    "navSuburbDetails": "",
+    "deliverable": true,
+    "storeName": "Willow Bridge",
+    "storeId": "262",
+    "deliverySlotsDetails": "",
+    "unSellableCommerceItems": [],
+    "deliveryStatus": {
+      "01": true,
+      "04": true
+    },
+    "firstAvailableFoodDeliveryDate": "Tuesday, 20 July"
+  }, {
+    "unDeliverableCommerceItems": [],
+    "storeAddress": "Shop 10 Laborie Centre, 43 Main Street, Paarl",
+    "quantityLimit": {
+      "foodMaximumQuantity": 64,
+      "other": 0,
+      "foodLayoutColour": "Blue",
+      "otherLayoutColour": "",
+      "food": 2,
+      "otherMaximumQuantity": -1
+    },
+    "navSuburbDetails": "",
+    "deliverable": true,
+    "storeName": "Laborie Centre Paarl",
+    "storeId": "1042",
+    "deliverySlotsDetails": "",
+    "unSellableCommerceItems": [],
+    "deliveryStatus": {
+      "01": true,
+      "04": true
+    },
+    "firstAvailableFoodDeliveryDate": "Tuesday, 20 July"
+  }, {
+    "unDeliverableCommerceItems": [],
+    "storeAddress": "Corner of Oxford and Queen Street, Durbanville, ",
+    "quantityLimit": {
+      "foodMaximumQuantity": 64,
+      "other": 0,
+      "foodLayoutColour": "Blue",
+      "otherLayoutColour": "",
+      "food": 2,
+      "otherMaximumQuantity": -1
+    },
+    "navSuburbDetails": "",
+    "deliverable": true,
+    "storeName": "Durbanville Village Sq",
+    "storeId": "1020",
+    "deliverySlotsDetails": "",
+    "unSellableCommerceItems": [],
+    "deliveryStatus": {
+      "01": true,
+      "04": true
+    },
+    "firstAvailableFoodDeliveryDate": "Tuesday, 20 July"
+  }, {
+    "unDeliverableCommerceItems": [],
+    "storeAddress": "Plattekloof Village Shopping Centre, Plattekloof Road, Baronetcy Boulevard",
+    "quantityLimit": {
+      "foodMaximumQuantity": 64,
+      "other": 0,
+      "foodLayoutColour": "Blue",
+      "otherLayoutColour": "",
+      "food": 2,
+      "otherMaximumQuantity": -1
+    },
+    "navSuburbDetails": "",
+    "deliverable": true,
+    "storeName": "Plattekloof Village",
+    "storeId": "1004",
+    "deliverySlotsDetails": "",
+    "unSellableCommerceItems": [],
+    "deliveryStatus": {
+      "01": true,
+      "04": true
+    },
+    "firstAvailableFoodDeliveryDate": "Tuesday, 20 July"
+  }],
+  "navSuburbDetails": {
+    "suburbName": "Anesta",
+    "id": "1506",
+    "region": "Western Cape"
+  },
+  "deliverable": true,
+  "deliverySlotsDetails": "",
+  "firstAvailableFoodDeliveryDate": "Tuesday, 20 July",
+  "firstAvailableOtherDeliveryDate": "Monday, 26 July",
+  "quantityLimit": {
+    "foodMaximumQuantity": -1,
+    "other": 0,
+    "foodLayoutColour": "",
+    "otherLayoutColour": "",
+    "food": 2,
+    "otherMaximumQuantity": -1
+  },
+  "links": [],
+  "unSellableCommerceItems": [{
+    "quantity": 1,
+    "productId": "2032130000009",
+    "displayCategory": "food",
+    "internalImageURL": "/images/elasticera/products/hero/2017-05-22/2032130000009_hero.jpg",
+    "commerceItemClassType": "foodCommerceItem",
+    "colour": "",
+    "detailPageURL": "/prod/Food/Meat-Poultry-Fish/Braai/Tuscan-Herb-Perfect-Chicken-Roast-Avg-1-2-kg/_/A-2032130000009",
+    "size": "NO SZ",
+    "productVariant": "noVariant",
+    "price": {
+      "amount": 101.59,
+      "wasPrice": 0,
+      "rawTotalPrice": 101.59,
+      "salePrice": 0,
+      "listPrice": 101.5873
+    },
+    "externalImageURL": "Tuscan-Herb-Perfect-Chicken-Roast-Avg-1-2-kg-2032130000009.jpg?V=KxoA&o=rYsnlMq2sNESNKf3gZSsGRJ2bZ4j&",
+    "productDisplayName": "Tuscan Herb Perfect Chicken Roast Avg 1.2 kg",
+    "fulfillerType": "01",
+    "productType": "FOODS"
+  }],
+  "deliveryStatus": {
+    "01": true,
+    "02": true,
+    "04": true,
+    "07": true
+  },
+  "storeClosed": false
+}

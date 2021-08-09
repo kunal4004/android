@@ -1,0 +1,31 @@
+{
+  "suburbId": "1894",
+  "hasDeliverySlotReservations": false,
+  "unDeliverableCommerceItems": [],
+  "stores": "",
+  "navSuburbDetails": "",
+  "deliverable": true,
+  "deliverySlotsDetails": "",
+  "firstAvailableFoodDeliveryDate": "Thursday, 13 May",
+  "firstAvailableOtherDeliveryDate": "Wednesday, 19 May",
+  "quantityLimit": {
+    "foodMaximumQuantity": -1,
+    "other": 0,
+    "foodLayoutColour": "",
+    "otherLayoutColour": "Blue",
+    "food": 0,
+    "otherMaximumQuantity": 30
+  },
+  "unSellableCommerceItems": [],
+  "deliveryStatus": {
+    "01": true,
+    "02": true,
+    "04": true,
+    "07": true
+  },
+  "response": {
+    "code": "-1",
+    "desc": "Success"
+  },
+  "httpCode": 200
+}

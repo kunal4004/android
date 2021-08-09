@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
@@ -64,6 +65,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent;
 
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_VALUE;
@@ -458,7 +460,17 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         Pair<ApplyNowState, Account> account = ((StatementActivity) activity).getAccountWithApplyNowState();
         ArrayList<Account> accountList = new ArrayList<>();
         accountList.add(account.second);
-        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement, notificationBadge,onlineIndicatorImageView);
+
+        VocTriggerEvent vocTriggerEvent;
+        if (account.second.productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
+            vocTriggerEvent = VocTriggerEvent.CHAT_SC_STATEMENT;
+        } else if (account.second.productGroupCode.equalsIgnoreCase(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
+            vocTriggerEvent = VocTriggerEvent.CHAT_PL_STATEMENT;
+        } else {
+            vocTriggerEvent = VocTriggerEvent.CHAT_CC_STATEMENT;
+        }
+
+        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement, notificationBadge,onlineIndicatorImageView, vocTriggerEvent);
         inAppChatTipAcknowledgement.build();
     }
 }

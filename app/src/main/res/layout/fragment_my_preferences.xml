@@ -203,7 +203,7 @@
             android:layout_marginTop="@dimen/sixteen_dp"
             android:background="@color/white"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvLinkedDevices"
