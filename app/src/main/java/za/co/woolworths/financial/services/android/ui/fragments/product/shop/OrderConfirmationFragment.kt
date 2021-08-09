@@ -192,7 +192,10 @@ class OrderConfirmationFragment : Fragment()  {
         val other: Int = items?.other?.size ?: 0
         val food: Int = items?.food?.size ?: 0
         val number: Int = other.plus(food)
-        numberItemsTextView.text = bindString(R.string.number_items, number.toString())
+        numberItemsTextView.text = if(number>1)
+            bindString(R.string.number_items, number.toString())
+        else
+            bindString(R.string.number_item, number.toString())
         costItemsTextView.text = orderTotalTextView.text
     }
 

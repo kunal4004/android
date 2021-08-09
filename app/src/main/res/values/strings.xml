@@ -2122,6 +2122,7 @@
     <string name="missed_wrewards_savings">Missed WRewards Savings</string>
     <string name="delivery_location_semicolon">Delivery location:</string>
     <string name="number_items">%1$s Items</string>
+    <string name="number_item">%1$s Item</string>
     <string name="order_again">ORDER AGAIN</string>
 
 </resources>

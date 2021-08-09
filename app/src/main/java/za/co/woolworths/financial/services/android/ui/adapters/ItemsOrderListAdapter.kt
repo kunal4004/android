@@ -25,8 +25,9 @@ class ItemsOrderListAdapter(var items: ArrayList<OrderItem>) : RecyclerView.Adap
     }
 
     class ItemsOrderListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val parameter = "w=85&q=85"
         fun bind(orderItem: OrderItem) {
-            itemView.itemImageView.setImageURI(Utils.getExternalImageRef() + orderItem.commerceItemInfo?.externalImageURL + "w=85&q=85");
+            itemView.itemImageView.setImageURI(Utils.getExternalImageRef() + orderItem.commerceItemInfo?.externalImageURL + parameter);
             itemView.itemDescription.text = orderItem.commerceItemInfo?.productDisplayName
             itemView.itemPrice.text = CurrencyFormatter
                 .formatAmountToRandAndCentWithSpace(orderItem.priceInfo?.amount)
