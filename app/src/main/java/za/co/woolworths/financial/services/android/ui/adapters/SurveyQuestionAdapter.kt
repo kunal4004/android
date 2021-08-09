@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.row_survey_footer.view.*
@@ -169,8 +170,12 @@ class SurveyQuestionAdapter(
 
                 post {
                     // Fill remaining vertical space, if any
-                    val heightDifference = delegate.getRecyclerViewHeight() - bottom
-                    vEmptySpace.layoutParams.height = if (heightDifference > 0)  heightDifference else 0
+                    val heightDifference = delegate.getRecyclerViewHeight() - bottom - vEmptySpace.layoutParams.height
+                    if (heightDifference > 0) {
+                        vEmptySpace.updateLayoutParams<ViewGroup.LayoutParams> {
+                            height = heightDifference
+                        }
+                    }
                 }
             }
         }
