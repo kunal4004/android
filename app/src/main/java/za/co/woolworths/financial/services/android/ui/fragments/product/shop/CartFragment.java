@@ -12,6 +12,7 @@ import static za.co.woolworths.financial.services.android.util.ScreenManager.SHO
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -59,7 +60,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.checkout.service.network.MockRetrofitConfig;
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse;
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
@@ -381,7 +381,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void callSavedAddress() {
 
-        Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
+        /*Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
         savedAddressCall.enqueue(new CompletionHandler<>(new IResponseListener<SavedAddressResponse>() {
             @Override
             public void onSuccess(@org.jetbrains.annotations.Nullable SavedAddressResponse response) {
@@ -390,8 +390,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
             @Override
             public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
+
             }
-        }, SavedAddressResponse.class));
+        }, SavedAddressResponse.class));*/
+
+        Context context = getActivity() != null ? getActivity().getApplicationContext() : null;
+        if (context != null) {
+            String jsonFileString = Utils.getJsonDataFromAsset(
+                    context,
+                    "mocks/savedAddress.json"
+            );
+            SavedAddressResponse mockChangeAddressResponse = new Gson().fromJson(
+                    jsonFileString,
+                    SavedAddressResponse.class
+            );
+            navigateToCheckout(mockChangeAddressResponse);
+        }
     }
 
     private void navigateToCheckout(SavedAddressResponse response) {

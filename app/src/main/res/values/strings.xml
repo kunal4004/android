@@ -2196,6 +2196,7 @@
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
     <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
     <string name="change_address">Change Address</string>
+    <string name="native_checkout_delivering_to_title">Delivering to</string>
 
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>

@@ -229,6 +229,18 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 layoutManager = activity?.let { LinearLayoutManager(it) }
                 checkoutAddressConfirmationListAdapter?.let { adapter = it }
             }
+
+            // If there is a default address nickname present set it selected
+            savedAddress?.defaultAddressNickname?.let { nickName ->
+                var index = 0
+                savedAddress?.addresses?.forEach { address ->
+                    if (nickName == address?.nickname) {
+                        checkoutAddressConfirmationListAdapter?.onItemClick(index)
+                        return@forEach
+                    }
+                    index++
+                }
+            }
         }
         deliveryTab.setOnClickListener(this)
         collectionTab.setOnClickListener(this)
