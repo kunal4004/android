@@ -118,6 +118,16 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static android.app.Activity.RESULT_OK;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.KEY_ARGS_ORDER_SUMMARY;
+import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
+
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
     private String mSuburbName, mProvinceName;
@@ -385,7 +395,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         savedAddressCall.enqueue(new CompletionHandler<>(new IResponseListener<SavedAddressResponse>() {
             @Override
             public void onSuccess(@org.jetbrains.annotations.Nullable SavedAddressResponse response) {
-                navigateToCheckout(response);
+
             }
 
             @Override
@@ -1250,8 +1260,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             localStoreId = null;
             reloadFragment();
             return;
-        }
-        else if (productCountMap.getTotalProductCount() != currentCartCount){
+        } else if (productCountMap.getTotalProductCount() != currentCartCount) {
             reloadFragment();
         }
     }
@@ -1529,9 +1538,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
             break;
             case TAG_AVAILABLE_VOUCHERS_TOAST: {
-				Activity activity = getActivity();
-				if (activity == null) return;
-				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_popup_view, activity);
+                Activity activity = getActivity();
+                if (activity == null) return;
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_popup_view, activity);
                 navigateToAvailableVouchersPage();
             }
             break;
@@ -1679,17 +1688,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     @Override
     public void onEnterPromoCode() {
-		Activity activity = getActivity();
-		if (activity == null) return;
-		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_enter, activity);
+        Activity activity = getActivity();
+        if (activity == null) return;
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_enter, activity);
         navigateToApplyPromoCodePage();
     }
 
     @Override
     public void onRemovePromoCode(String promoCode) {
-		Activity activity = getActivity();
-		if (activity == null) return;
-		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove, activity);
+        Activity activity = getActivity();
+        if (activity == null) return;
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove, activity);
         showProgressBar();
         OneAppService.INSTANCE.removePromoCode(new CouponClaimCode(promoCode)).enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
             @Override

@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
@@ -37,7 +38,9 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -46,6 +49,11 @@ import za.co.woolworths.financial.services.android.util.Utils
  */
 class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner {
+
+    companion object {
+        const val KEY_ARGS_ORDER_SUMMARY = "ORDER_SUMMARY"
+    }
+
 
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
@@ -98,6 +106,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         initializeDeliveringToView()
         initializeDeliveryFoodItems()
         initializeFoodSubstitution()
+        initializeOrderSummary()
 
         activity?.apply {
             view?.setOnClickListener {
@@ -222,6 +231,46 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         previousImgBtnOther.setOnClickListener(this)
         nextImgBtnOther.setOnClickListener(this)
     }
+
+    /**
+     * Initializes Order Summary data from argument.
+     */
+    private fun initializeOrderSummary() {
+        arguments?.apply {
+            val orderSummary = getParcelable(KEY_ARGS_ORDER_SUMMARY) as? OrderSummary
+            orderSummary?.let { orderSummary ->
+                txtOrderSummaryYourCartValue?.text =
+                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(orderSummary.basketTotal)
+                orderSummary.discountDetails?.let { discountDetails ->
+                    txtOrderSummaryDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
+                    txtOrderSummaryTotalDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                    groupPromoCodeDiscount?.visibility = if(discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupWRewardsDiscount?.visibility = if(discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupCompanyDiscount?.visibility = if(discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                    txtOrderSummaryWRewardsVouchersValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
+                    txtOrderSummaryCompanyDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
+                    txtOrderSummaryPromoCodeDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
+                }
+            }
+        }
+    }
+/*
+    private fun initializeGrid(
+        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
+        weekNumber: Int
+    ) {
+        val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
+        expandableGrid.apply {
+            createTimingsGrid(deliverySlots?.hourSlots)
+            createDatesGrid(deliverySlots?.headerDates)
+            createTimeSlotGridView(deliverySlots, weekNumber)
+        }
+    }*/
 
     private fun setupViewModel() {
         checkoutAddAddressNewUserViewModel = ViewModelProviders.of(

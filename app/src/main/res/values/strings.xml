@@ -2160,6 +2160,10 @@
     <string name="view_application_status">View Application Status</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
 
+    <!-- Native Checkout -->
+    <string name="native_checkout_continue_to_payment">Continue To Payment</string>
+    <string name="native_checkout_order_total_title">Order Total *</string>
+
     <!-- Native Checkout : delivery Instructions -->
     <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
     <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
@@ -2191,6 +2195,18 @@
     </plurals>
     <string name="suburb_selection_subtitle">This will show all collection stores near you.</string>
 
+    <!-- Native Checkout : Order Summary   -->
+    <string name="native_checkout_delivery_order_summary_note">* Items are not reserved until you checkout. \n* Delivery cost to be confirmed before payment</string>
+    <string name="native_checkout_delivery_order_summary_fee_value">TBC</string>
+    <string name="native_checkout_delivery_order_summary_fee">Delivery Fee</string>
+    <string name="native_checkout_delivery_order_summary_total_discount">Total Discount</string>
+    <string name="native_checkout_delivery_order_summary_discounts">Discounts</string>
+    <string name="native_checkout_delivery_order_summary_your_cart">Your Cart</string>
+    <string name="native_checkout_delivery_order_summary_company_discounts">Company Discount</string>
+    <string name="native_checkout_delivery_order_summary_wrewards_vouchers">Your WRewards Vouchers</string>
+    <string name="native_checkout_delivery_order_summary_promo_code">Promo Code Applied</string>
+    <string name="default_discount_value">- R 0.00</string>
+
     <!-- Native Checkout : Suburb not deliverable  -->
     <string name="dismiss">Dismiss</string>
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
@@ -2217,4 +2233,5 @@
     <string name="voc_processing_request_desc">This may take a few seconds</string>
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
+
 </resources>
