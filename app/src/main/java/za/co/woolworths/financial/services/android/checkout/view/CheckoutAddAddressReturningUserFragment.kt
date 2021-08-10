@@ -104,7 +104,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
     private fun initViews() {
         initializeDeliveringToView()
-        initializeDeliveryFoodItems()
+        initializeDeliveryFoodOtherItems()
         initializeFoodSubstitution()
         initializeOrderSummary()
 
@@ -223,7 +223,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         }
     }
 
-    private fun initializeDeliveryFoodItems() {
+    private fun initializeDeliveryFoodOtherItems() {
         setupViewModel()
         getAvailableDeliverySlots()
         previousImgBtnFood.setOnClickListener(this)
@@ -285,10 +285,13 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun getAvailableDeliverySlots() {
+        expandableGrid.setUpShimmerView()
+        expandableGrid.showDeliveryTypeShimmerView()
         checkoutAddAddressNewUserViewModel.getAvailableDeliverySlots().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
+                    expandableGrid.hideDeliveryTypeShimmerView()
                     /*if (it.data != null) {
                     // Keeping two diff response not to get merge while showing 2 diff slots.
                        selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
