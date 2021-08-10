@@ -81,12 +81,7 @@ class CheckoutAddressConfirmationListAdapter(
                 }
 
                 setOnClickListener {
-                    savedAddress?.addresses?.get(position)?.let {
-                        listner.changeAddress(it)
-                    }
-
-                    checkedItemPosition = position
-                    notifyDataSetChanged()
+                    onItemClick(adapterPosition)
                 }
                 editAddressImageView.setOnClickListener {
                     val bundle = Bundle()
@@ -100,6 +95,18 @@ class CheckoutAddressConfirmationListAdapter(
             }
 
         }
+    }
+
+    fun onItemClick(position: Int) {
+        if (position < 0 || position >= itemCount) {
+            return
+        }
+        savedAddress?.addresses?.get(position)?.let {
+            listner.changeAddress(it)
+        }
+
+        checkedItemPosition = position
+        notifyDataSetChanged()
     }
 
     interface EventListner {

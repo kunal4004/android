@@ -60,7 +60,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
-import za.co.woolworths.financial.services.android.checkout.service.network.MockRetrofitConfig;
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse;
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
@@ -401,6 +400,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
             @Override
             public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
+
             }
         }, SavedAddressResponse.class));*/
 
