@@ -12,6 +12,7 @@ import static za.co.woolworths.financial.services.android.util.ScreenManager.SHO
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -393,8 +394,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
         }, SavedAddressResponse.class));*/
 
-        
-        navigateToCheckout(null);
+
+        Context context = getActivity() != null ? getActivity().getApplicationContext() : null;
+        if (context != null) {
+            String jsonFileString = Utils.getJsonDataFromAsset(
+                    context,
+                    "mocks/savedAddress.json"
+            );
+            SavedAddressResponse mockChangeAddressResponse = new Gson().fromJson(
+                    jsonFileString,
+                    SavedAddressResponse.class
+            );
+            navigateToCheckout(mockChangeAddressResponse);
+        }
+
     }
 
     private void navigateToCheckout(SavedAddressResponse response) {

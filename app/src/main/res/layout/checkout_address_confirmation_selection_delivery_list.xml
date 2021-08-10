@@ -81,6 +81,7 @@
         android:paddingBottom="@dimen/four_dp_"
         android:textColor="@color/white"
         android:textSize="@dimen/eleven_sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_guideline" />
 
