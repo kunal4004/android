@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment.ProvinceSuburbType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_A_NEW_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_NEW_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
@@ -71,22 +72,28 @@ import java.util.*
 class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private var deliveringOptionsList: List<String>? = null
-    private var provinceList: List<Province>? = null
     private var navController: NavController? = null
     private lateinit var listOfInputFields: List<View>
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var selectedDeliveryAddressType: String? = null
-    var selectedAddress = SelectedPlacesAddress()
+    private var selectedAddress = SelectedPlacesAddress()
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var isShimmerRequired = true
     private var selectedAddressId = ""
     private var savedAddress: Address? = null
     private var isAddNewAddress = false
+    private var provinceSuburbEnableType: ProvinceSuburbType? = null
 
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
         const val SUBURB_SELECTION_BACK_PRESSED = "5465"
+    }
+
+    enum class ProvinceSuburbType {
+        ONLY_PROVINCE,
+        ONLY_SUBURB,
+        BOTH
     }
 
     override fun onCreateView(
@@ -320,15 +327,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         if (selectedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
         }
-        if (recipientName?.text.toString().isEmpty()) {
-            val jwtDecoded: JWTDecodedModel? = SessionUtilities.getInstance().jwt
-            val name = jwtDecoded?.name?.get(0) ?: ""
-            recipientName.setText(name)
-        }
         if (savedAddressResponse?.addresses.isNullOrEmpty()) {
             getSavedAddresses()
-        } else if (cellphoneNumberEditText?.text.toString().isEmpty()) {
-            cellphoneNumberEditText.setText(savedAddressResponse?.primaryContactNo)
         }
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
@@ -392,8 +392,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         mockSavedAddressResponse
                     } else
                         it.data as? SavedAddressResponse
-                    if (cellphoneNumberEditText?.text.toString().isEmpty())
-                        cellphoneNumberEditText.setText(savedAddressResponse?.primaryContactNo)
                 }
                 ResponseStatus.LOADING -> {
                     loadingProgressBar.visibility = View.VISIBLE
@@ -407,27 +405,25 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun addFragmentResultListener() {
         // Use the Kotlin extension in the fragment-ktx artifact
-        setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
+        setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { _, bundle ->
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Suburb")
             val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
             onSuburbSelected(suburb)
         }
         // Use the Kotlin extension in the fragment-ktx artifact
-        setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
+        setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { _, bundle ->
             // We use a String here, but any type that can be put in a Bundle is supported
             val result = bundle.getString("Province")
             val province: Province? = Utils.strToJson(result, Province::class.java) as? Province
             onProvinceSelected(province)
         }
 
-        setFragmentResultListener(PROVINCE_SELECTION_BACK_PRESSED) { requestKey, bundle ->
-            enableSuburbSelection()
-            enableProvinceSelection()
+        setFragmentResultListener(PROVINCE_SELECTION_BACK_PRESSED) { _, _ ->
+            enableDisableEditText()
         }
-        setFragmentResultListener(SUBURB_SELECTION_BACK_PRESSED) { requestKey, bundle ->
-            enableSuburbSelection()
-            enableProvinceSelection()
+        setFragmentResultListener(SUBURB_SELECTION_BACK_PRESSED) { _, _ ->
+            enableDisableEditText()
         }
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { requestKey, bundle ->
             view?.findNavController()?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment, bundleOf(
@@ -439,9 +435,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun onProvinceSelected(province: Province?) {
         selectedAddress.province = province?.name.toString()
         selectedAddress.region = province?.id.toString()
-        enableProvinceSelection()
-        enableSuburbSelection()
-        resetSuburbSelection()
+        enableDisableEditText()
         provinceAutocompleteEditText?.setText(province?.name)
     }
 
@@ -450,7 +444,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectedAddress.suburbId = ""
         selectedAddress.store = ""
         selectedAddress.storeId = ""
-        provinceAutocompleteEditText.text.clear()
         suburbEditText.text.clear()
     }
 
@@ -463,8 +456,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             selectedAddress.storeId = suburb?.id.toString()
         }
         selectedAddress.postalCode = suburb?.postalCode.toString()
-        enableSuburbSelection()
-        //enableProvinceSelection()
+        enableDisableEditText()
         suburbEditText?.setText(suburb?.name)
         if (suburb?.postalCode.isNullOrEmpty()) {
             enablePostalCode()
@@ -476,6 +468,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setAddress(place: Place) {
+        provinceSuburbEnableType = null
         var addressText1 = ""
         var addressText2 = ""
         for (address in place.addressComponents?.asList()!!) {
@@ -521,64 +514,56 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             setSelection(autoCompleteTextView.length())
             autoCompleteTextView.dismissDropDown()
         }
-        getProvince()
-    }
-
-    private fun getProvince() {
-        checkoutAddAddressNewUserViewModel.initGetProvince().observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    loadingProgressBar.visibility = View.GONE
-                    if ((it?.data as ProvincesResponse).regions.isNullOrEmpty()) {
-                        //showNoStoresError()
-                    } else {
-                        it.data?.regions?.let { it1 ->
-                            provinceList = it1
-                            checkIfSelectedProvinceExist(it1)
-                        }
-                    }
-                }
-                ResponseStatus.LOADING -> {
-                    loadingProgressBar.visibility = View.VISIBLE
-                }
-                ResponseStatus.ERROR -> {
-                    loadingProgressBar.visibility = View.GONE
-                }
-            }
-        })
+        checkIfSelectedProvinceExist(WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>)
     }
 
     private fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
-        val province = Province()
+        val localProvince = Province()
         val provinceName = selectedAddress.province
         if (provinceName.isNotEmpty()) {
             for (provinces in provinceList) {
                 if (provinceName.equals(provinces.name)) {
-                    province.id = provinces.id
-                    province.name = provinces.name
+                    // province name is matching with the province list from config.
+                    localProvince.apply {
+                        id = provinces.id
+                        name = provinces.name
+                    }
+                    disableProvinceSelection()
+                    provinceAutocompleteEditText.setText(provinceName)
+                    selectedAddress.apply {
+                        province = localProvince.name
+                        region = localProvince.id
+                    }
                 }
             }
-            disableProvinceSelection()
-            selectedAddress.province = province.name
-            selectedAddress.region = province.id
-
-            if (selectedAddress.suburb.isEmpty())
-                enableSuburbSelection()
-            else {
-                disableSuburbSelection()
+            if (localProvince.name.isNullOrEmpty()) {
+                // province name is not matching with the province list from config.
+                provinceAutocompleteEditText.setText("")
+                provinceSuburbEnableType =
+                    ONLY_PROVINCE
             }
         } else {
-            enableProvinceSelection()
-            enableSuburbSelection()
+            provinceAutocompleteEditText.setText("")
+            provinceSuburbEnableType = ONLY_PROVINCE
         }
-        suburbEditText.setText(if (provinceName.isEmpty()) "" else selectedAddress.suburb)
-        provinceAutocompleteEditText.setText(provinceName)
-        if (selectedAddress.postalCode.isNullOrEmpty()) {
-            enablePostalCode()
-            postalCode.text.clear()
+        if (selectedAddress.suburb.isEmpty()) {
+            resetSuburbSelection()
+            provinceSuburbEnableType =
+                if (selectedAddress.province.isNullOrEmpty()) BOTH else ONLY_SUBURB
         } else {
-            disablePostalCode()
-            postalCode.setText(selectedAddress.postalCode)
+            suburbEditText.setText(selectedAddress.suburb)
+            disableSuburbSelection()
+        }
+        enableDisableEditText()
+        when (selectedAddress.postalCode.isNullOrEmpty()) {
+            true -> {
+                enablePostalCode()
+                postalCode.text.clear()
+            }
+            false -> {
+                disablePostalCode()
+                postalCode.setText(selectedAddress.postalCode)
+            }
         }
     }
 
@@ -590,7 +575,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectProvinceLayout?.setOnClickListener(this)
         provinceAutocompleteEditText?.setOnClickListener(this)
         dropdownGetProvincesImg.visibility = View.VISIBLE
-        selectProvinceLayout.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_inactive_bg)
+        selectProvinceLayout.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_active_bg)
         provinceAutocompleteEditText.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_box_autocomplete_edit_text)
     }
 
@@ -602,7 +587,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectSuburbLayout?.setOnClickListener(this)
         suburbEditText?.setOnClickListener(this)
         dropdownGetSuburbImg.visibility = View.VISIBLE
-        selectSuburbLayout.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_inactive_bg)
+        selectSuburbLayout.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_active_bg)
         suburbEditText.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_box_autocomplete_edit_text)
     }
 
@@ -642,7 +627,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         showGetProvincesProgress()
         val bundle = Bundle()
         bundle.apply {
-            putString("ProvinceList", Utils.toJson(provinceList))
+            putString(
+                "ProvinceList",
+                Utils.toJson(WoolworthsApplication.getNativeCheckout()?.regions as? MutableList<Province>)
+            )
         }
         navController?.navigate(
             R.id.action_to_provinceSelectorFragment,
@@ -688,7 +676,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun resetOtherDeliveringTitle(selectedTag: Int) {
+    private fun resetOtherDeliveringTitle(selectedTag: Int) {
         //change background of unselected textview
         for ((index) in deliveringOptionsList!!.withIndex()) {
             if (index != selectedTag) {
@@ -810,22 +798,22 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    fun showGetSuburbProgress() {
+    private fun showGetSuburbProgress() {
         dropdownGetSuburbImg?.visibility = View.INVISIBLE
         progressbarGetSuburb?.visibility = View.VISIBLE
     }
 
-    fun hideSetSuburbProgressBar() {
+    private fun hideSetSuburbProgressBar() {
         progressbarGetSuburb?.visibility = View.INVISIBLE
         dropdownGetSuburbImg?.visibility = View.VISIBLE
     }
 
-    fun hideGetProvincesProgress() {
+    private fun hideGetProvincesProgress() {
         progressbarGetProvinces?.visibility = View.INVISIBLE
         dropdownGetProvincesImg?.visibility = View.VISIBLE
     }
 
-    fun showGetProvincesProgress() {
+    private fun showGetProvincesProgress() {
         dropdownGetProvincesImg?.visibility = View.INVISIBLE
         progressbarGetProvinces?.visibility = View.VISIBLE
     }
@@ -987,7 +975,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
      * @see [Province]
      * @see [UnSellableCommerceItem]
      */
-    fun navigateToUnsellableItemsFragment(
+    private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
         deliverable: Boolean
     ) {
@@ -1071,7 +1059,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     position
                                 )
                                 (it.data as? AddAddressResponse)?.address?.let { address ->
-                                    (savedAddressResponse?.addresses as MutableList<Address>)?.add(
+                                    (savedAddressResponse?.addresses as? MutableList<Address>)?.add(
                                         position, address
                                     )
                                 }
@@ -1099,7 +1087,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         var isExist = false
         if (!savedAddressResponse?.addresses.isNullOrEmpty() && selectedAddressId.isNullOrEmpty()) {
             for (address in savedAddressResponse?.addresses!!) {
-                if (addressNicknameEditText.text.toString().equals(address?.nickname, true)) {
+                if (addressNicknameEditText.text.toString().equals(address.nickname, true)) {
                     addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
                     addressNicknameErrorMsg?.visibility = View.VISIBLE
                     addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
@@ -1111,11 +1099,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigateToAddressConfirmation() {
-        val bundle = Bundle()
-        bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
         navController?.navigate(
             R.id.action_CheckoutAddAddressNewUserFragment_to_checkoutAddressConfirmationFragment,
-            bundleOf("bundle" to bundle)
+            bundleOf(SAVED_ADDRESS_KEY to savedAddressResponse)
         )
     }
 
@@ -1136,6 +1122,17 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 provinceNameErrorMsg.visibility = View.VISIBLE
                 provinceAutocompleteEditText.setBackgroundResource(R.drawable.input_box_half_error_bg)
                 selectProvinceLayout.setBackgroundResource(R.drawable.input_error_background)
+            }
+        }
+    }
+
+    private fun enableDisableEditText() {
+        when (provinceSuburbEnableType) {
+            ONLY_PROVINCE -> enableProvinceSelection()
+            ONLY_SUBURB -> enableSuburbSelection()
+            BOTH -> {
+                enableProvinceSelection()
+                enableSuburbSelection()
             }
         }
     }

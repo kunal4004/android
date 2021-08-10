@@ -1,35 +1,46 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
 import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
+import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
-import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
-import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
-import za.co.woolworths.financial.services.android.checkout.service.network.Slot
+import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -38,6 +49,11 @@ import za.co.woolworths.financial.services.android.util.Utils
  */
 class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner {
+
+    companion object {
+        const val KEY_ARGS_ORDER_SUMMARY = "ORDER_SUMMARY"
+    }
+
 
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
@@ -87,8 +103,10 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun initViews() {
+        initializeDeliveringToView()
         initializeDeliveryFoodItems()
         initializeFoodSubstitution()
+        initializeOrderSummary()
 
         activity?.apply {
             view?.setOnClickListener {
@@ -104,6 +122,52 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         switchGiftInstructions?.setOnCheckedChangeListener { buttonView, isChecked ->
             edtTxtGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun initializeDeliveringToView() {
+        arguments?.apply {
+            context?.let { context ->
+                val savedAddress = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+                savedAddress?.let { savedAddresses ->
+
+                    val deliveringToAddress = SpannableStringBuilder()
+                    // default address nickname
+                    val defaultAddressNickname =
+                        SpannableString(
+                            savedAddresses.defaultAddressNickname + " " + context.getString(
+                                R.string.bullet
+                            ) + " "
+                        )
+                    val typeface = ResourcesCompat.getFont(context, R.font.myriad_pro_semi_bold)
+                    defaultAddressNickname.setSpan(
+                        StyleSpan(typeface!!.style),
+                        0, defaultAddressNickname.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    defaultAddressNickname.setSpan(ForegroundColorSpan(Color.BLACK), 0, defaultAddressNickname.length
+                        , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    deliveringToAddress.append(defaultAddressNickname)
+
+                    // Extract default address display name
+                    savedAddresses.addresses?.forEach { address ->
+                        if(savedAddresses.defaultAddressNickname.equals(address.nickname)){
+                            val addressName = SpannableString(address?.displayName)
+                            val typeface1 = ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                            addressName.setSpan(
+                                StyleSpan(typeface1!!.style),
+                                0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                            deliveringToAddress.append(addressName)
+                            return@forEach
+                        }
+                    }
+                    tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
+
+                    checkoutDeliveryDetailsLayout?.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
+
+                }
+            }
         }
     }
 
@@ -167,6 +231,46 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         previousImgBtnOther.setOnClickListener(this)
         nextImgBtnOther.setOnClickListener(this)
     }
+
+    /**
+     * Initializes Order Summary data from argument.
+     */
+    private fun initializeOrderSummary() {
+        arguments?.apply {
+            val orderSummary = getParcelable(KEY_ARGS_ORDER_SUMMARY) as? OrderSummary
+            orderSummary?.let { orderSummary ->
+                txtOrderSummaryYourCartValue?.text =
+                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(orderSummary.basketTotal)
+                orderSummary.discountDetails?.let { discountDetails ->
+                    txtOrderSummaryDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
+                    txtOrderSummaryTotalDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                    groupPromoCodeDiscount?.visibility = if(discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupWRewardsDiscount?.visibility = if(discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupCompanyDiscount?.visibility = if(discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                    txtOrderSummaryWRewardsVouchersValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
+                    txtOrderSummaryCompanyDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
+                    txtOrderSummaryPromoCodeDiscountValue?.text =
+                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
+                }
+            }
+        }
+    }
+/*
+    private fun initializeGrid(
+        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
+        weekNumber: Int
+    ) {
+        val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
+        expandableGrid.apply {
+            createTimingsGrid(deliverySlots?.hourSlots)
+            createDatesGrid(deliverySlots?.headerDates)
+            createTimeSlotGridView(deliverySlots, weekNumber)
+        }
+    }*/
 
     private fun setupViewModel() {
         checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
@@ -284,6 +388,10 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             }
             R.id.nextImgBtnOther -> {
                 expandableGrid.initialiseGridView(selectedSlotResponseOther, SECOND.week, otherType)
+            }
+            R.id.checkoutDeliveryDetailsLayout -> {
+                view?.findNavController()?.navigate(
+                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment, arguments)
             }
         }
     }
