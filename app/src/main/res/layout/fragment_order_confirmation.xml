@@ -23,7 +23,7 @@
             android:letterSpacing="0.2"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="@dimen/fourteen_sp"
             app:WTextView_font="bold" />
 
         <ImageView
