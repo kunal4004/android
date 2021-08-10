@@ -101,8 +101,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/ten_dp"
-            android:paddingLeft="@dimen/eighteen_dp"
-            android:paddingRight="@dimen/eighteen_dp"
+            android:paddingLeft="@dimen/fifteen_dp"
+            android:paddingRight="@dimen/fifteen_dp"
             android:visibility="gone">
 
             <TextView

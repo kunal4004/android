@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAda
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 
+
 class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCancelDialogFragment.IActionOrCancel {
 
     companion object {
@@ -77,6 +78,18 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
             surveyQuestionAdapter = SurveyQuestionAdapter(it, getAllowedQuestions(surveyDetails!!.questions!!), this)
         }
         rvSurveyQuestions.adapter = surveyQuestionAdapter
+        addOnRecyclerViewHeightChangeListener()
+    }
+
+    fun addOnRecyclerViewHeightChangeListener() {
+        rvSurveyQuestions.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            // Update footer spacing if RecyclerView's height changed, when keyboard is shown/hidden for example
+            if ((bottom - top) != (oldBottom - oldTop)) {
+                updateSubmitButtonStateAndSpacing()
+            }
+        }
+        // Update spacing on first load
+        updateSubmitButtonStateAndSpacing()
     }
 
     private fun getAllowedQuestions(questions: ArrayList<SurveyQuestion>): List<SurveyQuestion> {
@@ -89,7 +102,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
         return questions.filter { item -> allowedQuestionTypes.contains(item.type) }
     }
 
-    private fun updateSubmitButtonState() {
+    private fun updateSubmitButtonStateAndSpacing() {
         surveyQuestionAdapter?.apply {
             notifyItemChanged(itemCount - 1, Unit)
         }
@@ -141,13 +154,14 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     }
 
     override fun onInputRateSlider(questionId: Long, value: Int) {
+        // No need to update submit button's state here,
+        // since slider already has a default value, whether it's required or not
         getAnswer(questionId)?.answerId = value
-        updateSubmitButtonState()
     }
 
     override fun onInputFreeText(questionId: Long, value: String) {
         getAnswer(questionId)?.textAnswer = value
-        updateSubmitButtonState()
+        updateSubmitButtonStateAndSpacing()
     }
 
     override fun onSubmit() {

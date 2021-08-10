@@ -141,6 +141,10 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                     isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
                     WoolworthsApplication.setInAppReview(this)
                 }
+
+                liquor?.apply {
+                    WoolworthsApplication.setLiquor(this)
+                }
             }
         }
     }
