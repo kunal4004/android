@@ -2063,6 +2063,10 @@
     <string name="chat_notification_ended_by_agent">The Agent has Ended your Chat Session.</string>
     <string name="woolies_chat_active">Chat is currently active</string>
 
+    <string name="shop_liquor_in_our_app">Shop Liquor</string>
+    <string name="select_suburb">Select Suburb</string>
+    <string name="delivery_liquor_description"><![CDATA[Liquor is not available for Click & Collect.]]></string>
+
     <!--Native Checkout-->
     <string name="name_colon_text_view">Name: *</string>
     <string name="mobile_number_text_view">Mobile Number: *</string>
@@ -2154,6 +2158,7 @@
     <string name="submitForm">You will also need to submit</string>
     <string name="submitDescription">In order to process your claim we will need the following documents.</string>
     <string name="view_application_status">View Application Status</string>
+    <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
 
     <!-- Native Checkout -->
     <string name="native_checkout_continue_to_payment">Continue To Payment</string>
@@ -2173,8 +2178,11 @@
     <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
     <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
     <string name="delivery_timeslot_title_food_items">Delivery 1 - Food Items</string>
+    <string name="delivery_timeslot_title_other_items">Delivery 2 - Other Items</string>
     <string name="slot_delivery_title">How Would You Like It Delivered?</string>
+    <string name="slot_delivery_title_when">When would you like it delivered?</string>
     <string name="select_your_preferred_delivery_time">Select your preferred delivery time</string>
+    <string name="select_your_preferred_delivery_time_other">Select your preferred delivery method</string>
     <string name="previous_week_text">Previous Week</string>
     <string name="next_week_text">Next Week</string>
     <string name="free_delivery_slot">FREE</string>
@@ -2204,6 +2212,7 @@
     <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
     <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
     <string name="change_address">Change Address</string>
+    <string name="native_checkout_delivering_to_title">Delivering to</string>
 
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>

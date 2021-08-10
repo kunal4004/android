@@ -390,6 +390,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
             @Override
             public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
+
             }
         }, SavedAddressResponse.class));*/
 

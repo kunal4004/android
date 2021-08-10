@@ -5,7 +5,7 @@ import java.io.Serializable
 
 class SavedAddressResponse : Serializable {
     @SerializedName("addresses")
-    var addresses: List<Address>? = null
+    var addresses: ArrayList<Address>? = null
 
     @SerializedName("primaryContactNo")
     var primaryContactNo: String? = null

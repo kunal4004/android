@@ -9,7 +9,9 @@
   },
   "hasOnlyODDAvailableWithFood": false,
   "fulfillmentTypes": {
-    "join": "01"
+    "other": "02",
+    "join": "02",
+    "food": "01"
   },
   "orderSummary": {
     "basketTotal": 99.98,
@@ -55,31 +57,31 @@
       ],
       "headerDates": [
         {
-          "dayInitial": "M",
+          "day": "Mon",
           "date": "19 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Tue",
           "date": "20 Apr"
         },
         {
-          "dayInitial": "W",
+          "day": "Wed",
           "date": "21 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Thu",
           "date": "22 Apr"
         },
         {
-          "dayInitial": "F",
+          "day": "Fri",
           "date": "23 Apr"
         },
         {
-          "dayInitial": "S",
+          "day": "Sat",
           "date": "24 Apr"
         },
         {
-          "dayInitial": "S",
+          "day": "Sun",
           "date": "25 Apr"
         }
       ],
@@ -662,32 +664,16 @@
       ],
       "headerDates": [
         {
-          "dayInitial": "M",
+          "day": "Mon",
           "date": "19 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Tue",
           "date": "20 Apr"
         },
         {
-          "dayInitial": "W",
+          "day": "Wed",
           "date": "21 Apr"
-        },
-        {
-          "dayInitial": "T",
-          "date": "22 Apr"
-        },
-        {
-          "dayInitial": "F",
-          "date": "23 Apr"
-        },
-        {
-          "dayInitial": "S",
-          "date": "24 Apr"
-        },
-        {
-          "dayInitial": "S",
-          "date": "25 Apr"
         }
       ],
       "week": [
@@ -1864,31 +1850,31 @@
       ],
       "headerDates": [
         {
-          "dayInitial": "M",
+          "day": "Mon",
           "date": "19 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Tue",
           "date": "20 Apr"
         },
         {
-          "dayInitial": "W",
+          "day": "Wed",
           "date": "21 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Thu",
           "date": "22 Apr"
         },
         {
-          "dayInitial": "F",
+          "day": "Fri",
           "date": "23 Apr"
         },
         {
-          "dayInitial": "S",
+          "day": "Sat",
           "date": "24 Apr"
         },
         {
-          "dayInitial": "S",
+          "day": "Sun",
           "date": "25 Apr"
         }
       ],
@@ -1914,25 +1900,6 @@
               "available": false,
               "intHourFrom": 10,
               "intHourTo": 13
-            },
-            {
-              "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
-              "slotCost": 34,
-              "freeDeliverySlot": false,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
             },
             {
               "dayOfMonth": 0,
@@ -1964,8 +1931,8 @@
               "stringShipOnDate": "2021-04-19",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 0,
-              "freeDeliverySlot": true,
+              "slotCost": 90,
+              "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
               "available": false,
@@ -1979,25 +1946,6 @@
           "slots": [
             {
               "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
-              "slotCost": 37,
-              "freeDeliverySlot": false,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
-            },
-            {
-              "dayOfMonth": 0,
               "hourFrom": "10am",
               "hourTo": "1pm",
               "shipOnDate": 1618869600000,
@@ -2007,8 +1955,8 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 0,
-              "freeDeliverySlot": true,
+              "slotCost": 60,
+              "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
               "available": true,
@@ -2114,25 +2062,6 @@
               "available": true,
               "intHourFrom": 18,
               "intHourTo": 20
-            },
-            {
-              "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
-              "slotCost": 29,
-              "freeDeliverySlot": false,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
             }
           ]
         },
@@ -2150,8 +2079,8 @@
               "stringShipOnDate": "2021-04-22",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 0,
-              "freeDeliverySlot": true,
+              "slotCost": 10,
+              "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
               "available": true,
@@ -2176,25 +2105,6 @@
               "available": true,
               "intHourFrom": 14,
               "intHourTo": 17
-            },
-            {
-              "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
-              "slotCost": 18,
-              "freeDeliverySlot": false,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
             },
             {
               "dayOfMonth": 0,
@@ -2276,25 +2186,6 @@
               "available": true,
               "intHourFrom": 18,
               "intHourTo": 20
-            },
-            {
-              "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
-              "slotCost": 190,
-              "freeDeliverySlot": false,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
             }
           ]
         },
@@ -2319,25 +2210,6 @@
               "available": true,
               "intHourFrom": 10,
               "intHourTo": 13
-            },
-            {
-              "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
-              "slotCost": 122,
-              "freeDeliverySlot": false,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
             },
             {
               "dayOfMonth": 0,
@@ -2382,25 +2254,6 @@
         {
           "date": "2021-04-25",
           "slots": [
-            {
-              "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
-              "slotCost": 41,
-              "freeDeliverySlot": false,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
-            },
             {
               "dayOfMonth": 0,
               "hourFrom": "10am",
@@ -2450,8 +2303,8 @@
               "stringShipOnDate": "2021-04-25",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 0,
-              "freeDeliverySlot": true,
+              "slotCost": 40,
+              "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
               "available": false,
@@ -2470,57 +2323,22 @@
       ],
       "headerDates": [
         {
-          "dayInitial": "M",
+          "day": "Mon",
           "date": "19 Apr"
         },
         {
-          "dayInitial": "T",
+          "day": "Tue",
           "date": "20 Apr"
         },
         {
-          "dayInitial": "W",
+          "day": "Wed",
           "date": "21 Apr"
-        },
-        {
-          "dayInitial": "T",
-          "date": "22 Apr"
-        },
-        {
-          "dayInitial": "F",
-          "date": "23 Apr"
-        },
-        {
-          "dayInitial": "S",
-          "date": "24 Apr"
-        },
-        {
-          "dayInitial": "S",
-          "date": "25 Apr"
         }
       ],
       "week": [
         {
           "date": "2021-04-20",
           "slots": [
-            {
-              "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
-              "slotCost": 83,
-              "freeDeliverySlot": false,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
-            },
             {
               "dayOfMonth": 0,
               "hourFrom": "10am",
@@ -2594,8 +2412,8 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 0,
-              "freeDeliverySlot": true,
+              "slotCost": 39,
+              "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
               "available": true,
@@ -2632,25 +2450,6 @@
               "stringShipOnDate": "2021-04-20",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 73,
-              "freeDeliverySlot": false,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
-            },
-            {
-              "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
               "slotCost": 0,
               "freeDeliverySlot": true,
               "hasReservation": false,
@@ -2675,8 +2474,8 @@
               "stringShipOnDate": "2021-04-21",
               "rushDelSlot": false,
               "corporateSlot": false,
-              "slotCost": 0,
-              "freeDeliverySlot": true,
+              "slotCost": 67,
+              "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
               "available": true,
@@ -2715,25 +2514,6 @@
               "corporateSlot": false,
               "slotCost": 0,
               "freeDeliverySlot": true,
-              "hasReservation": false,
-              "selected": false,
-              "available": true,
-              "intHourFrom": 18,
-              "intHourTo": 20
-            },
-            {
-              "dayOfMonth": 0,
-              "hourFrom": "6pm",
-              "hourTo": "8pm",
-              "shipOnDate": 1618869600000,
-              "description": "Tuesday 20 April",
-              "slotId": "200024",
-              "joinSlotId": "",
-              "stringShipOnDate": "2021-04-20",
-              "rushDelSlot": false,
-              "corporateSlot": false,
-              "slotCost": 91,
-              "freeDeliverySlot": false,
               "hasReservation": false,
               "selected": false,
               "available": true,

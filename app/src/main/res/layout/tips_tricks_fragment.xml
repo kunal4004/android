@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/newFeature"
+            android:id="@+id/txtNewFeature"
             style="@style/listStyle"
             android:layout_marginTop="16dp"
             android:background="@drawable/stores_details_background">
