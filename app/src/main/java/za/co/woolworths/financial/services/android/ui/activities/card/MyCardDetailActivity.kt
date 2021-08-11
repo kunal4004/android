@@ -73,7 +73,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
 
     private fun addCardDetailFragment() {
         val primaryCards = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards
-        if(primaryCards?.size!! > 0){
+        if(!primaryCards.isNullOrEmpty()){
             val primaryCard = primaryCards[PRIMARY_CARD_POSITION]
             val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
             val shouldDisplayStoreCardDetail = TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
