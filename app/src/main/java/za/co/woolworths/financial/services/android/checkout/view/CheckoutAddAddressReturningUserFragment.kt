@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
@@ -64,6 +65,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private var foodType = ONLY_FOOD
     private var otherType = ONLY_OTHER
     private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter? =
+        null
+    private var checkoutDeliveryTypeSelectionShimmerAdapter: CheckoutDeliveryTypeSelectionShimmerAdapter? =
         null
 
     enum class FoodSubstitution(val rgb: String) {
@@ -215,7 +218,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
             (availableDeliverySlotsResponse.openDayDeliverySlots as ArrayList).add(timeSlotListItem)
         }
-        checkoutDeliveryTypeSelectionListAdapter = null
+        checkoutDeliveryTypeSelectionShimmerAdapter = null
+        deliveryTypeSelectionRecyclerView.adapter = null
         checkoutDeliveryTypeSelectionListAdapter =
             CheckoutDeliveryTypeSelectionListAdapter(
                 availableDeliverySlotsResponse?.openDayDeliverySlots,
@@ -268,18 +272,6 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             }
         }
     }
-/*
-    private fun initializeGrid(
-        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
-        weekNumber: Int
-    ) {
-        val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
-        expandableGrid.apply {
-            createTimingsGrid(deliverySlots?.hourSlots)
-            createDatesGrid(deliverySlots?.headerDates)
-            createTimeSlotGridView(deliverySlots, weekNumber)
-        }
-    }*/
 
     private fun setupViewModel() {
         checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
@@ -302,6 +294,13 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
                     expandableGrid.hideDeliveryTypeShimmerView()
+                    val shouldShowShimmerList: ArrayList<Boolean> = ArrayList()
+                    shouldShowShimmerList.apply {
+                        add(false)
+                        add(false)
+                        add(false)
+                    }
+                    checkoutDeliveryTypeSelectionShimmerAdapter?.setData(shouldShowShimmerList)
                     /*if (it.data != null) {
                     // Keeping two diff response not to get merge while showing 2 diff slots.
                        selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
@@ -370,21 +369,20 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun showDeliverySubTypeShimmerView() {
-        //use mock data from json file to show shimmer view.
-        val jsonFileString = Utils.getJsonDataFromAsset(
-            activity?.applicationContext,
-            "mocks/openDayDeliverySlots.json"
-        )
-        val openDayDeliverySlots: List<Any> = Gson().fromJson(
-            jsonFileString,
-            object : TypeToken<List<Any>>() {}.type
-        )
-        checkoutDeliveryTypeSelectionListAdapter =
-            CheckoutDeliveryTypeSelectionListAdapter(
-                openDayDeliverySlots,
-                this,
-                ONLY_OTHER
-            )
+        val shouldShowShimmerList: ArrayList<Boolean> = ArrayList()
+        shouldShowShimmerList.apply {
+            add(true)
+            add(true)
+            add(true)
+        }
+        checkoutDeliveryTypeSelectionShimmerAdapter =
+            CheckoutDeliveryTypeSelectionShimmerAdapter(shouldShowShimmerList)
+
+        deliveryTypeSelectionRecyclerView?.apply {
+            addItemDecoration(object : RecyclerView.ItemDecoration() {})
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            checkoutDeliveryTypeSelectionShimmerAdapter?.let { adapter = it }
+        }
     }
 
     fun getSelectedSlotResponse(deliveryType: DeliveryType): AvailableDeliverySlotsResponse? {

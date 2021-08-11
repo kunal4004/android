@@ -2188,6 +2188,8 @@
     <string name="free_delivery_slot">FREE</string>
     <string name="currency">R</string>
     <string name="dummy_currency">R50</string>
+    <string name="title_text">ShowTitle</string>
+    <string name="subtitle_text">Show SubTitle Text</string>
     <string name="working_days_text">%1$s - %2$s Working Days</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>
