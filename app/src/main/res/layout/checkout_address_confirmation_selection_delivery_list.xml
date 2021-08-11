@@ -15,7 +15,7 @@
         android:id="@+id/selectorShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/shimmer_view_background"
+        android:background="@drawable/checkbox_circle_shimmer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_guideline">
 
@@ -48,9 +48,9 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:ellipsize="end"
-            android:text="@string/title_text"
             android:maxLines="1"
             android:singleLine="true"
+            android:text="@string/title_text"
             android:textColor="@color/black"
             tools:ignore="MissingConstraints" />
     </com.facebook.shimmer.ShimmerFrameLayout>
@@ -76,9 +76,9 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:ellipsize="end"
-            android:text="@string/subtitle_text"
             android:maxLines="1"
             android:singleLine="true"
+            android:text="@string/subtitle_text"
             android:textColor="@color/checkout_delivering_title"
             android:textSize="@dimen/fourteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
@@ -100,7 +100,7 @@
         android:id="@+id/slotPriceButtonShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/shimmer_view_background"
+        android:background="@drawable/slot_price_button_shimmer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_guideline">
 
@@ -109,8 +109,7 @@
             style="@style/futura_semi_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/four_dp_"
-            android:background="@drawable/slot_price_button"
+            android:background="@drawable/slot_price_button_light_blue"
             android:paddingStart="@dimen/seven_dp"
             android:paddingTop="@dimen/four_dp_"
             android:paddingEnd="@dimen/seven_dp"

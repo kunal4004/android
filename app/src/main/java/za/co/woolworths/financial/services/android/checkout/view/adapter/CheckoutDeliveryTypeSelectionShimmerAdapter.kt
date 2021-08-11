@@ -48,15 +48,8 @@ class CheckoutDeliveryTypeSelectionShimmerAdapter(
             itemView.apply {
                 if (shouldShowShimmerList[position])
                     showShimmer(this)
-                else
-                    hideShimmer(this)
             }
         }
-    }
-
-    fun setData(shouldShowShimmerList: ArrayList<Boolean>) {
-        this.shouldShowShimmerList = shouldShowShimmerList
-        notifyDataSetChanged()
     }
 
     private fun showShimmer(view: View) {
@@ -77,26 +70,6 @@ class CheckoutDeliveryTypeSelectionShimmerAdapter(
             slotPriceButtonShimmerFrameLayout?.setShimmer(shimmer)
             slotPriceButtonShimmerFrameLayout?.startShimmer()
             slotPriceButton.visibility = View.INVISIBLE
-        }
-    }
-
-    private fun hideShimmer(view: View) {
-        view.apply {
-            selectorShimmerFrameLayout?.setShimmer(null)
-            selectorShimmerFrameLayout?.stopShimmer()
-            selector.visibility = View.VISIBLE
-
-            titleShimmerLayout?.setShimmer(null)
-            titleShimmerLayout?.stopShimmer()
-            title.visibility = View.VISIBLE
-
-            subtitleShimmerLayout?.setShimmer(null)
-            subtitleShimmerLayout?.stopShimmer()
-            subTitle.visibility = View.VISIBLE
-
-            slotPriceButtonShimmerFrameLayout?.setShimmer(null)
-            slotPriceButtonShimmerFrameLayout?.stopShimmer()
-            slotPriceButton.visibility = View.VISIBLE
         }
     }
 }

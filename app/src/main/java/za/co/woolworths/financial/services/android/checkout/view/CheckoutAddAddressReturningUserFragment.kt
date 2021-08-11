@@ -152,14 +152,14 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         0,
                         defaultAddressNickname.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    );
+                    )
 
                     deliveringToAddress.append(defaultAddressNickname)
 
                     // Extract default address display name
                     savedAddresses.addresses?.forEach { address ->
                         if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                            val addressName = SpannableString(address?.displayName)
+                            val addressName = SpannableString(address.displayName)
                             val typeface1 =
                                 ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
                             addressName.setSpan(
@@ -294,13 +294,6 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
                     expandableGrid.hideDeliveryTypeShimmerView()
-                    val shouldShowShimmerList: ArrayList<Boolean> = ArrayList()
-                    shouldShowShimmerList.apply {
-                        add(false)
-                        add(false)
-                        add(false)
-                    }
-                    checkoutDeliveryTypeSelectionShimmerAdapter?.setData(shouldShowShimmerList)
                     /*if (it.data != null) {
                     // Keeping two diff response not to get merge while showing 2 diff slots.
                        selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
