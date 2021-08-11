@@ -427,15 +427,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             enableDisableEditText()
         }
 
-        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { requestKey, bundle ->
-            view?.findNavController()?.navigate(
-                R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
-                bundleOf(
-                    SAVED_ADDRESS_KEY to savedAddressResponse
-                )
-            )
-        }
-
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, bundle ->
             if (selectedAddress.province.isEmpty()) return@setFragmentResultListener
             getSuburbs()
