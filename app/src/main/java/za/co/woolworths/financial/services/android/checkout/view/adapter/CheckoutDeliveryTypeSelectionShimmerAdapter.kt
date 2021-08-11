@@ -11,9 +11,7 @@ import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_de
 /**
  * Created by Kunal Uttarwar on 11/08/21.
  */
-class CheckoutDeliveryTypeSelectionShimmerAdapter(
-    private var shouldShowShimmerList: ArrayList<Boolean>
-) :
+class CheckoutDeliveryTypeSelectionShimmerAdapter(private var shimmerListCount: Int) :
     RecyclerView.Adapter<CheckoutDeliveryTypeSelectionShimmerAdapter.CheckoutDeliveryTypeSelectionViewHolder>() {
     val shimmer: Shimmer = Shimmer.AlphaHighlightBuilder().build()
 
@@ -32,22 +30,21 @@ class CheckoutDeliveryTypeSelectionShimmerAdapter(
     }
 
     override fun getItemCount(): Int {
-        return shouldShowShimmerList.size
+        return shimmerListCount
     }
 
     override fun onBindViewHolder(
         holder: CheckoutDeliveryTypeSelectionShimmerAdapter.CheckoutDeliveryTypeSelectionViewHolder,
         position: Int
     ) {
-        holder.bindItem(position)
+        holder.bindItem()
     }
 
     inner class CheckoutDeliveryTypeSelectionViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        fun bindItem(position: Int) {
+        fun bindItem() {
             itemView.apply {
-                if (shouldShowShimmerList[position])
-                    showShimmer(this)
+                showShimmer(this)
             }
         }
     }

@@ -26,9 +26,9 @@ class CheckoutAddressConfirmationListAdapter(
 
     var checkedItemPosition = -1
 
-    companion object{
-       const val EDIT_SAVED_ADDRESS_RESPONSE_KEY = "editSavedAddressResponse"
-       const val EDIT_ADDRESS_POSITION_KEY = "position"
+    companion object {
+        const val EDIT_SAVED_ADDRESS_RESPONSE_KEY = "editSavedAddressResponse"
+        const val EDIT_ADDRESS_POSITION_KEY = "position"
     }
 
     override fun onCreateViewHolder(
@@ -46,9 +46,7 @@ class CheckoutAddressConfirmationListAdapter(
     }
 
     override fun getItemCount(): Int {
-        if (savedAddress?.addresses.isNullOrEmpty())
-            return 0
-        return savedAddress?.addresses?.size!!
+        return savedAddress?.addresses?.size ?: 0
     }
 
     override fun onBindViewHolder(

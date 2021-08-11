@@ -362,14 +362,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun showDeliverySubTypeShimmerView() {
-        val shouldShowShimmerList: ArrayList<Boolean> = ArrayList()
-        shouldShowShimmerList.apply {
-            add(true)
-            add(true)
-            add(true)
-        }
         checkoutDeliveryTypeSelectionShimmerAdapter =
-            CheckoutDeliveryTypeSelectionShimmerAdapter(shouldShowShimmerList)
+            CheckoutDeliveryTypeSelectionShimmerAdapter(3)
 
         deliveryTypeSelectionRecyclerView?.apply {
             addItemDecoration(object : RecyclerView.ItemDecoration() {})
