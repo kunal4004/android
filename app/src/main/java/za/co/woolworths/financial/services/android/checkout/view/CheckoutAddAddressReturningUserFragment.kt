@@ -144,16 +144,21 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         StyleSpan(typeface!!.style),
                         0, defaultAddressNickname.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    defaultAddressNickname.setSpan(ForegroundColorSpan(Color.BLACK), 0, defaultAddressNickname.length
-                        , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    defaultAddressNickname.setSpan(
+                        ForegroundColorSpan(Color.BLACK),
+                        0,
+                        defaultAddressNickname.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    );
 
                     deliveringToAddress.append(defaultAddressNickname)
 
                     // Extract default address display name
                     savedAddresses.addresses?.forEach { address ->
-                        if(savedAddresses.defaultAddressNickname.equals(address.nickname)){
+                        if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
                             val addressName = SpannableString(address?.displayName)
-                            val typeface1 = ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                            val typeface1 =
+                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
                             addressName.setSpan(
                                 StyleSpan(typeface1!!.style),
                                 0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -210,6 +215,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
             (availableDeliverySlotsResponse.openDayDeliverySlots as ArrayList).add(timeSlotListItem)
         }
+        checkoutDeliveryTypeSelectionListAdapter = null
         checkoutDeliveryTypeSelectionListAdapter =
             CheckoutDeliveryTypeSelectionListAdapter(
                 availableDeliverySlotsResponse?.openDayDeliverySlots,
@@ -246,9 +252,12 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
                     txtOrderSummaryTotalDiscountValue?.text =
                         "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
-                    groupPromoCodeDiscount?.visibility = if(discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
-                    groupWRewardsDiscount?.visibility = if(discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
-                    groupCompanyDiscount?.visibility = if(discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupPromoCodeDiscount?.visibility =
+                        if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupWRewardsDiscount?.visibility =
+                        if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                    groupCompanyDiscount?.visibility =
+                        if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
                     txtOrderSummaryWRewardsVouchersValue?.text =
                         "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
                     txtOrderSummaryCompanyDiscountValue?.text =
@@ -287,6 +296,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private fun getAvailableDeliverySlots() {
         expandableGrid.setUpShimmerView()
         expandableGrid.showDeliveryTypeShimmerView()
+        showDeliverySubTypeShimmerView()
         checkoutAddAddressNewUserViewModel.getAvailableDeliverySlots().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
@@ -312,7 +322,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         //Only for Food
                         foodType = ONLY_FOOD
                         checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
-                        selectDeliveryTimeSlotTitle.text = getString(R.string.slot_delivery_title_when)
+                        selectDeliveryTimeSlotTitle.text =
+                            getString(R.string.slot_delivery_title_when)
                         selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
                         expandableGrid.initialiseGridView(
                             selectedSlotResponseFood,
@@ -329,7 +340,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                             MIXED_FOOD
                         )
                         if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
-                            howWouldYouDeliveredTitle.text = getString(R.string.delivery_timeslot_title_other_items)
+                            howWouldYouDeliveredTitle.text =
+                                getString(R.string.delivery_timeslot_title_other_items)
                             initializeDeliveryTypeSelectionView(
                                 selectedSlotResponseFood,
                                 MIXED_OTHER
@@ -355,6 +367,24 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 }
             }
         })
+    }
+
+    private fun showDeliverySubTypeShimmerView() {
+        //use mock data from json file to show shimmer view.
+        val jsonFileString = Utils.getJsonDataFromAsset(
+            activity?.applicationContext,
+            "mocks/openDayDeliverySlots.json"
+        )
+        val openDayDeliverySlots: List<Any> = Gson().fromJson(
+            jsonFileString,
+            object : TypeToken<List<Any>>() {}.type
+        )
+        checkoutDeliveryTypeSelectionListAdapter =
+            CheckoutDeliveryTypeSelectionListAdapter(
+                openDayDeliverySlots,
+                this,
+                ONLY_OTHER
+            )
     }
 
     fun getSelectedSlotResponse(deliveryType: DeliveryType): AvailableDeliverySlotsResponse? {
@@ -394,7 +424,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             }
             R.id.checkoutDeliveryDetailsLayout -> {
                 view?.findNavController()?.navigate(
-                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment, arguments)
+                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
+                    arguments
+                )
             }
         }
     }
