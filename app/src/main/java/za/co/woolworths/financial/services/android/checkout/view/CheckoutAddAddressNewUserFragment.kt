@@ -848,8 +848,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
                             val response = (it.data as? AddAddressResponse)
-                            response?.httpCode = 400
-                            response?.response?.code = "1162"
                             when (response?.httpCode) {
                                 HTTP_OK, AppConstant.HTTP_OK_201 -> {
                                     if (savedAddressResponse != null && it?.data != null)
