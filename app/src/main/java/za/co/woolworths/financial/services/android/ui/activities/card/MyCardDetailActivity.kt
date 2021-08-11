@@ -72,31 +72,43 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
     }
 
     private fun addCardDetailFragment() {
-        val primaryCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(PRIMARY_CARD_POSITION)
-        val blockType = primaryCard?.blockType?.toLowerCase(Locale.getDefault())
-        val shouldDisplayStoreCardDetail = TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
-        val virtualCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.virtualCard
-        // Determine if card is blocked: if blockCode is not null, card is blocked.
-        when ((virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
-                || shouldDisplayStoreCardDetail
-                && blockType != TemporaryFreezeStoreCard.PERMANENT) {
-            true -> {
-                addFragment(
+        val primaryCards = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards
+        if(primaryCards?.size!! > 0){
+            val primaryCard = primaryCards[PRIMARY_CARD_POSITION]
+            val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
+            val shouldDisplayStoreCardDetail = TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
+            val virtualCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.virtualCard
+            // Determine if card is blocked: if blockCode is not null, card is blocked.
+            when ((virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+                    || shouldDisplayStoreCardDetail
+                    && blockType != TemporaryFreezeStoreCard.PERMANENT) {
+                true -> {
+                    addFragment(
                         fragment = MyCardDetailFragment.newInstance(mStoreCardDetail, shouldActivateUnblockCardOnLanding),
                         tag = MyCardDetailFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
-            }
-            else -> {
-                when (mStoreCardScreenType) {
+                }
+                else -> {
+                    when (mStoreCardScreenType) {
 
-                    StoreCardViewType.DEFAULT -> {
-                        addFragment(
+                        StoreCardViewType.DEFAULT -> {
+                            addFragment(
                                 fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
                                 tag = MyCardBlockedFragment::class.java.simpleName,
                                 containerViewId = R.id.flMyCard)
+                        }
                     }
                 }
             }
+        }
+        else{
+            val instantCardReplacement = WoolworthsApplication.getInstantCardReplacement()
+            instantCardReplacement?.isEnabled = false
+            WoolworthsApplication.setInstantCardReplacement(instantCardReplacement)
+            addFragment(
+                fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
+                tag = MyCardBlockedFragment::class.java.simpleName,
+                containerViewId = R.id.flMyCard)
         }
     }
 
