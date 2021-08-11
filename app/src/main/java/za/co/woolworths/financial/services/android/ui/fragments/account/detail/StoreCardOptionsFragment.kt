@@ -174,6 +174,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                     )
                 }
                 storeCardTagTextView?.visibility = VISIBLE
+                tempFreezeTextView?.visibility = GONE
                 myCardDetailTextView?.visibility = GONE
                 manageLinkNewCardGroup?.visibility = VISIBLE
                 context?.let {
@@ -198,6 +199,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                     )
                 }
                 storeCardTagTextView?.visibility = VISIBLE
+                tempFreezeTextView?.visibility = GONE
                 myCardDetailTextView?.visibility = GONE
                 if (mCardPresenterImpl?.isVirtualCardObjectBlockTypeNull() == true) {
                     manageLinkNewCardGroup?.visibility = VISIBLE
@@ -226,6 +228,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                     )
                 }
                 storeCardTagTextView?.visibility = VISIBLE
+                tempFreezeTextView?.visibility = GONE
                 myCardDetailTextView?.visibility = GONE
                 manageLinkNewCardGroup?.visibility = VISIBLE
                 manageMyCardTextView?.text = bindString(R.string.replacement_card_label)
@@ -251,6 +254,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             // Manage your card
             else -> {
                 storeCardTagTextView?.visibility = GONE
+                tempFreezeTextView?.visibility = GONE
                 myCardDetailTextView?.visibility = VISIBLE
                 myCardDetailTextView?.setOnClickListener {
                     mCardPresenterImpl?.navigateToTemporaryStoreCard()
@@ -265,6 +269,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         )
                     )
                 }
+                cardDetailImageView?.setImageResource(R.drawable.w_store_card)
                 cardDetailImageView?.alpha = 1.0f
             }
         }
