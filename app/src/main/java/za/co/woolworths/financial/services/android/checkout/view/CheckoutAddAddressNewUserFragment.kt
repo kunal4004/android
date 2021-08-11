@@ -848,16 +848,19 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
                             val response = (it.data as? AddAddressResponse)
-                            when (response?.httpCode) {
+                            when (response?.httpCode?.toInt()) {
                                 HTTP_OK, AppConstant.HTTP_OK_201 -> {
                                     if (savedAddressResponse != null && it?.data != null)
                                         savedAddressResponse?.addresses?.plus(response?.address)
                                     onAddNewAddress(body.nickname)
                                 }
-                                400 -> {
-                                    showSuburbNotDeliverableBottomSheetDialog(
-                                       response?.response?.code
-                                    )
+                                AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
+                                    if(response?.response?.code == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
+                                        response?.response?.code == ERROR_CODE_SUBURB_NOT_FOUND){
+                                        showSuburbNotDeliverableBottomSheetDialog(
+                                            response?.response?.code
+                                        )
+                                    }
                                 }
                             }
                         }
