@@ -73,10 +73,11 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginTop="@dimen/twenty_dp"
-        android:background="@drawable/input_box_inactive_bg"
+        android:background="@drawable/input_box_active_bg"
         android:paddingStart="@dimen/sixteen_dp"
         android:paddingEnd="@dimen/sixteen_dp"
         android:clickable="true"
+        android:state_active="true"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
         app:layout_constraintTop_toBottomOf="@id/subTitle"
@@ -137,7 +138,7 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:background="@drawable/input_box_inactive_bg"
+        android:background="@drawable/input_box_active_bg"
         android:paddingStart="@dimen/sixteen_dp"
         android:paddingEnd="@dimen/sixteen_dp"
         android:clickable="true"
@@ -206,7 +207,7 @@
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/storeClosedMsg">
+        app:layout_constraintTop_toBottomOf="@+id/storeClosedMsg">
 
         <RelativeLayout
             android:id="@+id/earliestDateTitleLayout"
@@ -287,7 +288,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/foodDeliveryDateMessage"
+        android:id="@+id/txtFoodDeliveryDateMessage"
         style="@style/myriad_pro_regular"
         android:layout_marginTop="@dimen/fourteen_dp"
         android:lineSpacingMultiplier="1.40"
@@ -310,9 +311,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@id/foodDeliveryDateMessage" />
-
-
+        app:layout_constraintTop_toBottomOf="@id/txtFoodDeliveryDateMessage" />
 
     <TextView
         android:id="@+id/title"
@@ -335,7 +334,7 @@
         app:layout_constraintTop_toBottomOf="@id/delivery" />
 
     <TextView
-        android:id="@+id/newFeature"
+        android:id="@+id/txtNewFeature"
         style="@style/futura_semi_bold"
         android:layout_width="wrap_content"
         android:paddingLeft="@dimen/five_dp"
@@ -353,7 +352,7 @@
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <TextView
-        android:id="@+id/confirmLocation"
+        android:id="@+id/confirmLocationTextView"
         style="@style/call_to_action_text_style"
         android:layout_height="@dimen/fifty_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
@@ -372,7 +371,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/twenty_four_dp"
-        app:layout_constraintBottom_toTopOf="@id/confirmLocation"
+        app:layout_constraintBottom_toTopOf="@id/confirmLocationTextView"
         app:layout_constraintEnd_toEndOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline" />
 

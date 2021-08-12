@@ -115,7 +115,7 @@ public class ProductListingExtensionFragment extends Fragment {
         PagingResponse pagingResponse = productView.pagingResponse;
         if (pagingResponse.numItemsInTotal != null && productView.pagingResponse.pageOffset != null) {
             mNumItemsInTotal = pagingResponse.numItemsInTotal;
-            Log.e("paginationResponse", "pageOffset " + productView.pagingResponse.pageOffset + " mNumItemsInTotal " + mNumItemsInTotal);
+            Log.d("paginationResponse", "pageOffset " + productView.pagingResponse.pageOffset + " mNumItemsInTotal " + mNumItemsInTotal);
             if (productView.pagingResponse.pageOffset > mNumItemsInTotal) {
                 setIsLastPage(true);
             }

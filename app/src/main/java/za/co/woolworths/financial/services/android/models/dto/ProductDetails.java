@@ -102,4 +102,6 @@ public class ProductDetails {
 	@SerializedName("colourSizeVariants")
 	@Expose
 	public String colourSizeVariants;
+	@SerializedName("isLiquor")
+	public boolean isLiquor;
 }

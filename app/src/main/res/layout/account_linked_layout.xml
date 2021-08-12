@@ -16,7 +16,7 @@
 
         <variable
             name="viewModel"
-            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsViewModel" />
+            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragmentViewModel" />
     </data>
 
     <LinearLayout
