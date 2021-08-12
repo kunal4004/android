@@ -19,10 +19,12 @@ import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_co
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
 import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
+import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddressConfirmationInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
+import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddressConfirmationViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -44,14 +46,16 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     CheckoutAddressConfirmationListAdapter.EventListner, SuburbListAdapter.ISuburbSelector {
 
-    var savedAddress: SavedAddressResponse? = null
-    var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? = null
+    private var savedAddress: SavedAddressResponse? = null
+    private var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? =
+        null
     private var storeListAdapter: CheckoutStoreSelectionAdapter? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var navController: NavController? = null
     private var localSuburbId: String? = null
     private var validatedSuburbProductResponse: ValidatedSuburbProducts? = null
     private var suburbListAdapter: SuburbListAdapter? = null
+    private lateinit var checkoutAddressConfirmationViewModel: CheckoutAddressConfirmationViewModel
 
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
@@ -110,13 +114,32 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     } else if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1 && addressConfirmationDelivery.visibility == View.VISIBLE)
                         addNewAddressErrorMsg.visibility = View.VISIBLE
                     else {
-                        //TO DO next screen
+                        // if it is store then call setSuburb API.
+                        setSuburb()
                     }
                 }
             }
             R.id.changeTextView -> {
                 changeLocation()
             }
+        }
+    }
+
+    private fun setSuburb() {
+        localSuburbId?.let {
+            checkoutAddressConfirmationViewModel.setSuburb(it).observe(viewLifecycleOwner, {
+                when (it.responseStatus) {
+                    ResponseStatus.SUCCESS -> {
+                        loadingProgressBar.visibility = View.GONE
+                    }
+                    ResponseStatus.LOADING -> {
+                        loadingProgressBar.visibility = View.VISIBLE
+                    }
+                    ResponseStatus.ERROR -> {
+                        loadingProgressBar.visibility = View.GONE
+                    }
+                }
+            })
         }
     }
 
@@ -171,33 +194,33 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun addFragmentResultListener() {
         // Use the Kotlin extension in the fragment-ktx artifact
-        setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { _, bundle ->
             updateSavedAddress(bundle)
         }
-        setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY) { _, bundle ->
             updateSavedAddress(bundle)
         }
-        setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { _, bundle ->
             updateSavedAddress(bundle)
         }
-        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
             showCollectionTab(localSuburbId)
         }
-        setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
+        setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { _, bundle ->
             val result = bundle.getString("Suburb")
             val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
             suburb?.id?.let { showCollectionTab(it) }
         }
 
-        setFragmentResultListener(CheckoutAddAddressNewUserFragment.PROVINCE_SELECTION_BACK_PRESSED) { requestKey, bundle ->
+        setFragmentResultListener(CheckoutAddAddressNewUserFragment.PROVINCE_SELECTION_BACK_PRESSED) { _, _ ->
             showCollectionTab(localSuburbId)
             showStoreList()
         }
-        setFragmentResultListener(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED) { requestKey, bundle ->
+        setFragmentResultListener(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED) { _, _ ->
             showCollectionTab(localSuburbId)
             showStoreList()
         }
-        setFragmentResultListener(STORE_SELECTION_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(STORE_SELECTION_REQUEST_KEY) { _, bundle ->
             val result = bundle.getString(STORE_SELECTION_REQUEST_KEY)
             val validateStoreList: ValidateStoreList? =
                 Utils.strToJson(result, ValidateStoreList::class.java) as? ValidateStoreList
@@ -234,7 +257,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             savedAddress?.defaultAddressNickname?.let { nickName ->
                 var index = 0
                 savedAddress?.addresses?.forEach { address ->
-                    if (nickName == address?.nickname) {
+                    if (nickName == address.nickname) {
                         checkoutAddressConfirmationListAdapter?.onItemClick(index)
                         return@forEach
                     }
@@ -437,9 +460,18 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 )
             )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
+
+        checkoutAddressConfirmationViewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory(
+                CheckoutAddressConfirmationInteractor(
+                    CheckoutAddressConfirmationApiHelper()
+                )
+            )
+        ).get(CheckoutAddressConfirmationViewModel::class.java)
     }
 
-    fun navigateToUnsellableItemsFragment(
+    private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: List<UnSellableCommerceItem>,
         address: Address,
         deliverable: Boolean
