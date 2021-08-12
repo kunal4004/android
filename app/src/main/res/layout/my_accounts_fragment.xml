@@ -117,6 +117,36 @@
                         layout="@layout/account_apply_layout"
                         android:visibility="visible" />
 
+                    <RelativeLayout
+                        android:id="@+id/viewApplicationStatusRelativeLayout"
+                        style="@style/listStyle"
+                        android:layout_marginBottom="@dimen/sixteen_dp"
+                        android:layout_marginTop="0dp"
+                        android:background="@drawable/stores_details_background"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/applicationStatusImageView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/application_icon"
+                            android:layout_centerVertical="true"
+                            />
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            style="@style/accountsItem"
+                            android:layout_toEndOf="@id/applicationStatusImageView"
+                            android:layout_marginStart="@dimen/sixteen_dp"
+                            android:text="@string/view_application_status" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/ic_caret_black" />
+                    </RelativeLayout>
+
+
                     <LinearLayout
                         android:id="@+id/parentOptionsLayout"
                         android:layout_width="match_parent"
@@ -133,16 +163,17 @@
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 style="@style/accountsItem"
-                                android:drawableLeft="@drawable/ic_link_account"
+                                android:drawableStart="@drawable/ic_link_account"
                                 android:text="@string/link_your_woolies_card_today" />
 
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
+                                android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
                                 android:background="@drawable/ic_caret_black" />
                         </RelativeLayout>
+
 
                         <RelativeLayout
                             android:id="@+id/creditReport"

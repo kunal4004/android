@@ -432,6 +432,7 @@ public class SSOActivity extends WebViewActivity {
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						Utils.setUserKMSIState(false);
+						WoolworthsApplication.setIsBadgesRequired(true);
 						clearAllCookies();
 						closeActivity();
 					} else {

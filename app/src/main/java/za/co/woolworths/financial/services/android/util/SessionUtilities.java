@@ -70,6 +70,21 @@ public class SessionUtilities {
 		return sessionDao.value == null ? "" : sessionDao.value;
 	}
 
+	public void setDeviceIdentityToken(String deviceIdentityToken) {
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DEVICE_IDENTITY_TOKEN);
+		sessionDao.value = deviceIdentityToken;
+		try {
+			sessionDao.save();
+		} catch (Exception e) {
+			Log.e(SessionDao.KEY.DEVICE_IDENTITY_TOKEN.toString(), e.getMessage());
+		}
+	}
+
+	public String getDeviceIdentityToken() {
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DEVICE_IDENTITY_TOKEN);
+		return sessionDao.value == null ? "" : sessionDao.value;
+	}
+
 	public void setSessionState(SessionDao.SESSION_STATE state) {
 		setSessionState(state, null);
 	}

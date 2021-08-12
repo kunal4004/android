@@ -1,3 +1,3 @@
 package za.co.woolworths.financial.services.android.util
 
-enum class DeliveryType { DELIVERY, STORE_PICKUP }
+enum class DeliveryType { DELIVERY, STORE_PICKUP, DELIVERY_LIQUOR }

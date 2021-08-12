@@ -125,9 +125,6 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         super.onViewCreated(view, savedInstanceState)
             initListener()
             populateView()
-            uniqueIdsForCardDetails()
-
-            initTemporaryFreezeCard()
 
             temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
                 if (compoundButton.isPressed) {
@@ -323,6 +320,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                     cardStatus?.text = getString(R.string.active)
                 }
             }
+
+            uniqueIdsForCardDetails()
+            initTemporaryFreezeCard()
         }
     }
 

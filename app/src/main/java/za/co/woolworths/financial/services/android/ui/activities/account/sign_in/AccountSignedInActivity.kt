@@ -181,7 +181,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             chatBubbleFloatingButton,
             applyNowState,
             notificationBadge = badge,
-            onlineChatImageViewIndicator = onlineIndicatorImageView
+            onlineChatImageViewIndicator = onlineIndicatorImageView,
+            vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
         )
         chatToCollectionAgentView.build()
     }
