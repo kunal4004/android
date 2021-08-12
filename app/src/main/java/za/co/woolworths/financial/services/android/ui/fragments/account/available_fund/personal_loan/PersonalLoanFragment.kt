@@ -77,10 +77,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-                when (bundle.getString(
-                    ViewTreatmentPlanDialogFragment::class.java.simpleName,
-                    "N/A"
-                )) {
+                when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
                     VIEW_PAYMENT_PLAN_BUTTON -> {
                         //TODO: VIEW_PAYMENT_PLAN_BUTTON, need url link
                     }

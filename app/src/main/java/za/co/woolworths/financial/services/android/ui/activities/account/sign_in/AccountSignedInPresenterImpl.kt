@@ -125,7 +125,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 }*/
 
                 !productOfferingGoodStanding && delinquencyCycle>=minimumDelinquencyCycle -> {
-                    mainView?.showViewTreatmentPlan(account)!!
+                    mainView?.showViewTreatmentPlan()!!
                 }
                 !productOfferingGoodStanding && delinquencyCycle<minimumDelinquencyCycle -> { // account is in arrears
                     mainView?.showAccountInArrears(account)

@@ -148,10 +148,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         this.mAccountHelpInformation = informationModelAccount
     }
 
-    override fun showViewTreatmentPlan(account: Account){
-        val bundle = Bundle()
-        bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(account))
-        mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment, bundle)
+    override fun showViewTreatmentPlan(){
+        mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment)
     }
 
     override fun removeBlocksOnCollectionCustomer() {
