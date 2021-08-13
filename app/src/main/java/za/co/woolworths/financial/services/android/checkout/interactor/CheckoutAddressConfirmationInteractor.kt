@@ -6,5 +6,5 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Chec
  * Created by Kunal Uttarwar on 12/08/21.
  */
 class CheckoutAddressConfirmationInteractor(private val checkoutAddressConfirmationApiHelper: CheckoutAddressConfirmationApiHelper) {
-    fun setSuburb(suburbName: String) = checkoutAddressConfirmationApiHelper.setSuburb(suburbName)
+    fun setSuburb(suburbId: String) = checkoutAddressConfirmationApiHelper.setSuburb(suburbId)
 }

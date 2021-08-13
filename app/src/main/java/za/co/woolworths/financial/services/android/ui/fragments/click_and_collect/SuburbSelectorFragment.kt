@@ -16,6 +16,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment
+import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -29,6 +30,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
 
     private var suburbList: ArrayList<Suburb>? = null
+    private var selectedProvince: Province? = null
     private var suburbListAdapter: SuburbListAdapter? = null
     private var deliveryType: DeliveryType? = null
     var bundle: Bundle? = null
@@ -52,6 +54,9 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
                 bundle?.apply {
                     getString("SuburbList")?.let {
                         suburbList = Gson().fromJson(it, object : TypeToken<List<Suburb>>() {}.type)
+                    }
+                    getString("Province")?.let {
+                        selectedProvince = Gson().fromJson(it, object : TypeToken<Province>() {}.type)
                     }
                     getSerializable("deliveryType")?.let {
                         deliveryType = it as DeliveryType
@@ -104,6 +109,7 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
             val bundle = Bundle()
             bundle?.apply {
                 putString("Suburb", Utils.toJson(suburb))
+                putString("Province", Utils.toJson(selectedProvince))
             }
             setFragmentResult(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE, bundle)
             navController?.navigateUp()

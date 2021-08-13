@@ -11,13 +11,13 @@ import za.co.woolworths.financial.services.android.checkout.utils.NativeCheckout
  */
 class CheckoutAddressConfirmationViewModel(private val checkoutAddressConfirmationInteractor: CheckoutAddressConfirmationInteractor) :
     ViewModel() {
-    fun setSuburb(suburbName: String) = liveData(Dispatchers.IO) {
+    fun setSuburb(suburbId: String) = liveData(Dispatchers.IO) {
         emit(NativeCheckoutResource.loading(data = null))
         try {
             emit(
                 NativeCheckoutResource.success(
                     data = checkoutAddressConfirmationInteractor.setSuburb(
-                        suburbName
+                        suburbId
                     ).body()
                 )
             )

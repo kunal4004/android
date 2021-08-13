@@ -9,5 +9,5 @@ import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
  * Created by Kunal Uttarwar on 12/08/21.
  */
 class CheckoutAddressConfirmationApiHelper: RetrofitConfig() {
-    fun setSuburb(suburbName: String): Response<SetDeliveryLocationSuburbResponse> = OneAppService.setSuburb(suburbName).execute()
+    fun setSuburb(suburbId: String): Response<SetDeliveryLocationSuburbResponse> = OneAppService.setSuburb(suburbId).execute()
 }
