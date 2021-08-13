@@ -296,7 +296,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val inAppReviewRequest = "in_app_review_request"
 
         //view payment plan
-        const val VIEW_PAYMENT_PLAN_PERSONAL_LOAN = "pl_view_payment_plan"
+        const val VIEW_PAYMENT_PLAN_PERSONAL_LOAN = "pl_viewtreatmentplan"
 
     }
 
