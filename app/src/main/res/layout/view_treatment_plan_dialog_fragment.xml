@@ -105,7 +105,6 @@
         android:textAllCaps="true"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="@dimen/twelve_sp"
-        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewTreatmentPlanDivider"
