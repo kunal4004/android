@@ -425,7 +425,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         setFragmentResultListener(SUBURB_SELECTION_BACK_PRESSED) { _, _ ->
             enableDisableEditText()
         }
-        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
             view?.findNavController()?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment, bundleOf(
                 SAVED_ADDRESS_KEY to savedAddressResponse))
         }
