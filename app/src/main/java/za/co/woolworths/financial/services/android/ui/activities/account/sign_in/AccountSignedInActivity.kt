@@ -148,6 +148,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         this.mAccountHelpInformation = informationModelAccount
     }
 
+    override fun showViewTreatmentPlan(){
+        mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment)
+    }
+
     override fun removeBlocksOnCollectionCustomer() {
         availableFundFragmentFrameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE

@@ -23,6 +23,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.MAKE_A_PAYMENT_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.VIEW_PAYMENT_PLAN_BUTTON
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -71,6 +74,18 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 }
             }
         }
+
+        setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
+            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
+                    VIEW_PAYMENT_PLAN_BUTTON -> {
+                        //TODO: VIEW_PAYMENT_PLAN_BUTTON, need url link
+                    }
+                    MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()
+                }
+            }
+        }
+
     }
 
     override fun onClick(view: View?) {
