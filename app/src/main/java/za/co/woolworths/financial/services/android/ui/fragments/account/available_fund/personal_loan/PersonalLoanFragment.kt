@@ -82,7 +82,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                     VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN, this)
-                            KotlinUtils.openUrlInPhoneBrowser(getApplyNowLink()?.applicationStatus,this)
+                            KotlinUtils.openUrlInPhoneBrowser(getApplyNowLink()?.personalLoan,this)
                         }
                     }
                     MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()
