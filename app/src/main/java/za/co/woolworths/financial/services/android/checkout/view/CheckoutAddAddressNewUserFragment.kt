@@ -182,6 +182,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         unitComplexFloorEditText.setText(selectedAddress.unitComplexFloor)
         suburbEditText.setText(selectedAddress.suburb)
         provinceAutocompleteEditText.setText(selectedAddress.province)
+        cellphoneNumberEditText.setText(savedAddress?.primaryContactNo)
+        recipientName.setText(savedAddress?.recipientName)
         if (selectedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
             postalCode.text.clear()
