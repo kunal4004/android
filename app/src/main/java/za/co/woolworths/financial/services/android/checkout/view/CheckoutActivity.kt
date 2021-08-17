@@ -24,7 +24,6 @@ class CheckoutActivity : AppCompatActivity() {
     var navHostFrag = NavHostFragment()
     var savedAddressResponse: SavedAddressResponse? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checkout)

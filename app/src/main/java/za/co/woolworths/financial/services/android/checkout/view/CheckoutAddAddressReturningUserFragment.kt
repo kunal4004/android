@@ -51,11 +51,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner {
 
-    companion object {
-        const val KEY_ARGS_ORDER_SUMMARY = "ORDER_SUMMARY"
-    }
-
-
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
     private var selectedSlotResponseFood: AvailableDeliverySlotsResponse? = null
@@ -109,7 +104,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
         initializeFoodSubstitution()
-        initializeOrderSummary()
+
+        getConfirmDeliveryAddressDetails()
 
         activity?.apply {
             view?.setOnClickListener {
@@ -243,32 +239,36 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     /**
-     * Initializes Order Summary data from argument.
+     * Initializes Order Summary data from confirmDeliveryAddress or storePickUp API .
      */
-    private fun initializeOrderSummary() {
-        arguments?.apply {
-            val orderSummary = getParcelable(KEY_ARGS_ORDER_SUMMARY) as? OrderSummary
-            orderSummary?.let { orderSummary ->
-                txtOrderSummaryYourCartValue?.text =
-                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(orderSummary.basketTotal)
-                orderSummary.discountDetails?.let { discountDetails ->
-                    txtOrderSummaryDiscountValue?.text =
-                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
-                    txtOrderSummaryTotalDiscountValue?.text =
-                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
-                    groupPromoCodeDiscount?.visibility =
-                        if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
-                    groupWRewardsDiscount?.visibility =
-                        if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
-                    groupCompanyDiscount?.visibility =
-                        if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
-                    txtOrderSummaryWRewardsVouchersValue?.text =
-                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
-                    txtOrderSummaryCompanyDiscountValue?.text =
-                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
-                    txtOrderSummaryPromoCodeDiscountValue?.text =
-                        "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
-                }
+    private fun initializeOrderSummary(orderSummary: OrderSummary?) {
+        orderSummary?.let { it ->
+            txtOrderSummaryYourCartValue?.text =
+                CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
+            it.discountDetails?.let { discountDetails ->
+                groupOrderSummaryDiscount?.visibility =
+                    if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
+                groupPromoCodeDiscount?.visibility =
+                    if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                groupWRewardsDiscount?.visibility =
+                    if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                groupCompanyDiscount?.visibility =
+                    if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                groupTotalDiscount?.visibility =
+                    if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
+
+                txtOrderSummaryDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
+                txtOrderSummaryTotalDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                txtOrderSummaryWRewardsVouchersValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
+                txtOrderSummaryCompanyDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
+                txtOrderSummaryPromoCodeDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
+
+                txtOrderTotalValue.text =  CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
             }
         }
     }
@@ -283,6 +283,40 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 )
             )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
+    }
+
+
+    private fun getConfirmDeliveryAddressDetails() {
+        checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails().observe(viewLifecycleOwner, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    loadingBar.visibility = View.GONE
+                    /*if (it.data != null) {
+                       confirmDeliveryAddressDetails = it.data as? ConfirmDeliveryAddressResponse
+                        initializeOrderSummary(confirmDeliveryAddressDetails?.orderSummary)
+                    }*/
+
+                    //use mock data from json file
+                    val jsonFileString = Utils.getJsonDataFromAsset(
+                        activity?.applicationContext,
+                        "mocks/confirmDelivery_Response.json"
+                    )
+                    val mockDeliverySlotResponse: ConfirmDeliveryAddressResponse = Gson().fromJson(
+                        jsonFileString,
+                        object : TypeToken<ConfirmDeliveryAddressResponse>() {}.type
+                    )
+
+                    initializeOrderSummary(mockDeliverySlotResponse?.orderSummary)
+                }
+                ResponseStatus.LOADING -> {
+                    loadingBar.visibility = View.VISIBLE
+                }
+                ResponseStatus.ERROR -> {
+                    loadingBar.visibility = View.GONE
+                }
+            }
+        })
+
     }
 
     private fun getAvailableDeliverySlots() {
