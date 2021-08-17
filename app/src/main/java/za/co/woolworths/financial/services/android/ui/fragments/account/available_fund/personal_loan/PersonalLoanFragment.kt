@@ -79,6 +79,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
             GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
                     VIEW_PAYMENT_PLAN_BUTTON -> {
+                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN, this) }
                         //TODO: VIEW_PAYMENT_PLAN_BUTTON, need url link
                     }
                     MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()
