@@ -71,7 +71,8 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                     ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD, this)
-                            KotlinUtils.openLinkInInternalWebView(this, WoolworthsApplication.getApplyNowLink()?.storeCard)
+                            KotlinUtils.openLinkInInternalWebView(this,
+                                WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.collectionsUrl)
                         }
                     }
                     ViewTreatmentPlanDialogFragment.MAKE_A_PAYMENT_BUTTON -> onStoreCardButtonTap()

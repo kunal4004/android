@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +21,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
+import android.webkit.SslErrorHandler;
 import android.webkit.URLUtil;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceError;
@@ -133,6 +135,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 				final Uri uri = request.getUrl();
 				handleUri(view, uri);
 				return true;
+			}
+
+			@Override
+			public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+				handler.proceed();
 			}
 		});
 		webInternalPage.loadUrl(mExternalLink);
