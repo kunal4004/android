@@ -143,8 +143,8 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                     WoolworthsApplication.setLiquor(this)
                 }
 
-                viewTreatmentPlan?.apply {
-                    WoolworthsApplication.setViewTreatmentPlan(this)
+                accountOptions?.apply {
+                    WoolworthsApplication.setAccountOptions(this)
                 }
             }
         }

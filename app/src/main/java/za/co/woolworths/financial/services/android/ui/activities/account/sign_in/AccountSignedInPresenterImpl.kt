@@ -69,7 +69,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferOutstanding()
+        showProductOfferOutstanding(accountInfo?.first)
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -110,8 +110,17 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-    override fun showProductOfferOutstanding() {
-        val minimumDelinquencyCycle = WoolworthsApplication.getViewTreatmentPlan().minimumDelinquencyCycle!!
+    override fun showProductOfferOutstanding(state: ApplyNowState) {
+        val minimumDelinquencyCycle = when(state){
+            ApplyNowState.PERSONAL_LOAN -> {
+                WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumDelinquencyCycle!!
+            }
+            ApplyNowState.STORE_CARD -> {
+                WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumDelinquencyCycle!!
+            }
+            else -> 999999
+        }
+
 
         val account = getAccount()
         account?.apply {

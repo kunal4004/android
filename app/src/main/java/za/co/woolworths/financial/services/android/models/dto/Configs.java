@@ -62,5 +62,5 @@ public class Configs {
     @Nullable
     public CustomerFeedback customerFeedback;
     @Nullable
-    public ViewTreatmentPlan viewTreatmentPlan;
+    public AccountOptions accountOptions;
 }

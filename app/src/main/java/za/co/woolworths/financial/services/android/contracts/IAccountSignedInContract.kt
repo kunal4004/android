@@ -31,7 +31,7 @@ interface IAccountSignedInContract {
         fun setAvailableFundBundleInfo(navDetailController: NavController?)
         fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>?
         fun getToolbarTitle(state: ApplyNowState): String?
-        fun showProductOfferOutstanding()
+        fun showProductOfferOutstanding(state: ApplyNowState)
         fun setAccountCardDetailInfo(navDetailController: NavController?)
         fun setAccountSixMonthInArrears(navDetailController: NavController?)
         fun getSixMonthOutstandingTitleAndCardResource(): Pair<Int, Int>
