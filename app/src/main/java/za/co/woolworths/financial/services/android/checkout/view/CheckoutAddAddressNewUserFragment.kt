@@ -35,7 +35,6 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_RESPONSE_KEY
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UNSELLABLE_CHANGE_STORE_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UPDATE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.SuburbNotDeliverableBottomsheetDialogFragment.Companion.ERROR_CODE
 import za.co.woolworths.financial.services.android.checkout.view.SuburbNotDeliverableBottomsheetDialogFragment.Companion.ERROR_CODE_SUBURB_NOT_DELIVERABLE
@@ -49,7 +48,6 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressCom
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -429,7 +427,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             enableDisableEditText()
         }
 
-        setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, bundle ->
+        setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
             if (selectedAddress.province.isEmpty()) return@setFragmentResultListener
             getSuburbs()
         }
@@ -754,7 +752,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getSuburbs() {
         if (progressbarGetProvinces?.visibility == View.VISIBLE) return
-        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region).observe(this, {
+        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region).observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     hideSetSuburbProgressBar()
@@ -853,7 +851,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             when (response?.httpCode?.toInt()) {
                                 HTTP_OK, AppConstant.HTTP_OK_201 -> {
                                     if (savedAddressResponse != null && it?.data != null)
-                                        savedAddressResponse?.addresses?.plus(response?.address)
+                                        savedAddressResponse?.addresses?.plus(response.address)
                                     onAddNewAddress(body.nickname)
                                 }
                                 AppConstant.HTTP_SESSION_TIMEOUT_400 -> {

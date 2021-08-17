@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import java.util.*
 
 /**
  * Created by Kunal Uttarwar on 02/08/21.
@@ -66,7 +67,7 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                 openDayDeliverySlotsList?.get(position)?.let {
                     val deliveryType =
                         (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue("deliveryType")
-                    title.text = deliveryType.capitalize()
+                    title.text = deliveryType.capitalize(Locale.ROOT)
                     subTitle.text = if (deliveryType.equals(DELIVERY_TYPE_TIMESLOT)) {
                         Html.fromHtml(
                             (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue(

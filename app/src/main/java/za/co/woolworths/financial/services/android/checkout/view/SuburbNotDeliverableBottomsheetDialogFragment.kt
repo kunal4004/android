@@ -1,22 +1,14 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.credit_card_cancel_delivery_confirmation_dialog.*
-import kotlinx.android.synthetic.main.credit_card_cancel_delivery_confirmation_dialog.callCallCenter
 import kotlinx.android.synthetic.main.fragment_suburb_not_deliverable_bottomsheet_dialog.*
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.credit_card_delivery.CancelOrToLateDeliveryDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.util.Utils
 
 class SuburbNotDeliverableBottomsheetDialogFragment : WBottomSheetDialogFragment(),
     View.OnClickListener {
