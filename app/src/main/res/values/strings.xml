@@ -960,7 +960,7 @@
     <string name="sign_out_layout">Sign Out</string>
     <string name="product_placeholder_selected_size">Selected Size</string>
     <string name="product_placeholder_select_size">Select Size</string>
-    <string name="call_us_now">Call Now</string>
+    <string name="call_us_now">Call Us Now</string>
     <string name="sending_otp_text">We\'re sending you an OTP</string>
     <string name="wrong_otp_desc">The OTP entered is incorrect. Please try again.</string>
     <string name="selected_colour">Selected Colour</string>
@@ -2187,6 +2187,9 @@
     <string name="next_week_text">Next Week</string>
     <string name="free_delivery_slot">FREE</string>
     <string name="currency">R</string>
+    <string name="dummy_currency">R50</string>
+    <string name="title_text">ShowTitle</string>
+    <string name="subtitle_text">Show SubTitle Text</string>
     <string name="working_days_text">%1$s - %2$s Working Days</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>
@@ -2233,6 +2236,6 @@
     <string name="voc_processing_request_desc">This may take a few seconds</string>
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
-    <string name="suburb_not_found">We Can’t Seem To  Find This Suburb</string>
+    <string name="suburb_not_found">We Can’t Seem To Find This Suburb</string>
 
 </resources>
