@@ -404,7 +404,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     jsonFileString,
                     SavedAddressResponse.class
             );
-            navigateToCheckout(mockChangeAddressResponse);
+            navigateToCheckout(null);
         }
     }
 

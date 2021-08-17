@@ -1,15 +1,20 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.view.View
 import android.widget.GridView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
+import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
+import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import za.co.woolworths.financial.services.android.checkout.service.network.AvailableDeliverySlotsResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.HeaderDate
 import za.co.woolworths.financial.services.android.checkout.service.network.Week
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType
-import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.DeliveryFoodOrOther.*
+import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.DeliveryFoodOrOther.FOOD
+import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.DeliveryFoodOrOther.OTHER
 import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.SlotGridColors.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.DeliverySlotsGridViewAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsDateGridViewAdapter
@@ -99,7 +104,7 @@ class ExpandableGrid(val fragment: Fragment) {
         }
     }
 
-    fun createTimeSlotGridView(
+    private fun createTimeSlotGridView(
         deliveryWeekSlots: List<Week>?,
         deliveryHoursSlots: List<String>?,
         weekNumber: Int,
@@ -148,9 +153,9 @@ class ExpandableGrid(val fragment: Fragment) {
             }
             // This condition is to keep two diff list for slots.
             if (deliveryType.equals(DeliveryType.ONLY_FOOD) || deliveryType.equals(DeliveryType.MIXED_FOOD)) {
-                slotGridList.put(FOOD, deliveryGridList)
+                slotGridList[FOOD] = deliveryGridList
             } else {
-                slotGridList.put(OTHER, deliveryGridList)
+                slotGridList[OTHER] = deliveryGridList
             }
         }
         val adapter = fragment.context?.let {
@@ -166,7 +171,7 @@ class ExpandableGrid(val fragment: Fragment) {
             this.adapter = adapter
         }
 
-        slotGridView.setOnItemClickListener { parent, view, position, id ->
+        slotGridView.setOnItemClickListener { _, _, position, id ->
             val deliveryList =
                 if (deliveryType.equals(DeliveryType.ONLY_FOOD) || deliveryType.equals(DeliveryType.MIXED_FOOD)) slotGridList[FOOD] else slotGridList[OTHER]
 
@@ -229,18 +234,29 @@ class ExpandableGrid(val fragment: Fragment) {
                 deliveryType
             )
         }
-        if (deliveryType.equals(DeliveryType.MIXED_FOOD))
-            selectedSlotResponse?.sortedFoodDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
-                remainder
-            )?.selected = isSelected
-        else if (deliveryType.equals(DeliveryType.MIXED_OTHER))
-            selectedSlotResponse?.sortedOtherDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
-                remainder
-            )?.selected = isSelected
-        else
-            selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.week?.get(weekPosition)?.slots?.get(
-                remainder
-            )?.selected = isSelected
+        when (deliveryType) {
+            DeliveryType.MIXED_FOOD -> {
+                selectedSlotResponse?.sortedFoodDeliverySlots?.get(weekNumber)?.week?.get(
+                    weekPosition
+                )?.slots?.get(
+                    remainder
+                )?.selected = isSelected
+            }
+            DeliveryType.MIXED_OTHER -> {
+                selectedSlotResponse?.sortedOtherDeliverySlots?.get(weekNumber)?.week?.get(
+                    weekPosition
+                )?.slots?.get(
+                    remainder
+                )?.selected = isSelected
+            }
+            else -> {
+                selectedSlotResponse?.sortedJoinDeliverySlots?.get(weekNumber)?.week?.get(
+                    weekPosition
+                )?.slots?.get(
+                    remainder
+                )?.selected = isSelected
+            }
+        }
     }
 
     private fun setAllSlotSelection(
@@ -253,7 +269,7 @@ class ExpandableGrid(val fragment: Fragment) {
                 val deliverySlots = availableDeliverySlotsResponse?.sortedFoodDeliverySlots
                 if (deliverySlots != null) {
                     for (slots in deliverySlots) {
-                        setweekSlotsResponse(slots.week, isSelected)
+                        setWeekSlotsResponse(slots.week, isSelected)
                     }
                 }
             }
@@ -261,7 +277,7 @@ class ExpandableGrid(val fragment: Fragment) {
                 val deliverySlots = availableDeliverySlotsResponse?.sortedOtherDeliverySlots
                 if (deliverySlots != null) {
                     for (slots in deliverySlots) {
-                        setweekSlotsResponse(slots.week, isSelected)
+                        setWeekSlotsResponse(slots.week, isSelected)
                     }
                 }
             }
@@ -269,7 +285,7 @@ class ExpandableGrid(val fragment: Fragment) {
                 val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots
                 if (deliverySlots != null) {
                     for (slots in deliverySlots) {
-                        setweekSlotsResponse(slots.week, isSelected)
+                        setWeekSlotsResponse(slots.week, isSelected)
                     }
                 }
             }
@@ -277,7 +293,7 @@ class ExpandableGrid(val fragment: Fragment) {
         return availableDeliverySlotsResponse
     }
 
-    private fun setweekSlotsResponse(week: List<Week>?, isSelected: Boolean) {
+    private fun setWeekSlotsResponse(week: List<Week>?, isSelected: Boolean) {
         if (week != null) {
             for (weeks in week) {
                 val slot = weeks.slots
@@ -290,7 +306,7 @@ class ExpandableGrid(val fragment: Fragment) {
         }
     }
 
-    fun createTimingsGrid(hoursSlots: List<String>?, timeGridView: GridView) {
+    private fun createTimingsGrid(hoursSlots: List<String>?, timeGridView: GridView) {
         timeGridView.numColumns =
             hoursSlots?.size ?: 0 + 1 // Adding 1 only to match slots title grid with actual slots
         timeGridView.adapter = fragment.context?.let {
@@ -304,7 +320,10 @@ class ExpandableGrid(val fragment: Fragment) {
         }
     }
 
-    fun createDatesGrid(datesSlots: List<HeaderDate>?, dateGridView: ExpandableGridViewScrollable) {
+    private fun createDatesGrid(
+        datesSlots: List<HeaderDate>?,
+        dateGridView: ExpandableGridViewScrollable
+    ) {
         dateGridView.setViewExpanded(true)
         dateGridView.adapter = fragment.context?.let {
             datesSlots?.let { it1 ->
@@ -315,5 +334,30 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
         }
+    }
+
+    fun setUpShimmerView() {
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        fragment.howWouldYouDeliveredShimmerFrameLayout?.setShimmer(shimmer)
+        fragment.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.setShimmer(shimmer)
+    }
+
+    fun showDeliveryTypeShimmerView() {
+        fragment.howWouldYouDeliveredShimmerFrameLayout?.startShimmer()
+        fragment.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.startShimmer()
+        fragment.howWouldYouDeliveredTitle?.visibility = View.INVISIBLE
+        fragment.selectDeliveryTimeSlotSubTitle?.visibility = View.INVISIBLE
+    }
+
+    fun hideDeliveryTypeShimmerView() {
+        fragment.howWouldYouDeliveredShimmerFrameLayout?.stopShimmer()
+        fragment.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.stopShimmer()
+        fragment.howWouldYouDeliveredShimmerFrameLayout?.setShimmer(null)
+        fragment.selectDeliveryTimeSlotSubTitleShimmerFrameLayout?.setShimmer(null)
+        fragment.howWouldYouDeliveredTitle?.visibility = View.VISIBLE
+        fragment.selectDeliveryTimeSlotSubTitle?.visibility = View.VISIBLE
+
+        fragment.checkoutHowWouldYouDeliveredLayout?.visibility = View.GONE
+
     }
 }

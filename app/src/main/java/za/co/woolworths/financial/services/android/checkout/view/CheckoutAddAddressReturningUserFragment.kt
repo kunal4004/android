@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
@@ -59,6 +60,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private var foodType = ONLY_FOOD
     private var otherType = ONLY_OTHER
     private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter? =
+        null
+    private var checkoutDeliveryTypeSelectionShimmerAdapter: CheckoutDeliveryTypeSelectionShimmerAdapter? =
         null
 
     enum class FoodSubstitution(val rgb: String) {
@@ -99,7 +102,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
     private fun initViews() {
         initializeDeliveringToView()
-        initializeDeliveryFoodItems()
+        initializeDeliveryFoodOtherItems()
         initializeFoodSubstitution()
 
         getConfirmDeliveryAddressDetails()
@@ -140,16 +143,21 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         StyleSpan(typeface!!.style),
                         0, defaultAddressNickname.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    defaultAddressNickname.setSpan(ForegroundColorSpan(Color.BLACK), 0, defaultAddressNickname.length
-                        , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    defaultAddressNickname.setSpan(
+                        ForegroundColorSpan(Color.BLACK),
+                        0,
+                        defaultAddressNickname.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
 
                     deliveringToAddress.append(defaultAddressNickname)
 
                     // Extract default address display name
                     savedAddresses.addresses?.forEach { address ->
-                        if(savedAddresses.defaultAddressNickname.equals(address.nickname)){
-                            val addressName = SpannableString(address?.displayName)
-                            val typeface1 = ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                        if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
+                            val addressName = SpannableString(address.displayName)
+                            val typeface1 =
+                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
                             addressName.setSpan(
                                 StyleSpan(typeface1!!.style),
                                 0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -206,6 +214,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
             (availableDeliverySlotsResponse.openDayDeliverySlots as ArrayList).add(timeSlotListItem)
         }
+        checkoutDeliveryTypeSelectionShimmerAdapter = null
+        deliveryTypeSelectionRecyclerView.adapter = null
         checkoutDeliveryTypeSelectionListAdapter =
             CheckoutDeliveryTypeSelectionListAdapter(
                 availableDeliverySlotsResponse?.openDayDeliverySlots,
@@ -219,7 +229,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         }
     }
 
-    private fun initializeDeliveryFoodItems() {
+    private fun initializeDeliveryFoodOtherItems() {
         setupViewModel()
         getAvailableDeliverySlots()
         previousImgBtnFood.setOnClickListener(this)
@@ -262,18 +272,6 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             }
         }
     }
-/*
-    private fun initializeGrid(
-        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
-        weekNumber: Int
-    ) {
-        val deliverySlots = availableDeliverySlotsResponse?.sortedJoinDeliverySlots?.get(weekNumber)
-        expandableGrid.apply {
-            createTimingsGrid(deliverySlots?.hourSlots)
-            createDatesGrid(deliverySlots?.headerDates)
-            createTimeSlotGridView(deliverySlots, weekNumber)
-        }
-    }*/
 
     private fun setupViewModel() {
         checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
@@ -322,10 +320,14 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun getAvailableDeliverySlots() {
+        expandableGrid.setUpShimmerView()
+        expandableGrid.showDeliveryTypeShimmerView()
+        showDeliverySubTypeShimmerView()
         checkoutAddAddressNewUserViewModel.getAvailableDeliverySlots().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
+                    expandableGrid.hideDeliveryTypeShimmerView()
                     /*if (it.data != null) {
                     // Keeping two diff response not to get merge while showing 2 diff slots.
                        selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
@@ -346,7 +348,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         //Only for Food
                         foodType = ONLY_FOOD
                         checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
-                        selectDeliveryTimeSlotTitle.text = getString(R.string.slot_delivery_title_when)
+                        selectDeliveryTimeSlotTitle.text =
+                            getString(R.string.slot_delivery_title_when)
                         selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
                         expandableGrid.initialiseGridView(
                             selectedSlotResponseFood,
@@ -363,7 +366,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                             MIXED_FOOD
                         )
                         if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
-                            howWouldYouDeliveredTitle.text = getString(R.string.delivery_timeslot_title_other_items)
+                            howWouldYouDeliveredTitle.text =
+                                getString(R.string.delivery_timeslot_title_other_items)
                             initializeDeliveryTypeSelectionView(
                                 selectedSlotResponseFood,
                                 MIXED_OTHER
@@ -389,6 +393,17 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 }
             }
         })
+    }
+
+    private fun showDeliverySubTypeShimmerView() {
+        checkoutDeliveryTypeSelectionShimmerAdapter =
+            CheckoutDeliveryTypeSelectionShimmerAdapter(3)
+
+        deliveryTypeSelectionRecyclerView?.apply {
+            addItemDecoration(object : RecyclerView.ItemDecoration() {})
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            checkoutDeliveryTypeSelectionShimmerAdapter?.let { adapter = it }
+        }
     }
 
     fun getSelectedSlotResponse(deliveryType: DeliveryType): AvailableDeliverySlotsResponse? {
@@ -428,7 +443,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             }
             R.id.checkoutDeliveryDetailsLayout -> {
                 view?.findNavController()?.navigate(
-                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment, arguments)
+                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
+                    arguments
+                )
             }
         }
     }
