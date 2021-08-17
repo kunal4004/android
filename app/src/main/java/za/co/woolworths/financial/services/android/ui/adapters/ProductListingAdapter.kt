@@ -45,7 +45,6 @@ class ProductListingAdapter(private val navigator: IProductListing?, private val
                             activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART, this) }
                             val fulfilmentTypeId = WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId
                             val storeId = fulfilmentTypeId?.let { it1 -> RecyclerViewViewHolderItems.getFulFillmentStoreId(it1) }
-                            fulfilmentTypeId?.let { id -> navigator?.queryInventoryForStore(id, AddItemToCart(productList.productId, productList.sku, 0), productList) }
                             fulfilmentTypeId?.let { id ->
                                 navigator?.queryInventoryForStore(
                                     id,
