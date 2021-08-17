@@ -384,9 +384,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         }
                     })
             }
-        } /*else if (localSuburbId != null && validatedSuburbProductResponse != null) {
+        } else if (localSuburbId != null && validatedSuburbProductResponse != null) {
             showStoreList()
-        }*/
+        }
     }
 
     private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
