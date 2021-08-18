@@ -431,6 +431,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             if (selectedAddress.province.isEmpty()) return@setFragmentResultListener
             getSuburbs()
         }
+
+        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
+            view?.findNavController()?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment, bundleOf(
+                SAVED_ADDRESS_KEY to savedAddressResponse))
+        }
+
     }
 
     private fun onProvinceSelected(province: Province?) {
@@ -752,7 +758,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getSuburbs() {
         if (progressbarGetProvinces?.visibility == View.VISIBLE) return
-        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region).observe(this, {
+        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region).observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     hideSetSuburbProgressBar()
