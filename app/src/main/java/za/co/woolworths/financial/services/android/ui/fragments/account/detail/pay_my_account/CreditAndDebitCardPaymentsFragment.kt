@@ -116,9 +116,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
     private fun createCardOption() {
         when (payMyAccountPresenter?.getPayMyAccountSection()) {
-            ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> {
-                hidePaymentMethod()
-            }
+
             ApplyNowState.STORE_CARD -> {
                 incAtAnyAbsaBranchButton?.visibility = VISIBLE
                 byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_transfer_store_card_desc)
@@ -130,6 +128,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 incPersonalLoanElectronicFundTransfer?.visibility = VISIBLE
                 byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_trasfer_personal_loan_desc)
             }
+            else -> {}
         }
 
         // Disable payments if isFeatureEnabled is false
