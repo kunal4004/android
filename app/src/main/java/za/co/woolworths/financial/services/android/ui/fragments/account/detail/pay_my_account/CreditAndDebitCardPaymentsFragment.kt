@@ -128,7 +128,11 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 incPersonalLoanElectronicFundTransfer?.visibility = VISIBLE
                 byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_trasfer_personal_loan_desc)
             }
-            else -> {}
+            else -> {
+                incSetupMyDebitOrder?.visibility = GONE
+                incAtAnyAbsaBranchButton?.visibility = VISIBLE
+                byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_transfer_store_card_desc)
+            }
         }
 
         // Disable payments if isFeatureEnabled is false
