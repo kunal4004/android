@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
 
         makePaymentButton?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
