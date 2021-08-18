@@ -388,13 +388,25 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
             } else {
                 cardWithPLCState = mCardPresenterImpl?.getCardWithPLCState(cards)
-                if (cardWithPLCState == null) {
-                    showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
-                } else {
-                    if (isCreditCardEnable()) {
-                        executeCreditCardDeliveryStatusService()
-                    } else
-                        showGetCreditCardActivationStatus(if (Utils.isCreditCardActivationEndpointAvailable()) CreditCardActivationState.AVAILABLE else CreditCardActivationState.UNAVAILABLE)
+                cards?.get(0)?.apply {
+                    when (envelopeNumber.isNullOrEmpty()) {
+                        true -> {
+                            when (cardStatus) {
+                                "PLC" -> {
+                                    when (isPLCInGoodStanding()) {
+                                        true -> executeCreditCardDeliveryStatusService()
+                                        false -> showGetCreditCardActivationStatus(if (Utils.isCreditCardActivationEndpointAvailable()) CreditCardActivationState.AVAILABLE else CreditCardActivationState.UNAVAILABLE)
+                                    }
+                                }
+                                "AAA" -> showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
+                            }
+                        }
+                        false -> {
+                            // envelope not null, call to get delivery status then show delivery journey()
+                            executeCreditCardDeliveryStatusService()
+                        }
+                    }
+
                 }
             }
         }
@@ -409,19 +421,27 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             CreditCardActivationState.FAILED,
             CreditCardActivationState.ACTIVATED -> {
                 stopCardActivationShimmer()
-                includeAccountDetailHeaderView.visibility = VISIBLE
+                includeAccountDetailHeaderView?.visibility = VISIBLE
+                includeManageMyCard?.visibility = GONE
+                myCardDetailTextView?.visibility = VISIBLE
             }
             CreditCardActivationState.UNAVAILABLE,
             CreditCardActivationState.AVAILABLE -> {
                 stopCardActivationShimmer()
-                creditCardActivationView.visibility = VISIBLE
-                activateCreditCard.visibility = VISIBLE
+                creditCardActivationView?.visibility = VISIBLE
+                activateCreditCard?.visibility = VISIBLE
                 KotlinUtils.roundCornerDrawable(creditCardStatusTextView, if (status == CreditCardActivationState.AVAILABLE) "#bad110" else "#b2b2b2")
-                creditCardStatusTextView.text = status.value
+                creditCardStatusTextView?.text = status.value
             }
         }
     }
 
+    fun showOnlyCardVisibleState() {
+        stopCardActivationShimmer()
+        includeAccountDetailHeaderView?.visibility = VISIBLE
+        includeManageMyCard?.visibility = GONE
+        myCardDetailTextView?.visibility = VISIBLE
+    }
 
     override fun stopCardActivationShimmer() {
         creditCardActivationPlaceHolder?.apply {
@@ -474,30 +494,28 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     override fun onGetCreditCardDeliveryStatusSuccess(creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse) {
         this.creditCardDeliveryStatusResponse = creditCardDeliveryStatusResponse
-        with(creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.displayTitle) {
-            when {
-                isNullOrEmpty() -> {
-                    when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
-                        CARD_NOT_RECEIVED -> {
-                            with(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus) {
-                                displayColour = "#bad110"
-                                displayTitle = CreditCardActivationState.AVAILABLE.value
-                            }
-                            showGetCreditCardDeliveryStatus(creditCardDeliveryStatusResponse.statusResponse.deliveryStatus)
-                        }
-                        else -> onGetCreditCardDeliveryStatusFailure()
-                    }
-                }
-                else -> {
+        when (creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(DEFAULT)) {
+            CARD_DELIVERED -> {
+                if (cardWithPLCState?.cardStatus.equals("AAA")) {
+                    showOnlyCardVisibleState()
+                } else {
                     creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
                 }
+            }
+            CARD_NOT_RECEIVED, AWAITING_INSTRUCTION -> {
+                showOnlyCardVisibleState()
+            }
+            else -> {
+                creditCardDeliveryStatusResponse.statusResponse?.deliveryStatus?.let { showGetCreditCardDeliveryStatus(it) }
             }
         }
     }
 
     override fun onGetCreditCardDeliveryStatusFailure() {
         stopCardActivationShimmer()
-        includeAccountDetailHeaderView.visibility = VISIBLE
+        includeAccountDetailHeaderView?.visibility = VISIBLE
+        includeManageMyCard?.visibility = GONE
+        myCardDetailTextView?.visibility = VISIBLE
     }
 
     override fun showGetCreditCardDeliveryStatus(deliveryStatus: DeliveryStatus) {
@@ -534,19 +552,15 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         }
     }
 
-    private fun isCreditCardEnable(): Boolean {
+    private fun isPLCInGoodStanding(): Boolean {
         var isEnable = false
         if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
             val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
-            if (cardTypes != null) {
-                for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
-                    if (binNumber.equals(mCardPresenterImpl?.getAccount()?.accountNumberBin, ignoreCase = true)
-                            && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
-                        isEnable = true;
-                    }
+            for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
+                if (binNumber.equals(mCardPresenterImpl?.getAccount()?.accountNumberBin, ignoreCase = true)
+                        && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
+                    isEnable = true
                 }
-            } else {
-                isEnable = false
             }
         }
         return isEnable
@@ -561,7 +575,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     private fun showDefaultCreditCardStatusView() {
         stopCardActivationShimmer()
-        includeAccountDetailHeaderView.visibility = VISIBLE
+        includeAccountDetailHeaderView?.visibility = VISIBLE
     }
 
     private fun showScheduleYourDelivery() {
