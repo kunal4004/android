@@ -139,7 +139,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 			@Override
 			public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-				handler.proceed();
+				if (handler != null){
+					handler.proceed();
+				} else {
+					super.onReceivedSslError(view, null, error);
+				}
 			}
 		});
 		webInternalPage.loadUrl(mExternalLink);
