@@ -4,5 +4,5 @@ data class ViewTreatmentPlan(
         val minimumSupportedAppBuildNumber: Int? = null,
         val minimumDelinquencyCycle: Int? = null,
         val maximumDelinquencyCycle: Int? = null,
-        val collectionsUrl: String? = null,
+        val collectionsUrl: String? = null
 )
