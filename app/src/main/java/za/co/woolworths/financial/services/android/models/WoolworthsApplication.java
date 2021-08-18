@@ -66,6 +66,7 @@ import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
+import za.co.woolworths.financial.services.android.models.dto.ViewTreatmentPlan;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
@@ -151,6 +152,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static boolean isBadgesRequired;
     private static InAppReview inAppReview;
     private static Liquor liquor;
+    private static ViewTreatmentPlan viewTreatmentPlan;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -756,4 +758,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return cartCheckoutLinkWithParams;
     }
 
+    public static void setViewTreatmentPlan(@Nullable ViewTreatmentPlan viewTreatmentPlan) {
+        WoolworthsApplication.viewTreatmentPlan = viewTreatmentPlan;
+    }
+
+    public static ViewTreatmentPlan getViewTreatmentPlan() {
+        return viewTreatmentPlan;
+    }
 }
