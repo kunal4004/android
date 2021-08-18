@@ -111,14 +111,13 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     override fun showProductOfferOutstanding() {
-        //TODO: Get these data from configs once set up.
-        val minimumDelinquencyCycle = 4
-        val maximumDelinquencyCycle = 8
+        val minimumDelinquencyCycle = WoolworthsApplication.getViewTreatmentPlan().minimumDelinquencyCycle!!
 
         val account = getAccount()
         account?.apply {
             return when {
-                /* //TODO: Will need this part in the future
+                //TODO: Will need this part in the future
+                /*
                 (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
                     // account is in arrears for more than 6 months
                     mainView?.removeBlocksOnCollectionCustomer()!!

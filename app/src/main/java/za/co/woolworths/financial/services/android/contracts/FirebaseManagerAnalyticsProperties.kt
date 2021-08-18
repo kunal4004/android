@@ -297,6 +297,7 @@ open class FirebaseManagerAnalyticsProperties {
 
         //view payment plan
         const val VIEW_PAYMENT_PLAN_PERSONAL_LOAN = "pl_viewtreatmentplan"
+        const val VIEW_PAYMENT_PLAN_STORE_CARD = "sc_viewtreatmentplan"
 
     }
 
