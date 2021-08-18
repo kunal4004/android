@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.NavController
@@ -64,12 +66,28 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+
         removeItems?.setOnClickListener(this)
-        changeStore?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener(this@UnsellableItemsFragment)
+        if(activity is CheckoutActivity) {
+            initCheckoutUnsellableItemsView()
+        } else {
+            changeStore?.apply {
+                visibility = View.VISIBLE
+                paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                setOnClickListener(this@UnsellableItemsFragment)
+            }
         }
+
         loadUnsellableItems()
+    }
+
+    /**
+     * This function will get called when navigated from checkout page
+     */
+    private fun initCheckoutUnsellableItemsView() {
+        changeStore?.visibility = View.INVISIBLE
+        unsellableItemsFragmentRelativeLayout?.background =
+            context?.let { ContextCompat.getDrawable(it, R.color.white) }
     }
 
     private fun loadUnsellableItems() {
@@ -88,6 +106,11 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun executeSetSuburb() {
+        if (activity is CheckoutActivity) {
+            setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, Bundle())
+            navController?.navigateUp()
+            return
+        }
         showSetSuburbProgressBar()
         selectedSuburb?.let {
             OneAppService.setSuburb(it.id).enqueue(CompletionHandler(object : IResponseListener<SetDeliveryLocationSuburbResponse> {

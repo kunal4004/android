@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 
 
 /**
@@ -95,14 +96,29 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         val fragmentList: MutableList<androidx.fragment.app.Fragment> =
             navHostFrag.childFragmentManager.fragments
-        if (fragmentList.size > 0 && fragmentList[0] is ProvinceSelectorFragment) {
-            (fragmentList[0] as ProvinceSelectorFragment).onBackPressed()
+
+        if (fragmentList.isNullOrEmpty()) {
+            overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+            finish()
+            return
         }
-        if (fragmentList.size > 0 && fragmentList[0] is SuburbSelectorFragment) {
-            (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
+
+        when {
+            fragmentList[0] is ProvinceSelectorFragment -> {
+                (fragmentList[0] as ProvinceSelectorFragment).onBackPressed()
+            }
+            fragmentList[0] is SuburbSelectorFragment -> {
+                (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
+            }
+            fragmentList[0] is UnsellableItemsFragment -> {
+                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+                finish()
+            }
+            else -> {
+                super.onBackPressed()
+            }
         }
     }
 }
