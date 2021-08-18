@@ -11,9 +11,12 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
@@ -47,6 +50,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     CheckoutAddressConfirmationListAdapter.EventListner, SuburbListAdapter.ISuburbSelector {
 
     private var savedAddress: SavedAddressResponse? = null
+    private var selectedAddress: Address? = null
     private var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? =
         null
     private var storeListAdapter: CheckoutStoreSelectionAdapter? = null
@@ -58,6 +62,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private lateinit var checkoutAddressConfirmationViewModel: CheckoutAddressConfirmationViewModel
     private var selectedSuburb = Suburb()
     private var selectedProvince = Province()
+    private var isDeliverySelected: Boolean = true
 
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
@@ -132,6 +137,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             checkoutAddressConfirmationViewModel.setSuburb(suburbId).observe(viewLifecycleOwner, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
+                        callChangeAddressApi()
                         loadingProgressBar.visibility = View.GONE
                         val store = selectedSuburb.let { suburb ->
                             Store(
@@ -176,6 +182,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun showCollectionTab(suburbId: String?) {
+        isDeliverySelected = false
         collectionTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
         deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         addressConfirmationDelivery.visibility = View.GONE
@@ -190,6 +197,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun showDeliveryTab() {
+        isDeliverySelected = true
         deliveryTab.setBackgroundResource(R.drawable.delivery_round_btn_white)
         collectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         addressConfirmationDelivery.visibility = View.VISIBLE
@@ -221,7 +229,16 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             updateSavedAddress(bundle)
         }
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
-            showCollectionTab(localSuburbId)
+            if (isDeliverySelected) {
+                view?.findNavController()?.navigate(
+                    R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
+                    bundleOf(
+                        SAVED_ADDRESS_KEY to savedAddress
+                    )
+                )
+            } else {
+                showCollectionTab(localSuburbId)
+            }
         }
         setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { _, bundle ->
             val province = bundle.getString("Province")
@@ -538,27 +555,36 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     override fun changeAddress(address: Address) {
-        address.nickname?.let { nickname ->
+        // Save instance of selected address to pass to other screens
+        selectedAddress = address
+    }
+
+    private fun callChangeAddressApi() {
+        selectedAddress?.nickname?.let { nickname ->
             checkoutAddAddressNewUserViewModel.changeAddress(nickname)
                 .observe(viewLifecycleOwner, {
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
 
-                            /*val jsonFileString = Utils.getJsonDataFromAsset(
+                            var changeAddressResponse = it?.data as? ChangeAddressResponse
+                            if (changeAddressResponse == null) {
+                                val jsonFileString = Utils.getJsonDataFromAsset(
                                     activity?.applicationContext,
-                                    "mocks/unsellableItems.json"
+                                    "mocks/changeAddressResponse.json"
                                 )
-                                val mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
-                                    jsonFileString,
-                                    object : TypeToken<ChangeAddressResponse>() {}.type
-                                )*/
+                                val mockChangeAddressResponse: ChangeAddressResponse =
+                                    Gson().fromJson(
+                                        jsonFileString,
+                                        object : TypeToken<ChangeAddressResponse>() {}.type
+                                    )
+                                changeAddressResponse = mockChangeAddressResponse
+                            }
 
-                            val changeAddressResponse = it?.data as? ChangeAddressResponse
                             if (changeAddressResponse != null && changeAddressResponse.deliverable) {
                                 if (changeAddressResponse.unSellableCommerceItems?.size!! > 0) {
                                     navigateToUnsellableItemsFragment(
                                         changeAddressResponse.unSellableCommerceItems,
-                                        address,
+                                        selectedAddress!!,
                                         changeAddressResponse.deliverable
                                     )
                                 }
