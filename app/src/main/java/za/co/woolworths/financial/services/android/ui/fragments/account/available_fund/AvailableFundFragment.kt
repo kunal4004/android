@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import com.awfs.coordination.R
@@ -39,10 +40,14 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
@@ -436,6 +441,33 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                         } catch (ex: IllegalStateException) {
                             FirebaseManager.logException(ex)
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    fun accountInArrearsResultListener(onPayMyAccountButtonTap: () -> Unit) {
+        setFragmentResultListener(AccountInArrearsDialogFragment::class.java.simpleName) { _, bundle ->
+            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                when (bundle.getString(
+                    AccountInArrearsDialogFragment::class.java.simpleName,
+                    "N/A"
+                )) {
+                    ARREARS_PAY_NOW_BUTTON -> onPayMyAccountButtonTap()
+                    ARREARS_CHAT_TO_US_BUTTON -> {
+                        val chatBubble =
+                            payMyAccountViewModel.getApplyNowState()?.let { applyNowState ->
+                                ChatFloatingActionButtonBubbleView(
+                                    activity = activity as? AccountSignedInActivity,
+                                    applyNowState = applyNowState,
+                                    vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
+                                )
+                            }
+                        chatBubble?.navigateToChatActivity(
+                            activity,
+                            payMyAccountViewModel.getCardDetail()?.account?.second
+                        )
                     }
                 }
             }
