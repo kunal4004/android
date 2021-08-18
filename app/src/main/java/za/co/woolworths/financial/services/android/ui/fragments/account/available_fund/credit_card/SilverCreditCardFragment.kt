@@ -7,7 +7,6 @@ import kotlinx.android.synthetic.main.available_funds_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 
@@ -37,10 +36,10 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                     navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
                 }
             }
-            R.id.incPayMyAccountButton -> {
-                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC, this) }
-                navigateToPayMyAccountActivity()
-            }
+            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap(
+                FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
+                SilverCreditCardFragmentDirections.actionSilverCreditCardFragmentToEnterPaymentAmountDetailFragment())
+
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
     }

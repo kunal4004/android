@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
-import za.co.woolworths.financial.services.android.util.Utils
 
 class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
@@ -40,10 +39,9 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                     }
                 }
             }
-            R.id.incPayMyAccountButton -> {
-                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC, this) }
-                navigateToPayMyAccountActivity()
-            }
+            R.id.incPayMyAccountButton ->  onPayMyAccountButtonTap(
+            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
+                BlackCreditCardFragmentDirections.actionBlackCreditCardFragmentToEnterPaymentAmountDetailFragment())
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
     }

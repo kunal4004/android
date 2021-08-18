@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.availab
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.available_funds_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -10,13 +11,14 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
-import za.co.woolworths.financial.services.android.util.Utils
 
 class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         availableFundBackground?.setBackgroundResource(R.drawable.gold_credit_card_background)
+
+        navController = Navigation.findNavController(view)
 
         initShimmer()
         stopProgress()
@@ -38,11 +40,12 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                     navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
                 }
             }
-            R.id.incPayMyAccountButton -> {
-                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC, this) }
-                navigateToPayMyAccountActivity()
-            }
+            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap(
+                FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
+                GoldCreditCardFragmentDirections.actionGoldCreditCardFragmentToEnterPaymentAmountDetailFragment())
+
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
     }
+
 }
