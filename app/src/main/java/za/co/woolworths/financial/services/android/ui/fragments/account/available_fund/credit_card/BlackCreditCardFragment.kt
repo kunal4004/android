@@ -27,6 +27,10 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         incPayMyAccountButton?.setOnClickListener(this)
 
         navigateToDeepLinkView()
+
+        accountInArrearsResultListener {
+            onPayMyAccountButtonTap()
+        }
     }
 
     override fun onClick(view: View?) {
@@ -39,10 +43,15 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                     }
                 }
             }
-            R.id.incPayMyAccountButton ->  onPayMyAccountButtonTap(
-            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
-                BlackCreditCardFragmentDirections.actionBlackCreditCardFragmentToEnterPaymentAmountDetailFragment())
+            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap()
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
+    }
+
+    private fun onPayMyAccountButtonTap() {
+        onPayMyAccountButtonTap(
+            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
+            BlackCreditCardFragmentDirections.actionBlackCreditCardFragmentToEnterPaymentAmountDetailFragment()
+        )
     }
 }

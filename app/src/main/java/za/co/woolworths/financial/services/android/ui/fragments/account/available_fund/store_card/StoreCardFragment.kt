@@ -42,22 +42,8 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         navigateToDeepLinkView()
 
 
-        setFragmentResultListener(AccountInArrearsDialogFragment::class.java.simpleName) { _, bundle ->
-            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
-                when (bundle.getString(AccountInArrearsDialogFragment::class.java.simpleName, "N/A")) {
-                    ARREARS_PAY_NOW_BUTTON -> onPayMyAccountButtonTap()
-                    ARREARS_CHAT_TO_US_BUTTON -> {
-                        val chatBubble = payMyAccountViewModel.getApplyNowState()?.let { applyNowState ->
-                            ChatFloatingActionButtonBubbleView(
-                                    activity = activity as? AccountSignedInActivity,
-                                    applyNowState = applyNowState,
-                                    vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
-                            )
-                        }
-                        chatBubble?.navigateToChatActivity(activity, payMyAccountViewModel.getCardDetail()?.account?.second)
-                    }
-                }
-            }
+        accountInArrearsResultListener{
+            onPayMyAccountButtonTap()
         }
     }
 

@@ -26,6 +26,10 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         incPayMyAccountButton?.setOnClickListener(this)
 
         navigateToDeepLinkView()
+
+        accountInArrearsResultListener {
+            onPayMyAccountButtonTap()
+        }
     }
 
     override fun onClick(view: View?) {
@@ -36,11 +40,16 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                     navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
                 }
             }
-            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap(
-                FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
-                SilverCreditCardFragmentDirections.actionSilverCreditCardFragmentToEnterPaymentAmountDetailFragment())
+            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap()
 
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
     }
+
+    private fun onPayMyAccountButtonTap() {
+        onPayMyAccountButtonTap(
+            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
+            SilverCreditCardFragmentDirections.actionSilverCreditCardFragmentToEnterPaymentAmountDetailFragment())
+    }
+
 }

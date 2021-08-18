@@ -30,6 +30,10 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
         navigateToDeepLinkView()
 
+        accountInArrearsResultListener {
+            onPayMyAccountButtonTap()
+        }
+
     }
 
     override fun onClick(view: View?) {
@@ -40,12 +44,18 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                     navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
                 }
             }
-            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap(
-                FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
-                GoldCreditCardFragmentDirections.actionGoldCreditCardFragmentToEnterPaymentAmountDetailFragment())
+            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap()
 
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
     }
 
-}
+    private fun onPayMyAccountButtonTap() {
+        onPayMyAccountButtonTap(
+            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
+            GoldCreditCardFragmentDirections.actionGoldCreditCardFragmentToEnterPaymentAmountDetailFragment())
+
+    }
+
+
+    }
