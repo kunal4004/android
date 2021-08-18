@@ -15,6 +15,7 @@ import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
@@ -37,6 +38,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
@@ -398,6 +400,41 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                             deleteDeepLinkData()
                             if (isProductInGoodStanding())
                                 view?.performClick()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun onPayMyAccountButtonTap(eventName: String?, directions: NavDirections?) {
+        if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+        payMyAccountViewModel.payMyAccountPresenter?.apply {
+            triggerFirebaseEvent(eventName, activity)
+            payMyAccountViewModel.resetAmountEnteredToDefault()
+            when (isPaymentMethodOfTypeError()) {
+                true -> {
+                    when (navController.currentDestination?.id) {
+                        R.id.storeCardFragment,
+                        R.id.blackCreditCardFragment,
+                        R.id.goldCreditCardFragment,
+                        R.id.silverCreditCardFragment,
+                        R.id.personalLoanFragment -> {
+                            try {
+                                navController.navigate(R.id.payMyAccountRetryErrorFragment)
+                            } catch (ex: IllegalStateException) {
+                                FirebaseManager.logException(ex)
+                            }
+                        }
+                    }
+                }
+                false -> {
+                    openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(activity)
+                    {
+                        try {
+                            directions?.let { safeNavigateFromNavController(it) }
+                        } catch (ex: IllegalStateException) {
+                            FirebaseManager.logException(ex)
                         }
                     }
                 }

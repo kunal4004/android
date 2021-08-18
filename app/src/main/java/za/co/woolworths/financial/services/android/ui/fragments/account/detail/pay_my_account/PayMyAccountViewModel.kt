@@ -20,7 +20,9 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.BeginPayMyAccountJourneyActionImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PayMyAccountPresenter
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -48,6 +50,7 @@ class PayMyAccountViewModel : ViewModel() {
     private var payUPayResultRequest: MutableLiveData<PayUPayResultRequest> = MutableLiveData()
 
 
+   val payMyAccountPresenter : PayMyAccountPresenter? =  PayMyAccountPresenter(BeginPayMyAccountJourneyActionImpl(this))
 
     var pma3dSecureRedirection: PMARedirection? = null
 
