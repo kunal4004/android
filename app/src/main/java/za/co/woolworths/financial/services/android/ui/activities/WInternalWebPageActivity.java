@@ -230,6 +230,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void goBackInWebView() {
+		if (mExternalLink.contains("https") &&
+				!webInternalPage.getUrl().equals(mExternalLink)) {
+			finishActivity();
+		}
+
 		if (NetworkManager.getInstance().isConnectedToNetwork(WInternalWebPageActivity.this)) {
 			WebBackForwardList history = webInternalPage.copyBackForwardList();
 			int index = -1;

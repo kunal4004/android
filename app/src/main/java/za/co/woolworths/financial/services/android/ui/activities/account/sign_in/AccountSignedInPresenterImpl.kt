@@ -118,7 +118,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.STORE_CARD -> {
                 WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumDelinquencyCycle!!
             }
-            else -> 999999
+            else -> return
         }
 
 
