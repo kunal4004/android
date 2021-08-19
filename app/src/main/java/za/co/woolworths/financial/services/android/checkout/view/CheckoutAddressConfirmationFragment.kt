@@ -51,7 +51,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private var savedAddress: SavedAddressResponse? = null
     private var selectedAddress: Address? = null
-    var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? =
+    private var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? =
         null
     private var storeListAdapter: CheckoutStoreSelectionAdapter? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
@@ -580,7 +580,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
                             // call slot selection
-                            navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_checkoutAddAddressReturningUserFragment)
+                            navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment)
                             var changeAddressResponse = it?.data as? ChangeAddressResponse
                             if (changeAddressResponse == null) {
                                 val jsonFileString = Utils.getJsonDataFromAsset(
