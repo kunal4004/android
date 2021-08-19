@@ -3,10 +3,8 @@ package za.co.woolworths.financial.services.android.ui.fragments
 import android.app.Activity
 import android.graphics.Paint
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.error_handler_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
@@ -25,12 +23,16 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
         var errorMessage: String? = null
 
         fun newInstance(errorMessage: String, errorType: Int) = ErrorHandlerFragment().withArgs {
-                putInt("errorType", errorType)
-                putString("errorMessage",errorMessage)
+            putInt("errorType", errorType)
+            putString("errorMessage", errorMessage)
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.error_handler_fragment, container, false)
     }
 
@@ -45,6 +47,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 errorMessage = getString("errorMessage", "")
             }
         }
+        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,6 +87,16 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 errorDescription?.text = getString(R.string.absa_common_error_message)
                 actionButton.text = getString(R.string.retry)
             }
+            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON -> {
+                errorLogo?.setImageResource(R.drawable.ic_error_icon)
+                errorTitle?.text =
+                    getString(R.string.common_error_unfortunately_something_went_wrong)
+                errorDescription?.text =
+                    getString(R.string.common_error_message_without_contact_info)
+                actionButton?.text = getString(R.string.retry)
+                cancelButton?.visibility = View.GONE
+                enableBackButton()
+            }
             ErrorHandlerActivity.WITH_NO_ACTION -> {
                 errorLogo.setImageResource(R.drawable.ic_error_icon)
                 errorTitle.text = getString(R.string.absa_general_error_title)
@@ -103,6 +116,24 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 errorDescription?.text = getString(R.string.store_email_error_desc)
                 actionButton.text = getString(R.string.retry)
                 cancelButton.text = getString(R.string.need_help_call_the_center)
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        when (errorType) {
+            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON -> {
+                menu.clear()
+            }
+        }
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun enableBackButton() {
+        (activity as? ErrorHandlerActivity)?.apply {
+            supportActionBar?.let { actionBar ->
+                actionBar.setHomeAsUpIndicator(R.drawable.back24)
+                actionBar.setDisplayHomeAsUpEnabled(true)
             }
         }
     }
@@ -127,7 +158,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                     ErrorHandlerActivity.PASSCODE_LOCKED -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RESET_PASSCODE)
                     }
-                    ErrorHandlerActivity.COMMON -> {
+                    ErrorHandlerActivity.COMMON, ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
                     ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
@@ -137,6 +168,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
                 }
+            }
+            R.id.home -> {
+                activity?.onBackPressed()
             }
         }
     }

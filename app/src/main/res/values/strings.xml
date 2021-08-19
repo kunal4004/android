@@ -2217,4 +2217,7 @@
     <string name="voc_processing_request_desc">This may take a few seconds</string>
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
+
+    <string name="common_error_unfortunately_something_went_wrong">Unfortunately, something went wrong.</string>
+    <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
 </resources>

@@ -228,9 +228,13 @@ object OneAppService : RetrofitConfig() {
             getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),
             getDeviceIdentityToken())
     }
+
     fun getSavedAddresses(): Call<SavedAddressResponse> {
-        return mockApiInterface.getSavedAddresses()
+        return mApiInterface.getSavedAddresses(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(),
+            getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),
+            getDeviceIdentityToken())
     }
+
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse> {
         return mockApiInterface.addAddress(addAddressRequestBody)
     }
