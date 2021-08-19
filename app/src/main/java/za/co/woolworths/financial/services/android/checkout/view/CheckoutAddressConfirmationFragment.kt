@@ -113,28 +113,37 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 navigateToAddAddress()
             }
             R.id.btnAddressConfirmation -> {
-                if (isDeliverySelected) {
-                    if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
-                        addNewAddressErrorMsg.visibility = View.VISIBLE
-                    else {
-                        callChangeAddressApi()
-                    }
-                } else {
-                    // This is when user clicks on collection journey.
-                    if (btnAddressConfirmation.text.equals(getString(R.string.change_suburb))) {
-                        //Zero stores and user clicks on change suburb.
-                        getSuburb(selectedProvince)
-                    } else if (selectedSuburb.storeAddress != null) {
-                        // if it is store then call setSuburb API.
-                        setSuburb()
-                        if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
-                            navigateToAddAddress()
+                if (loadingProgressBar.visibility == View.GONE) {
+                    if (isDeliverySelected) {
+                        if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
+                            addNewAddressErrorMsg.visibility = View.VISIBLE
+                        else {
+                            callChangeAddressApi()
+                        }
+                    } else {
+                        // This is when user clicks on collection journey.
+                        if (btnAddressConfirmation.text.equals(getString(R.string.change_suburb))) {
+                            //Zero stores and user clicks on change suburb.
+                            getSuburb(selectedProvince)
+                        } else if (selectedSuburb.storeAddress != null) {
+                            // if it is store then call setSuburb API.
+                            setSuburb()
+                            if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
+                                navigateToAddAddress()
+                            }
                         }
                     }
                 }
             }
+            R.id.changeProvinceTextView -> {
+                if (loadingProgressBar.visibility == View.GONE) {
+                    changeLocation()
+                }
+            }
             R.id.changeTextView -> {
-                changeLocation()
+                if (loadingProgressBar.visibility == View.GONE) {
+                    changeLocation()
+                }
             }
         }
     }
@@ -326,6 +335,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         plusImgAddAddress.setOnClickListener(this)
         addNewAddressTextView.setOnClickListener(this)
         btnAddressConfirmation.setOnClickListener(this)
+        changeProvinceTextView.setOnClickListener(this)
         changeTextView.setOnClickListener(this)
 
         storeInputValue?.apply {
@@ -382,6 +392,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                     if (validatedSuburbProductResponse != null) {
                                         if (validatedSuburbProductResponse?.stores?.isNotEmpty() == true) {
                                             changeTextView.visibility = View.VISIBLE
+                                            changeProvinceTextView.visibility = View.GONE
                                             btnAddressConfirmation.text =
                                                 getString(R.string.confirm)
                                         }
@@ -402,11 +413,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 loadingProgressBar.visibility = View.VISIBLE
                                 changeTextView.visibility = View.GONE
                                 btnAddressConfirmation.text = getString(R.string.change_suburb)
+                                changeProvinceTextView.visibility = View.VISIBLE
                             }
                             ResponseStatus.ERROR -> {
                                 loadingProgressBar.visibility = View.GONE
                                 changeTextView.visibility = View.VISIBLE
-                                btnAddressConfirmation.text = getString(R.string.confirm)
+                                btnAddressConfirmation.text = getString(R.string.change_suburb)
                             }
                         }
                     })
@@ -481,9 +493,11 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         if (!validatedSuburbProductResponse?.stores.isNullOrEmpty()) {
             searchLayout.visibility = View.VISIBLE
             changeTextView.visibility = View.VISIBLE
+            changeProvinceTextView.visibility = View.GONE
             btnAddressConfirmation.text = getString(R.string.confirm)
         } else {
             changeTextView.visibility = View.GONE
+            changeProvinceTextView.visibility = View.VISIBLE
             btnAddressConfirmation.text = getString(R.string.change_suburb)
         }
         earliestDateValue?.text =
@@ -497,7 +511,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             if (storesCount == 0) {
                 changeTextView.visibility = View.GONE
                 btnAddressConfirmation.text = getString(R.string.change_suburb)
+                changeProvinceTextView.visibility = View.VISIBLE
             }
+            else
+                changeProvinceTextView.visibility = View.GONE
             storesFoundTitle.text =
                 resources.getQuantityString(R.plurals.stores_near_me, storesCount, storesCount)
             layoutManager = activity?.let { LinearLayoutManager(it) }
@@ -618,6 +635,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     override fun onSuburbSelected(suburb: Suburb) {
         selectedSuburb = suburb
-        showCollectionTab(suburb.id)
+        showCollectionTab(selectedSuburb?.id)
     }
 }
