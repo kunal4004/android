@@ -132,6 +132,12 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 incSetupMyDebitOrder?.visibility = GONE
                 incAtAnyAbsaBranchButton?.visibility = VISIBLE
                 byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_transfer_store_card_desc)
+
+                // Hide debit and credit card payment item  when  ABSA cards is null or empty
+                if (payMyAccountViewModel.getAccount()?.cards?.isEmpty() == true) {
+                    incDebitCardButton?.visibility = GONE
+                    incCreditCardButton?.visibility = GONE
+                }
             }
         }
 

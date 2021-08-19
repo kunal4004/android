@@ -50,7 +50,7 @@ class PayMyAccountViewModel : ViewModel() {
     private var payUPayResultRequest: MutableLiveData<PayUPayResultRequest> = MutableLiveData()
 
 
-   val payMyAccountPresenter : PayMyAccountPresenter? =  PayMyAccountPresenter(BeginPayMyAccountJourneyActionImpl(this))
+   val payMyAccountPresenter : PayMyAccountPresenter =  PayMyAccountPresenter(BeginPayMyAccountJourneyActionImpl(this))
 
     var pma3dSecureRedirection: PMARedirection? = null
 
@@ -204,7 +204,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun isPaymentMethodListSizeLimitedToTenItem(): Boolean = getPaymentMethodList()?.size ?: 0 >= 10
 
-    private fun getProductGroupCode(): String = getAccount()?.productGroupCode ?: ""
+    fun getProductGroupCode(): String = getAccount()?.productGroupCode ?: ""
 
     fun getProductOfferingId(): Int? = getAccount()?.productOfferingId
 
@@ -455,7 +455,11 @@ class PayMyAccountViewModel : ViewModel() {
         val currency = "ZAR"
 
         val account = cardInfo?.account?.second
-        val accountNumber = account?.accountNumber ?: "0"
+        // Select absaAccountToken for credit card products and account number for personal loan and store card
+        val accountNumber = if (account?.productGroupCode?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true) == true)
+            account.cards?.get(0)?.absaAccountToken ?: ""
+        else
+            account?.accountNumber ?: ""
         val productOfferingId = account?.productOfferingId ?: 0
         val paymentMethod = PayUPaymentMethod(token ?: "", creditCardCVV ?: "", type ?: "")
 
