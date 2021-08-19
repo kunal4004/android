@@ -456,7 +456,10 @@ class PayMyAccountViewModel : ViewModel() {
 
         val account = cardInfo?.account?.second
         // Select absaAccountToken for credit card products and account number for personal loan and store card
-        val accountNumber = if(account?.productGroupCode?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true) == true) account.cards?.get(0)?.absaAccountToken  ?:"" else account?.accountNumber ?: ""
+        val accountNumber = if (account?.productGroupCode?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true) == true)
+            account.cards?.get(0)?.absaAccountToken ?: ""
+        else
+            account?.accountNumber ?: ""
         val productOfferingId = account?.productOfferingId ?: 0
         val paymentMethod = PayUPaymentMethod(token ?: "", creditCardCVV ?: "", type ?: "")
 
