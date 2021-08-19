@@ -414,37 +414,49 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
 
     fun onPayMyAccountButtonTap(eventName: String?, directions: NavDirections?) {
         if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
-        payMyAccountViewModel.payMyAccountPresenter?.apply {
-            triggerFirebaseEvent(eventName, activity)
-            payMyAccountViewModel.resetAmountEnteredToDefault()
-            when (isPaymentMethodOfTypeError()) {
-                true -> {
-                    when (navController.currentDestination?.id) {
-                        R.id.storeCardFragment,
-                        R.id.blackCreditCardFragment,
-                        R.id.goldCreditCardFragment,
-                        R.id.silverCreditCardFragment,
-                        R.id.personalLoanFragment -> {
+
+        payMyAccountViewModel.apply {
+            //Redirect to payment options when  ABSA cards array is empty for credit card products
+            if (getProductGroupCode().equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true)) {
+                if (getAccount()?.cards?.isEmpty() == true) {
+                    ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail())
+                    return
+                }
+            }
+
+            payMyAccountPresenter.apply {
+                triggerFirebaseEvent(eventName, activity)
+                resetAmountEnteredToDefault()
+                when (isPaymentMethodOfTypeError()) {
+                    true -> {
+                        when (navController.currentDestination?.id) {
+                            R.id.storeCardFragment,
+                            R.id.blackCreditCardFragment,
+                            R.id.goldCreditCardFragment,
+                            R.id.silverCreditCardFragment,
+                            R.id.personalLoanFragment -> {
+                                try {
+                                    navController.navigate(R.id.payMyAccountRetryErrorFragment)
+                                } catch (ex: IllegalStateException) {
+                                    FirebaseManager.logException(ex)
+                                }
+                            }
+                        }
+                    }
+                    false -> {
+                        openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(activity)
+                        {
                             try {
-                                navController.navigate(R.id.payMyAccountRetryErrorFragment)
+                                directions?.let { safeNavigateFromNavController(it) }
                             } catch (ex: IllegalStateException) {
                                 FirebaseManager.logException(ex)
                             }
                         }
                     }
                 }
-                false -> {
-                    openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(activity)
-                    {
-                        try {
-                            directions?.let { safeNavigateFromNavController(it) }
-                        } catch (ex: IllegalStateException) {
-                            FirebaseManager.logException(ex)
-                        }
-                    }
-                }
             }
         }
+
     }
 
     fun accountInArrearsResultListener(onPayMyAccountButtonTap: () -> Unit) {
