@@ -38,7 +38,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
-import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment.Companion.CHECKOUT_CHANGE_LOCATION_KEY
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -56,7 +55,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private var storeListAdapter: CheckoutStoreSelectionAdapter? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var navController: NavController? = null
-    private var localSuburbId: String? = null
+    private var localSuburbId: String = DEFAULT_STORE_ID
     private var validatedSuburbProductResponse: ValidatedSuburbProducts? = null
     private var suburbListAdapter: SuburbListAdapter? = null
     private lateinit var checkoutAddressConfirmationViewModel: CheckoutAddressConfirmationViewModel
@@ -73,6 +72,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         const val SAVED_ADDRESS_RESPONSE_KEY = "savedAddressResponse"
         const val UNSELLABLE_CHANGE_STORE_REQUEST_KEY = "unsellableChangeStore"
         const val STORE_SELECTION_REQUEST_KEY = "storeSelectionResponse"
+        const val DEFAULT_STORE_ID = "-1"
     }
 
     override fun onCreateView(
@@ -189,7 +189,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 "ProvinceList",
                 Utils.toJson(WoolworthsApplication.getNativeCheckout()?.regions)
             )
-            putBoolean(CHECKOUT_CHANGE_LOCATION_KEY, true)
         }
         navController?.navigate(
             R.id.action_provinceSelectorFragment,
@@ -256,12 +255,16 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 showCollectionTab(localSuburbId)
             }
         }
+
         setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { _, bundle ->
-            val province = bundle.getString("Province")
-            selectedProvince = Utils.strToJson(province, Province::class.java) as Province
             val suburb = bundle.getString("Suburb")
             selectedSuburb = Utils.strToJson(suburb, Suburb::class.java) as Suburb
             selectedSuburb.id?.let { showCollectionTab(it) }
+        }
+        setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { _, bundle ->
+            val province = bundle.getString("Province")
+            selectedProvince = Utils.strToJson(province, Province::class.java) as Province
+            showCollectionTab(DEFAULT_STORE_ID) // To show suburb selection list
         }
 
         setFragmentResultListener(CheckoutAddAddressNewUserFragment.PROVINCE_SELECTION_BACK_PRESSED) { _, _ ->
@@ -303,32 +306,37 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun initView() {
-        selectedProvince = Utils.getPreferredDeliveryLocation().province
-        if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
-            //Show No Address view
-            hideAddressListView()
-        } else {
-            // Show Delivery View
-            showAddressListView()
-            checkoutAddressConfirmationListAdapter =
-                CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
-            saveAddressRecyclerView?.apply {
-                addItemDecoration(object : ItemDecoration() {})
-                layoutManager = activity?.let { LinearLayoutManager(it) }
-                checkoutAddressConfirmationListAdapter?.let { adapter = it }
-            }
+        if (isDeliverySelected) {
+            selectedProvince = Utils.getPreferredDeliveryLocation().province
+            if (savedAddress?.addresses?.isNullOrEmpty() == true) {
+                //Show No Address view
+                hideDeliveryAddressListView()
+            } else {
+                // Show Delivery View
+                showDeliveryAddressListView()
+                checkoutAddressConfirmationListAdapter =
+                    CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
+                saveAddressRecyclerView?.apply {
+                    addItemDecoration(object : ItemDecoration() {})
+                    layoutManager = activity?.let { LinearLayoutManager(it) }
+                    checkoutAddressConfirmationListAdapter?.let { adapter = it }
+                }
 
-            // If there is a default address nickname present set it selected
-            savedAddress?.defaultAddressNickname?.let { nickName ->
-                var index = 0
-                savedAddress?.addresses?.forEach { address ->
-                    if (nickName == address.nickname) {
-                        checkoutAddressConfirmationListAdapter?.onItemClick(index)
-                        return@forEach
+                // If there is a default address nickname present set it selected
+                savedAddress?.defaultAddressNickname?.let { nickName ->
+                    var index = 0
+                    savedAddress?.addresses?.forEach { address ->
+                        if (nickName == address.nickname) {
+                            checkoutAddressConfirmationListAdapter?.onItemClick(index)
+                            return@forEach
+                        }
+                        index++
                     }
-                    index++
                 }
             }
+        }
+        else{
+            showCollectionTab(localSuburbId)
         }
         deliveryTab.setOnClickListener(this)
         collectionTab.setOnClickListener(this)
@@ -345,7 +353,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         }
     }
 
-    private fun hideAddressListView() {
+    private fun hideDeliveryAddressListView() {
         btnAddressConfirmation.text = bindString(R.string.add_address)
         whereWeDeliveringTitle.text = bindString(R.string.no_saved_addresses)
         saveAddressRecyclerView.visibility = View.GONE
@@ -355,7 +363,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         addNewAddressTextView.visibility = View.GONE
     }
 
-    private fun showAddressListView() {
+    private fun showDeliveryAddressListView() {
         saveAddressRecyclerView.visibility = View.VISIBLE
         addressListPartition.visibility = View.VISIBLE
         plusImgAddAddress.visibility = View.VISIBLE
@@ -366,8 +374,13 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun showStoreListView(suburbId: String?) {
-        if (suburbId.isNullOrEmpty())
+        if (suburbId.equals(DEFAULT_STORE_ID)){
+            // This means collection tab clicked for the first time.
             getSuburb(selectedProvince)
+        }
+        else if (suburbId.isNullOrEmpty()){
+            showStoreList()
+        }
         else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
             storesFoundTitle.text = resources.getQuantityString(R.plurals.stores_near_me, 0, 0)
