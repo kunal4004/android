@@ -377,6 +377,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             manageCardGroup?.visibility  = GONE
             return
         }
+
         activity?.apply {
             includeAccountDetailHeaderView?.visibility = GONE
             creditCardActivationView?.visibility = GONE
