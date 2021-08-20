@@ -118,32 +118,41 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.STORE_CARD -> {
                 WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumDelinquencyCycle!!
             }
-            else -> return
+            else -> null
         }
 
 
         val account = getAccount()
         account?.apply {
             return when {
-                //TODO: Will need this part in the future
-                /*
-                (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
-                    // account is in arrears for more than 6 months
-                    mainView?.removeBlocksOnCollectionCustomer()!!
-                }*/
 
-                !productOfferingGoodStanding && delinquencyCycle>=minimumDelinquencyCycle -> {
+                !productOfferingGoodStanding &&
+                        minimumDelinquencyCycle != null &&
+                        delinquencyCycle>=minimumDelinquencyCycle -> {
                     mainView?.showViewTreatmentPlan()!!
                 }
-                !productOfferingGoodStanding && delinquencyCycle<minimumDelinquencyCycle -> { // account is in arrears
+                !productOfferingGoodStanding &&
+                        minimumDelinquencyCycle != null &&
+                        delinquencyCycle<minimumDelinquencyCycle -> { // account is in arrears
                     mainView?.showAccountInArrears(account)
                     val informationModel = getCardProductInformation(true)
                     mainView?.showAccountHelp(informationModel)!!
                 }
                 else -> {
-                    mainView?.hideAccountInArrears(account)
-                    val informationInArrearsModel = getCardProductInformation(false)
-                    mainView?.showAccountHelp(informationInArrearsModel)!!
+                    if(!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                        // account is in arrears for more than 6 months
+                        mainView?.removeBlocksOnCollectionCustomer()!!
+                    }
+                    else if(!productOfferingGoodStanding) { // account is in arrears
+                        mainView?.showAccountInArrears(account)
+                        val informationModel = getCardProductInformation(true)
+                        mainView?.showAccountHelp(informationModel)!!
+                    }
+                    else{
+                        mainView?.hideAccountInArrears(account)
+                        val informationInArrearsModel = getCardProductInformation(false)
+                        mainView?.showAccountHelp(informationInArrearsModel)!!
+                    }
                 }
             }
         }

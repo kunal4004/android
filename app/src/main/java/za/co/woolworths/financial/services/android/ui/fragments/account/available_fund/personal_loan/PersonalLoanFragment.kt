@@ -83,7 +83,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                         activity?.apply {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN, this)
                             KotlinUtils.openLinkInInternalWebView(this,
-                                WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl)
+                                WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl, true)
                         }
                     }
                     MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()
