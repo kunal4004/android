@@ -76,7 +76,7 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
             activity?.apply {
                 // Use the Kotlin extension in the fragment-ktx artifact
                 val bundle = Bundle()
-                bundle?.apply {
+                bundle.apply {
                     putString("Province", Utils.toJson(province))
                 }
                 setFragmentResult(
@@ -91,6 +91,7 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
         activity?.apply {
             // Use the Kotlin extension in the fragment-ktx artifact
             setFragmentResult(PROVINCE_SELECTION_BACK_PRESSED, Bundle())
+            navController?.navigateUp()
         }
     }
 }

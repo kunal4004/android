@@ -62,6 +62,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private var selectedSuburb = Suburb()
     private var selectedProvince = Province()
     private var isDeliverySelected: Boolean = true
+    private var validateStoreList: ValidateStoreList? = null
 
     companion object {
         const val UPDATE_SAVED_ADDRESS_REQUEST_KEY = "updateSavedAddress"
@@ -126,11 +127,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                             //Zero stores and user clicks on change suburb.
                             getSuburb(selectedProvince)
                         } else if (selectedSuburb.storeAddress != null) {
-                            // if it is store then call setSuburb API.
-                            setSuburb()
-                            if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
-                                navigateToAddAddress()
-                            }
+                            checkUnsellableItems()
                         }
                     }
                 }
@@ -148,12 +145,28 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         }
     }
 
+    private fun checkUnsellableItems() {
+        if (validateStoreList != null && validateStoreList?.deliverable == true) {
+            if (validateStoreList?.unSellableCommerceItems?.size!! > 0) {
+                navigateToUnsellableItemsFragment(
+                    validateStoreList?.unSellableCommerceItems as List<UnSellableCommerceItem>,
+                    selectedAddress!!,
+                    validateStoreList?.deliverable!!
+                )
+            } else {
+                // if it is store then call setSuburb API.
+                setSuburb()
+                // call slot selection
+                navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment)
+            }
+        }
+    }
+
     private fun setSuburb() {
         localSuburbId?.let { suburbId ->
             checkoutAddressConfirmationViewModel.setSuburb(suburbId).observe(viewLifecycleOwner, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
-                        callChangeAddressApi()
                         loadingProgressBar.visibility = View.GONE
                         val store = selectedSuburb.let { suburb ->
                             Store(
@@ -259,26 +272,22 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { _, bundle ->
             val suburb = bundle.getString("Suburb")
             selectedSuburb = Utils.strToJson(suburb, Suburb::class.java) as Suburb
-            selectedSuburb.id?.let { showCollectionTab(it) }
+            selectedSuburb.id?.let {
+                storeListAdapter =
+                    null // setting null to update selected store position in list to -1
+                showCollectionTab(it)
+            }
         }
         setFragmentResultListener(EditDeliveryLocationFragment.PROVINCE_SELECTOR_REQUEST_CODE) { _, bundle ->
             val province = bundle.getString("Province")
             selectedProvince = Utils.strToJson(province, Province::class.java) as Province
             showCollectionTab(DEFAULT_STORE_ID) // To show suburb selection list
         }
-
-        setFragmentResultListener(CheckoutAddAddressNewUserFragment.PROVINCE_SELECTION_BACK_PRESSED) { _, _ ->
-            showCollectionTab(localSuburbId)
-            showStoreList()
-        }
-        setFragmentResultListener(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED) { _, _ ->
-            showCollectionTab(localSuburbId)
-            showStoreList()
-        }
         setFragmentResultListener(STORE_SELECTION_REQUEST_KEY) { _, bundle ->
             val result = bundle.getString(STORE_SELECTION_REQUEST_KEY)
             val validateStoreList: ValidateStoreList? =
                 Utils.strToJson(result, ValidateStoreList::class.java) as? ValidateStoreList
+            this.validateStoreList = validateStoreList
             val storeAddress = StoreAddress(
                 validateStoreList?.storeAddress,
                 "",
@@ -334,8 +343,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     }
                 }
             }
-        }
-        else{
+        } else {
             showCollectionTab(localSuburbId)
         }
         deliveryTab.setOnClickListener(this)
@@ -374,14 +382,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun showStoreListView(suburbId: String?) {
-        if (suburbId.equals(DEFAULT_STORE_ID)){
+        if (suburbId.equals(DEFAULT_STORE_ID)) {
             // This means collection tab clicked for the first time.
             getSuburb(selectedProvince)
-        }
-        else if (suburbId.isNullOrEmpty()){
+        } else if (suburbId.isNullOrEmpty()) {
             showStoreList()
-        }
-        else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
+        } else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
             storesFoundTitle.text = resources.getQuantityString(R.plurals.stores_near_me, 0, 0)
             localSuburbId?.let { it ->
@@ -443,7 +449,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
         btnConfirmLayout.visibility = View.GONE
-        addressConfirmationClicknCollect.visibility = View.GONE
         suburbSelectionLayout.visibility = View.VISIBLE
         suburbSelectionTitle.visibility = View.VISIBLE
         suburbSelectionSubTitle.visibility = View.VISIBLE
@@ -467,12 +472,14 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun getSuburb(province: Province?) {
         clickNCollectTitleLayout.visibility = View.GONE
+        addressConfirmationClicknCollect.visibility = View.GONE
         province?.id?.let {
             with(checkoutAddAddressNewUserViewModel) {
                 initGetSuburbs(it).observe(viewLifecycleOwner, {
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
+                            btnConfirmLayout.visibility = View.VISIBLE
                             if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
                                 //showNoStoresError()
                             } else {
@@ -492,9 +499,11 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         }
                         ResponseStatus.LOADING -> {
                             loadingProgressBar.visibility = View.VISIBLE
+                            btnConfirmLayout.visibility = View.GONE
                         }
                         ResponseStatus.ERROR -> {
                             loadingProgressBar.visibility = View.GONE
+                            btnConfirmLayout.visibility = View.VISIBLE
                         }
                     }
                 })
@@ -517,7 +526,11 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             validatedSuburbProductResponse?.firstAvailableFoodDeliveryDate ?: ""
         storeListAdapter =
             validatedSuburbProductResponse?.stores?.let { it1 ->
-                CheckoutStoreSelectionAdapter(it1, this)
+                CheckoutStoreSelectionAdapter(
+                    it1,
+                    this,
+                    storeListAdapter?.checkedItemPosition ?: -1
+                )
             }
         rcvStoreRecyclerView?.apply {
             val storesCount = (validatedSuburbProductResponse?.stores?.size ?: 0)
@@ -525,8 +538,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 changeTextView.visibility = View.GONE
                 btnAddressConfirmation.text = getString(R.string.change_suburb)
                 changeProvinceTextView.visibility = View.VISIBLE
-            }
-            else
+            } else
                 changeProvinceTextView.visibility = View.GONE
             storesFoundTitle.text =
                 resources.getQuantityString(R.plurals.stores_near_me, storesCount, storesCount)
@@ -609,8 +621,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 .observe(viewLifecycleOwner, {
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
-                            // call slot selection
-                            navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment)
+                            loadingProgressBar.visibility = View.GONE
                             var changeAddressResponse = it?.data as? ChangeAddressResponse
                             if (changeAddressResponse == null) {
                                 val jsonFileString = Utils.getJsonDataFromAsset(
@@ -636,10 +647,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                             }
                         }
                         ResponseStatus.LOADING -> {
-
+                            loadingProgressBar.visibility = View.VISIBLE
                         }
                         ResponseStatus.ERROR -> {
-
+                            loadingProgressBar.visibility = View.GONE
                         }
                     }
                 })
@@ -648,6 +659,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     override fun onSuburbSelected(suburb: Suburb) {
         selectedSuburb = suburb
+        storeListAdapter = null // setting null to update selected store position in list to -1
         showCollectionTab(selectedSuburb?.id)
     }
 }
