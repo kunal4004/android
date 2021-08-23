@@ -21,16 +21,17 @@ import za.co.woolworths.financial.services.android.util.Utils
  * Created by Kunal Uttarwar on 13/07/21.
  */
 class CheckoutStoreSelectionAdapter(
-    private val storeList: List<ValidateStoreList>, private val fragment: Fragment
+    private val storeList: List<ValidateStoreList>, private val fragment: Fragment, private val itemPosition: Int
 ) : RecyclerView.Adapter<CheckoutStoreSelectionAdapter.StoreViewHolder>(),
     Filterable {
 
-    var checkedItemPosition = -1
+    var checkedItemPosition: Int
     var checkedItemStoreId = "-1"
     var storeFilterList: List<ValidateStoreList>
 
     init {
         storeFilterList = storeList
+        checkedItemPosition = itemPosition
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreViewHolder {
@@ -98,13 +99,11 @@ class CheckoutStoreSelectionAdapter(
                 }
                 val filterResults = FilterResults()
                 filterResults.values = storeFilterList
-                var localItemPosition = -1
                 (filterResults.values as? List<ValidateStoreList>)?.forEachIndexed { index, it ->
                     if (it.storeId.equals(checkedItemStoreId)) {
-                        localItemPosition = index  // To manage checkbox while search.
+                        checkedItemPosition = index  // To manage checkbox while search.
                     }
                 }
-                checkedItemPosition = localItemPosition
                 return filterResults
             }
 

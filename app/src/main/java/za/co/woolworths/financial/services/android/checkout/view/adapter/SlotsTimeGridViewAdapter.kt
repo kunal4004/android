@@ -12,9 +12,9 @@ import com.awfs.coordination.R
  * Created by Kunal Uttarwar on 22/07/21.
  */
 class SlotsTimeGridViewAdapter(
-    context: Context, val resource: Int, val deliveryGridTitleList: List<String>
+    context: Context, val resource: Int, private val deliveryGridTitleList: List<String>
 ) : ArrayAdapter<String>(context, resource, deliveryGridTitleList) {
-    val contxt: Context = context
+    private val contxt: Context = context
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convrtView = convertView

@@ -72,6 +72,12 @@
         android:background="@color/color_12000000"
         app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryDiscountValue" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupOrderSummaryDiscount"
+        app:constraint_referenced_ids="txtOrderSummaryDiscount, txtOrderSummaryDiscountValue, viewHorizontalSeparator2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/txtOrderSummaryCompanyDiscount"
         android:layout_width="wrap_content"
@@ -110,7 +116,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="txtOrderSummaryCompanyDiscount, txtOrderSummaryCompanyDiscountValue, viewHorizontalSeparator3" />
-
 
     <TextView
         android:id="@+id/txtOrderSummaryPromoCodeDiscount"
@@ -223,6 +228,11 @@
         android:background="@color/color_12000000"
         app:layout_constraintTop_toBottomOf="@id/txtOrderSummaryTotalDiscountValue" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupTotalDiscount"
+        app:constraint_referenced_ids="txtOrderSummaryTotalDiscount, txtOrderSummaryTotalDiscountValue, viewHorizontalSeparator6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/txtOrderSummaryDeliveryFee"

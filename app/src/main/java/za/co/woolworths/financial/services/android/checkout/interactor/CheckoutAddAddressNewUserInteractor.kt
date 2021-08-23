@@ -17,4 +17,5 @@ class CheckoutAddAddressNewUserInteractor(private val checkoutAddAddressNewUserA
     fun deleteAddress(addressId: String) = checkoutMockApiHelper.deleteAddress(addressId)
     fun changeAddress(nickName:String) = checkoutMockApiHelper.changeAddress(nickName)
     fun getAvailableDeliverySlots() = checkoutMockApiHelper.getAvailableDeliverySlots()
+    fun getConfirmDeliveryAddressDetails() = checkoutMockApiHelper.getConfirmDeliveryAddressDetails()
 }
