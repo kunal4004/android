@@ -167,6 +167,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             checkoutAddressConfirmationViewModel.setSuburb(suburbId).observe(viewLifecycleOwner, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
+                        callChangeAddressApi()
                         loadingProgressBar.visibility = View.GONE
                         val store = selectedSuburb.let { suburb ->
                             Store(
