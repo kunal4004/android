@@ -16,7 +16,6 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressNewUserFragment
-import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -30,13 +29,16 @@ import za.co.woolworths.financial.services.android.util.Utils
 class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
 
     private var suburbList: ArrayList<Suburb>? = null
-    private var selectedProvince: Province? = null
     private var suburbListAdapter: SuburbListAdapter? = null
     private var deliveryType: DeliveryType? = null
     var bundle: Bundle? = null
     var navController: NavController? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.suburb_selector_fragment, container, false)
     }
 
@@ -45,21 +47,21 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
         activity?.apply {
             intent?.let {
                 if (it.hasExtra(SUBURB_LIST)) {
-                    val sharedPreferences = activity?.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+                    val sharedPreferences =
+                        activity?.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
                     val suburbLists = sharedPreferences?.getString(SUBURB_LIST, "")
-                    suburbList = Gson().fromJson(suburbLists, object : TypeToken<List<Suburb>>() {}.type)
+                    suburbList =
+                        Gson().fromJson(suburbLists, object : TypeToken<List<Suburb>>() {}.type)
                 }
                 deliveryType = it.getEnumExtra<DeliveryType>()
                 bundle = arguments?.getBundle("bundle")
                 bundle?.apply {
-                    getString("SuburbList")?.let {
-                        suburbList = Gson().fromJson(it, object : TypeToken<List<Suburb>>() {}.type)
+                    getString("SuburbList")?.let { list ->
+                        suburbList =
+                            Gson().fromJson(list, object : TypeToken<List<Suburb>>() {}.type)
                     }
-                    getString("Province")?.let {
-                        selectedProvince = Gson().fromJson(it, object : TypeToken<Province>() {}.type)
-                    }
-                    getSerializable("deliveryType")?.let {
-                        deliveryType = it as DeliveryType
+                    getSerializable("deliveryType")?.let { type ->
+                        deliveryType = type as DeliveryType
 
                     }
                 }
@@ -75,10 +77,12 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
             (activity as? CheckoutActivity)?.apply { hideBackArrow() }
         }
         if (deliveryType == DeliveryType.DELIVERY) {
-            activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_suburb)
+            activity?.findViewById<TextView>(R.id.toolbarText)?.text =
+                bindString(R.string.select_your_suburb)
             suburbInputValue.setHint(R.string.hint_search_for_your_suburb)
         } else {
-            activity?.findViewById<TextView>(R.id.toolbarText)?.text = bindString(R.string.select_your_store)
+            activity?.findViewById<TextView>(R.id.toolbarText)?.text =
+                bindString(R.string.select_your_store)
             suburbInputValue.setHint(R.string.hint_search_for_your_store)
         }
         suburbInputValue?.apply {
@@ -96,7 +100,8 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
 
     private fun loadSuburbsList() {
         rcvSuburbList?.apply {
-            suburbListAdapter = suburbList?.let { SuburbListAdapter(it, this@SuburbSelectorFragment, deliveryType) }
+            suburbListAdapter =
+                suburbList?.let { SuburbListAdapter(it, this@SuburbSelectorFragment, deliveryType) }
             setDivider(R.drawable.recycler_view_divider_gray_1dp)
             layoutManager = activity?.let { LinearLayoutManager(it) }
             suburbListAdapter?.let { adapter = it }
@@ -107,10 +112,7 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
         activity?.apply {
             // Use the Kotlin extension in the fragment-ktx artifact
             val bundle = Bundle()
-            bundle?.apply {
-                putString("Suburb", Utils.toJson(suburb))
-                putString("Province", Utils.toJson(selectedProvince))
-            }
+            bundle.putString("Suburb", Utils.toJson(suburb))
             setFragmentResult(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE, bundle)
             navController?.navigateUp()
         }
@@ -119,7 +121,10 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
     fun onBackPressed() {
         activity?.apply {
             // Use the Kotlin extension in the fragment-ktx artifact
-            setFragmentResult(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED, Bundle())
+            setFragmentResult(
+                CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED,
+                Bundle()
+            )
         }
     }
 
