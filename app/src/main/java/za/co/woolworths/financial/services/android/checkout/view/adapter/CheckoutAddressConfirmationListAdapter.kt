@@ -26,9 +26,9 @@ class CheckoutAddressConfirmationListAdapter(
 
     var checkedItemPosition = -1
 
-    companion object{
-       const val EDIT_SAVED_ADDRESS_RESPONSE_KEY = "editSavedAddressResponse"
-       const val EDIT_ADDRESS_POSITION_KEY = "position"
+    companion object {
+        const val EDIT_SAVED_ADDRESS_RESPONSE_KEY = "editSavedAddressResponse"
+        const val EDIT_ADDRESS_POSITION_KEY = "position"
     }
 
     override fun onCreateViewHolder(
@@ -46,9 +46,7 @@ class CheckoutAddressConfirmationListAdapter(
     }
 
     override fun getItemCount(): Int {
-        if (savedAddress?.addresses.isNullOrEmpty())
-            return 0
-        return savedAddress?.addresses?.size!!
+        return savedAddress?.addresses?.size ?: 0
     }
 
     override fun onBindViewHolder(
@@ -66,11 +64,22 @@ class CheckoutAddressConfirmationListAdapter(
         RecyclerView.ViewHolder(itemView) {
         fun bindItem(position: Int) {
             itemView.apply {
+                hideShimmer(this)
                 savedAddress?.addresses?.get(position)?.let {
                     title.text = it.displayName
                     subTitle.text = it.address1
                     selector.isChecked = checkedItemPosition == position
                     addressSelectionLayout.setBackgroundColor(
+                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                            R.color.white
+                        )
+                    )
+                    title.setBackgroundColor(
+                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                            R.color.white
+                        )
+                    )
+                    subTitle.setBackgroundColor(
                         if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
                             R.color.white
                         )
@@ -94,6 +103,26 @@ class CheckoutAddressConfirmationListAdapter(
                 }
             }
 
+        }
+    }
+
+    private fun hideShimmer(view: View) {
+        view.apply {
+            selectorShimmerFrameLayout?.setShimmer(null)
+            selectorShimmerFrameLayout?.stopShimmer()
+            selector.visibility = View.VISIBLE
+
+            titleShimmerLayout?.setShimmer(null)
+            titleShimmerLayout?.stopShimmer()
+            title.visibility = View.VISIBLE
+
+            subtitleShimmerLayout?.setShimmer(null)
+            subtitleShimmerLayout?.stopShimmer()
+            subTitle.visibility = View.VISIBLE
+
+            slotPriceButtonShimmerFrameLayout?.setShimmer(null)
+            slotPriceButtonShimmerFrameLayout?.stopShimmer()
+            slotPriceButton.visibility = View.GONE
         }
     }
 

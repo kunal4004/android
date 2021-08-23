@@ -960,7 +960,7 @@
     <string name="sign_out_layout">Sign Out</string>
     <string name="product_placeholder_selected_size">Selected Size</string>
     <string name="product_placeholder_select_size">Select Size</string>
-    <string name="call_us_now">Call Now</string>
+    <string name="call_us_now">Call Us Now</string>
     <string name="sending_otp_text">We\'re sending you an OTP</string>
     <string name="wrong_otp_desc">The OTP entered is incorrect. Please try again.</string>
     <string name="selected_colour">Selected Colour</string>
@@ -2094,7 +2094,8 @@
     <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
     <string name="add_a_new_address">Add A New Address</string>
     <string name="add_address">Add Address</string>
-    <string name="change_location">change location</string>
+    <string name="change_suburb">change suburb</string>
+    <string name="change_province"><u>change province</u></string>
     <string name="no_saved_addresses">No Saved Addresses</string>
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
@@ -2160,6 +2161,10 @@
     <string name="view_application_status">View Application Status</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
 
+    <!-- Native Checkout -->
+    <string name="native_checkout_continue_to_payment">Continue To Payment</string>
+    <string name="native_checkout_order_total_title">Order Total *</string>
+
     <!-- Native Checkout : delivery Instructions -->
     <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
     <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
@@ -2183,6 +2188,9 @@
     <string name="next_week_text">Next Week</string>
     <string name="free_delivery_slot">FREE</string>
     <string name="currency">R</string>
+    <string name="dummy_currency">R50</string>
+    <string name="title_text">ShowTitle</string>
+    <string name="subtitle_text">Show SubTitle Text</string>
     <string name="working_days_text">%1$s - %2$s Working Days</string>
     <plurals name="stores_near_me">
         <item quantity="zero">%d Stores near me</item>
@@ -2190,6 +2198,18 @@
         <item quantity="other">%d Stores near me</item>
     </plurals>
     <string name="suburb_selection_subtitle">This will show all collection stores near you.</string>
+
+    <!-- Native Checkout : Order Summary   -->
+    <string name="native_checkout_delivery_order_summary_note">* Items are not reserved until you checkout. \n* Delivery cost to be confirmed before payment</string>
+    <string name="native_checkout_delivery_order_summary_fee_value">TBC</string>
+    <string name="native_checkout_delivery_order_summary_fee">Delivery Fee</string>
+    <string name="native_checkout_delivery_order_summary_total_discount">Total Discount</string>
+    <string name="native_checkout_delivery_order_summary_discounts">Discounts</string>
+    <string name="native_checkout_delivery_order_summary_your_cart">Your Cart</string>
+    <string name="native_checkout_delivery_order_summary_company_discounts">Company Discount</string>
+    <string name="native_checkout_delivery_order_summary_wrewards_vouchers">Your WRewards Vouchers</string>
+    <string name="native_checkout_delivery_order_summary_promo_code">Promo Code Applied</string>
+    <string name="default_discount_value">- R 0.00</string>
 
     <!-- Native Checkout : Suburb not deliverable  -->
     <string name="dismiss">Dismiss</string>
@@ -2220,4 +2240,5 @@
 
     <string name="common_error_unfortunately_something_went_wrong">Unfortunately, something went wrong.</string>
     <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
+    <string name="suburb_not_found">We Can’t Seem To Find This Suburb</string>
 </resources>

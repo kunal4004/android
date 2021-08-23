@@ -28,19 +28,6 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         }
     }
 
-    fun initGetProvince() = liveData(Dispatchers.IO) {
-        emit(NativeCheckoutResource.loading(data = null))
-        try {
-            emit(
-                NativeCheckoutResource.success(
-                    data = checkoutAddAddressNewUserInteractor.getProvince().body()
-                )
-            )
-        } catch (exception: Exception) {
-            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
-        }
-    }
-
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean) = liveData(Dispatchers.IO) {
         emit(NativeCheckoutResource.loading(data = null))
         try {
@@ -117,6 +104,19 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
             emit(
                 NativeCheckoutResource.success(
                     data = checkoutAddAddressNewUserInteractor.getAvailableDeliverySlots().body()
+                )
+            )
+        } catch (exception: Exception) {
+            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
+        }
+    }
+
+    fun getConfirmDeliveryAddressDetails() = liveData(Dispatchers.IO) {
+        emit(NativeCheckoutResource.loading(data = null))
+        try {
+            emit(
+                NativeCheckoutResource.success(
+                    data = checkoutAddAddressNewUserInteractor.getConfirmDeliveryAddressDetails().body()
                 )
             )
         } catch (exception: Exception) {

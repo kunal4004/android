@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Chec
 class CheckoutAddAddressNewUserInteractor(private val checkoutAddAddressNewUserApiHelper: CheckoutAddAddressNewUserApiHelper, private val checkoutMockApiHelper: CheckoutMockApiHelper) {
 
     fun getSuburbs(provinceId: String) = checkoutAddAddressNewUserApiHelper.getSuburbs(provinceId)
-    fun getProvince() = checkoutAddAddressNewUserApiHelper.getProvince()
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean) = checkoutAddAddressNewUserApiHelper.validateSelectedSuburb(suburbId, isStore)
     fun getSavedAddresses() = checkoutMockApiHelper.getSavedAddresses()
     fun addAddress(addAddressRequestBody: AddAddressRequestBody) = checkoutMockApiHelper.addAddress(addAddressRequestBody)
@@ -18,4 +17,5 @@ class CheckoutAddAddressNewUserInteractor(private val checkoutAddAddressNewUserA
     fun deleteAddress(addressId: String) = checkoutMockApiHelper.deleteAddress(addressId)
     fun changeAddress(nickName:String) = checkoutMockApiHelper.changeAddress(nickName)
     fun getAvailableDeliverySlots() = checkoutMockApiHelper.getAvailableDeliverySlots()
+    fun getConfirmDeliveryAddressDetails() = checkoutMockApiHelper.getConfirmDeliveryAddressDetails()
 }

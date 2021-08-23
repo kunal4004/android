@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import java.util.*
 
 /**
  * Created by Kunal Uttarwar on 02/08/21.
@@ -62,10 +63,11 @@ class CheckoutDeliveryTypeSelectionListAdapter(
         RecyclerView.ViewHolder(itemView) {
         fun bindItem(position: Int) {
             itemView.apply {
+                hideShimmer(this)
                 openDayDeliverySlotsList?.get(position)?.let {
                     val deliveryType =
                         (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue("deliveryType")
-                    title.text = deliveryType.capitalize()
+                    title.text = deliveryType.capitalize(Locale.ROOT)
                     subTitle.text = if (deliveryType.equals(DELIVERY_TYPE_TIMESLOT)) {
                         Html.fromHtml(
                             (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue(
@@ -90,6 +92,16 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                             R.color.white
                         )
                     )
+                    title.setBackgroundColor(
+                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                            R.color.white
+                        )
+                    )
+                    subTitle.setBackgroundColor(
+                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                            R.color.white
+                        )
+                    )
                     if (selector.isChecked) {
                         //listner.hideErrorView()
                     }
@@ -104,6 +116,26 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                     notifyDataSetChanged()
                 }
             }
+        }
+    }
+
+    private fun hideShimmer(view: View) {
+        view.apply {
+            selectorShimmerFrameLayout?.setShimmer(null)
+            selectorShimmerFrameLayout?.stopShimmer()
+            selector.visibility = View.VISIBLE
+
+            titleShimmerLayout?.setShimmer(null)
+            titleShimmerLayout?.stopShimmer()
+            title.visibility = View.VISIBLE
+
+            subtitleShimmerLayout?.setShimmer(null)
+            subtitleShimmerLayout?.stopShimmer()
+            subTitle.visibility = View.VISIBLE
+
+            slotPriceButtonShimmerFrameLayout?.setShimmer(null)
+            slotPriceButtonShimmerFrameLayout?.stopShimmer()
+            slotPriceButton.visibility = View.VISIBLE
         }
     }
 

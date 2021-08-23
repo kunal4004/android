@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
@@ -35,9 +36,12 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -56,6 +60,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private var foodType = ONLY_FOOD
     private var otherType = ONLY_OTHER
     private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter? =
+        null
+    private var checkoutDeliveryTypeSelectionShimmerAdapter: CheckoutDeliveryTypeSelectionShimmerAdapter? =
         null
 
     enum class FoodSubstitution(val rgb: String) {
@@ -96,8 +102,10 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
     private fun initViews() {
         initializeDeliveringToView()
-        initializeDeliveryFoodItems()
+        initializeDeliveryFoodOtherItems()
         initializeFoodSubstitution()
+
+        getConfirmDeliveryAddressDetails()
 
         activity?.apply {
             view?.setOnClickListener {
@@ -135,16 +143,21 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         StyleSpan(typeface!!.style),
                         0, defaultAddressNickname.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    defaultAddressNickname.setSpan(ForegroundColorSpan(Color.BLACK), 0, defaultAddressNickname.length
-                        , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    defaultAddressNickname.setSpan(
+                        ForegroundColorSpan(Color.BLACK),
+                        0,
+                        defaultAddressNickname.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
 
                     deliveringToAddress.append(defaultAddressNickname)
 
                     // Extract default address display name
                     savedAddresses.addresses?.forEach { address ->
-                        if(savedAddresses.defaultAddressNickname.equals(address.nickname)){
-                            val addressName = SpannableString(address?.displayName)
-                            val typeface1 = ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                        if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
+                            val addressName = SpannableString(address.displayName)
+                            val typeface1 =
+                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
                             addressName.setSpan(
                                 StyleSpan(typeface1!!.style),
                                 0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -201,6 +214,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
             (availableDeliverySlotsResponse.openDayDeliverySlots as ArrayList).add(timeSlotListItem)
         }
+        checkoutDeliveryTypeSelectionShimmerAdapter = null
+        deliveryTypeSelectionRecyclerView.adapter = null
         checkoutDeliveryTypeSelectionListAdapter =
             CheckoutDeliveryTypeSelectionListAdapter(
                 availableDeliverySlotsResponse?.openDayDeliverySlots,
@@ -214,13 +229,48 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         }
     }
 
-    private fun initializeDeliveryFoodItems() {
+    private fun initializeDeliveryFoodOtherItems() {
         setupViewModel()
         getAvailableDeliverySlots()
         previousImgBtnFood.setOnClickListener(this)
         nextImgBtnFood.setOnClickListener(this)
         previousImgBtnOther.setOnClickListener(this)
         nextImgBtnOther.setOnClickListener(this)
+    }
+
+    /**
+     * Initializes Order Summary data from confirmDeliveryAddress or storePickUp API .
+     */
+    private fun initializeOrderSummary(orderSummary: OrderSummary?) {
+        orderSummary?.let { it ->
+            txtOrderSummaryYourCartValue?.text =
+                CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
+            it.discountDetails?.let { discountDetails ->
+                groupOrderSummaryDiscount?.visibility =
+                    if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
+                groupPromoCodeDiscount?.visibility =
+                    if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                groupWRewardsDiscount?.visibility =
+                    if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                groupCompanyDiscount?.visibility =
+                    if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                groupTotalDiscount?.visibility =
+                    if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
+
+                txtOrderSummaryDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
+                txtOrderSummaryTotalDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                txtOrderSummaryWRewardsVouchersValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
+                txtOrderSummaryCompanyDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
+                txtOrderSummaryPromoCodeDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
+
+                txtOrderTotalValue.text =  CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+            }
+        }
     }
 
     private fun setupViewModel() {
@@ -235,11 +285,49 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
+
+    private fun getConfirmDeliveryAddressDetails() {
+        checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails().observe(viewLifecycleOwner, {
+            when (it.responseStatus) {
+                ResponseStatus.SUCCESS -> {
+                    loadingBar.visibility = View.GONE
+                    /*if (it.data != null) {
+                       confirmDeliveryAddressDetails = it.data as? ConfirmDeliveryAddressResponse
+                        initializeOrderSummary(confirmDeliveryAddressDetails?.orderSummary)
+                    }*/
+
+                    //use mock data from json file
+                    val jsonFileString = Utils.getJsonDataFromAsset(
+                        activity?.applicationContext,
+                        "mocks/confirmDelivery_Response.json"
+                    )
+                    val mockDeliverySlotResponse: ConfirmDeliveryAddressResponse = Gson().fromJson(
+                        jsonFileString,
+                        object : TypeToken<ConfirmDeliveryAddressResponse>() {}.type
+                    )
+
+                    initializeOrderSummary(mockDeliverySlotResponse?.orderSummary)
+                }
+                ResponseStatus.LOADING -> {
+                    loadingBar.visibility = View.VISIBLE
+                }
+                ResponseStatus.ERROR -> {
+                    loadingBar.visibility = View.GONE
+                }
+            }
+        })
+
+    }
+
     private fun getAvailableDeliverySlots() {
+        expandableGrid.setUpShimmerView()
+        expandableGrid.showDeliveryTypeShimmerView()
+        showDeliverySubTypeShimmerView()
         checkoutAddAddressNewUserViewModel.getAvailableDeliverySlots().observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingBar.visibility = View.GONE
+                    expandableGrid.hideDeliveryTypeShimmerView()
                     /*if (it.data != null) {
                     // Keeping two diff response not to get merge while showing 2 diff slots.
                        selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
@@ -260,7 +348,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         //Only for Food
                         foodType = ONLY_FOOD
                         checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
-                        selectDeliveryTimeSlotTitle.text = getString(R.string.slot_delivery_title_when)
+                        selectDeliveryTimeSlotTitle.text =
+                            getString(R.string.slot_delivery_title_when)
                         selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
                         expandableGrid.initialiseGridView(
                             selectedSlotResponseFood,
@@ -277,7 +366,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                             MIXED_FOOD
                         )
                         if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
-                            howWouldYouDeliveredTitle.text = getString(R.string.delivery_timeslot_title_other_items)
+                            howWouldYouDeliveredTitle.text =
+                                getString(R.string.delivery_timeslot_title_other_items)
                             initializeDeliveryTypeSelectionView(
                                 selectedSlotResponseFood,
                                 MIXED_OTHER
@@ -303,6 +393,17 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 }
             }
         })
+    }
+
+    private fun showDeliverySubTypeShimmerView() {
+        checkoutDeliveryTypeSelectionShimmerAdapter =
+            CheckoutDeliveryTypeSelectionShimmerAdapter(3)
+
+        deliveryTypeSelectionRecyclerView?.apply {
+            addItemDecoration(object : RecyclerView.ItemDecoration() {})
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            checkoutDeliveryTypeSelectionShimmerAdapter?.let { adapter = it }
+        }
     }
 
     fun getSelectedSlotResponse(deliveryType: DeliveryType): AvailableDeliverySlotsResponse? {
@@ -342,7 +443,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             }
             R.id.checkoutDeliveryDetailsLayout -> {
                 view?.findNavController()?.navigate(
-                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment, arguments)
+                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
+                    arguments
+                )
             }
         }
     }

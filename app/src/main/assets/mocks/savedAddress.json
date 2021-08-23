@@ -48,7 +48,7 @@
     }
   ],
   "primaryContactNo": "0813764713",
-  "defaultAddressNickname": "Test1",
+  "defaultAddressNickname": "",
   "isStorePickup": false,
   "response": {
     "code": "-1",
