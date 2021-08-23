@@ -111,6 +111,16 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     override fun showProductOfferOutstanding(state: ApplyNowState) {
+        val supported = when(state) {
+            ApplyNowState.PERSONAL_LOAN -> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumSupportedAppBuildNumber!!
+            }
+            ApplyNowState.STORE_CARD -> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumSupportedAppBuildNumber!!
+            }
+            else -> false
+        }
+
         val minimumDelinquencyCycle = when(state){
             ApplyNowState.PERSONAL_LOAN -> {
                 WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumDelinquencyCycle!!
@@ -125,18 +135,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val account = getAccount()
         account?.apply {
             return when {
-
-                !productOfferingGoodStanding &&
+                !productOfferingGoodStanding && supported &&
                         minimumDelinquencyCycle != null &&
                         delinquencyCycle>=minimumDelinquencyCycle -> {
                     mainView?.showViewTreatmentPlan()!!
-                }
-                !productOfferingGoodStanding &&
-                        minimumDelinquencyCycle != null &&
-                        delinquencyCycle<minimumDelinquencyCycle -> { // account is in arrears
-                    mainView?.showAccountInArrears(account)
-                    val informationModel = getCardProductInformation(true)
-                    mainView?.showAccountHelp(informationModel)!!
                 }
                 else -> {
                     if(!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
