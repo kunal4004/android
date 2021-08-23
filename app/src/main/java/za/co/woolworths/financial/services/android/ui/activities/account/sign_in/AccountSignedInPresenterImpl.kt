@@ -138,6 +138,9 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 !productOfferingGoodStanding && supported &&
                         minimumDelinquencyCycle != null &&
                         delinquencyCycle>=minimumDelinquencyCycle -> {
+                    if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                        mainView?.removeBlocksWhenChargedOff()
+                    }
                     mainView?.showViewTreatmentPlan()!!
                 }
                 else -> {

@@ -17,6 +17,7 @@ interface IAccountSignedInContract {
         fun showAccountInArrears(account: Account)
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
+        fun removeBlocksWhenChargedOff()
         fun removeBlocksOnCollectionCustomer()
         fun showViewTreatmentPlan()
         fun bottomSheetIsExpanded(): Boolean
