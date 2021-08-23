@@ -22,10 +22,12 @@ import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_co
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
 import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
+import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddressConfirmationInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
+import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddressConfirmationViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -47,15 +49,19 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     CheckoutAddressConfirmationListAdapter.EventListner, SuburbListAdapter.ISuburbSelector {
 
-    var savedAddress: SavedAddressResponse? = null
-    var selectedAddress: Address? = null
-    var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? = null
+    private var savedAddress: SavedAddressResponse? = null
+    private var selectedAddress: Address? = null
+    private var checkoutAddressConfirmationListAdapter: CheckoutAddressConfirmationListAdapter? =
+        null
     private var storeListAdapter: CheckoutStoreSelectionAdapter? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var navController: NavController? = null
     private var localSuburbId: String? = null
     private var validatedSuburbProductResponse: ValidatedSuburbProducts? = null
     private var suburbListAdapter: SuburbListAdapter? = null
+    private lateinit var checkoutAddressConfirmationViewModel: CheckoutAddressConfirmationViewModel
+    private var selectedSuburb = Suburb()
+    private var selectedProvince = Province()
     private var isDeliverySelected: Boolean = true
 
     companion object {
@@ -115,13 +121,48 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     } else if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1 && addressConfirmationDelivery.visibility == View.VISIBLE)
                         addNewAddressErrorMsg.visibility = View.VISIBLE
                     else {
-                        callChangeAddressApi()
+                        // if it is store then call setSuburb API.
+                        setSuburb()
                     }
                 }
             }
             R.id.changeTextView -> {
                 changeLocation()
             }
+        }
+    }
+
+    private fun setSuburb() {
+        localSuburbId?.let { suburbId ->
+            checkoutAddressConfirmationViewModel.setSuburb(suburbId).observe(viewLifecycleOwner, {
+                when (it.responseStatus) {
+                    ResponseStatus.SUCCESS -> {
+                        callChangeAddressApi()
+                        loadingProgressBar.visibility = View.GONE
+                        val store = selectedSuburb.let { suburb ->
+                            Store(
+                                suburb.id,
+                                suburb.name,
+                                suburb.fulfillmentStores,
+                                suburb.storeAddress.address1
+                            )
+                        }
+                        Utils.savePreferredDeliveryLocation(
+                            ShoppingDeliveryLocation(
+                                selectedProvince,
+                                null,
+                                store
+                            )
+                        )
+                    }
+                    ResponseStatus.LOADING -> {
+                        loadingProgressBar.visibility = View.VISIBLE
+                    }
+                    ResponseStatus.ERROR -> {
+                        loadingProgressBar.visibility = View.GONE
+                    }
+                }
+            })
         }
     }
 
@@ -178,16 +219,16 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun addFragmentResultListener() {
         // Use the Kotlin extension in the fragment-ktx artifact
-        setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { _, bundle ->
             updateSavedAddress(bundle)
         }
-        setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY) { _, bundle ->
             updateSavedAddress(bundle)
         }
-        setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { _, bundle ->
             updateSavedAddress(bundle)
         }
-        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
             if (isDeliverySelected) {
                 view?.findNavController()?.navigate(
                     R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
@@ -198,26 +239,39 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             } else {
                 showCollectionTab(localSuburbId)
             }
-
         }
-        setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { requestKey, bundle ->
-            val result = bundle.getString("Suburb")
-            val suburb: Suburb? = Utils.strToJson(result, Suburb::class.java) as? Suburb
-            suburb?.id?.let { showCollectionTab(it) }
+        setFragmentResultListener(EditDeliveryLocationFragment.SUBURB_SELECTOR_REQUEST_CODE) { _, bundle ->
+            val province = bundle.getString("Province")
+            selectedProvince = Utils.strToJson(province, Province::class.java) as Province
+            val suburb = bundle.getString("Suburb")
+            selectedSuburb = Utils.strToJson(suburb, Suburb::class.java) as Suburb
+            selectedSuburb.id?.let { showCollectionTab(it) }
         }
 
-        setFragmentResultListener(CheckoutAddAddressNewUserFragment.PROVINCE_SELECTION_BACK_PRESSED) { requestKey, bundle ->
+        setFragmentResultListener(CheckoutAddAddressNewUserFragment.PROVINCE_SELECTION_BACK_PRESSED) { _, _ ->
             showCollectionTab(localSuburbId)
             showStoreList()
         }
-        setFragmentResultListener(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED) { requestKey, bundle ->
+        setFragmentResultListener(CheckoutAddAddressNewUserFragment.SUBURB_SELECTION_BACK_PRESSED) { _, _ ->
             showCollectionTab(localSuburbId)
             showStoreList()
         }
-        setFragmentResultListener(STORE_SELECTION_REQUEST_KEY) { requestKey, bundle ->
+        setFragmentResultListener(STORE_SELECTION_REQUEST_KEY) { _, bundle ->
             val result = bundle.getString(STORE_SELECTION_REQUEST_KEY)
             val validateStoreList: ValidateStoreList? =
                 Utils.strToJson(result, ValidateStoreList::class.java) as? ValidateStoreList
+            val storeAddress = StoreAddress(
+                validateStoreList?.storeAddress,
+                "",
+                "",
+                "",
+                selectedSuburb.postalCode,
+                selectedSuburb.name,
+                selectedSuburb.id,
+                selectedProvince.name
+            )
+
+            selectedSuburb.storeAddress = storeAddress
             setEarliestDeliveryDates(validateStoreList)
         }
     }
@@ -233,6 +287,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun initView() {
+        selectedProvince = Utils.getPreferredDeliveryLocation().province
         if (savedAddress?.addresses == null || savedAddress?.addresses?.size == 0) {
             //Show No Address view
             hideAddressListView()
@@ -251,7 +306,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             savedAddress?.defaultAddressNickname?.let { nickName ->
                 var index = 0
                 savedAddress?.addresses?.forEach { address ->
-                    if (nickName == address?.nickname) {
+                    if (nickName == address.nickname) {
                         checkoutAddressConfirmationListAdapter?.onItemClick(index)
                         return@forEach
                     }
@@ -295,7 +350,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun showStoreListView(suburbId: String?) {
         if (suburbId.isNullOrEmpty())
-            getSuburb(Utils.getPreferredDeliveryLocation().province)
+            getSuburb(selectedProvince)
         else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
             storesFoundTitle.text = resources.getQuantityString(R.plurals.stores_near_me, 0, 0)
@@ -346,9 +401,9 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         }
                     })
             }
-        } /*else if (localSuburbId != null && validatedSuburbProductResponse != null) {
+        } else if (localSuburbId != null && validatedSuburbProductResponse != null) {
             showStoreList()
-        }*/
+        }
     }
 
     private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
@@ -454,9 +509,18 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 )
             )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
+
+        checkoutAddressConfirmationViewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory(
+                CheckoutAddressConfirmationInteractor(
+                    CheckoutAddressConfirmationApiHelper()
+                )
+            )
+        ).get(CheckoutAddressConfirmationViewModel::class.java)
     }
 
-    fun navigateToUnsellableItemsFragment(
+    private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: List<UnSellableCommerceItem>,
         address: Address,
         deliverable: Boolean
@@ -538,6 +602,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     override fun onSuburbSelected(suburb: Suburb) {
+        selectedSuburb = suburb
         showCollectionTab(suburb.id)
     }
 }

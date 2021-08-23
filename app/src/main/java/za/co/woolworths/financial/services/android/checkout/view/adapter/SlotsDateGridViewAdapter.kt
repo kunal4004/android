@@ -13,9 +13,9 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Head
  * Created by Kunal Uttarwar on 22/07/21.
  */
 class SlotsDateGridViewAdapter(
-    context: Context, val resource: Int, val deliveryGridList: List<HeaderDate>
+    context: Context, val resource: Int, private val deliveryGridList: List<HeaderDate>
 ) : ArrayAdapter<HeaderDate>(context, resource, deliveryGridList) {
-    val contxt: Context = context
+    private val contxt: Context = context
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convrtView = convertView

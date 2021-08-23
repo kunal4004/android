@@ -49,7 +49,6 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressCom
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -152,7 +151,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             selectSuburbLayout,
             selectProvinceLayout,
             postalCode,
-            recipientName,
+            recipientNameEditText,
             cellphoneNumberEditText
         )
         setupViewModel()
@@ -184,6 +183,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         unitComplexFloorEditText.setText(selectedAddress.unitComplexFloor)
         suburbEditText.setText(selectedAddress.suburb)
         provinceAutocompleteEditText.setText(selectedAddress.province)
+        cellphoneNumberEditText.setText(savedAddress?.primaryContactNo)
+        recipientNameEditText.setText(savedAddress?.recipientName)
         if (selectedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
             postalCode.text.clear()
@@ -234,7 +235,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     showErrorInputField(this, View.GONE)
             }
         }
-        recipientName?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        recipientNameEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         cellphoneNumberEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
     }
 
@@ -427,7 +428,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             enableDisableEditText()
         }
 
-        setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, bundle ->
+        setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
             if (selectedAddress.province.isEmpty()) return@setFragmentResultListener
             getSuburbs()
         }
@@ -436,7 +437,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             view?.findNavController()?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment, bundleOf(
                 SAVED_ADDRESS_KEY to savedAddressResponse))
         }
-
     }
 
     private fun onProvinceSelected(province: Province?) {
@@ -837,7 +837,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 .isNotEmpty() && suburbEditText?.text.toString().trim()
                 .isNotEmpty() && provinceAutocompleteEditText?.text.toString().trim()
                 .isNotEmpty() && postalCode?.text.toString().trim()
-                .isNotEmpty() && recipientName?.text.toString().trim()
+                .isNotEmpty() && recipientNameEditText?.text.toString().trim()
                 .isNotEmpty() && cellphoneNumberEditText?.text.toString().trim()
                 .isNotEmpty() && selectedDeliveryAddressType != null
             && cellphoneNumberEditText?.text.toString().trim().length == 10
@@ -857,7 +857,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             when (response?.httpCode?.toInt()) {
                                 HTTP_OK, AppConstant.HTTP_OK_201 -> {
                                     if (savedAddressResponse != null && it?.data != null)
-                                        savedAddressResponse?.addresses?.plus(response?.address)
+                                        savedAddressResponse?.addresses?.plus(response.address)
                                     onAddNewAddress(body.nickname)
                                 }
                                 AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
@@ -1047,7 +1047,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun getAddAddressRequestBody(): AddAddressRequestBody {
         return AddAddressRequestBody(
             addressNicknameEditText?.text.toString().trim(),
-            recipientName?.text.toString().trim(),
+            recipientNameEditText?.text.toString().trim(),
             autoCompleteTextView?.text.toString().trim(),
             unitComplexFloorEditText?.text.toString().trim(),
             postalCode?.text.toString().trim(),
@@ -1181,7 +1181,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 postalCodeTextErrorMsg?.visibility = visible
                 editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_non_editable_background else R.drawable.input_non_editable_edit_text)
             }
-            R.id.recipientName -> {
+            R.id.recipientNameEditText -> {
                 recipientNameErrorMsg?.visibility = visible
             }
             R.id.cellphoneNumberEditText -> {

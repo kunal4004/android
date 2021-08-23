@@ -137,6 +137,7 @@ class ProvinceSelectorFragment : Fragment(), ProvinceListAdapter.IProvinceSelect
                                 val bundle = Bundle()
                                 bundle.apply {
                                     putString("SuburbList", Utils.toJson(it1))
+                                    putString("Province", Utils.toJson(province))
                                     putSerializable("deliveryType", DeliveryType.DELIVERY)
                                 }
                                 navController?.navigate(

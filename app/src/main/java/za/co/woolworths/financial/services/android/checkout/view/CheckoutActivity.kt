@@ -5,7 +5,6 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
@@ -22,7 +21,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
  */
 class CheckoutActivity : AppCompatActivity() {
 
-    var navHostFrag = NavHostFragment()
+    private var navHostFrag = NavHostFragment()
     var savedAddressResponse: SavedAddressResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

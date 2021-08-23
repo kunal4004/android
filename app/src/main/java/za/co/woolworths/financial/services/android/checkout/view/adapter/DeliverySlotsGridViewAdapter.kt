@@ -17,10 +17,10 @@ import za.co.woolworths.financial.services.android.ui.extension.bindColor
  * Created by Kunal Uttarwar on 20/07/21.
  */
 class DeliverySlotsGridViewAdapter(
-    context: Context, val resource: Int, val deliveryGridModelList: ArrayList<DeliveryGridModel>
+    context: Context, val resource: Int, private val deliveryGridModelList: ArrayList<DeliveryGridModel>
 ) : ArrayAdapter<DeliveryGridModel>(context, resource, deliveryGridModelList) {
 
-    val contxt: Context = context
+    private val contxt: Context = context
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convrtView = convertView
