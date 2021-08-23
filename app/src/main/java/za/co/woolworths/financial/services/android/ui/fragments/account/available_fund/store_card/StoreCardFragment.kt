@@ -70,7 +70,12 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
                     ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD, this)
+                            val arguments = HashMap<String, String>()
+                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD_ACTION
+                            Utils.triggerFireBaseEvents(
+                                FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD,
+                                arguments,
+                                this)
                             KotlinUtils.openUrlInPhoneBrowser(
                                 WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.collectionsUrl, this)
                         }

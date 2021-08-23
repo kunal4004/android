@@ -81,7 +81,12 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
                     VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN, this)
+                            val arguments = HashMap<String, String>()
+                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION
+                            Utils.triggerFireBaseEvents(
+                                FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
+                                arguments,
+                                this)
                             KotlinUtils.openUrlInPhoneBrowser(
                                 WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl, this)
                         }
