@@ -8,6 +8,7 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.checkout.service.network.ChangeAddressResponse
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
@@ -83,7 +85,11 @@ class OrderConfirmationFragment : Fragment()  {
     }
 
     private fun setToolbar(orderId: String) {
-        orderIdTextView.text = bindString(R.string.order_details_toolbar_title, orderId)
+        if (activity is CheckoutActivity) {
+            (activity as? CheckoutActivity)?.apply {
+                showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
+            }
+        }
     }
 
     private fun setupDeliveryOrCollectionDetails(response: SubmittedOrderResponse?) {
