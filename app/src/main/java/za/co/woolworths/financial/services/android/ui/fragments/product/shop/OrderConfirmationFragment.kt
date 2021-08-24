@@ -13,10 +13,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
+import za.co.woolworths.financial.services.android.checkout.service.network.ChangeAddressResponse
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
@@ -29,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.Utils
 
 
 class OrderConfirmationFragment : Fragment()  {
@@ -48,22 +52,34 @@ class OrderConfirmationFragment : Fragment()  {
     }
 
     private fun getOrderDetails() {
-        OneAppService.getSubmittedOrder()
+        /*OneAppService.getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
                     response?.orderSummary?.orderId?.let { setToolbar(it) }
-
                     setupDeliveryOrCollectionDetails(response)
-
                     setupOrderTotalDetails(response)
-
                     setupOrderDetailsBottomSheet(response)
                 }
 
                 override fun onFailure(error: Throwable?) {
                     //TODO: handle error
                 }
-            }, SubmittedOrderResponse::class.java))
+            }, SubmittedOrderResponse::class.java))*/
+
+
+        //use mock json file.
+        val jsonFileString = Utils.getJsonDataFromAsset(
+            activity?.applicationContext,
+            "mocks/submittedOrder.json"
+        )
+        val mockSubmittedOrder: SubmittedOrderResponse = Gson().fromJson(
+            jsonFileString,
+            object : TypeToken<SubmittedOrderResponse>() {}.type
+        )
+        mockSubmittedOrder?.orderSummary?.orderId?.let { setToolbar(it) }
+        setupDeliveryOrCollectionDetails(mockSubmittedOrder)
+        setupOrderTotalDetails(mockSubmittedOrder)
+        setupOrderDetailsBottomSheet(mockSubmittedOrder)
     }
 
     private fun setToolbar(orderId: String) {
