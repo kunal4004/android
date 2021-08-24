@@ -295,6 +295,10 @@ open class FirebaseManagerAnalyticsProperties {
         const val DEVICESECURITY_DELETE = "devicesecurity_delete"
         const val inAppReviewRequest = "in_app_review_request"
 
+        // Voice of Customer
+        const val VOC_SKIP = "voc_skip"
+        const val VOC_SUBMIT = "voc_submit"
+        const val VOC_OPTOUT = "voc_optout"
     }
 
     class PropertyNames {
