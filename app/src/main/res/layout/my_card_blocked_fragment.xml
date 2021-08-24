@@ -54,6 +54,7 @@
         app:srcCompat="@drawable/icr_blocked_card_disabled" />
 
     <TextView
+        android:id="@+id/cardStatusTagTextView"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="16dp"
