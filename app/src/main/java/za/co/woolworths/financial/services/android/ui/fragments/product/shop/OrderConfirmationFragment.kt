@@ -8,7 +8,6 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +19,6 @@ import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
-import za.co.woolworths.financial.services.android.checkout.service.network.ChangeAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -39,8 +37,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class OrderConfirmationFragment : Fragment() {
 
-    var itemsOrder: ArrayList<OrderItem>? = ArrayList(0)
-    var itemsOrderListAdapter: ItemsOrderListAdapter? = null
+    private var itemsOrder: ArrayList<OrderItem>? = ArrayList(0)
+    private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

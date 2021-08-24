@@ -8,7 +8,7 @@
     "food": 215.92
   },
   "wfsCardDetails": {
-    "isWFSCardAvailable": true
+    "isWFSCardAvailable": false
   },
   "errorMessage": "",
   "orderSummary": {
@@ -27,7 +27,11 @@
     "orderCancellable": false,
     "total": 1194.92,
     "discountDetails": {
-      "totalOrderDiscount": 0
+      "totalOrderDiscount": 10,
+      "totalDiscount": 20,
+      "otherDiscount": 3.1,
+      "companyDiscount": 14.26,
+      "wrewardsDiscount": 18
     },
     "suburb": {
       "regionId": "2000030",
