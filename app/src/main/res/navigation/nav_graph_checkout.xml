@@ -37,9 +37,17 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
+
         <action
             android:id="@+id/action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment"
             app:destination="@id/suburbNotDeliverableBottomsheetDialogFragment" />
+        <action
+            android:id="@+id/action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment"
+            app:destination="@id/CheckoutAddAddressReturningUserFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
 
     </fragment>
 
@@ -86,6 +94,13 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment"
+            app:destination="@id/CheckoutAddAddressReturningUserFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
 
     <fragment
