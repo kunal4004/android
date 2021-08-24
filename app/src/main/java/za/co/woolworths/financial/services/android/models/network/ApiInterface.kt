@@ -9,6 +9,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
@@ -1691,4 +1692,19 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body optOutBody: SurveyOptOutBody
     ): Call<Void>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
+    @GET("cart/submittedOrder")
+    fun getSubmittedOrder(
+        @Header("apiId") apiId: String,
+        @Header("sha1Password") sha1Password: String,
+        @Header("deviceVersion") deviceVersion: String,
+        @Header("deviceModel") deviceModel: String,
+        @Header("network") network: String,
+        @Header("os") os: String,
+        @Header("osVersion") osVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+    ): Call<SubmittedOrderResponse>
+
 }

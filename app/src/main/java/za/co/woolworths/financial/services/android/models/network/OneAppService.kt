@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Mock
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
@@ -751,5 +752,18 @@ object OneAppService : RetrofitConfig() {
                         appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().applicationContext)
                 )
         )
+    }
+
+    fun getSubmittedOrder(): Call<SubmittedOrderResponse> {
+        return mApiInterface.getSubmittedOrder(
+            getApiId(),
+            getSha1Password(),
+            getDeviceManufacturer(),
+            getDeviceModel(),
+            getNetworkCarrier(),
+            getOS(),
+            getOsVersion(),
+            getSessionToken(),
+            getDeviceIdentityToken())
     }
 }
