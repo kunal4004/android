@@ -37,13 +37,15 @@ import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class OrderConfirmationFragment : Fragment()  {
+class OrderConfirmationFragment : Fragment() {
 
     var itemsOrder: ArrayList<OrderItem>? = ArrayList(0)
     var itemsOrderListAdapter: ItemsOrderListAdapter? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_order_confirmation, container, false)
     }
 
@@ -108,20 +110,22 @@ class OrderConfirmationFragment : Fragment()  {
                 optionLocation.text = response?.deliveryDetails?.shippingAddress?.address1
             }
 
-            if(response?.deliveryDetails?.deliveryInfos?.size == 2){
+            if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
                 oneDeliveryLinearLayout.visibility = View.GONE
                 foodDeliveryLinearLayout.visibility = View.VISIBLE
                 otherDeliveryLinearLayout.visibility = View.VISIBLE
-                foodDeliveryDateTimeTextView.text = applyBoldBeforeComma(response
-                    .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+                foodDeliveryDateTimeTextView.text = applyBoldBeforeComma(
+                    response
+                        .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+                )
                 otherDeliveryDateTimeTextView.text =
                     response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
-            }
-            else if(response?.deliveryDetails?.deliveryInfos?.size == 1){
+            } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
                 oneDeliveryLinearLayout.visibility = View.VISIBLE
                 foodDeliveryLinearLayout.visibility = View.GONE
                 otherDeliveryLinearLayout.visibility = View.GONE
-                deliveryDateTimeTextView.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+                deliveryDateTimeTextView.text =
+                    applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
             }
         }
     }
@@ -135,30 +139,52 @@ class OrderConfirmationFragment : Fragment()  {
         yourCartTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.basketTotal)
 
-        discountsTextView.text = CurrencyFormatter
-            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.otherDiscount)
+        val otherDiscount = response?.orderSummary?.discountDetails?.otherDiscount
+        if (otherDiscount != null && otherDiscount > 0) {
+            discountsTextView.text = "- ".plus(
+                CurrencyFormatter
+                    .formatAmountToRandAndCentWithSpace(otherDiscount)
+            )
+        } else {
+            discountsLinearLayout.visibility = View.GONE
+            discountsSeparator.visibility = View.GONE
+        }
 
-        companyDiscountTextView.text = CurrencyFormatter
-            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.companyDiscount)
+        val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
+        if (companyDiscount != null && companyDiscount > 0) {
+            companyDiscountTextView.text = "- ".plus(
+                CurrencyFormatter
+                    .formatAmountToRandAndCentWithSpace(companyDiscount)
+            )
+        } else {
+            companyDiscountLinearLayout.visibility = View.GONE
+            companyDiscountSeparator.visibility = View.GONE
+        }
 
         wRewardsVouchersTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
 
-        totalDiscountTextView.text = CurrencyFormatter
-            .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.totalDiscount)
+        val totalDiscount = response?.orderSummary?.discountDetails?.totalDiscount
+        if (totalDiscount != null && totalDiscount > 0) {
+            totalDiscountTextView.text = "- ".plus(
+                CurrencyFormatter
+                    .formatAmountToRandAndCentWithSpace(totalDiscount)
+            )
+        } else {
+            totalDiscountLinearLayout.visibility = View.GONE
+            totalDiscountSeparator.visibility = View.GONE
+        }
 
         deliveryFeeTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
 
-        if(response?.wfsCardDetails?.isWFSCardAvailable == false) {
-            if(response.orderSummary?.discountDetails?.wrewardsDiscount!! > 0.0) {
+        if (response?.wfsCardDetails?.isWFSCardAvailable == false) {
+            if (response.orderSummary?.discountDetails?.wrewardsDiscount!! > 0.0) {
                 setMissedRewardsSavings(response.orderSummary?.discountDetails?.wrewardsDiscount!!)
-            }
-            else if(response.orderSummary?.savedAmount!! > 10) {
+            } else if (response.orderSummary?.savedAmount!! > 10) {
                 setMissedRewardsSavings(response.orderSummary?.savedAmount!!.toDouble())
             }
-        }
-        else{
+        } else {
             missedRewardsLinearLayout.visibility = View.GONE
         }
     }
@@ -168,20 +194,22 @@ class OrderConfirmationFragment : Fragment()  {
         orderStatusTextView.text = response?.orderSummary?.state
         deliveryLocationTextView.text = optionLocation.text
 
-        if(response?.deliveryDetails?.deliveryInfos?.size == 2){
+        if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
             oneDeliveryBottomSheetLinearLayout.visibility = View.GONE
             foodDeliveryLinearLayout.visibility = View.VISIBLE
             otherDeliveryBottomSheetLinearLayout.visibility = View.VISIBLE
-            foodDeliveryDateTimeBottomSheetTextView.text = applyBoldBeforeComma(response
-                .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+            foodDeliveryDateTimeBottomSheetTextView.text = applyBoldBeforeComma(
+                response
+                    .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
+            )
             otherDeliveryDateTimeBottomSheetTextView.text =
                 response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
-        }
-        else if(response?.deliveryDetails?.deliveryInfos?.size == 1){
+        } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
             oneDeliveryBottomSheetLinearLayout.visibility = View.VISIBLE
             foodDeliveryBottomSheetLinearLayout.visibility = View.GONE
             otherDeliveryBottomSheetLinearLayout.visibility = View.GONE
-            deliveryDateTimeBottomSheetTextView.text = applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+            deliveryDateTimeBottomSheetTextView.text =
+                applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
         }
 
         setNumberAndCostItemsBottomSheet(response?.items)
@@ -208,7 +236,7 @@ class OrderConfirmationFragment : Fragment()  {
             listOfItems.add(item)
         }
 
-        addShoppingListButton.setOnClickListener{
+        addShoppingListButton.setOnClickListener {
             NavigateToShoppingList.openShoppingList(activity, listOfItems, "", false)
         }
     }
@@ -229,10 +257,10 @@ class OrderConfirmationFragment : Fragment()  {
     }
 
     private fun initialiseItemsOrder(items: OrderItems?) {
-        if(items?.other?.size!! > 0){
+        if (items?.other?.size!! > 0) {
             itemsOrder?.addAll(items.other!!)
         }
-        if(items.food?.size!! > 0){
+        if (items.food?.size!! > 0) {
             itemsOrder?.addAll(items.food!!)
         }
     }
@@ -241,7 +269,7 @@ class OrderConfirmationFragment : Fragment()  {
         val other: Int = items?.other?.size ?: 0
         val food: Int = items?.food?.size ?: 0
         val number: Int = other.plus(food)
-        numberItemsTextView.text = if(number>1)
+        numberItemsTextView.text = if (number > 1)
             bindString(R.string.number_items, number.toString())
         else
             bindString(R.string.number_item, number.toString())
@@ -253,7 +281,7 @@ class OrderConfirmationFragment : Fragment()  {
         missedRewardsTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(amount)
 
-        wrewardsIconImageView.setOnClickListener{
+        wrewardsIconImageView.setOnClickListener {
             val bottomSheetFragment = WrewardsBottomSheetFragment()
 
             val bundle = Bundle()
@@ -261,7 +289,8 @@ class OrderConfirmationFragment : Fragment()  {
             bottomSheetFragment.arguments = bundle
 
             activity?.supportFragmentManager?.let { supportFragmentManager ->
-                bottomSheetFragment.show(supportFragmentManager, WrewardsBottomSheetFragment.TAG) }
+                bottomSheetFragment.show(supportFragmentManager, WrewardsBottomSheetFragment.TAG)
+            }
         }
     }
 
@@ -270,7 +299,8 @@ class OrderConfirmationFragment : Fragment()  {
         val wordSpan: Spannable = SpannableString(deliveryDateAndTime)
 
         if (!splitDateTime.isNullOrEmpty() &&
-            splitDateTime.size == 2) {
+            splitDateTime.size == 2
+        ) {
             wordSpan.setSpan(
                 StyleSpan(BOLD),
                 0,
