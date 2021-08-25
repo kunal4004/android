@@ -419,7 +419,11 @@ public class Utils {
             }
         });
         AlertDialog dialog = builder.create();
-        dialog.show();
+        if(!((Activity) context).isFinishing())
+        {
+            dialog.show();
+        }
+
 
     }
 
