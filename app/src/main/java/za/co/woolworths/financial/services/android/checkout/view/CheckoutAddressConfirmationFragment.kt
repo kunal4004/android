@@ -551,6 +551,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         rcvStoreRecyclerView?.apply {
             val storesCount = (validatedSuburbProductResponse?.stores?.size ?: 0)
             if (storesCount == 0) {
+                setMarginToStoreListView()
                 changeTextView.visibility = View.GONE
                 btnAddressConfirmation.text = getString(R.string.change_suburb)
                 changeProvinceTextView.visibility = View.VISIBLE
