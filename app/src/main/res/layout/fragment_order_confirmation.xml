@@ -6,43 +6,12 @@
     android:layout_height="match_parent"
     android:background="@color/default_background">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/orderToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/fourty_dp"
-        android:background="@drawable/appbar_background"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/nestedScrollView"
-        android:minHeight="?attr/actionBarSize">
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/orderIdTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|center_vertical"
-            android:letterSpacing="0.2"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="@dimen/fourteen_sp"
-            app:WTextView_font="bold" />
-
-        <ImageView
-            android:id="@+id/btnClose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="@dimen/sixteen_dp"
-            android:src="@drawable/close_24" />
-
-    </androidx.appcompat.widget.Toolbar>
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/fourty_five_dp"
         android:layout_marginBottom="@dimen/ninety_dp"
-        app:layout_constraintTop_toBottomOf="@+id/orderToolbar">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,6 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="@+id/nestedScrollView">
+
         <include layout="@layout/order_details_bottom_sheet" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

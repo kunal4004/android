@@ -137,7 +137,7 @@
             android:id="@+id/otherDeliveryDateTimeTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:textColor="@color/black"
+            android:textColor="@color/gray"
             style="@style/myriad_pro_regular"
             android:textSize="@dimen/twelve_sp"
             android:gravity="end"

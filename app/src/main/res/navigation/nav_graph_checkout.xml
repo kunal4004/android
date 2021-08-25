@@ -62,6 +62,14 @@
     </fragment>
 
     <fragment
+        android:id="@+id/OrderConfirmationFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment"
+        android:label="Checkout Order Confirmation"
+        tools:layout="@layout/fragment_order_confirmation">
+
+    </fragment>
+
+    <fragment
         android:id="@+id/checkoutAddressConfirmationFragment"
         android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment"
         android:label="Checkout Address Confirmation"

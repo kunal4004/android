@@ -18,12 +18,23 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             app:layout_scrollFlags="scroll|enterAlways">
 
             <TextView
                 android:id="@+id/toolbarText"
                 style="@style/appToolbarStyle"
+                android:layout_gravity="center|center_vertical"
                 android:text="" />
+
+            <ImageView
+                android:id="@+id/btnClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                android:src="@drawable/close_24"
+                android:visibility="gone" />
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
