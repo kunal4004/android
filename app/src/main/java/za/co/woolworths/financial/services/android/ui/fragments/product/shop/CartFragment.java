@@ -403,24 +403,26 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         navigateToCheckout(response);
                         break;
                     default:
-                        showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON);
+                        if(response.getResponse() != null){
+                            showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, response.getResponse().getMessage());
+                        }
                         break;
                 }
             }
 
             @Override
             public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
-                showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON);
+                showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, error.getMessage());
             }
         }, SavedAddressResponse.class));
     }
 
-    private void showErrorDialog(int errorType) {
+    private void showErrorDialog(int errorType, String errorMessage) {
         if(getActivity() != null) {
             Activity activity = getActivity();
             Intent intent = new Intent(activity, ErrorHandlerActivity.class);
             intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType);
-            intent.putExtra(ErrorHandlerActivity.ERROR_MESSAGE, "");
+            intent.putExtra(ErrorHandlerActivity.ERROR_MESSAGE, errorMessage);
             activity.startActivityForResult(intent, ErrorHandlerActivity.RESULT_RETRY);
         }
     }

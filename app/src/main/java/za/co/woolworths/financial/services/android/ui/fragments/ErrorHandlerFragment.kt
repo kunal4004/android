@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments
 import android.app.Activity
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
@@ -92,7 +93,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 errorTitle?.text =
                     getString(R.string.common_error_unfortunately_something_went_wrong)
                 errorDescription?.text =
-                    getString(R.string.common_error_message_without_contact_info)
+                    if(TextUtils.isEmpty(errorMessage))
+                      getString(R.string.common_error_message_without_contact_info)
+                    else errorMessage
                 actionButton?.text = getString(R.string.retry)
                 cancelButton?.visibility = View.GONE
                 enableBackButton()
