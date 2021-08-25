@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 /**
  * Created by Kunal Uttarwar on 26/05/21.
  */
-class CheckoutActivity : AppCompatActivity() {
+class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     private var navHostFrag = NavHostFragment()
     var savedAddressResponse: SavedAddressResponse? = null
@@ -70,6 +70,17 @@ class CheckoutActivity : AppCompatActivity() {
         toolbar?.visibility = View.GONE
     }
 
+    fun showTitleWithCrossButton(titleText: String) {
+        toolbar?.visibility = View.VISIBLE
+        setSupportActionBar(toolbar)
+        btnClose?.visibility = View.VISIBLE
+        btnClose.setOnClickListener(this)
+        toolbarText.text = titleText
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+        }
+    }
+
     private fun loadNavHostFragment() {
         navHostFrag = navHostFragment as NavHostFragment
         val graph =
@@ -77,7 +88,7 @@ class CheckoutActivity : AppCompatActivity() {
 
         graph.startDestination = when {
             savedAddressResponse?.addresses.isNullOrEmpty() -> {
-                 R.id.CheckoutAddAddressNewUserFragment
+                R.id.CheckoutAddAddressNewUserFragment
             }
             TextUtils.isEmpty(savedAddressResponse?.defaultAddressNickname) -> {
                 R.id.checkoutAddressConfirmationFragment
@@ -118,6 +129,14 @@ class CheckoutActivity : AppCompatActivity() {
             }
             else -> {
                 super.onBackPressed()
+            }
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btnClose -> {
+                onBackPressed()
             }
         }
     }
