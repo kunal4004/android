@@ -154,6 +154,14 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					super.onReceivedSslError(view, null, error);
 				}
 			}
+
+			@Override
+			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+				super.doUpdateVisitedHistory(view, url, isReload);
+				if (treatmentPlan && url.equals(KotlinUtils.collectionsExitUrl)) {
+					finishActivity();
+				}
+			}
 		});
 		webInternalPage.loadUrl(mExternalLink);
 
@@ -172,8 +180,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		});
 	}
 
-	private void handleUri(WebView view, Uri uri) {
-		String url = uri.toString();
+	private void handleUri(WebView view, Uri uri) {String url = uri.toString();
 		if (url.contains("mailto:")) {
 			Utils.sendEmail(url, "",getApplicationContext());
 		}if (url.startsWith("tel:")) {
@@ -254,11 +261,6 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void goBackInWebView() {
-		if (treatmentPlan &&
-				webInternalPage.getUrl().equals(KotlinUtils.collectionsRedirectUrl)) {
-			finishActivity();
-		}
-
 		if (NetworkManager.getInstance().isConnectedToNetwork(WInternalWebPageActivity.this)) {
 			WebBackForwardList history = webInternalPage.copyBackForwardList();
 			int index = -1;
@@ -269,6 +271,10 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					mErrorHandlerView.hideErrorHandlerLayout();
 					webInternalPage.goBackOrForward(index);
 					url = history.getItemAtIndex(-index).getUrl();
+
+					if (treatmentPlan && url.equals(KotlinUtils.collectionsIdUrl)) {
+						finishActivity();
+					}
 					break;
 				}
 				index--;

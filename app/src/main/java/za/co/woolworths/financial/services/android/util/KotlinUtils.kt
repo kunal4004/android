@@ -67,7 +67,8 @@ class KotlinUtils {
 
         const val DELAY: Long = 900
         const val productImageUrlPrefix = "https://images.woolworthsstatic.co.za/"
-        const val collectionsRedirectUrl = "https://qa.woolworths.wfs.co.za/CustomerCollections/IdVerification"
+        const val collectionsIdUrl = "https://qa.woolworths.wfs.co.za/CustomerCollections/IdVerification"
+        const val collectionsExitUrl = "https://qa.woolworths.wfs.co.za/CustomerCollections/Exit"
         const val TREATMENTPLAN = "treamentPlan"
 
         fun highlightTextInDesc(

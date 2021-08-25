@@ -87,14 +87,18 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                                 FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
                                 arguments,
                                 this)
-                            if(WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode == NATIVE_BROWSER){
+                            //Commented codes for testing webview flow only
+                            KotlinUtils.openLinkInInternalWebView(activity,
+                                WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl, true)
+
+                            /*if(WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode == NATIVE_BROWSER){
                                 KotlinUtils.openUrlInPhoneBrowser(
                                     WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl, this)
 
                             } else if(WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode == WEBVIEW){
                                 KotlinUtils.openLinkInInternalWebView(activity,
                                     WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl, true)
-                            }
+                            }*/
                         }
                     }
                     MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()
