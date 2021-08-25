@@ -54,11 +54,14 @@ import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncrease;
 import za.co.woolworths.financial.services.android.models.dto.CreditView;
+import za.co.woolworths.financial.services.android.models.dto.CustomerFeedback;
 import za.co.woolworths.financial.services.android.models.dto.DashConfig;
 import za.co.woolworths.financial.services.android.models.dto.InAppReview;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
+import za.co.woolworths.financial.services.android.models.dto.Liquor;
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
@@ -89,6 +92,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Nullable
     private static PayMyAccount mPayMyAccount;
     private static InAppChat inAppChat;
+    private static Boolean isProductItemForLiquorInventoryPending = false;
+    private static ProductList productItemForLiquorInventory = null;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;
@@ -132,6 +137,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static ClickAndCollect clickAndCollect;
     private static UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes;
     private static CreditCardDelivery creditCardDelivery;
+    private static CustomerFeedback customerFeedback;
 
     private Activity mCurrentActivity = null;
 
@@ -144,6 +150,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private CreditLimitIncrease creditLimitIncrease;
     private static boolean isBadgesRequired;
     private static InAppReview inAppReview;
+    private static Liquor liquor;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -646,6 +653,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.creditCardDelivery = creditCardDelivery;
     }
 
+    public static CustomerFeedback getCustomerFeedback() {
+        return customerFeedback != null ? customerFeedback : new CustomerFeedback();
+    }
+
+    public static void setCustomerFeedback(CustomerFeedback customerFeedback) {
+        WoolworthsApplication.customerFeedback = customerFeedback;
+    }
+
     @Nullable
     public static CreditView getCreditView() {
         return creditView;
@@ -709,6 +724,30 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.inAppReview = inAppReview;
     }
 
+    public static Liquor getLiquor() {
+        return liquor;
+    }
+
+    public static void setLiquor(Liquor liquor) {
+        WoolworthsApplication.liquor = liquor;
+    }
+
+    public static void setProductItemForInventory(ProductList productList) {
+        productItemForLiquorInventory = productList;
+    }
+
+    public static void setCallForLiquorInventory(Boolean isPending) {
+        isProductItemForLiquorInventoryPending = isPending;
+    }
+
+    public static Boolean isProductItemForLiquorInvetoryPending() {
+        return isProductItemForLiquorInventoryPending;
+    }
+
+    public static ProductList getProductItemForInventory() {
+        return productItemForLiquorInventory;
+    }
+
     public static void setCartCheckoutLinkWithParams(String cartCheckoutLinkWithParams) {
         WoolworthsApplication.cartCheckoutLinkWithParams = cartCheckoutLinkWithParams;
     }
@@ -716,4 +755,5 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public static String getCartCheckoutLinkWithParams() {
         return cartCheckoutLinkWithParams;
     }
+
 }

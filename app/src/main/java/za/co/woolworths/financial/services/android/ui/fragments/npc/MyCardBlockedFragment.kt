@@ -67,6 +67,8 @@ class MyCardBlockedFragment : MyCardExtension() {
                 btnGetReplacementCard?.visibility = GONE
                 btnLinkACard?.visibility = GONE
                 callUsNowButton?.visibility = VISIBLE
+                cardStatusTagTextView?.text = bindString(R.string.active)
+                imStoreCard?.setImageResource(R.drawable.w_store_card)
             }
         }
 

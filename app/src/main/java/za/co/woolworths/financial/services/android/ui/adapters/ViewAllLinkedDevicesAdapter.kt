@@ -2,20 +2,13 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
 import android.text.TextUtils
-import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.item_view_all_linked_device_layout.view.*
-import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy.view.*
-import kotlinx.android.synthetic.main.layout_credit_report_privacy_policy_list_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: View.OnClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -69,7 +62,8 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
                 viewAllDeviceNameTextView?.text = primaryDevice?.deviceName
                 viewAllDeviceLocationTextView?.text = if (TextUtils.isEmpty(primaryDevice?.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else primaryDevice?.locationLinked
                 viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, primaryDevice?.linkedDate)
-
+                viewAllDeviceDeleteImageView?.visibility =  View.VISIBLE
+                viewAllDeviceEditImageView?.visibility =  View.GONE
                 viewAllDeviceDeleteImageView?.setTag(R.id.viewAllDeviceDeleteImageView, primaryDevice)
                 viewAllDeviceDeleteImageView?.setOnClickListener(onClickListener)
             }
@@ -103,8 +97,10 @@ class ViewAllLinkedDevicesAdapter(val context: Context, val onClickListener: Vie
                         listItem.viewAllDeviceNameTextView?.text = it.deviceName
                         listItem.viewAllDeviceSubtitleTextView?.text = context.getString(R.string.view_all_device_linked_on, it.linkedDate)
                         listItem.viewAllDeviceLocationTextView?.text = if(TextUtils.isEmpty(it.locationLinked)) context.getString(R.string.view_all_device_location_n_a) else it.locationLinked
-                        listItem.viewAllDeviceDeleteImageView?.setTag(R.id.viewAllDeviceDeleteImageView, it)
-                        listItem.viewAllDeviceDeleteImageView?.setOnClickListener(onClickListener)
+                        listItem.viewAllDeviceDeleteImageView?.visibility =  View.GONE
+                        listItem.viewAllDeviceEditImageView?.visibility =  View.VISIBLE
+                        listItem.viewAllDeviceEditImageView?.setTag(R.id.viewAllDeviceEditImageView, it)
+                        listItem.viewAllDeviceEditImageView?.setOnClickListener(onClickListener)
                         itemView.viewAllOtherDevicesContainer.addView(listItem)
                     }
                 }
