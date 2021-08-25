@@ -26,14 +26,16 @@ import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenA
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.CARD
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.HttpCookie
 import java.util.*
 
@@ -257,6 +259,22 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         card.absaAccountToken = mCreditCardToken
         account?.cards = mutableListOf(card)
         val accountList = account?.let { account -> mutableListOf(account) }
+
+        var vocTriggerEvent: VocTriggerEvent? = null
+        account?.let {
+            vocTriggerEvent = when {
+                it.productGroupCode.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_SC_STATEMENT
+                }
+                it.productGroupCode.equals(AccountsProductGroupCode.PERSONAL_LOAN.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_PL_STATEMENT
+                }
+                else -> {
+                    VocTriggerEvent.CHAT_CC_STATEMENT
+                }
+            }
+        }
+
         chatAccountProductLandingPage?.first?.let {
             ChatFloatingActionButtonBubbleView(
                 activity = this@AbsaStatementsActivity,
@@ -268,7 +286,8 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                 applyNowState = it,
                 scrollableView = paymentOptionScrollView,
                 notificationBadge = badge,
-                onlineChatImageViewIndicator = onlineIndicatorImageView
+                onlineChatImageViewIndicator = onlineIndicatorImageView,
+                vocTriggerEvent = vocTriggerEvent
             )
                 .build()
         }

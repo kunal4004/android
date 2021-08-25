@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linkPrimaryDeviceOtpNavigation"
+    app:startDestination="@id/linkPrimaryDeviceOTPFragment">
+
+    <fragment
+        android:id="@+id/linkPrimaryDeviceOTPFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.LinkPrimaryDeviceOTPFragment"
+        tools:layout="@layout/fragment_link_device_otp"
+        android:label="fragment_link_primary_device_otp">
+        <action
+            android:id="@+id/action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment"
+            app:destination="@id/resendOTPBottomSheetFragment" />
+
+        <action
+            android:id="@+id/action_to_viewAllLinkedDevicesFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/viewAllLinkedDevicesFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/resendOTPBottomSheetFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.mypreferences.ResendOTPBottomSheetFragment"
+        tools:layout="@layout/fragment_link_device_resend_otp"
+        android:label="fragment_link_device_resend_otp" />
+</navigation>

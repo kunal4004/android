@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/graph_voice_of_customer_navigation"
+    app:startDestination="@id/surveyVocFragment">
+
+    <fragment
+        android:id="@+id/surveyVocFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.voc.SurveyVocFragment"
+        android:label="fragment_survey_voc"
+        tools:layout="@layout/fragment_survey_voc" >
+        <action
+            android:id="@+id/action_surveyVocFragment_to_surveyProcessRequestVocFragment"
+            app:destination="@id/surveyProcessRequestVocFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/surveyProcessRequestVocFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.voc.SurveyProcessRequestVocFragment"
+        android:label="SurveyProcessRequestVocFragment"
+        tools:layout="@layout/process_your_request_fragment" />
+
+</navigation>

@@ -32,7 +32,6 @@ enum class CreditCardActivationState(val value: String) {
 
 enum class CreditCardDeliveryStatus {
     CARD_RECEIVED, CARD_DELIVERED, APPOINTMENT_SCHEDULED, AWAITING_INSTRUCTION, CANCELLED, CARD_SHREDDED, CARD_NOT_RECEIVED, DEFAULT
-
 }
 
 enum class AccountsProductGroupCode(val groupCode: String) {
