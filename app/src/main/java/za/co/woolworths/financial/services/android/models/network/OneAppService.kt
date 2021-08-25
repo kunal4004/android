@@ -218,14 +218,12 @@ object OneAppService : RetrofitConfig() {
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.getProducts(getDeviceModel(), getDeviceManufacturer(), getOS(),
-                getNetworkCarrier(), getApiId(), "", "", getSha1Password(), "",
+            mApiInterface.getProducts("", "",  "",
                 "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
                 requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
                 requestParams.refinement, suburbId = suburbId, storeId = storeId)
         } else {
-            mApiInterface.getProductsWithoutLocation(getDeviceModel(), getDeviceManufacturer(), getOS(),
-                getNetworkCarrier(), getApiId(), "", "", getSha1Password(), getSessionToken(),
+            mApiInterface.getProductsWithoutLocation("", "", getSessionToken(),
                 getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value,
                 requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId,
                 storeId = storeId)
@@ -292,14 +290,12 @@ object OneAppService : RetrofitConfig() {
         val loc = getMyLocation()
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.productDetail(getDeviceModel(), getDeviceManufacturer(),
-                    getOS(), getNetworkCarrier(), getApiId(), "", "",
-                    getSha1Password(), loc.longitude, loc.latitude, getSessionToken(), getDeviceIdentityToken(),
+            mApiInterface.productDetail("", "",
+                     loc.longitude, loc.latitude, getSessionToken(), getDeviceIdentityToken(),
                     productId, skuId, suburbId, storeId)
         } else {
-            mApiInterface.productDetail(getDeviceModel(), getDeviceManufacturer(),
-                    getOS(), getNetworkCarrier(), getApiId(), "", "",
-                    getSha1Password(), getSessionToken(), getDeviceIdentityToken(),
+            mApiInterface.productDetail( "", "",
+                    getSessionToken(), getDeviceIdentityToken(),
                     productId, skuId, suburbId, storeId)
         }
     }

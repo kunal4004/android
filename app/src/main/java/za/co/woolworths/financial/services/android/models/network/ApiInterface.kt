@@ -539,14 +539,8 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("productsV2/{productId}")
     fun productDetail(
-            @Header("deviceModel") deviceModel: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("os") os: String,
-            @Header("network") network: String,
-            @Header("apiId") apiId: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sha1Password") sha1Password: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productId") productId: String,
@@ -559,14 +553,8 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("productsV2/{productId}")
     fun productDetail(
-            @Header("deviceModel") deviceModel: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("os") os: String,
-            @Header("network") network: String,
-            @Header("apiId") apiId: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sha1Password") sha1Password: String,
             @Header("longitude") longitude: Double,
             @Header("latitude") latitude: Double,
             @Header("sessionToken") sessionToken: String,
@@ -648,14 +636,9 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("searchSortAndFilterV2")
     fun getProducts(
-            @Header("deviceModel") deviceModel: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("os") os: String,
-            @Header("network") network: String,
-            @Header("apiId") apiId: String,
+
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sha1Password") sha1Password: String,
             @Header("longitude") longitude: String,
             @Header("latitude") latitude: String,
             @Header("sessionToken") sessionToken: String,
@@ -673,14 +656,9 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("searchSortAndFilterV2")
     fun getProductsWithoutLocation(
-            @Header("deviceModel") deviceModel: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("os") os: String,
-            @Header("network") network: String,
-            @Header("apiId") apiId: String,
+
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sha1Password") sha1Password: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("searchTerm") searchTerm: String,
