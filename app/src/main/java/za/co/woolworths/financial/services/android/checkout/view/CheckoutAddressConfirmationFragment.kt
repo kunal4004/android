@@ -163,7 +163,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun setSuburb() {
-        localSuburbId?.let { suburbId ->
+        localSuburbId.let { suburbId ->
             checkoutAddressConfirmationViewModel.setSuburb(suburbId).observe(viewLifecycleOwner, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
@@ -216,7 +216,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         addressConfirmationDelivery.visibility = View.GONE
         suburbSelectionLayout.visibility = View.GONE
-        btnConfirmLayout.visibility = View.VISIBLE
+        if (selectedSuburb.storeAddress == null) {
+            removeMarginToStoreListView()
+        } else
+            setMarginToStoreListView()
         clickNCollectTitleLayout.visibility = View.VISIBLE
         addressConfirmationClicknCollect.visibility = View.VISIBLE
         showStoreListView(suburbId)
@@ -301,6 +304,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             )
 
             selectedSuburb.storeAddress = storeAddress
+            setMarginToStoreListView()
             setEarliestDeliveryDates(validateStoreList)
         }
     }
@@ -390,8 +394,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             showStoreList()
         } else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
-            storesFoundTitle.text = resources.getQuantityString(R.plurals.stores_near_me, 0, 0)
-            localSuburbId?.let { it ->
+            localSuburbId.let { it ->
                 checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
                     .observe(viewLifecycleOwner, {
                         when (it.responseStatus) {
@@ -449,7 +452,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
-        btnConfirmLayout.visibility = View.GONE
+        removeMarginToStoreListView()
         suburbSelectionLayout.visibility = View.VISIBLE
         suburbSelectionTitle.visibility = View.VISIBLE
         suburbSelectionSubTitle.visibility = View.VISIBLE
@@ -480,7 +483,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
-                            btnConfirmLayout.visibility = View.VISIBLE
                             if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
                                 //showNoStoresError()
                             } else {
@@ -500,16 +502,29 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         }
                         ResponseStatus.LOADING -> {
                             loadingProgressBar.visibility = View.VISIBLE
-                            btnConfirmLayout.visibility = View.GONE
+                            removeMarginToStoreListView()
                         }
                         ResponseStatus.ERROR -> {
                             loadingProgressBar.visibility = View.GONE
-                            btnConfirmLayout.visibility = View.VISIBLE
                         }
                     }
                 })
             }
         }
+    }
+
+    private fun setMarginToStoreListView() {
+        btnConfirmLayout.visibility = View.VISIBLE
+        val param = addressConfirmationClicknCollect.layoutParams as ViewGroup.MarginLayoutParams
+        param.setMargins(0, 192, 0, 104)
+        addressConfirmationClicknCollect.layoutParams = param
+    }
+
+    private fun removeMarginToStoreListView() {
+        btnConfirmLayout.visibility = View.GONE
+        val param = addressConfirmationClicknCollect.layoutParams as ViewGroup.MarginLayoutParams
+        param.setMargins(0, 192, 0, 10)
+        addressConfirmationClicknCollect.layoutParams = param
     }
 
     private fun showStoreList() {

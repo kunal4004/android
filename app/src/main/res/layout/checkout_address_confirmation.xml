@@ -74,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/fifty_two_dp"
-        android:layout_marginBottom="@dimen/hundred_and_four_dp"
+        android:layout_marginBottom="@dimen/ten_dp"
         android:visibility="gone" />
 
     <LinearLayout
