@@ -40,13 +40,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
     @GET("user/accounts")
     fun getAccounts(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -56,13 +50,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/account/{productOfferingId}/history")
     fun getAccountTransactionHistory(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -72,13 +60,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/accounts")
     fun getAccountsByProductOfferingId(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -88,13 +70,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
     @GET("user/vouchers")
     fun getVouchers(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -104,13 +80,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/vouchers/count")
     fun getVouchersCount(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -119,13 +89,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/session")
     fun login(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -137,13 +101,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/loan/request")
     fun issueLoan(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -154,13 +112,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/loan/authorise")
     fun authoriseLoan(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -170,13 +122,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600")
     @GET("mobileconfigs")
     suspend fun getConfig(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Header("appVersion") appVersion: String
@@ -185,13 +130,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/locations")
     fun queryServiceGetStore(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -204,13 +143,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/locations")
     fun getStoresLocation(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -225,13 +158,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("locationItems/{sku}")
     fun getStoresLocationItem(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("latitude") latitude: String,
@@ -246,13 +173,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/messages")
     fun getMessages(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -265,13 +186,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("user/messages/{id}")
     fun getDeleteresponse(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -282,13 +197,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @PUT("user/messages")
     fun setReadMessages(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -299,13 +208,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/devices")
     fun createUpdateDevice(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -316,13 +219,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/cli/DEABanks")
     fun getDeaBanks(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -334,13 +231,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/cli/DEABankAccountTypes")
     fun getBankAccountTypes(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -352,13 +243,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/cli/application")
     fun cliCreateApplication(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -368,13 +253,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/cli/offer/{cliId}")
     fun cliUpdateApplication(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -385,13 +264,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/cli/offer/{cliId}/decision")
     fun createOfferDecision(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -402,13 +275,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/cli/offer/{cliId}/POI")
     fun cliSubmitPOI(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -419,13 +286,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:0")
     @GET("user/cli/offerActive")
     fun getActiveOfferRequest(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -435,26 +296,14 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/cli/offer/email")
     fun cliSendEmailRquest(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CLIEmailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/cli/offer/bankingDetails")
     fun cliUpdateBankRequest(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -464,13 +313,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:900")
     @GET("content/promotions")
     fun getPromotions(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -480,14 +323,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("categories")
     fun getRootCategories(
-            @Header("osVersion") osVersion: String,
-            @Header("apiId") apiId: String,
-            @Header("os") os: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("apiKey") userAgent: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             //Optional params
@@ -501,14 +336,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("categories/{cat}")
     fun getSubCategory(
-            @Header("osVersion") osVersion: String,
-            @Header("apiId") apiId: String,
-            @Header("os") os: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("apiKey") apiKey: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("cat") category: String,
@@ -523,13 +350,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30", "Accept-Encoding: gzip")
     @GET("content/faq")
     fun getFAQ(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -539,7 +359,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("products/{productId}")
     fun getProductDetail(
-            @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
             @Header("os") os: String,
@@ -556,7 +375,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("products/{productId}")
     fun getProductDetail(
-            @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
             @Header("os") os: String,
@@ -574,7 +392,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("products/{productId}")
     fun getProductDetail(
-            @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
             @Header("os") os: String,
@@ -594,26 +411,14 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
     @GET("reward/cardDetails")
     fun getCardDetails(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CardDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/statements")
     fun getUserStatement(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -627,13 +432,7 @@ interface ApiInterface {
     @GET("user/statements/{docId}")
     @Streaming
     fun getStatement(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -645,13 +444,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/statements")
     fun sendUserStatement(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -662,13 +455,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location")
     fun getProvinces(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -678,13 +465,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/{locationId}")
     fun getSuburbs(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -695,13 +476,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cart/suburb")
     fun setDeliveryLocationSuburb(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body suburbRequest: SetDeliveryLocationSuburbRequest): Call<SetDeliveryLocationSuburbResponse>
@@ -709,13 +484,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("cartV2")
     fun getShoppingCart(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ShoppingCartResponse>
@@ -723,13 +492,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cart/item")
     fun addItemToCart(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -739,13 +502,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("cartV2/item")
     fun removeItemFromCart(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("commerceId") commerceId: String): Call<ShoppingCartResponse>
@@ -753,13 +510,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("cart/summary")
     fun getCartSummary(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -768,13 +519,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("cartV2/item")
     fun removeAllCartItems(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<ShoppingCartResponse>
 
@@ -782,13 +527,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @PUT("cartV2/item/{commerceId}")
     fun changeQuantityRequest(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -800,7 +539,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("productsV2/{productId}")
     fun productDetail(
-            @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
             @Header("os") os: String,
@@ -821,7 +559,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("productsV2/{productId}")
     fun productDetail(
-            @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
             @Header("os") os: String,
@@ -843,26 +580,14 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("list")
     fun getShoppingLists(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<ShoppingListsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("list")
     fun createList(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body name: CreateList): Call<ShoppingListsResponse>
@@ -870,13 +595,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("list/{id}")
     fun getShoppingListItems(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String): Call<ShoppingListItemsResponse>
@@ -884,13 +603,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("list/{productId}/item")
     fun addToList(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("productId") productId: String,
@@ -899,13 +612,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("list/{id}")
     fun deleteShoppingList(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String): Call<ShoppingListsResponse>
@@ -913,13 +620,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("list/{listId}/item/{id}")
     fun deleteShoppingListItem(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("listId") listId: String,
@@ -930,13 +631,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("inventory/multiSku/{multipleSku}")
     fun getInventorySKU(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("multipleSku") multipleSku: String): Call<SkuInventoryResponse>
@@ -944,13 +639,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("inventory/store/{store_id}/multiSku/{multipleSku}")
     fun getInventorySKUForStore(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("store_id") store_id: String,
@@ -959,7 +648,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("searchSortAndFilterV2")
     fun getProducts(
-            @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
             @Header("os") os: String,
@@ -985,7 +673,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("searchSortAndFilterV2")
     fun getProductsWithoutLocation(
-            @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
             @Header("os") os: String,
@@ -1011,13 +698,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cart/checkoutComplete")
     fun postCheckoutSuccess(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Body checkoutSuccess: CheckoutSuccess): Call<Void>
@@ -1025,26 +706,14 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("order")
     fun getOrders(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<OrdersResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("order/{id}")
     fun getOrderDetails(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String): Call<OrderDetailsResponse>
@@ -1052,13 +721,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("order/{id}")
     fun addOrderToList(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("id") id: String,
@@ -1067,13 +730,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("order/taxInvoice/{taxNoteNumber}")
     fun getTaxInvoice(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("taxNoteNumber") taxNoteNumber: String): Call<OrderTaxInvoiceResponse>
@@ -1081,13 +738,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/creditCardToken")
     fun getCreditCardToken(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1097,13 +748,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("accounts/storecard/blockStoreCard/{productOfferingId}")
     fun blockStoreCard(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1114,13 +758,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("accounts/storecard/otp")
     fun getLinkNewCardOTP(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1130,13 +768,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("accounts/storecard/linkStoreCard")
     fun linkStoreCard(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1146,13 +777,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("accounts/storecard/cards")
     fun getStoreCards(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1164,13 +788,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("accounts/storecard/unblockStoreCard/{productOfferingId}")
     fun unblockStoreCard(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1180,13 +798,7 @@ interface ApiInterface {
 
     @GET("user/locations/geofence")
     fun getStoresForNPC(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1200,13 +812,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("order/cancelOrder")
     fun queryServiceCancelOrder(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1216,13 +822,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("absa/activateCardAccount")
     fun activateCreditCard(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1232,13 +832,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("accounts/otp/retrieve")
     fun retrieveOTP(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1249,13 +843,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("accounts/otp/validate/{productOfferingId}")
     fun validateOTP(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1266,13 +854,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("event/{featureName}/{appScreen}")
     fun postEvent(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1283,13 +865,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("payments/payu/methods")
     fun getPaymentPAYUMethod(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1298,13 +874,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("payments/payu/pay")
     fun postPayUpPay(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1315,13 +885,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("payments/payu/result")
     fun getPaymentPayUResult(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1336,13 +900,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/validateSelectedSuburb/{suburbId}")
     fun validateSelectedSuburb(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1353,13 +911,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("payments/payu/methods/{paymenToken}")
     fun payURemovePaymentMethod(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1370,13 +922,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cartV2/applyVouchers")
     fun applyVouchers(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1386,13 +932,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("accounts/cardDelivery/status")
     fun cardDeliveryStatus(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1403,13 +943,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("accounts/cardDelivery/possibleAddress")
     fun possibleAddress(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1421,13 +955,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("accounts/cardDelivery/timeslots")
     fun availableTimeSlots(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1441,13 +969,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @PUT("accounts/cardDelivery/scheduleDelivery")
     fun scheduleDelivery(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1461,13 +983,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cartV2/applyPromoCode")
     fun applyPromoCode(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1477,13 +993,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cartV2/removePromoCode")
     fun removePromoCode(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1493,13 +1003,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("productsV2/content/{contentId}")
     fun getSizeGuideContent(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1510,13 +1014,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/otp/retrieve")
     fun getLinkDeviceOTP(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
@@ -1527,13 +1025,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @PUT("user/device/{deviceIdentityId}")
     fun changePrimaryDeviceApi(
-        @Header("apiId") apiId: String,
-        @Header("sha1Password") sha1Password: String,
-        @Header("deviceVersion") deviceVersion: String,
-        @Header("deviceModel") deviceModel: String,
-        @Header("network") network: String,
-        @Header("os") os: String,
-        @Header("osVersion") osVersion: String,
+
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
@@ -1546,13 +1038,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/device")
     fun linkDeviceApi(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1564,13 +1050,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
     @GET("user/device")
     fun getAllLinkedDevices(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
@@ -1580,13 +1060,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("user/device/{deviceIdentityId}")
     fun deleteDevice(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1600,13 +1074,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("accounts/storecard/email")
     fun confirmStoreCardEmail(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1616,13 +1084,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("survey")
     fun getVocSurvey(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1632,13 +1094,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("survey/{surveyId}/replies")
     fun submitVocSurveyReplies(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
@@ -1649,13 +1105,7 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("survey/optout")
     fun optOutVocSurvey(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
+          
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
