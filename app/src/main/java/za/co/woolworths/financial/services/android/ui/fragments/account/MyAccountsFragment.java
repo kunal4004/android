@@ -1441,10 +1441,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            Utils.clearCacheHistory(activity);
-                        }
+                        Utils.clearCacheHistory();
                     } catch (Exception pE) {
                         Log.d(TAG, pE.getMessage());
                     }
