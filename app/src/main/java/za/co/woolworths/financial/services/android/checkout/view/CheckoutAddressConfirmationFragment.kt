@@ -174,12 +174,14 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 suburb.storeAddress.address1
                             )
                         }
+                        val shoppingDeliveryLocation = ShoppingDeliveryLocation(
+                            selectedProvince,
+                            null,
+                            store
+                        )
+                        shoppingDeliveryLocation.storePickup = true
                         Utils.savePreferredDeliveryLocation(
-                            ShoppingDeliveryLocation(
-                                selectedProvince,
-                                null,
-                                store
-                            )
+                            shoppingDeliveryLocation
                         )
                         if (!isDeliverySelected) {
                             // call slot selection
@@ -438,6 +440,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 changeTextView.visibility = View.GONE
                                 btnAddressConfirmation.text = getString(R.string.change_suburb)
                                 changeProvinceTextView.visibility = View.VISIBLE
+                                storesFoundTitle.visibility = View.GONE
                             }
                             ResponseStatus.ERROR -> {
                                 loadingProgressBar.visibility = View.GONE
@@ -558,6 +561,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 changeProvinceTextView.visibility = View.VISIBLE
             } else
                 changeProvinceTextView.visibility = View.GONE
+            storesFoundTitle.visibility = View.VISIBLE
             storesFoundTitle.text =
                 resources.getQuantityString(R.plurals.stores_near_me, storesCount, storesCount)
             layoutManager = activity?.let { LinearLayoutManager(it) }

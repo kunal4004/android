@@ -227,6 +227,7 @@
             android:weightSum="1"
             android:paddingTop="@dimen/fifteen_dp"
             android:paddingBottom="@dimen/fifteen_dp"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
             app:layout_constraintRight_toRightOf="@+id/right_guideline"
             app:layout_constraintTop_toBottomOf="@+id/otherDeliverySeparator">
@@ -316,6 +317,7 @@
             android:letterSpacing="0.2"
             android:text="@string/order_again"
             app:WButton_font="medium_bold"
+            android:visibility="gone"
             android:layout_marginTop="@dimen/twenty_dp"
             android:layout_marginBottom="@dimen/twenty_dp"
             app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
