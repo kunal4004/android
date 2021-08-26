@@ -372,7 +372,12 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     override fun executeCreditCardTokenService() {
-        if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, true) || mCardPresenterImpl?.getAccount()?.productOfferingGoodStanding != true) return
+        if (!mCardPresenterImpl?.getAccount()?.productGroupCode.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, true) || mCardPresenterImpl?.getAccount()?.productOfferingGoodStanding != true){
+            // WOP-12148 - Hide manage my card option for credit card when productOfferingGoodStanding false
+            manageCardGroup?.visibility  = GONE
+            return
+        }
+
         activity?.apply {
             includeAccountDetailHeaderView?.visibility = GONE
             creditCardActivationView?.visibility = GONE
