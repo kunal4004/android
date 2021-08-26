@@ -156,8 +156,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             } else {
                 // if it is store then call setSuburb API.
                 setSuburb()
-                // call slot selection
-                navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment)
             }
         }
     }
@@ -167,7 +165,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             checkoutAddressConfirmationViewModel.setSuburb(suburbId).observe(viewLifecycleOwner, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
-                        callChangeAddressApi()
                         loadingProgressBar.visibility = View.GONE
                         val store = selectedSuburb.let { suburb ->
                             Store(
@@ -184,6 +181,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 store
                             )
                         )
+                        if (!isDeliverySelected) {
+                            // call slot selection
+                            navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment)
+                        }
                     }
                     ResponseStatus.LOADING -> {
                         loadingProgressBar.visibility = View.VISIBLE
