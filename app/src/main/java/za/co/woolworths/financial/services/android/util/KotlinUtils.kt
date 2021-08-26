@@ -407,7 +407,10 @@ class KotlinUtils {
             val symbolType= if(checkoutLink.contains("?")) "&" else "?"
             val checkOutLink = "$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId"
 
-            WoolworthsApplication.setCartCheckoutLinkWithParams(checkOutLink)
+            if(checkOutLink!=null)
+            {
+                WoolworthsApplication.setCartCheckoutLinkWithParams(checkOutLink)
+            }
         }
 
         fun sendEmail(activity: Activity?, emailId: String, subject: String?) {
