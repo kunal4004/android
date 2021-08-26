@@ -151,6 +151,11 @@ class StoreConfirmationFragment : Fragment() {
                         }
                         storeConfirmedLayout?.visibility = View.VISIBLE
                     }
+                    AppConstant.HTTP_SESSION_TIMEOUT_400.toString() -> {
+                        showErrorScreen(
+                            ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT,
+                            response!!.response!!.desc!!.toString())
+                    }
                     else -> {
                         showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)
                     }
