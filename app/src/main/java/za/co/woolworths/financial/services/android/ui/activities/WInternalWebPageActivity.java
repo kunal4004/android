@@ -58,6 +58,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private String downLoadUserAgent;
 	private String downLoadConntentDisposition;
 	private Boolean treatmentPlan;
+	private String collectionsExitUrl;
 
 	@Override
 	protected void onStart() {
@@ -158,7 +159,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			@Override
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
 				super.doUpdateVisitedHistory(view, url, isReload);
-				if (treatmentPlan && url.equals(KotlinUtils.collectionsExitUrl)) {
+				if (treatmentPlan && url.equals(collectionsExitUrl)) {
 					finishActivity();
 				}
 			}
@@ -256,7 +257,8 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			mExternalLink = bundle.getString("externalLink");
-			treatmentPlan = bundle.getBoolean(KotlinUtils.TREATMENTPLAN);
+			treatmentPlan = bundle.getBoolean(KotlinUtils.TREATMENT_PLAN);
+			collectionsExitUrl = bundle.getString(KotlinUtils.COLLECTIONS_EXIT_URL);
 		}
 	}
 
@@ -272,7 +274,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					webInternalPage.goBackOrForward(index);
 					url = history.getItemAtIndex(-index).getUrl();
 
-					if (treatmentPlan && url.equals(KotlinUtils.collectionsIdUrl)) {
+					if (treatmentPlan && url.contains(KotlinUtils.collectionsIdUrl)) {
 						finishActivity();
 					}
 					break;

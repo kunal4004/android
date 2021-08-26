@@ -67,9 +67,9 @@ class KotlinUtils {
 
         const val DELAY: Long = 900
         const val productImageUrlPrefix = "https://images.woolworthsstatic.co.za/"
-        const val collectionsIdUrl = "https://qa.woolworths.wfs.co.za/CustomerCollections/IdVerification"
-        const val collectionsExitUrl = "https://qa.woolworths.wfs.co.za/CustomerCollections/Exit"
-        const val TREATMENTPLAN = "treamentPlan"
+        const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
+        const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
+        const val TREATMENT_PLAN = "treamentPlan"
 
         fun highlightTextInDesc(
                 context: Context?,
@@ -797,13 +797,17 @@ class KotlinUtils {
             }
         }
 
-        fun openLinkInInternalWebView(activity: Activity?, url: String?, treatmentPlan: Boolean) {
+        fun openLinkInInternalWebView(activity: Activity?,
+                                      url: String?,
+                                      treatmentPlan: Boolean,
+                                      collectionsExitUrl: String?) {
             activity?.apply {
                 val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
                 openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 openInternalWebView.putExtra("externalLink", url)
                 if(treatmentPlan){
-                    openInternalWebView.putExtra(TREATMENTPLAN, treatmentPlan)
+                    openInternalWebView.putExtra(TREATMENT_PLAN, treatmentPlan)
+                    openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
                 }
                 startActivity(openInternalWebView)
             }
