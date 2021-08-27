@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.*
 import android.text.style.*
+import android.util.Log
 import android.util.Pair
 import android.util.TypedValue
 import android.view.View
@@ -394,7 +395,7 @@ class KotlinUtils {
             val appVersionParam = "appVersion"
             val jSessionIdParam = "JSESSIONID"
             val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
-
+            Log.i(" KotlinUtils", "updateCheckOutLink$checkoutLink");
             val context = WoolworthsApplication.getAppContext()
             val packageManager = context.packageManager
 
@@ -404,12 +405,9 @@ class KotlinUtils {
             val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
             val appVersion = "$versionName.$versionCode"
 
-            val symbolType= if(checkoutLink.contains("?")) "&" else "?"
-            val checkOutLink = "$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId"
-
-            if(checkOutLink!=null)
-            {
-                WoolworthsApplication.setCartCheckoutLinkWithParams(checkOutLink)
+            if(checkoutLink!=null) {
+                val symbolType = if (checkoutLink.contains("?")) "&" else "?"
+                WoolworthsApplication.setCartCheckoutLinkWithParams("$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId")
             }
         }
 
