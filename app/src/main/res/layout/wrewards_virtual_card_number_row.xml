@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/virtualCardNumberTitleTextView"
+        style="@style/reward_benefit_title"
+        android:layout_centerVertical="false"
+        android:text="@string/virtual_card_number"
+        app:layout_constraintBottom_toBottomOf="@+id/moreInfoVirtualCardTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/moreInfoVirtualCardTextView" />
+
+
+    <TextView
+        android:id="@+id/moreInfoVirtualCardTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:letterSpacing="0.1"
+        android:paddingTop="@dimen/eight_dp"
+        android:paddingBottom="@dimen/eight_dp"
+        android:text="@string/reward_more_info"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightIndicatorIconImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/reward_more_info" />
+
+    <ImageView
+        android:id="@+id/rightIndicatorIconImageView"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_caret_black"
+        app:layout_constraintBottom_toBottomOf="@+id/moreInfoVirtualCardTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/moreInfoVirtualCardTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

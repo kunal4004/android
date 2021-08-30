@@ -1367,6 +1367,17 @@
         <item name="android:paddingEnd">16dp</item>
     </style>
 
+    <style name="wreward_virtual_card_number_style" parent="android:Theme">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">top</item>
+        <item name="android:paddingStart">@dimen/sixteen_dp</item>
+        <item name="android:paddingBottom">@dimen/twenty_two_dp</item>
+        <item name="android:paddingEnd">@dimen/sixteen_dp</item>
+        <item name="android:paddingTop">@dimen/zero_dp</item>
+    </style>
+
     <style name="RewardBenefitDetailStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
