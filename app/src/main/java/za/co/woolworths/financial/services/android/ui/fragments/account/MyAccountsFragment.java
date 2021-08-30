@@ -311,7 +311,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             creditReportView = view.findViewById(R.id.creditReport);
             creditReportIcon = view.findViewById(R.id.creditReportIcon);
             applyNowSpacingView = view.findViewById(R.id.applyNowSpacingView);
-
+            TextView appVersionNameInfo = view.findViewById(R.id.appVersionNameInfo);
+            appVersionNameInfo.setText(myAccountsPresenter.appVersionInfo());
 
             retryStoreCardTextView = view.findViewById(R.id.retryStoreCardTextView);
             retryStoreCardImageView = view.findViewById(R.id.retryStoreCardImageView);
@@ -394,6 +395,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
 
         uniqueIdentifiersForAccount();
+
     }
 
     private void callLinkedDevicesAPI(Boolean isForced) {
@@ -1441,10 +1443,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            Utils.clearCacheHistory(activity);
-                        }
+                        Utils.clearCacheHistory();
                     } catch (Exception pE) {
                         Log.d(TAG, pE.getMessage());
                     }
