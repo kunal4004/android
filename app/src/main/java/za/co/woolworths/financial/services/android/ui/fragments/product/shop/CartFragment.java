@@ -96,6 +96,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
@@ -104,6 +105,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.CartUtils;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -392,30 +394,36 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void callSavedAddress() {
 
-        /*Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
+        Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
         savedAddressCall.enqueue(new CompletionHandler<>(new IResponseListener<SavedAddressResponse>() {
             @Override
             public void onSuccess(@org.jetbrains.annotations.Nullable SavedAddressResponse response) {
-
+                switch (response.getHttpCode()){
+                    case AppConstant.HTTP_OK:
+                        navigateToCheckout(response);
+                        break;
+                    default:
+                        if(response.getResponse() != null){
+                            showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, response.getResponse().getMessage());
+                        }
+                        break;
+                }
             }
 
             @Override
             public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
-
+                showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, error.getMessage());
             }
-        }, SavedAddressResponse.class));*/
+        }, SavedAddressResponse.class));
+    }
 
-        Context context = getActivity() != null ? getActivity().getApplicationContext() : null;
-        if (context != null) {
-            String jsonFileString = Utils.getJsonDataFromAsset(
-                    context,
-                    "mocks/savedAddress.json"
-            );
-            SavedAddressResponse mockChangeAddressResponse = new Gson().fromJson(
-                    jsonFileString,
-                    SavedAddressResponse.class
-            );
-            navigateToCheckout(null);
+    private void showErrorDialog(int errorType, String errorMessage) {
+        if(getActivity() != null) {
+            Activity activity = getActivity();
+            Intent intent = new Intent(activity, ErrorHandlerActivity.class);
+            intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType);
+            intent.putExtra(ErrorHandlerActivity.ERROR_MESSAGE, errorMessage);
+            activity.startActivityForResult(intent, ErrorHandlerActivity.RESULT_RETRY);
         }
     }
 
@@ -1234,6 +1242,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 default:
                     break;
             }
+        }
+
+        // Retry callback when saved address api fails
+        if(resultCode == ErrorHandlerActivity.RESULT_RETRY){
+            callSavedAddress();
         }
     }
 
