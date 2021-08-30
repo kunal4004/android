@@ -207,9 +207,9 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
         clearToolbar()
         viewAllLinkedDevicesRecyclerView?.visibility = View.GONE
         unlinkDeviceConfirmationConstraintLayout?.visibility = View.VISIBLE
-        unlinkDeviceResultSubtitle.visibility = View.GONE
+        unlinkDeviceResultSubtitle?.visibility = View.GONE
         context?.let { it ->
-            viewAllDeviceConstraintLayout.background = AppCompatResources.getDrawable(it, R.color.white)
+            viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.white)
             unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
         }
     }
