@@ -103,7 +103,10 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private void webSetting() {
 		showProgressBar();
 		webInternalPage.getSettings().setJavaScriptEnabled(true);
-		if(treatmentPlan) webInternalPage.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+		if(treatmentPlan){
+			webInternalPage.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+			webInternalPage.clearCache(true);
+		}
 		webInternalPage.getSettings().setDomStorageEnabled(true);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 			webInternalPage.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
