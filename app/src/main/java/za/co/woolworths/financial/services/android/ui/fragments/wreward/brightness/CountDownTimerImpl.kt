@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 class CountDownTimerImpl : CountDownTimerInterface {
 
     private val countDownTimerInterval: Long = 1000
-    private var timeCountInMilliSeconds: Long = 1 * 10 * 1000
+    private var timeCountInMilliSeconds: Long = 1 * 15 * 1000
     private var countDownTimer: CountDownTimer? = null
     private var timerStatus = TimerStatus.STOPPED
 
@@ -47,7 +47,7 @@ class CountDownTimerImpl : CountDownTimerInterface {
     override fun setTimerValues() {
         val time = 1   //Time time in minutes
         // assigning values after converting to milliseconds
-        timeCountInMilliSeconds = time * 10 * 1000.toLong()
+        timeCountInMilliSeconds = time * 15 * 1000.toLong()
     }
 
     override fun stopCountDownTimer() {
