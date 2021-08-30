@@ -103,6 +103,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private void webSetting() {
 		showProgressBar();
 		webInternalPage.getSettings().setJavaScriptEnabled(true);
+		if(treatmentPlan) webInternalPage.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 		webInternalPage.getSettings().setDomStorageEnabled(true);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 			webInternalPage.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
@@ -292,10 +293,6 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					mErrorHandlerView.hideErrorHandlerLayout();
 					webInternalPage.goBackOrForward(index);
 					url = history.getItemAtIndex(-index).getUrl();
-
-					if (treatmentPlan && url.contains(KotlinUtils.collectionsIdUrl)) {
-						finishActivity();
-					}
 					break;
 				}
 				index--;
@@ -308,6 +305,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					finishActivity();
 				}
 			}
+
+			if (treatmentPlan && webInternalPage.getUrl().contains(KotlinUtils.collectionsIdUrl)) {
+				finishActivity();
+			}
+
 		} else {
 			finishActivity();
 		}
