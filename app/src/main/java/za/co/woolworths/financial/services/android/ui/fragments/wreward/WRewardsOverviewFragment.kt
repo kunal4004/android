@@ -44,7 +44,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ScreenBrightnessImpl.Companion.HUNDRED_PERCENT_VALUE
 import android.animation.AnimatorListenerAdapter
 import android.text.TextUtils
+import kotlinx.android.synthetic.main.wrewards_virtual_card_number_row.*
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ShakeDetectorImpl
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment
 
 class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
@@ -90,7 +92,12 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         mScreenBrightnessDelegate?.apply {
             registerLifeCycle(lifecycle)
             shakeDetectorInit {
-                if (TextUtils.isEmpty(barCodeNumber?.text?.toString()))  return@shakeDetectorInit
+
+
+                val isCurrentFragmentWRewardsFragmentSection =  (activity as? BottomNavigationActivity)?.currentFragment is WRewardsFragment
+                val isCurrentFragmentWRewardsOverviewFragment =  ( parentFragment as? WRewardsLoggedinAndLinkedFragment)?.wrewardsViewPager?.currentItem != 0
+                // disable shake action when barcode is invisible
+                if (TextUtils.isEmpty(barCodeNumber?.text?.toString()) || !isCurrentFragmentWRewardsFragmentSection || isCurrentFragmentWRewardsOverviewFragment)   return@shakeDetectorInit
                 setShakeToAnimateView(activity,flipCardBackLayout)
                 shakeOrTapToBrightness() }
         }
@@ -114,7 +121,8 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         infoImage.setOnClickListener(this)
         tvMoreInfo.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
-        tvMoreInfoVirtualCard.setOnClickListener(this)
+        moreInfoVirtualCardTextView.setOnClickListener(this)
+        rightIndicatorIconImageView.setOnClickListener(this)
         flipCardFrontLayout.setOnClickListener(this)
         shakeOrTapNumberTextView.setOnClickListener(this)
 
@@ -289,7 +297,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                 }
             }
 
-            R.id.tvMoreInfoVirtualCard -> {
+            R.id.moreInfoVirtualCardTextView,R.id.rightIndicatorIconImageView -> {
                 activity?.supportFragmentManager?.let { VirtualCardNumberInfoDialogFragment.newInstance().show(it, VirtualCardNumberInfoDialogFragment::class.java.simpleName) }
             }
 
