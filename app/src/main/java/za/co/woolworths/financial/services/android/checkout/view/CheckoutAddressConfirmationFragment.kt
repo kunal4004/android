@@ -156,18 +156,15 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             } else {
                 // if it is store then call setSuburb API.
                 setSuburb()
-                // call slot selection
-                navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment)
             }
         }
     }
 
     private fun setSuburb() {
-        localSuburbId?.let { suburbId ->
+        localSuburbId.let { suburbId ->
             checkoutAddressConfirmationViewModel.setSuburb(suburbId).observe(viewLifecycleOwner, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
-                        callChangeAddressApi()
                         loadingProgressBar.visibility = View.GONE
                         val store = selectedSuburb.let { suburb ->
                             Store(
@@ -177,13 +174,19 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 suburb.storeAddress.address1
                             )
                         }
-                        Utils.savePreferredDeliveryLocation(
-                            ShoppingDeliveryLocation(
-                                selectedProvince,
-                                null,
-                                store
-                            )
+                        val shoppingDeliveryLocation = ShoppingDeliveryLocation(
+                            selectedProvince,
+                            null,
+                            store
                         )
+                        shoppingDeliveryLocation.storePickup = true
+                        Utils.savePreferredDeliveryLocation(
+                            shoppingDeliveryLocation
+                        )
+                        if (!isDeliverySelected) {
+                            // call slot selection
+                            navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment)
+                        }
                     }
                     ResponseStatus.LOADING -> {
                         loadingProgressBar.visibility = View.VISIBLE
@@ -216,7 +219,10 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         addressConfirmationDelivery.visibility = View.GONE
         suburbSelectionLayout.visibility = View.GONE
-        btnConfirmLayout.visibility = View.VISIBLE
+        if (selectedSuburb.storeAddress == null) {
+            removeMarginToStoreListView()
+        } else
+            setMarginToStoreListView()
         clickNCollectTitleLayout.visibility = View.VISIBLE
         addressConfirmationClicknCollect.visibility = View.VISIBLE
         showStoreListView(suburbId)
@@ -301,6 +307,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             )
 
             selectedSuburb.storeAddress = storeAddress
+            setMarginToStoreListView()
             setEarliestDeliveryDates(validateStoreList)
         }
     }
@@ -390,8 +397,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             showStoreList()
         } else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
-            storesFoundTitle.text = resources.getQuantityString(R.plurals.stores_near_me, 0, 0)
-            localSuburbId?.let { it ->
+            localSuburbId.let { it ->
                 checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
                     .observe(viewLifecycleOwner, {
                         when (it.responseStatus) {
@@ -434,6 +440,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                 changeTextView.visibility = View.GONE
                                 btnAddressConfirmation.text = getString(R.string.change_suburb)
                                 changeProvinceTextView.visibility = View.VISIBLE
+                                storesFoundTitle.visibility = View.GONE
                             }
                             ResponseStatus.ERROR -> {
                                 loadingProgressBar.visibility = View.GONE
@@ -449,7 +456,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     }
 
     private fun showSuburbSelectionView(suburbList: MutableList<Suburb>) {
-        btnConfirmLayout.visibility = View.GONE
+        removeMarginToStoreListView()
         suburbSelectionLayout.visibility = View.VISIBLE
         suburbSelectionTitle.visibility = View.VISIBLE
         suburbSelectionSubTitle.visibility = View.VISIBLE
@@ -480,7 +487,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
-                            btnConfirmLayout.visibility = View.VISIBLE
                             if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
                                 //showNoStoresError()
                             } else {
@@ -500,16 +506,29 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                         }
                         ResponseStatus.LOADING -> {
                             loadingProgressBar.visibility = View.VISIBLE
-                            btnConfirmLayout.visibility = View.GONE
+                            removeMarginToStoreListView()
                         }
                         ResponseStatus.ERROR -> {
                             loadingProgressBar.visibility = View.GONE
-                            btnConfirmLayout.visibility = View.VISIBLE
                         }
                     }
                 })
             }
         }
+    }
+
+    private fun setMarginToStoreListView() {
+        btnConfirmLayout.visibility = View.VISIBLE
+        val param = addressConfirmationClicknCollect.layoutParams as ViewGroup.MarginLayoutParams
+        param.setMargins(0, 192, 0, 104)
+        addressConfirmationClicknCollect.layoutParams = param
+    }
+
+    private fun removeMarginToStoreListView() {
+        btnConfirmLayout.visibility = View.GONE
+        val param = addressConfirmationClicknCollect.layoutParams as ViewGroup.MarginLayoutParams
+        param.setMargins(0, 192, 0, 10)
+        addressConfirmationClicknCollect.layoutParams = param
     }
 
     private fun showStoreList() {
@@ -536,11 +555,13 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         rcvStoreRecyclerView?.apply {
             val storesCount = (validatedSuburbProductResponse?.stores?.size ?: 0)
             if (storesCount == 0) {
+                setMarginToStoreListView()
                 changeTextView.visibility = View.GONE
                 btnAddressConfirmation.text = getString(R.string.change_suburb)
                 changeProvinceTextView.visibility = View.VISIBLE
             } else
                 changeProvinceTextView.visibility = View.GONE
+            storesFoundTitle.visibility = View.VISIBLE
             storesFoundTitle.text =
                 resources.getQuantityString(R.plurals.stores_near_me, storesCount, storesCount)
             layoutManager = activity?.let { LinearLayoutManager(it) }

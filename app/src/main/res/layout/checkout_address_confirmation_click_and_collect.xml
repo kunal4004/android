@@ -24,7 +24,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="@integer/point_five"
             android:padding="@dimen/six_dp"
-            android:text="@{@plurals/stores_near_me(0,0)}"
             android:textSize="@dimen/twenty_sp" />
 
         <TextView
