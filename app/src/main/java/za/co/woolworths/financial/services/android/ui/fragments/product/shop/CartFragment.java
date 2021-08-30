@@ -371,7 +371,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         return;
                     }
                     // Go to Web checkout journey if...
-                    if(WoolworthsApplication.getNativeCheckout() != null
+                    if (WoolworthsApplication.getNativeCheckout() != null
                             && !WoolworthsApplication.getNativeCheckout().isNativeCheckoutEnabled()) {
                         Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
                         getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
@@ -1122,6 +1122,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         super.onResume();
         Activity activity = getActivity();
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST);
+        checkLocationChangeAndReload();
         if (activity != null) {
             activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         }
@@ -1271,7 +1272,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             localStoreId = null;
             reloadFragment();
             return;
-        } else if (productCountMap.getTotalProductCount() != currentCartCount) {
+        } else if (productCountMap != null && productCountMap.getTotalProductCount() != currentCartCount) {
             reloadFragment();
         }
     }
@@ -1287,11 +1288,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentByTag(CartActivity.TAG);
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         if (fragmentTransaction != null && currentFragment != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                fragmentTransaction.detach(currentFragment).commitNow();
-                fragmentTransaction.attach(currentFragment).commitNow();
-            } else
-                fragmentTransaction.detach(this).attach(this).commit();
+            fragmentTransaction.detach(this).attach(this).commit();
         }
     }
 
