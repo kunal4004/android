@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication.getApplyNowLink
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
@@ -81,8 +81,22 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
                     VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN, this)
-                            KotlinUtils.openUrlInPhoneBrowser(getApplyNowLink()?.personalLoan,this)
+                            val arguments = HashMap<String, String>()
+                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION
+                            Utils.triggerFireBaseEvents(
+                                FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
+                                arguments,
+                                this)
+                            if(WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode == NATIVE_BROWSER){
+                                KotlinUtils.openUrlInPhoneBrowser(
+                                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl, this)
+
+                            } else if(WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode == WEBVIEW){
+                                KotlinUtils.openLinkInInternalWebView(activity,
+                                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl,
+                                    true,
+                                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.exitUrl)
+                            }
                         }
                     }
                     MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()

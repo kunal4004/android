@@ -4,10 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,11 +17,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
+import android.webkit.SslErrorHandler;
 import android.webkit.URLUtil;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceError;
@@ -36,6 +41,7 @@ import com.awfs.coordination.R;
 import com.google.android.material.appbar.AppBarLayout;
 
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -51,10 +57,16 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private String downLoadMimeType;
 	private String downLoadUserAgent;
 	private String downLoadConntentDisposition;
+	private Boolean treatmentPlan;
+	private String collectionsExitUrl;
 
 	@Override
 	protected void onStart() {
-		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		if(treatmentPlan){
+			overridePendingTransition(R.anim.slide_from_right, R.anim.stay);
+		} else{
+			overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		}
 		super.onStart();
 	}
 
@@ -134,6 +146,23 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 				handleUri(view, uri);
 				return true;
 			}
+
+			@Override
+			public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+				if (handler != null){
+					handler.proceed();
+				} else {
+					super.onReceivedSslError(view, null, error);
+				}
+			}
+
+			@Override
+			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+				super.doUpdateVisitedHistory(view, url, isReload);
+				if (treatmentPlan && url.equals(collectionsExitUrl)) {
+					finishActivity();
+				}
+			}
 		});
 		webInternalPage.loadUrl(mExternalLink);
 
@@ -152,11 +181,14 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		});
 	}
 
-	private void handleUri(WebView view, Uri uri) {
-		String url = uri.toString();
+	private void handleUri(WebView view, Uri uri) {String url = uri.toString();
 		if (url.contains("mailto:")) {
 			Utils.sendEmail(url, "",getApplicationContext());
-		}else {
+		}if (url.startsWith("tel:")) {
+			Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
+			startActivity(intent);
+		}
+		else {
 			view.loadUrl(url);
 		}
 	}
@@ -190,12 +222,22 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	private void hideProgressBar() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				mWoolworthsProgressBar.setVisibility(View.GONE);
-			}
-		});
+		if(treatmentPlan){
+			Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					mWoolworthsProgressBar.setVisibility(View.GONE);
+				}
+			}, 1000);
+		} else {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					mWoolworthsProgressBar.setVisibility(View.GONE);
+				}
+			});
+		}
 	}
 
 	@Override
@@ -215,6 +257,8 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			mExternalLink = bundle.getString("externalLink");
+			treatmentPlan = bundle.getBoolean(KotlinUtils.TREATMENT_PLAN);
+			collectionsExitUrl = bundle.getString(KotlinUtils.COLLECTIONS_EXIT_URL);
 		}
 	}
 
@@ -229,6 +273,10 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					mErrorHandlerView.hideErrorHandlerLayout();
 					webInternalPage.goBackOrForward(index);
 					url = history.getItemAtIndex(-index).getUrl();
+
+					if (treatmentPlan && url.contains(KotlinUtils.collectionsIdUrl)) {
+						finishActivity();
+					}
 					break;
 				}
 				index--;

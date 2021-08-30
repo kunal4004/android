@@ -70,8 +70,23 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
                     ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD, this)
-                            KotlinUtils.openUrlInPhoneBrowser(WoolworthsApplication.getApplyNowLink()?.storeCard,this)
+                            val arguments = HashMap<String, String>()
+                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD_ACTION
+                            Utils.triggerFireBaseEvents(
+                                FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD,
+                                arguments,
+                                this)
+                            if(WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode == NATIVE_BROWSER){
+                                KotlinUtils.openUrlInPhoneBrowser(
+                                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.collectionsUrl, this)
+
+                            } else if(WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode == WEBVIEW){
+                                KotlinUtils.openLinkInInternalWebView(activity,
+                                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.collectionsUrl,
+                                    true,
+                                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.exitUrl
+                                )
+                            }
                         }
                     }
                     ViewTreatmentPlanDialogFragment.MAKE_A_PAYMENT_BUTTON -> onStoreCardButtonTap()
