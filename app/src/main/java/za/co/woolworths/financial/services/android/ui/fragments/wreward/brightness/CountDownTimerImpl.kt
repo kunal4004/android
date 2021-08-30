@@ -32,8 +32,6 @@ class CountDownTimerImpl : CountDownTimerInterface {
 
     override fun startStopCountdownTimer(onFinish: () -> Unit) {
         if (timerStatus === TimerStatus.STOPPED) {
-            // call to initialize the timer values
-            setTimerValues()
             timerStatus = TimerStatus.STARTED
             // call to start the count down timer
             startCountDownTimer(onFinish)
@@ -42,12 +40,6 @@ class CountDownTimerImpl : CountDownTimerInterface {
             timerStatus = TimerStatus.STOPPED
             stopCountDownTimer()
         }
-    }
-
-    override fun setTimerValues() {
-        val time = 1   //Time time in minutes
-        // assigning values after converting to milliseconds
-        timeCountInMilliSeconds = time * 15 * 1000.toLong()
     }
 
     override fun stopCountDownTimer() {
