@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.awfs.coordination.R;
 import com.google.android.material.appbar.AppBarLayout;
 
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -229,7 +230,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 				public void run() {
 					mWoolworthsProgressBar.setVisibility(View.GONE);
 				}
-			}, 1000);
+			}, AppConstant.DELAY_1000_MS);
 		} else {
 			runOnUiThread(new Runnable() {
 				@Override
