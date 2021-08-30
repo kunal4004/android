@@ -76,11 +76,12 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                                 FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD,
                                 arguments,
                                 this)
-                            if(WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode == NATIVE_BROWSER){
-                                KotlinUtils.openUrlInPhoneBrowser(
+                            when (WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode){
+                                NATIVE_BROWSER ->
+                                    KotlinUtils.openUrlInPhoneBrowser(
                                     WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.collectionsUrl, this)
 
-                            } else if(WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode == WEBVIEW){
+                                else ->
                                 KotlinUtils.openLinkInInternalWebView(activity,
                                     WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.collectionsUrl,
                                     true,
