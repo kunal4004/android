@@ -204,7 +204,12 @@ object OneAppService : RetrofitConfig() {
         return mockApiInterface.getSavedAddresses()
     }
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse> {
-        return mockApiInterface.addAddress(addAddressRequestBody)
+        return mApiInterface.addAddress(
+            "",
+            "",
+            getSessionToken(),
+            addAddressRequestBody
+        )
     }
     fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String): Call<AddAddressResponse> {
         return mockApiInterface.updateAddress(addAddressRequestBody, addressId)

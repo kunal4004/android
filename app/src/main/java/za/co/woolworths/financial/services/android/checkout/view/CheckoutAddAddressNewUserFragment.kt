@@ -434,8 +434,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
-            view?.findNavController()?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment, bundleOf(
-                SAVED_ADDRESS_KEY to savedAddressResponse))
+            view?.findNavController()?.navigate(
+                R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
+                bundleOf(
+                    SAVED_ADDRESS_KEY to savedAddressResponse
+                )
+            )
         }
     }
 
@@ -504,6 +508,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectedAddress.address1 = addressText1.plus(" ").plus(addressText2)
         selectedAddress.latitude = place.latLng?.latitude
         selectedAddress.longitude = place.latLng?.longitude
+        selectedAddress.placesId = place.id
 
         if (selectedAddress.suburb.isNotEmpty())
             selectedAddress.suburbId = ""
@@ -758,28 +763,29 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getSuburbs() {
         if (progressbarGetProvinces?.visibility == View.VISIBLE) return
-        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region).observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    hideSetSuburbProgressBar()
-                    if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
-                        //showNoStoresError()
-                    } else {
-                        (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
-                            navigateToSuburbSelection(
-                                it1
-                            )
+        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region)
+            .observe(viewLifecycleOwner, {
+                when (it.responseStatus) {
+                    ResponseStatus.SUCCESS -> {
+                        hideSetSuburbProgressBar()
+                        if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
+                            //showNoStoresError()
+                        } else {
+                            (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
+                                navigateToSuburbSelection(
+                                    it1
+                                )
+                            }
                         }
                     }
+                    ResponseStatus.LOADING -> {
+                        showGetSuburbProgress()
+                    }
+                    ResponseStatus.ERROR -> {
+                        hideSetSuburbProgressBar()
+                    }
                 }
-                ResponseStatus.LOADING -> {
-                    showGetSuburbProgress()
-                }
-                ResponseStatus.ERROR -> {
-                    hideSetSuburbProgressBar()
-                }
-            }
-        })
+            })
     }
 
     private fun navigateToSuburbSelection(suburbs: List<Suburb>) {
@@ -861,8 +867,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     onAddNewAddress(body.nickname)
                                 }
                                 AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
-                                    if(response?.response?.code == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
-                                        response?.response?.code == ERROR_CODE_SUBURB_NOT_FOUND){
+                                    if (response?.response?.code == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
+                                        response?.response?.code == ERROR_CODE_SUBURB_NOT_FOUND
+                                    ) {
                                         showSuburbNotDeliverableBottomSheetDialog(
                                             response?.response?.code
                                         )
@@ -945,7 +952,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             // Don't allow user to navigate to Checkout page when deliverable : [false].
                             if (!response.deliverable) {
                                 showSuburbNotDeliverableBottomSheetDialog(
-                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE)
+                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE
+                                )
                                 return@observe
                             }
 
@@ -984,11 +992,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
         view?.findNavController()?.navigate(
-                R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
-                bundleOf(
-                    ERROR_CODE to errorCode
-                )
+            R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
+            bundleOf(
+                ERROR_CODE to errorCode
             )
+        )
     }
 
     /**
@@ -1060,13 +1068,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.city else savedAddress?.city
                 ?: "",
             suburbEditText?.text.toString(),
-            selectedDeliveryAddressType.toString(),
+            "",
             "",
             false,
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.latitude else savedAddress?.latitude
                 ?: 0.0,
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.longitude else savedAddress?.longitude
-                ?: 0.0
+                ?: 0.0, selectedAddress.placesId ?: "",
+            selectedDeliveryAddressType.toString()
         )
     }
 

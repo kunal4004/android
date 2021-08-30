@@ -59,9 +59,7 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         try {
             emit(
                 NativeCheckoutResource.success(
-                    data = checkoutAddAddressNewUserInteractor.addAddress(
-                        addAddressRequestBody
-                    ).body()
+                    data = checkoutAddAddressNewUserInteractor.addAddress(addAddressRequestBody)
                 )
             )
         } catch (exception: Exception) {
