@@ -6,8 +6,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
+import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
@@ -461,6 +464,46 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ProvincesResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("cart/checkout/savedAddresses")
+    fun getSavedAddresses(
+        @Header("apiId") apiId: String,
+        @Header("sha1Password") sha1Password: String,
+        @Header("deviceVersion") deviceVersion: String,
+        @Header("deviceModel") deviceModel: String,
+        @Header("network") network: String,
+        @Header("os") os: String,
+        @Header("osVersion") osVersion: String,
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): Call<SavedAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("addAddress")
+    fun addAddress(@Body addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @PATCH("address/{id}")
+    fun updateAddress(@Body addAddressRequestBody: AddAddressRequestBody, @Path("id") id: String): Call<AddAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @DELETE("address/{addressId}")
+    fun deleteAddress(@Path("addressId") addressId: String): Call<DeleteAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("changeAddress/{nickName}")
+    fun changeAddress(@Path("nickName") nickName: String): Call<ChangeAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("availableDeliverySlots")
+    fun getAvailableDeliverySlots(): Call<AvailableDeliverySlotsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("confirmDeliveryAddress")
+    fun getConfirmDeliveryAddressDetails(): Call<ConfirmDeliveryAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/{locationId}")
@@ -1089,4 +1132,19 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body optOutBody: SurveyOptOutBody
     ): Call<Void>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
+    @GET("cart/submittedOrder")
+    fun getSubmittedOrder(
+        @Header("apiId") apiId: String,
+        @Header("sha1Password") sha1Password: String,
+        @Header("deviceVersion") deviceVersion: String,
+        @Header("deviceModel") deviceModel: String,
+        @Header("network") network: String,
+        @Header("os") os: String,
+        @Header("osVersion") osVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+    ): Call<SubmittedOrderResponse>
+
 }

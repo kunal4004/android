@@ -1,7 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
+import static android.app.Activity.RESULT_OK;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
+import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -49,9 +60,10 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse;
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
-import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -71,6 +83,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
+import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode;
@@ -83,6 +96,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
@@ -91,6 +105,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.CartUtils;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -105,17 +120,6 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WFormatter;
-
-import static android.app.Activity.RESULT_OK;
-import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
-import static za.co.woolworths.financial.services.android.ui.activities.CartActivity.TAG;
-import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
@@ -362,14 +366,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 Activity checkOutActivity = getActivity();
                 if ((checkOutActivity != null) && btnCheckOut.isEnabled() && orderSummary != null) {
                     if (Utils.getPreferredDeliveryLocation().storePickup && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT,checkOutActivity);
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT, checkOutActivity);
                         showMaxItemView();
                         return;
                     }
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,checkOutActivity);
-                    Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
-                    getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
-                    checkOutActivity.overridePendingTransition(0, 0);
+                    // Go to Web checkout journey if...
+                    if (WoolworthsApplication.getNativeCheckout() != null
+                            && !WoolworthsApplication.getNativeCheckout().isNativeCheckoutEnabled()) {
+                        Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
+                        getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
+                        checkOutActivity.overridePendingTransition(0, 0);
+                    }
+                    // else Go to native checkout journey
+                    else {
+                        // Get list of saved address and navigate to proper Checkout page.
+                        callSavedAddress();
+                    }
                 }
                 break;
             case R.id.orderTotalLayout:
@@ -378,6 +390,48 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             default:
                 break;
         }
+    }
+
+    private void callSavedAddress() {
+
+        Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
+        savedAddressCall.enqueue(new CompletionHandler<>(new IResponseListener<SavedAddressResponse>() {
+            @Override
+            public void onSuccess(@org.jetbrains.annotations.Nullable SavedAddressResponse response) {
+                switch (response.getHttpCode()){
+                    case AppConstant.HTTP_OK:
+                        navigateToCheckout(response);
+                        break;
+                    default:
+                        if(response.getResponse() != null){
+                            showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, response.getResponse().getMessage());
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
+                showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, error.getMessage());
+            }
+        }, SavedAddressResponse.class));
+    }
+
+    private void showErrorDialog(int errorType, String errorMessage) {
+        if(getActivity() != null) {
+            Activity activity = getActivity();
+            Intent intent = new Intent(activity, ErrorHandlerActivity.class);
+            intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType);
+            intent.putExtra(ErrorHandlerActivity.ERROR_MESSAGE, errorMessage);
+            activity.startActivityForResult(intent, ErrorHandlerActivity.RESULT_RETRY);
+        }
+    }
+
+    private void navigateToCheckout(SavedAddressResponse response) {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
+        Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
+        checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
+        startActivity(checkoutActivityIntent);
     }
 
     @Override
@@ -759,6 +813,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                                 cartProductAdapter.setEditMode(true);
                             }
                             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+                            Suburb suburb = new Suburb();
+                            if (shoppingCartResponse.data[0].suburbId.contains("st"))
+                                suburb.id = shoppingCartResponse.data[0].suburbId.replace("st", "");
+                            else
+                                suburb.id = shoppingCartResponse.data[0].suburbId;
+                            suburb.name = shoppingCartResponse.data[0].suburbName;
+                            Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(Utils.getPreferredDeliveryLocation().province, suburb, Utils.getPreferredDeliveryLocation().store));
                             setItemLimitsBanner();
                             break;
                         case 440:
@@ -1061,6 +1122,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         super.onResume();
         Activity activity = getActivity();
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST);
+        checkLocationChangeAndReload();
         if (activity != null) {
             activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         }
@@ -1181,6 +1243,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     break;
             }
         }
+
+        // Retry callback when saved address api fails
+        if(resultCode == ErrorHandlerActivity.RESULT_RETRY){
+            callSavedAddress();
+        }
     }
 
     private void checkLocationChangeAndReload() {
@@ -1205,8 +1272,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             localStoreId = null;
             reloadFragment();
             return;
-        }
-        else if (productCountMap.getTotalProductCount() != currentCartCount){
+        } else if (productCountMap != null && productCountMap.getTotalProductCount() != currentCartCount) {
             reloadFragment();
         }
     }
@@ -1222,11 +1288,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentByTag(CartActivity.TAG);
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         if (fragmentTransaction != null && currentFragment != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                fragmentTransaction.detach(currentFragment).commitNow();
-                fragmentTransaction.attach(currentFragment).commitNow();
-            } else
-                fragmentTransaction.detach(this).attach(this).commit();
+            fragmentTransaction.detach(this).attach(this).commit();
         }
     }
 
@@ -1484,9 +1546,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
             break;
             case TAG_AVAILABLE_VOUCHERS_TOAST: {
-				Activity activity = getActivity();
-				if (activity == null) return;
-				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_popup_view, activity);
+                Activity activity = getActivity();
+                if (activity == null) return;
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_popup_view, activity);
                 navigateToAvailableVouchersPage();
             }
             break;
@@ -1634,17 +1696,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     @Override
     public void onEnterPromoCode() {
-		Activity activity = getActivity();
-		if (activity == null) return;
-		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_enter, activity);
+        Activity activity = getActivity();
+        if (activity == null) return;
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_enter, activity);
         navigateToApplyPromoCodePage();
     }
 
     @Override
     public void onRemovePromoCode(String promoCode) {
-		Activity activity = getActivity();
-		if (activity == null) return;
-		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove, activity);
+        Activity activity = getActivity();
+        if (activity == null) return;
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_promo_remove, activity);
         showProgressBar();
         OneAppService.INSTANCE.removePromoCode(new CouponClaimCode(promoCode)).enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
             @Override
