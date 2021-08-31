@@ -1299,6 +1299,9 @@
 
     <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
+    <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
+    <string name="view_payment_plan_button_label">View payment plan</string>
+    <string name="make_payment_now_button_label">Make a payment</string>
 
     <!-- Unique Ids for Transactions-->
     <string name="transactions_title_layout">View Transaction Title Layout</string>
@@ -2263,4 +2266,5 @@
     <string name="wrewards_logo_rewards">REWARDS</string>
     <string name="wrewards_logo_w">W</string>
 
+    <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
 </resources>

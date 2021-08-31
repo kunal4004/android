@@ -106,10 +106,6 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     }
                 }
 
-                // set payment method
-                initPaymentMethod()
-
-
                 cvvFieldEnableState(pmaAmountEnteredTextView?.text?.toString())
 
 
@@ -124,11 +120,13 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
     }
 
     private fun cvvFieldEnableState(amountPayable: String?) {
-        val isAmountPayableZero = amountPayable == RAND_AMOUNT_ZERO
-        cvvEditTextInput?.apply {
-            isEnabled = !isAmountPayableZero
-            isFocusable = !isAmountPayableZero
-            isFocusableInTouchMode = !isAmountPayableZero
+        with(payMyAccountViewModel) {
+            val isAmountPayableZero = amountPayable == RAND_AMOUNT_ZERO
+            cvvEditTextInput?.apply {
+                isEnabled = !isAmountPayableZero && !isSelectedCardExpired()
+                isFocusable = !isAmountPayableZero && !isSelectedCardExpired()
+                isFocusableInTouchMode = !isAmountPayableZero && !isSelectedCardExpired()
+            }
         }
     }
 
@@ -163,11 +161,10 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             if (isSelectedCardExpired()) {
                 cardExpiredTagTextView?.visibility = VISIBLE
                 changeTextView?.text =  addCardLabel
-                cvvEditTextInput?.isEnabled = false
+
             } else {
                 cardExpiredTagTextView?.visibility = GONE
                 changeTextView?.text = changeCardLabel
-                cvvEditTextInput?.isEnabled = true
             }
 
             with(getSelectedPaymentMethodCard()) {
