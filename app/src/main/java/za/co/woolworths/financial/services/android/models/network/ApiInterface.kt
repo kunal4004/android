@@ -472,13 +472,6 @@ interface ApiInterface {
     )
     @GET("cart/checkout/savedAddresses")
     fun getSavedAddresses(
-        @Header("apiId") apiId: String,
-        @Header("sha1Password") sha1Password: String,
-        @Header("deviceVersion") deviceVersion: String,
-        @Header("deviceModel") deviceModel: String,
-        @Header("network") network: String,
-        @Header("os") os: String,
-        @Header("osVersion") osVersion: String,
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
