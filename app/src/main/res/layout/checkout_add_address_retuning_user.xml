@@ -95,6 +95,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/txtOrderTotalTitle" />
 
+    <View
+        android:id="@+id/viewHorizontalSeparator1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"
+        android:background="@color/color_12000000"
+        app:layout_constraintTop_toTopOf="@id/continueToPaymentButtonBackgroundView" />
+
     <TextView
         android:id="@+id/txtOrderTotalTitle"
         android:layout_width="wrap_content"

@@ -125,9 +125,17 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun initializeDeliveringToView() {
+        if(arguments == null) {
+            checkoutDeliveryDetailsLayout.visibility = View.GONE
+            return
+        }
         arguments?.apply {
             context?.let { context ->
                 val savedAddress = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+                if(savedAddress == null || savedAddress?.addresses.isNullOrEmpty()) {
+                    checkoutDeliveryDetailsLayout?.visibility = View.GONE
+                    return@apply
+                }
                 savedAddress?.let { savedAddresses ->
 
                     val deliveringToAddress = SpannableStringBuilder()

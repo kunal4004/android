@@ -202,9 +202,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getSavedAddresses(): Call<SavedAddressResponse> {
-        return mApiInterface.getSavedAddresses(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(),
-            getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),
-            getDeviceIdentityToken())
+        return mApiInterface.getSavedAddresses( "", "", getSessionToken())
     }
 
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse> {
