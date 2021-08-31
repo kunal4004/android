@@ -55,7 +55,9 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.trackMyDelivery -> {
-                KotlinUtils.openUrlInPhoneBrowser(WoolworthsApplication.getCreditCardDelivery().deliveryTrackingUrl, activity)
+                activity?.let {
+                    KotlinUtils.openUrlInPhoneBrowser(WoolworthsApplication.getCreditCardDelivery().deliveryTrackingUrl, it)
+                }
             }
             R.id.referenceNumberText -> {
                 val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

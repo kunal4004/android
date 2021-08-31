@@ -59,7 +59,9 @@ class WhatsAppChatToUsFragment : Fragment(), View.OnClickListener {
                     (activity as? WChatActivity)?.shouldDismissChatNavigationModel = true
                     activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CHAT_WITH_US, this) }
                     chatViewModel.postEventChatOffline()
-                    KotlinUtils.openUrlInPhoneBrowser(WhatsAppChatToUsVisibility().whatsAppChatWithUsUrlBreakout, activity)
+                    activity?.let {
+                        KotlinUtils.openUrlInPhoneBrowser(WhatsAppChatToUsVisibility().whatsAppChatWithUsUrlBreakout, it)
+                    }
                 } else {
                     ErrorHandlerView(activity).showToast()
                 }

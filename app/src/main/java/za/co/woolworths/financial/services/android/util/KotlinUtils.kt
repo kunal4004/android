@@ -624,11 +624,11 @@ class KotlinUtils {
             }
         }
 
-        fun openUrlInPhoneBrowser(urlString: String?, activity: Activity?) {
+        fun openUrlInPhoneBrowser(urlString: String?, activity: Activity) {
             urlString?.apply {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                activity?.startActivity(intent)
+                activity.startActivity(intent)
             }
         }
 
