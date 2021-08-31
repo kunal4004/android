@@ -103,6 +103,10 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private void webSetting() {
 		showProgressBar();
 		webInternalPage.getSettings().setJavaScriptEnabled(true);
+		if(treatmentPlan){
+			webInternalPage.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+			webInternalPage.clearCache(true);
+		}
 		webInternalPage.getSettings().setDomStorageEnabled(true);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 			webInternalPage.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
@@ -160,8 +164,26 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 			@Override
 			public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
 				super.doUpdateVisitedHistory(view, url, isReload);
-				if (treatmentPlan && url.equals(collectionsExitUrl)) {
-					finishActivity();
+				if (treatmentPlan && url.contains(collectionsExitUrl)) {
+					Uri uri = Uri.parse(url);
+					String urlToOpen = uri.getQueryParameter("nburl");
+
+					if(urlToOpen != null){
+						Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlToOpen));
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(intent);
+
+						Handler handler = new Handler();
+						handler.postDelayed(new Runnable() {
+							@Override
+							public void run() {
+								webInternalPage.loadUrl(mExternalLink);
+							}
+						}, AppConstant.DELAY_900_MS);
+					}
+					else{
+						finishActivity();
+					}
 				}
 			}
 		});
@@ -274,10 +296,6 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					mErrorHandlerView.hideErrorHandlerLayout();
 					webInternalPage.goBackOrForward(index);
 					url = history.getItemAtIndex(-index).getUrl();
-
-					if (treatmentPlan && url.contains(KotlinUtils.collectionsIdUrl)) {
-						finishActivity();
-					}
 					break;
 				}
 				index--;
@@ -290,6 +308,11 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 					finishActivity();
 				}
 			}
+
+			if (treatmentPlan && webInternalPage.getUrl().contains(KotlinUtils.collectionsIdUrl)) {
+				finishActivity();
+			}
+
 		} else {
 			finishActivity();
 		}
