@@ -9,4 +9,7 @@ class Response : Serializable {
 
     @SerializedName("desc")
     var desc: String? = null
+
+    @SerializedName("message")
+    var message: String? = null
 }

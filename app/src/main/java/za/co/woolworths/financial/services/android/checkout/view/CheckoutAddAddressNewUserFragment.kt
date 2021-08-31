@@ -62,6 +62,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SUBURB
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
 
@@ -853,35 +854,38 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
             if (selectedAddressId.isNullOrEmpty()) {
                 val body = getAddAddressRequestBody()
+                loadingProgressBar.visibility = View.VISIBLE
                 checkoutAddAddressNewUserViewModel.addAddress(
                     body
-                ).observe(this, {
-                    when (it.responseStatus) {
-                        ResponseStatus.SUCCESS -> {
-                            loadingProgressBar.visibility = View.GONE
-                            val response = (it.data as? AddAddressResponse)
-                            when (response?.httpCode?.toInt()) {
-                                HTTP_OK, AppConstant.HTTP_OK_201 -> {
-                                    if (savedAddressResponse != null && it?.data != null)
-                                        savedAddressResponse?.addresses?.plus(response.address)
-                                    onAddNewAddress(body.nickname)
+                ).observe(this, { response ->
+                    loadingProgressBar.visibility = View.GONE
+                    when (response) {
+                        is AddAddressResponse -> {
+                            val addressResponse = response as AddAddressResponse
+                            when (addressResponse.httpCode) {
+                                HTTP_OK, HTTP_OK_201 -> {
+                                    if (savedAddressResponse != null && addressResponse != null)
+                                        savedAddressResponse?.addresses?.plus(addressResponse?.address)
+                                    addressResponse.address.nickname?.let { nickName ->
+                                        onAddNewAddress(
+                                            nickName
+                                        )
+                                    }
                                 }
+
                                 AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
-                                    if (response?.response?.code == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
-                                        response?.response?.code == ERROR_CODE_SUBURB_NOT_FOUND
+                                    if (addressResponse.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
+                                        addressResponse.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
                                     ) {
                                         showSuburbNotDeliverableBottomSheetDialog(
-                                            response?.response?.code
+                                            addressResponse.response.code.toString()
                                         )
                                     }
                                 }
                             }
                         }
-                        ResponseStatus.LOADING -> {
-                            loadingProgressBar.visibility = View.VISIBLE
-                        }
-                        ResponseStatus.ERROR -> {
-                            loadingProgressBar.visibility = View.GONE
+                        is Throwable -> {
+
                         }
                     }
                 })
