@@ -27,7 +27,6 @@ import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
 import kotlinx.android.synthetic.main.pma_pay_by_debit_order_item.*
 import kotlinx.android.synthetic.main.pma_personal_loan_electronic_fund_transfer.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
-import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -40,7 +39,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
@@ -229,28 +228,30 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(R.id.payMyAccountRetryErrorFragment)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) -> {
-                        navController?.navigate(CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(true))
+                        safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(true))
+
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) -> {
-                        navController?.navigate(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment())
+                        safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment())
+
                     }
                 }
             }
 
             R.id.findAWooliesStoreButton, R.id.incAtYourNearestWoolworthsStoreButton -> {
-                navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_storesNearbyFragment1)
+                safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToStoresNearbyFragment1())
+
             }
 
             R.id.incPersonalLoanElectronicFundTransfer, R.id.plViewBankingDetailButton, R.id.incByElectronicFundTransferEFTButton, R.id.viewBankingDetailButton -> {
-                navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_byElectronicFundTransferFragment)
+                safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToByElectronicFundTransferFragment())
+
             }
 
             R.id.incPayAtAnyATMButton, R.id.payAtAnyATMButton -> navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_payMyAccountLearnMoreFragment)
 
             R.id.incSetupMyDebitOrder, R.id.setUpDebitOrderButton -> {
-                GlobalScope.doAfterDelay(AppConstant.DELAY_200_MS) {
-                    navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_PMAPayByDebitOrderFragment)
-                }
+                safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToPMAPayByDebitOrderFragment())
             }
 
             R.id.incWhatsAppAnyQuestions -> {
