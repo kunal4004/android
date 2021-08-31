@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
+import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
@@ -228,30 +228,28 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(R.id.payMyAccountRetryErrorFragment)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) -> {
-                        safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(true))
-
+                        navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(true))
                     }
+
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) -> {
-                        safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment())
+                        navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment())
 
                     }
                 }
             }
 
             R.id.findAWooliesStoreButton, R.id.incAtYourNearestWoolworthsStoreButton -> {
-                safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToStoresNearbyFragment1())
-
+                navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToStoresNearbyFragment1())
             }
 
             R.id.incPersonalLoanElectronicFundTransfer, R.id.plViewBankingDetailButton, R.id.incByElectronicFundTransferEFTButton, R.id.viewBankingDetailButton -> {
-                safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToByElectronicFundTransferFragment())
-
+                navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToByElectronicFundTransferFragment())
             }
 
             R.id.incPayAtAnyATMButton, R.id.payAtAnyATMButton -> navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_payMyAccountLearnMoreFragment)
 
             R.id.incSetupMyDebitOrder, R.id.setUpDebitOrderButton -> {
-                safeNavigateFromNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToPMAPayByDebitOrderFragment())
+                navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToPMAPayByDebitOrderFragment())
             }
 
             R.id.incWhatsAppAnyQuestions -> {
