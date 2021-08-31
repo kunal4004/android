@@ -37,6 +37,12 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UNSELLABLE_CHANGE_STORE_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UPDATE_SAVED_ADDRESS_REQUEST_KEY
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_DESCRIPTION
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TITLE
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_ADD_ADDRESS
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_DELETE_ADDRESS
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.RESULT_ERROR_CODE_RETRY
 import za.co.woolworths.financial.services.android.checkout.view.SuburbNotDeliverableBottomsheetDialogFragment.Companion.ERROR_CODE
 import za.co.woolworths.financial.services.android.checkout.view.SuburbNotDeliverableBottomsheetDialogFragment.Companion.ERROR_CODE_SUBURB_NOT_DELIVERABLE
 import za.co.woolworths.financial.services.android.checkout.view.SuburbNotDeliverableBottomsheetDialogFragment.Companion.ERROR_CODE_SUBURB_NOT_FOUND
@@ -433,6 +439,17 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             if (selectedAddress.province.isEmpty()) return@setFragmentResultListener
             getSuburbs()
         }
+        setFragmentResultListener(RESULT_ERROR_CODE_RETRY) { _, bundle ->
+            when (bundle.getInt("bundle")) {
+                ERROR_TYPE_ADD_ADDRESS -> {
+                    onSaveAddressClicked()
+                }
+                ERROR_TYPE_DELETE_ADDRESS -> {
+                    deleteAddress()
+                }
+            }
+
+        }
 
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
             view?.findNavController()?.navigate(
@@ -729,7 +746,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun deleteAddress() {
         loadingProgressBar.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.deleteAddress(selectedAddressId)
-            .observe(this, { response ->
+            .observe(viewLifecycleOwner, { response ->
                 loadingProgressBar.visibility = View.GONE
                 when (response) {
                     is DeleteAddressResponse -> {
@@ -756,7 +773,20 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         }
                     }
                     is Throwable -> {
-
+                        val bundle = Bundle()
+                        bundle.putString(
+                            ERROR_TITLE,
+                            response.message
+                        )
+                        bundle.putString(
+                            ERROR_DESCRIPTION,
+                            getString(R.string.no_internet_subtitle)
+                        )
+                        bundle.putInt(ERROR_TYPE, ERROR_TYPE_DELETE_ADDRESS)
+                        view?.findNavController()?.navigate(
+                            R.id.action_CheckoutAddAddressNewUserFragment_to_ErrorHandlerBottomSheetDialog,
+                            bundle
+                        )
                     }
                 }
             })
@@ -857,14 +887,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 loadingProgressBar.visibility = View.VISIBLE
                 checkoutAddAddressNewUserViewModel.addAddress(
                     body
-                ).observe(this, { response ->
+                ).observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
                     when (response) {
                         is AddAddressResponse -> {
                             when (response.httpCode) {
                                 HTTP_OK, HTTP_OK_201 -> {
                                     if (savedAddressResponse != null && response != null)
-                                        savedAddressResponse?.addresses?.plus(response?.address)
+                                        savedAddressResponse?.addresses?.plus(response.address)
                                     response.address.nickname?.let { nickName ->
                                         onAddNewAddress(
                                             nickName
@@ -884,7 +914,20 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             }
                         }
                         is Throwable -> {
-
+                            val bundle = Bundle()
+                            bundle.putString(
+                                ERROR_TITLE,
+                                response.message
+                            )
+                            bundle.putString(
+                                ERROR_DESCRIPTION,
+                                getString(R.string.no_internet_subtitle)
+                            )
+                            bundle.putInt(ERROR_TYPE, ERROR_TYPE_ADD_ADDRESS)
+                            view?.findNavController()?.navigate(
+                                R.id.action_CheckoutAddAddressNewUserFragment_to_ErrorHandlerBottomSheetDialog,
+                                bundle
+                            )
                         }
                     }
                 })
@@ -934,7 +977,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun onAddNewAddress(@NonNull nickName: String) {
         checkoutAddAddressNewUserViewModel.changeAddress(
             nickName
-        ).observe(this, {
+        ).observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     var changeAddressResponse = it?.data as? ChangeAddressResponse
@@ -1085,7 +1128,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun updateAddress() {
         checkoutAddAddressNewUserViewModel.updateAddress(
             getAddAddressRequestBody(), selectedAddressId
-        ).observe(this, {
+        ).observe(viewLifecycleOwner, {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     loadingProgressBar.visibility = View.GONE
