@@ -50,7 +50,7 @@ class ChatOfflineFragment : Fragment() {
             displayEndSessionButton(false)
         }
 
-        hiClientTextView?.text = "Hi ${ChatCustomerInfo.getUsername()},"
+        hiClientTextView?.text = "Hi ${ChatCustomerInfo.getInstance().getUsername()},"
 
         chatCollectionDescriptionTextView?.text = chatViewModel.offlineMessageTemplate { result ->
             KotlinUtils.sendEmail(activity, result.first, result.second, result.third)
