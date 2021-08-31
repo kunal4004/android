@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/nineteen_dp"
-            android:background="@drawable/input_box_inactive_bg"
+            android:background="@drawable/input_box_white_with_border_bg"
             android:cursorVisible="true"
             android:fontFamily="@font/myriad_pro_regular"
             android:gravity="top|left"
@@ -50,7 +50,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/eight_dp"
-        android:alpha="0.3"
-        android:background="@color/color_separator_light_grey" />
+        android:background="@color/color_separator_lighter_grey" />
 
 </LinearLayout>

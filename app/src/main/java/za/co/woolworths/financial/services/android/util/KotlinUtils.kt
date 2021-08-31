@@ -394,7 +394,6 @@ class KotlinUtils {
             val appVersionParam = "appVersion"
             val jSessionIdParam = "JSESSIONID"
             val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
-
             val context = WoolworthsApplication.getAppContext()
             val packageManager = context.packageManager
 
@@ -404,10 +403,10 @@ class KotlinUtils {
             val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
             val appVersion = "$versionName.$versionCode"
 
-            val symbolType= if(checkoutLink.contains("?")) "&" else "?"
-            val checkOutLink = "$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId"
-
-            WoolworthsApplication.setCartCheckoutLinkWithParams(checkOutLink)
+            if(checkoutLink!=null) {
+                val symbolType = if (checkoutLink.contains("?")) "&" else "?"
+                WoolworthsApplication.setCartCheckoutLinkWithParams("$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId")
+            }
         }
 
         fun sendEmail(activity: Activity?, emailId: String, subject: String?) {
