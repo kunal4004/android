@@ -727,39 +727,39 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun deleteAddress() {
-        checkoutAddAddressNewUserViewModel.deleteAddress(selectedAddressId).observe(this, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    loadingProgressBar.visibility = View.GONE
-                    if (it?.data != null) {
-                        if ((it.data as? DeleteAddressResponse)?.httpCode?.equals(HTTP_OK) == true) {
-                            if (savedAddressResponse?.addresses != null) {
-                                val iterator =
-                                    (savedAddressResponse?.addresses as? MutableList<Address>)?.iterator()
-                                while (iterator?.hasNext() == true) {
-                                    val item = iterator.next()
-                                    if (item.id.equals(selectedAddressId)) {
-                                        iterator.remove()
-                                        break
+        loadingProgressBar.visibility = View.VISIBLE
+        checkoutAddAddressNewUserViewModel.deleteAddress(selectedAddressId)
+            .observe(this, { response ->
+                loadingProgressBar.visibility = View.GONE
+                when (response) {
+                    is DeleteAddressResponse -> {
+                        when (response.httpCode) {
+                            HTTP_OK, HTTP_OK_201 -> {
+                                if (savedAddressResponse?.addresses != null) {
+                                    val iterator =
+                                        (savedAddressResponse?.addresses as? MutableList<Address>)?.iterator()
+                                    while (iterator?.hasNext() == true) {
+                                        val item = iterator.next()
+                                        if (item.id.equals(selectedAddressId)) {
+                                            iterator.remove()
+                                            break
+                                        }
                                     }
                                 }
+                                setFragmentResult(
+                                    DELETE_SAVED_ADDRESS_REQUEST_KEY,
+                                    bundleOf(SAVED_ADDRESS_KEY to savedAddressResponse)
+                                )
+                                navController?.navigateUp()
+                                selectedAddressId = ""
                             }
-                            val bundle = Bundle()
-                            bundle.putString("savedAddress", Utils.toJson(savedAddressResponse))
-                            setFragmentResult(DELETE_SAVED_ADDRESS_REQUEST_KEY, bundle)
-                            navController?.navigateUp()
-                            selectedAddressId = ""
                         }
                     }
+                    is Throwable -> {
+
+                    }
                 }
-                ResponseStatus.LOADING -> {
-                    loadingProgressBar.visibility = View.VISIBLE
-                }
-                ResponseStatus.ERROR -> {
-                    loadingProgressBar.visibility = View.GONE
-                }
-            }
-        })
+            })
     }
 
     private fun getSuburbs() {
@@ -861,12 +861,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     loadingProgressBar.visibility = View.GONE
                     when (response) {
                         is AddAddressResponse -> {
-                            val addressResponse = response as AddAddressResponse
-                            when (addressResponse.httpCode) {
+                            when (response.httpCode) {
                                 HTTP_OK, HTTP_OK_201 -> {
-                                    if (savedAddressResponse != null && addressResponse != null)
-                                        savedAddressResponse?.addresses?.plus(addressResponse?.address)
-                                    addressResponse.address.nickname?.let { nickName ->
+                                    if (savedAddressResponse != null && response != null)
+                                        savedAddressResponse?.addresses?.plus(response?.address)
+                                    response.address.nickname?.let { nickName ->
                                         onAddNewAddress(
                                             nickName
                                         )
@@ -874,11 +873,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                 }
 
                                 AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
-                                    if (addressResponse.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
-                                        addressResponse.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
+                                    if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
+                                        response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
                                     ) {
                                         showSuburbNotDeliverableBottomSheetDialog(
-                                            addressResponse.response.code.toString()
+                                            response.response.code.toString()
                                         )
                                     }
                                 }

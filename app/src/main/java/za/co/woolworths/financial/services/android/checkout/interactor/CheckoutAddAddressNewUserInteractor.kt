@@ -26,7 +26,7 @@ class CheckoutAddAddressNewUserInteractor(
     fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) =
         checkoutMockApiHelper.updateAddress(addAddressRequestBody, addressId)
 
-    fun deleteAddress(addressId: String) = checkoutMockApiHelper.deleteAddress(addressId)
+    fun deleteAddress(addressId: String) = checkoutAddAddressNewUserApiHelper.deleteAddress(addressId)
     fun changeAddress(nickName: String) = checkoutMockApiHelper.changeAddress(nickName)
     fun getAvailableDeliverySlots() = checkoutMockApiHelper.getAvailableDeliverySlots()
     fun getConfirmDeliveryAddressDetails() =
