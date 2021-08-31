@@ -1375,7 +1375,7 @@
         <item name="android:paddingStart">@dimen/sixteen_dp</item>
         <item name="android:paddingBottom">@dimen/twenty_two_dp</item>
         <item name="android:paddingEnd">@dimen/sixteen_dp</item>
-        <item name="android:paddingTop">@dimen/zero_dp</item>
+        <item name="android:paddingTop">@dimen/ten_dp</item>
     </style>
 
     <style name="RewardBenefitDetailStyle" parent="Theme.AppCompat.Light.NoActionBar">
