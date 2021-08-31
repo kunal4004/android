@@ -1099,6 +1099,8 @@ public class Utils {
     }
 
     public static void deliveryLocationEnabled(Context context, boolean enabled, final View view) {
+        if(context==null)
+            return;
         Animation animFadeOut = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.edit_mode_fade_out);
         animFadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
