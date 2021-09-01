@@ -917,6 +917,13 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                         )
                                     }
                                 }
+                                else -> {
+                                    presentErrorDialog(
+                                        getString(R.string.common_error_unfortunately_something_went_wrong),
+                                        getString(R.string.no_internet_subtitle),
+                                        ERROR_TYPE_ADD_ADDRESS
+                                    )
+                                }
                             }
                         }
                         is Throwable -> {
