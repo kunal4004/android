@@ -64,6 +64,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var isDashEnabled = false
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = createLocationRequest()
+    private var localSuburbId: String? = null
+    private var localStoreId: String? = null
+    private var isValidateSelectedSuburbCallStopped = true
 
 
     companion object {
@@ -74,7 +77,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
     init {
         isDashEnabled =
-            Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber?.toString())
+            Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber)
                 ?: false
     }
 
@@ -102,8 +105,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
+        localSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
+        localStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
 
-        var isPermissionGranted: Boolean = false
+        var isPermissionGranted = false
         activity?.apply {
             isPermissionGranted = ContextCompat.checkSelfPermission(
                 this,
@@ -286,7 +291,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         }
     }
 
-    fun presentDashDetailsActivity(activity: Activity, link: String?) {
+    private fun presentDashDetailsActivity(activity: Activity, link: String?) {
         activity.apply {
             val mIntent = Intent(this, DashDetailsActivity::class.java)
             mIntent.putExtra(
@@ -348,7 +353,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 executeValidateSuburb()
                 //When moved from My Cart to department
                 startLocationUpdates()
-
                 showDeliveryOptionDialog()
             }
         }
@@ -439,7 +443,10 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         super.onResume()
         activity?.apply {
             mDepartmentAdapter?.notifyDataSetChanged()
-            executeValidateSuburb()
+            val fragmentList = supportFragmentManager.fragments
+            if (fragmentList.isNotEmpty() && fragmentList[fragmentList.size - 1] !is ProductListingFragment) {
+                executeValidateSuburb()
+            }
         }
     }
 
@@ -455,6 +462,23 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         }
     }
 
+    private fun isLocationChanged(): Boolean {
+        val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
+        val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
+        if (currentStoreId == null && currentSuburbId == null) {
+            return false
+        } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
+            localStoreId = currentStoreId
+            localSuburbId = null
+            return true
+        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
+            localSuburbId = currentSuburbId
+            localStoreId = null
+            return true
+        }
+        return true
+    }
+
     private fun executeValidateSuburb() {
         Utils.getPreferredDeliveryLocation().let {
             if (it == null) {
@@ -464,30 +488,42 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 if (storeOrSuburbId.equals(
                         WoolworthsApplication.getValidatedSuburbProducts()?.suburbId,
                         true
-                    )
+                    ) || !isLocationChanged()
                 ) {
                     updateDeliveryDates()
                 } else {
-                    mDepartmentAdapter?.showDeliveryDatesProgress(true)
-                    storeOrSuburbId?.let { it1 ->
-                        OneAppService.validateSelectedSuburb(it1, it.storePickup)
-                            .enqueue(CompletionHandler(object :
-                                IResponseListener<ValidateSelectedSuburbResponse> {
-                                override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
-                                    when (response?.httpCode) {
-                                        200 -> response.validatedSuburbProducts?.let { it1 ->
-                                            it1.suburbId = storeOrSuburbId
-                                            WoolworthsApplication.setValidatedSuburbProducts(it1)
-                                            updateDeliveryDates()
+                    when (isValidateSelectedSuburbCallStopped) {
+                        true -> {
+                            mDepartmentAdapter?.showDeliveryDatesProgress(true)
+                            storeOrSuburbId?.let { it1 ->
+                                isValidateSelectedSuburbCallStopped = false
+                                OneAppService.validateSelectedSuburb(it1, it.storePickup)
+                                    .enqueue(CompletionHandler(object :
+                                        IResponseListener<ValidateSelectedSuburbResponse> {
+                                        override fun onSuccess(response: ValidateSelectedSuburbResponse?) {
+                                            isValidateSelectedSuburbCallStopped = true
+                                            when (response?.httpCode) {
+                                                200 -> response.validatedSuburbProducts?.let { it1 ->
+                                                    it1.suburbId = storeOrSuburbId
+                                                    WoolworthsApplication.setValidatedSuburbProducts(
+                                                        it1
+                                                    )
+                                                    updateDeliveryDates()
+                                                }
+                                                else -> mDepartmentAdapter?.hideDeliveryDates()
+                                            }
                                         }
-                                        else -> mDepartmentAdapter?.hideDeliveryDates()
-                                    }
-                                }
 
-                                override fun onFailure(error: Throwable?) {
-                                    mDepartmentAdapter?.hideDeliveryDates()
-                                }
-                            }, ValidateSelectedSuburbResponse::class.java))
+                                        override fun onFailure(error: Throwable?) {
+                                            isValidateSelectedSuburbCallStopped = true
+                                            mDepartmentAdapter?.hideDeliveryDates()
+                                        }
+                                    }, ValidateSelectedSuburbResponse::class.java))
+                            }
+                        }
+                        false -> {
+                            // Don't make new request.
+                        }
                     }
                 }
             }
@@ -577,7 +613,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         fusedLocationClient?.removeLocationUpdates(locationCallback)
     }
 
-    private fun createLocationRequest() = LocationRequest.create()?.apply {
+    private fun createLocationRequest() = LocationRequest.create().apply {
         interval = 100
         fastestInterval = 1000
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY

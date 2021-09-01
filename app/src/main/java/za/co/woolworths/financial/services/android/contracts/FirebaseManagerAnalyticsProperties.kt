@@ -295,6 +295,12 @@ open class FirebaseManagerAnalyticsProperties {
         const val DEVICESECURITY_DELETE = "devicesecurity_delete"
         const val inAppReviewRequest = "in_app_review_request"
 
+        //view payment plan
+        const val VIEW_PAYMENT_PLAN_PERSONAL_LOAN = "pl_viewtreatmentplan"
+        const val VIEW_PAYMENT_PLAN_STORE_CARD = "sc_viewtreatmentplan"
+        const val VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION = "Personal Loan landing - Arrears popup - View Treatment plan"
+        const val VIEW_PAYMENT_PLAN_STORE_CARD_ACTION  = "Store Card landing - Arrears popup - View Treatment plan"
+
     }
 
     class PropertyNames {

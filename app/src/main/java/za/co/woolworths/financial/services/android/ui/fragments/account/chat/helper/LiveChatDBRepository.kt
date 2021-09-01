@@ -69,7 +69,7 @@ class LiveChatDBRepository : DatabaseManager() {
     @SuppressLint("DefaultLocale")
     fun getSessionVars(): String {
 
-        val customerInfo = ChatCustomerInfo
+        val customerInfo = ChatCustomerInfo.getInstance()
         val account = getAccount()
 
         val prsAccountNumber = account?.accountNumber ?: ""
