@@ -770,22 +770,20 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                 navController?.navigateUp()
                                 selectedAddressId = ""
                             }
+                            else -> {
+                                presentErrorDialog(
+                                    getString(R.string.common_error_unfortunately_something_went_wrong),
+                                    getString(R.string.delete_address_error),
+                                    ERROR_TYPE_DELETE_ADDRESS
+                                )
+                            }
                         }
                     }
                     is Throwable -> {
-                        val bundle = Bundle()
-                        bundle.putString(
-                            ERROR_TITLE,
-                            response.message
-                        )
-                        bundle.putString(
-                            ERROR_DESCRIPTION,
-                            getString(R.string.no_internet_subtitle)
-                        )
-                        bundle.putInt(ERROR_TYPE, ERROR_TYPE_DELETE_ADDRESS)
-                        view?.findNavController()?.navigate(
-                            R.id.action_CheckoutAddAddressNewUserFragment_to_ErrorHandlerBottomSheetDialog,
-                            bundle
+                        presentErrorDialog(
+                            getString(R.string.common_error_unfortunately_something_went_wrong),
+                            getString(R.string.no_internet_subtitle),
+                            ERROR_TYPE_DELETE_ADDRESS
                         )
                     }
                 }
@@ -902,31 +900,30 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     }
                                 }
 
-                                AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
+                                AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
                                     if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
                                         response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
                                     ) {
                                         showSuburbNotDeliverableBottomSheetDialog(
                                             response.response.code.toString()
                                         )
+                                    } else if (isNickNameAlreadyExist(response)) {
+                                        showNickNameExist()
+                                    } else {
+                                        presentErrorDialog(
+                                            getString(R.string.common_error_unfortunately_something_went_wrong),
+                                            getString(R.string.save_address_error),
+                                            ERROR_TYPE_ADD_ADDRESS
+                                        )
                                     }
                                 }
                             }
                         }
                         is Throwable -> {
-                            val bundle = Bundle()
-                            bundle.putString(
-                                ERROR_TITLE,
-                                response.message
-                            )
-                            bundle.putString(
-                                ERROR_DESCRIPTION,
-                                getString(R.string.no_internet_subtitle)
-                            )
-                            bundle.putInt(ERROR_TYPE, ERROR_TYPE_ADD_ADDRESS)
-                            view?.findNavController()?.navigate(
-                                R.id.action_CheckoutAddAddressNewUserFragment_to_ErrorHandlerBottomSheetDialog,
-                                bundle
+                            presentErrorDialog(
+                                getString(R.string.common_error_unfortunately_something_went_wrong),
+                                getString(R.string.no_internet_subtitle),
+                                ERROR_TYPE_ADD_ADDRESS
                             )
                         }
                     }
@@ -1036,6 +1033,17 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         })
     }
 
+    private fun isNickNameAlreadyExist(response: AddAddressResponse): Boolean {
+        if (!response.validationErrors.isNullOrEmpty()) {
+            for (errorsFields in response.validationErrors) {
+                if (errorsFields.getField() == "nickname") {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     private fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
         view?.findNavController()?.navigate(
             R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
@@ -1114,7 +1122,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.city else savedAddress?.city
                 ?: "",
             suburbEditText?.text.toString(),
-            "",
+            "secondaryAddresses",
             "",
             false,
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.latitude else savedAddress?.latitude
@@ -1168,14 +1176,35 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         if (!savedAddressResponse?.addresses.isNullOrEmpty() && selectedAddressId.isNullOrEmpty()) {
             for (address in savedAddressResponse?.addresses!!) {
                 if (addressNicknameEditText.text.toString().equals(address.nickname, true)) {
-                    addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
-                    addressNicknameErrorMsg?.visibility = View.VISIBLE
-                    addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
+                    showNickNameExist()
                     isExist = true
                 }
             }
         }
         return isExist
+    }
+
+    private fun showNickNameExist() {
+        addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
+        addressNicknameErrorMsg?.visibility = View.VISIBLE
+        addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
+    }
+
+    private fun presentErrorDialog(title: String, subTitle: String, type: Int) {
+        val bundle = Bundle()
+        bundle.putString(
+            ERROR_TITLE,
+            title
+        )
+        bundle.putString(
+            ERROR_DESCRIPTION,
+            subTitle
+        )
+        bundle.putInt(ERROR_TYPE, type)
+        view?.findNavController()?.navigate(
+            R.id.action_CheckoutAddAddressNewUserFragment_to_ErrorHandlerBottomSheetDialog,
+            bundle
+        )
     }
 
     private fun navigateToAddressConfirmation() {
