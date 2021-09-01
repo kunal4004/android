@@ -27,12 +27,12 @@ abstract class RetrofitConfig : NetworkConfig() {
 
         with(httpBuilder) {
             addInterceptor(WfsApiInterceptor())
+            addInterceptor(CommonHeaderInterceptor())
             readTimeout(if (BuildConfig.ENV.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             connectTimeout(if (BuildConfig.ENV.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             writeTimeout(if (BuildConfig.ENV.equals("qa", true)) READ_CONNECT_TIMEOUT_UNIT_QA else READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             interceptors().add(logging)
         }
-
         mApiInterface = getRetrofit(httpBuilder)
     }
 
@@ -41,6 +41,7 @@ abstract class RetrofitConfig : NetworkConfig() {
                 .baseUrl(BuildConfig.HOST + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+
                 .client(httpBuilder.build())
                 .build()
                 .create(ApiInterface::class.java)

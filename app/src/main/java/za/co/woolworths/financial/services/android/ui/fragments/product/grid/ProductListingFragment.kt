@@ -860,6 +860,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         this.mSelectedProductList = productList
         val activity = activity ?: return
 
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
+            return
+        }
+
         if(productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
@@ -867,10 +872,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             return
         }
 
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
-            return
-        }
 
         if (mStoreId.isEmpty()) {
             addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
