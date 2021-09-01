@@ -4,13 +4,18 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
-object ChatCustomerInfo {
+class ChatCustomerInfo {
+
+    companion object {
+        private var instance = ChatCustomerInfo()
+
+        fun getInstance(): ChatCustomerInfo {
+            instance.jWTDecodedModel = SessionUtilities.getInstance().jwt
+            return instance
+        }
+    }
 
     private var jWTDecodedModel: JWTDecodedModel? = null
-
-    init {
-        jWTDecodedModel = SessionUtilities.getInstance().jwt
-    }
 
     fun getCustomerFamilyName(): String {
         val familyName = jWTDecodedModel?.family_name?.get(0)

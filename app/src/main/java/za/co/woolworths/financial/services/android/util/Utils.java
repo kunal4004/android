@@ -985,19 +985,20 @@ public class Utils {
         }
     }
 
-    public static void removeFromDb(SessionDao.KEY key, Context context) throws Exception {
-        SessionDao.getByKey(key).delete();
-    }
-
-    public static void clearCacheHistory(Activity context) {
+    public static void removeFromDb(SessionDao.KEY key) {
         try {
-            QueryBadgeCounter.getInstance().notifyBadgeCounterUpdate(REMOVE_ALL_BADGE_COUNTER);
-            Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
-            Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
-            Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, context);
+            SessionDao.getByKey(key).delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void clearCacheHistory() {
+        QueryBadgeCounter.getInstance().notifyBadgeCounterUpdate(REMOVE_ALL_BADGE_COUNTER);
+        Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
+        Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH);
+        Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION);
+        Utils.removeFromDb(SessionDao.KEY.LIVE_CHAT_EXTRAS);
     }
 
     public static void truncateMaxLine(final TextView tv) {
