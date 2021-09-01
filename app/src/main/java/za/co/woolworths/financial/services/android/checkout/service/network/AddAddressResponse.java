@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.checkout.service.network;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class AddAddressResponse {
 
     @SerializedName("address")
@@ -13,6 +15,9 @@ public class AddAddressResponse {
 
     @SerializedName("httpCode")
     private Integer httpCode;
+
+    @SerializedName("validationErrors")
+    private List<ValidationError> validationErrors;
 
     public Address getAddress() {
         return address;
@@ -38,4 +43,11 @@ public class AddAddressResponse {
         this.httpCode = httpCode;
     }
 
+    public List<ValidationError> getValidationErrors() {
+        return validationErrors;
+    }
+
+    public void setValidationErrors(List<ValidationError> validationErrors) {
+        this.validationErrors = validationErrors;
+    }
 }

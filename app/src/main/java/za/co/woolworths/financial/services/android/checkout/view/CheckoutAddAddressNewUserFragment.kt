@@ -62,6 +62,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SUBURB
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
 
@@ -434,8 +435,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
-            view?.findNavController()?.navigate(R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment, bundleOf(
-                SAVED_ADDRESS_KEY to savedAddressResponse))
+            view?.findNavController()?.navigate(
+                R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
+                bundleOf(
+                    SAVED_ADDRESS_KEY to savedAddressResponse
+                )
+            )
         }
     }
 
@@ -504,6 +509,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectedAddress.address1 = addressText1.plus(" ").plus(addressText2)
         selectedAddress.latitude = place.latLng?.latitude
         selectedAddress.longitude = place.latLng?.longitude
+        selectedAddress.placesId = place.id
 
         if (selectedAddress.suburb.isNotEmpty())
             selectedAddress.suburbId = ""
@@ -758,28 +764,29 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getSuburbs() {
         if (progressbarGetProvinces?.visibility == View.VISIBLE) return
-        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region).observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    hideSetSuburbProgressBar()
-                    if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
-                        //showNoStoresError()
-                    } else {
-                        (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
-                            navigateToSuburbSelection(
-                                it1
-                            )
+        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region)
+            .observe(viewLifecycleOwner, {
+                when (it.responseStatus) {
+                    ResponseStatus.SUCCESS -> {
+                        hideSetSuburbProgressBar()
+                        if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
+                            //showNoStoresError()
+                        } else {
+                            (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
+                                navigateToSuburbSelection(
+                                    it1
+                                )
+                            }
                         }
                     }
+                    ResponseStatus.LOADING -> {
+                        showGetSuburbProgress()
+                    }
+                    ResponseStatus.ERROR -> {
+                        hideSetSuburbProgressBar()
+                    }
                 }
-                ResponseStatus.LOADING -> {
-                    showGetSuburbProgress()
-                }
-                ResponseStatus.ERROR -> {
-                    hideSetSuburbProgressBar()
-                }
-            }
-        })
+            })
     }
 
     private fun navigateToSuburbSelection(suburbs: List<Suburb>) {
@@ -847,34 +854,38 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
             if (selectedAddressId.isNullOrEmpty()) {
                 val body = getAddAddressRequestBody()
+                loadingProgressBar.visibility = View.VISIBLE
                 checkoutAddAddressNewUserViewModel.addAddress(
                     body
-                ).observe(this, {
-                    when (it.responseStatus) {
-                        ResponseStatus.SUCCESS -> {
-                            loadingProgressBar.visibility = View.GONE
-                            val response = (it.data as? AddAddressResponse)
-                            when (response?.httpCode?.toInt()) {
-                                HTTP_OK, AppConstant.HTTP_OK_201 -> {
-                                    if (savedAddressResponse != null && it?.data != null)
-                                        savedAddressResponse?.addresses?.plus(response.address)
-                                    onAddNewAddress(body.nickname)
+                ).observe(this, { response ->
+                    loadingProgressBar.visibility = View.GONE
+                    when (response) {
+                        is AddAddressResponse -> {
+                            val addressResponse = response as AddAddressResponse
+                            when (addressResponse.httpCode) {
+                                HTTP_OK, HTTP_OK_201 -> {
+                                    if (savedAddressResponse != null && addressResponse != null)
+                                        savedAddressResponse?.addresses?.plus(addressResponse?.address)
+                                    addressResponse.address.nickname?.let { nickName ->
+                                        onAddNewAddress(
+                                            nickName
+                                        )
+                                    }
                                 }
+
                                 AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
-                                    if(response?.response?.code == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
-                                        response?.response?.code == ERROR_CODE_SUBURB_NOT_FOUND){
+                                    if (addressResponse.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
+                                        addressResponse.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
+                                    ) {
                                         showSuburbNotDeliverableBottomSheetDialog(
-                                            response?.response?.code
+                                            addressResponse.response.code.toString()
                                         )
                                     }
                                 }
                             }
                         }
-                        ResponseStatus.LOADING -> {
-                            loadingProgressBar.visibility = View.VISIBLE
-                        }
-                        ResponseStatus.ERROR -> {
-                            loadingProgressBar.visibility = View.GONE
+                        is Throwable -> {
+
                         }
                     }
                 })
@@ -945,7 +956,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             // Don't allow user to navigate to Checkout page when deliverable : [false].
                             if (!response.deliverable) {
                                 showSuburbNotDeliverableBottomSheetDialog(
-                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE)
+                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE
+                                )
                                 return@observe
                             }
 
@@ -984,11 +996,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
         view?.findNavController()?.navigate(
-                R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
-                bundleOf(
-                    ERROR_CODE to errorCode
-                )
+            R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
+            bundleOf(
+                ERROR_CODE to errorCode
             )
+        )
     }
 
     /**
@@ -1060,13 +1072,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.city else savedAddress?.city
                 ?: "",
             suburbEditText?.text.toString(),
-            selectedDeliveryAddressType.toString(),
+            "",
             "",
             false,
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.latitude else savedAddress?.latitude
                 ?: 0.0,
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.longitude else savedAddress?.longitude
-                ?: 0.0
+                ?: 0.0, selectedAddress.placesId ?: "",
+            selectedDeliveryAddressType.toString()
         )
     }
 

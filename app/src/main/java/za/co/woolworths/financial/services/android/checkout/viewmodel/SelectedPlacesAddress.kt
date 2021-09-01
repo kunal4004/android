@@ -17,4 +17,5 @@ class SelectedPlacesAddress() {
     var longitude: Double? = 0.0
     var nickname: String = ""
     var unitComplexFloor: String = ""
+    var placesId: String? = ""
 }
