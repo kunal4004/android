@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingBottom="@dimen/ten_dp">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/howWouldYouDeliveredShimmerFrameLayout"
+        style="@style/myriad_pro_regular_black"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/two_dp"
+        android:layout_marginBottom="@dimen/two_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/top_guideline">
+
+        <TextView
+            android:id="@+id/howWouldYouDeliveredTitle"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:text="@string/slot_delivery_title"
+            android:textSize="@dimen/twenty_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/selectDeliveryTimeSlotSubTitleShimmerFrameLayout"
+        style="@style/myriad_pro_regular_black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_six_dp"
+        android:layout_marginTop="@dimen/four_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:layout_weight="@integer/point_five"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/howWouldYouDeliveredShimmerFrameLayout">
+
+        <TextView
+            android:id="@+id/selectDeliveryTimeSlotSubTitle"
+            style="@style/myriad_pro_regular"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:text="@string/select_your_preferred_delivery_time_other"
+            android:textColor="@color/checkout_delivering_title"
+            android:textSize="@dimen/fifteen_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/deliveryTypeSelectionRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eighteen_dp"
+        android:background="@color/white"
+        android:scrollbars="vertical"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintEnd_toStartOf="@+id/rightguideline"
+        app:layout_constraintStart_toEndOf="@+id/leftguideline"
+        app:layout_constraintTop_toBottomOf="@+id/selectDeliveryTimeSlotSubTitleShimmerFrameLayout" />
+
+    <include
+        android:id="@+id/gridLayoutDeliveryOptions"
+        layout="@layout/checkout_grid_layout_other"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/deliveryTypeSelectionRecyclerView" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_six_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/leftguideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/rightguideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1836,6 +1836,7 @@
     <string name="chat_to_us_label">CHAT TO US</string>
 
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
+    <string name="earliest_delivery_date_text">Earliest Delivery date \u0020</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
@@ -2069,6 +2070,36 @@
     <string name="select_suburb">Select Suburb</string>
     <string name="delivery_liquor_description"><![CDATA[Liquor is not available for Click & Collect.]]></string>
 
+    <!--Native Checkout-->
+    <string name="name_colon_text_view">Name: *</string>
+    <string name="mobile_number_text_view">Mobile Number: *</string>
+    <string name="my_address_details">My Address Details</string>
+    <string name="address_nickname_text_view">Address Nickname: *</string>
+    <string name="unit_complex_floor_text_view">Unit No/Complex/Floor/Building:</string>
+    <string name="suburb_colon_text_view">Suburb: *</string>
+    <string name="province_colon_text_view">Province: *</string>
+    <string name="postal_code_colon_text_view">Postal Code: *</string>
+    <string name="optional_hint">Optional</string>
+    <string name="places_autocomplete_tv_hint">Enter a new address</string>
+    <string name="where_are_we_delivering">Where Are We Delivering?</string>
+    <string name="where_should_we_deliver">Where Should We Deliver?</string>
+    <string name="save_address">SAVE ADDRESS</string>
+    <string name="change_details">change details</string>
+    <string name="delete_address">delete address</string>
+    <string name="places_address_error_msg">Please enter a valid Address</string>
+    <string name="address_nickname_error_msg">This field is required.</string>
+    <string name="add_new_address_error_msg">Please select or add a delivery address.</string>
+    <string name="delivering_address_types_error_msg">Please select an address type.</string>
+    <string name="suburb_name_error_msg">Please select a suburb.</string>
+    <string name="province_name_error_msg">Please select a province.</string>
+    <string name="postal_code_error_msg">Please enter a Postal Code</string>
+    <string name="mobile_number_error_msg">Please enter a 10-digit South African mobile number.</string>
+    <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
+    <string name="add_a_new_address">Add A New Address</string>
+    <string name="add_address">Add Address</string>
+    <string name="change_suburb">change suburb</string>
+    <string name="change_province"><u>change province</u></string>
+    <string name="no_saved_addresses">No Saved Addresses</string>
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
     <string name="death_cover_title">Death Cover</string>
@@ -2134,6 +2165,63 @@
     <string name="app_version_info">App Version %s (%s)</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
 
+    <!-- Native Checkout -->
+    <string name="native_checkout_continue_to_payment">Continue To Payment</string>
+    <string name="native_checkout_order_total_title">Order Total *</string>
+
+    <!-- Native Checkout : delivery Instructions -->
+    <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
+    <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
+    <string name="native_checkout_delivery_special_instructions_hint">Please type delivery instructions here.</string>
+    <string name="native_checkout_delivery_gift_instructions">Is this a Gift?</string>
+    <string name="native_checkout_delivery_gift_instructions_hint">Please type gifting message here.</string>
+
+    <!-- Native Checkout : Food Substitution    -->
+    <string name="native_checkout_delivery_food_substitution_title">Food Substitutions</string>
+    <string name="native_checkout_delivery_food_substitution_desc">If an item is out of stock, how should we handle substitutes for you? If no substitutes are found the difference is not charged.</string>
+    <string name="native_checkout_delivery_food_substitution_phone_confirm">Phone me to confirm any substitutions</string>
+    <string name="native_checkout_delivery_food_substitution_similar_subst">Substitute for similar items if one is available</string>
+    <string name="native_checkout_delivery_food_substitution_no_thanks">No thanks, don’t substitute</string>
+    <string name="delivery_timeslot_title_food_items">Delivery 1 - Food Items</string>
+    <string name="delivery_timeslot_title_other_items">Delivery 2 - Other Items</string>
+    <string name="slot_delivery_title">How Would You Like It Delivered?</string>
+    <string name="slot_delivery_title_when">When would you like it delivered?</string>
+    <string name="select_your_preferred_delivery_time">Select your preferred delivery time</string>
+    <string name="select_your_preferred_delivery_time_other">Select your preferred delivery method</string>
+    <string name="previous_week_text">Previous Week</string>
+    <string name="next_week_text">Next Week</string>
+    <string name="free_delivery_slot">FREE</string>
+    <string name="currency">R</string>
+    <string name="dummy_currency">R50</string>
+    <string name="title_text">ShowTitle</string>
+    <string name="subtitle_text">Show SubTitle Text</string>
+    <string name="working_days_text">%1$s - %2$s Working Days</string>
+    <plurals name="stores_near_me">
+        <item quantity="zero">%d Stores near me</item>
+        <item quantity="one">%d Store near me</item>
+        <item quantity="other">%d Stores near me</item>
+    </plurals>
+    <string name="suburb_selection_subtitle">This will show all collection stores near you.</string>
+
+    <!-- Native Checkout : Order Summary   -->
+    <string name="native_checkout_delivery_order_summary_note">* Items are not reserved until you checkout. \n* Delivery cost to be confirmed before payment</string>
+    <string name="native_checkout_delivery_order_summary_fee_value">TBC</string>
+    <string name="native_checkout_delivery_order_summary_fee">Delivery Fee</string>
+    <string name="native_checkout_delivery_order_summary_total_discount">Total Discount</string>
+    <string name="native_checkout_delivery_order_summary_discounts">Discounts</string>
+    <string name="native_checkout_delivery_order_summary_your_cart">Your Cart</string>
+    <string name="native_checkout_delivery_order_summary_company_discounts">Company Discount</string>
+    <string name="native_checkout_delivery_order_summary_wrewards_vouchers">Your WRewards Vouchers</string>
+    <string name="native_checkout_delivery_order_summary_promo_code">Promo Code Applied</string>
+    <string name="default_discount_value">- R 0.00</string>
+
+    <!-- Native Checkout : Suburb not deliverable  -->
+    <string name="dismiss">Dismiss</string>
+    <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
+    <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
+    <string name="change_address">Change Address</string>
+    <string name="native_checkout_delivering_to_title">Delivering to</string>
+
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
     <string name="voc_question_freetext_hint_optional">Describe your experience in detail (optional)</string>
@@ -2154,4 +2242,29 @@
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
+
+    <string name="common_error_unfortunately_something_went_wrong">Unfortunately, something went wrong.</string>
+    <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
+    <string name="suburb_not_found">We Can’t Seem To Find This Suburb</string>
+
+    <!--order details-->
+    <string name="order_details_toolbar_title">ORDER #%1$s</string>
+    <string name="order_details">Order Details</string>
+    <string name="collection_from">Collection from</string>
+    <string name="delivery_semicolon">Delivery:</string>
+    <string name="food_items_semicolon">Food Items:</string>
+    <string name="other_items_semicolon">Other Items:</string>
+    <string name="order_total_semicolon">Order Total:</string>
+    <string name="missed_wrewards_savings">Missed WRewards Savings</string>
+    <string name="delivery_location_semicolon">Delivery location:</string>
+    <string name="number_items">%1$s Items</string>
+    <string name="number_item">%1$s Item</string>
+    <string name="order_again">ORDER AGAIN</string>
+    <string name="you_could_have_saved">You could have saved</string>
+    <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
+    <string name="add_it_now">Add it now</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="wrewards_logo_rewards">REWARDS</string>
+    <string name="wrewards_logo_w">W</string>
+
 </resources>
