@@ -2222,6 +2222,11 @@
     <string name="change_address">Change Address</string>
     <string name="native_checkout_delivering_to_title">Delivering to</string>
 
+    <!-- Native Checkout : Error Screens  -->
+    <string name="save_address_error">We can’t save your address right now. Please try again.</string>
+    <string name="delete_address_error">We can’t delete your address right now. Please try again.</string>
+    <string name="update_address_error">We can’t seem to save the changes to your address. Please try again.</string>
+
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
     <string name="voc_question_freetext_hint_optional">Describe your experience in detail (optional)</string>

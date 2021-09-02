@@ -13,10 +13,17 @@ import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 /**
  * Created by Kunal Uttarwar on 04/06/21.
  */
-class CheckoutAddAddressNewUserApiHelper: RetrofitConfig() {
+class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
-    fun getSuburbs(provinceId: String): Response<SuburbsResponse> = OneAppService.getSuburbs(provinceId).execute()
-    fun validateSelectedSuburb(suburbId: String, isStore: Boolean): Response<ValidateSelectedSuburbResponse> = OneAppService.validateSelectedSuburb(suburbId, isStore).execute()
+    fun getSuburbs(provinceId: String): Response<SuburbsResponse> =
+        OneAppService.getSuburbs(provinceId).execute()
+
+    fun validateSelectedSuburb(
+        suburbId: String,
+        isStore: Boolean
+    ): Response<ValidateSelectedSuburbResponse> =
+        OneAppService.validateSelectedSuburb(suburbId, isStore).execute()
+
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): LiveData<Any> {
         val addAddressData = MutableLiveData<Any>()
         OneAppService.addAddress(addAddressRequestBody)?.enqueue(CompletionHandler(object :
@@ -33,5 +40,23 @@ class CheckoutAddAddressNewUserApiHelper: RetrofitConfig() {
 
         }, AddAddressResponse::class.java))
         return addAddressData
+    }
+
+    fun deleteAddress(addressId: String): LiveData<Any> {
+        val deleteAddressData = MutableLiveData<Any>()
+        OneAppService.deleteAddress(addressId).enqueue(CompletionHandler(object :
+            IResponseListener<DeleteAddressResponse> {
+            override fun onSuccess(deleteAddressResponse: DeleteAddressResponse?) {
+                deleteAddressData.value = deleteAddressResponse ?: null
+            }
+
+            override fun onFailure(error: Throwable?) {
+                if (error != null) {
+                    deleteAddressData.value = error!!
+                }
+            }
+
+        }, DeleteAddressResponse::class.java))
+        return deleteAddressData
     }
 }
