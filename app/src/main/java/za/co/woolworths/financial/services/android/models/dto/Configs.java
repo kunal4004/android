@@ -61,4 +61,6 @@ public class Configs {
     public BalanceProtectionInsurance balanceProtectionInsurance;
     @Nullable
     public CustomerFeedback customerFeedback;
+    @Nullable
+    public AccountOptions accountOptions;
 }
