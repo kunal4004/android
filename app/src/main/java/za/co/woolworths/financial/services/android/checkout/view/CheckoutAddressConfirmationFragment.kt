@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.add_to_list_content.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
@@ -39,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.util.DeliveryType
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -105,10 +108,14 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.deliveryTab -> {
-                showDeliveryTab()
+                if (loadingProgressBar.visibility == View.GONE) {
+                    showDeliveryTab()
+                }
             }
             R.id.collectionTab -> {
-                showCollectionTab(localSuburbId)
+                if (loadingProgressBar.visibility == View.GONE) {
+                    showCollectionTab(localSuburbId)
+                }
             }
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
                 navigateToAddAddress()
@@ -331,6 +338,11 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             } else {
                 // Show Delivery View
                 showDeliveryAddressListView()
+                setRecyclerViewMaximumHeight(
+                    saveAddressRecyclerView.layoutParams,
+                    savedAddress?.addresses?.size ?: 0
+                )
+                checkoutAddressConfirmationListAdapter = null
                 checkoutAddressConfirmationListAdapter =
                     CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
                 saveAddressRecyclerView?.apply {
@@ -367,6 +379,21 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 storeListAdapter?.filter?.filter(it.toString())
             }
         }
+    }
+
+    private fun setRecyclerViewMaximumHeight(viewGroupParams: ViewGroup.LayoutParams, size: Int) {
+        val displayMetrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+        val rowHeight = 65
+        val totalRemovalHeight = 370
+        val recyclerViewSpace =
+            displayMetrics.heightPixels - KotlinUtils.dpToPxConverter(totalRemovalHeight)
+        val totalRowHeight = KotlinUtils.dpToPxConverter(rowHeight * size)
+        if (totalRowHeight <= recyclerViewSpace)
+            viewGroupParams.height = totalRowHeight
+        else
+            viewGroupParams.height = recyclerViewSpace
+        saveAddressRecyclerView.layoutParams = viewGroupParams
     }
 
     private fun hideDeliveryAddressListView() {

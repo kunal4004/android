@@ -892,7 +892,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             when (response.httpCode) {
                                 HTTP_OK, HTTP_OK_201 -> {
                                     if (savedAddressResponse != null && response != null)
-                                        savedAddressResponse?.addresses?.plus(response.address)
+                                        savedAddressResponse?.addresses?.add(response.address)
                                     response.address.nickname?.let { nickName ->
                                         onAddNewAddress(
                                             nickName

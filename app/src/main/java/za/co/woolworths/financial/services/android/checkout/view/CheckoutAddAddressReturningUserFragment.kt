@@ -155,7 +155,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     // Extract default address display name
                     savedAddresses.addresses?.forEach { address ->
                         if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                            val addressName = SpannableString(address.displayName)
+                            val addressName = SpannableString(address.nickname)
                             val typeface1 =
                                 ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
                             addressName.setSpan(
