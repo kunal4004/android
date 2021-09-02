@@ -491,8 +491,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             enablePostalCode()
             postalCode.text.clear()
         } else {
-            disablePostalCode()
             postalCode?.setText(suburb?.postalCode)
+            if (postalCode.text.isNotEmpty()) {
+                disablePostalCode()
+            } else
+                enablePostalCode()
         }
     }
 
@@ -591,8 +594,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 postalCode.text.clear()
             }
             false -> {
-                disablePostalCode()
                 postalCode.setText(selectedAddress.postalCode)
+                if (postalCode.text.isNotEmpty()) {
+                    disablePostalCode()
+                } else
+                    enablePostalCode()
             }
         }
     }
@@ -1270,7 +1276,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             R.id.postalCode -> {
                 postalCodeTextErrorMsg?.visibility = visible
-                editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_non_editable_background else R.drawable.input_non_editable_edit_text)
             }
             R.id.recipientNameEditText -> {
                 recipientNameErrorMsg?.visibility = visible
