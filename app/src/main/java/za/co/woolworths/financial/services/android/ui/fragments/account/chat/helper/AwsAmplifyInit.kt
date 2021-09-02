@@ -41,8 +41,10 @@ class AmplifyInit {
                         .getJSONObject("CognitoUserPool")
                         .getJSONObject("Default")
 
-                    auth.put("PoolId", inAppChat.userPoolId)
-                    auth.put("AppClientId", inAppChat.userPoolWebClientId)
+                    inAppChat.let {
+                        auth.put("PoolId", inAppChat.userPoolId)
+                        auth.put("AppClientId", inAppChat.userPoolWebClientId)
+                    }
 
                     val api = awsConfigurationJSONObject
                         .getJSONObject("api")
@@ -50,7 +52,9 @@ class AmplifyInit {
                         .getJSONObject("awsAPIPlugin")
                         .getJSONObject("api")
 
-                    api.put("endpoint", inAppChat.apiURI)
+                    inAppChat.let {
+                        api.put("endpoint", inAppChat.apiURI)
+                    }
 
                     val awsConfiguration = AmplifyConfiguration
                         .builder(awsConfigurationJSONObject)
