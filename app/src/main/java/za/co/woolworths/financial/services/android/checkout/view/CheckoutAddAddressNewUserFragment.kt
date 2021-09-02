@@ -437,6 +437,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
             if (selectedAddress.province.isEmpty()) return@setFragmentResultListener
+            provinceSuburbEnableType = ONLY_SUBURB
+            enableDisableEditText()
             getSuburbs()
         }
         setFragmentResultListener(RESULT_ERROR_CODE_RETRY) { _, bundle ->
@@ -1135,7 +1137,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.city else savedAddress?.city
                 ?: "",
             suburbEditText?.text.toString(),
-            "secondaryAddresses",
             "",
             false,
             if (selectedAddressId.isNullOrEmpty()) selectedAddress.latitude else savedAddress?.latitude
