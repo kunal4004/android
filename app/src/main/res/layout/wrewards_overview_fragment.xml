@@ -100,8 +100,6 @@
                                             android:textColor="@color/black"
                                             android:textSize="@dimen/fifteen_sp"
                                             app:WTextView_font="medium"
-                                            android:text="hello"
-
                                             app:layout_constraintHeight_default="wrap"
                                             app:layout_constraintStart_toStartOf="parent"
                                             app:layout_constraintEnd_toEndOf="parent"
@@ -111,9 +109,6 @@
                                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
                             </FrameLayout>
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -135,37 +130,39 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <LinearLayout
+                    android:id="@+id/shakeOrTapNumberLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/shakeOrTapNumberTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:fontFamily="@font/futura_medium_ttf"
+                        android:gravity="center"
+                        android:letterSpacing="0.08"
+                        android:paddingTop="@dimen/four_dp"
+                        android:paddingStart="@dimen/sixteen_dp"
+                        android:paddingEnd="@dimen/sixteen_dp"
+                        android:text="@string/reward_shake_tap_label"
+                        android:textColor="@color/color_808080"
+                        android:textSize="@dimen/thirteen_sp"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHeight_default="wrap"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </LinearLayout>
+
                 <RelativeLayout
                     android:id="@+id/wRewardsBenefitsRelativeLayout"
-                    style="@style/reward_benefit_container_style">
+                    style="@style/wreward_virtual_card_number_style">
 
-                    <TextView
-                        style="@style/reward_benefit_title"
-                        android:text="@string/virtual_card_number" />
-
-                    <ImageView
-                        android:id="@+id/infoImageVirtualCard"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/ic_caret_black" />
-
-                    <TextView
-                        android:id="@+id/tvMoreInfoVirtualCard"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toStartOf="@+id/infoImageVirtualCard"
-                        android:fontFamily="@font/futura_semi_bold_ttf"
-                        android:letterSpacing="0.1"
-                        android:text="@string/reward_more_info"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/twelve_sp"
-                        tools:targetApi="lollipop"
-                        android:paddingBottom="@dimen/eight_dp"
-                        android:paddingTop="@dimen/eight_dp"
-                        tools:text="@string/reward_more_info" />
+                    <include layout="@layout/wrewards_virtual_card_number_row" />
                 </RelativeLayout>
 
                 <View
@@ -247,7 +244,7 @@
                         android:id="@+id/toNextTire"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:textColor="@color/black"
                         android:textSize="15sp"
