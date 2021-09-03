@@ -384,7 +384,7 @@ fun TextView.underline() {
     paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
 }
 
-fun Fragment.safeNavigateFromNavController(directions: NavDirections) {
+fun Fragment.navigateSafelyWithNavController(directions: NavDirections) {
     val navController = findNavController()
     val destination = navController.currentDestination as? FragmentNavigator.Destination
     if (javaClass.name == destination?.className) {
