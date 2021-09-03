@@ -97,7 +97,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                 val isCurrentFragmentWRewardsFragmentSection =  (activity as? BottomNavigationActivity)?.currentFragment is WRewardsFragment
                 val isCurrentFragmentWRewardsOverviewFragment =  ( parentFragment as? WRewardsLoggedinAndLinkedFragment)?.wrewardsViewPager?.currentItem != 0
                 // disable shake action when barcode is invisible
-                if (TextUtils.isEmpty(barCodeNumber?.text?.toString()) || !isCurrentFragmentWRewardsFragmentSection || isCurrentFragmentWRewardsOverviewFragment)   return@shakeDetectorInit
+                if (!SessionUtilities.getInstance().isUserAuthenticated || TextUtils.isEmpty(barCodeNumber?.text?.toString()) || !isCurrentFragmentWRewardsFragmentSection || isCurrentFragmentWRewardsOverviewFragment)   return@shakeDetectorInit
                 setShakeToAnimateView(activity,flipCardBackLayout)
                 shakeOrTapToBrightness() }
         }
