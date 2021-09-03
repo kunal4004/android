@@ -1299,6 +1299,9 @@
 
     <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
+    <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
+    <string name="view_payment_plan_button_label">View payment plan</string>
+    <string name="make_payment_now_button_label">Make a payment</string>
 
     <!-- Unique Ids for Transactions-->
     <string name="transactions_title_layout">View Transaction Title Layout</string>
@@ -2219,6 +2222,11 @@
     <string name="change_address">Change Address</string>
     <string name="native_checkout_delivering_to_title">Delivering to</string>
 
+    <!-- Native Checkout : Error Screens  -->
+    <string name="save_address_error">We can’t save your address right now. Please try again.</string>
+    <string name="delete_address_error">We can’t delete your address right now. Please try again.</string>
+    <string name="update_address_error">We can’t seem to save the changes to your address. Please try again.</string>
+
     <!--  Voice of Customer  -->
     <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
     <string name="voc_question_freetext_hint_optional">Describe your experience in detail (optional)</string>
@@ -2238,6 +2246,7 @@
     <string name="voc_processing_request_desc">This may take a few seconds</string>
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
+    <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
 
     <string name="common_error_unfortunately_something_went_wrong">Unfortunately, something went wrong.</string>
     <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
