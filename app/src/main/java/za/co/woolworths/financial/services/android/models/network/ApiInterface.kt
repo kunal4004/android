@@ -490,9 +490,16 @@ interface ApiInterface {
     @PATCH("address/{id}")
     fun updateAddress(@Body addAddressRequestBody: AddAddressRequestBody, @Path("id") id: String): Call<AddAddressResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("address/{addressId}")
-    fun deleteAddress(@Path("addressId") addressId: String): Call<DeleteAddressResponse>
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json"
+    )
+    @DELETE("cart/checkout/address/{addressId}")
+    fun deleteAddress(
+        @Header("sessionToken") sessionToken: String,
+        @Path("addressId") addressId: String
+    ): Call<DeleteAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("cart/checkout/changeAddress/{nickName}")

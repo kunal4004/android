@@ -218,7 +218,7 @@ object OneAppService : RetrofitConfig() {
         return mockApiInterface.updateAddress(addAddressRequestBody, addressId)
     }
     fun deleteAddress(addressId: String): Call<DeleteAddressResponse> {
-        return mockApiInterface.deleteAddress(addressId)
+        return mApiInterface.deleteAddress(getSessionToken(), addressId)
     }
 
     fun changeAddress(nickName: String): Call<ChangeAddressResponse> {

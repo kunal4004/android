@@ -75,17 +75,8 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
             }
         }
 
-    fun deleteAddress(addressId: String) = liveData(Dispatchers.IO) {
-        emit(NativeCheckoutResource.loading(data = null))
-        try {
-            emit(
-                NativeCheckoutResource.success(
-                    data = checkoutAddAddressNewUserInteractor.deleteAddress(addressId).body()
-                )
-            )
-        } catch (exception: Exception) {
-            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
-        }
+    fun deleteAddress(addressId: String) : LiveData<Any> {
+        return checkoutAddAddressNewUserInteractor.deleteAddress(addressId)
     }
 
     fun getAvailableDeliverySlots() = liveData(Dispatchers.IO) {
