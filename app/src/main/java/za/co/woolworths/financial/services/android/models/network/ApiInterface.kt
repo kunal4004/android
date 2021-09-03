@@ -474,7 +474,8 @@ interface ApiInterface {
     fun getSavedAddresses(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<SavedAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
