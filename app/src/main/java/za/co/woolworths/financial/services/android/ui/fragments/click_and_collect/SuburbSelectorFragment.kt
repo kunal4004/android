@@ -67,6 +67,7 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
                 }
             }
         }
+        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,6 +97,18 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_item, menu)
         return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_search -> {
+                navController?.navigateUp()
+                return false
+            } else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+
     }
 
     private fun loadSuburbsList() {

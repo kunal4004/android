@@ -495,8 +495,13 @@ interface ApiInterface {
     fun deleteAddress(@Path("addressId") addressId: String): Call<DeleteAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("changeAddress/{nickName}")
-    fun changeAddress(@Path("nickName") nickName: String): Call<ChangeAddressResponse>
+    @GET("cart/checkout/changeAddress/{nickName}")
+    fun changeAddress(
+        @Path("nickName") nickName: String,
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String
+    ): Call<ChangeAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("availableDeliverySlots")

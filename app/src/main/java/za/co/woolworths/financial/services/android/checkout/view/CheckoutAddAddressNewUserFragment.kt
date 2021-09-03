@@ -873,7 +873,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     }
                                 }
 
-                                AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
+                                AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
                                     if (addressResponse.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
                                         addressResponse.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
                                     ) {
@@ -936,59 +936,47 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         checkoutAddAddressNewUserViewModel.changeAddress(
             nickName
         ).observe(this, {
+            loadingProgressBar.visibility = View.GONE
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
-                    var changeAddressResponse = it?.data as? ChangeAddressResponse
-                    if (changeAddressResponse == null) {
-                        val jsonFileString = Utils.getJsonDataFromAsset(
-                            activity?.applicationContext,
-                            "mocks/changeAddressResponse.json"
-                        )
-                        val mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
-                            jsonFileString,
-                            object : TypeToken<ChangeAddressResponse>() {}.type
-                        )
-                        changeAddressResponse = mockChangeAddressResponse
-                    }
-                    changeAddressResponse.let { anyResponse ->
-                        (anyResponse as? ChangeAddressResponse)?.let { response ->
-                            // If deliverable false then show cant deliver popup
-                            // Don't allow user to navigate to Checkout page when deliverable : [false].
-                            if (!response.deliverable) {
-                                showSuburbNotDeliverableBottomSheetDialog(
-                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE
-                                )
-                                return@observe
-                            }
-
-                            // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
-                            if (!response.unSellableCommerceItems.isNullOrEmpty()) {
-                                navigateToUnsellableItemsFragment(
-                                    response.unSellableCommerceItems,
-                                    response.deliverable
-                                )
-                                return@observe
-                            }
-
-                            // else functionality complete.
-                            if (isAddNewAddress) {
-                                setFragmentResult(
-                                    ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
-                                        SAVED_ADDRESS_KEY to savedAddressResponse
-                                    )
-                                )
-                                navController?.navigateUp()
-                            } else
-                                navigateToAddressConfirmation()
-
+                    val changeAddressResponse = it?.data as? ChangeAddressResponse
+                    changeAddressResponse?.let { response ->
+                        // If deliverable false then show cant deliver popup
+                        // Don't allow user to navigate to Checkout page when deliverable : [false].
+                        if (!response.deliverable) {
+                            showSuburbNotDeliverableBottomSheetDialog(
+                                ERROR_CODE_SUBURB_NOT_DELIVERABLE
+                            )
+                            return@observe
                         }
+
+                        // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
+                        if (!response.unSellableCommerceItems.isNullOrEmpty()) {
+                            navigateToUnsellableItemsFragment(
+                                response.unSellableCommerceItems,
+                                response.deliverable
+                            )
+                            return@observe
+                        }
+
+                        // else functionality complete.
+                        if (isAddNewAddress) {
+                            setFragmentResult(
+                                ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
+                                    SAVED_ADDRESS_KEY to savedAddressResponse
+                                )
+                            )
+                            navController?.navigateUp()
+                        } else
+                            navigateToAddressConfirmation()
+
                     }
                 }
                 ResponseStatus.LOADING -> {
-
+                    loadingProgressBar.visibility = View.VISIBLE
                 }
                 ResponseStatus.ERROR -> {
-
+                    loadingProgressBar.visibility = View.GONE
                 }
             }
         })

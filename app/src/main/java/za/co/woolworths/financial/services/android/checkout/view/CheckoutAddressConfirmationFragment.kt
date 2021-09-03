@@ -338,18 +338,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     layoutManager = activity?.let { LinearLayoutManager(it) }
                     checkoutAddressConfirmationListAdapter?.let { adapter = it }
                 }
-
-                // If there is a default address nickname present set it selected
-                savedAddress?.defaultAddressNickname?.let { nickName ->
-                    var index = 0
-                    savedAddress?.addresses?.forEach { address ->
-                        if (nickName == address.nickname) {
-                            checkoutAddressConfirmationListAdapter?.onItemClick(index)
-                            return@forEach
-                        }
-                        index++
-                    }
-                }
             }
         } else {
             showCollectionTab(localSuburbId)
@@ -635,6 +623,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     override fun changeAddress(address: Address) {
         // Save instance of selected address to pass to other screens
         selectedAddress = address
+        savedAddress?.defaultAddressNickname = selectedAddress?.nickname
     }
 
     private fun callChangeAddressApi() {
@@ -644,28 +633,31 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     when (it.responseStatus) {
                         ResponseStatus.SUCCESS -> {
                             loadingProgressBar.visibility = View.GONE
-                            var changeAddressResponse = it?.data as? ChangeAddressResponse
+                            val changeAddressResponse = it?.data as? ChangeAddressResponse
                             if (changeAddressResponse == null) {
-                                val jsonFileString = Utils.getJsonDataFromAsset(
-                                    activity?.applicationContext,
-                                    "mocks/changeAddressResponse.json"
-                                )
-                                val mockChangeAddressResponse: ChangeAddressResponse =
-                                    Gson().fromJson(
-                                        jsonFileString,
-                                        object : TypeToken<ChangeAddressResponse>() {}.type
-                                    )
-                                changeAddressResponse = mockChangeAddressResponse
+                                return@observe
                             }
+                            changeAddressResponse.let { response ->
+                                // If deliverable false then show cant deliver popup
+                                // Don't allow user to navigate to Checkout page when deliverable : [false].
+                                if (!response.deliverable) {
+                                    showSuburbNotDeliverableBottomSheetDialog(
+                                        SuburbNotDeliverableBottomsheetDialogFragment.ERROR_CODE_SUBURB_NOT_DELIVERABLE
+                                    )
+                                    return@observe
+                                }
 
-                            if (changeAddressResponse != null && changeAddressResponse.deliverable) {
-                                if (changeAddressResponse.unSellableCommerceItems?.size!! > 0) {
+                                // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
+                                if (!response.unSellableCommerceItems.isNullOrEmpty()) {
                                     navigateToUnsellableItemsFragment(
                                         changeAddressResponse.unSellableCommerceItems,
                                         selectedAddress!!,
                                         changeAddressResponse.deliverable
                                     )
+                                    return@observe
                                 }
+
+                                navigateToReturningUser()
                             }
                         }
                         ResponseStatus.LOADING -> {
@@ -677,6 +669,24 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     }
                 })
         }
+    }
+
+    private fun navigateToReturningUser() {
+        view?.findNavController()?.navigate(
+            R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
+            bundleOf(
+                SAVED_ADDRESS_KEY to savedAddress
+            )
+        )
+    }
+
+    private fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
+        view?.findNavController()?.navigate(
+            R.id.action_checkoutAddressConfirmationFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
+            bundleOf(
+                SuburbNotDeliverableBottomsheetDialogFragment.ERROR_CODE to errorCode
+            )
+        )
     }
 
     override fun onSuburbSelected(suburb: Suburb) {
