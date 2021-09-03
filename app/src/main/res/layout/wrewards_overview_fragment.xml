@@ -68,28 +68,29 @@
                                     android:layout_height="match_parent">
 
                                     <androidx.constraintlayout.widget.ConstraintLayout
+                                        android:id="@+id/cardBackgroundLinearLayout"
                                         android:layout_width="0dp"
                                         android:layout_height="0dp"
-                                        android:id="@+id/cardBackgroundLinearLayout"
-                                        app:layout_constraintStart_toStartOf="parent"
-                                        app:layout_constraintEnd_toEndOf="parent"
-                                        app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"
-                                        app:layout_constraintWidth_percent="0.8"
-                                        app:layout_constraintHeight_percent="0.65">
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintHeight_percent="0.8"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:layout_constraintWidth_percent="0.93">
 
                                         <ImageView
                                             android:id="@+id/barCodeImage"
                                             android:layout_width="0dp"
                                             android:layout_height="0dp"
                                             android:adjustViewBounds="true"
+                                            android:layout_marginBottom="@dimen/ten_dp"
                                             android:scaleType="fitXY"
-                                            android:paddingBottom="@dimen/ten_dp"
-                                            app:layout_constraintHeight_default="wrap"
-                                            app:layout_constraintStart_toStartOf="parent"
+                                            android:src="@drawable/barcode_img"
+                                            app:layout_constraintBottom_toTopOf="@id/barCodeNumber"
                                             app:layout_constraintEnd_toEndOf="parent"
-                                            app:layout_constraintTop_toTopOf="parent"
-                                            app:layout_constraintBottom_toTopOf="@id/barCodeNumber"/>
+                                            app:layout_constraintHeight_default="spread"
+                                            app:layout_constraintStart_toStartOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent" />
 
                                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                                             android:id="@+id/barCodeNumber"
@@ -100,11 +101,11 @@
                                             android:textColor="@color/black"
                                             android:textSize="@dimen/fifteen_sp"
                                             app:WTextView_font="medium"
-                                            app:layout_constraintHeight_default="wrap"
-                                            app:layout_constraintStart_toStartOf="parent"
-                                            app:layout_constraintEnd_toEndOf="parent"
                                             app:layout_constraintBottom_toBottomOf="parent"
-                                            app:layout_constraintHeight_max="@dimen/fifteen_dp"/>
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintHeight_default="wrap"
+                                            app:layout_constraintHeight_max="@dimen/fifteen_dp"
+                                            app:layout_constraintStart_toStartOf="parent" />
 
                                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -145,12 +146,12 @@
                         android:fontFamily="@font/futura_medium_ttf"
                         android:gravity="center"
                         android:letterSpacing="0.08"
-                        android:paddingTop="@dimen/four_dp"
+                        android:paddingTop="@dimen/six_dp"
                         android:paddingStart="@dimen/sixteen_dp"
                         android:paddingEnd="@dimen/sixteen_dp"
                         android:text="@string/reward_shake_tap_label"
-                        android:textColor="@color/color_808080"
-                        android:textSize="@dimen/thirteen_sp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/eleven_sp"
                         android:visibility="invisible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
