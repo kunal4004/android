@@ -12,4 +12,7 @@ class DeleteAddressResponse {
 
     @SerializedName("httpCode")
     public val httpCode: Int? = null
+
+    @SerializedName("validationErrors")
+    public val validationErrors: List<ValidationError>? = null
 }
