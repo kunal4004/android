@@ -41,10 +41,8 @@ class AmplifyInit {
                         .getJSONObject("CognitoUserPool")
                         .getJSONObject("Default")
 
-                    inAppChat.let {
-                        auth.put("PoolId", inAppChat.userPoolId)
-                        auth.put("AppClientId", inAppChat.userPoolWebClientId)
-                    }
+                    auth.put("PoolId", inAppChat.userPoolId)
+                    auth.put("AppClientId", inAppChat.userPoolWebClientId)
 
                     val api = awsConfigurationJSONObject
                         .getJSONObject("api")
@@ -52,9 +50,7 @@ class AmplifyInit {
                         .getJSONObject("awsAPIPlugin")
                         .getJSONObject("api")
 
-                    inAppChat.let {
-                        api.put("endpoint", inAppChat.apiURI)
-                    }
+                    api.put("endpoint", inAppChat.apiURI)
 
                     val awsConfiguration = AmplifyConfiguration
                         .builder(awsConfigurationJSONObject)
@@ -65,7 +61,7 @@ class AmplifyInit {
                     Amplify.addPlugin(AndroidLoggingPlugin(if (BuildConfig.DEBUG) LogLevel.VERBOSE else LogLevel.NONE))
                     Amplify.configure(awsConfiguration, context)
                 }
-            } catch (ex: AmplifyException) {
+            } catch (ex: Exception) {
                 FirebaseManager.logException(ex)
             }
         }
