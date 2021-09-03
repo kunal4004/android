@@ -900,7 +900,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     }
                                 }
 
-                                AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                                AppConstant.HTTP_EXPECTATION_FAILED_502, AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
                                     if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
                                         response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
                                     ) {
