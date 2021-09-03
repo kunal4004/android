@@ -409,6 +409,9 @@ public class Utils {
     }
 
     public static void alertErrorMessage(Context context, String message) {
+        if ( context  instanceof  Activity && ((Activity) context).isFinishing()) {
+            return;
+        }
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(message);
         builder.setCancelable(false);
@@ -419,7 +422,7 @@ public class Utils {
             }
         });
         AlertDialog dialog = builder.create();
-        if(!((Activity) context).isFinishing())
+        if(context  instanceof  Activity &&!((Activity) context).isFinishing())
         {
             dialog.show();
         }
