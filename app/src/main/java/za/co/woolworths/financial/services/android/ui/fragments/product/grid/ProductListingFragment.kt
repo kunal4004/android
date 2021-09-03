@@ -239,9 +239,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (mProductList?.isNullOrEmpty() == true)
             mProductList = ArrayList()
         response.history?.apply {
-            if (categoryDimensions.isNotEmpty()) {
+            if (!categoryDimensions?.isNullOrEmpty()) {
                 mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
-            } else if (searchCrumbs.isNotEmpty()) {
+            } else if (!searchCrumbs?.isNullOrEmpty()) {
                 mSubCategoryName = searchCrumbs.get(searchCrumbs.size - 1).terms
             }
         }
