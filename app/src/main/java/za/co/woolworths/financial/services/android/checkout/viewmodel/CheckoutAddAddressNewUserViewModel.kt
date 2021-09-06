@@ -42,19 +42,6 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         }
     }
 
-    fun getSavedAddresses() = liveData(Dispatchers.IO) {
-        emit(NativeCheckoutResource.loading(data = null))
-        try {
-            emit(
-                NativeCheckoutResource.success(
-                    data = checkoutAddAddressNewUserInteractor.getSavedAddresses().body()
-                )
-            )
-        } catch (exception: Exception) {
-            emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
-        }
-    }
-
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.addAddress(addAddressRequestBody)
     }

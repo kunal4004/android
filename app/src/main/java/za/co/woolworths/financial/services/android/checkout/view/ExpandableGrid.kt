@@ -2,6 +2,9 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.view.View
 import android.widget.GridView
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
@@ -20,6 +23,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Deliver
 import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsDateGridViewAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.SlotsTimeGridViewAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.DeliveryGridModel
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 
 /**
  * Created by Kunal Uttarwar on 25/07/21.
@@ -359,5 +363,61 @@ class ExpandableGrid(val fragment: Fragment) {
 
         fragment.checkoutHowWouldYouDeliveredLayout?.visibility = View.GONE
 
+    }
+
+    fun enableNextBtnFood() {
+        setEnableBackgroundColor(fragment.nextImgBtnFood, fragment.nextFoodTextView)
+    }
+
+    fun enableNextBtnOther() {
+        setEnableBackgroundColor(fragment.nextImgBtnOther, fragment.nextOtherTextView)
+    }
+
+    fun enablePreviousBtnFood() {
+        setEnableBackgroundColor(fragment.previousImgBtnFood, fragment.previousFoodTextView)
+    }
+
+    fun enablePreviousBtnOther() {
+        setEnableBackgroundColor(fragment.previousImgBtnOther, fragment.previousOtherTextView)
+    }
+
+    fun disableNextBtnFood() {
+        setDisableBackgroundColor(fragment.nextImgBtnFood, fragment.nextFoodTextView)
+    }
+
+    fun disableNextBtnOther() {
+        setDisableBackgroundColor(fragment.nextImgBtnOther, fragment.nextOtherTextView)
+    }
+
+    fun disablePreviousBtnFood() {
+        setDisableBackgroundColor(fragment.previousImgBtnFood, fragment.previousFoodTextView)
+    }
+
+    fun disablePreviousBtnOther() {
+        setDisableBackgroundColor(fragment.previousImgBtnOther, fragment.previousOtherTextView)
+    }
+
+    private fun setDisableBackgroundColor(imgBtn: ImageButton, textView: TextView) {
+        imgBtn.background = bindDrawable(R.drawable.transperant_options_button)
+        textView.setTextColor(
+            ContextCompat.getColor(
+                fragment.requireContext(),
+                R.color.color_cccccc
+            )
+        )
+        imgBtn.isEnabled = false
+        textView.isEnabled = false
+    }
+
+    private fun setEnableBackgroundColor(imgBtn: ImageButton, textView: TextView) {
+        imgBtn.background = bindDrawable(R.drawable.rounded_view_grey_img_button)
+        textView.setTextColor(
+            ContextCompat.getColor(
+                fragment.requireContext(),
+                R.color.checkout_delivering_title
+            )
+        )
+        imgBtn.isEnabled = true
+        textView.isEnabled = true
     }
 }

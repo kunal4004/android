@@ -64,8 +64,8 @@ class Address : Serializable {
     @SerializedName("region")
     var region: String? = null
 
-    @SerializedName("displayName")
-    var displayName: String? = null
+    @SerializedName("placesId")
+    var placesId: String? = null
 
     @SerializedName("addressType")
     var addressType: String? = null

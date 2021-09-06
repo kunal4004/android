@@ -8,8 +8,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
  * Created by Kunal Uttarwar on 10/06/21.
  */
 class CheckoutMockApiHelper : MockRetrofitConfig() {
-    fun getSavedAddresses(): Response<SavedAddressResponse> =
-        OneAppService.getSavedAddresses().execute()
 
     fun updateAddress(
         addAddressRequestBody: AddAddressRequestBody,
