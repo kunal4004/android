@@ -2,15 +2,19 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward
 
 import android.animation.*
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -32,8 +36,22 @@ import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotion
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.Utils.triggerFireBaseEvents
 
+import androidx.annotation.RequiresApi
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.CountDownTimerImpl
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ScreenBrightnessDelegate
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ScreenBrightnessImpl
+import androidx.activity.result.contract.ActivityResultContracts
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ScreenBrightnessImpl.Companion.HUNDRED_PERCENT_VALUE
+import android.animation.AnimatorListenerAdapter
+import android.text.TextUtils
+import kotlinx.android.synthetic.main.wrewards_virtual_card_number_row.*
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ShakeDetectorImpl
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment
+
 class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
+    private var initialBrightness: Int = 0
+    private var mScreenBrightnessDelegate: ScreenBrightnessDelegate? = null
     private val TAGREWARD: String = WRewardsOverviewFragment::class.java.simpleName
     private var mIsBackVisible: Boolean = false
     private var mSetLeftIn: AnimatorSet? = null
@@ -43,9 +61,12 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private var bundle: Bundle? = null
     private var voucherResponse: VoucherResponse? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
+    private var shortAnimationDuration: Int = 1700
+
     // variable to track event time
     private var mLastClickTime: Long = 0
     private var tireStatusVIP = "vip"
+    private lateinit var requestWriteSettingsFromFragment : ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +82,30 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mScreenBrightnessDelegate = ScreenBrightnessDelegate(
+                ScreenBrightnessImpl(),
+                CountDownTimerImpl(),
+                ShakeDetectorImpl(this))
+
+        initialBrightness = mScreenBrightnessDelegate?.convertBrightnessLevelToPercent(mScreenBrightnessDelegate?.getScreenBrightness() ?: 0) ?: 0
+
+        mScreenBrightnessDelegate?.apply {
+            registerLifeCycle(lifecycle)
+            shakeDetectorInit {
+                val isCurrentFragmentWRewardsFragmentSection =
+                    (activity as? BottomNavigationActivity)?.currentFragment is WRewardsFragment
+                val isCurrentFragmentWRewardsOverviewFragment =
+                    (parentFragment as? WRewardsLoggedinAndLinkedFragment)?.wrewardsViewPager?.currentItem == 0
+                // disable shake action when barcode is invisible
+                if (SessionUtilities.getInstance().isUserAuthenticated &&
+                    ( barCodeNumber?.text?.length ?: 0 > 0) &&
+                    isCurrentFragmentWRewardsFragmentSection &&
+                    isCurrentFragmentWRewardsOverviewFragment) {
+                    setShakeToAnimateView(activity, flipCardBackLayout)
+                    shakeOrTapToBrightness()
+                }
+            }
+        }
         activity?.let { activity ->
             mErrorHandlerView = ErrorHandlerView(activity, no_connection_layout)
             mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
@@ -81,9 +126,22 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         infoImage.setOnClickListener(this)
         tvMoreInfo.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
-        tvMoreInfoVirtualCard.setOnClickListener(this)
+        moreInfoVirtualCardTextView.setOnClickListener(this)
+        rightIndicatorIconImageView.setOnClickListener(this)
+        flipCardFrontLayout.setOnClickListener(this)
+        shakeOrTapNumberTextView.setOnClickListener(this)
 
         uniqueIdsForWRewardOverview()
+
+        // Custom activity result contract
+        requestWriteSettingsFromFragment = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            // parseResult will return this as string?
+            mScreenBrightnessDelegate?.apply {
+                if (isSettingPermissionAllowedForOneApp()) {
+                    controlBrightness()
+                }
+            }
+        }
     }
 
     private fun uniqueIdsForWRewardOverview() {
@@ -184,6 +242,21 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             mSetLeftIn?.setTarget(flipCardBackLayout)
             mSetRightOut?.start()
             mSetLeftIn?.start()
+            if (barCodeNumber?.text?.isEmpty() !=  true) {
+                shakeOrTapNumberTextView?.apply {
+                    // Set the content view to 0% opacity but visible, so that it is visible
+                    // (but fully transparent) during the animation.
+                    alpha = 0f
+                    visibility = VISIBLE
+
+                    // Animate the content view to 100% opacity, and clear any animation
+                    // listener set on the view.
+                    animate()
+                            .alpha(1f)
+                            .setDuration(shortAnimationDuration.toLong())
+                            .setListener(null)
+                }
+            }
             true
         } else {
             mSetRightOut?.setTarget(flipCardBackLayout)
@@ -201,6 +274,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         flipCardBackLayout?.cameraDistance = scale
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onClick(view: View?) {
         if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
             return
@@ -227,10 +301,38 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                     }
                 }
             }
-            R.id.tvMoreInfoVirtualCard -> {
+
+            R.id.moreInfoVirtualCardTextView,R.id.rightIndicatorIconImageView -> {
                 activity?.supportFragmentManager?.let { VirtualCardNumberInfoDialogFragment.newInstance().show(it, VirtualCardNumberInfoDialogFragment::class.java.simpleName) }
             }
+
+            R.id.shakeOrTapNumberTextView ->  shakeOrTapToBrightness()
+
             else -> return
+        }
+    }
+
+    private fun shakeOrTapToBrightness() {
+        mScreenBrightnessDelegate?.apply {
+            if (!isSettingPermissionAllowedForOneApp()) {
+                requestWriteSettingsFromFragment.launch(
+                        Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+                            data = Uri.parse("package:" + activity?.packageName)
+                        }
+                )
+                return
+            }
+            controlBrightness()
+        }
+    }
+
+    private fun ScreenBrightnessDelegate.controlBrightness() {
+        setBrightnessModeManual()
+        initialBrightness = convertBrightnessLevelToPercent(getScreenBrightness())
+        setScreenBrightness(HUNDRED_PERCENT_VALUE)
+        startStopCountdownTimer {
+            //onFinish
+            setScreenBrightness(initialBrightness)
         }
     }
 
