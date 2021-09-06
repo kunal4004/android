@@ -15,11 +15,16 @@ import kotlinx.android.synthetic.main.layout_confirmation.*
 import kotlinx.android.synthetic.main.layout_store_card_confirmed.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.StoreCardEmailConfirmBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
@@ -29,6 +34,8 @@ class StoreConfirmationFragment : Fragment() {
     private var body: StoreCardEmailConfirmBody? = null
     private var menuBar: Menu? = null
     private var isConfirmStore: Boolean = false
+    private var accountData: Pair<ApplyNowState, Account>? = null
+    private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +43,10 @@ class StoreConfirmationFragment : Fragment() {
             val storeDetails = getString(STORE_DETAILS, null)
             body = Gson().fromJson(storeDetails, StoreCardEmailConfirmBody::class.java)
         }
+
+        mAccountSignedInPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
+        accountData = mAccountSignedInPresenter?.getMyAccountCardInfo()
+
     }
 
     override fun onCreateView(
@@ -193,8 +204,9 @@ class StoreConfirmationFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_CANCELED) {
-            processingViewGroup?.visibility = View.GONE
-            confirmStoreLayout?.visibility = View.VISIBLE
+            activity?.apply {
+                finish()
+            }
         }
 
         when (requestCode) {
