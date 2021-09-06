@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
+import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
@@ -130,7 +130,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
 
         navigateToPayMyAccount {
             try {
-                safeNavigateFromNavController(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
+                navigateSafelyWithNavController(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
 
             } catch (ex: IllegalStateException) {
                 FirebaseManager.logException(ex)

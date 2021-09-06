@@ -34,7 +34,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
+import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.*
@@ -163,7 +163,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
 
         navigateToPayMyAccount {
             try {
-                safeNavigateFromNavController(RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockDCFragmentToEnterPaymentAmountDetailFragment())
+                navigateSafelyWithNavController(RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockDCFragmentToEnterPaymentAmountDetailFragment())
             } catch (ex: IllegalStateException) {
                 FirebaseManager.logException(ex)
             }
@@ -181,7 +181,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
         payMyAccountViewModel.resetAmountEnteredToDefault()
 
         navigateToPayMyAccount {
-            safeNavigateFromNavController(RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockDCFragmentToEnterPaymentAmountDetailFragment())
+            navigateSafelyWithNavController(RemoveBlockOnCollectionFragmentDirections.actionRemoveBlockDCFragmentToEnterPaymentAmountDetailFragment())
         }
     }
 
