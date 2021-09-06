@@ -301,11 +301,22 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             val result = bundle.getString(STORE_SELECTION_REQUEST_KEY)
             val validateStoreList: ValidateStoreList? =
                 Utils.strToJson(result, ValidateStoreList::class.java) as? ValidateStoreList
+
+            if (selectedAddress == null)
+                selectedAddress = Address()
+            selectedAddress?.apply {
+                suburbId = selectedSuburb.id
+                suburb = selectedSuburb.name
+                postalCode = selectedSuburb.postalCode
+                city = selectedProvince.name
+                region = selectedProvince.id
+            }
+
             this.validateStoreList = validateStoreList
             val storeAddress = StoreAddress(
                 validateStoreList?.storeAddress,
                 "",
-                "",
+                selectedProvince.name,
                 "",
                 selectedSuburb.postalCode,
                 selectedSuburb.name,
