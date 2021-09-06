@@ -203,8 +203,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun initView() {
         if (selectedAddressId.isNotEmpty()) {
             //it's not empty means it's a edit address call.
-            deleteTextView.visibility = View.VISIBLE
-            deleteTextView.setOnClickListener(this)
+            if (savedAddressResponse?.addresses?.size!! > 1) {
+                deleteTextView.visibility = View.VISIBLE
+                deleteTextView.setOnClickListener(this)
+            }
             saveAddress.text = bindString(R.string.change_details)
         }
         if (isShimmerRequired) {
