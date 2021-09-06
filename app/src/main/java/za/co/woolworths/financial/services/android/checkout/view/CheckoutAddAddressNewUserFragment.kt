@@ -336,9 +336,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         if (selectedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
         }
-        if (savedAddressResponse?.addresses.isNullOrEmpty()) {
-            getSavedAddresses()
-        }
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let { context ->
@@ -382,34 +379,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 }
         }
-    }
-
-    private fun getSavedAddresses() {
-        checkoutAddAddressNewUserViewModel.getSavedAddresses().observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    loadingProgressBar.visibility = View.GONE
-                    savedAddressResponse = if (it?.data == null) {
-                        val jsonFileString = Utils.getJsonDataFromAsset(
-                            activity?.applicationContext,
-                            "mocks/savedAddress.json"
-                        )
-                        val mockSavedAddressResponse: SavedAddressResponse = Gson().fromJson(
-                            jsonFileString,
-                            object : TypeToken<SavedAddressResponse>() {}.type
-                        )
-                        mockSavedAddressResponse
-                    } else
-                        it.data as? SavedAddressResponse
-                }
-                ResponseStatus.LOADING -> {
-                    loadingProgressBar.visibility = View.VISIBLE
-                }
-                ResponseStatus.ERROR -> {
-                    loadingProgressBar.visibility = View.GONE
-                }
-            }
-        })
     }
 
     private fun addFragmentResultListener() {

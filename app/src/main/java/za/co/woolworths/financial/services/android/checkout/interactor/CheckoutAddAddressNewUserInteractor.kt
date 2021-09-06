@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.checkout.interactor
 
 import androidx.lifecycle.LiveData
 import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
-import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
 
@@ -18,7 +17,6 @@ class CheckoutAddAddressNewUserInteractor(
     fun validateSelectedSuburb(suburbId: String, isStore: Boolean) =
         checkoutAddAddressNewUserApiHelper.validateSelectedSuburb(suburbId, isStore)
 
-    fun getSavedAddresses() = checkoutMockApiHelper.getSavedAddresses()
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): LiveData<Any> {
         return checkoutAddAddressNewUserApiHelper.addAddress(addAddressRequestBody)
     }
@@ -26,7 +24,9 @@ class CheckoutAddAddressNewUserInteractor(
     fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) =
         checkoutMockApiHelper.updateAddress(addAddressRequestBody, addressId)
 
-    fun deleteAddress(addressId: String) = checkoutAddAddressNewUserApiHelper.deleteAddress(addressId)
+    fun deleteAddress(addressId: String) =
+        checkoutAddAddressNewUserApiHelper.deleteAddress(addressId)
+
     fun changeAddress(nickName: String) = checkoutMockApiHelper.changeAddress(nickName)
     fun getAvailableDeliverySlots() = checkoutMockApiHelper.getAvailableDeliverySlots()
     fun getConfirmDeliveryAddressDetails() =
