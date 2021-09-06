@@ -34,8 +34,6 @@ class StoreConfirmationFragment : Fragment() {
     private var body: StoreCardEmailConfirmBody? = null
     private var menuBar: Menu? = null
     private var isConfirmStore: Boolean = false
-    private var accountData: Pair<ApplyNowState, Account>? = null
-    private var mAccountSignedInPresenter: AccountSignedInPresenterImpl? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +41,6 @@ class StoreConfirmationFragment : Fragment() {
             val storeDetails = getString(STORE_DETAILS, null)
             body = Gson().fromJson(storeDetails, StoreCardEmailConfirmBody::class.java)
         }
-
-        mAccountSignedInPresenter = (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter
-        accountData = mAccountSignedInPresenter?.getMyAccountCardInfo()
-
     }
 
     override fun onCreateView(
