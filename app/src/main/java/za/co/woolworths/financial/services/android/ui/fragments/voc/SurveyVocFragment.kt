@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_survey_voc.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyAnswer
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyQuestion
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.voc.VoiceOfCust
 import za.co.woolworths.financial.services.android.ui.adapters.SurveyQuestionAdapter
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
 import za.co.woolworths.financial.services.android.util.FirebaseManager
+import za.co.woolworths.financial.services.android.util.Utils
 
 
 class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCancelDialogFragment.IActionOrCancel {
@@ -165,6 +167,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
     }
 
     override fun onSubmit() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VOC_SUBMIT, activity)
         navController?.navigate(
                 R.id.action_surveyVocFragment_to_surveyProcessRequestVocFragment,
                 bundleOf(
@@ -189,6 +192,7 @@ class SurveyVocFragment : Fragment(), SurveyAnswerDelegate, GenericActionOrCance
 
     override fun onDialogActionClicked(dialogId: Int) {
         if (dialogId == DIALOG_OPT_OUT_ID) {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VOC_OPTOUT, activity)
             performOptOutRequest()
             (activity as? VoiceOfCustomerActivity)?.apply {
                 finishActivity()
