@@ -66,7 +66,7 @@ class CheckoutAddressConfirmationListAdapter(
             itemView.apply {
                 hideShimmer(this)
                 savedAddress?.addresses?.get(position)?.let {
-                    title.text = it.displayName
+                    title.text = it.nickname
                     subTitle.text = it.address1
                     selector.isChecked = checkedItemPosition == position
                     addressSelectionLayout.setBackgroundColor(

@@ -122,6 +122,11 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         initializeDeliveryFoodOtherItems()
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
+        expandableGrid.apply {
+            disablePreviousBtnFood()
+            disablePreviousBtnOther()
+        }
+
         getConfirmDeliveryAddressDetails()
 
         activity?.apply {
@@ -139,7 +144,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
         edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
 
-        switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { buttonView, isChecked ->
+        switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
             edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
@@ -147,11 +152,10 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 if (isChecked) View.VISIBLE else View.GONE
         }
 
-        switchGiftInstructions?.setOnCheckedChangeListener { buttonView, isChecked ->
+        switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
             edtTxtInputLayoutGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
             edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
-
             edtTxtGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
         }
@@ -196,7 +200,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     // Extract default address display name
                     savedAddresses.addresses?.forEach { address ->
                         if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                            val addressName = SpannableString(address.displayName)
+                            val addressName = SpannableString(address.nickname)
                             val typeface1 =
                                 ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
                             addressName.setSpan(
@@ -223,7 +227,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
      */
     private fun initializeFoodSubstitution() {
         var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
-        radioGroupFoodSubstitution?.setOnCheckedChangeListener { group, checkedId ->
+        radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
                     selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
@@ -309,7 +313,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 txtOrderSummaryPromoCodeDiscountValue?.text =
                     "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
 
-                txtOrderTotalValue.text =  CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+                txtOrderTotalValue.text =
+                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
             }
         }
     }
@@ -328,35 +333,37 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
 
     private fun getConfirmDeliveryAddressDetails() {
-        checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails().observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    loadingBar.visibility = View.GONE
-                    /*if (it.data != null) {
-                       confirmDeliveryAddressDetails = it.data as? ConfirmDeliveryAddressResponse
-                        initializeOrderSummary(confirmDeliveryAddressDetails?.orderSummary)
-                    }*/
+        checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails()
+            .observe(viewLifecycleOwner, {
+                when (it.responseStatus) {
+                    ResponseStatus.SUCCESS -> {
+                        loadingBar.visibility = View.GONE
+                        /*if (it.data != null) {
+                           confirmDeliveryAddressDetails = it.data as? ConfirmDeliveryAddressResponse
+                            initializeOrderSummary(confirmDeliveryAddressDetails?.orderSummary)
+                        }*/
 
-                    //use mock data from json file
-                    val jsonFileString = Utils.getJsonDataFromAsset(
-                        activity?.applicationContext,
-                        "mocks/confirmDelivery_Response.json"
-                    )
-                    val mockDeliverySlotResponse: ConfirmDeliveryAddressResponse = Gson().fromJson(
-                        jsonFileString,
-                        object : TypeToken<ConfirmDeliveryAddressResponse>() {}.type
-                    )
+                        //use mock data from json file
+                        val jsonFileString = Utils.getJsonDataFromAsset(
+                            activity?.applicationContext,
+                            "mocks/confirmDelivery_Response.json"
+                        )
+                        val mockDeliverySlotResponse: ConfirmDeliveryAddressResponse =
+                            Gson().fromJson(
+                                jsonFileString,
+                                object : TypeToken<ConfirmDeliveryAddressResponse>() {}.type
+                            )
 
-                    initializeOrderSummary(mockDeliverySlotResponse?.orderSummary)
+                        initializeOrderSummary(mockDeliverySlotResponse?.orderSummary)
+                    }
+                    ResponseStatus.LOADING -> {
+                        loadingBar.visibility = View.VISIBLE
+                    }
+                    ResponseStatus.ERROR -> {
+                        loadingBar.visibility = View.GONE
+                    }
                 }
-                ResponseStatus.LOADING -> {
-                    loadingBar.visibility = View.VISIBLE
-                }
-                ResponseStatus.ERROR -> {
-                    loadingBar.visibility = View.GONE
-                }
-            }
-        })
+            })
 
     }
 
@@ -471,16 +478,32 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.previousImgBtnFood -> {
-                expandableGrid.initialiseGridView(selectedSlotResponseFood, FIRST.week, foodType)
+                expandableGrid.apply {
+                    disablePreviousBtnFood()
+                    enableNextBtnFood()
+                    initialiseGridView(selectedSlotResponseFood, FIRST.week, foodType)
+                }
             }
             R.id.nextImgBtnFood -> {
-                expandableGrid.initialiseGridView(selectedSlotResponseFood, SECOND.week, foodType)
+                expandableGrid.apply {
+                    disableNextBtnFood()
+                    enablePreviousBtnFood()
+                    initialiseGridView(selectedSlotResponseFood, SECOND.week, foodType)
+                }
             }
             R.id.previousImgBtnOther -> {
-                expandableGrid.initialiseGridView(selectedSlotResponseOther, FIRST.week, otherType)
+                expandableGrid.apply {
+                    disablePreviousBtnOther()
+                    enableNextBtnOther()
+                    initialiseGridView(selectedSlotResponseOther, FIRST.week, otherType)
+                }
             }
             R.id.nextImgBtnOther -> {
-                expandableGrid.initialiseGridView(selectedSlotResponseOther, SECOND.week, otherType)
+                expandableGrid.apply {
+                    disableNextBtnOther()
+                    enablePreviousBtnOther()
+                    initialiseGridView(selectedSlotResponseOther, SECOND.week, otherType)
+                }
             }
             R.id.checkoutDeliveryDetailsLayout -> {
                 view?.findNavController()?.navigate(
@@ -492,13 +515,17 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     override fun selectedDeliveryType(deliveryType: Any, type: DeliveryType) {
-        if (((deliveryType as Map<Any, String>).getValue("deliveryType")).equals(
+        if (((deliveryType as? Map<Any, String>)?.getValue("deliveryType")).equals(
                 DELIVERY_TYPE_TIMESLOT
             )
         ) {
             gridLayoutDeliveryOptions.visibility = View.VISIBLE
             otherType = type
-            expandableGrid.initialiseGridView(selectedSlotResponseOther, FIRST.week, type)
+            expandableGrid.apply {
+                disablePreviousBtnOther()
+                enableNextBtnOther()
+                initialiseGridView(selectedSlotResponseOther, FIRST.week, type)
+            }
         } else {
             gridLayoutDeliveryOptions.visibility = View.GONE
         }

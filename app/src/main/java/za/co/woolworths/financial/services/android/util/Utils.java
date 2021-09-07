@@ -411,6 +411,9 @@ public class Utils {
     }
 
     public static void alertErrorMessage(Context context, String message) {
+        if ( context  instanceof  Activity && ((Activity) context).isFinishing()) {
+            return;
+        }
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(message);
         builder.setCancelable(false);
@@ -421,7 +424,8 @@ public class Utils {
             }
         });
         AlertDialog dialog = builder.create();
-        dialog.show();
+            dialog.show();
+
 
     }
 
@@ -1102,6 +1106,8 @@ public class Utils {
     }
 
     public static void deliveryLocationEnabled(Context context, boolean enabled, final View view) {
+        if(context==null)
+            return;
         Animation animFadeOut = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.edit_mode_fade_out);
         animFadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
