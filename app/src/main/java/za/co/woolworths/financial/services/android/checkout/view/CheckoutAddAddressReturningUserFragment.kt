@@ -122,6 +122,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         initializeDeliveryFoodOtherItems()
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
+
         expandableGrid.apply {
             disablePreviousBtnFood()
             disablePreviousBtnOther()
