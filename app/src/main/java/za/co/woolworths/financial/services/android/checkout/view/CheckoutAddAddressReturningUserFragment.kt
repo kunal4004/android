@@ -2,9 +2,7 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
+import android.text.*
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
@@ -43,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.regex.Pattern
 
 
 /**
@@ -51,6 +50,24 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner {
 
+    companion object {
+        const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
+    }
+
+    private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher{
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int){}
+        override fun afterTextChanged(s: Editable?){
+            val text = s.toString()
+            val length = text.length
+
+            if (length > 0 && !Pattern.matches(REGEX_DELIVERY_INSTRUCTIONS, text)) {
+                s!!.delete(length - 1, length)
+            }
+        }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+        }
+    }
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
     private var selectedSlotResponseFood: AvailableDeliverySlotsResponse? = null
@@ -104,6 +121,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
         initializeFoodSubstitution()
+        initializeDeliveryInstructions()
+
         expandableGrid.apply {
             disablePreviousBtnFood()
             disablePreviousBtnOther()
@@ -116,22 +135,45 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 Utils.hideSoftKeyboard(this)
             }
         }
+    }
+
+    private fun initializeDeliveryInstructions() {
+        edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
+        edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
+        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
+        edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
+        edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
 
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
+            edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+            edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
             edtTxtSpecialDeliveryInstruction?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
         }
 
         switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
+            edtTxtInputLayoutGiftInstructions?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+            edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
             edtTxtGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
         }
     }
 
     private fun initializeDeliveringToView() {
+        if(arguments == null) {
+            checkoutDeliveryDetailsLayout.visibility = View.GONE
+            return
+        }
         arguments?.apply {
             context?.let { context ->
                 val savedAddress = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+                if(savedAddress == null || savedAddress?.addresses.isNullOrEmpty()) {
+                    checkoutDeliveryDetailsLayout?.visibility = View.GONE
+                    return@apply
+                }
                 savedAddress?.let { savedAddresses ->
 
                     val deliveringToAddress = SpannableStringBuilder()
