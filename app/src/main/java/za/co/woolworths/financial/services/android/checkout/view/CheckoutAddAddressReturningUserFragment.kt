@@ -134,12 +134,24 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     private fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
+        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
+        edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
+        edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
+
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { buttonView, isChecked ->
+            edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+            edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
             edtTxtSpecialDeliveryInstruction?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
         }
 
         switchGiftInstructions?.setOnCheckedChangeListener { buttonView, isChecked ->
+            edtTxtInputLayoutGiftInstructions?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+            edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
+
             edtTxtGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
         }
