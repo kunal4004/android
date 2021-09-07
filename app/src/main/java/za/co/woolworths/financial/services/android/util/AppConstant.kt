@@ -13,6 +13,7 @@ class AppConstant {
         const val WOOLWOORTH_CALL_CENTER_NUMBER: String = "0861 50 20 20"
 
         //Delays
+        const val DELAY_10_MS: Long = 10
         const val DELAY_100_MS: Long = 100
         const val DELAY_200_MS: Long = 200
         const val DELAY_300_MS: Long = 300
