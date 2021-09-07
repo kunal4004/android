@@ -222,7 +222,8 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun changeAddress(nickName: String): Call<ChangeAddressResponse> {
-        return mApiInterface.changeAddress(nickName, "", "", getSessionToken())
+        return mApiInterface.changeAddress(nickName, "", "", getSessionToken(),
+            getDeviceIdentityToken())
     }
 
     fun getAvailableDeliverySlots(): Call<AvailableDeliverySlotsResponse>{

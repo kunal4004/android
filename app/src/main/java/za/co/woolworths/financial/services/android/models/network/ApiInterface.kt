@@ -507,7 +507,8 @@ interface ApiInterface {
         @Path("nickName") nickName: String,
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String
+        @Header("sessionToken") sessionToken: String,
+        @Header("sessionToken") deviceIdentityToken: String
     ): Call<ChangeAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")

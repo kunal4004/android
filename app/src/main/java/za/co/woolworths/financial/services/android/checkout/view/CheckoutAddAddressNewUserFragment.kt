@@ -71,6 +71,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 
 
 /**
@@ -452,6 +453,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
+            savedAddressResponse?.defaultAddressNickname = selectedAddress?.nickname
             view?.findNavController()?.navigate(
                 R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
                 bundleOf(
@@ -900,7 +902,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     }
                                 }
 
-                                AppConstant.HTTP_EXPECTATION_FAILED_502, AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
+                                AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
                                     if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
                                         response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
                                     ) {
@@ -1085,6 +1087,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             R.id.action_to_unsellableItemsFragment,
             bundleOf(
                 KEY_ARGS_BUNDLE to bundleOf(
+                    SAVED_ADDRESS_KEY to savedAddress,
                     EditDeliveryLocationActivity.DELIVERY_TYPE to DeliveryType.DELIVERY.name,
                     KEY_ARGS_SUBURB to Utils.toJson(suburb),
                     KEY_ARGS_PROVINCE to Utils.toJson(province),

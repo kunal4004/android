@@ -67,16 +67,16 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
                 }
             }
         }
-        setHasOptionsMenu(true)
+        if (activity is CheckoutActivity) {
+            setHasOptionsMenu(true)
+            (activity as? CheckoutActivity)?.apply { hideBackArrow() }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        if (activity is CheckoutActivity) {
-            setHasOptionsMenu(true)
-            (activity as? CheckoutActivity)?.apply { hideBackArrow() }
-        }
+
         if (deliveryType == DeliveryType.DELIVERY) {
             activity?.findViewById<TextView>(R.id.toolbarText)?.text =
                 bindString(R.string.select_your_suburb)
