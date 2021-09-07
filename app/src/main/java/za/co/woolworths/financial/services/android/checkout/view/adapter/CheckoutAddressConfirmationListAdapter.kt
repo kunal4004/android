@@ -70,7 +70,7 @@ class CheckoutAddressConfirmationListAdapter(
                     if (savedAddress?.defaultAddressNickname == it.nickname) {
                         checkedItemPosition = position
                     }
-                    title.text = it.displayName
+                    title.text = it.nickname
                     subTitle.text = it.address1
                     selector.isChecked = checkedItemPosition == position
                     addressSelectionLayout.setBackgroundColor(

@@ -54,10 +54,9 @@
         android:id="@+id/addressConfirmationDelivery"
         layout="@layout/checkout_address_confirmation_delivery"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/fifty_two_dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/hundred_and_four_dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnConfirmLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/deliveryOrCollectionLayout" />
 
     <include
         android:id="@+id/suburbSelectionLayout"
