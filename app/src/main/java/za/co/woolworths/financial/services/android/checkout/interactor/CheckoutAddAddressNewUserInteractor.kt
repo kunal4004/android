@@ -22,7 +22,7 @@ class CheckoutAddAddressNewUserInteractor(
     }
 
     fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) =
-        checkoutMockApiHelper.updateAddress(addAddressRequestBody, addressId)
+        checkoutAddAddressNewUserApiHelper.updateAddress(addAddressRequestBody, addressId)
 
     fun deleteAddress(addressId: String) =
         checkoutAddAddressNewUserApiHelper.deleteAddress(addressId)

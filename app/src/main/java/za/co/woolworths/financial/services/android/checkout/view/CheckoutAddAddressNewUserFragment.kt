@@ -127,6 +127,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     savedAddress =
                         savedAddressResponse?.addresses?.get(getInt(EDIT_ADDRESS_POSITION_KEY))
                     selectedAddressId = savedAddress?.id.toString()
+                    selectedDeliveryAddressType = savedAddress?.addressType
                     setHasOptionsMenu(true)
                     isShimmerRequired = false
                 }
@@ -184,6 +185,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectedAddress.longitude = savedAddress?.longitude
         selectedAddress.nickname = savedAddress?.nickname ?: ""
         selectedAddress.unitComplexFloor = savedAddress?.address2 ?: ""
+        selectedAddress.placesId = savedAddress?.placesId ?: ""
 
         autoCompleteTextView?.setText(selectedAddress.address1)
         addressNicknameEditText.setText(selectedAddress.nickname)
@@ -879,22 +881,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     }
                                 }
 
-                                AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
-                                    if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
-                                        response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
-                                    ) {
-                                        showSuburbNotDeliverableBottomSheetDialog(
-                                            response.response.code.toString()
-                                        )
-                                    } else if (isNickNameAlreadyExist(response)) {
-                                        showNickNameExist()
-                                    } else {
-                                        presentErrorDialog(
-                                            getString(R.string.common_error_unfortunately_something_went_wrong),
-                                            getString(R.string.save_address_error),
-                                            ERROR_TYPE_ADD_ADDRESS
-                                        )
-                                    }
+                                AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                                    addAddressErrorResponse(response, R.string.save_address_error)
                                 }
                                 else -> {
                                     presentErrorDialog(
@@ -940,6 +928,24 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         showErrorInputField(it, View.VISIBLE)
                 }
             }
+        }
+    }
+
+    private fun addAddressErrorResponse(response: AddAddressResponse, errorMessage: Int) {
+        if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
+            response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
+        ) {
+            showSuburbNotDeliverableBottomSheetDialog(
+                response.response.code.toString()
+            )
+        } else if (isNickNameAlreadyExist(response)) {
+            showNickNameExist()
+        } else {
+            presentErrorDialog(
+                getString(R.string.common_error_unfortunately_something_went_wrong),
+                getString(errorMessage),
+                ERROR_TYPE_ADD_ADDRESS
+            )
         }
     }
 
@@ -1119,41 +1125,59 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateAddress() {
+        loadingProgressBar.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.updateAddress(
             getAddAddressRequestBody(), selectedAddressId
-        ).observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    loadingProgressBar.visibility = View.GONE
-                    if (savedAddressResponse != null && it?.data != null) {
-                        arguments?.getBundle("bundle")?.getInt(EDIT_ADDRESS_POSITION_KEY)
-                            ?.let { position ->
-                                (savedAddressResponse?.addresses as? MutableList<Address>)?.removeAt(
-                                    position
-                                )
-                                (it.data as? AddAddressResponse)?.address?.let { address ->
-                                    (savedAddressResponse?.addresses as? MutableList<Address>)?.add(
-                                        position, address
+        )
+            .observe(viewLifecycleOwner, { response ->
+                loadingProgressBar.visibility = View.GONE
+                when (response) {
+                    is AddAddressResponse -> {
+                        when (response.httpCode) {
+                            HTTP_OK, HTTP_OK_201 -> {
+                                if (savedAddressResponse != null && response != null) {
+                                    arguments?.getBundle("bundle")
+                                        ?.getInt(EDIT_ADDRESS_POSITION_KEY)
+                                        ?.let { position ->
+                                            (savedAddressResponse?.addresses as? MutableList<Address>)?.removeAt(
+                                                position
+                                            )
+                                            response.address?.let { address ->
+                                                (savedAddressResponse?.addresses as? MutableList<Address>)?.add(
+                                                    position, address
+                                                )
+                                            }
+                                        }
+                                    setFragmentResult(
+                                        UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
+                                            SAVED_ADDRESS_KEY to savedAddressResponse
+                                        )
                                     )
+                                    navController?.navigateUp()
+                                    selectedAddressId = ""
                                 }
                             }
-                        setFragmentResult(
-                            UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
-                                SAVED_ADDRESS_KEY to savedAddressResponse
-                            )
+                            AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                                addAddressErrorResponse(response, R.string.update_address_error)
+                            }
+                            else -> {
+                                presentErrorDialog(
+                                    getString(R.string.common_error_unfortunately_something_went_wrong),
+                                    getString(R.string.no_internet_subtitle),
+                                    ERROR_TYPE_ADD_ADDRESS
+                                )
+                            }
+                        }
+                    }
+                    is Throwable -> {
+                        presentErrorDialog(
+                            getString(R.string.common_error_unfortunately_something_went_wrong),
+                            getString(R.string.no_internet_subtitle),
+                            ERROR_TYPE_ADD_ADDRESS
                         )
-                        navController?.navigateUp()
-                        selectedAddressId = ""
                     }
                 }
-                ResponseStatus.LOADING -> {
-                    loadingProgressBar.visibility = View.VISIBLE
-                }
-                ResponseStatus.ERROR -> {
-                    loadingProgressBar.visibility = View.GONE
-                }
-            }
-        })
+            })
     }
 
     private fun isNickNameExist(): Boolean {

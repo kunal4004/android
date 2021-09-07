@@ -26,10 +26,10 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
     fun addAddress(addAddressRequestBody: AddAddressRequestBody): LiveData<Any> {
         val addAddressData = MutableLiveData<Any>()
-        OneAppService.addAddress(addAddressRequestBody)?.enqueue(CompletionHandler(object :
+        OneAppService.addAddress(addAddressRequestBody).enqueue(CompletionHandler(object :
             IResponseListener<AddAddressResponse> {
-            override fun onSuccess(addAddressResponse: AddAddressResponse?) {
-                addAddressData.value = addAddressResponse ?: null
+            override fun onSuccess(response: AddAddressResponse?) {
+                addAddressData.value = response ?: null
             }
 
             override fun onFailure(error: Throwable?) {
@@ -46,8 +46,8 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
         val deleteAddressData = MutableLiveData<Any>()
         OneAppService.deleteAddress(addressId).enqueue(CompletionHandler(object :
             IResponseListener<DeleteAddressResponse> {
-            override fun onSuccess(deleteAddressResponse: DeleteAddressResponse?) {
-                deleteAddressData.value = deleteAddressResponse ?: null
+            override fun onSuccess(response: DeleteAddressResponse?) {
+                deleteAddressData.value = response ?: null
             }
 
             override fun onFailure(error: Throwable?) {
@@ -58,5 +58,27 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
         }, DeleteAddressResponse::class.java))
         return deleteAddressData
+    }
+
+    fun updateAddress(
+        addAddressRequestBody: AddAddressRequestBody,
+        addressId: String
+    ): LiveData<Any> {
+        val updateAddressData = MutableLiveData<Any>()
+        OneAppService.updateAddress(addAddressRequestBody, addressId)
+            .enqueue(CompletionHandler(object :
+                IResponseListener<AddAddressResponse> {
+                override fun onSuccess(response: AddAddressResponse?) {
+                    updateAddressData.value = response ?: null
+                }
+
+                override fun onFailure(error: Throwable?) {
+                    if (error != null) {
+                        updateAddressData.value = error!!
+                    }
+                }
+
+            }, AddAddressResponse::class.java))
+        return updateAddressData
     }
 }

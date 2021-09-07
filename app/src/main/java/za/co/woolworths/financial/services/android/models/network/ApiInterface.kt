@@ -486,9 +486,18 @@ interface ApiInterface {
         @Header("sessionToken") sessionToken: String,
         @Body addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @PATCH("address/{id}")
-    fun updateAddress(@Body addAddressRequestBody: AddAddressRequestBody, @Path("id") id: String): Call<AddAddressResponse>
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json"
+    )
+    @PUT("cart/checkout/address/{id}")
+    fun updateAddress(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Body addAddressRequestBody: AddAddressRequestBody, @Path("id") id: String
+    ): Call<AddAddressResponse>
 
     @Headers(
         "Content-Type: application/json",

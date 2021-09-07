@@ -34,7 +34,10 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         try {
             emit(
                 NativeCheckoutResource.success(
-                    data = checkoutAddAddressNewUserInteractor.validateSelectedSuburb(suburbId, isStore).body()
+                    data = checkoutAddAddressNewUserInteractor.validateSelectedSuburb(
+                        suburbId,
+                        isStore
+                    ).body()
                 )
             )
         } catch (exception: Exception) {
@@ -46,23 +49,14 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         return checkoutAddAddressNewUserInteractor.addAddress(addAddressRequestBody)
     }
 
-    fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) =
-        liveData(Dispatchers.IO) {
-            emit(NativeCheckoutResource.loading(data = null))
-            try {
-                emit(
-                    NativeCheckoutResource.success(
-                        data = checkoutAddAddressNewUserInteractor.updateAddress(
-                            addAddressRequestBody, addressId
-                        ).body()
-                    )
-                )
-            } catch (exception: Exception) {
-                emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
-            }
-        }
+    fun updateAddress(
+        addAddressRequestBody: AddAddressRequestBody,
+        addressId: String
+    ): LiveData<Any> {
+        return checkoutAddAddressNewUserInteractor.updateAddress(addAddressRequestBody, addressId)
+    }
 
-    fun deleteAddress(addressId: String) : LiveData<Any> {
+    fun deleteAddress(addressId: String): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.deleteAddress(addressId)
     }
 
@@ -84,7 +78,8 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         try {
             emit(
                 NativeCheckoutResource.success(
-                    data = checkoutAddAddressNewUserInteractor.getConfirmDeliveryAddressDetails().body()
+                    data = checkoutAddAddressNewUserInteractor.getConfirmDeliveryAddressDetails()
+                        .body()
                 )
             )
         } catch (exception: Exception) {
