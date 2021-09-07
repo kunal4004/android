@@ -58,7 +58,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
     }
 
     private fun initListeners() {
-        cancelButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        if(errorType != ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT){
+            cancelButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        }
         cancelButton.setOnClickListener(this)
         actionButton.setOnClickListener(this)
 
@@ -120,6 +122,15 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 actionButton.text = getString(R.string.retry)
                 cancelButton.text = getString(R.string.need_help_call_the_center)
             }
+            ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT -> {
+                errorLogo.setImageResource(R.drawable.ic_error_icon)
+                errorTitle.text = errorMessage
+                errorDescription?.text = getString(R.string.store_email_error_desc)
+                actionButton.text = getString(R.string.got_it)
+                cancelButton.text = getString(R.string.need_help_call_the_center)
+                cancelButton.isAllCaps = false
+                cancelButton.paintFlags = Paint.FAKE_BOLD_TEXT_FLAG
+            }
         }
     }
 
@@ -145,7 +156,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
         when (p0?.id) {
             R.id.cancelButton -> {
                 when (errorType) {
-                    ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION, ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
+                    ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION,
+                    ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT,
+                    ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_CALL_CENTER)
                     }
                     else -> {
@@ -169,6 +182,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                     }
                     ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
+                    }
+                    ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT -> {
+                        setResultBAck(Activity.RESULT_CANCELED)
                     }
                 }
             }
