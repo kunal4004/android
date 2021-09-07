@@ -159,7 +159,7 @@ class StoreConfirmationFragment : Fragment() {
                     AppConstant.HTTP_SESSION_TIMEOUT_400.toString() -> {
                         showErrorScreen(
                             ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT,
-                            response!!.response!!.desc!!.toString())
+                            response?.response?.desc?.toString() ?: "")
                     }
                     else -> {
                         showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)
