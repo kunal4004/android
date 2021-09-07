@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.contract
 
 interface CountDownTimerInterface {
-    fun startCountDownTimer(onFinish: () -> Unit)
-    fun startStopCountdownTimer(onFinish: () -> Unit)
-    fun stopCountDownTimer()
-    fun refreshToken()
+    fun stopTimer()
+    fun resetTimer()
+    fun startTimer(onFinishResult: () -> Unit)
+    fun startStopTimer(onFinish: () -> Unit)
     fun hmsTimeFormatter(milliSeconds: Long): String
 }
