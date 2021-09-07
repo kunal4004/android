@@ -198,9 +198,7 @@ class StoreConfirmationFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_CANCELED) {
-            activity?.apply {
-                finish()
-            }
+            activity?.finish()
         }
 
         when (requestCode) {
