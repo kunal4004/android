@@ -67,15 +67,16 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
                 }
             }
         }
+        if (activity is CheckoutActivity) {
+            setHasOptionsMenu(true)
+            (activity as? CheckoutActivity)?.hideBackArrow()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        if (activity is CheckoutActivity) {
-            setHasOptionsMenu(true)
-            (activity as? CheckoutActivity)?.apply { hideBackArrow() }
-        }
+
         if (deliveryType == DeliveryType.DELIVERY) {
             activity?.findViewById<TextView>(R.id.toolbarText)?.text =
                 bindString(R.string.select_your_suburb)
@@ -96,6 +97,19 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_item, menu)
         return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_search -> {
+                navController?.navigateUp()
+                return false
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+
     }
 
     private fun loadSuburbsList() {
