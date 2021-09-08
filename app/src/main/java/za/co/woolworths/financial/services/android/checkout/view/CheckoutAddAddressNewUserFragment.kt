@@ -88,7 +88,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var isShimmerRequired = true
     private var selectedAddressId = ""
-    private var savedAddress: Address? = null
     private var isAddNewAddress = false
     private var provinceSuburbEnableType: ProvinceSuburbType? = null
 
@@ -124,10 +123,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         editSavedAddress,
                         SavedAddressResponse::class.java
                     ) as? SavedAddressResponse)
-                    savedAddress =
+                    val savedAddress =
                         savedAddressResponse?.addresses?.get(getInt(EDIT_ADDRESS_POSITION_KEY))
                     selectedAddressId = savedAddress?.id.toString()
                     selectedDeliveryAddressType = savedAddress?.addressType
+                    updateSelectedAddress(savedAddress)
                     setHasOptionsMenu(true)
                     isShimmerRequired = false
                 }
@@ -166,14 +166,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         init()
         addFragmentResultListener()
         // Show prepopulate fields on edit address
-        if (savedAddress != null) {
+        if (selectedAddressId.isNotEmpty()) {
+            //it's not empty means it's a edit address call.
             if (activity is CheckoutActivity)
                 (activity as CheckoutActivity).hideBackArrow()
-            setTextFields(savedAddress)
+            setTextFields()
         }
     }
 
-    private fun setTextFields(savedAddress: Address?) {
+    private fun updateSelectedAddress(savedAddress: Address?) {
         selectedAddress.address1 = savedAddress?.address1 ?: ""
         selectedAddress.postalCode = savedAddress?.postalCode ?: ""
         selectedAddress.region = savedAddress?.region ?: ""
@@ -186,20 +187,26 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         selectedAddress.nickname = savedAddress?.nickname ?: ""
         selectedAddress.unitComplexFloor = savedAddress?.address2 ?: ""
         selectedAddress.placesId = savedAddress?.placesId ?: ""
+        selectedAddress.primaryContactNumber = savedAddress?.primaryContactNo ?: ""
+        selectedAddress.secondaryContactNumber = savedAddress?.secondaryContactNo ?: ""
+        selectedAddress.recipientName = savedAddress?.recipientName ?: ""
+        selectedAddress.addressType = savedAddress?.addressType ?: ""
+    }
 
+    private fun setTextFields() {
         autoCompleteTextView?.setText(selectedAddress.address1)
         addressNicknameEditText.setText(selectedAddress.nickname)
         unitComplexFloorEditText.setText(selectedAddress.unitComplexFloor)
         suburbEditText.setText(selectedAddress.suburb)
         provinceAutocompleteEditText.setText(selectedAddress.province)
-        cellphoneNumberEditText.setText(savedAddress?.primaryContactNo)
-        recipientNameEditText.setText(savedAddress?.recipientName)
+        cellphoneNumberEditText.setText(selectedAddress?.primaryContactNumber)
+        recipientNameEditText.setText(selectedAddress?.recipientName)
         if (selectedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
             postalCode.text.clear()
         } else
             postalCode.setText(selectedAddress.postalCode)
-        selectedDeliveryAddressType = savedAddress?.addressType
+        selectedDeliveryAddressType = selectedAddress?.addressType
     }
 
     private fun initView() {
@@ -1060,29 +1067,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     ) {
         val suburb = Suburb()
         val province = Province()
-
-        if (selectedAddressId.isEmpty()) {
-            suburb.apply {
-                id = selectedAddress.suburbId
-                name = selectedAddress.suburb
-                postalCode = selectedAddress.postalCode
-                suburbDeliverable = deliverable
-            }
-            province.apply {
-                name = selectedAddress.city
-                id = selectedAddress.region
-            }
-        } else {
-            suburb.apply {
-                id = savedAddress?.suburbId ?: ""
-                name = savedAddress?.suburb ?: ""
-                postalCode = savedAddress?.postalCode ?: ""
-                suburbDeliverable = deliverable
-            }
-            province.apply {
-                name = savedAddress?.city ?: ""
-                id = savedAddress?.region ?: ""
-            }
+        suburb.apply {
+            id = selectedAddress.suburbId
+            name = selectedAddress.suburb
+            postalCode = selectedAddress.postalCode
+            suburbDeliverable = deliverable
+        }
+        province.apply {
+            name = selectedAddress.city
+            id = selectedAddress.region
         }
 
         navController?.navigate(
@@ -1107,19 +1100,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             postalCode?.text.toString().trim(),
             cellphoneNumberEditText?.text.toString().trim(),
             "",
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.region else savedAddress?.region
-                ?: "",
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.suburbId else savedAddress?.suburbId
-                ?: "",
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.city else savedAddress?.city
-                ?: "",
+            selectedAddress.region,
+            selectedAddress.suburbId,
+            selectedAddress.city,
             suburbEditText?.text.toString(),
             "",
             false,
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.latitude else savedAddress?.latitude
-                ?: 0.0,
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.longitude else savedAddress?.longitude
-                ?: 0.0, selectedAddress.placesId ?: "",
+            selectedAddress.latitude,
+            selectedAddress.longitude,
+            selectedAddress.placesId ?: "",
             selectedDeliveryAddressType.toString()
         )
     }

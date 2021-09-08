@@ -18,4 +18,9 @@ class SelectedPlacesAddress {
     var nickname: String = ""
     var unitComplexFloor: String = ""
     var placesId: String? = ""
+    var primaryContactNumber: String? = ""
+    var secondaryContactNumber: String? = ""
+    var recipientName: String? = ""
+    var addressType: String? = ""
+
 }
