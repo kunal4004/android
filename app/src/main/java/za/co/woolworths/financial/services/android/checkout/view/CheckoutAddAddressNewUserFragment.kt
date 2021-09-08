@@ -23,8 +23,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
@@ -59,6 +57,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
@@ -72,8 +71,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
-import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 
 
 /**
@@ -202,14 +199,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         unitComplexFloorEditText.setText(selectedAddress.unitComplexFloor)
         suburbEditText.setText(selectedAddress.suburb)
         provinceAutocompleteEditText.setText(selectedAddress.province)
-        cellphoneNumberEditText.setText(selectedAddress?.primaryContactNumber)
-        recipientNameEditText.setText(selectedAddress?.recipientName)
+        cellphoneNumberEditText.setText(selectedAddress.primaryContactNumber)
+        recipientNameEditText.setText(selectedAddress.recipientName)
         if (selectedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
             postalCode.text.clear()
         } else
             postalCode.setText(selectedAddress.postalCode)
-        selectedDeliveryAddressType = selectedAddress?.addressType
+        selectedDeliveryAddressType = selectedAddress.addressType
     }
 
     private fun initView() {
@@ -437,7 +434,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
-            savedAddressResponse?.defaultAddressNickname = selectedAddress?.nickname
+            savedAddressResponse?.defaultAddressNickname = selectedAddress.nickname
             view?.findNavController()?.navigate(
                 R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
                 bundleOf(
@@ -1014,14 +1011,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                 navigateToAddressConfirmation()
                         }
                         else -> {
-                            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                getString(R.string.common_error_message_without_contact_info))
+                            showErrorScreen(
+                                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                getString(R.string.common_error_message_without_contact_info)
+                            )
                         }
                     }
                 }
                 is Throwable -> {
-                    showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                        getString(R.string.common_error_message_without_contact_info))
+                    showErrorScreen(
+                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                        getString(R.string.common_error_message_without_contact_info)
+                    )
                 }
             }
         })
@@ -1086,7 +1087,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             R.id.action_to_unsellableItemsFragment,
             bundleOf(
                 KEY_ARGS_BUNDLE to bundleOf(
-                    SAVED_ADDRESS_KEY to savedAddress,
+                    SAVED_ADDRESS_KEY to savedAddressResponse,
                     EditDeliveryLocationActivity.DELIVERY_TYPE to DeliveryType.DELIVERY.name,
                     KEY_ARGS_SUBURB to Utils.toJson(suburb),
                     KEY_ARGS_PROVINCE to Utils.toJson(province),
