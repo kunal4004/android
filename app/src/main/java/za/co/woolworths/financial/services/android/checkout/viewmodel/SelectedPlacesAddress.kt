@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.checkout.viewmodel
 /**
  * Created by Kunal Uttarwar on 15/06/21.
  */
-class SelectedPlacesAddress() {
+class SelectedPlacesAddress {
     var address1: String = ""
     var postalCode: String = ""
     var region: String = ""
