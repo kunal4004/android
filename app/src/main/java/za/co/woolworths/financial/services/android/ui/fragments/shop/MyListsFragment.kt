@@ -125,7 +125,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                 0 -> showEmptyShoppingListView() //no list found
 
                 else -> {
-                    rlCreateAList.visibility = VISIBLE
+                    rlCreateAList?.visibility = VISIBLE
                     mAddToShoppingListAdapter?.setShoppingList(shoppingList)
                     mAddToShoppingListAdapter?.notifyDataSetChanged()
                 }
