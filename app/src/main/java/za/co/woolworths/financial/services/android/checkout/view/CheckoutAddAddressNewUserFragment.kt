@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.content.Context
+import android.content.Intent
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.*
@@ -72,6 +73,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HT
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 
 
 /**
@@ -960,53 +962,65 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
      * @param nickName  unique address name used to identify individual address
      */
     private fun onAddNewAddress(@NonNull nickName: String) {
+        loadingProgressBar.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.changeAddress(
             nickName
-        ).observe(viewLifecycleOwner, {
+        ).observe(viewLifecycleOwner, { response ->
             loadingProgressBar.visibility = View.GONE
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    val changeAddressResponse = it?.data as? ChangeAddressResponse
-                    changeAddressResponse?.let { response ->
-                        // If deliverable false then show cant deliver popup
-                        // Don't allow user to navigate to Checkout page when deliverable : [false].
-                        if (!response.deliverable) {
-                            showSuburbNotDeliverableBottomSheetDialog(
-                                ERROR_CODE_SUBURB_NOT_DELIVERABLE
-                            )
-                            return@observe
-                        }
-
-                        // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
-                        if (!response.unSellableCommerceItems.isNullOrEmpty()) {
-                            navigateToUnsellableItemsFragment(
-                                response.unSellableCommerceItems,
-                                response.deliverable
-                            )
-                            return@observe
-                        }
-
-                        // else functionality complete.
-                        if (isAddNewAddress) {
-                            setFragmentResult(
-                                ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
-                                    SAVED_ADDRESS_KEY to savedAddressResponse
+            when (response) {
+                is ChangeAddressResponse -> {
+                    when (response.httpCode) {
+                        HTTP_OK, HTTP_OK_201 -> {
+                            // If deliverable false then show cant deliver popup
+                            // Don't allow user to navigate to Checkout page when deliverable : [false].
+                            if (!response.deliverable) {
+                                showSuburbNotDeliverableBottomSheetDialog(
+                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE
                                 )
-                            )
-                            navController?.navigateUp()
-                        } else
-                            navigateToAddressConfirmation()
+                                return@observe
+                            }
 
+                            // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
+                            if (!response.unSellableCommerceItems.isNullOrEmpty()) {
+                                navigateToUnsellableItemsFragment(
+                                    response.unSellableCommerceItems,
+                                    response.deliverable
+                                )
+                                return@observe
+                            }
+
+                            // else functionality complete.
+                            if (isAddNewAddress) {
+                                setFragmentResult(
+                                    ADD_A_NEW_ADDRESS_REQUEST_KEY, bundleOf(
+                                        SAVED_ADDRESS_KEY to savedAddressResponse
+                                    )
+                                )
+                                navController?.navigateUp()
+                            } else
+                                navigateToAddressConfirmation()
+                        }
+                        else -> {
+                            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                getString(R.string.common_error_message_without_contact_info))
+                        }
                     }
                 }
-                ResponseStatus.LOADING -> {
-                    loadingProgressBar.visibility = View.VISIBLE
-                }
-                ResponseStatus.ERROR -> {
-                    loadingProgressBar.visibility = View.GONE
+                is Throwable -> {
+                    showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                        getString(R.string.common_error_message_without_contact_info))
                 }
             }
         })
+    }
+
+    private fun showErrorScreen(errorType: Int, errorMessage: String?) {
+        activity?.apply {
+            val intent = Intent(this, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage", errorMessage)
+            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
     }
 
     private fun isNickNameAlreadyExist(response: AddAddressResponse): Boolean {

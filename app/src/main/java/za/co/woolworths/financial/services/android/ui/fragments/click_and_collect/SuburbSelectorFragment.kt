@@ -69,7 +69,7 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
         }
         if (activity is CheckoutActivity) {
             setHasOptionsMenu(true)
-            (activity as? CheckoutActivity)?.apply { hideBackArrow() }
+            (activity as? CheckoutActivity)?.hideBackArrow()
         }
     }
 
@@ -100,11 +100,12 @@ class SuburbSelectorFragment : Fragment(), SuburbListAdapter.ISuburbSelector {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.action_search -> {
                 navController?.navigateUp()
                 return false
-            } else -> {
+            }
+            else -> {
                 return super.onOptionsItemSelected(item)
             }
         }

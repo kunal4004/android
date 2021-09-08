@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -35,14 +36,17 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import java.net.HttpURLConnection
 
 
 /**
@@ -655,46 +659,56 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     private fun callChangeAddressApi() {
         selectedAddress?.nickname?.let { nickname ->
+            loadingProgressBar.visibility = View.VISIBLE
             checkoutAddAddressNewUserViewModel.changeAddress(nickname)
-                .observe(viewLifecycleOwner, {
-                    when (it.responseStatus) {
-                        ResponseStatus.SUCCESS -> {
-                            loadingProgressBar.visibility = View.GONE
-                            val changeAddressResponse = it?.data as? ChangeAddressResponse
-                            if (changeAddressResponse == null) {
-                                return@observe
-                            }
-                            changeAddressResponse.let { response ->
-                                // If deliverable false then show cant deliver popup
-                                // Don't allow user to navigate to Checkout page when deliverable : [false].
-                                if (!response.deliverable) {
-                                    showSuburbNotDeliverableBottomSheetDialog(
-                                        SuburbNotDeliverableBottomsheetDialogFragment.ERROR_CODE_SUBURB_NOT_DELIVERABLE
-                                    )
-                                    return@observe
-                                }
+                .observe(viewLifecycleOwner, { response ->
+                    loadingProgressBar.visibility = View.GONE
+                    when (response) {
+                        is ChangeAddressResponse -> {
+                            when (response.httpCode) {
+                                HttpURLConnection.HTTP_OK, AppConstant.HTTP_OK_201 -> {
 
-                                // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
-                                if (!response.unSellableCommerceItems.isNullOrEmpty()) {
-                                    navigateToUnsellableItemsFragment(
-                                        changeAddressResponse.unSellableCommerceItems,
-                                        selectedAddress!!,
-                                        changeAddressResponse.deliverable
-                                    )
-                                    return@observe
-                                }
+                                    // If deliverable false then show cant deliver popup
+                                    // Don't allow user to navigate to Checkout page when deliverable : [false].
+                                    if (!response.deliverable) {
+                                        showSuburbNotDeliverableBottomSheetDialog(
+                                            SuburbNotDeliverableBottomsheetDialogFragment.ERROR_CODE_SUBURB_NOT_DELIVERABLE
+                                        )
+                                        return@observe
+                                    }
 
-                                navigateToReturningUser()
+                                    // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
+                                    if (!response.unSellableCommerceItems.isNullOrEmpty()) {
+                                        navigateToUnsellableItemsFragment(
+                                            response.unSellableCommerceItems,
+                                            selectedAddress!!,
+                                            response.deliverable
+                                        )
+                                        return@observe
+                                    }
+                                    navigateToReturningUser()
+                                }
+                                else -> {
+                                    showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                        getString(R.string.common_error_message_without_contact_info))
+                                }
                             }
                         }
-                        ResponseStatus.LOADING -> {
-                            loadingProgressBar.visibility = View.VISIBLE
-                        }
-                        ResponseStatus.ERROR -> {
-                            loadingProgressBar.visibility = View.GONE
+                        is Throwable -> {
+                            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                getString(R.string.common_error_message_without_contact_info))
                         }
                     }
                 })
+        }
+    }
+
+    private fun showErrorScreen(errorType: Int, errorMessage: String?) {
+        activity?.apply {
+            val intent = Intent(this, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage", errorMessage)
+            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
         }
     }
 
