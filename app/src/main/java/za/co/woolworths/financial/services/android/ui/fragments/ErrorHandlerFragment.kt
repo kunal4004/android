@@ -18,7 +18,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
 
     }
 
-
     companion object {
         var errorType: Int = 0
         var errorMessage: String? = null
@@ -48,7 +47,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 errorMessage = getString("errorMessage", "")
             }
         }
-        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,7 +61,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
         }
         cancelButton.setOnClickListener(this)
         actionButton.setOnClickListener(this)
-
     }
 
     private fun setViewOnErrorType() {
@@ -100,7 +97,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                     else errorMessage
                 actionButton?.text = getString(R.string.retry)
                 cancelButton?.visibility = View.GONE
-                enableBackButton()
             }
             ErrorHandlerActivity.WITH_NO_ACTION -> {
                 errorLogo.setImageResource(R.drawable.ic_error_icon)
@@ -130,24 +126,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 cancelButton.text = getString(R.string.need_help_call_the_center)
                 cancelButton.isAllCaps = false
                 cancelButton.paintFlags = Paint.FAKE_BOLD_TEXT_FLAG
-            }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        when (errorType) {
-            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON -> {
-                menu.clear()
-            }
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    private fun enableBackButton() {
-        (activity as? ErrorHandlerActivity)?.apply {
-            supportActionBar?.let { actionBar ->
-                actionBar.setHomeAsUpIndicator(R.drawable.back24)
-                actionBar.setDisplayHomeAsUpEnabled(true)
             }
         }
     }
@@ -187,9 +165,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                         setResultBAck(Activity.RESULT_CANCELED)
                     }
                 }
-            }
-            R.id.home -> {
-                activity?.onBackPressed()
             }
         }
     }

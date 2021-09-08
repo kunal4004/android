@@ -81,4 +81,24 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
             }, AddAddressResponse::class.java))
         return updateAddressData
     }
+
+    fun changeAddress(nickName: String): LiveData<Any> {
+        val changeAddressLiveData = MutableLiveData<Any>()
+        OneAppService.changeAddress(nickName).enqueue(CompletionHandler(object :
+            IResponseListener<ChangeAddressResponse> {
+            override fun onSuccess(changeAddressResponse: ChangeAddressResponse?) {
+                changeAddressLiveData.value = changeAddressResponse ?: null
+            }
+
+            override fun onFailure(error: Throwable?) {
+                if (error != null) {
+                    changeAddressLiveData.value = error!!
+                }
+            }
+
+        }, ChangeAddressResponse::class.java))
+
+        return changeAddressLiveData
+    }
+
 }
