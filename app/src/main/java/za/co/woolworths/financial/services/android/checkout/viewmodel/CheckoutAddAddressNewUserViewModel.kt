@@ -49,11 +49,11 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         return checkoutAddAddressNewUserInteractor.addAddress(addAddressRequestBody)
     }
 
-    fun updateAddress(
+    fun editAddress(
         addAddressRequestBody: AddAddressRequestBody,
         addressId: String
     ): LiveData<Any> {
-        return checkoutAddAddressNewUserInteractor.updateAddress(addAddressRequestBody, addressId)
+        return checkoutAddAddressNewUserInteractor.editAddress(addAddressRequestBody, addressId)
     }
 
     fun deleteAddress(addressId: String): LiveData<Any> {

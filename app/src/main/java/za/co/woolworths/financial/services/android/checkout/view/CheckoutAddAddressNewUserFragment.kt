@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.location.Geocoder
@@ -917,7 +918,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 })
             } else
-                updateAddress()
+                editAddress()
 
         } else {
             isNickNameExist()
@@ -1125,9 +1126,9 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         )
     }
 
-    private fun updateAddress() {
+    private fun editAddress() {
         loadingProgressBar.visibility = View.VISIBLE
-        checkoutAddAddressNewUserViewModel.updateAddress(
+        checkoutAddAddressNewUserViewModel.editAddress(
             getAddAddressRequestBody(), selectedAddressId
         )
             .observe(viewLifecycleOwner, { response ->
@@ -1227,6 +1228,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun showErrorPhoneNumber() {
         cellphoneNumberErrorMsg?.visibility = View.VISIBLE
         cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
+        showAnimationErrorMessage(
+            cellphoneNumberErrorMsg,
+            View.VISIBLE,
+            recipientAddressLayout.y.toInt()
+        )
     }
 
     private fun showErrorSuburbOrProvince(relativeLayout: RelativeLayout) {
@@ -1260,27 +1266,51 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
         when (editText.id) {
             R.id.autoCompleteTextView -> {
-                autocompletePlaceErrorMsg?.visibility = visible
+                showAnimationErrorMessage(autocompletePlaceErrorMsg, visible, 0)
             }
             R.id.addressNicknameEditText -> {
-                addressNicknameErrorMsg?.visibility = visible
+                showAnimationErrorMessage(addressNicknameErrorMsg, visible, 0)
             }
             R.id.suburbEditText -> {
-                suburbNameErrorMsg?.visibility = visible
+                showAnimationErrorMessage(suburbNameErrorMsg, visible, 0)
             }
             R.id.provinceAutocompleteEditText -> {
-                provinceNameErrorMsg?.visibility = visible
+                showAnimationErrorMessage(provinceNameErrorMsg, visible, 0)
             }
             R.id.postalCode -> {
-                postalCodeTextErrorMsg?.visibility = visible
+                showAnimationErrorMessage(postalCodeTextErrorMsg, visible, 0)
             }
             R.id.recipientNameEditText -> {
-                recipientNameErrorMsg?.visibility = visible
+                showAnimationErrorMessage(
+                    recipientNameErrorMsg,
+                    visible,
+                    recipientAddressLayout.y.toInt()
+                )
             }
             R.id.cellphoneNumberEditText -> {
-                cellphoneNumberErrorMsg?.visibility = visible
                 cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
+                showAnimationErrorMessage(
+                    cellphoneNumberErrorMsg,
+                    visible,
+                    recipientAddressLayout.y.toInt()
+                )
             }
+        }
+    }
+
+    private fun showAnimationErrorMessage(
+        textView: TextView,
+        visible: Int,
+        recipientLayoutValue: Int
+    ) {
+        textView?.visibility = visible
+        if (View.VISIBLE == visible) {
+            val anim = ObjectAnimator.ofInt(
+                newUserNestedScrollView,
+                "scrollY",
+                recipientLayoutValue + textView.y.toInt()
+            )
+            anim.setDuration(300).start()
         }
     }
 

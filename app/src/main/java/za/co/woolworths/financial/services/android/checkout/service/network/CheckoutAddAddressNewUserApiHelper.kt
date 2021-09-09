@@ -60,12 +60,12 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
         return deleteAddressData
     }
 
-    fun updateAddress(
+    fun editAddress(
         addAddressRequestBody: AddAddressRequestBody,
         addressId: String
     ): LiveData<Any> {
         val updateAddressData = MutableLiveData<Any>()
-        OneAppService.updateAddress(addAddressRequestBody, addressId)
+        OneAppService.editAddress(addAddressRequestBody, addressId)
             .enqueue(CompletionHandler(object :
                 IResponseListener<AddAddressResponse> {
                 override fun onSuccess(response: AddAddressResponse?) {

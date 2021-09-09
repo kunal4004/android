@@ -493,7 +493,7 @@ interface ApiInterface {
         "Media-Type: application/json"
     )
     @PUT("cart/checkout/address/{addressId}")
-    fun updateAddress(
+    fun editAddress(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,

@@ -215,11 +215,11 @@ object OneAppService : RetrofitConfig() {
             addAddressRequestBody,
         )
     }
-    fun updateAddress(
+    fun editAddress(
         addAddressRequestBody: AddAddressRequestBody,
         addressId: String
     ): Call<AddAddressResponse> {
-        return mApiInterface.updateAddress(
+        return mApiInterface.editAddress(
             "",
             "",
             getSessionToken(), getDeviceIdentityToken(), addressId, addAddressRequestBody

@@ -21,8 +21,8 @@ class CheckoutAddAddressNewUserInteractor(
         return checkoutAddAddressNewUserApiHelper.addAddress(addAddressRequestBody)
     }
 
-    fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) =
-        checkoutAddAddressNewUserApiHelper.updateAddress(addAddressRequestBody, addressId)
+    fun editAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) =
+        checkoutAddAddressNewUserApiHelper.editAddress(addAddressRequestBody, addressId)
 
     fun deleteAddress(addressId: String) =
         checkoutAddAddressNewUserApiHelper.deleteAddress(addressId)
