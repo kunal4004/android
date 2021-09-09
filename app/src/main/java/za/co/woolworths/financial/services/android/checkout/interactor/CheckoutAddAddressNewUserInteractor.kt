@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
+import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
@@ -29,6 +30,6 @@ class CheckoutAddAddressNewUserInteractor(
 
     fun changeAddress(nickName: String) = checkoutMockApiHelper.changeAddress(nickName)
     fun getAvailableDeliverySlots() = checkoutMockApiHelper.getAvailableDeliverySlots()
-    fun getConfirmDeliveryAddressDetails() =
-        checkoutMockApiHelper.getConfirmDeliveryAddressDetails()
+    fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody) =
+        checkoutAddAddressNewUserApiHelper.getConfirmDeliveryAddressDetails(body = body)
 }

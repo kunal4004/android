@@ -20,7 +20,4 @@ class CheckoutMockApiHelper : MockRetrofitConfig() {
 
     fun getAvailableDeliverySlots(): Response<AvailableDeliverySlotsResponse> =
         OneAppService.getAvailableDeliverySlots().execute()
-
-    fun getConfirmDeliveryAddressDetails() =
-        OneAppService.getConfirmDeliveryAddressDetails().execute()
 }

@@ -510,8 +510,14 @@ interface ApiInterface {
     fun getAvailableDeliverySlots(): Call<AvailableDeliverySlotsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("confirmDeliveryAddress")
-    fun getConfirmDeliveryAddressDetails(): Call<ConfirmDeliveryAddressResponse>
+    @POST("cart/checkout/confirmDeliveryAddress")
+    fun getConfirmDeliveryAddressDetails(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body confirmDeliveryAddressBody: ConfirmDeliveryAddressBody
+    ): Call<ConfirmDeliveryAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/{locationId}")

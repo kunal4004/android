@@ -7,6 +7,7 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 
@@ -58,5 +59,24 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
         }, DeleteAddressResponse::class.java))
         return deleteAddressData
+    }
+
+    fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): LiveData<Any> {
+        val confirmDeliveryAddress = MutableLiveData<Any>()
+        OneAppService.getConfirmDeliveryAddressDetails(body).enqueue(CompletionHandler(object :
+            IResponseListener<ConfirmDeliveryAddressResponse> {
+            override fun onSuccess(confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse?) {
+                confirmDeliveryAddress.value = confirmDeliveryAddressResponse ?: null
+            }
+
+            override fun onFailure(error: Throwable?) {
+                if (error != null) {
+                    confirmDeliveryAddress.value = error!!
+                }
+            }
+
+        }, ConfirmDeliveryAddressResponse::class.java))
+        return confirmDeliveryAddress
+
     }
 }
