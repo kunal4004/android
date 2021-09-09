@@ -6,66 +6,69 @@ import java.util.concurrent.TimeUnit
 
 class CountDownTimerImpl : CountDownTimerInterface {
 
-    private val countDownTimerInterval: Long = 1000
-    private var timeCountInMilliSeconds: Long = 1 * 15 * 1000
-    private var countDownTimer: CountDownTimer? = null
-    private var timerStatus = TimerStatus.STOPPED
+    companion object {
+        private const val COUNT_DOWN_TIMER_INTERVAL: Long = 1000
+        private const val START_TIME_IN_MILLIS: Long = 1 * 15 * 1000
+        private var mCountDownTimer: CountDownTimer? = null
+        private var mTimerStatus = TimerStatus.STOPPED
+        private var mTimeLeftInMillis = START_TIME_IN_MILLIS
+    }
 
     private enum class TimerStatus {
         STARTED, STOPPED
     }
 
-    override fun startCountDownTimer(onFinish: () -> Unit) {
-        countDownTimer = object : CountDownTimer(timeCountInMilliSeconds, countDownTimerInterval) {
-            override fun onTick(millisUntilFinished: Long) {}
+    override fun startTimer(onFinishResult: () -> Unit) {
+        if (mCountDownTimer == null) {
+            mCountDownTimer = object : CountDownTimer(mTimeLeftInMillis, COUNT_DOWN_TIMER_INTERVAL) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        mTimeLeftInMillis = millisUntilFinished
+                    }
 
-            override fun onFinish() {
-                // changing the timer status to stopped
-                timerStatus = TimerStatus.STOPPED
-                stopCountDownTimer()
-                onFinish()
-            }
+                    override fun onFinish() {
+                        resetTimer()
+                        stopTimer()
+                        onFinishResult()
+                    }
+                }
+            mCountDownTimer?.start()
+
         }
-
-        countDownTimer?.start()
+        mTimerStatus = TimerStatus.STARTED
     }
 
-    override fun startStopCountdownTimer(onFinish: () -> Unit) {
-        if (timerStatus === TimerStatus.STOPPED) {
-            timerStatus = TimerStatus.STARTED
-            // call to start the count down timer
-            startCountDownTimer(onFinish)
-        } else {
-            // changing the timer status to stopped
-            timerStatus = TimerStatus.STOPPED
-            stopCountDownTimer()
-        }
-    }
-
-    override fun stopCountDownTimer() {
-        countDownTimer?.cancel()
-    }
-
-    override fun refreshToken() {
+    override fun stopTimer() {
         // changing the timer status to stopped
-        timerStatus = TimerStatus.STOPPED
-        stopCountDownTimer()
+        mTimerStatus = TimerStatus.STOPPED
+        mCountDownTimer?.cancel()
+        mCountDownTimer = null
+    }
+
+    override fun startStopTimer(onFinish: () -> Unit) {
+        when (mTimerStatus) {
+            TimerStatus.STARTED -> stopTimer()
+            TimerStatus.STOPPED -> startTimer { onFinish() }
+        }
+    }
+
+    override fun resetTimer() {
+        mTimeLeftInMillis = START_TIME_IN_MILLIS
     }
 
     override fun hmsTimeFormatter(milliSeconds: Long): String {
         return String.format(
-                "%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(milliSeconds),
-                TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(
-                        TimeUnit.MILLISECONDS.toHours(
-                                milliSeconds
-                        )
-                ),
-                TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(
-                        TimeUnit.MILLISECONDS.toMinutes(
-                                milliSeconds
-                        )
+            "%02d:%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(milliSeconds),
+            TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(
+                TimeUnit.MILLISECONDS.toHours(
+                    milliSeconds
                 )
+            ),
+            TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(
+                TimeUnit.MILLISECONDS.toMinutes(
+                    milliSeconds
+                )
+            )
         )
     }
 }

@@ -28,9 +28,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.iid.InstanceIdResult
+import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
@@ -471,9 +469,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun retrieveTokenAndCallLinkDevice() {
         if (TextUtils.isEmpty(Utils.getToken())) {
             if (Utils.isGooglePlayServicesAvailable()) {
-                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task: Task<InstanceIdResult?> ->
+
+                FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        task.result?.token?.let {
+                        task.result.token.let {
                             // Save fb token in DB.
                             Utils.setToken(it)
                             sendTokenToLinkDevice(it)
