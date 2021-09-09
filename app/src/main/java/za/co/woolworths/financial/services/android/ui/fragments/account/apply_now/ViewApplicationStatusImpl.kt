@@ -19,9 +19,7 @@ class ViewApplicationStatusImpl(private val accountsResponse: AccountsResponse?)
             MyAccountSection.StoreCardLanding-> getApplyNowLink()?.storeCard
             MyAccountSection.PersonalLoanLanding -> getApplyNowLink()?.personalLoan
         }
-        activity?.let {
-            KotlinUtils.openUrlInPhoneBrowser(applyNowLinkUrl, it)
-        }
+        KotlinUtils.openUrlInPhoneBrowser(applyNowLinkUrl, activity)
     }
 
     override fun getApplyNowLink(): ApplyNowLinks? = WoolworthsApplication.getApplyNowLink()

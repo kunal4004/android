@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -627,11 +628,16 @@ class KotlinUtils {
             }
         }
 
-        fun openUrlInPhoneBrowser(urlString: String?, activity: Activity) {
-            urlString?.apply {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                activity.startActivity(intent)
+        fun openUrlInPhoneBrowser(urlString: String?, activity: Activity?) {
+            try {
+                urlString?.apply {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    activity?.startActivity(intent)
+                }
+            }
+            catch (exception: ActivityNotFoundException){
+                //Todo: Handle exception - need more info
             }
         }
 
