@@ -158,16 +158,16 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 !productOfferingGoodStanding && supported &&
                         delinquencyCycle>=minimumDelinquencyCycle -> {
                     if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
-                        mainView?.removeBlocksWhenChargedOff()
                         if(!isCreditCard){
+                            mainView?.removeBlocksWhenChargedOff()
                             mainView?.showViewTreatmentPlan(false)!!
+                        } else{
+                            mainView?.removeBlocksWhenChargedOff()
                         }
-                    }
-                    else if(productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true)){
+                    } else if(productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true)){
                             //display treatment plan popup with view payment options
                             mainView?.showViewTreatmentPlan(isCreditCard)!!
-                    }
-                    else {
+                    } else {
                         mainView?.showViewTreatmentPlan(false)!!
                     }
                 }
@@ -176,20 +176,18 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                         productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
                         // account is in arrears for more than 6 months
                         mainView?.removeBlocksOnCollectionCustomer()!!
-                    }
-                    else if(!productOfferingGoodStanding) { // account is in arrears
+                    } else if(!productOfferingGoodStanding) { // account is in arrears
                         mainView?.showAccountInArrears(account)
                         val informationModel = getCardProductInformation(true)
                         mainView?.showAccountHelp(informationModel)!!
-                    }
-                    else{
+                    } else{
                         //when productOfferingGoodStanding == true
                         mainView?.hideAccountInArrears(account)
                         val informationInArrearsModel = getCardProductInformation(false)
                         mainView?.showAccountHelp(informationInArrearsModel)!!
                     }
                 }
-            }
+            }!!
         }
     }
 
