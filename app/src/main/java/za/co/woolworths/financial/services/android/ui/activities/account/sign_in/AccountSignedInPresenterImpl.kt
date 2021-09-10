@@ -139,6 +139,18 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             }
         }
 
+        val isCreditCard = when(state){
+            ApplyNowState.PERSONAL_LOAN,
+            ApplyNowState.STORE_CARD-> {
+                false
+            }
+            ApplyNowState.GOLD_CREDIT_CARD,
+            ApplyNowState.BLACK_CREDIT_CARD,
+            ApplyNowState.SILVER_CREDIT_CARD-> {
+                true
+            }
+        }
+
 
         val account = getAccount()
         account?.apply {
@@ -147,13 +159,35 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                         delinquencyCycle>=minimumDelinquencyCycle -> {
                     if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
                         mainView?.removeBlocksWhenChargedOff()
+                        if(!isCreditCard){
+                            mainView?.showViewTreatmentPlan(false)!!
+                        }
                     }
-                    mainView?.showViewTreatmentPlan()!!
+                    else if(productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true)){
+                            //display treatment plan popup with view payment options
+                            mainView?.showViewTreatmentPlan(isCreditCard)!!
+                    }
+                    else {
+                        mainView?.showViewTreatmentPlan(false)!!
+                    }
                 }
                 else -> {
-                    mainView?.hideAccountInArrears(account)
-                    val informationInArrearsModel = getCardProductInformation(false)
-                    mainView?.showAccountHelp(informationInArrearsModel)!!
+                    if(!productOfferingGoodStanding &&
+                        productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                        // account is in arrears for more than 6 months
+                        mainView?.removeBlocksOnCollectionCustomer()!!
+                    }
+                    else if(!productOfferingGoodStanding) { // account is in arrears
+                        mainView?.showAccountInArrears(account)
+                        val informationModel = getCardProductInformation(true)
+                        mainView?.showAccountHelp(informationModel)!!
+                    }
+                    else{
+                        //when productOfferingGoodStanding == true
+                        mainView?.hideAccountInArrears(account)
+                        val informationInArrearsModel = getCardProductInformation(false)
+                        mainView?.showAccountHelp(informationInArrearsModel)!!
+                    }
                 }
             }
         }

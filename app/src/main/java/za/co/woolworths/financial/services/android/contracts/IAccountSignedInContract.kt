@@ -19,7 +19,7 @@ interface IAccountSignedInContract {
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
         fun removeBlocksWhenChargedOff()
         fun removeBlocksOnCollectionCustomer()
-        fun showViewTreatmentPlan()
+        fun showViewTreatmentPlan(viewPaymentOptions: Boolean)
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
     }

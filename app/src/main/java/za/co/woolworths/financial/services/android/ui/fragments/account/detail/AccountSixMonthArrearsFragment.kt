@@ -1,10 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -12,9 +14,14 @@ import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_six_month_arrears_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AccountSixMonthArrearsFragment : Fragment() {
@@ -34,8 +41,31 @@ class AccountSixMonthArrearsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hideCardTextViews()
-        setTitleAndCardType()
+        setTitleAndCardTypeAndButton()
+
         callTheCallCenterButton?.setOnClickListener { Utils.makeCall("0861502020") }
+        callTheCallCenterUnderlinedButton?.setOnClickListener { Utils.makeCall("0861502020") }
+        viewTreatmentPlansButton?.setOnClickListener {
+            activity?.apply {
+                val arguments = HashMap<String, String>()
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD_ACTION
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD,
+                    arguments,
+                    this)
+                when (WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode){
+                    AvailableFundFragment.NATIVE_BROWSER ->
+                        KotlinUtils.openUrlInPhoneBrowser(
+                            WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.creditCard.collectionsUrl, this)
+
+                    else ->
+                        KotlinUtils.openLinkInInternalWebView(this,
+                            WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.creditCard.collectionsUrl,
+                            true,
+                            WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.creditCard.exitUrl)
+                }
+            }
+        }
         navigateBackImageButton?.setOnClickListener { activity?.onBackPressed() }
 
         cardDetailImageShimmerFrameLayout?.setShimmer(null)
@@ -49,10 +79,38 @@ class AccountSixMonthArrearsFragment : Fragment() {
         myCardTextView?.visibility = GONE
         myCardDetailTextView?.visibility = GONE
         userNameTextView?.visibility = GONE
+        mApplyNowAccountKeyPair?.second?.let { resourceId ->
+            if (resourceId == R.string.blackCreditCard_title) {
+                imLogoIncreaseLimit?.visibility = GONE
+                manageMyCardTextView?.visibility = GONE
+                manageMyCardImageView?.visibility = GONE
+                manageCardDivider?.background = null
+                includeManageMyCard?.layoutParams?.apply {
+                    height = 0
+                }
+            }
+        }
     }
 
-    private fun setTitleAndCardType() {
+    private fun setTitleAndCardTypeAndButton() {
         mApplyNowAccountKeyPair?.first?.let { resourceId -> cardDetailImageView?.setImageResource(resourceId) }
-        toolbarTitleTextView?.text = mApplyNowAccountKeyPair?.second?.let { resourceId -> activity?.resources?.getString(resourceId) }
+        mApplyNowAccountKeyPair?.second?.let { resourceId ->
+            toolbarTitleTextView?.text = activity?.resources?.getString(resourceId)
+            if(resourceId == R.string.blackCreditCard_title){
+                arrearsDescTextView?.text = activity?.resources?.getString(R.string.account_arrears_cc_description)
+                callTheCallCenterButton?.visibility = GONE
+                viewTreatmentPlansButton?.visibility = VISIBLE
+                callTheCallCenterUnderlinedButton?.apply {
+                    paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                    visibility = VISIBLE
+                }
+            }
+            else{
+                arrearsDescTextView?.text = activity?.resources?.getString(R.string.account_arrears_description)
+                callTheCallCenterButton?.visibility = VISIBLE
+                viewTreatmentPlansButton?.visibility = GONE
+                callTheCallCenterUnderlinedButton?.visibility = GONE
+            }
+        }
     }
 }
