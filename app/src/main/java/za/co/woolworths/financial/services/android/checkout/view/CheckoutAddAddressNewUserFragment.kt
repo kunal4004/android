@@ -1279,6 +1279,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             R.id.postalCode -> {
                 showAnimationErrorMessage(postalCodeTextErrorMsg, visible, 0)
+                editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_non_editable_background else R.drawable.input_non_editable_edit_text)
             }
             R.id.recipientNameEditText -> {
                 showAnimationErrorMessage(

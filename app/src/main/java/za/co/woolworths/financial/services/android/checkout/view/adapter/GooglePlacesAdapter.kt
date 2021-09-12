@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
 import android.app.Activity
-import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -9,8 +8,6 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
 import com.awfs.coordination.R
-import com.facebook.shimmer.Shimmer
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -19,7 +16,6 @@ import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
-import za.co.woolworths.financial.services.android.util.AppConstant
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -35,8 +31,6 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
     private var mResultList = arrayListOf<PlaceAutocomplete>()
     private val placesClient = geoData
     private val mContext = context
-    private var isShimmerShowing = true
-
 
     override fun getCount(): Int {
         return mResultList.size
@@ -65,36 +59,14 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
         } else {
             mHolder = convrtView.tag as ViewHolder
         }
-        mHolder.primaryTextViewShimmerFrameLayout =
-            convrtView?.findViewById<View>(R.id.primaryTextViewShimmerFrameLayout) as? ShimmerFrameLayout
-        mHolder.secondaryTextViewShimmerFrameLayout =
-            convrtView?.findViewById<View>(R.id.SecondaryTextViewShimmerFrameLayout) as? ShimmerFrameLayout
         mHolder.dividerRecyclerView =
             convrtView?.findViewById(R.id.dividerRecyclerView) as? View
         mHolder.dividerRecyclerView?.visibility = View.VISIBLE
-        if (isShimmerShowing) {
-            mHolder.primaryTextView?.visibility = View.INVISIBLE
-            mHolder.secondaryTextView?.visibility = View.INVISIBLE
-            val shimmer = Shimmer.AlphaHighlightBuilder().build()
-            mHolder.primaryTextViewShimmerFrameLayout?.setShimmer(shimmer)
-            mHolder.primaryTextViewShimmerFrameLayout?.startShimmer()
-            mHolder.secondaryTextViewShimmerFrameLayout?.setShimmer(shimmer)
-            mHolder.secondaryTextViewShimmerFrameLayout?.startShimmer()
-            Handler().postDelayed({
-                isShimmerShowing = false
-                notifyDataSetChanged()
-            }, AppConstant.DELAY_1500_MS)
-        } else {
-            mHolder.primaryTextViewShimmerFrameLayout?.stopShimmer()
-            mHolder.primaryTextViewShimmerFrameLayout?.setShimmer(null)
-            mHolder.secondaryTextViewShimmerFrameLayout?.stopShimmer()
-            mHolder.secondaryTextViewShimmerFrameLayout?.setShimmer(null)
-            mHolder.primaryTextView?.visibility = View.VISIBLE
-            mHolder.secondaryTextView?.visibility = View.VISIBLE
-            val item = getItem(position)
-            mHolder.primaryTextView?.text = item.primaryText
-            mHolder.secondaryTextView?.text = item.secondaryText
-        }
+        mHolder.primaryTextView?.visibility = View.VISIBLE
+        mHolder.secondaryTextView?.visibility = View.VISIBLE
+        val item = getItem(position)
+        mHolder.primaryTextView?.text = item.primaryText
+        mHolder.secondaryTextView?.text = item.secondaryText
         return convrtView
     }
 
@@ -104,7 +76,6 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
                 val results = FilterResults()
                 // Skip the autocomplete query if no constraints or less than 3 char is given.
                 if (constraint != null && constraint.toString().trim().length >= SEARCH_LENGTH) {
-                    isShimmerShowing = true
                     mResultList = getPredictions(constraint)
                     results.values = mResultList
                     results.count = mResultList.size
@@ -176,8 +147,6 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
 internal class ViewHolder {
     var primaryTextView: TextView? = null
     var secondaryTextView: TextView? = null
-    var primaryTextViewShimmerFrameLayout: ShimmerFrameLayout? = null
-    var secondaryTextViewShimmerFrameLayout: ShimmerFrameLayout? = null
     var dividerRecyclerView: View? = null
 }
 
