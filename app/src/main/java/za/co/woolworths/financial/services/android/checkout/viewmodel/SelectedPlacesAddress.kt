@@ -1,26 +1,12 @@
 package za.co.woolworths.financial.services.android.checkout.viewmodel
 
+import za.co.woolworths.financial.services.android.checkout.service.network.Address
+
 /**
  * Created by Kunal Uttarwar on 15/06/21.
  */
 class SelectedPlacesAddress {
-    var address1: String = ""
-    var postalCode: String = ""
-    var region: String = ""
-    var suburbId: String = ""
-    var city: String = ""
-    var suburb: String = ""
+    var savedAddress = Address()
     var store: String = ""
     var storeId: String = ""
-    var province: String = ""
-    var latitude: Double? = 0.0
-    var longitude: Double? = 0.0
-    var nickname: String = ""
-    var unitComplexFloor: String = ""
-    var placesId: String? = ""
-    var primaryContactNumber: String? = ""
-    var secondaryContactNumber: String? = ""
-    var recipientName: String? = ""
-    var addressType: String? = ""
-
 }
