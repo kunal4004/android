@@ -17,8 +17,6 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.add_to_list_content.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
@@ -305,11 +303,22 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             val result = bundle.getString(STORE_SELECTION_REQUEST_KEY)
             val validateStoreList: ValidateStoreList? =
                 Utils.strToJson(result, ValidateStoreList::class.java) as? ValidateStoreList
+
+            if (selectedAddress == null)
+                selectedAddress = Address()
+            selectedAddress?.apply {
+                suburbId = selectedSuburb.id
+                suburb = selectedSuburb.name
+                postalCode = selectedSuburb.postalCode
+                city = selectedProvince.name
+                region = selectedProvince.id
+            }
+
             this.validateStoreList = validateStoreList
             val storeAddress = StoreAddress(
                 validateStoreList?.storeAddress,
                 "",
-                "",
+                selectedProvince.name,
                 "",
                 selectedSuburb.postalCode,
                 selectedSuburb.name,

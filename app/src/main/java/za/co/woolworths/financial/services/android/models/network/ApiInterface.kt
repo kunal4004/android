@@ -484,11 +484,23 @@ interface ApiInterface {
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @PATCH("address/{id}")
-    fun updateAddress(@Body addAddressRequestBody: AddAddressRequestBody, @Path("id") id: String): Call<AddAddressResponse>
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "Media-Type: application/json"
+    )
+    @PUT("cart/checkout/address/{addressId}")
+    fun editAddress(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("addressId") addressId: String,
+        @Body addAddressRequestBody: AddAddressRequestBody
+    ): Call<AddAddressResponse>
 
     @Headers(
         "Content-Type: application/json",
@@ -498,6 +510,7 @@ interface ApiInterface {
     @DELETE("cart/checkout/address/{addressId}")
     fun deleteAddress(
         @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("addressId") addressId: String
     ): Call<DeleteAddressResponse>
 
