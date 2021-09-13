@@ -185,6 +185,7 @@ class EditDeliveryLocationFragment : Fragment(),
         when (v?.id) {
             R.id.confirmLocationTextView -> {
                 if (selectedSuburb != null || selectedStore != null) {
+                    confirmLocationTextView?.text = ""
                     when (deliveryType) {
                         DeliveryType.STORE_PICKUP -> {
                             validatedSuburbProductsForStore.let {

@@ -12,7 +12,7 @@ android {
     def major = "8"
     def minor = "3"
     def fix = "0"
-    def jobNumber = 532
+    def jobNumber = 533
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -224,8 +224,8 @@ dependencies {
     implementation 'com.daasuu:BubbleLayout:1.2.0'
 
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:26.6.0')
-
+    implementation platform('com.google.firebase:firebase-bom:28.4.0')
+    implementation 'io.grpc:grpc-okhttp:1.32.2'
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-config-ktx'
