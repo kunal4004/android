@@ -19,7 +19,6 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.facebook.shimmer.Shimmer
 import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -87,7 +86,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private var selectedAddress = SelectedPlacesAddress()
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
-    private var isShimmerRequired = true
     private var selectedAddressId = ""
     private var isAddNewAddress = false
     private var provinceSuburbEnableType: ProvinceSuburbType? = null
@@ -132,7 +130,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         selectedAddress.savedAddress = savedAddress
                     }
                     setHasOptionsMenu(true)
-                    isShimmerRequired = false
                 }
             } else if (containsKey(ADD_NEW_ADDRESS_KEY)) {
                 //Add new Address from delivery.
@@ -208,11 +205,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             saveAddress.text = bindString(R.string.change_details)
         }
-        if (isShimmerRequired) {
-            setUpShimmer()
-            isShimmerRequired = false
-        } else
-            stopShimmer()
         if (activity is CheckoutActivity) {
             (activity as? CheckoutActivity)?.apply {
                 showBackArrowWithoutTitle()
@@ -245,80 +237,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
         recipientNameEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         cellphoneNumberEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-    }
-
-    private fun setUpShimmer() {
-        val shimmer = Shimmer.AlphaHighlightBuilder().build()
-        addressNicknameShimmerFrameLayout?.setShimmer(shimmer)
-        unitComplexPlaceHolderShimmerFrameLayout.setShimmer(shimmer)
-        suburbPlaceHolderShimmerFrameLayout.setShimmer(shimmer)
-        provincePlaceHolderShimmerFrameLayout.setShimmer(shimmer)
-        postalCodePlaceHolderShimmerFrameLayout.setShimmer(shimmer)
-        addressNicknameEditTextShimmerFrameLayout.setShimmer(shimmer)
-        unitComplexEditTextShimmerFrameLayout.setShimmer(shimmer)
-        selectSuburbLayoutShimmerFrameLayout.setShimmer(shimmer)
-        selectProvinceLayoutShimmerFrameLayout.setShimmer(shimmer)
-        postalCodeShimmerFrameLayout.setShimmer(shimmer)
-        startShimmer()
-    }
-
-    private fun startShimmer() {
-        addressNicknameShimmerFrameLayout?.startShimmer()
-        unitComplexPlaceHolderShimmerFrameLayout?.startShimmer()
-        suburbPlaceHolderShimmerFrameLayout?.startShimmer()
-        provincePlaceHolderShimmerFrameLayout?.startShimmer()
-        postalCodePlaceHolderShimmerFrameLayout?.startShimmer()
-        addressNicknameEditTextShimmerFrameLayout?.startShimmer()
-        unitComplexEditTextShimmerFrameLayout?.startShimmer()
-        selectSuburbLayoutShimmerFrameLayout?.startShimmer()
-        selectProvinceLayoutShimmerFrameLayout?.startShimmer()
-        postalCodeShimmerFrameLayout?.startShimmer()
-
-        addressNicknamePlaceHolder.visibility = View.INVISIBLE
-        unitComplexFloorPlaceHolder.visibility = View.INVISIBLE
-        suburbPlaceHolder.visibility = View.INVISIBLE
-        provincePlaceHolder.visibility = View.INVISIBLE
-        postalCodePlaceHolder.visibility = View.INVISIBLE
-        addressNicknameEditText.visibility = View.INVISIBLE
-        unitComplexFloorEditText.visibility = View.INVISIBLE
-        selectSuburbLayout.visibility = View.INVISIBLE
-        selectProvinceLayout.visibility = View.INVISIBLE
-        postalCode.visibility = View.INVISIBLE
-    }
-
-    private fun stopShimmer() {
-        addressNicknameShimmerFrameLayout?.stopShimmer()
-        unitComplexPlaceHolderShimmerFrameLayout?.stopShimmer()
-        suburbPlaceHolderShimmerFrameLayout?.stopShimmer()
-        provincePlaceHolderShimmerFrameLayout?.stopShimmer()
-        postalCodePlaceHolderShimmerFrameLayout?.stopShimmer()
-        addressNicknameEditTextShimmerFrameLayout?.stopShimmer()
-        unitComplexEditTextShimmerFrameLayout?.stopShimmer()
-        selectSuburbLayoutShimmerFrameLayout?.stopShimmer()
-        selectProvinceLayoutShimmerFrameLayout?.stopShimmer()
-        postalCodeShimmerFrameLayout?.stopShimmer()
-
-        addressNicknameShimmerFrameLayout.setShimmer(null)
-        unitComplexPlaceHolderShimmerFrameLayout.setShimmer(null)
-        suburbPlaceHolderShimmerFrameLayout.setShimmer(null)
-        provincePlaceHolderShimmerFrameLayout.setShimmer(null)
-        postalCodePlaceHolderShimmerFrameLayout.setShimmer(null)
-        addressNicknameEditTextShimmerFrameLayout.setShimmer(null)
-        unitComplexEditTextShimmerFrameLayout.setShimmer(null)
-        selectSuburbLayoutShimmerFrameLayout.setShimmer(null)
-        selectProvinceLayoutShimmerFrameLayout.setShimmer(null)
-        postalCodeShimmerFrameLayout.setShimmer(null)
-
-        addressNicknamePlaceHolder.visibility = View.VISIBLE
-        unitComplexFloorPlaceHolder.visibility = View.VISIBLE
-        suburbPlaceHolder.visibility = View.VISIBLE
-        provincePlaceHolder.visibility = View.VISIBLE
-        postalCodePlaceHolder.visibility = View.VISIBLE
-        addressNicknameEditText.visibility = View.VISIBLE
-        unitComplexFloorEditText.visibility = View.VISIBLE
-        selectSuburbLayout.visibility = View.VISIBLE
-        selectProvinceLayout.visibility = View.VISIBLE
-        postalCode.visibility = View.VISIBLE
     }
 
     private fun setupViewModel() {
@@ -358,7 +276,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         Place.Field.ADDRESS,
                         Place.Field.ADDRESS_COMPONENTS
                     )
-                    stopShimmer()
                     val request =
                         placeFields.let { FetchPlaceRequest.builder(placeId, it).build() }
                     request.let { placeRequest ->
