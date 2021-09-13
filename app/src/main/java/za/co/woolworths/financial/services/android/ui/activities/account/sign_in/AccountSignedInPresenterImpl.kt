@@ -113,29 +113,29 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     override fun showProductOfferOutstanding(state: ApplyNowState) {
         val supported = when(state) {
             ApplyNowState.PERSONAL_LOAN -> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumSupportedAppBuildNumber!!
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber!!
             }
             ApplyNowState.STORE_CARD -> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumSupportedAppBuildNumber!!
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumSupportedAppBuildNumber!!
             }
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
             ApplyNowState.SILVER_CREDIT_CARD-> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.creditCard.minimumSupportedAppBuildNumber!!
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber!!
             }
         }
 
         val minimumDelinquencyCycle = when(state){
             ApplyNowState.PERSONAL_LOAN -> {
-                WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumDelinquencyCycle!!
             }
             ApplyNowState.STORE_CARD -> {
-                WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumDelinquencyCycle!!
             }
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
             ApplyNowState.SILVER_CREDIT_CARD-> {
-                WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.creditCard.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle!!
             }
         }
 
