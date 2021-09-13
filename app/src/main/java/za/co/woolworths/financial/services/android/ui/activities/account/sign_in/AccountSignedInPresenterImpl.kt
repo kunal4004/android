@@ -162,7 +162,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                             mainView?.removeBlocksWhenChargedOff()
                             mainView?.showViewTreatmentPlan(false)!!
                         } else{
-                            mainView?.removeBlocksWhenChargedOff()
+                            mainView?.removeBlocksWhenChargedOff()!!
                         }
                     } else if(productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true)){
                             //display treatment plan popup with view payment options
@@ -187,7 +187,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                         mainView?.showAccountHelp(informationInArrearsModel)!!
                     }
                 }
-            }!!
+            }
         }
     }
 
