@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightne
 import androidx.activity.result.contract.ActivityResultContracts
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ScreenBrightnessImpl.Companion.HUNDRED_PERCENT_VALUE
 import android.animation.AnimatorListenerAdapter
-import android.text.TextUtils
 import kotlinx.android.synthetic.main.wrewards_virtual_card_number_row.*
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.ShakeDetectorImpl
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment
@@ -82,25 +81,8 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mScreenBrightnessDelegate = ScreenBrightnessDelegate(
-                ScreenBrightnessImpl(),
-                CountDownTimerImpl(),
-                ShakeDetectorImpl(this))
+        initBrightnessControl()
 
-        initialBrightness = mScreenBrightnessDelegate?.convertBrightnessLevelToPercent(mScreenBrightnessDelegate?.getScreenBrightness() ?: 0) ?: 0
-
-        mScreenBrightnessDelegate?.apply {
-            registerLifeCycle(lifecycle)
-            shakeDetectorInit {
-
-
-                val isCurrentFragmentWRewardsFragmentSection =  (activity as? BottomNavigationActivity)?.currentFragment is WRewardsFragment
-                val isCurrentFragmentWRewardsOverviewFragment =  ( parentFragment as? WRewardsLoggedinAndLinkedFragment)?.wrewardsViewPager?.currentItem != 0
-                // disable shake action when barcode is invisible
-                if (!SessionUtilities.getInstance().isUserAuthenticated || TextUtils.isEmpty(barCodeNumber?.text?.toString()) || !isCurrentFragmentWRewardsFragmentSection || isCurrentFragmentWRewardsOverviewFragment)   return@shakeDetectorInit
-                setShakeToAnimateView(activity,flipCardBackLayout)
-                shakeOrTapToBrightness() }
-        }
         activity?.let { activity ->
             mErrorHandlerView = ErrorHandlerView(activity, no_connection_layout)
             mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
@@ -127,16 +109,56 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         shakeOrTapNumberTextView.setOnClickListener(this)
 
         uniqueIdsForWRewardOverview()
+    }
 
-        // Custom activity result contract
-        requestWriteSettingsFromFragment = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            // parseResult will return this as string?
-            mScreenBrightnessDelegate?.apply {
-                if (isSettingPermissionAllowedForOneApp()) {
-                    controlBrightness()
+    private fun initBrightnessControl() {
+        mScreenBrightnessDelegate = ScreenBrightnessDelegate(
+            ScreenBrightnessImpl(),
+            CountDownTimerImpl(),
+            ShakeDetectorImpl(this)
+        )
+
+        mScreenBrightnessDelegate?.apply {
+
+            setBrightnessLevel()
+
+            initBrightnessChangeListener {
+                if (it < 255)
+                    setBrightnessLevel()
+            }
+
+            registerLifeCycle(lifecycle)
+            shakeDetectorInit {
+                val isCurrentFragmentWRewardsFragmentSection =
+                    (activity as? BottomNavigationActivity)?.currentFragment is WRewardsFragment
+                val isCurrentFragmentWRewardsOverviewFragment =
+                    (parentFragment as? WRewardsLoggedinAndLinkedFragment)?.wrewardsViewPager?.currentItem == 0
+                // disable shake action when barcode is invisible
+                if (SessionUtilities.getInstance().isUserAuthenticated &&
+                    (barCodeNumber?.text?.length ?: 0 > 0) &&
+                    isCurrentFragmentWRewardsFragmentSection &&
+                    isCurrentFragmentWRewardsOverviewFragment
+                ) {
+                    setShakeToAnimateView(activity, flipCardBackLayout)
+                    shakeOrTapToBrightness()
                 }
             }
+
+            // Custom activity result contract
+            requestWriteSettingsFromFragment =
+                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                    // parseResult will return this as string?
+                    if (isSettingPermissionAllowedForOneApp()) {
+                        controlBrightness()
+                    }
+                }
         }
+    }
+
+    private fun ScreenBrightnessDelegate.setBrightnessLevel() {
+        initialBrightness = convertBrightnessLevelToPercent(
+            mScreenBrightnessDelegate?.getScreenBrightness() ?: 0
+        )
     }
 
     private fun uniqueIdsForWRewardOverview() {
@@ -323,12 +345,8 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
     private fun ScreenBrightnessDelegate.controlBrightness() {
         setBrightnessModeManual()
-        initialBrightness = convertBrightnessLevelToPercent(getScreenBrightness())
         setScreenBrightness(HUNDRED_PERCENT_VALUE)
-        startStopCountdownTimer {
-            //onFinish
-            setScreenBrightness(initialBrightness)
-        }
+        startTimer { setScreenBrightness(initialBrightness) }
     }
 
     private fun handleNoTireHistoryView() {
@@ -368,7 +386,13 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         hideBackButtonAndToolbarBorder()
+        mScreenBrightnessDelegate?.registerContentObserverForBrightness()
         activity?.apply { Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_OVERVIEW) }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mScreenBrightnessDelegate?.unRegisterContentObserverForBrightness()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -386,5 +410,4 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             }
         }
     }
-
 }

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.content.Context
+import android.content.Intent
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.*
@@ -71,6 +72,8 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 
 
 /**
@@ -425,6 +428,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
+            savedAddressResponse?.defaultAddressNickname = selectedAddress?.nickname
             view?.findNavController()?.navigate(
                 R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
                 bundleOf(
@@ -958,25 +962,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
      * @param nickName  unique address name used to identify individual address
      */
     private fun onAddNewAddress(@NonNull nickName: String) {
+        loadingProgressBar.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.changeAddress(
             nickName
-        ).observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    var changeAddressResponse = it?.data as? ChangeAddressResponse
-                    if (changeAddressResponse == null) {
-                        val jsonFileString = Utils.getJsonDataFromAsset(
-                            activity?.applicationContext,
-                            "mocks/changeAddressResponse.json"
-                        )
-                        val mockChangeAddressResponse: ChangeAddressResponse = Gson().fromJson(
-                            jsonFileString,
-                            object : TypeToken<ChangeAddressResponse>() {}.type
-                        )
-                        changeAddressResponse = mockChangeAddressResponse
-                    }
-                    changeAddressResponse.let { anyResponse ->
-                        (anyResponse as? ChangeAddressResponse)?.let { response ->
+        ).observe(viewLifecycleOwner, { response ->
+            loadingProgressBar.visibility = View.GONE
+            when (response) {
+                is ChangeAddressResponse -> {
+                    when (response.httpCode) {
+                        HTTP_OK, HTTP_OK_201 -> {
                             // If deliverable false then show cant deliver popup
                             // Don't allow user to navigate to Checkout page when deliverable : [false].
                             if (!response.deliverable) {
@@ -1005,18 +999,28 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                 navController?.navigateUp()
                             } else
                                 navigateToAddressConfirmation()
-
+                        }
+                        else -> {
+                            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                getString(R.string.common_error_message_without_contact_info))
                         }
                     }
                 }
-                ResponseStatus.LOADING -> {
-
-                }
-                ResponseStatus.ERROR -> {
-
+                is Throwable -> {
+                    showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                        getString(R.string.common_error_message_without_contact_info))
                 }
             }
         })
+    }
+
+    private fun showErrorScreen(errorType: Int, errorMessage: String?) {
+        activity?.apply {
+            val intent = Intent(this, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage", errorMessage)
+            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
     }
 
     private fun isNickNameAlreadyExist(response: AddAddressResponse): Boolean {
@@ -1083,6 +1087,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             R.id.action_to_unsellableItemsFragment,
             bundleOf(
                 KEY_ARGS_BUNDLE to bundleOf(
+                    SAVED_ADDRESS_KEY to savedAddress,
                     EditDeliveryLocationActivity.DELIVERY_TYPE to DeliveryType.DELIVERY.name,
                     KEY_ARGS_SUBURB to Utils.toJson(suburb),
                     KEY_ARGS_PROVINCE to Utils.toJson(province),

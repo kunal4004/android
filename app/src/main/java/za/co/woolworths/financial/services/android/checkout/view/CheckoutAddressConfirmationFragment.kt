@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -35,14 +36,17 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import java.net.HttpURLConnection
 
 
 /**
@@ -350,18 +354,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                     layoutManager = activity?.let { LinearLayoutManager(it) }
                     checkoutAddressConfirmationListAdapter?.let { adapter = it }
                 }
-
-                // If there is a default address nickname present set it selected
-                savedAddress?.defaultAddressNickname?.let { nickName ->
-                    var index = 0
-                    savedAddress?.addresses?.forEach { address ->
-                        if (nickName == address.nickname) {
-                            checkoutAddressConfirmationListAdapter?.onItemClick(index)
-                            return@forEach
-                        }
-                        index++
-                    }
-                }
             }
         } else {
             showCollectionTab(localSuburbId)
@@ -662,48 +654,80 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     override fun changeAddress(address: Address) {
         // Save instance of selected address to pass to other screens
         selectedAddress = address
+        savedAddress?.defaultAddressNickname = selectedAddress?.nickname
     }
 
     private fun callChangeAddressApi() {
         selectedAddress?.nickname?.let { nickname ->
+            loadingProgressBar.visibility = View.VISIBLE
             checkoutAddAddressNewUserViewModel.changeAddress(nickname)
-                .observe(viewLifecycleOwner, {
-                    when (it.responseStatus) {
-                        ResponseStatus.SUCCESS -> {
-                            loadingProgressBar.visibility = View.GONE
-                            var changeAddressResponse = it?.data as? ChangeAddressResponse
-                            if (changeAddressResponse == null) {
-                                val jsonFileString = Utils.getJsonDataFromAsset(
-                                    activity?.applicationContext,
-                                    "mocks/changeAddressResponse.json"
-                                )
-                                val mockChangeAddressResponse: ChangeAddressResponse =
-                                    Gson().fromJson(
-                                        jsonFileString,
-                                        object : TypeToken<ChangeAddressResponse>() {}.type
-                                    )
-                                changeAddressResponse = mockChangeAddressResponse
-                            }
+                .observe(viewLifecycleOwner, { response ->
+                    loadingProgressBar.visibility = View.GONE
+                    when (response) {
+                        is ChangeAddressResponse -> {
+                            when (response.httpCode) {
+                                HttpURLConnection.HTTP_OK, AppConstant.HTTP_OK_201 -> {
 
-                            if (changeAddressResponse != null && changeAddressResponse.deliverable) {
-                                if (changeAddressResponse.unSellableCommerceItems?.size!! > 0) {
-                                    navigateToUnsellableItemsFragment(
-                                        changeAddressResponse.unSellableCommerceItems,
-                                        selectedAddress!!,
-                                        changeAddressResponse.deliverable
-                                    )
+                                    // If deliverable false then show cant deliver popup
+                                    // Don't allow user to navigate to Checkout page when deliverable : [false].
+                                    if (!response.deliverable) {
+                                        showSuburbNotDeliverableBottomSheetDialog(
+                                            SuburbNotDeliverableBottomsheetDialogFragment.ERROR_CODE_SUBURB_NOT_DELIVERABLE
+                                        )
+                                        return@observe
+                                    }
+
+                                    // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
+                                    if (!response.unSellableCommerceItems.isNullOrEmpty()) {
+                                        navigateToUnsellableItemsFragment(
+                                            response.unSellableCommerceItems,
+                                            selectedAddress!!,
+                                            response.deliverable
+                                        )
+                                        return@observe
+                                    }
+                                    navigateToReturningUser()
+                                }
+                                else -> {
+                                    showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                        getString(R.string.common_error_message_without_contact_info))
                                 }
                             }
                         }
-                        ResponseStatus.LOADING -> {
-                            loadingProgressBar.visibility = View.VISIBLE
-                        }
-                        ResponseStatus.ERROR -> {
-                            loadingProgressBar.visibility = View.GONE
+                        is Throwable -> {
+                            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                getString(R.string.common_error_message_without_contact_info))
                         }
                     }
                 })
         }
+    }
+
+    private fun showErrorScreen(errorType: Int, errorMessage: String?) {
+        activity?.apply {
+            val intent = Intent(this, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage", errorMessage)
+            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    private fun navigateToReturningUser() {
+        view?.findNavController()?.navigate(
+            R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
+            bundleOf(
+                SAVED_ADDRESS_KEY to savedAddress
+            )
+        )
+    }
+
+    private fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
+        view?.findNavController()?.navigate(
+            R.id.action_checkoutAddressConfirmationFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
+            bundleOf(
+                SuburbNotDeliverableBottomsheetDialogFragment.ERROR_CODE to errorCode
+            )
+        )
     }
 
     override fun onSuburbSelected(suburb: Suburb) {

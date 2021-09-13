@@ -66,6 +66,10 @@ class CheckoutAddressConfirmationListAdapter(
             itemView.apply {
                 hideShimmer(this)
                 savedAddress?.addresses?.get(position)?.let {
+                    // If there is a default address nickname present set it selected
+                    if (savedAddress?.defaultAddressNickname == it.nickname) {
+                        checkedItemPosition = position
+                    }
                     title.text = it.nickname
                     subTitle.text = it.address1
                     selector.isChecked = checkedItemPosition == position

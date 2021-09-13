@@ -54,7 +54,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -67,7 +67,6 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -677,7 +676,7 @@ public class Utils {
         if (deviceID == null) {
             deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
             if (deviceID == null) {
-                deviceID = FirebaseInstanceId.getInstance().getId();
+                deviceID = FirebaseInstallations.getInstance().getId().getResult().toString();
                 sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
             }
         }

@@ -106,11 +106,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun executeSetSuburb() {
-        if (activity is CheckoutActivity) {
-            setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, Bundle())
-            navController?.navigateUp()
-            return
-        }
+
         showSetSuburbProgressBar()
         selectedSuburb?.let {
             OneAppService.setSuburb(it.id).enqueue(CompletionHandler(object : IResponseListener<SetDeliveryLocationSuburbResponse> {

@@ -18,7 +18,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
 
     }
 
-
     companion object {
         var errorType: Int = 0
         var errorMessage: String? = null
@@ -48,7 +47,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 errorMessage = getString("errorMessage", "")
             }
         }
-        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,10 +56,11 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
     }
 
     private fun initListeners() {
-        cancelButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        if(errorType != ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT){
+            cancelButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        }
         cancelButton.setOnClickListener(this)
         actionButton.setOnClickListener(this)
-
     }
 
     private fun setViewOnErrorType() {
@@ -98,7 +97,6 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                     else errorMessage
                 actionButton?.text = getString(R.string.retry)
                 cancelButton?.visibility = View.GONE
-                enableBackButton()
             }
             ErrorHandlerActivity.WITH_NO_ACTION -> {
                 errorLogo.setImageResource(R.drawable.ic_error_icon)
@@ -120,23 +118,14 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 actionButton.text = getString(R.string.retry)
                 cancelButton.text = getString(R.string.need_help_call_the_center)
             }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        when (errorType) {
-            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON -> {
-                menu.clear()
-            }
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    private fun enableBackButton() {
-        (activity as? ErrorHandlerActivity)?.apply {
-            supportActionBar?.let { actionBar ->
-                actionBar.setHomeAsUpIndicator(R.drawable.back24)
-                actionBar.setDisplayHomeAsUpEnabled(true)
+            ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT -> {
+                errorLogo.setImageResource(R.drawable.ic_error_icon)
+                errorTitle.text = errorMessage
+                errorDescription?.text = getString(R.string.store_email_error_desc)
+                actionButton.text = getString(R.string.got_it)
+                cancelButton.text = getString(R.string.need_help_call_the_center)
+                cancelButton.isAllCaps = false
+                cancelButton.paintFlags = Paint.FAKE_BOLD_TEXT_FLAG
             }
         }
     }
@@ -145,7 +134,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
         when (p0?.id) {
             R.id.cancelButton -> {
                 when (errorType) {
-                    ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION, ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
+                    ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION,
+                    ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT,
+                    ErrorHandlerActivity.LINK_DEVICE_FAILED -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_CALL_CENTER)
                     }
                     else -> {
@@ -170,10 +161,10 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                     ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
+                    ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT -> {
+                        setResultBAck(Activity.RESULT_CANCELED)
+                    }
                 }
-            }
-            R.id.home -> {
-                activity?.onBackPressed()
             }
         }
     }
