@@ -50,21 +50,12 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
         return checkoutAddAddressNewUserInteractor.addAddress(addAddressRequestBody)
     }
 
-    fun updateAddress(addAddressRequestBody: AddAddressRequestBody, addressId: String) =
-        liveData(Dispatchers.IO) {
-            emit(NativeCheckoutResource.loading(data = null))
-            try {
-                emit(
-                    NativeCheckoutResource.success(
-                        data = checkoutAddAddressNewUserInteractor.updateAddress(
-                            addAddressRequestBody, addressId
-                        ).body()
-                    )
-                )
-            } catch (exception: Exception) {
-                emit(NativeCheckoutResource.error(data = null, msg = exception.toString()))
-            }
-        }
+    fun editAddress(
+        addAddressRequestBody: AddAddressRequestBody,
+        addressId: String
+    ): LiveData<Any> {
+        return checkoutAddAddressNewUserInteractor.editAddress(addAddressRequestBody, addressId)
+    }
 
     fun deleteAddress(addressId: String): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.deleteAddress(addressId)

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.location.Geocoder
@@ -23,8 +24,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
@@ -59,6 +58,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
@@ -72,8 +72,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
-import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 
 
 /**
@@ -91,7 +89,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var isShimmerRequired = true
     private var selectedAddressId = ""
-    private var savedAddress: Address? = null
     private var isAddNewAddress = false
     private var provinceSuburbEnableType: ProvinceSuburbType? = null
 
@@ -127,9 +124,13 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         editSavedAddress,
                         SavedAddressResponse::class.java
                     ) as? SavedAddressResponse)
-                    savedAddress =
+                    val savedAddress =
                         savedAddressResponse?.addresses?.get(getInt(EDIT_ADDRESS_POSITION_KEY))
                     selectedAddressId = savedAddress?.id.toString()
+                    selectedDeliveryAddressType = savedAddress?.addressType
+                    if (savedAddress != null) {
+                        selectedAddress.savedAddress = savedAddress
+                    }
                     setHasOptionsMenu(true)
                     isShimmerRequired = false
                 }
@@ -168,45 +169,40 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         init()
         addFragmentResultListener()
         // Show prepopulate fields on edit address
-        if (savedAddress != null) {
+        if (selectedAddressId.isNotEmpty()) {
+            //it's not empty means it's a edit address call.
             if (activity is CheckoutActivity)
                 (activity as CheckoutActivity).hideBackArrow()
-            setTextFields(savedAddress)
+            setTextFields()
         }
     }
 
-    private fun setTextFields(savedAddress: Address?) {
-        selectedAddress.address1 = savedAddress?.address1 ?: ""
-        selectedAddress.postalCode = savedAddress?.postalCode ?: ""
-        selectedAddress.region = savedAddress?.region ?: ""
-        selectedAddress.suburbId = savedAddress?.suburbId ?: ""
-        selectedAddress.city = savedAddress?.city ?: ""
-        selectedAddress.suburb = savedAddress?.suburb ?: ""
-        selectedAddress.province = savedAddress?.city ?: "" //province and city
-        selectedAddress.latitude = savedAddress?.latitude
-        selectedAddress.longitude = savedAddress?.longitude
-        selectedAddress.nickname = savedAddress?.nickname ?: ""
-        selectedAddress.unitComplexFloor = savedAddress?.address2 ?: ""
-
-        autoCompleteTextView?.setText(selectedAddress.address1)
-        addressNicknameEditText.setText(selectedAddress.nickname)
-        unitComplexFloorEditText.setText(selectedAddress.unitComplexFloor)
-        suburbEditText.setText(selectedAddress.suburb)
-        provinceAutocompleteEditText.setText(selectedAddress.province)
-        cellphoneNumberEditText.setText(savedAddress?.primaryContactNo)
-        recipientNameEditText.setText(savedAddress?.recipientName)
-        if (selectedAddress.postalCode.isNullOrEmpty()) {
+    private fun setTextFields() {
+        autoCompleteTextView?.setText(selectedAddress.savedAddress.address1)
+        addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
+        unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
+        suburbEditText.setText(selectedAddress.savedAddress.suburb)
+        provinceAutocompleteEditText.setText(selectedAddress.savedAddress.city)
+        cellphoneNumberEditText.setText(selectedAddress.savedAddress.primaryContactNo)
+        recipientNameEditText.setText(selectedAddress.savedAddress.recipientName)
+        if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
             postalCode.text.clear()
         } else
-            postalCode.setText(selectedAddress.postalCode)
-        selectedDeliveryAddressType = savedAddress?.addressType
+            postalCode.setText(selectedAddress.savedAddress.postalCode)
+        selectedDeliveryAddressType = selectedAddress.savedAddress.addressType
     }
 
     private fun initView() {
         if (selectedAddressId.isNotEmpty()) {
             //it's not empty means it's a edit address call.
-            if (savedAddressResponse?.addresses?.size!! > 1) {
+            if (savedAddressResponse?.defaultAddressNickname == arguments?.getBundle("bundle")
+                    ?.getInt(EDIT_ADDRESS_POSITION_KEY)?.let {
+                        savedAddressResponse?.addresses?.get(it)?.nickname
+                    }
+            ) {
+                // Do Nothing
+            } else if (savedAddressResponse?.addresses?.size!! > 1) {
                 deleteTextView.visibility = View.VISIBLE
                 deleteTextView.setOnClickListener(this)
             }
@@ -226,7 +222,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         autoCompleteTextView?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
         addressNicknameEditText?.apply {
             afterTextChanged {
-                selectedAddress.nickname = it
+                selectedAddress.savedAddress.nickname = it
                 showErrorInputField(this, View.GONE)
             }
         }
@@ -238,7 +234,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
         unitComplexFloorEditText?.apply {
             afterTextChanged {
-                selectedAddress.unitComplexFloor = it
+                selectedAddress.savedAddress.address2 = it
             }
         }
         postalCode?.apply {
@@ -338,7 +334,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun init() {
-        if (selectedAddress.postalCode.isNullOrEmpty()) {
+        if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             enablePostalCode()
         }
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
@@ -410,7 +406,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
-            if (selectedAddress.province.isEmpty()) return@setFragmentResultListener
+            if (selectedAddress.savedAddress.city.isNullOrEmpty()) return@setFragmentResultListener
             provinceSuburbEnableType = ONLY_SUBURB
             enableDisableEditText()
             getSuburbs()
@@ -428,7 +424,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
-            savedAddressResponse?.defaultAddressNickname = selectedAddress?.nickname
+            savedAddressResponse?.defaultAddressNickname = selectedAddress.savedAddress.nickname
             view?.findNavController()?.navigate(
                 R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
                 bundleOf(
@@ -439,36 +435,42 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun onProvinceSelected(province: Province?) {
-        selectedAddress.province = province?.name.toString()
-        selectedAddress.region = province?.id.toString()
+        selectedAddress.savedAddress.apply {
+            city = province?.name.toString()
+            region = province?.id.toString()
+        }
         enableDisableEditText()
         provinceAutocompleteEditText?.setText(province?.name)
     }
 
     private fun resetSuburbSelection() {
-        selectedAddress.suburb = ""
-        selectedAddress.suburbId = ""
+        selectedAddress.savedAddress.apply {
+            suburb = ""
+            suburbId = ""
+        }
         selectedAddress.store = ""
         selectedAddress.storeId = ""
         suburbEditText.text.clear()
     }
 
-    private fun onSuburbSelected(suburb: Suburb?) {
+    private fun onSuburbSelected(onSelectedSuburb: Suburb?) {
         if (deliveryType == DeliveryType.DELIVERY) {
-            selectedAddress.suburb = suburb?.name.toString()
-            selectedAddress.suburbId = suburb?.id.toString()
+            selectedAddress.savedAddress.apply {
+                suburb = onSelectedSuburb?.name.toString()
+                suburbId = onSelectedSuburb?.id.toString()
+            }
         } else {
-            selectedAddress.store = suburb?.name.toString()
-            selectedAddress.storeId = suburb?.id.toString()
+            selectedAddress.store = onSelectedSuburb?.name.toString()
+            selectedAddress.storeId = onSelectedSuburb?.id.toString()
         }
-        selectedAddress.postalCode = suburb?.postalCode.toString()
+        selectedAddress.savedAddress.postalCode = onSelectedSuburb?.postalCode.toString()
         enableDisableEditText()
-        suburbEditText?.setText(suburb?.name)
-        if (suburb?.postalCode.isNullOrEmpty()) {
+        suburbEditText?.setText(onSelectedSuburb?.name)
+        if (onSelectedSuburb?.postalCode.isNullOrEmpty()) {
             enablePostalCode()
             postalCode.text.clear()
         } else {
-            postalCode?.setText(suburb?.postalCode)
+            postalCode?.setText(onSelectedSuburb?.postalCode)
             if (postalCode.text.isNotEmpty()) {
                 disablePostalCode()
             } else
@@ -485,42 +487,48 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 STREET_NUMBER.value -> addressText1 = address.name
                 ROUTE.value -> addressText2 = address.name
                 ADMINISTRATIVE_AREA_LEVEL_1.value -> {
-                    selectedAddress.province = address.name
+                    selectedAddress.savedAddress.city = address.name
                 }
-                POSTAL_CODE.value -> selectedAddress.postalCode = address.name
+                POSTAL_CODE.value -> selectedAddress.savedAddress.postalCode = address.name
                 SUBLOCALITY_LEVEL_1.value -> {
                     if (address.name.isNotEmpty())
-                        selectedAddress.suburb = address.name
+                        selectedAddress.savedAddress.suburb = address.name
                 }
                 SUBLOCALITY_LEVEL_2.value -> {
-                    if (selectedAddress.suburb.isEmpty())
-                        selectedAddress.suburb = address.name
+                    if (selectedAddress.savedAddress.suburb.isNullOrEmpty())
+                        selectedAddress.savedAddress.suburb = address.name
                 }
 
-                LOCALITY.value -> selectedAddress.city = address.name
+                LOCALITY.value -> selectedAddress.savedAddress.city = address.name
 
             }
         }
-        if (selectedAddress.province.isNotEmpty() && selectedAddress.suburb.isNotEmpty())
-            selectedAddress.region = ""
-        selectedAddress.address1 = addressText1.plus(" ").plus(addressText2)
-        selectedAddress.latitude = place.latLng?.latitude
-        selectedAddress.longitude = place.latLng?.longitude
-        selectedAddress.placesId = place.id
+        if (!selectedAddress.savedAddress.city.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
+            selectedAddress.savedAddress.region = ""
+        selectedAddress.savedAddress.apply {
+            address1 = addressText1.plus(" ").plus(addressText2)
+            latitude = place.latLng?.latitude
+            longitude = place.latLng?.longitude
+            placesId = place.id
+        }
 
-        if (selectedAddress.suburb.isNotEmpty())
-            selectedAddress.suburbId = ""
-        if (selectedAddress.postalCode.isEmpty()) {
+        if (!selectedAddress.savedAddress.suburb.isNullOrEmpty())
+            selectedAddress.savedAddress.suburbId = ""
+        if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             //If Google places failed to give postal code.
             val geocoder = Geocoder(context, Locale.getDefault())
             val addresses =
-                geocoder.getFromLocation(selectedAddress.latitude!!, selectedAddress.longitude!!, 1)
+                geocoder.getFromLocation(
+                    selectedAddress.savedAddress.latitude!!,
+                    selectedAddress.savedAddress.longitude!!,
+                    1
+                )
             if (!addresses[0]?.postalCode.isNullOrEmpty())
-                selectedAddress.postalCode = addresses[0]?.postalCode.toString()
+                selectedAddress.savedAddress.postalCode = addresses[0]?.postalCode.toString()
         }
 
         autoCompleteTextView.apply {
-            setText(selectedAddress.address1)
+            setText(selectedAddress.savedAddress.address1)
             setSelection(autoCompleteTextView.length())
             autoCompleteTextView.dismissDropDown()
         }
@@ -529,8 +537,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
         val localProvince = Province()
-        val provinceName = selectedAddress.province
-        if (provinceName.isNotEmpty()) {
+        val provinceName = selectedAddress.savedAddress.city
+        if (!provinceName.isNullOrEmpty()) {
             for (provinces in provinceList) {
                 if (provinceName.equals(provinces.name)) {
                     // province name is matching with the province list from config.
@@ -540,8 +548,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                     disableProvinceSelection()
                     provinceAutocompleteEditText.setText(provinceName)
-                    selectedAddress.apply {
-                        province = localProvince.name
+                    selectedAddress.savedAddress.apply {
+                        city = localProvince.name
                         region = localProvince.id
                     }
                 }
@@ -556,22 +564,22 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             provinceAutocompleteEditText.setText("")
             provinceSuburbEnableType = ONLY_PROVINCE
         }
-        if (selectedAddress.suburb.isEmpty()) {
+        if (selectedAddress.savedAddress.suburb.isNullOrEmpty()) {
             resetSuburbSelection()
             provinceSuburbEnableType =
-                if (selectedAddress.province.isNullOrEmpty()) BOTH else ONLY_SUBURB
+                if (selectedAddress.savedAddress.city.isNullOrEmpty()) BOTH else ONLY_SUBURB
         } else {
-            suburbEditText.setText(selectedAddress.suburb)
+            suburbEditText.setText(selectedAddress.savedAddress.suburb)
             disableSuburbSelection()
         }
         enableDisableEditText()
-        when (selectedAddress.postalCode.isNullOrEmpty()) {
+        when (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             true -> {
                 enablePostalCode()
                 postalCode.text.clear()
             }
             false -> {
-                postalCode.setText(selectedAddress.postalCode)
+                postalCode.setText(selectedAddress.savedAddress.postalCode)
                 if (postalCode.text.isNotEmpty()) {
                     disablePostalCode()
                 } else
@@ -713,7 +721,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                 onSaveAddressClicked()
             }
             R.id.selectSuburbLayout, R.id.suburbEditText -> {
-                if (selectedAddress.province.isEmpty()) return
+                if (selectedAddress.savedAddress.city.isNullOrEmpty()) return
                 getSuburbs()
             }
             R.id.selectProvinceLayout, R.id.provinceAutocompleteEditText -> {
@@ -775,29 +783,31 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun getSuburbs() {
         if (progressbarGetProvinces?.visibility == View.VISIBLE) return
-        checkoutAddAddressNewUserViewModel.initGetSuburbs(selectedAddress.region)
-            .observe(viewLifecycleOwner, {
-                when (it.responseStatus) {
-                    ResponseStatus.SUCCESS -> {
-                        hideSetSuburbProgressBar()
-                        if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
-                            //showNoStoresError()
-                        } else {
-                            (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
-                                navigateToSuburbSelection(
-                                    it1
-                                )
+        selectedAddress.savedAddress.region?.let { provinceId ->
+            checkoutAddAddressNewUserViewModel.initGetSuburbs(provinceId)
+                .observe(viewLifecycleOwner, {
+                    when (it.responseStatus) {
+                        ResponseStatus.SUCCESS -> {
+                            hideSetSuburbProgressBar()
+                            if ((it?.data as? SuburbsResponse)?.suburbs.isNullOrEmpty()) {
+                                //showNoStoresError()
+                            } else {
+                                (it?.data as? SuburbsResponse)?.suburbs?.let { it1 ->
+                                    navigateToSuburbSelection(
+                                        it1
+                                    )
+                                }
                             }
                         }
+                        ResponseStatus.LOADING -> {
+                            showGetSuburbProgress()
+                        }
+                        ResponseStatus.ERROR -> {
+                            hideSetSuburbProgressBar()
+                        }
                     }
-                    ResponseStatus.LOADING -> {
-                        showGetSuburbProgress()
-                    }
-                    ResponseStatus.ERROR -> {
-                        hideSetSuburbProgressBar()
-                    }
-                }
-            })
+                })
+        }
     }
 
     private fun navigateToSuburbSelection(suburbs: List<Suburb>) {
@@ -883,22 +893,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                     }
                                 }
 
-                                AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
-                                    if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
-                                        response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
-                                    ) {
-                                        showSuburbNotDeliverableBottomSheetDialog(
-                                            response.response.code.toString()
-                                        )
-                                    } else if (isNickNameAlreadyExist(response)) {
-                                        showNickNameExist()
-                                    } else {
-                                        presentErrorDialog(
-                                            getString(R.string.common_error_unfortunately_something_went_wrong),
-                                            getString(R.string.save_address_error),
-                                            ERROR_TYPE_ADD_ADDRESS
-                                        )
-                                    }
+                                AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                                    addAddressErrorResponse(response, R.string.save_address_error)
                                 }
                                 else -> {
                                     presentErrorDialog(
@@ -919,7 +915,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 })
             } else
-                updateAddress()
+                editAddress()
 
         } else {
             isNickNameExist()
@@ -944,6 +940,24 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         showErrorInputField(it, View.VISIBLE)
                 }
             }
+        }
+    }
+
+    private fun addAddressErrorResponse(response: AddAddressResponse, errorMessage: Int) {
+        if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
+            response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
+        ) {
+            showSuburbNotDeliverableBottomSheetDialog(
+                response.response.code.toString()
+            )
+        } else if (isNickNameAlreadyExist(response)) {
+            showNickNameExist()
+        } else {
+            presentErrorDialog(
+                getString(R.string.common_error_unfortunately_something_went_wrong),
+                getString(errorMessage),
+                ERROR_TYPE_ADD_ADDRESS
+            )
         }
     }
 
@@ -1001,14 +1015,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                 navigateToAddressConfirmation()
                         }
                         else -> {
-                            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                getString(R.string.common_error_message_without_contact_info))
+                            showErrorScreen(
+                                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                getString(R.string.common_error_message_without_contact_info)
+                            )
                         }
                     }
                 }
                 is Throwable -> {
-                    showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                        getString(R.string.common_error_message_without_contact_info))
+                    showErrorScreen(
+                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                        getString(R.string.common_error_message_without_contact_info)
+                    )
                 }
             }
         })
@@ -1058,36 +1076,22 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     ) {
         val suburb = Suburb()
         val province = Province()
-
-        if (selectedAddressId.isEmpty()) {
-            suburb.apply {
-                id = selectedAddress.suburbId
-                name = selectedAddress.suburb
-                postalCode = selectedAddress.postalCode
-                suburbDeliverable = deliverable
-            }
-            province.apply {
-                name = selectedAddress.city
-                id = selectedAddress.region
-            }
-        } else {
-            suburb.apply {
-                id = savedAddress?.suburbId ?: ""
-                name = savedAddress?.suburb ?: ""
-                postalCode = savedAddress?.postalCode ?: ""
-                suburbDeliverable = deliverable
-            }
-            province.apply {
-                name = savedAddress?.city ?: ""
-                id = savedAddress?.region ?: ""
-            }
+        suburb.apply {
+            id = selectedAddress.savedAddress.suburbId
+            name = selectedAddress.savedAddress.suburb
+            postalCode = selectedAddress.savedAddress.postalCode
+            suburbDeliverable = deliverable
+        }
+        province.apply {
+            name = selectedAddress.savedAddress.city
+            id = selectedAddress.savedAddress.region
         }
 
         navController?.navigate(
             R.id.action_to_unsellableItemsFragment,
             bundleOf(
                 KEY_ARGS_BUNDLE to bundleOf(
-                    SAVED_ADDRESS_KEY to savedAddress,
+                    SAVED_ADDRESS_KEY to savedAddressResponse,
                     EditDeliveryLocationActivity.DELIVERY_TYPE to DeliveryType.DELIVERY.name,
                     KEY_ARGS_SUBURB to Utils.toJson(suburb),
                     KEY_ARGS_PROVINCE to Utils.toJson(province),
@@ -1106,59 +1110,73 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             postalCode?.text.toString().trim(),
             cellphoneNumberEditText?.text.toString().trim(),
             "",
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.region else savedAddress?.region
-                ?: "",
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.suburbId else savedAddress?.suburbId
-                ?: "",
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.city else savedAddress?.city
-                ?: "",
+            selectedAddress.savedAddress.region ?: "",
+            selectedAddress.savedAddress.suburbId ?: "",
+            selectedAddress.savedAddress.city ?: "",
             suburbEditText?.text.toString(),
             "",
             false,
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.latitude else savedAddress?.latitude
-                ?: 0.0,
-            if (selectedAddressId.isNullOrEmpty()) selectedAddress.longitude else savedAddress?.longitude
-                ?: 0.0, selectedAddress.placesId ?: "",
+            selectedAddress.savedAddress.latitude,
+            selectedAddress.savedAddress.longitude,
+            selectedAddress.savedAddress.placesId ?: "",
             selectedDeliveryAddressType.toString()
         )
     }
 
-    private fun updateAddress() {
-        checkoutAddAddressNewUserViewModel.updateAddress(
+    private fun editAddress() {
+        loadingProgressBar.visibility = View.VISIBLE
+        checkoutAddAddressNewUserViewModel.editAddress(
             getAddAddressRequestBody(), selectedAddressId
-        ).observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    loadingProgressBar.visibility = View.GONE
-                    if (savedAddressResponse != null && it?.data != null) {
-                        arguments?.getBundle("bundle")?.getInt(EDIT_ADDRESS_POSITION_KEY)
-                            ?.let { position ->
-                                (savedAddressResponse?.addresses as? MutableList<Address>)?.removeAt(
-                                    position
-                                )
-                                (it.data as? AddAddressResponse)?.address?.let { address ->
-                                    (savedAddressResponse?.addresses as? MutableList<Address>)?.add(
-                                        position, address
+        )
+            .observe(viewLifecycleOwner, { response ->
+                loadingProgressBar.visibility = View.GONE
+                when (response) {
+                    is AddAddressResponse -> {
+                        when (response.httpCode) {
+                            HTTP_OK, HTTP_OK_201 -> {
+                                if (savedAddressResponse != null && response != null) {
+                                    arguments?.getBundle("bundle")
+                                        ?.getInt(EDIT_ADDRESS_POSITION_KEY)
+                                        ?.let { position ->
+                                            (savedAddressResponse?.addresses as? MutableList<Address>)?.removeAt(
+                                                position
+                                            )
+                                            response.address?.let { address ->
+                                                (savedAddressResponse?.addresses as? MutableList<Address>)?.add(
+                                                    position, address
+                                                )
+                                            }
+                                        }
+                                    setFragmentResult(
+                                        UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
+                                            SAVED_ADDRESS_KEY to savedAddressResponse
+                                        )
                                     )
+                                    navController?.navigateUp()
+                                    selectedAddressId = ""
                                 }
                             }
-                        setFragmentResult(
-                            UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
-                                SAVED_ADDRESS_KEY to savedAddressResponse
-                            )
+                            AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                                addAddressErrorResponse(response, R.string.update_address_error)
+                            }
+                            else -> {
+                                presentErrorDialog(
+                                    getString(R.string.common_error_unfortunately_something_went_wrong),
+                                    getString(R.string.no_internet_subtitle),
+                                    ERROR_TYPE_ADD_ADDRESS
+                                )
+                            }
+                        }
+                    }
+                    is Throwable -> {
+                        presentErrorDialog(
+                            getString(R.string.common_error_unfortunately_something_went_wrong),
+                            getString(R.string.no_internet_subtitle),
+                            ERROR_TYPE_ADD_ADDRESS
                         )
-                        navController?.navigateUp()
-                        selectedAddressId = ""
                     }
                 }
-                ResponseStatus.LOADING -> {
-                    loadingProgressBar.visibility = View.VISIBLE
-                }
-                ResponseStatus.ERROR -> {
-                    loadingProgressBar.visibility = View.GONE
-                }
-            }
-        })
+            })
     }
 
     private fun isNickNameExist(): Boolean {
@@ -1207,6 +1225,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun showErrorPhoneNumber() {
         cellphoneNumberErrorMsg?.visibility = View.VISIBLE
         cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
+        showAnimationErrorMessage(
+            cellphoneNumberErrorMsg,
+            View.VISIBLE,
+            recipientAddressLayout.y.toInt()
+        )
     }
 
     private fun showErrorSuburbOrProvince(relativeLayout: RelativeLayout) {
@@ -1240,27 +1263,52 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
         when (editText.id) {
             R.id.autoCompleteTextView -> {
-                autocompletePlaceErrorMsg?.visibility = visible
+                showAnimationErrorMessage(autocompletePlaceErrorMsg, visible, 0)
             }
             R.id.addressNicknameEditText -> {
-                addressNicknameErrorMsg?.visibility = visible
+                showAnimationErrorMessage(addressNicknameErrorMsg, visible, 0)
             }
             R.id.suburbEditText -> {
-                suburbNameErrorMsg?.visibility = visible
+                showAnimationErrorMessage(suburbNameErrorMsg, visible, 0)
             }
             R.id.provinceAutocompleteEditText -> {
-                provinceNameErrorMsg?.visibility = visible
+                showAnimationErrorMessage(provinceNameErrorMsg, visible, 0)
             }
             R.id.postalCode -> {
-                postalCodeTextErrorMsg?.visibility = visible
+                showAnimationErrorMessage(postalCodeTextErrorMsg, visible, 0)
+                editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_non_editable_background else R.drawable.input_non_editable_edit_text)
             }
             R.id.recipientNameEditText -> {
-                recipientNameErrorMsg?.visibility = visible
+                showAnimationErrorMessage(
+                    recipientNameErrorMsg,
+                    visible,
+                    recipientAddressLayout.y.toInt()
+                )
             }
             R.id.cellphoneNumberEditText -> {
-                cellphoneNumberErrorMsg?.visibility = visible
                 cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
+                showAnimationErrorMessage(
+                    cellphoneNumberErrorMsg,
+                    visible,
+                    recipientAddressLayout.y.toInt()
+                )
             }
+        }
+    }
+
+    private fun showAnimationErrorMessage(
+        textView: TextView,
+        visible: Int,
+        recipientLayoutValue: Int
+    ) {
+        textView?.visibility = visible
+        if (View.VISIBLE == visible) {
+            val anim = ObjectAnimator.ofInt(
+                newUserNestedScrollView,
+                "scrollY",
+                recipientLayoutValue + textView.y.toInt()
+            )
+            anim.setDuration(300).start()
         }
     }
 

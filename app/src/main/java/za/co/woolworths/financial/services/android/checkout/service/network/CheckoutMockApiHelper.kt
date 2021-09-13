@@ -9,12 +9,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
  */
 class CheckoutMockApiHelper : MockRetrofitConfig() {
 
-    fun updateAddress(
-        addAddressRequestBody: AddAddressRequestBody,
-        addressId: String
-    ): Response<AddAddressResponse> =
-        OneAppService.updateAddress(addAddressRequestBody, addressId).execute()
-
     fun changeAddress(nickName: String): Response<ChangeAddressResponse> =
         OneAppService.changeAddress(nickName).execute()
 
