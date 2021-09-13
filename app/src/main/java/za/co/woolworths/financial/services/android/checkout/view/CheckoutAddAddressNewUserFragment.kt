@@ -331,16 +331,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(PROVINCE_SELECTION_BACK_PRESSED) { _, _ ->
-            enableDisableEditText()
+            enableEditText()
         }
         setFragmentResultListener(SUBURB_SELECTION_BACK_PRESSED) { _, _ ->
-            enableDisableEditText()
+            enableEditText()
         }
 
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
             if (selectedAddress.savedAddress.city.isNullOrEmpty()) return@setFragmentResultListener
             provinceSuburbEnableType = ONLY_SUBURB
-            enableDisableEditText()
+            enableEditText()
             getSuburbs()
         }
         setFragmentResultListener(RESULT_ERROR_CODE_RETRY) { _, bundle ->
@@ -371,7 +371,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             city = province?.name.toString()
             region = province?.id.toString()
         }
-        enableDisableEditText()
+        enableEditText()
         provinceAutocompleteEditText?.setText(province?.name)
     }
 
@@ -396,7 +396,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             selectedAddress.storeId = onSelectedSuburb?.id.toString()
         }
         selectedAddress.savedAddress.postalCode = onSelectedSuburb?.postalCode.toString()
-        enableDisableEditText()
+        enableEditText()
         suburbEditText?.setText(onSelectedSuburb?.name)
         if (onSelectedSuburb?.postalCode.isNullOrEmpty()) {
             enablePostalCode()
@@ -480,8 +480,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         id = provinces.id
                         name = provinces.name
                     }
-                    disableProvinceSelection()
                     provinceAutocompleteEditText.setText(provinceName)
+                    disableProvinceSelection()
                     selectedAddress.savedAddress.apply {
                         city = localProvince.name
                         region = localProvince.id
@@ -506,7 +506,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             suburbEditText.setText(selectedAddress.savedAddress.suburb)
             disableSuburbSelection()
         }
-        enableDisableEditText()
+        enableEditText()
         when (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             true -> {
                 enablePostalCode()
@@ -1189,7 +1189,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun enableDisableEditText() {
+    private fun enableEditText() {
         when (provinceSuburbEnableType) {
             ONLY_PROVINCE -> enableProvinceSelection()
             ONLY_SUBURB -> enableSuburbSelection()
@@ -1217,7 +1217,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
             R.id.postalCode -> {
                 showAnimationErrorMessage(postalCodeTextErrorMsg, visible, 0)
-                editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_non_editable_background else R.drawable.input_non_editable_edit_text)
+                editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
             }
             R.id.recipientNameEditText -> {
                 showAnimationErrorMessage(
