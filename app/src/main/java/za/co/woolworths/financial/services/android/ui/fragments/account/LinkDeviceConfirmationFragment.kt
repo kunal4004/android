@@ -193,34 +193,44 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
         context?.let {
             linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))
-            linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
             when(mApplyNowState){
                 ApplyNowState.SILVER_CREDIT_CARD,
                 ApplyNowState.GOLD_CREDIT_CARD,
-                ApplyNowState.BLACK_CREDIT_CARD ->
+                ApplyNowState.BLACK_CREDIT_CARD -> {
+                    linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
                     linkDeviceResultSubitle?.text = it.getString(R.string.link_device_confirm_desc_cc)
-                ApplyNowState.STORE_CARD,
-                ApplyNowState.PERSONAL_LOAN ->
+
+                    gotItLinkDeviceConfirmationButton.apply {
+                        visibility = View.VISIBLE
+                        setOnClickListener {
+                            val intent = Intent()
+                            intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                            activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                            activity?.finish()
+                        }
+                    }
+                    linkMyDeviceConfirmationButton.apply {
+                        visibility = View.VISIBLE
+                        paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                        setOnClickListener {
+                            askLocationPermission()
+                        }
+                    }
+                }
+                else -> {
+                    linkDeviceResultTitle?.text = it.getString(R.string.ok_cool)
                     linkDeviceResultSubitle?.text = it.getString(R.string.link_device_confirm_desc)
+                    Handler().postDelayed(
+                        {
+                            val intent = Intent()
+                            intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                            activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                            activity?.finish()
+                        }, AppConstant.DELAY_1500_MS)
+                }
             }
         }
         linkDeviceResultLayout.visibility = View.VISIBLE
-        gotItLinkDeviceConfirmationButton.apply {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                val intent = Intent()
-                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
-                activity?.finish()
-            }
-        }
-        linkMyDeviceConfirmationButton.apply {
-            visibility = View.VISIBLE
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener {
-                askLocationPermission()
-            }
-        }
         linkDeviceConfirmationScrollLayout.visibility = View.GONE
 
         activity?.apply {
