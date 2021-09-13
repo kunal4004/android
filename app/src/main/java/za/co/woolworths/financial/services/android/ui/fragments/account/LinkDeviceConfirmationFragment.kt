@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -192,9 +193,26 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
         context?.let {
             linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))
-            linkDeviceResultTitle?.text = it.getString(R.string.ok_cool)
+            linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
+            linkDeviceResultSubitle?.text = it.getString(R.string.not_linked_device_desc)
         }
         linkDeviceResultLayout.visibility = View.VISIBLE
+        gotItLinkDeviceConfirmationButton.apply {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                val intent = Intent()
+                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                activity?.finish()
+            }
+        }
+        linkMyDeviceConfirmationButton.apply {
+            visibility = View.VISIBLE
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener {
+                askLocationPermission()
+            }
+        }
         linkDeviceConfirmationScrollLayout.visibility = View.GONE
 
         activity?.apply {
@@ -206,13 +224,6 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             if (this is LinkDeviceConfirmationInterface) {
                 hideToolbarButton()
             }
-            Handler().postDelayed({
-
-                val intent = Intent()
-                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
-                finish()
-            }, AppConstant.DELAY_1500_MS)
         }
     }
 
