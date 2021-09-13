@@ -61,7 +61,7 @@ class AmplifyInit {
                     Amplify.addPlugin(AndroidLoggingPlugin(if (BuildConfig.DEBUG) LogLevel.VERBOSE else LogLevel.NONE))
                     Amplify.configure(awsConfiguration, context)
                 }
-            } catch (ex: AmplifyException) {
+            } catch (ex: Exception) {
                 FirebaseManager.logException(ex)
             }
         }

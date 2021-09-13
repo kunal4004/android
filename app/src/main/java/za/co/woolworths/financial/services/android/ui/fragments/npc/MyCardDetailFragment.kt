@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.snackbar.OneAppSnackbar
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_10_MS
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
 import java.net.SocketTimeoutException
 import java.util.*
@@ -305,19 +306,24 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                     textViewCardHolderName?.text = it
                 }
             }
-            when (isUserGotVirtualCard(mStoreCardsResponse?.storeCardsData)) {
-                true -> {
-                    manageView?.visibility = GONE
-                    blockCard?.visibility = GONE
-                    temporaryCardFreezeRelativeLayout?.visibility = GONE
-                    cardNumberLayout?.visibility = GONE
-                    tvCardNumberHeader?.visibility = INVISIBLE
-                    cardStatus?.text = getString(R.string.store_card_status_temporary)
-                    cardExpireDate?.text = WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
-                }
-                false -> {
-                    virtualCardViews?.visibility = GONE
-                    cardStatus?.text = getString(R.string.active)
+
+                //on main thread
+            GlobalScope.doAfterDelay(DELAY_10_MS) {
+                when (isUserGotVirtualCard(mStoreCardsResponse?.storeCardsData)) {
+                    true -> {
+                        manageView?.visibility = GONE
+                        blockCard?.visibility = GONE
+                        temporaryCardFreezeRelativeLayout?.visibility = GONE
+                        cardNumberLayout?.visibility = GONE
+                        tvCardNumberHeader?.visibility = INVISIBLE
+                        cardStatus?.text = getString(R.string.store_card_status_temporary)
+                        cardExpireDate?.text =
+                            WFormatter.formatDateTOddMMMYYYY(mStoreCard?.expiryDate)
+                    }
+                    false -> {
+                        virtualCardViews?.visibility = GONE
+                        cardStatus?.text = getString(R.string.active)
+                    }
                 }
             }
 
