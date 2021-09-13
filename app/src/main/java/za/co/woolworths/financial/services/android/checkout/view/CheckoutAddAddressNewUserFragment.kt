@@ -66,6 +66,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_BUNDLE
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_PROVINCE
+import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SCREEN_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SUBURB
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
 import za.co.woolworths.financial.services.android.util.*
@@ -95,6 +96,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
         const val SUBURB_SELECTION_BACK_PRESSED = "5465"
+        const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
+        const val SCREEN_NAME_ADD_NEW_ADDRESS: String = "SCREEN_NAME_ADD_NEW_ADDRESS"
     }
 
     enum class ProvinceSuburbType {
@@ -423,14 +426,32 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
         }
 
-        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
-            savedAddressResponse?.defaultAddressNickname = selectedAddress.savedAddress.nickname
-            view?.findNavController()?.navigate(
-                R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
-                bundleOf(
-                    SAVED_ADDRESS_KEY to savedAddressResponse
-                )
-            )
+        setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, bundle ->
+            var screenName = ""
+            bundle.apply {
+                screenName = getString(KEY_ARGS_SCREEN_NAME, "")
+            }
+
+            when (screenName) {
+                SCREEN_NAME_ADD_NEW_ADDRESS -> {
+                    savedAddressResponse?.defaultAddressNickname = selectedAddress.savedAddress.nickname
+                    view?.findNavController()?.navigate(
+                        R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
+                        bundleOf(
+                            SAVED_ADDRESS_KEY to savedAddressResponse
+                        )
+                    )
+                }
+                SCREEN_NAME_EDIT_ADDRESS -> {
+                    setFragmentResult(
+                        UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
+                            SAVED_ADDRESS_KEY to savedAddressResponse
+                        )
+                    )
+                    navController?.navigateUp()
+                    selectedAddressId = ""
+                }
+            }
         }
     }
 
@@ -998,7 +1019,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                             if (!response.unSellableCommerceItems.isNullOrEmpty()) {
                                 navigateToUnsellableItemsFragment(
                                     response.unSellableCommerceItems,
-                                    response.deliverable
+                                    response.deliverable,
+                                    SCREEN_NAME_ADD_NEW_ADDRESS
                                 )
                                 return@observe
                             }
@@ -1072,7 +1094,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
      */
     private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: MutableList<UnSellableCommerceItem>,
-        deliverable: Boolean
+        deliverable: Boolean,
+        screenName: String
     ) {
         val suburb = Suburb()
         val province = Province()
@@ -1095,7 +1118,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     EditDeliveryLocationActivity.DELIVERY_TYPE to DeliveryType.DELIVERY.name,
                     KEY_ARGS_SUBURB to Utils.toJson(suburb),
                     KEY_ARGS_PROVINCE to Utils.toJson(province),
-                    KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems)
+                    KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS to Utils.toJson(unSellableCommerceItems),
+                    KEY_ARGS_SCREEN_NAME to screenName
                 )
             )
         )
@@ -1147,13 +1171,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                                 )
                                             }
                                         }
-                                    setFragmentResult(
-                                        UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
-                                            SAVED_ADDRESS_KEY to savedAddressResponse
-                                        )
-                                    )
-                                    navController?.navigateUp()
-                                    selectedAddressId = ""
+                                    response.address?.nickname?.let { callChangeAddressApi(it) }
                                 }
                             }
                             AppConstant.HTTP_SESSION_TIMEOUT_400, AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
@@ -1177,6 +1195,62 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     }
                 }
             })
+    }
+
+    private fun callChangeAddressApi(nickName: String) {
+        loadingProgressBar.visibility = View.VISIBLE
+        checkoutAddAddressNewUserViewModel.changeAddress(
+            nickName
+        ).observe(viewLifecycleOwner, { response ->
+            loadingProgressBar.visibility = View.GONE
+            when (response) {
+                is ChangeAddressResponse -> {
+                    when (response.httpCode) {
+                        HTTP_OK, HTTP_OK_201 -> {
+                            // If deliverable false then show cant deliver popup
+                            // Don't allow user to navigate to Checkout page when deliverable : [false].
+                            if (!response.deliverable) {
+                                showSuburbNotDeliverableBottomSheetDialog(
+                                    ERROR_CODE_SUBURB_NOT_DELIVERABLE
+                                )
+                                return@observe
+                            }
+
+                            // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
+                            if (!response.unSellableCommerceItems.isNullOrEmpty()) {
+                                navigateToUnsellableItemsFragment(
+                                    response.unSellableCommerceItems,
+                                    response.deliverable,
+                                    SCREEN_NAME_EDIT_ADDRESS
+                                )
+                                return@observe
+                            }
+
+                            // else functionality complete.
+                            setFragmentResult(
+                                UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
+                                    SAVED_ADDRESS_KEY to savedAddressResponse
+                                )
+                            )
+                            navController?.navigateUp()
+                            selectedAddressId = ""
+                        }
+                        else -> {
+                            showErrorScreen(
+                                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                getString(R.string.common_error_message_without_contact_info)
+                            )
+                        }
+                    }
+                }
+                is Throwable -> {
+                    showErrorScreen(
+                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                        getString(R.string.common_error_message_without_contact_info)
+                    )
+                }
+            }
+        })
     }
 
     private fun isNickNameExist(): Boolean {
