@@ -208,7 +208,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     savedAddresses.addresses?.forEach { address ->
                         if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
                             suburbId = address.suburbId ?: ""
-                            val addressName = SpannableString(address.nickname)
+                            val addressName = SpannableString(address.address1)
                             val typeface1 =
                                 ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
                             addressName.setSpan(
