@@ -11,6 +11,7 @@ import androidx.annotation.NonNull
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -177,6 +178,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setTextFields() {
+        enableDisableUserInputEditText(
+            unitComplexFloorEditText,
+            isEnable = true,
+            isErrorScreen = false
+        )
         autoCompleteTextView?.setText(selectedAddress.savedAddress.address1)
         addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
         unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
@@ -411,8 +417,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setAddress(place: Place) {
-        enableDisableUserInputEditText(addressNicknameEditText, true)
-        enableDisableUserInputEditText(unitComplexFloorEditText, true)
+        enableDisableUserInputEditText(
+            addressNicknameEditText,
+            true,
+            addressNicknameErrorMsg.isVisible
+        )
+        enableDisableUserInputEditText(
+            unitComplexFloorEditText,
+            isEnable = true,
+            isErrorScreen = false
+        )
         provinceSuburbEnableType = null
         var addressText1 = ""
         var addressText2 = ""
@@ -578,10 +592,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         postalCode.isEnabled = false
     }
 
-    private fun enableDisableUserInputEditText(userInputField: EditText, isEnable: Boolean) {
-        userInputField.setBackgroundResource(if (isEnable) R.drawable.recipient_details_input_edittext_bg else R.drawable.input_box_inactive_bg)
-        userInputField.isClickable = isEnable
-        userInputField.isEnabled = isEnable
+    private fun enableDisableUserInputEditText(
+        userInputField: EditText?,
+        isEnable: Boolean,
+        isErrorScreen: Boolean
+    ) {
+        userInputField?.setBackgroundResource(if (isErrorScreen) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
+        userInputField?.isClickable = isEnable
+        userInputField?.isEnabled = isEnable
     }
 
     private fun navigateToProvinceSelection() {
