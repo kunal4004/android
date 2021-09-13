@@ -138,13 +138,14 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     getString(SAVED_ADDRESS_RESPONSE_KEY),
                     SavedAddressResponse::class.java
                 ) as? SavedAddressResponse)
+                setHasOptionsMenu(true)
             }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_item, menu)
-        if (selectedAddressId.isNotEmpty()) //show only if it is edit address screen
+        if (selectedAddressId.isNotEmpty() || isAddNewAddress) //show only if it is edit address screen
             return super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -166,11 +167,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         init()
         addFragmentResultListener()
         // Show prepopulate fields on edit address
-        if (selectedAddressId.isNotEmpty()) {
-            //it's not empty means it's a edit address call.
+        if (selectedAddressId.isNotEmpty() || isAddNewAddress) {
+            //selectedAddressId is not empty means it's a edit address call.
             if (activity is CheckoutActivity)
                 (activity as CheckoutActivity).hideBackArrow()
-            setTextFields()
+            if (selectedAddressId.isNotEmpty())
+                setTextFields()
         }
     }
 
@@ -211,11 +213,17 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             }
         }
         saveAddress?.setOnClickListener(this)
-        autoCompleteTextView?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        autoCompleteTextView?.apply {
+            afterTextChanged {
+                if (it.isNotEmpty())
+                    showErrorInputField(this, View.GONE)
+            }
+        }
         addressNicknameEditText?.apply {
             afterTextChanged {
                 selectedAddress.savedAddress.nickname = it
-                showErrorInputField(this, View.GONE)
+                if (it.isNotEmpty())
+                    showErrorInputField(this, View.GONE)
             }
         }
         suburbEditText?.apply { afterTextChanged { suburbNameErrorMsg?.visibility = View.GONE } }
@@ -235,8 +243,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     showErrorInputField(this, View.GONE)
             }
         }
-        recipientNameEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
-        cellphoneNumberEditText?.apply { afterTextChanged { showErrorInputField(this, View.GONE) } }
+        recipientNameEditText?.apply {
+            afterTextChanged {
+                if (it.isNotEmpty())
+                    showErrorInputField(this, View.GONE)
+            }
+        }
+        cellphoneNumberEditText?.apply {
+            afterTextChanged {
+                if (it.isNotEmpty())
+                    showErrorInputField(this, View.GONE)
+            }
+        }
     }
 
     private fun setupViewModel() {
@@ -252,9 +270,6 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun init() {
-        if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
-            enablePostalCode()
-        }
         deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let { context ->
@@ -396,6 +411,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setAddress(place: Place) {
+        enableDisableUserInputEditText(addressNicknameEditText, true)
+        enableDisableUserInputEditText(unitComplexFloorEditText, true)
         provinceSuburbEnableType = null
         var addressText1 = ""
         var addressText2 = ""
@@ -559,6 +576,12 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         postalCode.setBackgroundResource(R.drawable.input_box_inactive_bg)
         postalCode.isClickable = false
         postalCode.isEnabled = false
+    }
+
+    private fun enableDisableUserInputEditText(userInputField: EditText, isEnable: Boolean) {
+        userInputField.setBackgroundResource(if (isEnable) R.drawable.recipient_details_input_edittext_bg else R.drawable.input_box_inactive_bg)
+        userInputField.isClickable = isEnable
+        userInputField.isEnabled = isEnable
     }
 
     private fun navigateToProvinceSelection() {
@@ -1140,6 +1163,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showErrorPhoneNumber() {
+        cellphoneNumberEditText.setBackgroundResource(R.drawable.input_error_background)
         cellphoneNumberErrorMsg?.visibility = View.VISIBLE
         cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
         showAnimationErrorMessage(

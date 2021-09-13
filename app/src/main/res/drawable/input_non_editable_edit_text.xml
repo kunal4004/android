@@ -6,6 +6,6 @@
         android:width="@dimen/one_dp"
         android:color="@color/non_editable_button_bg" />
 
-    <solid android:color="@color/checkout_delivering_title_background" />
+    <solid android:color="@color/color_E5E5E5" />
 
 </shape>
