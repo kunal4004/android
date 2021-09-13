@@ -194,7 +194,15 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         context?.let {
             linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))
             linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
-            linkDeviceResultSubitle?.text = it.getString(R.string.not_linked_device_desc)
+            when(mApplyNowState){
+                ApplyNowState.SILVER_CREDIT_CARD,
+                ApplyNowState.GOLD_CREDIT_CARD,
+                ApplyNowState.BLACK_CREDIT_CARD ->
+                    linkDeviceResultSubitle?.text = it.getString(R.string.link_device_confirm_desc_cc)
+                ApplyNowState.STORE_CARD,
+                ApplyNowState.PERSONAL_LOAN ->
+                    linkDeviceResultSubitle?.text = it.getString(R.string.link_device_confirm_desc)
+            }
         }
         linkDeviceResultLayout.visibility = View.VISIBLE
         gotItLinkDeviceConfirmationButton.apply {
