@@ -111,55 +111,49 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     override fun showProductOfferOutstanding(state: ApplyNowState) {
-        if(WoolworthsApplication.getAccountOptions() != null) {
-            val supported = when(state) {
-                ApplyNowState.PERSONAL_LOAN -> {
-                    Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumSupportedAppBuildNumber!!
-                }
-                ApplyNowState.STORE_CARD -> {
-                    Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumSupportedAppBuildNumber!!
-                }
-                else -> false
+        val supported = when(state) {
+            ApplyNowState.PERSONAL_LOAN -> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber!!
             }
-
-            val minimumDelinquencyCycle = when(state){
-                ApplyNowState.PERSONAL_LOAN -> {
-                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumDelinquencyCycle!!
-                }
-                ApplyNowState.STORE_CARD -> {
-                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumDelinquencyCycle!!
-                }
-                else -> null
+            ApplyNowState.STORE_CARD -> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumSupportedAppBuildNumber!!
             }
+            ApplyNowState.GOLD_CREDIT_CARD,
+            ApplyNowState.BLACK_CREDIT_CARD,
+            ApplyNowState.SILVER_CREDIT_CARD-> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber!!
+            }
+        }
+
+        val minimumDelinquencyCycle = when(state){
+            ApplyNowState.PERSONAL_LOAN -> {
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumDelinquencyCycle!!
+            }
+            ApplyNowState.STORE_CARD -> {
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumDelinquencyCycle!!
+            }
+            ApplyNowState.GOLD_CREDIT_CARD,
+            ApplyNowState.BLACK_CREDIT_CARD,
+            ApplyNowState.SILVER_CREDIT_CARD-> {
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle!!
+            }
+        }
 
 
-            val account = getAccount()
-            account?.apply {
-                return when {
-                    !productOfferingGoodStanding && supported &&
-                            minimumDelinquencyCycle != null &&
-                            delinquencyCycle>=minimumDelinquencyCycle -> {
-                        if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
-                            mainView?.removeBlocksWhenChargedOff()
-                        }
-                        mainView?.showViewTreatmentPlan()!!
+        val account = getAccount()
+        account?.apply {
+            return when {
+                !productOfferingGoodStanding && supported &&
+                        delinquencyCycle>=minimumDelinquencyCycle -> {
+                    if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                        mainView?.removeBlocksWhenChargedOff()
                     }
-                    else -> {
-                        if(!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
-                            // account is in arrears for more than 6 months
-                            mainView?.removeBlocksOnCollectionCustomer()!!
-                        }
-                        else if(!productOfferingGoodStanding) { // account is in arrears
-                            mainView?.showAccountInArrears(account)
-                            val informationModel = getCardProductInformation(true)
-                            mainView?.showAccountHelp(informationModel)!!
-                        }
-                        else{
-                            mainView?.hideAccountInArrears(account)
-                            val informationInArrearsModel = getCardProductInformation(false)
-                            mainView?.showAccountHelp(informationInArrearsModel)!!
-                        }
-                    }
+                    mainView?.showViewTreatmentPlan()!!
+                }
+                else -> {
+                    mainView?.hideAccountInArrears(account)
+                    val informationInArrearsModel = getCardProductInformation(false)
+                    mainView?.showAccountHelp(informationInArrearsModel)!!
                 }
             }
         }
