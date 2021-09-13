@@ -224,8 +224,8 @@ dependencies {
     implementation 'com.daasuu:BubbleLayout:1.2.0'
 
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:26.6.0')
-
+    implementation platform('com.google.firebase:firebase-bom:28.4.0')
+    implementation 'io.grpc:grpc-okhttp:1.32.2'
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-config-ktx'
