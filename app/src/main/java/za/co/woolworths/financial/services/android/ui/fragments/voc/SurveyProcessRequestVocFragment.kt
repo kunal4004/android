@@ -110,6 +110,10 @@ class SurveyProcessRequestVocFragment : ProcessYourRequestFragment(), View.OnCli
                         }
                     }
                 }
+
+                if (answerId == null && textAnswer == null) {
+                    surveyAnswers?.remove(question.id)
+                }
             }
         }
     }
