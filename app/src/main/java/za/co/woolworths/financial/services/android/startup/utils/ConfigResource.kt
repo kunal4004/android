@@ -142,6 +142,10 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 liquor?.apply {
                     WoolworthsApplication.setLiquor(this)
                 }
+
+                accountOptions?.apply {
+                    WoolworthsApplication.setAccountOptions(this)
+                }
             }
         }
     }

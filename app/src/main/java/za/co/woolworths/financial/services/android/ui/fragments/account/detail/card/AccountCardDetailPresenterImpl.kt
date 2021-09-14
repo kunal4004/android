@@ -257,7 +257,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun getCardWithPLCState(cards: ArrayList<Card>?): Card? {
         var cardWithPLCState: Card? = null
-        cards?.filter { card -> card.cardStatus.trim { it <= ' ' } == "PLC" }?.apply {
+        cards?.apply {
             if (this.isNotEmpty())
                 cardWithPLCState = this[0]
         }
