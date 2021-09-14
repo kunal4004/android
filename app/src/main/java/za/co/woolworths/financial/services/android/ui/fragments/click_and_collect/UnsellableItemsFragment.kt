@@ -39,12 +39,14 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
     var selectedProvince: Province? = null
     var deliveryType: DeliveryType? = null
     var bundle: Bundle? = null
+    private var fromScreenName: String? = ""
     private var commerceItems: ArrayList<UnSellableCommerceItem>? = null
     var navController: NavController? = null
     companion object {
         const val KEY_ARGS_BUNDLE = "bundle"
         const val KEY_ARGS_SUBURB = "SUBURB"
         const val KEY_ARGS_PROVINCE = "PROVINCE"
+        const val KEY_ARGS_SCREEN_NAME = "SCREEN_NAME"
         const val KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS = "UnSellableCommerceItems"
     }
 
@@ -56,6 +58,7 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
             selectedSuburb = Utils.jsonStringToObject(getString(KEY_ARGS_SUBURB), Suburb::class.java) as Suburb?
             selectedProvince = Utils.jsonStringToObject(getString(KEY_ARGS_PROVINCE), Province::class.java) as Province?
             commerceItems = Gson().fromJson(getString(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS), object : TypeToken<List<UnSellableCommerceItem>>() {}.type)
+            fromScreenName = getString(KEY_ARGS_SCREEN_NAME)
         }
     }
 
@@ -122,7 +125,9 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
                                 }
                             }
                             if (activity is CheckoutActivity) {
-                                setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, Bundle())
+                                setFragmentResult(CheckoutAddressConfirmationFragment.UNSELLABLE_CHANGE_STORE_REQUEST_KEY, bundleOf(
+                                    KEY_ARGS_SCREEN_NAME to fromScreenName
+                                ))
                                 navController?.navigateUp()
                             } else
                                 navigateToSuburbConfirmationFragment()
