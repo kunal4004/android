@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.*
@@ -22,6 +23,7 @@ import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
 import kotlinx.android.synthetic.main.checkout_grid_layout_other.*
 import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
+import kotlinx.android.synthetic.main.edit_delivery_location_confirmation_fragment.view.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
@@ -38,7 +40,9 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
+import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
@@ -53,6 +57,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     companion object {
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
     }
+
+    private var suburbId: String = ""
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher{
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int){}
@@ -201,7 +207,8 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                     // Extract default address display name
                     savedAddresses.addresses?.forEach { address ->
                         if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                            val addressName = SpannableString(address.nickname)
+                            suburbId = address.suburbId ?: ""
+                            val addressName = SpannableString(address.address1)
                             val typeface1 =
                                 ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
                             addressName.setSpan(
@@ -332,40 +339,39 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
-
     private fun getConfirmDeliveryAddressDetails() {
-        checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails()
-            .observe(viewLifecycleOwner, {
-                when (it.responseStatus) {
-                    ResponseStatus.SUCCESS -> {
-                        loadingBar.visibility = View.GONE
-                        /*if (it.data != null) {
-                           confirmDeliveryAddressDetails = it.data as? ConfirmDeliveryAddressResponse
-                            initializeOrderSummary(confirmDeliveryAddressDetails?.orderSummary)
-                        }*/
 
-                        //use mock data from json file
-                        val jsonFileString = Utils.getJsonDataFromAsset(
-                            activity?.applicationContext,
-                            "mocks/confirmDelivery_Response.json"
-                        )
-                        val mockDeliverySlotResponse: ConfirmDeliveryAddressResponse =
-                            Gson().fromJson(
-                                jsonFileString,
-                                object : TypeToken<ConfirmDeliveryAddressResponse>() {}.type
-                            )
+        if(TextUtils.isEmpty(suburbId)){
+            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                getString(R.string.common_error_message_without_contact_info))
+            return
+        }
 
-                        initializeOrderSummary(mockDeliverySlotResponse?.orderSummary)
+        loadingBar.visibility = View.VISIBLE
+        val body = ConfirmDeliveryAddressBody(suburbId)
+        checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails(body)
+            .observe(viewLifecycleOwner, { response ->
+                loadingBar.visibility = View.GONE
+
+                when (response) {
+                    is ConfirmDeliveryAddressResponse -> {
+                        initializeOrderSummary(response.orderSummary)
                     }
-                    ResponseStatus.LOADING -> {
-                        loadingBar.visibility = View.VISIBLE
-                    }
-                    ResponseStatus.ERROR -> {
-                        loadingBar.visibility = View.GONE
+                    is Throwable -> {
+                        showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                            getString(R.string.common_error_message_without_contact_info))
                     }
                 }
             })
+    }
 
+    private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
+        activity?.apply {
+            val intent = Intent(this, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage", errorMessage)
+            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
     }
 
     private fun getAvailableDeliverySlots() {

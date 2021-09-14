@@ -74,9 +74,10 @@
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/groupOrderSummaryDiscount"
-        app:constraint_referenced_ids="txtOrderSummaryDiscount, txtOrderSummaryDiscountValue, viewHorizontalSeparator2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="txtOrderSummaryDiscount, txtOrderSummaryDiscountValue, viewHorizontalSeparator2" />
 
     <TextView
         android:id="@+id/txtOrderSummaryCompanyDiscount"
@@ -115,6 +116,7 @@
         android:id="@+id/groupCompanyDiscount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:constraint_referenced_ids="txtOrderSummaryCompanyDiscount, txtOrderSummaryCompanyDiscountValue, viewHorizontalSeparator3" />
 
     <TextView
@@ -154,6 +156,7 @@
         android:id="@+id/groupPromoCodeDiscount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:constraint_referenced_ids="txtOrderSummaryPromoCodeDiscount, txtOrderSummaryPromoCodeDiscountValue, viewHorizontalSeparator4" />
 
     <TextView
@@ -193,6 +196,7 @@
         android:id="@+id/groupWRewardsDiscount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:constraint_referenced_ids="txtOrderSummaryWRewardsVouchers, txtOrderSummaryWRewardsVouchersValue, viewHorizontalSeparator5" />
 
     <TextView
@@ -230,9 +234,10 @@
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/groupTotalDiscount"
-        app:constraint_referenced_ids="txtOrderSummaryTotalDiscount, txtOrderSummaryTotalDiscountValue, viewHorizontalSeparator6"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="txtOrderSummaryTotalDiscount, txtOrderSummaryTotalDiscountValue, viewHorizontalSeparator6" />
 
     <TextView
         android:id="@+id/txtOrderSummaryDeliveryFee"
