@@ -56,10 +56,6 @@ class CheckoutAddressConfirmationListAdapter(
         holder.bindItem(position)
     }
 
-    fun setData(savedAddressResponse: SavedAddressResponse?) {
-        savedAddress = savedAddressResponse
-    }
-
     inner class CheckoutAddressConfirmationViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         fun bindItem(position: Int) {

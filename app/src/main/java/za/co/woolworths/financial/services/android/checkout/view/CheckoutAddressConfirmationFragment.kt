@@ -112,6 +112,8 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             R.id.deliveryTab -> {
                 if (loadingProgressBar.visibility == View.GONE) {
                     showDeliveryTab()
+                    showDeliveryAddressListView()
+                    initialiseDeliveryAddressRecyclerView()
                 }
             }
             R.id.collectionTab -> {
@@ -265,12 +267,15 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResultListener(UPDATE_SAVED_ADDRESS_REQUEST_KEY) { _, bundle ->
             updateSavedAddress(bundle)
+            initialiseDeliveryAddressRecyclerView()
         }
         setFragmentResultListener(DELETE_SAVED_ADDRESS_REQUEST_KEY) { _, bundle ->
             updateSavedAddress(bundle)
+            initialiseDeliveryAddressRecyclerView()
         }
         setFragmentResultListener(ADD_A_NEW_ADDRESS_REQUEST_KEY) { _, bundle ->
             updateSavedAddress(bundle)
+            initialiseDeliveryAddressRecyclerView()
         }
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
             if (isDeliverySelected) {
@@ -338,8 +343,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                 savedAddress = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
             }
         }
-        checkoutAddressConfirmationListAdapter?.setData(savedAddress)
-        checkoutAddressConfirmationListAdapter?.notifyDataSetChanged()
     }
 
     private fun initView() {
@@ -351,18 +354,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             } else {
                 // Show Delivery View
                 showDeliveryAddressListView()
-                setRecyclerViewMaximumHeight(
-                    saveAddressRecyclerView.layoutParams,
-                    savedAddress?.addresses?.size ?: 0
-                )
-                checkoutAddressConfirmationListAdapter = null
-                checkoutAddressConfirmationListAdapter =
-                    CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
-                saveAddressRecyclerView?.apply {
-                    addItemDecoration(object : ItemDecoration() {})
-                    layoutManager = activity?.let { LinearLayoutManager(it) }
-                    checkoutAddressConfirmationListAdapter?.let { adapter = it }
-                }
+                initialiseDeliveryAddressRecyclerView()
             }
         } else {
             showCollectionTab(localSuburbId)
@@ -379,6 +371,21 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             addTextChangedListener {
                 storeListAdapter?.filter?.filter(it.toString())
             }
+        }
+    }
+
+    private fun initialiseDeliveryAddressRecyclerView() {
+        setRecyclerViewMaximumHeight(
+            saveAddressRecyclerView.layoutParams,
+            savedAddress?.addresses?.size ?: 0
+        )
+        checkoutAddressConfirmationListAdapter = null
+        checkoutAddressConfirmationListAdapter =
+            CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
+        saveAddressRecyclerView?.apply {
+            addItemDecoration(object : ItemDecoration() {})
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            checkoutAddressConfirmationListAdapter?.let { adapter = it }
         }
     }
 
@@ -698,14 +705,18 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
                                     navigateToReturningUser()
                                 }
                                 else -> {
-                                    showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                        getString(R.string.common_error_message_without_contact_info))
+                                    showErrorScreen(
+                                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                        getString(R.string.common_error_message_without_contact_info)
+                                    )
                                 }
                             }
                         }
                         is Throwable -> {
-                            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                                getString(R.string.common_error_message_without_contact_info))
+                            showErrorScreen(
+                                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                getString(R.string.common_error_message_without_contact_info)
+                            )
                         }
                     }
                 })
