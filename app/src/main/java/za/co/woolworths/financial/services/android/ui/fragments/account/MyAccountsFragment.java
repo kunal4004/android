@@ -218,6 +218,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     MyAccountsFragmentViewModel myAccountsFragmentViewModel;
     private MyAccountsPresenter myAccountsPresenter;
     private View applyNowSpacingView;
+    private TextView appVersionNameInfoTextView;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -311,7 +312,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             creditReportView = view.findViewById(R.id.creditReport);
             creditReportIcon = view.findViewById(R.id.creditReportIcon);
             applyNowSpacingView = view.findViewById(R.id.applyNowSpacingView);
-
+            appVersionNameInfoTextView = view.findViewById(R.id.appVersionNameInfoTextView);
+            appVersionNameInfoTextView.setText(myAccountsPresenter.appVersionInfo());
 
             retryStoreCardTextView = view.findViewById(R.id.retryStoreCardTextView);
             retryStoreCardImageView = view.findViewById(R.id.retryStoreCardImageView);
@@ -394,6 +396,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
 
         uniqueIdentifiersForAccount();
+
     }
 
     private void callLinkedDevicesAPI(Boolean isForced) {
@@ -828,6 +831,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(profileRelativeLayout);
             showView(updatePasswordRelativeLayout);
             showView(preferenceRelativeLayout);
+            showView(appVersionNameInfoTextView);
             showView(loginUserOptionsLayout);
             if (WoolworthsApplication.getCreditView() != null && WoolworthsApplication.getCreditView().isEnabled())
                 showView(creditReportView);
@@ -846,6 +850,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             viewApplicationStatusVisibility(params, View.VISIBLE, 1);
             mUpdateMyAccount.swipeToRefreshAccount(false);
             showView(loggedOutHeaderLayout);
+            showView(appVersionNameInfoTextView);
         }
         displayViewApplicationStatus();
     }
@@ -864,6 +869,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         hideView(preferenceRelativeLayout);
         hideView(creditReportView);
         hideView(viewApplicationStatusRelativeLayout);
+        hideView(appVersionNameInfoTextView);
     }
 
     private final OnClickListener btnSignin_onClick = new OnClickListener() {
@@ -1441,10 +1447,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            Utils.clearCacheHistory(activity);
-                        }
+                        Utils.clearCacheHistory();
                     } catch (Exception pE) {
                         Log.d(TAG, pE.getMessage());
                     }

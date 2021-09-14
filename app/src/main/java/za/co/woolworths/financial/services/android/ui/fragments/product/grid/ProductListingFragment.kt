@@ -239,9 +239,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (mProductList?.isNullOrEmpty() == true)
             mProductList = ArrayList()
         response.history?.apply {
-            if (categoryDimensions.isNotEmpty()) {
+            if (!categoryDimensions?.isNullOrEmpty()) {
                 mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
-            } else if (searchCrumbs.isNotEmpty()) {
+            } else if (!searchCrumbs?.isNullOrEmpty()) {
                 mSubCategoryName = searchCrumbs.get(searchCrumbs.size - 1).terms
             }
         }
@@ -860,6 +860,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         this.mSelectedProductList = productList
         val activity = activity ?: return
 
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
+            return
+        }
+
         if(productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
@@ -867,10 +872,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             return
         }
 
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
-            return
-        }
 
         if (mStoreId.isEmpty()) {
             addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }

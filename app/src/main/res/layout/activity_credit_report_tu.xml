@@ -65,6 +65,7 @@
                         android:layout_centerHorizontal="true"
                         android:contentDescription="@string/credit_report_title_tu"
                         android:scaleType="fitXY"
+                        android:focusableInTouchMode="true"
                         android:src="@drawable/header_image" />
 
                     <androidx.appcompat.widget.Toolbar

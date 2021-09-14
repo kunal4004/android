@@ -62,6 +62,11 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         mAvailableFundPresenter.setBundle(arguments)
     }
 
+    companion object {
+        const val WEBVIEW = "webview"
+        const val NATIVE_BROWSER = "nativeBrowser"
+    }
+
     @Throws(RuntimeException::class)
     override fun onAttach(context: Context) {
         super.onAttach(context)
