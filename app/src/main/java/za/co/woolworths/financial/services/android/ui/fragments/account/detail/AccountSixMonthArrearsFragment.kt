@@ -80,7 +80,9 @@ class AccountSixMonthArrearsFragment : Fragment() {
         myCardDetailTextView?.visibility = GONE
         userNameTextView?.visibility = GONE
         mApplyNowAccountKeyPair?.second?.let { resourceId ->
-            if (resourceId == R.string.blackCreditCard_title) {
+            if (resourceId == R.string.blackCreditCard_title ||
+                resourceId == R.string.goldCreditCard_title ||
+                resourceId == R.string.silverCreditCard_title) {
                 imLogoIncreaseLimit?.visibility = GONE
                 manageMyCardTextView?.visibility = GONE
                 manageMyCardImageView?.visibility = GONE
@@ -96,7 +98,9 @@ class AccountSixMonthArrearsFragment : Fragment() {
         mApplyNowAccountKeyPair?.first?.let { resourceId -> cardDetailImageView?.setImageResource(resourceId) }
         mApplyNowAccountKeyPair?.second?.let { resourceId ->
             toolbarTitleTextView?.text = activity?.resources?.getString(resourceId)
-            if(resourceId == R.string.blackCreditCard_title){
+            if(resourceId == R.string.blackCreditCard_title ||
+                    resourceId == R.string.goldCreditCard_title ||
+                    resourceId == R.string.silverCreditCard_title){
                 arrearsDescTextView?.text = activity?.resources?.getString(R.string.account_arrears_cc_description)
                 callTheCallCenterButton?.visibility = GONE
                 viewTreatmentPlansButton?.visibility = VISIBLE
