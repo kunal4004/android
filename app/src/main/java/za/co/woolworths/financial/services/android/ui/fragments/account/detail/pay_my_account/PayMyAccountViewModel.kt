@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.app.Activity
 import android.net.UrlQuerySanitizer
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.awfs.coordination.R
@@ -46,6 +47,7 @@ class PayMyAccountViewModel : ViewModel() {
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     var deleteCardList: MutableList<Pair<GetPaymentMethod?, Int>>? = mutableListOf()
     private var payUPayResultRequest: MutableLiveData<PayUPayResultRequest> = MutableLiveData()
+    private var TAG: String = PayMyAccountViewModel::class.java.simpleName
 
 
 
@@ -79,8 +81,13 @@ class PayMyAccountViewModel : ViewModel() {
         paymentList?.forEach {
             it.isCardChecked = false
         }
-        if (paymentList?.size ?: 0 > 0)
-            paymentList?.get(selectedPosition)?.isCardChecked = true
+        if (paymentList?.size ?: 0 > 0) {
+            try {
+                paymentList?.get(selectedPosition)?.isCardChecked = true
+            } catch (error: IndexOutOfBoundsException) {
+                Log.e(TAG, error.message.toString())
+            }
+        }
         return paymentList
     }
 
