@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.account_six_month_arrears_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -97,11 +98,11 @@ class AccountSixMonthArrearsFragment : Fragment() {
     private fun setTitleAndCardTypeAndButton() {
         mApplyNowAccountKeyPair?.first?.let { resourceId -> cardDetailImageView?.setImageResource(resourceId) }
         mApplyNowAccountKeyPair?.second?.let { resourceId ->
-            toolbarTitleTextView?.text = activity?.resources?.getString(resourceId)
+            toolbarTitleTextView?.text = bindString(resourceId)
             if(resourceId == R.string.blackCreditCard_title ||
                     resourceId == R.string.goldCreditCard_title ||
                     resourceId == R.string.silverCreditCard_title){
-                arrearsDescTextView?.text = activity?.resources?.getString(R.string.account_arrears_cc_description)
+                arrearsDescTextView?.text = bindString(R.string.account_arrears_cc_description)
                 callTheCallCenterButton?.visibility = GONE
                 viewTreatmentPlansButton?.visibility = VISIBLE
                 callTheCallCenterUnderlinedButton?.apply {
