@@ -26,6 +26,16 @@ class CheckoutAddressConfirmationListAdapter(
 
     var checkedItemPosition = -1
 
+    init {
+        // If there is a default address nickname present set it selected
+        savedAddress?.addresses?.forEach { address ->
+            if (savedAddress?.defaultAddressNickname == address.nickname) {
+                checkedItemPosition = savedAddress?.addresses?.indexOf(address) ?: -1
+                return@forEach
+            }
+        }
+    }
+
     companion object {
         const val EDIT_SAVED_ADDRESS_RESPONSE_KEY = "editSavedAddressResponse"
         const val EDIT_ADDRESS_POSITION_KEY = "position"
@@ -58,6 +68,13 @@ class CheckoutAddressConfirmationListAdapter(
 
     fun setData(savedAddressResponse: SavedAddressResponse?) {
         savedAddress = savedAddressResponse
+        // If there is a default address nickname present set it selected
+        savedAddress?.addresses?.forEach { address ->
+            if (savedAddress?.defaultAddressNickname == address.nickname) {
+                checkedItemPosition = savedAddress?.addresses?.indexOf(address) ?: -1
+                return@forEach
+            }
+        }
     }
 
     inner class CheckoutAddressConfirmationViewHolder(itemView: View) :
@@ -66,10 +83,7 @@ class CheckoutAddressConfirmationListAdapter(
             itemView.apply {
                 hideShimmer(this)
                 savedAddress?.addresses?.get(position)?.let {
-                    // If there is a default address nickname present set it selected
-                    if (savedAddress?.defaultAddressNickname == it.nickname) {
-                        checkedItemPosition = position
-                    }
+
                     title.text = it.nickname
                     subTitle.text = it.address1
                     selector.isChecked = checkedItemPosition == position
@@ -136,10 +150,19 @@ class CheckoutAddressConfirmationListAdapter(
         }
         savedAddress?.addresses?.get(position)?.let {
             listner.changeAddress(it)
+            notifyItemChanged(position, it)
+        }
+        // update last position as well
+        val previousPosition = checkedItemPosition
+        checkedItemPosition = position
+
+        if (previousPosition < 0 || previousPosition >= itemCount) {
+            return
+        }
+        savedAddress?.addresses?.get(previousPosition)?.let {
+            notifyItemChanged(previousPosition, it)
         }
 
-        checkedItemPosition = position
-        notifyDataSetChanged()
     }
 
     interface EventListner {
