@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
@@ -50,7 +49,8 @@ import java.net.HttpURLConnection
 /**
  * Created by Kunal Uttarwar on 16/06/21.
  */
-class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
+class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragment(),
+    View.OnClickListener,
     CheckoutAddressConfirmationListAdapter.EventListner, SuburbListAdapter.ISuburbSelector {
 
     private var savedAddress: SavedAddressResponse? = null
@@ -75,7 +75,6 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
         const val ADD_A_NEW_ADDRESS_REQUEST_KEY = "addNewAddress"
         const val ADD_NEW_ADDRESS_KEY = "addNewAddress"
         const val SAVED_ADDRESS_KEY = "savedAddress"
-        const val SAVED_ADDRESS_RESPONSE_KEY = "savedAddressResponse"
         const val UNSELLABLE_CHANGE_STORE_REQUEST_KEY = "unsellableChangeStore"
         const val STORE_SELECTION_REQUEST_KEY = "storeSelectionResponse"
         const val DEFAULT_STORE_ID = "-1"
@@ -103,8 +102,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        updateSavedAddress(arguments)
+        updateSavedAddress(baseFragBundle)
     }
 
     override fun onClick(v: View?) {
@@ -256,10 +254,11 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private fun navigateToAddAddress() {
         val bundle = Bundle()
         bundle.putBoolean(ADD_NEW_ADDRESS_KEY, true)
-        bundle.putString(SAVED_ADDRESS_RESPONSE_KEY, Utils.toJson(savedAddress))
+        bundle.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddress))
+        baseFragBundle?.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddress))
         navController?.navigate(
             R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
-            bundleOf("bundle" to bundle)
+            bundle
         )
     }
 
@@ -281,9 +280,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
             if (isDeliverySelected) {
                 view?.findNavController()?.navigate(
                     R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
-                    bundleOf(
-                        SAVED_ADDRESS_KEY to savedAddress
-                    )
+                    baseFragBundle
                 )
             } else {
                 showCollectionTab(localSuburbId)
@@ -340,7 +337,12 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private fun updateSavedAddress(bundle: Bundle?) {
         bundle?.apply {
             if (containsKey(SAVED_ADDRESS_KEY)) {
-                savedAddress = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+                savedAddress = Utils.jsonStringToObject(
+                    getString(SAVED_ADDRESS_KEY),
+                    SavedAddressResponse::class.java
+                ) as? SavedAddressResponse
+                    ?: getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+                baseFragBundle?.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddress))
             }
         }
     }
@@ -735,9 +737,7 @@ class CheckoutAddressConfirmationFragment : Fragment(), View.OnClickListener,
     private fun navigateToReturningUser() {
         view?.findNavController()?.navigate(
             R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
-            bundleOf(
-                SAVED_ADDRESS_KEY to savedAddress
-            )
+            baseFragBundle
         )
     }
 

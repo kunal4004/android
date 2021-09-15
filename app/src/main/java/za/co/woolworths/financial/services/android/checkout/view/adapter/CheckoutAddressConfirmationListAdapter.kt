@@ -98,7 +98,7 @@ class CheckoutAddressConfirmationListAdapter(
                     bundle.putInt(EDIT_ADDRESS_POSITION_KEY, position)
                     navController?.navigate(
                         R.id.CheckoutAddAddressNewUserFragment,
-                        bundleOf("bundle" to bundle)
+                        bundle
                     )
                 }
             }

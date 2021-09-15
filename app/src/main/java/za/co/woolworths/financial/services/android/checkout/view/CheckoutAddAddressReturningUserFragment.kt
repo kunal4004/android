@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -51,7 +50,8 @@ import java.util.regex.Pattern
 /**
  * Created by Kunal Uttarwar on 27/05/21.
  */
-class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener,
+class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFragment(),
+    View.OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner {
 
     companion object {
@@ -60,9 +60,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
     private var suburbId: String = ""
 
-    private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher{
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int){}
-        override fun afterTextChanged(s: Editable?){
+    private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun afterTextChanged(s: Editable?) {
             val text = s.toString()
             val length = text.length
 
@@ -70,6 +70,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                 s!!.delete(length - 1, length)
             }
         }
+
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
         }
@@ -169,61 +170,64 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun initializeDeliveringToView() {
-        if(arguments == null) {
+        if (arguments == null) {
             checkoutDeliveryDetailsLayout.visibility = View.GONE
             return
         }
-        arguments?.apply {
-            context?.let { context ->
-                val savedAddress = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
-                if(savedAddress == null || savedAddress?.addresses.isNullOrEmpty()) {
-                    checkoutDeliveryDetailsLayout?.visibility = View.GONE
-                    return@apply
-                }
-                savedAddress?.let { savedAddresses ->
+        context?.let { context ->
+            val savedAddress = Utils.jsonStringToObject(
+                baseFragBundle?.getString(SAVED_ADDRESS_KEY),
+                SavedAddressResponse::class.java
+            ) as? SavedAddressResponse
+                ?: baseFragBundle?.getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
 
-                    val deliveringToAddress = SpannableStringBuilder()
-                    // default address nickname
-                    val defaultAddressNickname =
-                        SpannableString(
-                            savedAddresses.defaultAddressNickname + " " + context.getString(
-                                R.string.bullet
-                            ) + " "
+            if (savedAddress == null || savedAddress.addresses.isNullOrEmpty()) {
+                checkoutDeliveryDetailsLayout?.visibility = View.GONE
+                return
+            }
+            savedAddress.let { savedAddresses ->
+
+                val deliveringToAddress = SpannableStringBuilder()
+                // default address nickname
+                val defaultAddressNickname =
+                    SpannableString(
+                        savedAddresses.defaultAddressNickname + " " + context.getString(
+                            R.string.bullet
+                        ) + " "
+                    )
+                val typeface = ResourcesCompat.getFont(context, R.font.myriad_pro_semi_bold)
+                defaultAddressNickname.setSpan(
+                    StyleSpan(typeface!!.style),
+                    0, defaultAddressNickname.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                defaultAddressNickname.setSpan(
+                    ForegroundColorSpan(Color.BLACK),
+                    0,
+                    defaultAddressNickname.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+
+                deliveringToAddress.append(defaultAddressNickname)
+
+                // Extract default address display name
+                savedAddresses.addresses?.forEach { address ->
+                    if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
+                        suburbId = address.suburbId ?: ""
+                        val addressName = SpannableString(address.address1)
+                        val typeface1 =
+                            ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
+                        addressName.setSpan(
+                            StyleSpan(typeface1!!.style),
+                            0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
-                    val typeface = ResourcesCompat.getFont(context, R.font.myriad_pro_semi_bold)
-                    defaultAddressNickname.setSpan(
-                        StyleSpan(typeface!!.style),
-                        0, defaultAddressNickname.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    defaultAddressNickname.setSpan(
-                        ForegroundColorSpan(Color.BLACK),
-                        0,
-                        defaultAddressNickname.length,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-
-                    deliveringToAddress.append(defaultAddressNickname)
-
-                    // Extract default address display name
-                    savedAddresses.addresses?.forEach { address ->
-                        if (savedAddresses.defaultAddressNickname.equals(address.nickname)) {
-                            suburbId = address.suburbId ?: ""
-                            val addressName = SpannableString(address.address1)
-                            val typeface1 =
-                                ResourcesCompat.getFont(context, R.font.myriad_pro_regular)
-                            addressName.setSpan(
-                                StyleSpan(typeface1!!.style),
-                                0, addressName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                            deliveringToAddress.append(addressName)
-                            return@forEach
-                        }
+                        deliveringToAddress.append(addressName)
+                        return@forEach
                     }
-                    tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
-
-                    checkoutDeliveryDetailsLayout?.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
-
                 }
+                tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
+
+                checkoutDeliveryDetailsLayout?.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
+
             }
         }
     }
@@ -341,9 +345,11 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
     private fun getConfirmDeliveryAddressDetails() {
 
-        if(TextUtils.isEmpty(suburbId)){
-            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                getString(R.string.common_error_message_without_contact_info))
+        if (TextUtils.isEmpty(suburbId)) {
+            showErrorScreen(
+                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                getString(R.string.common_error_message_without_contact_info)
+            )
             return
         }
 
@@ -358,8 +364,10 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
                         initializeOrderSummary(response.orderSummary)
                     }
                     is Throwable -> {
-                        showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                            getString(R.string.common_error_message_without_contact_info))
+                        showErrorScreen(
+                            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                            getString(R.string.common_error_message_without_contact_info)
+                        )
                     }
                 }
             })
@@ -515,7 +523,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             R.id.checkoutDeliveryDetailsLayout -> {
                 view?.findNavController()?.navigate(
                     R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
-                    arguments
+                    baseFragBundle
                 )
             }
         }
