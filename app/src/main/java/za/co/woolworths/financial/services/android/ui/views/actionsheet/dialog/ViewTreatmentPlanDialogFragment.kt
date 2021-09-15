@@ -19,7 +19,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
     private var showChatBubbleInterface: IShowChatBubble? = null
     private val mClassName = ViewTreatmentPlanDialogFragment::class.java.simpleName
-    private var viewPaymentOption: Boolean? = false
+    private var viewPaymentOption: Boolean = false
 
     companion object {
         const val VIEW_PAYMENT_PLAN_BUTTON = "viewPaymentPlanButton"
@@ -42,7 +42,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewPaymentOption = arguments?.getBoolean(VIEW_PAYMENT_OPTIONS_VISIBILITY)
+        viewPaymentOption = arguments?.getBoolean(VIEW_PAYMENT_OPTIONS_VISIBILITY,false)?: false
 
         viewTreatmentPlanButton?.apply {
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
@@ -51,7 +51,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         makePaymentButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(viewPaymentOption == true) View.GONE else View.VISIBLE
+            visibility = if(viewPaymentOption) View.GONE else View.VISIBLE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -63,7 +63,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         viewPaymentOptionsButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(viewPaymentOption == true) View.VISIBLE else View.GONE
+            visibility = if(viewPaymentOption) View.VISIBLE else View.GONE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
