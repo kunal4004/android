@@ -37,6 +37,8 @@ import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -46,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.Transactio
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
@@ -64,12 +67,15 @@ class KotlinUtils {
 
         const val DELAY: Long = 900
         const val productImageUrlPrefix = "https://images.woolworthsstatic.co.za/"
+        const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
+        const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
+        const val TREATMENT_PLAN = "treamentPlan"
 
         fun highlightTextInDesc(
-            context: Context?,
-            spannableTitle: SpannableString,
-            searchTerm: String,
-            textIsClickable: Boolean = true
+                context: Context?,
+                spannableTitle: SpannableString,
+                searchTerm: String,
+                textIsClickable: Boolean = true
         ): SpannableString {
             var start = spannableTitle.indexOf(searchTerm)
             if (start == -1) {
@@ -89,34 +95,34 @@ class KotlinUtils {
             }
 
             val typeface: Typeface? =
-                context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+                    context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
             if (textIsClickable) spannableTitle.setSpan(
-                clickableSpan,
-                start,
-                end,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            val dimenPix =
-                context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
-            typeface?.style?.let { style ->
-                spannableTitle.setSpan(
-                    StyleSpan(style),
+                    clickableSpan,
                     start,
                     end,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            val dimenPix =
+                    context?.resources?.getDimension(R.dimen.store_card_spannable_text_17_sp_bold)
+            typeface?.style?.let { style ->
+                spannableTitle.setSpan(
+                        StyleSpan(style),
+                        start,
+                        end,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             }
             spannableTitle.setSpan(
-                AbsoluteSizeSpan(
-                    dimenPix?.toInt()
-                        ?: 0
-                ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    AbsoluteSizeSpan(
+                            dimenPix?.toInt()
+                                    ?: 0
+                    ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             spannableTitle.setSpan(
-                AbsoluteSizeSpan(
-                    dimenPix?.toInt()
-                        ?: 0
-                ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    AbsoluteSizeSpan(
+                            dimenPix?.toInt()
+                                    ?: 0
+                    ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             return spannableTitle
         }
@@ -125,12 +131,12 @@ class KotlinUtils {
 
             if (Build.VERSION.SDK_INT >= 19) {
                 appCompatActivity?.window?.decorView?.systemUiVisibility =
-                    View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             }
             if (Build.VERSION.SDK_INT >= 21) {
                 appCompatActivity?.setWindowFlag(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    false
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                        false
                 )
                 appCompatActivity?.window?.statusBarColor = Color.TRANSPARENT
             }
@@ -151,7 +157,7 @@ class KotlinUtils {
         fun getStatusBarHeight(actionBarHeight: Int): Int {
             val resources = WoolworthsApplication.getAppContext().resources
             val resId: Int = resources?.getIdentifier("status_bar_height", "dimen", "android")
-                ?: -1
+                    ?: -1
             var statusBarHeight = 0
             if (resId > 0) {
                 statusBarHeight = resources?.getDimensionPixelSize(resId) ?: 0
@@ -197,16 +203,16 @@ class KotlinUtils {
             val shape = GradientDrawable()
             shape.shape = GradientDrawable.RECTANGLE
             shape.cornerRadii =
-                floatArrayOf(
-                    paddingDp,
-                    paddingDp,
-                    paddingDp,
-                    paddingDp,
-                    paddingDp,
-                    paddingDp,
-                    paddingDp,
-                    paddingDp
-                )
+                    floatArrayOf(
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp,
+                            paddingDp
+                    )
             shape.setColor(Color.parseColor(color))
             view.background = shape
         }
@@ -266,8 +272,8 @@ class KotlinUtils {
             val appCompat = WoolworthsApplication.getAppContext()
             if (appCompat?.theme?.resolveAttribute(android.R.attr.actionBarSize, tv, true)!!) {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(
-                    tv.data,
-                    appCompat.resources?.displayMetrics
+                        tv.data,
+                        appCompat.resources?.displayMetrics
                 )
             }
             return actionBarHeight
@@ -280,8 +286,8 @@ class KotlinUtils {
         }
 
         fun setAccountNavigationGraph(
-            navigationController: NavController,
-            screenType: OnBoardingScreenType
+                navigationController: NavController,
+                screenType: OnBoardingScreenType
         ) {
             val bundle = Bundle()
             bundle.putSerializable(ON_BOARDING_SCREEN_TYPE, screenType)
@@ -319,7 +325,7 @@ class KotlinUtils {
                 transactionList.add(TransactionHeader(transactionMap.key))
                 transactionMap.value.forEach { transactionItem ->
                     transactionList.add(
-                        transactionItem
+                            transactionItem
                     )
                 }
             }
@@ -338,15 +344,15 @@ class KotlinUtils {
         }
 
         fun presentEditDeliveryLocationActivity(
-            activity: Activity?,
-            requestCode: Int,
-            deliveryType: DeliveryType? = null
+                activity: Activity?,
+                requestCode: Int,
+                deliveryType: DeliveryType? = null
         ) {
             var type = deliveryType
             if (type == null) {
                 if (Utils.getPreferredDeliveryLocation() != null) {
                     type =
-                        if (Utils.getPreferredDeliveryLocation().storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
+                            if (Utils.getPreferredDeliveryLocation().storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
                 }
             }
             activity?.apply {
@@ -360,26 +366,26 @@ class KotlinUtils {
         }
 
         fun setDeliveryAddressView(
-            context: Activity?,
-            shoppingDeliveryLocation: ShoppingDeliveryLocation,
-            tvDeliveringTo: WTextView,
-            tvDeliveryLocation: WTextView,
-            deliverLocationIcon: ImageView?
+                context: Activity?,
+                shoppingDeliveryLocation: ShoppingDeliveryLocation,
+                tvDeliveringTo: WTextView,
+                tvDeliveryLocation: WTextView,
+                deliverLocationIcon: ImageView?
         ) {
             with(shoppingDeliveryLocation) {
                 when (storePickup) {
                     true -> {
                         tvDeliveringTo.text =
-                            context?.resources?.getString(R.string.collecting_from)
+                                context?.resources?.getString(R.string.collecting_from)
                         tvDeliveryLocation.text =
-                            context?.resources?.getString(R.string.store) + store?.name
+                                context?.resources?.getString(R.string.store) + store?.name
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
                     false -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
                         tvDeliveryLocation.text =
-                            suburb.name + if (province?.name.isNullOrEmpty()) "" else ", " + province.name
+                                suburb.name + if (province?.name.isNullOrEmpty()) "" else ", " + province.name
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
                     }
@@ -388,74 +394,73 @@ class KotlinUtils {
         }
 
         fun updateCheckOutLink(jSessionId: String?) {
+            val appVersionParam = "appVersion"
+            val jSessionIdParam = "JSESSIONID"
             val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
             val context = WoolworthsApplication.getAppContext()
             val packageManager = context.packageManager
-            val packageInfo: PackageInfo =
-                packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
+
+            val packageInfo: PackageInfo = packageManager.getPackageInfo(context.packageName, PackageManager.GET_META_DATA)
 
             val versionName = packageInfo.versionName
-            val versionCode =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
+            val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
             val appVersion = "$versionName.$versionCode"
 
-            val checkOutLink = when (checkoutLink.contains("?")) {
-                true -> "$checkoutLink&appVersion=$appVersion&JSESSIONID=$jSessionId"
-                else -> "$checkoutLink?appVersion=$appVersion&JSESSIONID=$jSessionId"
+            if(checkoutLink!=null) {
+                val symbolType = if (checkoutLink.contains("?")) "&" else "?"
+                WoolworthsApplication.setCartCheckoutLinkWithParams("$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId")
             }
-
-            WoolworthsApplication.setCartCheckoutLink(checkOutLink)
         }
 
         fun sendEmail(activity: Activity?, emailId: String, subject: String?) {
             val emailIntent = Intent(Intent.ACTION_SENDTO)
             emailIntent.data = Uri.parse(
-                "mailto:" + emailId +
-                        "?subject=" + Uri.encode(subject) +
-                        "&body=" + Uri.encode("")
+                    "mailto:" + emailId +
+                            "?subject=" + Uri.encode(subject) +
+                            "&body=" + Uri.encode("")
             )
             val listOfEmail =
-                activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
+                    activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
             if (listOfEmail.size > 0) {
                 activity?.startActivity(emailIntent)
             } else {
                 Utils.displayValidationMessage(
-                    activity,
-                    CustomPopUpWindow.MODAL_LAYOUT.INFO,
-                    bindString(R.string.contact_us_no_email_error).replace("email_address", emailId)
-                        .replace(
-                            "subject_line", subject
-                                ?: ""
-                        )
+                        activity,
+                        CustomPopUpWindow.MODAL_LAYOUT.INFO,
+                        bindString(R.string.contact_us_no_email_error).replace("email_address", emailId)
+                                .replace(
+                                        "subject_line", subject
+                                        ?: ""
+                                )
                 )
             }
         }
 
         fun sendEmail(
-            activity: Activity?,
-            emailAddress: String,
-            subjectLine: String?,
-            emailMessage: String
+                activity: Activity?,
+                emailAddress: String,
+                subjectLine: String?,
+                emailMessage: String
         ) {
             val emailIntent = Intent(Intent.ACTION_SENDTO)
             emailIntent.data = Uri.parse(
-                "mailto:" + emailAddress +
-                        "?subject=" + Uri.encode(subjectLine) +
-                        "&body=" + Uri.encode(emailMessage)
+                    "mailto:" + emailAddress +
+                            "?subject=" + Uri.encode(subjectLine) +
+                            "&body=" + Uri.encode(emailMessage)
             )
             val listOfEmail =
-                activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
+                    activity?.packageManager?.queryIntentActivities(emailIntent, 0) ?: arrayListOf()
             if (listOfEmail.size > 0) {
                 activity?.startActivity(emailIntent)
             } else {
                 Utils.displayValidationMessage(
-                    activity,
-                    CustomPopUpWindow.MODAL_LAYOUT.INFO,
-                    activity?.resources?.getString(R.string.contact_us_no_email_error)
-                        ?.replace("email_address", emailAddress)?.replace(
-                            "subject_line", subjectLine
-                                ?: ""
-                        )
+                        activity,
+                        CustomPopUpWindow.MODAL_LAYOUT.INFO,
+                        activity?.resources?.getString(R.string.contact_us_no_email_error)
+                                ?.replace("email_address", emailAddress)?.replace(
+                                        "subject_line", subjectLine
+                                        ?: ""
+                                )
                 )
             }
         }
@@ -465,17 +470,17 @@ class KotlinUtils {
         }
 
         fun parseMoneyValue(
-            value: String,
-            groupingSeparator: String,
-            currencySymbol: String
+                value: String,
+                groupingSeparator: String,
+                currencySymbol: String
         ): String =
-            value.replace(groupingSeparator, "").replace(currencySymbol, "")
+                value.replace(groupingSeparator, "").replace(currencySymbol, "")
 
         fun parseMoneyValueWithLocale(
-            locale: Locale,
-            value: String,
-            groupingSeparator: String,
-            currencySymbol: String
+                locale: Locale,
+                value: String,
+                groupingSeparator: String,
+                currencySymbol: String
         ): Number {
             val valueWithoutSeparator = parseMoneyValue(value, groupingSeparator, currencySymbol)
             return try {
@@ -500,16 +505,16 @@ class KotlinUtils {
                 val end = start.plus(key.length)
                 val myriadProFont: TypefaceSpan = CustomTypefaceSpan("", getMyriadProSemiBoldFont())
                 noteStringBuilder.setSpan(
-                    myriadProFont,
-                    start,
-                    end,
-                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                        myriadProFont,
+                        start,
+                        end,
+                        Spannable.SPAN_INCLUSIVE_INCLUSIVE
                 )
                 noteStringBuilder.setSpan(
-                    ForegroundColorSpan(bindColor(R.color.description_color)),
-                    start,
-                    end,
-                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                        ForegroundColorSpan(bindColor(R.color.description_color)),
+                        start,
+                        end,
+                        Spannable.SPAN_INCLUSIVE_INCLUSIVE
                 )
             }
 
@@ -524,8 +529,8 @@ class KotlinUtils {
                 val reader: Reader = BufferedReader(InputStreamReader(config, "UTF-8"))
                 var n: Int
                 while (reader.read(buffer).also {
-                        n = it
-                    } != -1) {
+                            n = it
+                        } != -1) {
                     writer.run { write(buffer, 0, n) }
                 }
             }
@@ -535,9 +540,9 @@ class KotlinUtils {
 
         fun firstLetterCapitalization(name: String?): String? {
             val capitaliseFirstLetterInName =
-                name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
+                    name?.substring(0, 1)?.toUpperCase(Locale.getDefault())
             val lowercaseOtherLetterInName =
-                name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
+                    name?.substring(1, name.length)?.toLowerCase(Locale.getDefault())
             return capitaliseFirstLetterInName?.plus(lowercaseOtherLetterInName)
         }
 
@@ -584,7 +589,7 @@ class KotlinUtils {
         fun convertActivityToTranslucent(activity: Activity) {
             try {
                 val getActivityOptions =
-                    Activity::class.java.getDeclaredMethod("getActivityOptions")
+                        Activity::class.java.getDeclaredMethod("getActivityOptions")
                 getActivityOptions.isAccessible = true
                 val options = getActivityOptions.invoke(activity)
                 val classes = Activity::class.java.declaredClasses
@@ -595,8 +600,8 @@ class KotlinUtils {
                     }
                 }
                 val convertToTranslucent = Activity::class.java.getDeclaredMethod(
-                    "convertToTranslucent",
-                    translucentConversionListenerClazz, ActivityOptions::class.java
+                        "convertToTranslucent",
+                        translucentConversionListenerClazz, ActivityOptions::class.java
                 )
                 convertToTranslucent.isAccessible = true
                 convertToTranslucent.invoke(activity, null, options)
@@ -606,23 +611,23 @@ class KotlinUtils {
         }
 
         fun showGeneralInfoDialog(
-            fragmentManager: FragmentManager,
-            description: String,
-            title: String = "",
-            actionText: String = "",
-            infoIcon: Int = 0
+                fragmentManager: FragmentManager,
+                description: String,
+                title: String = "",
+                actionText: String = "",
+                infoIcon: Int = 0
         ) {
             val dialog =
-                GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
+                    GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
             fragmentManager.let { fragmentTransaction ->
                 dialog.show(
-                    fragmentTransaction,
-                    GeneralInfoDialogFragment::class.java.simpleName
+                        fragmentTransaction,
+                        GeneralInfoDialogFragment::class.java.simpleName
                 )
             }
         }
 
-        fun openBrowserWithUrl(urlString: String?, activity: Activity?) {
+        fun openUrlInPhoneBrowser(urlString: String?, activity: Activity?) {
             urlString?.apply {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -646,8 +651,8 @@ class KotlinUtils {
 
         fun getAccount(accountExtras: String?): Pair<ApplyNowState, Account>? {
             return Gson().fromJson<Pair<ApplyNowState, Account>>(
-                accountExtras,
-                object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type
+                    accountExtras,
+                    object : TypeToken<Pair<ApplyNowState?, Account?>?>() {}.type
             )
         }
 
@@ -666,42 +671,49 @@ class KotlinUtils {
         @JvmStatic
         fun setUserPropertiesToNull() {
             val firebaseInstance =
-                FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
+                    FirebaseAnalytics.getInstance(WoolworthsApplication.getAppContext())
             firebaseInstance?.apply {
                 setUserProperty(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
-                    null
+                        FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_OFFERING,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING,
-                    null
+                        FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_OFFERING,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING,
-                    null
+                        FirebaseManagerAnalyticsProperties.PropertyNames.SILVER_CREDIT_CARD_PRODUCT_OFFERING,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING,
-                    null
+                        FirebaseManagerAnalyticsProperties.PropertyNames.GOLD_CREDIT_CARD_PRODUCT_OFFERING,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING,
-                    null
+                        FirebaseManagerAnalyticsProperties.PropertyNames.BLACK_CREDIT_CARD_PRODUCT_OFFERING,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_STATE,
-                    null
+                        FirebaseManagerAnalyticsProperties.PropertyNames.PERSONAL_LOAN_PRODUCT_STATE,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.CREDIT_CARD_PRODUCT_STATE,
-                    null
+                        FirebaseManagerAnalyticsProperties.PropertyNames.CREDIT_CARD_PRODUCT_STATE,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
                 setUserProperty(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_STATE,
-                    null
+                        FirebaseManagerAnalyticsProperties.PropertyNames.STORE_CARD_PRODUCT_STATE,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
                 )
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, null)
-                setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, null)
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ATGId,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                )
+                setUserProperty(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.C2ID,
+                        FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE
+                )
+                setUserId(FirebaseManagerAnalyticsProperties.PropertyValues.NOT_APPLICABLE)
             }
         }
 
@@ -720,8 +732,8 @@ class KotlinUtils {
 
         fun rotateViewAnimation(): RotateAnimation {
             val animation = RotateAnimation(
-                0f, 360f,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+                    0f, 360f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
             )
             with(animation) {
                 duration = AppConstant.DURATION_1000_MS
@@ -734,14 +746,72 @@ class KotlinUtils {
         fun getTimeStamp(): String? {
             return try {
                 java.lang.String.valueOf(
-                    TimeUnit.MILLISECONDS.toSeconds(
-                        System.currentTimeMillis()
-                    )
+                        TimeUnit.MILLISECONDS.toSeconds(
+                                System.currentTimeMillis()
+                        )
                 )
             } catch (ex: java.lang.Exception) {
                 null
             }
 
         }
+
+        /**
+         * This function should satisfy below conditions
+         * - It should not be a store pick up &&
+         * - Selected suburb [AppInstanceObject.User.preferredShoppingDeliveryLocation] should match up with suburb id's in mobile config
+         * @return Returns boolean value indicating if current suburb delivers liquors
+         * [Boolean.true]  if above conditions match else [Boolean.false]
+         *
+         * @see [za.co.woolworths.financial.services.android.models.dao.AppInstanceObject.User.preferredShoppingDeliveryLocation]
+         */
+        fun isCurrentSuburbDeliversLiquor(): Boolean {
+            Utils.getPreferredDeliveryLocation()?.apply {
+                return (!storePickup && suburb != null && WoolworthsApplication.getLiquor()?.suburbs?.contains(suburb.id) == true)
+            }
+            return false
+        }
+
+        /**
+         * This function should satisfy below conditions
+         * - Retrieve [SessionDao.KEY.LIQUOR_MODAL_SHOWN] flag from SessionDao database
+         *
+         * @return Returns boolean value indicating if liquor selection modal is shown
+         * [Boolean.true]  if above conditions match else [Boolean.false]
+         *
+         * @see SessionDao
+         */
+        fun isLiquorModalShown(): Boolean {
+            val firstTime = Utils.getSessionDaoValue(KEY.LIQUOR_MODAL_SHOWN)
+            return firstTime != null
+        }
+
+        fun setLiquorModalShown() {
+            try {
+                val firstTime = Utils.getSessionDaoValue(KEY.LIQUOR_MODAL_SHOWN)
+                if (firstTime == null) {
+                    Utils.sessionDaoSave(KEY.LIQUOR_MODAL_SHOWN, "1")
+                }
+            } catch (ignored: NullPointerException) {
+            }
+        }
+
+        fun openLinkInInternalWebView(activity: Activity?,
+                                      url: String?,
+                                      treatmentPlan: Boolean,
+                                      collectionsExitUrl: String?) {
+            activity?.apply {
+                val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
+                openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                openInternalWebView.putExtra("externalLink", url)
+                if(treatmentPlan){
+                    openInternalWebView.putExtra(TREATMENT_PLAN, treatmentPlan)
+                    openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                }
+                startActivity(openInternalWebView)
+            }
+        }
+
     }
+
 }

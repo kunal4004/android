@@ -115,12 +115,9 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
             }
             val arguments = HashMap<String, String>()
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID] = productId
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] =
-                FirebaseManagerAnalyticsProperties.ACTION_PDP_DEEPLINK
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE_DP_LNK,
-                arguments
-            )
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = FirebaseManagerAnalyticsProperties.ACTION_PDP_DEEPLINK
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE_DP_LNK, arguments, this)
+
 
             setupViewModel()
             init()

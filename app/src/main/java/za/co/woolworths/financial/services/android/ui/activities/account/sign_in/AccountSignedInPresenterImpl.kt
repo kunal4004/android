@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account.sign_i
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
+import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -68,7 +69,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferOutstanding()
+        showProductOfferOutstanding(accountInfo?.first)
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -89,10 +90,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 else -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
             }
             AccountsProductGroupCode.PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
-            else -> throw RuntimeException("Invalid  productGroupCode ${account?.productGroupCode}")
+            else -> null
         }
 
-        getToolbarTitle(productGroupInfo.first)?.let { toolbarTitle -> mainView?.toolbarTitle(toolbarTitle) }
+        productGroupInfo?.first?.let { getToolbarTitle(it)?.let { toolbarTitle -> mainView?.toolbarTitle(toolbarTitle) } }
 
         return productGroupInfo
     }
@@ -109,23 +110,56 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-    override fun showProductOfferOutstanding() {
-        val account = getAccount()
-        account?.apply {
-            return when {
-                (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
-                    // account is in arrears for more than 6 months
-                    mainView?.removeBlocksOnCollectionCustomer()!!
+    override fun showProductOfferOutstanding(state: ApplyNowState) {
+        if(WoolworthsApplication.getAccountOptions() != null) {
+            val supported = when(state) {
+                ApplyNowState.PERSONAL_LOAN -> {
+                    Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumSupportedAppBuildNumber!!
                 }
-                !productOfferingGoodStanding -> { // account is in arrears
-                    mainView?.showAccountInArrears(account)
-                    val informationModel = getCardProductInformation(true)
-                    mainView?.showAccountHelp(informationModel)!!
+                ApplyNowState.STORE_CARD -> {
+                    Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumSupportedAppBuildNumber!!
                 }
-                else -> {
-                    mainView?.hideAccountInArrears(account)
-                    val informationInArrearsModel = getCardProductInformation(false)
-                    mainView?.showAccountHelp(informationInArrearsModel)!!
+                else -> false
+            }
+
+            val minimumDelinquencyCycle = when(state){
+                ApplyNowState.PERSONAL_LOAN -> {
+                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumDelinquencyCycle!!
+                }
+                ApplyNowState.STORE_CARD -> {
+                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumDelinquencyCycle!!
+                }
+                else -> null
+            }
+
+
+            val account = getAccount()
+            account?.apply {
+                return when {
+                    !productOfferingGoodStanding && supported &&
+                            minimumDelinquencyCycle != null &&
+                            delinquencyCycle>=minimumDelinquencyCycle -> {
+                        if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                            mainView?.removeBlocksWhenChargedOff()
+                        }
+                        mainView?.showViewTreatmentPlan()!!
+                    }
+                    else -> {
+                        if(!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                            // account is in arrears for more than 6 months
+                            mainView?.removeBlocksOnCollectionCustomer()!!
+                        }
+                        else if(!productOfferingGoodStanding) { // account is in arrears
+                            mainView?.showAccountInArrears(account)
+                            val informationModel = getCardProductInformation(true)
+                            mainView?.showAccountHelp(informationModel)!!
+                        }
+                        else{
+                            mainView?.hideAccountInArrears(account)
+                            val informationInArrearsModel = getCardProductInformation(false)
+                            mainView?.showAccountHelp(informationInArrearsModel)!!
+                        }
+                    }
                 }
             }
         }
@@ -133,7 +167,24 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
 
     override fun bottomSheetBehaviourPeekHeight(): Int {
         val height = deviceHeight()
-        return (height.div(100)).times(if (isAccountInArrearsState()) 14 else 23)
+        val availableFundHeightPercent = if (isAccountInArrearsState()) {
+            val sliderGuidelineArrearsTypeValue = TypedValue()
+            WoolworthsApplication.getInstance()?.resources?.getValue(
+                R.dimen.slider_guideline_percent_for_arrears_account_product,
+                sliderGuidelineArrearsTypeValue,
+                true
+            )
+            sliderGuidelineArrearsTypeValue.float
+        } else {
+            val sliderGuidelineTypeValue = TypedValue()
+            WoolworthsApplication.getInstance()?.resources?.getValue(
+                R.dimen.slider_guideline_percent_for_account_product,
+                sliderGuidelineTypeValue,
+                true
+            )
+            sliderGuidelineTypeValue.float
+        }
+        return height - (height * availableFundHeightPercent).toInt()
     }
 
     @SuppressLint("DefaultLocale")
@@ -142,6 +193,13 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val productOfferingGoodStanding = account?.productOfferingGoodStanding ?: false
         //  account?.productGroupCode?.toUpperCase() != CREDIT_CARD will hide payable now row for credit card options
         return !productOfferingGoodStanding && account?.productGroupCode?.toUpperCase() != AccountsProductGroupCode.CREDIT_CARD.groupCode.toUpperCase()
+    }
+
+    override fun isAccountInDelinquencyMoreThan6Months(): Boolean {
+        val accounts = getAccount()
+        val productOfferingStatus = accounts?.productOfferingStatus
+        val productOfferingGoodStanding = accounts?.productOfferingGoodStanding
+        return productOfferingGoodStanding == false && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
     }
 
     override fun chatWithCollectionAgent() {

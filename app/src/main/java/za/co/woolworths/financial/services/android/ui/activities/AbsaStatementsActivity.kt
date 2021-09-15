@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.absa_statements_activity.*
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import kotlinx.android.synthetic.main.empty_state_template.*
 import kotlinx.android.synthetic.main.payment_options_activity.*
-import kotlinx.android.synthetic.main.store_details_layout_common.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaBalanceEnquiryFacadeGetAllBalances
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetArchivedStatementListRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetIndividualStatementRequest
@@ -27,14 +26,16 @@ import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenA
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.CARD
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.HttpCookie
 import java.util.*
 
@@ -104,7 +105,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             }
 
             override fun onFailure(errorMessage: String?) {
-               FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+               FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this@AbsaStatementsActivity)
                 showErrorView()
             }
 
@@ -137,7 +138,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     fun showStatementsList(archivedStatementList: ArrayList<ArchivedStatement>?) {
-        FirebaseEventDetailManager.success(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS)
+        FirebaseEventDetailManager.success(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
         archivedStatementList?.let {
             if (it.size > 0) {
                 hideProgress()
@@ -204,7 +205,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     override fun onViewStatement(item: ArchivedStatement) {
         if (pbCircular.visibility != View.VISIBLE) {
             KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_GET_STATEMENT, OneAppEvents.FeatureName.ABSA)
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_INDIVIDUAL_STATEMENT)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_INDIVIDUAL_STATEMENT, this)
             getIndividualStatement(item)
         }
     }
@@ -258,6 +259,22 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         card.absaAccountToken = mCreditCardToken
         account?.cards = mutableListOf(card)
         val accountList = account?.let { account -> mutableListOf(account) }
+
+        var vocTriggerEvent: VocTriggerEvent? = null
+        account?.let {
+            vocTriggerEvent = when {
+                it.productGroupCode.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_SC_STATEMENT
+                }
+                it.productGroupCode.equals(AccountsProductGroupCode.PERSONAL_LOAN.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_PL_STATEMENT
+                }
+                else -> {
+                    VocTriggerEvent.CHAT_CC_STATEMENT
+                }
+            }
+        }
+
         chatAccountProductLandingPage?.first?.let {
             ChatFloatingActionButtonBubbleView(
                 activity = this@AbsaStatementsActivity,
@@ -269,7 +286,8 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                 applyNowState = it,
                 scrollableView = paymentOptionScrollView,
                 notificationBadge = badge,
-                onlineChatImageViewIndicator = onlineIndicatorImageView
+                onlineChatImageViewIndicator = onlineIndicatorImageView,
+                vocTriggerEvent = vocTriggerEvent
             )
                 .build()
         }

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_account_bpi_navhost"
+    app:startDestination="@id/Overview">
+
+    <fragment
+        android:id="@+id/Overview"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.overview.BPIOverviewFragment"
+        android:label="Overview"
+        tools:layout="@layout/balance_protection_insurance_overview_fragment">
+        <action
+            android:id="@+id/action_Overview_to_SubmitClaim"
+            app:destination="@id/SubmitClaim"
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right" />
+        <action
+            android:id="@+id/action_Overview_to_OverViewDetail"
+            app:destination="@id/OverViewDetail" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/SubmitClaim"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.submit_claim.BPISubmitClaimFragment"
+        android:label="Submit Claim"
+        tools:layout="@layout/bpi_submit_claim_fragment">
+        <action
+            android:id="@+id/action_SubmitClaim_to_BPISubmitClaimDetailFragment"
+            app:destination="@id/SubmitClaimDetail"
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/SubmitClaimDetail"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.submit_claim_detail.BPISubmitClaimDetailFragment"
+        android:label="Submit Claim Detail"
+        tools:layout="@layout/bpi_submit_claim_detail_fragment" >
+        <argument
+            android:name="claimReasonList"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.bpi.SubmitClaimReason"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/OverViewDetail"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.overview_detail.BPIOverviewDetailFragment"
+        android:label="BPI Overview Detail"
+        tools:layout="@layout/overview_detail_fragment">
+        <action
+            android:id="@+id/action_OverViewDetail_to_SubmitClaim"
+            app:destination="@id/SubmitClaim"
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right" />
+        <argument
+            android:name="OverviewArgs"
+            app:argType="za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceOverview"
+            app:nullable="true" />
+    </fragment>
+</navigation>

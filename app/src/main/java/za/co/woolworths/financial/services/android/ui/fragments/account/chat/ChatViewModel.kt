@@ -265,19 +265,21 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    fun triggerFirebaseOnlineOfflineChatEvent() {
-        if (isOperatingHoursForInAppChat())
-            trackFirebaseEvent.chatOnline(getApplyNowState(), activityType)
-        else
-            trackFirebaseEvent.chatOffline(getApplyNowState(), activityType)
+    fun triggerFirebaseOnlineOfflineChatEvent(activity: Activity) {
+        activity?.apply {
+            if (isOperatingHoursForInAppChat())
+                trackFirebaseEvent.chatOnline(getApplyNowState(), activityType, this)
+            else
+                trackFirebaseEvent.chatOffline(getApplyNowState(), activityType, this)
+        }
     }
 
-    fun triggerFirebaseEventChatBreak() {
-        trackFirebaseEvent.chatBreak(getApplyNowState(), activityType)
+    fun triggerFirebaseEventChatBreak(activity: Activity) {
+        activity?.apply { trackFirebaseEvent.chatBreak(getApplyNowState(), activityType, this) }
     }
 
-    fun triggerFirebaseEventEndSession() {
-        trackFirebaseEvent.chatEnd(getApplyNowState(), activityType)
+    fun triggerFirebaseEventEndSession(activity: Activity) {
+        activity?.apply { trackFirebaseEvent.chatEnd(getApplyNowState(), activityType, this) }
     }
 
     fun isChatServiceRunning(activity: Activity?): Boolean {

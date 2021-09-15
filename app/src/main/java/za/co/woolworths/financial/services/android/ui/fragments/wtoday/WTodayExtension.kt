@@ -52,7 +52,7 @@ abstract class WTodayExtension : Fragment() {
                                 val arguments = HashMap<String, String>()
                                 arguments[skuId] = "NO PRICE INFO"
                                 arguments[skuId] = "From WTodayFragment Promotions"
-                                Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.VIEW_ITEM, arguments)
+                                Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.VIEW_ITEM, arguments, this)
                             }
                         }
                     }

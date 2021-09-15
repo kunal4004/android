@@ -91,7 +91,7 @@ class AvailableVoucherFragment : Fragment(), View.OnClickListener, VoucherAndPro
     override fun redeemVouchers() {
         voucherDetails?.vouchers?.let {
             presenter?.getSelectedVouchersToApply()?.let { selectedVouchers ->
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_voucher_redeem)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Cart_ovr_voucher_redeem, this) }
                 showRedeemVoucherProgress()
                 presenter?.initRedeemVouchers(selectedVouchers)
             }

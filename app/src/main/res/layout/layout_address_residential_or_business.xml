@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/storeAddressDeliveryDetailsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:lineSpacingExtra="@dimen/five_dp"
+        android:paddingHorizontal="@dimen/ten_dp"
+        android:text="@string/store_address_delivery_details"
+        android:textColor="@color/color_7b7b7b"
+        android:textSize="@dimen/sixteen_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/residentialTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:drawableStart="@drawable/uncheck_item"
+        android:drawablePadding="@dimen/ten_dp"
+        android:gravity="center"
+        android:text="@string/residential"
+        android:textColor="@color/color_7b7b7b"
+        app:layout_constraintEnd_toStartOf="@+id/businessTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintTop_toBottomOf="@+id/storeAddressDeliveryDetailsTextView"
+        app:layout_constraintWidth_percent="@integer/point_five" />
+
+    <TextView
+        android:id="@+id/businessTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/uncheck_item"
+        android:drawablePadding="@dimen/ten_dp"
+        android:gravity="center"
+        android:text="@string/business"
+        android:layout_marginStart="@dimen/eighty_dp"
+        android:textColor="@color/color_7b7b7b"
+        app:layout_constraintBottom_toBottomOf="@+id/residentialTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/residentialTextView"
+        app:layout_constraintTop_toTopOf="@+id/residentialTextView"
+        app:layout_constraintWidth_percent="@integer/point_five" />
+
+    <TextView
+        android:id="@+id/tvComplexOrBuildingName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/complex_building"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/residentialTextView" />
+
+    <EditText
+        android:id="@+id/complexOrBuildingNameEdtTV"
+        style="@style/credi_card_delivery_edittext_style"
+        android:contentDescription="@string/hint_complex_building"
+        android:hint="@string/hint_complex_building"
+        android:textColorHint="@color/black30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvComplexOrBuildingName" />
+
+    <TextView
+        android:id="@+id/tvBusinessName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/business_name"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/complexOrBuildingNameEdtTV" />
+
+    <EditText
+        android:id="@+id/businessNameEdtTV"
+        style="@style/credi_card_delivery_edittext_style"
+        android:contentDescription="@string/hint_business_name"
+        android:hint="@string/hint_business_name"
+        android:textColorHint="@color/black30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvBusinessName" />
+
+    <TextView
+        android:id="@+id/tvStreetAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/street_address"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/businessNameEdtTV" />
+
+    <EditText
+        android:id="@+id/streetAddressEdtTV"
+        style="@style/credi_card_delivery_edittext_style"
+        android:contentDescription="@string/hint_street_address"
+        android:hint="@string/hint_street_address"
+        android:textColorHint="@color/black30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvStreetAddress" />
+
+    <TextView
+        android:id="@+id/tvSuburb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/suburb"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/streetAddressEdtTV" />
+
+    <EditText
+        android:id="@+id/suburbEdtTV"
+        style="@style/credi_card_delivery_edittext_style"
+        android:contentDescription="@string/hint_suburb"
+        android:hint="@string/hint_suburb"
+        android:textColorHint="@color/black30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSuburb" />
+
+    <TextView
+        android:id="@+id/tvCityTown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/city_town"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/suburbEdtTV" />
+
+    <EditText
+        android:id="@+id/cityTownEdtTV"
+        style="@style/credi_card_delivery_edittext_style"
+        android:contentDescription="@string/hint_city_town"
+        android:hint="@string/hint_city_town"
+        android:textColorHint="@color/black30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvCityTown" />
+
+    <TextView
+        android:id="@+id/tvProvince"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/province"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cityTownEdtTV" />
+
+    <EditText
+        android:id="@+id/provinceEdtTV"
+        style="@style/credi_card_delivery_edittext_style"
+        android:contentDescription="@string/hint_province"
+        android:hint="@string/hint_province"
+        android:textColorHint="@color/black30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvProvince" />
+
+    <TextView
+        android:id="@+id/tvPostalCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/postal_code"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/provinceEdtTV" />
+
+    <EditText
+        android:id="@+id/postalCodeEdtTV"
+        style="@style/credi_card_delivery_edittext_style"
+        android:contentDescription="@string/hint_postal_code"
+        android:hint="@string/hint_postal_code"
+        android:inputType="number"
+        android:textColorHint="@color/black30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvPostalCode" />
+
+    <TextView
+        android:id="@+id/nextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eighty_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@drawable/next_button_inactive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/postalCodeEdtTV" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

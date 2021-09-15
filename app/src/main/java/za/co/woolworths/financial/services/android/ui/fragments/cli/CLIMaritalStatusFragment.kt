@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.annotation.Nullable
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
@@ -34,11 +35,18 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
         mContext = context
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cli_marital_status, container, false)
+    private var fragmentView: View? = null
+
+    override fun onCreateView(inflater: LayoutInflater, @Nullable container: ViewGroup?, @Nullable savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        if (fragmentView != null) {
+            return fragmentView
+        }
+        val view: View = inflater.inflate(R.layout.fragment_cli_marital_status, container, false)
+        fragmentView = view
+        return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,8 +59,13 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
         //set default text for picker selection.
         cli_marital_status_selection.text = mContext.getString(R.string.select)
 
-        // Default selected position
-        setMaritalStatusPicker(0)
+        (activity as? CLIPhase2Activity)?.selectedMaritalStatusPosition?.let {
+            setMaritalStatusPicker(it)
+            cli_marital_status_picker_done?.performClick()
+        } ?: run {
+            // Default selected position
+            setMaritalStatusPicker(0)
+        }
 
         //Set Listeners
         cli_marital_status_next?.setOnClickListener(this)
@@ -75,21 +88,23 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
                     return
                 }
                 selectedMaritalStatus = maritalStatusList[position]
+                (activity as? CLIPhase2Activity)?.selectedMaritalStatusPosition = position
                 selectedMaritalStatus?.let { setMaritalStatusPicker(position) }
             }
         }
     }
 
     private fun setMaritalStatusPicker(position: Int) {
-        val maritalStatusList = WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatus
+        val maritalStatusList =
+            WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatus
         if (maritalStatusList == null || maritalStatusList.isEmpty()) {
             return
         }
         val dataList = maritalStatusList.map { it.statusDesc }
         selectedMaritalStatus = maritalStatusList[position]
-        cli_marital_status_picker?.apply {
-            data = dataList
-            selectedItemPosition = position
+            cli_marital_status_picker?.apply {
+                data = dataList
+                selectedItemPosition = position
         }
     }
 
@@ -161,5 +176,10 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
                 cli_marital_status_next?.isEnabled = true
             }
         }
+    }
+
+    override fun onDestroy() {
+        (fragmentView?.parent as? ViewGroup)?.removeView(fragmentView)
+        super.onDestroy()
     }
 }

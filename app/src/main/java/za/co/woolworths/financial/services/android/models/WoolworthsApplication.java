@@ -49,19 +49,25 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.AccountOptions;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncrease;
 import za.co.woolworths.financial.services.android.models.dto.CreditView;
+import za.co.woolworths.financial.services.android.models.dto.CustomerFeedback;
 import za.co.woolworths.financial.services.android.models.dto.DashConfig;
+import za.co.woolworths.financial.services.android.models.dto.InAppReview;
 import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
+import za.co.woolworths.financial.services.android.models.dto.Liquor;
 import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
+import za.co.woolworths.financial.services.android.models.dto.ViewTreatmentPlan;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
@@ -69,16 +75,13 @@ import za.co.woolworths.financial.services.android.models.dto.contact_us.Contact
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.ui.activities.WChatActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
+import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
-import za.co.woolworths.financial.services.android.util.ServiceTools;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
-
 
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
@@ -91,6 +94,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
     @Nullable
     private static PayMyAccount mPayMyAccount;
     private static InAppChat inAppChat;
+    private static Boolean isProductItemForLiquorInventoryPending = false;
+    private static ProductList productItemForLiquorInventory = null;
     private UserManager mUserManager;
     private Tracker mTracker;
     private static ApplyNowLinks applyNowLink;
@@ -101,6 +106,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String howToSaveLink;
     private static String wrewardsTCLink;
     private static String cartCheckoutLink;
+    private static String cartCheckoutLinkWithParams;
     private static JsonElement storeCardBlockReasons;
     private static String authenticVersionReleaseNote;
     private Set<Class<Activity>> visibleActivities = new HashSet<>();
@@ -133,6 +139,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static ClickAndCollect clickAndCollect;
     private static UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes;
     private static CreditCardDelivery creditCardDelivery;
+    private static CustomerFeedback customerFeedback;
 
     private Activity mCurrentActivity = null;
 
@@ -143,6 +150,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static CreditView creditView;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
+    private static boolean isBadgesRequired;
+    private static InAppReview inAppReview;
+    private static Liquor liquor;
+    private static AccountOptions accountOptions;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -281,6 +292,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
+        ConnectivityLiveData.INSTANCE.init(this);
         FirebaseApp.initializeApp(getApplicationContext());
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
         if (FirebaseCrashlytics.getInstance().didCrashOnPreviousExecution()) {
@@ -644,6 +656,14 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.creditCardDelivery = creditCardDelivery;
     }
 
+    public static CustomerFeedback getCustomerFeedback() {
+        return customerFeedback != null ? customerFeedback : new CustomerFeedback();
+    }
+
+    public static void setCustomerFeedback(CustomerFeedback customerFeedback) {
+        WoolworthsApplication.customerFeedback = customerFeedback;
+    }
+
     @Nullable
     public static CreditView getCreditView() {
         return creditView;
@@ -691,4 +711,59 @@ public class WoolworthsApplication extends Application implements Application.Ac
         mContextApplication = context;
     }
 
+    public static boolean isIsBadgesRequired() {
+        return isBadgesRequired;
+    }
+
+    public static void setIsBadgesRequired(boolean isBadgesRequired) {
+        WoolworthsApplication.isBadgesRequired = isBadgesRequired;
+    }
+
+    public static InAppReview getInAppReview() {
+        return inAppReview;
+    }
+
+    public static void setInAppReview(InAppReview inAppReview) {
+        WoolworthsApplication.inAppReview = inAppReview;
+    }
+
+    public static Liquor getLiquor() {
+        return liquor;
+    }
+
+    public static void setLiquor(Liquor liquor) {
+        WoolworthsApplication.liquor = liquor;
+    }
+
+    public static void setProductItemForInventory(ProductList productList) {
+        productItemForLiquorInventory = productList;
+    }
+
+    public static void setCallForLiquorInventory(Boolean isPending) {
+        isProductItemForLiquorInventoryPending = isPending;
+    }
+
+    public static Boolean isProductItemForLiquorInvetoryPending() {
+        return isProductItemForLiquorInventoryPending;
+    }
+
+    public static ProductList getProductItemForInventory() {
+        return productItemForLiquorInventory;
+    }
+
+    public static void setCartCheckoutLinkWithParams(String cartCheckoutLinkWithParams) {
+        WoolworthsApplication.cartCheckoutLinkWithParams = cartCheckoutLinkWithParams;
+    }
+
+    public static String getCartCheckoutLinkWithParams() {
+        return cartCheckoutLinkWithParams;
+    }
+
+    public static void setAccountOptions(@Nullable AccountOptions accountOptions) {
+        WoolworthsApplication.accountOptions = accountOptions;
+    }
+
+    public static AccountOptions getAccountOptions() {
+        return accountOptions;
+    }
 }

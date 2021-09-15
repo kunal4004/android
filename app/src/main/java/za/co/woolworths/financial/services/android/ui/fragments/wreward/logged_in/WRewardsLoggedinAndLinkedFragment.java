@@ -56,7 +56,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLoggedinAndLinkedFragmentBinding, WRewardLoggedInViewModel> implements WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private TabLayout tabLayout;
-	private ViewPager viewPager;
+	private ViewPager wrewardsViewPager;
 	private WRewardsFragmentPagerAdapter adapter;
 	private ProgressBar progressBar;
 	private LinearLayout fragmentView;
@@ -109,7 +109,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		viewPager = getViewDataBinding().viewpager;
+		wrewardsViewPager = getViewDataBinding().wrewardsViewPager;
 		progressBar = getViewDataBinding().progressBar;
 		fragmentView = getViewDataBinding().fragmentView;
 		tabLayout = getViewDataBinding().tabs;
@@ -117,11 +117,11 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			@Override
 			public void onTabSelected(TabLayout.Tab tab) {
 				if (tab.getPosition() == TabState.OVERVIEW.tabState && tab.getCustomView() != null) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW, getActivity());
 				} else if (tab.getPosition() == TabState.VOUCHERS.tabState) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSVOUCHERS);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSVOUCHERS, getActivity());
 				} else if (tab.getPosition() == TabState.SAVINGS.tabState) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS, getActivity());
 				}
 			}
 
@@ -135,7 +135,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		});
 		joinWRewardLoggedInFrameLayout = getViewDataBinding().joinWRewardLoggedInFrameLayout;
 		joinWRewardLoggedInRelativeLayout = getViewDataBinding().joinWRewardLoggedInRelativeLayout;
-		viewPager.setOffscreenPageLimit(3);
+		wrewardsViewPager.setOffscreenPageLimit(3);
 		mRlConnect = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
 		mErrorHandlerView.setMargin(mRlConnect, 0, 0, 0, 0);
@@ -163,11 +163,11 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			progressBar.setContentDescription(getString(R.string.wreward_progress_bar));
 			tabLayout.setContentDescription(getString(R.string.wreward_tab_layout));
 			fragmentView.setContentDescription(getString(R.string.fragment_tab_layout));
-			viewPager.setContentDescription(getString(R.string.reward_items_layout));
+			wrewardsViewPager.setContentDescription(getString(R.string.reward_items_layout));
 			mRlConnect.setContentDescription(getString(R.string.no_connection));
 		}
 
-		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+		wrewardsViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			public void onPageScrollStateChanged(int state) {
 			}
 
@@ -281,7 +281,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 					progressBar.setVisibility(View.GONE);
 					fragmentView.setVisibility(View.VISIBLE);
 					clearVoucherCounter();
-					setupErrorViewPager(viewPager);
+					setupErrorViewPager(wrewardsViewPager);
 					break;
 			}
 		} catch (Exception ex) {
@@ -333,7 +333,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		if (isCardDetailsCalled && isWrewardsCalled) {
 			progressBar.setVisibility(View.GONE);
 			fragmentView.setVisibility(View.VISIBLE);
-			setupViewPager(viewPager, voucherResponse, cardDetailsResponse);
+			setupViewPager(wrewardsViewPager, voucherResponse, cardDetailsResponse);
 		}
 	}
 
@@ -361,8 +361,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public void scrollToTop() {
 		if (!isAdded()) return;
 		if (adapter != null) {
-			Fragment page = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
-			switch (viewPager.getCurrentItem()) {
+			Fragment page = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + wrewardsViewPager.getCurrentItem());
+			switch (wrewardsViewPager.getCurrentItem()) {
 				case 0:
 					if (page instanceof WRewardsOverviewFragment) {
 						WRewardsOverviewFragment wRewardsOverviewFragment = (WRewardsOverviewFragment) page;
@@ -427,7 +427,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			viewPager.setCurrentItem(1);
+			wrewardsViewPager.setCurrentItem(1);
 		});
 	}
 
@@ -448,4 +448,9 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_SIGNED_IN_LINKED);
 		isActivityInForeground = true;
 	}
+
+	public ViewPager getWrewardsViewPager() {
+		return wrewardsViewPager;
+	}
+
 }

@@ -287,7 +287,7 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
         }
     }
 
-    fun getUsername(): String? = ChatCustomerInfo.getUsername()
+    fun getUsername(): String? = ChatCustomerInfo.getInstance().getUsername()
 
     private fun getActivityName(): String? = activity::class.java.simpleName
 

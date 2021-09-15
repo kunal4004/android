@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -23,6 +24,10 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardReque
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.PERMANENT
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment.Companion.ACCESS_MY_LOCATION_REQUEST_CODE
+
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
@@ -65,9 +70,9 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
 
         okGotItButton?.setOnClickListener {
             (activity as? AppCompatActivity)?.let {
-                              it.setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
-                                it.finish()
-                            }
+                it.setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
+                it.finish()
+            }
         }
         hideToolbarIcon()
 
@@ -140,7 +145,8 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     activity?.apply {
-                        setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE)
+                        setResult(MyCardDetailActivity.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE,
+                                Intent().putExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, true))
                         overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                         finish()
                     }

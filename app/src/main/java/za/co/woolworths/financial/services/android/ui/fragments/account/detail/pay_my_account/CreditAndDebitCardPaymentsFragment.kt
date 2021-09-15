@@ -9,6 +9,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -26,7 +27,6 @@ import kotlinx.android.synthetic.main.pma_pay_at_any_atm.*
 import kotlinx.android.synthetic.main.pma_pay_by_debit_order_item.*
 import kotlinx.android.synthetic.main.pma_personal_loan_electronic_fund_transfer.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
-import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WhatsAppUnavailableFragment
@@ -220,7 +220,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             R.id.payByDebitCardNowButton -> {
                 val cardInfo = payMyAccountViewModel.getCardDetail()
                 val payUMethodType = cardInfo?.payuMethodType
-                payMyAccountPresenter?.setFirebaseEventForPayByCardNow()
+                activity?.let { payMyAccountPresenter?.setFirebaseEventForPayByCardNow(it) }
 
                 payMyAccountViewModel.resetAmountEnteredToDefault()
                 when {
@@ -228,28 +228,28 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                         navController?.navigate(R.id.payMyAccountRetryErrorFragment)
                     }
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CREATE_USER) -> {
-                        navController?.navigate(CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(true))
+                        navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.goToEnterPaymentAmountFragmentAction(true))
                     }
+
                     (payUMethodType == PayMyAccountViewModel.PAYUMethodType.CARD_UPDATE) -> {
-                        navController?.navigate(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment())
+                        navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToDisplayVendorCardDetailFragment())
+
                     }
                 }
             }
 
             R.id.findAWooliesStoreButton, R.id.incAtYourNearestWoolworthsStoreButton -> {
-                navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_storesNearbyFragment1)
+                navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToStoresNearbyFragment1())
             }
 
             R.id.incPersonalLoanElectronicFundTransfer, R.id.plViewBankingDetailButton, R.id.incByElectronicFundTransferEFTButton, R.id.viewBankingDetailButton -> {
-                navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_byElectronicFundTransferFragment)
+                navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToByElectronicFundTransferFragment())
             }
 
             R.id.incPayAtAnyATMButton, R.id.payAtAnyATMButton -> navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_payMyAccountLearnMoreFragment)
 
             R.id.incSetupMyDebitOrder, R.id.setUpDebitOrderButton -> {
-                GlobalScope.doAfterDelay(AppConstant.DELAY_200_MS) {
-                    navController?.navigate(R.id.action_creditAndDebitCardPaymentsFragment_to_PMAPayByDebitOrderFragment)
-                }
+                navigateSafelyWithNavController(CreditAndDebitCardPaymentsFragmentDirections.actionCreditAndDebitCardPaymentsFragmentToPMAPayByDebitOrderFragment())
             }
 
             R.id.incWhatsAppAnyQuestions -> {
@@ -258,7 +258,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                     whatsAppUnavailableFragment.show(childFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName)
                     return
                 }
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_PAYMENT_OPTION, activity)
                 ScreenManager.presentWhatsAppChatToUsActivity(activity, WhatsAppChatToUs.FEATURE_WHATSAPP, payMyAccountPresenter?.getAppScreenName())
             }
         }
@@ -308,7 +308,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 applyNowState = applyNowState,
                 scrollableView = creditDebitCardPaymentsScrollView,
                 notificationBadge = badge,
-                onlineChatImageViewIndicator = onlineIndicatorImageView
+                onlineChatImageViewIndicator = onlineIndicatorImageView,
+                vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventPaymentOptions()
             )
 
             mChatFloatingActionButtonBubbleView?.build()

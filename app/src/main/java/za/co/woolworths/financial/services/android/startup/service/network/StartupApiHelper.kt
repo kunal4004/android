@@ -9,14 +9,9 @@ import za.co.woolworths.financial.services.android.util.NetworkManager
  * Created by Kunal Uttarwar on 23/2/21.
  */
 class StartupApiHelper : RetrofitConfig() {
-    suspend fun getConfig() = mApiInterface.getConfig(WoolworthsApplication.getApiId(),
-            getSha1Password(),
-            getDeviceManufacturer(),
-            getDeviceModel(),
-            getNetworkCarrier(),
-            getOS(),
-            getOsVersion(),
+    suspend fun getConfig() = mApiInterface.getConfig(
             getSessionToken(),
+            getDeviceIdentityToken(),
             WoolworthsApplication.getAppVersionName())
 
     fun isConnectedToInternet(context: Context) = NetworkManager.getInstance().isConnectedToNetwork(context)

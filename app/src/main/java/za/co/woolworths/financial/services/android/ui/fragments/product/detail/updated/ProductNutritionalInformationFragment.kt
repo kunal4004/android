@@ -102,7 +102,7 @@ class ProductNutritionalInformationFragment : Fragment(), NutritionalInformation
     override fun onOptionSelected(selectedSortedOption: NutritionalInformationFilterOption) {
         val arguments = HashMap<String, String>()
         arguments[FirebaseManagerAnalyticsProperties.PropertyNames.NUTRITIONAL_INFORMATION_FILTER_OPTION] = selectedSortedOption.name
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION, arguments)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PRODUCTDETAIL_NUTRITIONAL_INFORMATION, arguments, this) }
         filterOptionDialog?.dismiss()
         filterOptionSelector?.text = selectedSortedOption.name
         nutritionalDataList[selectedSortedOption.name]?.let { adapter.updateData(it) }

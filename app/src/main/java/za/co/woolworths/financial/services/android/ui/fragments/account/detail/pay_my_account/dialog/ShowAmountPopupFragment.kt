@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +15,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
@@ -75,6 +78,19 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 } else {
                     updateAmountEntered(card?.amountEntered)
                 }
+
+                pmaAmountEnteredTextView?.apply {
+                    if (!payMyAccountViewModel.isAmountBelowMaxLimit(card?.amountEntered)) {
+                        setTextColor(Color.RED)
+                        typeface = Typeface.DEFAULT_BOLD
+                        invalidPaymentAmountTextView?.visibility = VISIBLE
+                    } else{
+                        setTextColor(Color.BLACK)
+                        typeface = Typeface.DEFAULT
+                        invalidPaymentAmountTextView?.visibility = GONE
+                    }
+                }
+
                 // Enable/Disable confirm payment button
                 pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(cvvEditTextInput.length(), pmaAmountEnteredTextView?.text?.toString())
 
@@ -90,10 +106,6 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                     }
                 }
 
-                // set payment method
-                initPaymentMethod()
-
-
                 cvvFieldEnableState(pmaAmountEnteredTextView?.text?.toString())
 
 
@@ -108,11 +120,13 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
     }
 
     private fun cvvFieldEnableState(amountPayable: String?) {
-        val isAmountPayableZero = amountPayable == RAND_AMOUNT_ZERO
-        cvvEditTextInput?.apply {
-            isEnabled = !isAmountPayableZero
-            isFocusable = !isAmountPayableZero
-            isFocusableInTouchMode = !isAmountPayableZero
+        with(payMyAccountViewModel) {
+            val isAmountPayableZero = amountPayable == RAND_AMOUNT_ZERO
+            cvvEditTextInput?.apply {
+                isEnabled = !isAmountPayableZero && !isSelectedCardExpired()
+                isFocusable = !isAmountPayableZero && !isSelectedCardExpired()
+                isFocusableInTouchMode = !isAmountPayableZero && !isSelectedCardExpired()
+            }
         }
     }
 
@@ -147,11 +161,10 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             if (isSelectedCardExpired()) {
                 cardExpiredTagTextView?.visibility = VISIBLE
                 changeTextView?.text =  addCardLabel
-                cvvEditTextInput?.isEnabled = false
+
             } else {
                 cardExpiredTagTextView?.visibility = GONE
                 changeTextView?.text = changeCardLabel
-                cvvEditTextInput?.isEnabled = true
             }
 
             with(getSelectedPaymentMethodCard()) {
@@ -203,7 +216,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 when (v?.id) {
 
                     R.id.editAmountImageView -> {
-                        triggerFirebaseEventForEditAmount()
+                        triggerFirebaseEventForEditAmount(activity as PayMyAccountActivity)
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
                     }
 
@@ -223,7 +236,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
             } else {
                 when (v?.id) {
                     R.id.editAmountImageView -> {
-                        triggerFirebaseEventForEditAmount()
+                        activity?.let { triggerFirebaseEventForEditAmount(it) }
                         ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardInfo, PayMyAccountStartDestinationType.PAYMENT_AMOUNT, true)
                     }
                     R.id.changeTextView -> {

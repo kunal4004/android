@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
+import android.app.Activity
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
@@ -21,7 +22,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.Ba
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
 
-class RefinementNavigationAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
+class RefinementNavigationAdapter(val context: Activity, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RefinementBaseViewHolder {
         return when (viewType) {
@@ -62,7 +63,7 @@ class RefinementNavigationAdapter(val context: Context, val listner: OnRefinemen
                 notifyDataSetChanged()
                 val navigationItem = refinementSelectableItem.item as RefinementNavigation
                 val navigationState = if (navigationItem.multiSelect) navigationItem.refinements[0].navigationState else navigationItem.refinementCrumbs[0].navigationState
-                Utils.triggerFireBaseEvents(if (navigationItem.multiSelect) FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_ON else FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_OFF)
+                Utils.triggerFireBaseEvents(if (navigationItem.multiSelect) FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_ON else FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_OFF, context)
                 listner.onBackPressedWithRefinement(navigationState, false)
             }
         }

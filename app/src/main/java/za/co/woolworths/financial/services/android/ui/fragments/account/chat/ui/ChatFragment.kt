@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.Sessi
 import za.co.woolworths.financial.services.android.ui.activities.WChatActivity
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.APP_SCREEN
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.WhatsAppChatToUsVisibility.Companion.FEATURE_NAME
@@ -72,8 +73,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? WChatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        chatNavController =
-            (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
+        chatNavController = (activity?.supportFragmentManager?.findFragmentById(R.id.chatNavHost) as? NavHostFragment)?.navController
         initView()
     }
 
@@ -83,7 +83,6 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 activity?.let { act -> ServiceTools.start(act, LiveChatService::class.java) }
                 return@with
             }
-
             listAllMessages()
         }
     }
@@ -106,7 +105,11 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                 }
             }
         }, {
-            chatLoaderProgressBar?.visibility = GONE
+            activity?.runOnUiThread {
+                if (isAdded) {
+                    chatLoaderProgressBar?.visibility = GONE
+                }
+            }
         })
     }
 
@@ -254,35 +257,30 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
 
     private fun autoConnectToNetwork() {
         activity?.let { activity ->
-            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
-                activity,
-                this,
-                object : ConnectionBroadcastReceiver() {
-                    override fun onConnectionChanged(hasConnection: Boolean) {
-                        if (hasConnection && !isConnectedToNetwork) {
-                            isConnectedToNetwork = true
-                            with(chatViewModel) {
-                                liveChatListAllAgentConversation.messageListFromAgent({ messagesByConversation ->
-                                    mChatAdapter?.clear()
-                                    messagesByConversation.first?.forEach { item ->
-                                        showMessage(item)
-                                    }
-                                    activity.runOnUiThread {
-                                        if (isAdded) {
-                                            chatLoaderProgressBar?.visibility = GONE
-                                            subscribeResult(messagesByConversation.second, false)
-                                        }
-                                    }
-                                }, {
-                                    chatLoaderProgressBar?.visibility = GONE
-                                })
+            ConnectivityLiveData.observe(viewLifecycleOwner, { isNetworkAvailable ->
+                if (isNetworkAvailable && !isConnectedToNetwork) {
+                    isConnectedToNetwork = true
+                    with(chatViewModel) {
+                        liveChatListAllAgentConversation.messageListFromAgent({ messagesByConversation ->
+                            mChatAdapter?.clear()
+                            messagesByConversation.first?.forEach { item ->
+                                showMessage(item)
                             }
-                        } else {
-                            isConnectedToNetwork = false
-                        }
-
+                            activity.runOnUiThread {
+                                if (isAdded) {
+                                    chatLoaderProgressBar?.visibility = GONE
+                                    subscribeResult(messagesByConversation.second, false)
+                                }
+                            }
+                        }, {
+                            chatLoaderProgressBar?.visibility = GONE
+                        })
                     }
-                })
+                } else {
+                    if (!isNetworkAvailable)
+                        isConnectedToNetwork = false
+                }
+            })
         }
     }
 
@@ -302,7 +300,7 @@ class ChatFragment : Fragment(), IDialogListener, View.OnClickListener {
                     is SendMessageResponse -> message.content
                 }
                 if (!TextUtils.isEmpty(content)) {
-                    it.addMessage(message)
+                    it.addMessage(activity, message)
                     messageListRecyclerView?.scrollToPosition(it.itemCount - 1)
                 }
             }

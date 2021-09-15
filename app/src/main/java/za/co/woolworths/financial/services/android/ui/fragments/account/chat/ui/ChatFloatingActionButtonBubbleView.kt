@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.views.NotificationBadge
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 
 class ChatFloatingActionButtonBubbleView(
@@ -55,7 +56,8 @@ class ChatFloatingActionButtonBubbleView(
     var applyNowState: ApplyNowState,
     var scrollableView: Any? = null,
     var notificationBadge: NotificationBadge? = null,
-    var onlineChatImageViewIndicator: ImageView? = null
+    var onlineChatImageViewIndicator: ImageView? = null,
+    val vocTriggerEvent: VocTriggerEvent? = null
 ) : LifecycleObserver {
 
     private var chatBubbleToolTip: Dialog? = null
@@ -212,7 +214,10 @@ class ChatFloatingActionButtonBubbleView(
         )
 
         activity.sendBroadcast(Intent(LIVE_CHAT_TOAST))
-        activity.startActivity(Intent(activity, WChatActivity::class.java))
+        Intent(activity, WChatActivity::class.java).apply {
+            putExtra(WChatActivity.EXTRA_VOC_TRIGGER_EVENT, vocTriggerEvent)
+            activity.startActivity(this)
+        }
     }
 
     fun build() {

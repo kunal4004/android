@@ -101,6 +101,14 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/edit_amount" />
 
+    <TextView
+        android:id="@+id/invalidPaymentAmountTextView"
+        style="@style/textviewErrorLabelStyle"
+        android:text="@string/update_payment_above_limit_error"
+        app:layout_constraintStart_toStartOf="@+id/pmaAmountEnteredTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pmaAmountEnteredTextView"
+        android:layout_marginTop="-50dp"/>
+
     <EditText
         android:id="@+id/cvvEditTextInput"
         android:layout_width="@dimen/seventy_five_dp"

@@ -18,8 +18,7 @@ import java.util.*
 
 class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
 
-    private val listMessageByConversation: String =
-        Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
+    private val listMessageByConversation: String = Assets.readAsString("graphql/get-all-messages-for-conversation.graphql")
     private val liveChatDBRepository = LiveChatDBRepository()
 
     // Arrange a request to start a subscription.
@@ -98,5 +97,33 @@ class LiveChatListAllAgentConversationImpl : IListAllAgentMessage {
             { apiException ->
                 onFailure(apiException)
             })
+    }
+
+    override fun fetchAllAgentConversation(onSuccess: (Int, SendMessageResponse?) -> Unit) {
+        val conversationId = liveChatDBRepository.getConversationMessageId()
+        if (TextUtils.isEmpty(conversationId)) return
+        API.query(
+            request(conversationId),
+            { listOfConversationsFromAgent ->
+                // Conversation displayed in adapter
+                val chatListFromAdapter = ChatAWSAmplify.getChatMessageList()?.toMutableList()
+
+                // reset agent profile icon flag to default
+                chatListFromAdapter?.forEach {
+                    (it as? SenderMessage)?.isWoolworthIconVisible = true
+                    (it as? SendMessageResponse)?.isWoolworthIconVisible = true
+                }
+
+               val agentListFromAdapter : MutableList<SendMessageResponse>? = chatListFromAdapter?.filterIsInstance<SendMessageResponse>() as? MutableList<SendMessageResponse>?
+
+                val agentListFromService =  listOfConversationsFromAgent.data?.items?.sortedBy { it.createdAt }
+
+                // query last item in  agent list
+                val lastItem = agentListFromService?.firstOrNull()
+
+                val sendMessageResponseList =  agentListFromService?.minus(agentListFromAdapter)
+
+                onSuccess(sendMessageResponseList?.size ?: 0, lastItem)
+            }, {})
     }
 }

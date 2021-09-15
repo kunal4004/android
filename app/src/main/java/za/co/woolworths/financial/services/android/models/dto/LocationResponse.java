@@ -10,5 +10,6 @@ public class LocationResponse {
 
     public int httpCode;
     public Response response;
+    public Boolean inGeofence;
     public List<StoreDetails> Locations;
 }

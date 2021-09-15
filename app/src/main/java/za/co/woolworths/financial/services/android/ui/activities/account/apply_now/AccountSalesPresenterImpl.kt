@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account.apply_
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.awfs.coordination.R
@@ -96,7 +97,14 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
     }
 
     override fun bottomSheetPeekHeight(): Int {
-        return (deviceHeight() / 3) +  KotlinUtils.getStatusBarHeight()
+        val deviceHeight = deviceHeight()
+        val bottomGuidelineTypeValue = TypedValue()
+        WoolworthsApplication.getInstance()?.resources?.getValue(
+            R.integer.my_account_apply_now_bottom_sheet_slider_peek_height,
+            bottomGuidelineTypeValue,
+            true
+        )
+        return (deviceHeight - (deviceHeight * bottomGuidelineTypeValue.float)).toInt()
     }
 
     override fun bottomSheetBehaviourHeight(): Int {

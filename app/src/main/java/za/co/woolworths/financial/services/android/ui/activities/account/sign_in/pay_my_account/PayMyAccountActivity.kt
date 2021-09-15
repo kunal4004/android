@@ -53,8 +53,8 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
             val bundle = Bundle()
             bundle.putString(GET_CARD_RESPONSE, getString(GET_CARD_RESPONSE,""))
             bundle.putBoolean(IS_DONE_BUTTON_ENABLED, getBoolean(IS_DONE_BUTTON_ENABLED, false))
-            val graph = navigationHost?.graph
-            graph?.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
+            val navGraph = navigationHost?.navInflater?.inflate(R.navigation.pay_my_account_nav_host)
+            navGraph?.startDestination = when (getSerializable(SCREEN_TYPE) as? PayMyAccountStartDestinationType
                     ?: PayMyAccountStartDestinationType.CREATE_USER) {
                 PayMyAccountStartDestinationType.CREATE_USER -> R.id.creditAndDebitCardPaymentsFragment
                 PayMyAccountStartDestinationType.MANAGE_CARD -> R.id.manageCardFragment
@@ -63,7 +63,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
                 else -> R.id.addNewPayUCardFragment
             }
 
-            graph?.let { navigationHost?.setGraph(it, bundle) }
+            navGraph?.let { navigationHost?.setGraph(it, bundle) }
         }
     }
 

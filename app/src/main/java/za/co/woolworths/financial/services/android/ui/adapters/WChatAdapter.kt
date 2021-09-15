@@ -31,7 +31,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
 
     fun getMessageList() = chatMessageList
 
-    fun addMessage(message: ChatMessage) {
+    fun addMessage(activity: Activity?,message: ChatMessage) {
         chatMessageList.add(message)
         //Display 1 woolies icon per message received
         var messagesSize = chatMessageList.size
@@ -47,7 +47,7 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
 
             }
         }
-        notifyDataSetChanged()
+        activity?.runOnUiThread { notifyDataSetChanged()  }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {

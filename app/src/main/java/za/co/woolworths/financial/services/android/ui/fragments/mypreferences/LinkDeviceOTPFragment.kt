@@ -27,15 +27,14 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
-import com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.iid.InstanceIdResult
+import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
 import kotlinx.android.synthetic.main.fragment_link_device_otp.*
+import kotlinx.android.synthetic.main.fragment_link_device_otp.sendinOTPLayout
+import kotlinx.android.synthetic.main.fragment_unlink_device_otp.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.android.synthetic.main.layout_sending_otp_request.*
@@ -45,7 +44,6 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
@@ -56,6 +54,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesIn
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
@@ -64,14 +63,12 @@ import java.util.*
 
 class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeListener {
 
-
     private var mConnectionBroadCast: BroadcastReceiver? = null
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
     private var retryApiCall: String? = null
-    private var otpMethod: String? = "SMS"
+    private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
-    private var isOTPValidated: Boolean = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationRequest = createLocationRequest()
     private val locationCallback = object : LocationCallback() {
@@ -110,7 +107,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     linkDeviceOTPEdtTxt4?.requestFocus(View.FOCUS_DOWN)
                 }
             }
-            true
         }
         false
     }
@@ -132,8 +128,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private var mLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
-    private var mValidateLinkDeviceOTPReq: Call<RetrieveOTPResponse>? = null
-    private var mlinkDeviceReq: Call<LinkedDeviceResponse>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -252,8 +246,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         when (v?.id) {
             R.id.didNotReceiveOTPTextView -> {
                 if (!isRetrieveOTPCallInProgress()) {
-                    v?.isEnabled = false
-                    Handler().postDelayed({ v?.isEnabled = true }, AppConstant.DELAY_1000_MS)
+                    v.isEnabled = false
+                    Handler().postDelayed({ v.isEnabled = true }, AppConstant.DELAY_1000_MS)
                     view?.findNavController()?.navigate(R.id.action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
                             ResendOTPBottomSheetFragment.OTP_NUMBER to otpNumber
                     ))
@@ -261,27 +255,32 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             }
             R.id.buttonNext -> {
 
-                makeValidateOTPRequest()
+                makeLinkDeviceRequest()
             }
         }
     }
 
-    private fun makeValidateOTPRequest() {
+    private fun makeLinkDeviceRequest() {
 
-        val otpNumber = getNumberFromEditText(linkDeviceOTPEdtTxt1)
+        otpNumber = getNumberFromEditText(linkDeviceOTPEdtTxt1)
                 .plus(getNumberFromEditText(linkDeviceOTPEdtTxt2))
                 .plus(getNumberFromEditText(linkDeviceOTPEdtTxt3))
                 .plus(getNumberFromEditText(linkDeviceOTPEdtTxt4))
                 .plus(getNumberFromEditText(linkDeviceOTPEdtTxt5))
 
-        if (TextUtils.isEmpty(otpNumber) || otpNumber.length < 5) {
+        otpMethod = otpMethod ?: OTPMethodType.SMS.name
+
+        if (TextUtils.isEmpty(otpNumber) || otpNumber!!.length < 5) {
             return
         }
 
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(linkDeviceOTPEdtTxt5?.windowToken, 0)
 
-        callValidatingOTPAPI(otpNumber)
+        linkDeviceOTPScreen?.visibility = View.GONE
+        sendinOTPLayout?.visibility = View.GONE
+
+        callLinkingDeviceAPI()
     }
 
 
@@ -336,6 +335,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         showSendingOTPProcessing()
         mLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
             override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
+                if (!isAdded || activity == null) return
                 context?.let { didNotReceiveOTPTextView?.setTextColor(ContextCompat.getColor(it, R.color.black)) }
 
                 when (retrieveOTPResponse?.httpCode) {
@@ -373,11 +373,16 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             sendOTPFailedGroup?.visibility = View.GONE
                             sendinOTPLayout?.visibility = View.GONE
                             linkDeviceOTPScreen?.visibility = View.VISIBLE
+                            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
                             retryApiCall = RETRY_GET_OTP
                             return
                         }
-
+                        sendOTPProcessingGroup?.visibility = View.GONE
+                        linkDeviceResultScreen?.visibility = View.GONE
                         sendOTPFailedGroup?.visibility = View.VISIBLE
+                        sendOTPFailedImageView?.visibility = View.VISIBLE
+                        sendOTPFailedTitle?.visibility = View.VISIBLE
+                        sendOTPFailedTitle?.text = "Failed to send OTP."
                     }
                 }
             }
@@ -394,69 +399,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     return
                 }
 
+                sendOTPProcessingGroup?.visibility = View.GONE
+                linkDeviceResultScreen?.visibility = View.GONE
                 sendOTPFailedGroup?.visibility = View.VISIBLE
-            }
-        }, RetrieveOTPResponse::class.java))
-    }
-
-    private fun callValidatingOTPAPI(otp: String) {
-
-        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            return
-        }
-
-        mValidateLinkDeviceOTPReq = otpMethod?.let { type ->
-            OneAppService.validateLinkDeviceOtp(LinkDeviceValidateBody(otp, otpMethod
-                    ?: "SMS"))
-        }
-
-        showValidatingProcessing()
-        linkDeviceOTPScreen?.visibility = View.GONE
-        isOTPValidated = false
-        mValidateLinkDeviceOTPReq?.enqueue(CompletionHandler(object : IResponseListener<RetrieveOTPResponse> {
-            override fun onSuccess(retrieveOTPResponse: RetrieveOTPResponse?) {
-                sendinOTPLayout?.visibility = View.GONE
-                when (retrieveOTPResponse?.httpCode) {
-                    AppConstant.HTTP_OK -> {
-                        if (!isAdded) {
-                            return
-                        }
-                        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-                            return
-                        }
-
-                        isOTPValidated = true
-                        callLinkingDeviceAPI()
-                    }
-                    AppConstant.HTTP_SESSION_TIMEOUT_440 ->
-                        activity?.apply {
-                            if (!isFinishing) {
-                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, retrieveOTPResponse.response?.stsParams, this)
-                            }
-                        }
-                    else -> retrieveOTPResponse?.response?.desc?.let { desc ->
-
-                        showValidateOTPError(desc)
-                        Handler().postDelayed({
-                            linkDeviceOTPEdtTxt5.requestFocus()
-                            val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                            imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
-                        }, AppConstant.DELAY_200_MS)
-                    }
-                }
-            }
-
-            override fun onFailure(error: Throwable?) {
-                context?.apply {
-                    showValidateOTPError(getString(R.string.icr_wrong_otp_error))
-                    Handler().postDelayed({
-                        linkDeviceOTPEdtTxt5?.requestFocus()
-                        val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                        imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
-                    }, AppConstant.DELAY_200_MS)
-                }
+                sendOTPFailedImageView?.visibility = View.VISIBLE
+                sendOTPFailedTitle?.visibility = View.VISIBLE
+                sendOTPFailedTitle?.text = "Failed to send OTP."
             }
         }, RetrieveOTPResponse::class.java))
     }
@@ -508,11 +456,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             return
         }
 
-        linkDeviceOTPScreen?.visibility = View.GONE
-
-        if (!isOTPValidated) {
-            return
-        }
         showLinkingDeviceProcessing()
         //Location permission granted but no current location found.
         if (checkLocationPermission() && Utils.isLocationEnabled(context) && currentLocation == null) {
@@ -526,9 +469,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun retrieveTokenAndCallLinkDevice() {
         if (TextUtils.isEmpty(Utils.getToken())) {
             if (Utils.isGooglePlayServicesAvailable()) {
-                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task: Task<InstanceIdResult?> ->
+
+                FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        task.result?.token?.let {
+                        task.result.token.let {
                             // Save fb token in DB.
                             Utils.setToken(it)
                             sendTokenToLinkDevice(it)
@@ -548,24 +492,31 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun sendTokenToLinkDevice(token: String) {
-
-        mlinkDeviceReq = OneAppService.linkDeviceApi(KotlinUtils.getUserDefinedDeviceName(activity), Utils.getUniqueDeviceID(context), getLocationAddress(currentLocation?.latitude, currentLocation?.longitude), true, token)
-
         linkDeviceOTPScreen?.visibility = View.GONE
-        mlinkDeviceReq?.enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
-            override fun onSuccess(linkedDeviceResponse: LinkedDeviceResponse?) {
+        OneAppService.linkDeviceApi(
+            KotlinUtils.getUserDefinedDeviceName(activity),
+            Utils.getUniqueDeviceID(context),
+            getLocationAddress(currentLocation?.latitude, currentLocation?.longitude),
+            true,
+            token,
+            otpNumber,
+            otpMethod)
+            .enqueue(CompletionHandler(object : IResponseListener<LinkedDeviceResponse> {
+            override fun onSuccess(response: LinkedDeviceResponse?) {
                 sendinOTPLayout?.visibility = View.GONE
-                when (linkedDeviceResponse?.httpCode) {
+                when (response?.httpCode) {
                     AppConstant.HTTP_OK_201.toString() -> {
-                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)))
+                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), this) }
 
                         if (!isAdded) {
                             return
                         }
                         showDeviceLinked()
-                        linkedDeviceResponse.deviceIdentityId?.let { saveDeviceId(it) }
+                        response.deviceIdentityToken?.let{ SessionUtilities.getInstance().deviceIdentityToken =
+                            it }
+                        response.deviceIdentityId?.let { saveDeviceId(it) }
                         setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
-                                "isLinked" to true
+                            MyPreferencesFragment.IS_DEVICE_LINKED to true
                         ))
                         Handler().postDelayed({
 
@@ -590,19 +541,22 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     AppConstant.HTTP_SESSION_TIMEOUT_440.toString() ->
                         activity?.apply {
                             if (!isFinishing) {
-                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, linkedDeviceResponse.response.stsParams, this)
+                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams, this)
                             }
                         }
-                    else -> linkedDeviceResponse?.response?.desc?.let { desc ->
-                        linkDeviceOTPScreen?.visibility = View.VISIBLE
-                        buttonNext?.visibility = View.VISIBLE
-                        didNotReceiveOTPTextView?.visibility = View.VISIBLE
-                        showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
+                    else -> response?.response?.desc?.let { desc ->
+                        showValidateOTPError(getString(R.string.icr_wrong_otp_error))
+                        Handler().postDelayed({
+                            linkDeviceOTPEdtTxt5.requestFocus()
+                            val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                            imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                        }, AppConstant.DELAY_200_MS)
                     }
                 }
             }
 
             override fun onFailure(error: Throwable?) {
+                sendinOTPLayout?.visibility = View.GONE
                 linkDeviceOTPScreen?.visibility = View.VISIBLE
                 buttonNext?.visibility = View.VISIBLE
                 didNotReceiveOTPTextView?.visibility = View.VISIBLE
@@ -653,8 +607,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun showLinkingDeviceProcessing() {
+        buttonNext?.visibility = View.GONE
         sendOTPTitle?.visibility = View.GONE
         sendOTPSubtitle?.visibility = View.GONE
+        didNotReceiveOTPTextView?.visibility = View.GONE
 
         context?.let {
             sendOTPProcessingReq?.text = it.getString(R.string.link_device_linking_processing)
@@ -671,18 +627,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
         context?.let {
             sendOTPProcessingReq?.text = it.getString(R.string.link_device_sending_otp_processing)
-        }
-        sendinOTPLayout?.visibility = View.VISIBLE
-    }
-
-    private fun showValidatingProcessing() {
-        sendOTPTitle?.visibility = View.GONE
-        sendOTPSubtitle?.visibility = View.GONE
-        buttonNext?.visibility = View.GONE
-        didNotReceiveOTPTextView?.visibility = View.GONE
-
-        context?.let {
-            sendOTPProcessingReq?.text = it.getString(R.string.validating_otp)
         }
         sendinOTPLayout?.visibility = View.VISIBLE
     }
@@ -709,7 +653,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_CANCELED) {
-            resetOTPView()
+            Handler().postDelayed({
+                linkDeviceOTPEdtTxt5.requestFocus()
+                val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+            }, AppConstant.DELAY_200_MS)
             linkDeviceOTPScreen?.visibility = View.VISIBLE
         }
 
@@ -721,8 +669,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     }
                     ErrorHandlerActivity.RESULT_CALL_CENTER -> {
                         Utils.makeCall(AppConstant.WOOLWOORTH_CALL_CENTER_NUMBER)
-                        setFragmentResult("linkDevice", bundleOf(
-                                "isLinked" to false
+                        setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
+                            MyPreferencesFragment.IS_DEVICE_LINKED to false
                         ))
                         view?.findNavController()?.navigateUp()
                     }
@@ -743,6 +691,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     override fun onDestroy() {
         super.onDestroy()
+        cancelRetrofitRequest(mLinkDeviceOTPReq)
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE) }
     }
 
@@ -757,7 +706,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     callGetOTPAPI(otpMethod)
                 }
                 RETRY_VALIDATE -> {
-                    makeValidateOTPRequest()
+                    makeLinkDeviceRequest()
                 }
                 RETRY_LINK_DEVICE -> {
                     callLinkingDeviceAPI()

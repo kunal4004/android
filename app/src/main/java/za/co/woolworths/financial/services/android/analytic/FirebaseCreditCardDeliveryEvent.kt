@@ -1,10 +1,11 @@
 package za.co.woolworths.financial.services.android.analytic
 
+import android.app.Activity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.util.Utils
 
-class FirebaseCreditCardDeliveryEvent(private var applyNowState: ApplyNowState?) : FirebaseManagerAnalyticsProperties() {
+class FirebaseCreditCardDeliveryEvent(private var applyNowState: ApplyNowState?, var activity:Activity) : FirebaseManagerAnalyticsProperties() {
 
     private val loginCreditCardDelivery = Triple(loginGoldCreditCardDelivery, loginBlackCreditCardDelivery, loginSilverCreditCardDelivery)
     private val loginCreditCardDeliveryLater = Triple(loginGoldCreditCardDeliveryLater, loginBlackCreditCardDeliveryLater, loginSilverCreditCardDeliveryLater)
@@ -39,5 +40,5 @@ class FirebaseCreditCardDeliveryEvent(private var applyNowState: ApplyNowState?)
         ApplyNowState.GOLD_CREDIT_CARD -> eventName?.first
         ApplyNowState.BLACK_CREDIT_CARD -> eventName?.second
         else -> eventName?.third
-    })
+    }, activity)
 }

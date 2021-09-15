@@ -44,7 +44,7 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
 
     private fun init() {
         mApplyNowState = applyNowState()
-        mFirebaseCreditCardDeliveryEvent = FirebaseCreditCardDeliveryEvent(mApplyNowState)
+        mFirebaseCreditCardDeliveryEvent = activity?.let { FirebaseCreditCardDeliveryEvent(mApplyNowState, it) }
         deliveredToName = SessionUtilities.getInstance()?.jwt?.name?.get(0)
         var creditCardName: String = bindString(R.string.blackCreditCard_title)
         when {

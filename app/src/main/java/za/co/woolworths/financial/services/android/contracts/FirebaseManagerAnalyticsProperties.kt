@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.contracts
 
 open class FirebaseManagerAnalyticsProperties {
     companion object {
-
         const val WTODAYMENU = "wtodaymenu"
         const val SHOPMENU: String = "shopmenu"
         const val MYCARTMENU: String = "mycartmenu"
@@ -87,10 +86,16 @@ open class FirebaseManagerAnalyticsProperties {
 
         const val MY_ACCOUNTS_VTC_GET = "myaccounts_vtc_get"
         const val MY_ACCOUNTS_VTC_PAY = "myaccounts_vtc_pay"
+        const val MY_ACCOUNTS_VTC_VIEWCARDNUMBERS = "vtc_viewcardnumbers"
         const val MY_ACCOUNTS_VTC_HOW_TO = "my_accounts_vtc_howto"
 
         const val MYACCOUNTS_ICR_GET_CARD = "myaccounts_icr_get_card"
         const val MYACCOUNTS_ICR_STORES = "myaccounts_icr_stores"
+        const val MYACCOUNTS_VTC_CARD_REPLACEMENT_START = "vtc_cardreplacement_start"
+        const val MYACCOUNTS_SC_REPLACE_CARD_STORE = "sc_replacecard_store"
+        const val MYACCOUNTS_SC_REPLACE_CARD_F2F = "sc_replacecard_f2f"
+        const val MYACCOUNTS_REPLACE_CARD_STORE_DELIVERY = "replacecard_storedelivery"
+        const val MYACCOUNTS_REPLACE_CARD_F2F = "replacecard_f2f"
         const val MYACCOUNTS_ICR_LINK_START = "myaccounts_icr_link_start"
         const val MYACCOUNTS_ICR_LINK_CARD = "myaccounts_icr_link_card"
         const val MYACCOUNTS_ICR_LINK_CONFIRM = "myaccounts_icr_link_confirm"
@@ -288,7 +293,18 @@ open class FirebaseManagerAnalyticsProperties {
         const val DEVICESECURITY_LINK_CONFIRMED = "devicesecurity_OTP"
         const val DEVICESECURITY_VIEW_LIST = "devicesecurity_view_list"
         const val DEVICESECURITY_DELETE = "devicesecurity_delete"
+        const val inAppReviewRequest = "in_app_review_request"
 
+        //view payment plan
+        const val VIEW_PAYMENT_PLAN_PERSONAL_LOAN = "pl_viewtreatmentplan"
+        const val VIEW_PAYMENT_PLAN_STORE_CARD = "sc_viewtreatmentplan"
+        const val VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION = "Personal Loan landing - Arrears popup - View Treatment plan"
+        const val VIEW_PAYMENT_PLAN_STORE_CARD_ACTION  = "Store Card landing - Arrears popup - View Treatment plan"
+
+        // Voice of Customer
+        const val VOC_SKIP = "voc_skip"
+        const val VOC_SUBMIT = "voc_submit"
+        const val VOC_OPTOUT = "voc_optout"
     }
 
     class PropertyNames {
@@ -358,8 +374,12 @@ open class FirebaseManagerAnalyticsProperties {
             const val linkDeviceConfirmed = "OTP entered and confirmed to link device"
             const val linkDeviceViewList = "View linked devices"
             const val linkDeviceDelete = "Device unlinked / deleted"
+        }
+    }
 
-
+    class PropertyValues {
+        companion object {
+            const val NOT_APPLICABLE: String = "N/A"
         }
     }
 

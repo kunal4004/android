@@ -121,7 +121,7 @@ class ContactUsFinancialServiceFragment : Fragment(), View.OnClickListener {
                     activity?.supportFragmentManager?.let { supportFragmentManager -> whatsAppUnavailableFragment.show(supportFragmentManager, WhatsAppUnavailableFragment::class.java.simpleName) }
                     return
                 }
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CONTACT_US)
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WHATSAPP_CONTACT_US, this) }
                 ScreenManager.presentWhatsAppChatToUsActivity(activity, FEATURE_WHATSAPP, CONTACT_US)
             }
         }

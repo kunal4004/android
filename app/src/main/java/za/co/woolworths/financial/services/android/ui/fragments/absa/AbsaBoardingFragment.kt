@@ -49,7 +49,7 @@ class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.setupPasscode -> {
-                FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.ABSA_CC_SET_UP_PASSCODE)
+                activity?.apply { FirebaseEventDetailManager.tapped(FirebaseManagerAnalyticsProperties.ABSA_CC_SET_UP_PASSCODE, this) }
                 replaceFragment(
                         fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditCardNumber),
                         tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,

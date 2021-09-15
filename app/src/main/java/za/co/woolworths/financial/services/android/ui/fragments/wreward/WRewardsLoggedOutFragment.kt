@@ -47,11 +47,11 @@ class WRewardsLoggedOutFragment : WRewardOnBoardingFragment(), View.OnClickListe
             when (view?.id) {
                 R.id.applyForWRewards -> Utils.openLinkInInternalWebView( WoolworthsApplication.getWrewardsLink())
                 R.id.tvSignIn -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSIGNIN)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSIGNIN, this)
                     ScreenManager.presentSSOSignin(this)
                 }
                 R.id.tvRegister -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSREGISTER)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSREGISTER, this)
                     ScreenManager.presentSSORegister(this)
                 }
             }

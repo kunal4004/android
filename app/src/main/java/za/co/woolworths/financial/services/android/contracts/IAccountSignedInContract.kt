@@ -17,7 +17,9 @@ interface IAccountSignedInContract {
         fun showAccountInArrears(account: Account)
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
+        fun removeBlocksWhenChargedOff()
         fun removeBlocksOnCollectionCustomer()
+        fun showViewTreatmentPlan()
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
     }
@@ -30,13 +32,14 @@ interface IAccountSignedInContract {
         fun setAvailableFundBundleInfo(navDetailController: NavController?)
         fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>?
         fun getToolbarTitle(state: ApplyNowState): String?
-        fun showProductOfferOutstanding()
+        fun showProductOfferOutstanding(state: ApplyNowState)
         fun setAccountCardDetailInfo(navDetailController: NavController?)
         fun setAccountSixMonthInArrears(navDetailController: NavController?)
         fun getSixMonthOutstandingTitleAndCardResource(): Pair<Int, Int>
         fun bottomSheetBehaviourHeight(): Int
         fun bottomSheetBehaviourPeekHeight(): Int
         fun isAccountInArrearsState(): Boolean?
+        fun isAccountInDelinquencyMoreThan6Months(): Boolean
         fun chatWithCollectionAgent()
         fun getDeepLinkData(): JsonObject?
         fun deleteDeepLinkData()

@@ -315,7 +315,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
                 priceHolder.viewVouchers.setOnClickListener(v -> {
                             onItemClick.onViewVouchers();
-                            Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view);
+                            Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view, mContext);
                         }
                 );
                 int activeVouchersCount = voucherDetails.getActiveVouchersCount();
@@ -538,7 +538,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     if (woolworthsApplication != null) {
                         woolworthsApplication.getWGlobalState().setSelectedSKUId(null);
                     }
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTADDTOLIST);
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTADDTOLIST, mContext);
 
                     ArrayList<AddToListRequest> addToListRequests = new ArrayList<>();
                     for (CommerceItem commerceItem : commerceItems) {

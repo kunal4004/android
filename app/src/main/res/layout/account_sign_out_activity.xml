@@ -23,8 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.6"
-        app:layout_constraintHeight_percent="0.6" />
+        app:layout_constraintGuide_percent="@integer/my_account_apply_now_bottom_sheet_slider_peek_height"
+        app:layout_constraintHeight_percent="@integer/my_account_apply_now_bottom_sheet_slider_peek_height" />
 
     <TextView
         android:id="@+id/storeCardTitleTextView"
@@ -65,7 +65,7 @@
         android:text="@string/apply_now"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintBottom_toTopOf="@+id/viewApplicationStatusTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -84,6 +84,19 @@
         app:layout_constraintBottom_toTopOf="@+id/storeCardApplyNowButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/viewApplicationStatusTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp"
+        android:text="@string/view_application_status"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toEndOf="@+id/storeCardApplyNowButton"
+        app:layout_constraintStart_toStartOf="@+id/storeCardApplyNowButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

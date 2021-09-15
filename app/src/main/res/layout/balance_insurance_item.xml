@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <View
         android:id="@+id/vEmptySpace"
         android:layout_width="match_parent"
         android:layout_height="16dp"
-        android:background="@color/recent_search_bg"/>
+        android:background="@color/recent_search_bg" />
 
     <RelativeLayout
         android:id="@+id/rlBalanceInsurance"
@@ -17,11 +16,10 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:gravity="center"
-        android:paddingBottom="16dp"
-        android:paddingEnd="16dp"
         android:paddingStart="16dp"
         android:paddingTop="14dp"
-        >
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,21 +37,19 @@
                 android:layout_alignTop="@+id/logoViewStatement"
                 android:layout_marginBottom="2dp"
                 android:layout_toEndOf="@+id/logoViewStatement"
-                android:text="@string/view_statements"/>
+                android:text="@string/view_statements" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvDescription"
                 style="@style/style_loan_desc"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
         <ImageView
             android:id="@+id/iconBalanceInsurance"
             style="@style/style_loan_img"
-            android:contentDescription="@string/acc_my_detail"
-            />
+            android:contentDescription="@string/acc_my_detail" />
 
     </RelativeLayout>
 
@@ -62,5 +58,5 @@
         android:layout_width="match_parent"
         android:layout_height="0.2dp"
         android:background="@color/outside_border"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </LinearLayout>

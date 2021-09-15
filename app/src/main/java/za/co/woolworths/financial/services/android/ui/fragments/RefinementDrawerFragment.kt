@@ -164,7 +164,7 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
         } else if (TextUtils.isEmpty(getBaseNavigationState()) && TextUtils.isEmpty(getRefinedNavigationState())) {
             setResultForProductListing(emptyNavigationState)
         }
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_SEE_RESULT)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_SEE_RESULT, this) }
         this.closeDownPage()
     }
 
@@ -174,14 +174,14 @@ class RefinementDrawerFragment : Fragment(), OnRefinementOptionSelected, OnRefin
     }
 
     private fun hideProgressBar() {
-        progressBar.visibility = View.INVISIBLE
+        progressBar?.visibility = View.INVISIBLE
         activity?.apply {
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
     }
 
     private fun showProgressBar() {
-        progressBar.visibility = View.VISIBLE
+        progressBar?.visibility = View.VISIBLE
         activity?.apply {
             window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);

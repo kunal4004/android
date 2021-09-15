@@ -7,6 +7,7 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -21,14 +22,17 @@ import kotlinx.android.synthetic.main.account_sales_detail_fragment.*
 import kotlinx.android.synthetic.main.account_sign_out_activity.*
 import za.co.woolworths.financial.services.android.contracts.IAccountSalesContract
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CardHeader
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardType
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentAtPosition
+import za.co.woolworths.financial.services.android.ui.extension.underline
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountSection
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragmentViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.AccountSalesFragment
 import za.co.woolworths.financial.services.android.ui.views.ConfigureViewPagerWithTab
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
-
 
 class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountSalesView, OnClickListener, (Int) -> Unit {
 
@@ -36,13 +40,21 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     var mAccountSalesModelImpl: AccountSalesPresenterImpl? = null
     var mBottomSheetBehaviorState: Int = BottomSheetBehavior.STATE_COLLAPSED
 
+    private val myAccountsFragmentViewModel: MyAccountsFragmentViewModel by viewModels()
+
     @SuppressLint("SourceLockedOrientationActivity", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_sales_activity)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        myAccountsFragmentViewModel.getAccountPresenter(null)
         KotlinUtils.setTransparentStatusBar(this)
 
+        viewApplicationStatusTextView?.apply {
+            underline()
+            AnimationUtilExtension.animateViewPushDown(this)
+            setOnClickListener(this@AccountSalesActivity)
+        }
         mAccountSalesModelImpl = AccountSalesPresenterImpl(this, AccountSalesModelImpl())
         mAccountSalesModelImpl?.apply {
             setAccountSalesIntent(intent)
@@ -162,9 +174,22 @@ class AccountSalesActivity : AppCompatActivity(), IAccountSalesContract.AccountS
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.storeCardApplyNowButton, R.id.bottomApplyNowButton -> {
-                mAccountSalesModelImpl?.onApplyNowButtonTapped()?.let { url -> KotlinUtils.openBrowserWithUrl(url, this) }
+                mAccountSalesModelImpl?.onApplyNowButtonTapped()?.let { url -> KotlinUtils.openUrlInPhoneBrowser(url, this) }
             }
             R.id.navigateBackImageButton -> onBackPressed()
+
+            R.id.viewApplicationStatusTextView -> {
+               val applyNowSection =  when(mAccountSalesModelImpl?.getApplyNowState()) {
+                 ApplyNowState.STORE_CARD -> MyAccountSection.StoreCardLanding
+                   ApplyNowState.PERSONAL_LOAN -> MyAccountSection.PersonalLoanLanding
+                   ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD  -> MyAccountSection.CreditCardLanding
+                   else -> MyAccountSection.AccountLanding
+
+               }
+
+                myAccountsFragmentViewModel.myAccountsPresenter?.viewApplicationStatusLinkInExternalBrowser(applyNowSection, this)
+            }
+
         }
     }
 

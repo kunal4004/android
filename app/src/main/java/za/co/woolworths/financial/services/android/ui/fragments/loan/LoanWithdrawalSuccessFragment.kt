@@ -18,7 +18,7 @@ class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.personalLoanDrawdownComplete)
+        activity?.apply {Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.personalLoanDrawdownComplete, this) }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -96,7 +96,7 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
         vouchers?.get(position)?.description?.apply {
             val arguments: MutableMap<String, String> = HashMap()
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.VOUCHERDESCRIPTION] = Utils.ellipsizeVoucherDescription(this)
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSDESCRIPTION_VOUCHERDESCRIPTION, arguments)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSDESCRIPTION_VOUCHERDESCRIPTION, arguments, this@WRewardsVoucherDetailsActivity)
         }
     }
 

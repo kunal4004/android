@@ -1,12 +1,13 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by W7099877 on 12/10/2016.
  */
 
-public class StoreDetails {
+public class StoreDetails implements Serializable {
     public int id;
     public String name;
     public double latitude;

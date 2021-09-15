@@ -1,12 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.store
 
-import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -16,12 +17,13 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.store_locator_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
-import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity
-import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ParticipatingStoreFragment.Companion.STORE_CARD
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1.Companion.CAMERA_ANIMATION_SPEED
+import za.co.woolworths.financial.services.android.ui.fragments.vtc.SelectStoreDetailsFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.ArrayList
 import java.util.HashMap
@@ -34,12 +36,21 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private var markers: ArrayList<Marker>? = null
     private var mapFragment: SupportMapFragment? = null
     private var previousMarker: Marker? = null
-    private var storeDetailsList: MutableList<StoreDetails>? = null
+    private var storeDetailsList: MutableList<StoreDetails>? = ArrayList(0)
     private var unSelectedIcon: BitmapDescriptor? = null
     private var selectedIcon: BitmapDescriptor? = null
+    private var showStoreSelect: Boolean = false
 
     companion object {
-        fun newInstance() = StoreLocatorFragment()
+        fun newInstance(location: MutableList<StoreDetails>?, storeCardDetails: String?, showStoreSelect: Boolean): StoreLocatorFragment {
+            val fragment = StoreLocatorFragment()
+            fragment.arguments = bundleOf(
+                    STORE_CARD to storeCardDetails
+            )
+            fragment.storeDetailsList = location ?: ArrayList(0)
+            fragment.showStoreSelect = showStoreSelect
+            return fragment
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,6 +59,11 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initViews()
+    }
+
+    private fun initViews() {
         initCardPager()
         initMap()
     }
@@ -81,18 +97,16 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     }
 
     private fun onMapReady() {
-        (activity as? StoreLocatorActivity)?.apply {
 
-            selectedIcon = getSelectedIcon()
-            unSelectedIcon = getUnSelectedIcon()
+        selectedIcon = getSelectedIcon()
+        unSelectedIcon = getUnSelectedIcon()
 
+        activity?.apply {
             mGoogleMap?.setInfoWindowAdapter(MapWindowAdapter(this))
             mGoogleMap?.setOnMarkerClickListener(this@StoreLocatorFragment)
-
-            storeDetailsList = ArrayList()
-            storeDetailsList = getLocation()
-            storeDetailsList?.let { stores -> bindDataWithUI(stores) }
         }
+
+        storeDetailsList?.let { stores -> bindDataWithUI(stores) }
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
@@ -157,14 +171,15 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     }
 
     private fun showStoreDetails(position: Int) {
-        activity?.apply {
-            with(Intent(this, StoreDetailsActivity::class.java)) {
-                putExtra("store", Gson().toJson(storeDetailsList?.get(position)))
-                putExtra("FromStockLocator", false)
-                putExtra("SHOULD_DISPLAY_BACK_ICON", true)
-                startActivity(this)
-                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            }
-        }
+
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_SC_REPLACE_CARD_STORE, this) }
+
+        view?.findNavController()?.navigate(R.id.action_participatingStoreFragment_to_selectStoreDetailsFragment, bundleOf(
+                "store" to Gson().toJson(storeDetailsList?.get(position)),
+                STORE_CARD to arguments?.getString(STORE_CARD),
+                 SelectStoreDetailsFragment.SHOW_STORE_SELECT to showStoreSelect,
+                "FromStockLocator" to false,
+                "SHOULD_DISPLAY_BACK_ICON" to true
+        ))
     }
 }

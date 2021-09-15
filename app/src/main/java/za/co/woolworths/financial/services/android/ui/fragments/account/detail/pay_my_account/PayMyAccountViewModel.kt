@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account
 
+import android.app.Activity
 import android.net.UrlQuerySanitizer
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
@@ -21,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.ConnectException
 import java.util.*
 import javax.annotation.Nullable
@@ -53,6 +56,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     companion object {
         const val DEFAULT_RAND_CURRENCY = "R 0.00"
+        const val MAX_AMOUNT_LIMIT = 50000
     }
 
     private fun createCard(): AddCardResponse {
@@ -243,7 +247,9 @@ class PayMyAccountViewModel : ViewModel() {
     }
 
     fun isConfirmPaymentButtonEnabled(cvvLength: Int, amountEntered: String?): Boolean {
-        return cvvLength > 2 && isChangeIconEnabled(amountEntered)
+        return cvvLength > 2 &&
+                isChangeIconEnabled(amountEntered) &&
+                isAmountBelowMaxLimit(amountEntered)
     }
 
     fun isMaxCVVLength(size: Int): Boolean {
@@ -279,12 +285,48 @@ class PayMyAccountViewModel : ViewModel() {
         return paymentMethodList?.isEmpty() == true
     }
 
-    fun triggerFirebaseEventForEditAmount() {
-        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForAmountEdit(productGroupCode) }
+    fun triggerFirebaseEventForEditAmount(activity: Activity) {
+        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForAmountEdit(productGroupCode, activity) }
     }
 
-    fun triggerFirebaseEventForPaymentComplete() {
-        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode) }
+    fun triggerFirebaseEventForPaymentComplete(activity: Activity) {
+        getAccount()?.productGroupCode?.toLowerCase(Locale.getDefault())?.let { productGroupCode -> pmaFirebaseEvent.sendFirebaseEventForPaymentComplete(productGroupCode, activity) }
+    }
+
+    fun getVocTriggerEventPaymentOptions(): VocTriggerEvent? {
+        getAccount()?.productGroupCode?.let {
+            return when {
+                it.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_SC_PAYMENTOPTIONS
+                }
+                it.equals(AccountsProductGroupCode.PERSONAL_LOAN.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_PL_PAYMENTOPTIONS
+                }
+                else -> {
+                    VocTriggerEvent.CHAT_CC_PAYMENTOPTIONS
+                }
+            }
+        } ?: kotlin.run {
+            return null
+        }
+    }
+
+    fun getVocTriggerEventMyAccounts(): VocTriggerEvent? {
+        getAccount()?.productGroupCode?.let {
+            return when {
+                it.equals(AccountsProductGroupCode.STORE_CARD.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_SC_MYACCOUNTS
+                }
+                it.equals(AccountsProductGroupCode.PERSONAL_LOAN.groupCode, ignoreCase = true) -> {
+                    VocTriggerEvent.CHAT_PL_MYACCOUNTS
+                }
+                else -> {
+                    VocTriggerEvent.CHAT_CC_MYACCOUNTS
+                }
+            }
+        } ?: kotlin.run {
+            return null
+        }
     }
 
     @Nullable
@@ -480,5 +522,9 @@ class PayMyAccountViewModel : ViewModel() {
             val maskedCardNumber = "**** **** **** $number"
             return Triple(cardHolderName, expiredMonthYear, maskedCardNumber)
         }
+    }
+
+    fun isAmountBelowMaxLimit(amount: String?): Boolean {
+        return convertRandFormatToDouble(amount) <= MAX_AMOUNT_LIMIT
     }
 }

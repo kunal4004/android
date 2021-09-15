@@ -54,7 +54,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -67,7 +67,6 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -125,7 +124,9 @@ import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
+import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
 
 public class Utils {
 
@@ -170,12 +171,19 @@ public class Utils {
     };
 
     public static void saveLastLocation(Location loc, Context mContext) {
-
         try {
             JSONObject locationJson = new JSONObject();
 
-            locationJson.put("lat", loc.getLatitude());
-            locationJson.put("lon", loc.getLongitude());
+            Double latitude = null;
+            Double longitude = null;
+
+            if (loc != null) {
+                latitude = loc.getLatitude();
+                longitude = loc.getLongitude();
+            }
+
+            locationJson.put("lat", latitude);
+            locationJson.put("lon", longitude);
 
             sessionDaoSave(SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
         } catch (JSONException e) {
@@ -400,6 +408,9 @@ public class Utils {
     }
 
     public static void alertErrorMessage(Context context, String message) {
+        if ( context  instanceof  Activity && ((Activity) context).isFinishing()) {
+            return;
+        }
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(message);
         builder.setCancelable(false);
@@ -410,7 +421,8 @@ public class Utils {
             }
         });
         AlertDialog dialog = builder.create();
-        dialog.show();
+            dialog.show();
+
 
     }
 
@@ -425,7 +437,6 @@ public class Utils {
         openInternalWebView.putExtra("externalLink", url);
         context.startActivity(openInternalWebView);
     }
-
 
     public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
         //IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
@@ -510,7 +521,7 @@ public class Utils {
         mTooltip.show();
     }
 
-    public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments) {
+    public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments, Activity activity) {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
 
         Bundle params = new Bundle();
@@ -519,22 +530,13 @@ public class Utils {
         }
 
         mFirebaseAnalytics.logEvent(eventName, params);
+        requestInAppReview(eventName, activity);
     }
 
-    public static void triggerFireBaseEvent(String eventName, Map<String, Boolean> argument) {
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
-
-        Bundle params = new Bundle();
-        for (Map.Entry<String, Boolean> entry : argument.entrySet()) {
-            params.putBoolean(entry.getKey(), entry.getValue());
-        }
-
-        mFirebaseAnalytics.logEvent(eventName, params);
-    }
-
-    public static void triggerFireBaseEvents(String eventName) {
+    public static void triggerFireBaseEvents(String eventName, Activity activity) {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
         mFirebaseAnalytics.logEvent(eventName, null);
+        requestInAppReview(eventName, activity);
     }
 
     public static void setScreenName(Activity activity, String screenName) {
@@ -672,7 +674,7 @@ public class Utils {
         if (deviceID == null) {
             deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
             if (deviceID == null) {
-                deviceID = FirebaseInstanceId.getInstance().getId();
+                deviceID = FirebaseInstallations.getInstance().getId().getResult().toString();
                 sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
             }
         }
@@ -986,19 +988,20 @@ public class Utils {
         }
     }
 
-    public static void removeFromDb(SessionDao.KEY key, Context context) throws Exception {
-        SessionDao.getByKey(key).delete();
-    }
-
-    public static void clearCacheHistory(Activity context) {
+    public static void removeFromDb(SessionDao.KEY key) {
         try {
-            QueryBadgeCounter.getInstance().notifyBadgeCounterUpdate(REMOVE_ALL_BADGE_COUNTER);
-            Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
-            Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
-            Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, context);
+            SessionDao.getByKey(key).delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void clearCacheHistory() {
+        QueryBadgeCounter.getInstance().notifyBadgeCounterUpdate(REMOVE_ALL_BADGE_COUNTER);
+        Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
+        Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH);
+        Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION);
+        Utils.removeFromDb(SessionDao.KEY.LIVE_CHAT_EXTRAS);
     }
 
     public static void truncateMaxLine(final TextView tv) {
@@ -1100,6 +1103,8 @@ public class Utils {
     }
 
     public static void deliveryLocationEnabled(Context context, boolean enabled, final View view) {
+        if(context==null)
+            return;
         Animation animFadeOut = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.edit_mode_fade_out);
         animFadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -1613,6 +1618,15 @@ public class Utils {
         }
 
         return token;
+    }
+
+    public static void setInAppReviewRequested() {
+        Utils.sessionDaoSave(IN_APP_REVIEW, "1");
+    }
+
+    public static boolean isInAppReviewRequested() {
+        String firstTime = Utils.getSessionDaoValue(IN_APP_REVIEW);
+        return (firstTime != null);
     }
 
     public static Boolean isGooglePlayServicesAvailable() {

@@ -125,7 +125,7 @@ class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
     }
 
     private fun navigateToAbsaLoginFragment() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_LOGIN_WITH_NEW_PASSCODE)
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_LOGIN_WITH_NEW_PASSCODE, this) }
         replaceFragment(
                 fragment = AbsaLoginFragment.newInstance(mCreditCardNumber),
                 tag = AbsaLoginFragment::class.java.simpleName,

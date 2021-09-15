@@ -42,10 +42,10 @@ class LiveChatDBRepository : DatabaseManager() {
         saveLiveChatParams(liveChatParams)
     }
 
-    fun updateUnreadMessageCount() {
+    fun updateUnreadMessageCount(count : Int  = 1) {
         val liveChatParams = getLiveChatParams()
-        val count = liveChatParams?.unReadMessageCount?.plus(1) ?: 0
-        liveChatParams?.unReadMessageCount = count
+        val unreadCount = liveChatParams?.unReadMessageCount?.plus(count) ?: 0
+        liveChatParams?.unReadMessageCount = unreadCount
         saveLiveChatParams(liveChatParams)
     }
 
@@ -69,7 +69,7 @@ class LiveChatDBRepository : DatabaseManager() {
     @SuppressLint("DefaultLocale")
     fun getSessionVars(): String {
 
-        val customerInfo = ChatCustomerInfo
+        val customerInfo = ChatCustomerInfo.getInstance()
         val account = getAccount()
 
         val prsAccountNumber = account?.accountNumber ?: ""

@@ -37,7 +37,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
             setUpDeliveryNowClicked = getBoolean("setUpDeliveryNowClicked", false);
             val applyNowState: ApplyNowState? = getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
             if (applyNowState != null)
-                mFirebaseCreditCardDeliveryEvent = FirebaseCreditCardDeliveryEvent(applyNowState = applyNowState)
+                mFirebaseCreditCardDeliveryEvent = FirebaseCreditCardDeliveryEvent(applyNowState = applyNowState, activity = this@CreditCardDeliveryActivity)
         }
         actionBar()
         loadNavHostFragment()

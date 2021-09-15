@@ -103,7 +103,7 @@ public class CheckOutFragment extends Fragment {
 
 	@NonNull
 	private String getUrl() {
-		return WoolworthsApplication.getCartCheckoutLink();
+		return WoolworthsApplication.getCartCheckoutLinkWithParams();
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
@@ -148,11 +148,13 @@ public class CheckOutFragment extends Fragment {
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				Activity activity = getActivity();
+				if (activity == null) return true;
 				if (url.contains(QueryString.COMPLETE.getValue())) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_COMPLETE);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_COMPLETE, activity);
 					closeOnNextPage = QueryString.COMPLETE;
 				} else if (url.contains(QueryString.ABANDON.getValue())) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_ABANDON);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_ABANDON, activity);
 					closeOnNextPage = QueryString.ABANDON;
 				}
 				view.loadUrl(url);
@@ -161,15 +163,17 @@ public class CheckOutFragment extends Fragment {
 
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap favicon) {
+				Activity activity = getActivity();
+				if (activity == null) return;
 
 				if (url.contains(QueryString.COMPLETE.getValue())) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_COMPLETE);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_COMPLETE, activity);
 					closeOnNextPage = QueryString.COMPLETE;
 				} else if (url.contains(QueryString.ABANDON.getValue())) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_ABANDON);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_ABANDON, activity);
 					closeOnNextPage = QueryString.ABANDON;
 				} else if (url.contains(ORDER_CONFIRMATION)) {
-					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_ORDER_CONFIRMATION);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_ORDER_CONFIRMATION, activity);
 					initPostCheckout();
 				}
 				// close cart activity if current url equals next url
