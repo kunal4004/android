@@ -60,9 +60,9 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
     private var suburbId: String = ""
 
-    private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher{
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int){}
-        override fun afterTextChanged(s: Editable?){
+    private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun afterTextChanged(s: Editable?) {
             val text = s.toString()
             val length = text.length
 
@@ -74,6 +74,7 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
         }
     }
+    private var confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
     private var selectedSlotResponseFood: AvailableDeliverySlotsResponse? = null
@@ -134,7 +135,14 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
             disablePreviousBtnOther()
         }
 
-        getConfirmDeliveryAddressDetails()
+        when (confirmDeliveryAddressResponse) {
+            null -> {
+                getConfirmDeliveryAddressDetails()
+            }
+            else -> {
+                initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
+            }
+        }
 
         activity?.apply {
             view?.setOnClickListener {
@@ -169,14 +177,14 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
     }
 
     private fun initializeDeliveringToView() {
-        if(arguments == null) {
+        if (arguments == null) {
             checkoutDeliveryDetailsLayout.visibility = View.GONE
             return
         }
         arguments?.apply {
             context?.let { context ->
                 val savedAddress = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
-                if(savedAddress == null || savedAddress?.addresses.isNullOrEmpty()) {
+                if (savedAddress == null || savedAddress?.addresses.isNullOrEmpty()) {
                     checkoutDeliveryDetailsLayout?.visibility = View.GONE
                     return@apply
                 }
@@ -341,9 +349,11 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
     private fun getConfirmDeliveryAddressDetails() {
 
-        if(TextUtils.isEmpty(suburbId)){
-            showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                getString(R.string.common_error_message_without_contact_info))
+        if (TextUtils.isEmpty(suburbId)) {
+            showErrorScreen(
+                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                getString(R.string.common_error_message_without_contact_info)
+            )
             return
         }
 
@@ -355,11 +365,14 @@ class CheckoutAddAddressReturningUserFragment : Fragment(), View.OnClickListener
 
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
+                        confirmDeliveryAddressResponse = response
                         initializeOrderSummary(response.orderSummary)
                     }
                     is Throwable -> {
-                        showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                            getString(R.string.common_error_message_without_contact_info))
+                        showErrorScreen(
+                            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                            getString(R.string.common_error_message_without_contact_info)
+                        )
                     }
                 }
             })
