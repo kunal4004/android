@@ -663,7 +663,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     override fun changeAddress(address: Address) {
         // Save instance of selected address to pass to other screens
         selectedAddress = address
-        savedAddress?.defaultAddressNickname = selectedAddress?.nickname
     }
 
     private fun callChangeAddressApi() {
@@ -685,6 +684,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         )
                                         return@observe
                                     }
+
+                                    // Set default address to selected address
+                                    savedAddress?.defaultAddressNickname = nickname
 
                                     // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
                                     if (!response.unSellableCommerceItems.isNullOrEmpty()) {

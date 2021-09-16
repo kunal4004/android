@@ -379,6 +379,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     }
                     // else Go to native checkout journey
                     else {
+                        if (pBar.getVisibility() == View.VISIBLE) {
+                            return;
+                        }
                         // Get list of saved address and navigate to proper Checkout page.
                         callSavedAddress();
                     }
@@ -394,16 +397,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void callSavedAddress() {
 
+        pBar.setVisibility(View.VISIBLE);
         Call<SavedAddressResponse> savedAddressCall = OneAppService.INSTANCE.getSavedAddresses();
         savedAddressCall.enqueue(new CompletionHandler<>(new IResponseListener<SavedAddressResponse>() {
             @Override
             public void onSuccess(@org.jetbrains.annotations.Nullable SavedAddressResponse response) {
-                switch (response.getHttpCode()){
+                switch (response.getHttpCode()) {
                     case AppConstant.HTTP_OK:
+                        pBar.setVisibility(View.GONE);
                         navigateToCheckout(response);
                         break;
                     default:
-                        if(response.getResponse() != null){
+                        pBar.setVisibility(View.GONE);
+                        if (response.getResponse() != null) {
                             showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, response.getResponse().getMessage());
                         }
                         break;
@@ -418,7 +424,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void showErrorDialog(int errorType, String errorMessage) {
-        if(getActivity() != null) {
+        if (getActivity() != null) {
             Activity activity = getActivity();
             Intent intent = new Intent(activity, ErrorHandlerActivity.class);
             intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType);
@@ -1245,7 +1251,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }
 
         // Retry callback when saved address api fails
-        if(resultCode == ErrorHandlerActivity.RESULT_RETRY){
+        if (resultCode == ErrorHandlerActivity.RESULT_RETRY) {
             callSavedAddress();
         }
     }

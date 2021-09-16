@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -25,6 +24,16 @@ class CheckoutAddressConfirmationListAdapter(
     RecyclerView.Adapter<CheckoutAddressConfirmationListAdapter.CheckoutAddressConfirmationViewHolder>() {
 
     var checkedItemPosition = -1
+
+    init {
+        // If there is a default address nickname present set it selected
+        savedAddress?.addresses?.forEach { address ->
+            if (savedAddress?.defaultAddressNickname == address.nickname) {
+                checkedItemPosition = savedAddress?.addresses?.indexOf(address) ?: -1
+                return@forEach
+            }
+        }
+    }
 
     companion object {
         const val EDIT_SAVED_ADDRESS_RESPONSE_KEY = "editSavedAddressResponse"
@@ -62,10 +71,7 @@ class CheckoutAddressConfirmationListAdapter(
             itemView.apply {
                 hideShimmer(this)
                 savedAddress?.addresses?.get(position)?.let {
-                    // If there is a default address nickname present set it selected
-                    if (savedAddress?.defaultAddressNickname == it.nickname) {
-                        checkedItemPosition = position
-                    }
+
                     title.text = it.nickname
                     subTitle.text = it.address1
                     selector.isChecked = checkedItemPosition == position
@@ -132,10 +138,19 @@ class CheckoutAddressConfirmationListAdapter(
         }
         savedAddress?.addresses?.get(position)?.let {
             listner.changeAddress(it)
+            notifyItemChanged(position, it)
+        }
+        // update last position as well
+        val previousPosition = checkedItemPosition
+        checkedItemPosition = position
+
+        if (previousPosition < 0 || previousPosition >= itemCount) {
+            return
+        }
+        savedAddress?.addresses?.get(previousPosition)?.let {
+            notifyItemChanged(previousPosition, it)
         }
 
-        checkedItemPosition = position
-        notifyDataSetChanged()
     }
 
     interface EventListner {

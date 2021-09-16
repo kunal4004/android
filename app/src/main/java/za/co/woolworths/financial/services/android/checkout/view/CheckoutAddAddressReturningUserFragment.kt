@@ -75,6 +75,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
         }
     }
+    private var confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
     private var selectedSlotResponseFood: AvailableDeliverySlotsResponse? = null
@@ -135,7 +136,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             disablePreviousBtnOther()
         }
 
-        getConfirmDeliveryAddressDetails()
+        when (confirmDeliveryAddressResponse) {
+            null -> {
+                getConfirmDeliveryAddressDetails()
+            }
+            else -> {
+                initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
+            }
+        }
 
         activity?.apply {
             view?.setOnClickListener {
@@ -361,6 +369,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
+                        confirmDeliveryAddressResponse = response
                         initializeOrderSummary(response.orderSummary)
                     }
                     is Throwable -> {
