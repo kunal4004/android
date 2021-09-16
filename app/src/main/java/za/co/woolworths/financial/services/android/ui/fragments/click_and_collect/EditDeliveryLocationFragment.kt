@@ -335,7 +335,7 @@ class EditDeliveryLocationFragment : Fragment(),
                         it.id,
                         it.name,
                         it.fulfillmentStores,
-                        it.storeAddress.address1
+                        it.storeAddress?.address1
                     )
                 }
                 Utils.savePreferredDeliveryLocation(
