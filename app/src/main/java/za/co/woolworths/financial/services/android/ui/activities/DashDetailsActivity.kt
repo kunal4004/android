@@ -78,9 +78,9 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
         try {
             KotlinUtils.openUrlInPhoneBrowser(wooliesAppLink,this)
         } catch (e: ActivityNotFoundException) {
-            KotlinUtils.openUrlInPhoneBrowser("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dashConfig?.appURI}",this)
+            KotlinUtils.openUrlInPhoneBrowser(AppConstant.PLAY_STORE_URL + WoolworthsApplication.getInstance().dashConfig?.appURI,this)
         } catch (e: PackageManager.NameNotFoundException) {
-            KotlinUtils.openUrlInPhoneBrowser("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dashConfig?.appURI}",this)
+            KotlinUtils.openUrlInPhoneBrowser(AppConstant.PLAY_STORE_URL + WoolworthsApplication.getInstance().dashConfig?.appURI,this)
         }
     }
 }
