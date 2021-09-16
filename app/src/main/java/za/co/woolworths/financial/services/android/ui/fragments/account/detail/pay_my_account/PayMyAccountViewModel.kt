@@ -81,12 +81,8 @@ class PayMyAccountViewModel : ViewModel() {
         paymentList?.forEach {
             it.isCardChecked = false
         }
-        if (paymentList?.size ?: 0 > 0) {
-            try {
-                paymentList?.get(selectedPosition)?.isCardChecked = true
-            } catch (error: IndexOutOfBoundsException) {
-                Log.e(TAG, error.message.toString())
-            }
+        if (paymentList?.size ?:0 >= selectedPosition) {
+            paymentList?.get(selectedPosition)?.isCardChecked = true
         }
         return paymentList
     }
