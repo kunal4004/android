@@ -177,8 +177,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         loadingProgressBar.visibility = View.GONE
                         val store = selectedSuburb.let { suburb ->
                             Store(
-                                suburb.id,
-                                suburb.name,
+                                suburb.storeAddress.suburbId,
+                                suburb.storeAddress.suburb,
                                 suburb.fulfillmentStores,
                                 suburb.storeAddress.address1
                             )
@@ -323,8 +323,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 selectedProvince.name,
                 "",
                 selectedSuburb.postalCode,
-                selectedSuburb.name,
-                selectedSuburb.id,
+                validateStoreList?.storeName,
+                "st".plus(validateStoreList?.storeId),
                 selectedProvince.name
             )
 
@@ -443,15 +443,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                 if (it?.data != null) {
                                     validatedSuburbProductResponse =
                                         (it.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
-                                    /*val jsonFileString = Utils.getJsonDataFromAsset(
-                                        activity?.applicationContext,
-                                        "mocks/validateSuburbWithUnsellable.json"
-                                    )
-                                    val mockAddressResponse: ValidatedSuburbProducts = Gson().fromJson(
-                                        jsonFileString,
-                                        object : TypeToken<ValidatedSuburbProducts>() {}.type
-                                    )
-                                    validatedSuburbProductResponse= mockAddressResponse*/
                                     if (validatedSuburbProductResponse != null) {
                                         if (validatedSuburbProductResponse?.stores?.isNotEmpty() == true) {
                                             changeTextView.visibility = View.VISIBLE
