@@ -69,7 +69,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferOutstanding()
+        showProductOfferOutstanding(accountInfo?.first)
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -110,23 +110,56 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-    override fun showProductOfferOutstanding() {
-        val account = getAccount()
-        account?.apply {
-            return when {
-                (!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)) -> {
-                    // account is in arrears for more than 6 months
-                    mainView?.removeBlocksOnCollectionCustomer()!!
+    override fun showProductOfferOutstanding(state: ApplyNowState) {
+        if(WoolworthsApplication.getAccountOptions() != null) {
+            val supported = when(state) {
+                ApplyNowState.PERSONAL_LOAN -> {
+                    Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumSupportedAppBuildNumber!!
                 }
-                !productOfferingGoodStanding -> { // account is in arrears
-                    mainView?.showAccountInArrears(account)
-                    val informationModel = getCardProductInformation(true)
-                    mainView?.showAccountHelp(informationModel)!!
+                ApplyNowState.STORE_CARD -> {
+                    Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumSupportedAppBuildNumber!!
                 }
-                else -> {
-                    mainView?.hideAccountInArrears(account)
-                    val informationInArrearsModel = getCardProductInformation(false)
-                    mainView?.showAccountHelp(informationInArrearsModel)!!
+                else -> false
+            }
+
+            val minimumDelinquencyCycle = when(state){
+                ApplyNowState.PERSONAL_LOAN -> {
+                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.minimumDelinquencyCycle!!
+                }
+                ApplyNowState.STORE_CARD -> {
+                    WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.storeCard.minimumDelinquencyCycle!!
+                }
+                else -> null
+            }
+
+
+            val account = getAccount()
+            account?.apply {
+                return when {
+                    !productOfferingGoodStanding && supported &&
+                            minimumDelinquencyCycle != null &&
+                            delinquencyCycle>=minimumDelinquencyCycle -> {
+                        if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                            mainView?.removeBlocksWhenChargedOff()
+                        }
+                        mainView?.showViewTreatmentPlan()!!
+                    }
+                    else -> {
+                        if(!productOfferingGoodStanding && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                            // account is in arrears for more than 6 months
+                            mainView?.removeBlocksOnCollectionCustomer()!!
+                        }
+                        else if(!productOfferingGoodStanding) { // account is in arrears
+                            mainView?.showAccountInArrears(account)
+                            val informationModel = getCardProductInformation(true)
+                            mainView?.showAccountHelp(informationModel)!!
+                        }
+                        else{
+                            mainView?.hideAccountInArrears(account)
+                            val informationInArrearsModel = getCardProductInformation(false)
+                            mainView?.showAccountHelp(informationInArrearsModel)!!
+                        }
+                    }
                 }
             }
         }

@@ -54,7 +54,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -67,7 +67,6 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -409,6 +408,9 @@ public class Utils {
     }
 
     public static void alertErrorMessage(Context context, String message) {
+        if ( context  instanceof  Activity && ((Activity) context).isFinishing()) {
+            return;
+        }
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(message);
         builder.setCancelable(false);
@@ -419,7 +421,8 @@ public class Utils {
             }
         });
         AlertDialog dialog = builder.create();
-        dialog.show();
+            dialog.show();
+
 
     }
 
@@ -671,7 +674,7 @@ public class Utils {
         if (deviceID == null) {
             deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
             if (deviceID == null) {
-                deviceID = FirebaseInstanceId.getInstance().getId();
+                deviceID = FirebaseInstallations.getInstance().getId().getResult().toString();
                 sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
             }
         }
@@ -985,19 +988,20 @@ public class Utils {
         }
     }
 
-    public static void removeFromDb(SessionDao.KEY key, Context context) throws Exception {
-        SessionDao.getByKey(key).delete();
-    }
-
-    public static void clearCacheHistory(Activity context) {
+    public static void removeFromDb(SessionDao.KEY key) {
         try {
-            QueryBadgeCounter.getInstance().notifyBadgeCounterUpdate(REMOVE_ALL_BADGE_COUNTER);
-            Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
-            Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
-            Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, context);
+            SessionDao.getByKey(key).delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void clearCacheHistory() {
+        QueryBadgeCounter.getInstance().notifyBadgeCounterUpdate(REMOVE_ALL_BADGE_COUNTER);
+        Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
+        Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH);
+        Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION);
+        Utils.removeFromDb(SessionDao.KEY.LIVE_CHAT_EXTRAS);
     }
 
     public static void truncateMaxLine(final TextView tv) {
@@ -1099,6 +1103,8 @@ public class Utils {
     }
 
     public static void deliveryLocationEnabled(Context context, boolean enabled, final View view) {
+        if(context==null)
+            return;
         Animation animFadeOut = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.edit_mode_fade_out);
         animFadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -1426,15 +1432,15 @@ public class Utils {
         }
     }
 
-    public static int getMinimumSupportedAppBuildNumber(String minimumSupportedAppBuildNumber) {
-        return TextUtils.isEmpty(minimumSupportedAppBuildNumber) ? 0 : Integer.valueOf(minimumSupportedAppBuildNumber);
+    public static int getMinimumSupportedAppBuildNumber(Integer  minimumSupportedAppBuildNumber) {
+        return minimumSupportedAppBuildNumber;
     }
 
     public static Integer getAppBuildNumber() {
         return BuildConfig.VERSION_CODE;
     }
 
-    public static Boolean isFeatureEnabled(String minimumSupportedAppBuildNumber) {
+    public static Boolean isFeatureEnabled(Integer  minimumSupportedAppBuildNumber) {
         return (getAppBuildNumber() >= getMinimumSupportedAppBuildNumber(minimumSupportedAppBuildNumber));
     }
 
