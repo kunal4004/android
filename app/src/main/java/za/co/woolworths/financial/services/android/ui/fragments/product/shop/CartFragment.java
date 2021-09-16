@@ -1261,10 +1261,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         String currentSuburbId = null;
         String currentStoreId = null;
         int currentCartCount = QueryBadgeCounter.getInstance().getCartCount();
-        if (deliveryLocation.suburb != null)
-            currentSuburbId = deliveryLocation.suburb.id;
-        if (deliveryLocation.store != null)
-            currentStoreId = deliveryLocation.store.getId();
+        if (deliveryLocation !=null) {
+            if (deliveryLocation.suburb != null)
+                currentSuburbId = deliveryLocation.suburb.id;
+            if (deliveryLocation.store != null)
+                currentStoreId = deliveryLocation.store.getId();
+        }
         if (currentStoreId == null && currentSuburbId == null) {
             //Fresh install with no location selection.
         } else if (currentSuburbId == null && !(currentStoreId.equals(localStoreId))) {

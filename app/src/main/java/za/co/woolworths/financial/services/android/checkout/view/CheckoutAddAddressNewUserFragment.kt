@@ -12,7 +12,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
@@ -34,7 +33,6 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.ADD_NEW_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.DELETE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UNSELLABLE_CHANGE_STORE_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.UPDATE_SAVED_ADDRESS_REQUEST_KEY
 import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_DESCRIPTION
@@ -73,12 +71,14 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
  * Created by Kunal Uttarwar on 29/05/21.
  */
-class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
+class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(),
+    View.OnClickListener {
 
     private var deliveringOptionsList: List<String>? = null
     private var navController: NavController? = null
@@ -116,8 +116,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
+        arguments?.apply {
             if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
                 val editSavedAddress = getString(EDIT_SAVED_ADDRESS_RESPONSE_KEY)
@@ -126,6 +125,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         editSavedAddress,
                         SavedAddressResponse::class.java
                     ) as? SavedAddressResponse)
+                    baseFragBundle?.putString(SAVED_ADDRESS_KEY, Utils.toJson(savedAddressResponse))
                     val savedAddress =
                         savedAddressResponse?.addresses?.get(getInt(EDIT_ADDRESS_POSITION_KEY))
                     selectedAddressId = savedAddress?.id.toString()
@@ -138,11 +138,18 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             } else if (containsKey(ADD_NEW_ADDRESS_KEY)) {
                 //Add new Address from delivery.
                 isAddNewAddress = getBoolean(ADD_NEW_ADDRESS_KEY)
-                savedAddressResponse = (Utils.jsonStringToObject(
-                    getString(SAVED_ADDRESS_RESPONSE_KEY),
+                savedAddressResponse = Utils.jsonStringToObject(
+                    getString(SAVED_ADDRESS_KEY),
                     SavedAddressResponse::class.java
-                ) as? SavedAddressResponse)
+                ) as? SavedAddressResponse
+                    ?: getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
                 setHasOptionsMenu(true)
+            } else if (containsKey(SAVED_ADDRESS_KEY)) {
+                savedAddressResponse = Utils.jsonStringToObject(
+                    getString(SAVED_ADDRESS_KEY),
+                    SavedAddressResponse::class.java
+                ) as? SavedAddressResponse
+                    ?: getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
             }
         }
     }
@@ -182,6 +189,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun setTextFields() {
         enableDisableUserInputEditText(
+            addressNicknameEditText,
+            true,
+            addressNicknameErrorMsg.isVisible
+        )
+        enableDisableUserInputEditText(
             unitComplexFloorEditText,
             isEnable = true,
             isErrorScreen = false
@@ -204,10 +216,11 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun initView() {
         if (selectedAddressId.isNotEmpty()) {
             //it's not empty means it's a edit address call.
-            if (savedAddressResponse?.defaultAddressNickname == arguments?.getBundle("bundle")
-                    ?.getInt(EDIT_ADDRESS_POSITION_KEY)?.let {
-                        savedAddressResponse?.addresses?.get(it)?.nickname
-                    }
+            if (savedAddressResponse?.defaultAddressNickname == arguments?.getInt(
+                    EDIT_ADDRESS_POSITION_KEY
+                )?.let {
+                    savedAddressResponse?.addresses?.get(it)?.nickname
+                }
             ) {
                 // Do Nothing
             } else if (savedAddressResponse?.addresses?.size!! > 1) {
@@ -365,14 +378,15 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, bundle ->
-            var screenName = ""
+            var screenName: String
             bundle.apply {
                 screenName = getString(KEY_ARGS_SCREEN_NAME, "")
             }
 
             when (screenName) {
                 SCREEN_NAME_ADD_NEW_ADDRESS -> {
-                    savedAddressResponse?.defaultAddressNickname = selectedAddress.savedAddress.nickname
+                    savedAddressResponse?.defaultAddressNickname =
+                        selectedAddress.savedAddress.nickname
                     view?.findNavController()?.navigate(
                         R.id.action_CheckoutAddAddressNewUserFragment_to_CheckoutAddAddressReturningUserFragment,
                         bundleOf(
@@ -423,6 +437,16 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             selectedAddress.storeId = onSelectedSuburb?.id.toString()
         }
         selectedAddress.savedAddress.postalCode = onSelectedSuburb?.postalCode.toString()
+        enableDisableUserInputEditText(
+            addressNicknameEditText,
+            true,
+            addressNicknameErrorMsg.isVisible
+        )
+        enableDisableUserInputEditText(
+            unitComplexFloorEditText,
+            isEnable = true,
+            isErrorScreen = false
+        )
         enableEditText()
         suburbEditText?.setText(onSelectedSuburb?.name)
         if (onSelectedSuburb?.postalCode.isNullOrEmpty()) {
@@ -475,7 +499,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
         if (!selectedAddress.savedAddress.city.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
         selectedAddress.savedAddress.apply {
-            address1 = addressText1.plus(" ").plus(addressText2)
+            address1 = if (place.name.isNullOrEmpty()) addressText1.plus(" ")
+                .plus(addressText2) else place.name
             latitude = place.latLng?.latitude
             longitude = place.latLng?.longitude
             placesId = place.id
@@ -649,6 +674,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                     options
                 )
             ) {
+                selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
                 titleTextView?.background =
                     bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
                 titleTextView?.setTextColor(
@@ -661,6 +687,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
             titleTextView?.setOnClickListener {
                 resetOtherDeliveringTitle(it.tag as Int)
                 selectedDeliveryAddressType = (it as TextView).text as? String
+                selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
                 deliveringAddressTypesErrorMsg.visibility = View.GONE
                 // change background of selected textView
                 it.background =
@@ -732,6 +759,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                             break
                                         }
                                     }
+                                    baseFragBundle?.putString(
+                                        SAVED_ADDRESS_KEY,
+                                        Utils.toJson(savedAddressResponse)
+                                    )
                                 }
                                 setFragmentResult(
                                     DELETE_SAVED_ADDRESS_REQUEST_KEY,
@@ -863,8 +894,21 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         is AddAddressResponse -> {
                             when (response.httpCode) {
                                 HTTP_OK, HTTP_OK_201 -> {
-                                    if (savedAddressResponse != null && response != null)
-                                        savedAddressResponse?.addresses?.add(response.address)
+                                    if (response != null) {
+                                        if (savedAddressResponse?.addresses != null) {
+                                            savedAddressResponse?.addresses?.add(response.address)
+                                        } else {
+                                            if (savedAddressResponse == null)
+                                                savedAddressResponse = SavedAddressResponse()
+                                            val addressList: ArrayList<Address> = ArrayList()
+                                            addressList.add(response.address)
+                                            savedAddressResponse?.addresses = addressList
+                                        }
+                                        baseFragBundle?.putString(
+                                            SAVED_ADDRESS_KEY,
+                                            Utils.toJson(savedAddressResponse)
+                                        )
+                                    }
                                     response.address.nickname?.let { nickName ->
                                         onAddNewAddress(
                                             nickName
@@ -1117,8 +1161,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                         when (response.httpCode) {
                             HTTP_OK, HTTP_OK_201 -> {
                                 if (savedAddressResponse != null && response != null) {
-                                    arguments?.getBundle("bundle")
-                                        ?.getInt(EDIT_ADDRESS_POSITION_KEY)
+                                    arguments?.getInt(EDIT_ADDRESS_POSITION_KEY)
                                         ?.let { position ->
                                             (savedAddressResponse?.addresses as? MutableList<Address>)?.removeAt(
                                                 position
@@ -1128,6 +1171,10 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
                                                     position, address
                                                 )
                                             }
+                                            baseFragBundle?.putString(
+                                                SAVED_ADDRESS_KEY,
+                                                Utils.toJson(savedAddressResponse)
+                                            )
                                         }
                                     response.address?.nickname?.let { callChangeAddressApi(it) }
                                 }
@@ -1226,8 +1273,8 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
 
     private fun showNickNameExist() {
         addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
-        addressNicknameErrorMsg?.visibility = View.VISIBLE
         addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
+        showAnimationErrorMessage(addressNicknameErrorMsg, View.VISIBLE, 0)
     }
 
     private fun presentErrorDialog(title: String, subTitle: String, type: Int) {
@@ -1250,7 +1297,7 @@ class CheckoutAddAddressNewUserFragment : Fragment(), View.OnClickListener {
     private fun navigateToAddressConfirmation() {
         navController?.navigate(
             R.id.action_CheckoutAddAddressNewUserFragment_to_checkoutAddressConfirmationFragment,
-            bundleOf(SAVED_ADDRESS_KEY to savedAddressResponse)
+            baseFragBundle
         )
     }
 
