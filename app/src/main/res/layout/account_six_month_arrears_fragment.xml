@@ -10,6 +10,7 @@
         android:id="@+id/toolbarContainer"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/ten_dp"
         android:layout_gravity="top"
         android:contentDescription="@string/account_six_month_arrear_toolbar"
         android:background="@color/white"
@@ -82,14 +83,14 @@
         android:layout_marginBottom="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintGuide_begin="32dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/endGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="32dp" />
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
     <TextView
         android:id="@+id/arrearsDescTextView"
@@ -140,7 +141,7 @@
         style="@style/whiteButtonBackgroundStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@color/white"
         android:fontFamily="@font/futura_medium_ttf"
         android:text="@string/call_the_call_centre"
