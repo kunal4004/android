@@ -406,7 +406,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         )
         bundle.putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, type)
         view?.findNavController()?.navigate(
-            R.id.action_CheckoutAddAddressNewUserFragment_to_ErrorHandlerBottomSheetDialog,
+            R.id.action_CheckoutAddAddressReturningUserFragment_to_ErrorHandlerBottomSheetDialog,
             bundle
         )
     }
