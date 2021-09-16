@@ -39,6 +39,7 @@ class LiveChatSendMessageImpl : ILiveChatSendMessage {
 
         val variables = HashMap<String, Any>()
         val conversationId = liveChatDBRepository.getConversationMessageId()
+        val customerInfo = ChatCustomerInfo.getInstance()
 
         variables["sessionId"] = conversationId
         variables["sessionType"] = liveChatDBRepository.getSessionType()
@@ -47,8 +48,8 @@ class LiveChatSendMessageImpl : ILiveChatSendMessage {
         variables["contentType"] = "text"
         variables["relatedMessageId"] = ""
         variables["sessionVars"] = liveChatDBRepository.getSessionVars()
-        variables["name"] = ChatCustomerInfo.getCustomerFamilyName()
-        variables["email"] = ChatCustomerInfo.getCustomerEmail()
+        variables["name"] = customerInfo.getCustomerFamilyName()
+        variables["email"] = customerInfo.getCustomerEmail()
 
         return SimpleGraphQLRequest(
             messageGraphQL,

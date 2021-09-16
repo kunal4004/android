@@ -103,7 +103,7 @@ class BPISubmitClaimDetailFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.btnGetDocument -> KotlinUtils.openLinkInInternalWebView(activity, BPIViewModel.externalURL)
+            R.id.btnGetDocument -> KotlinUtils.openLinkInInternalWebView(activity, BPIViewModel.externalURL, false, null)
         }
     }
 }
