@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -43,6 +44,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     fun setActionBar() {
         toolbar?.visibility = View.VISIBLE
         setSupportActionBar(toolbar)
+        KotlinUtils.setTransparentStatusBar(this)
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(true)
@@ -122,16 +124,16 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
 
-        when(fragmentList[0]) {
-             is ProvinceSelectorFragment -> {
+        when (fragmentList[0]) {
+            is ProvinceSelectorFragment -> {
                 (fragmentList[0] as ProvinceSelectorFragment).onBackPressed()
             }
-             is SuburbSelectorFragment -> {
+            is SuburbSelectorFragment -> {
                 (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
             }
-             is UnsellableItemsFragment, is CheckoutAddAddressReturningUserFragment -> {
-                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+            is UnsellableItemsFragment, is CheckoutAddAddressReturningUserFragment -> {
                 finish()
+                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
             }
             else -> {
                 super.onBackPressed()
