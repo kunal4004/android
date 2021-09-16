@@ -47,8 +47,6 @@ class PayMyAccountViewModel : ViewModel() {
     var queryPaymentMethod: MutableLiveData<Boolean> = MutableLiveData()
     var deleteCardList: MutableList<Pair<GetPaymentMethod?, Int>>? = mutableListOf()
     private var payUPayResultRequest: MutableLiveData<PayUPayResultRequest> = MutableLiveData()
-    private var TAG: String = PayMyAccountViewModel::class.java.simpleName
-
 
 
     var pma3dSecureRedirection: PMARedirection? = null
