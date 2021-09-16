@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.*
@@ -10,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,7 +41,6 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
-import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
@@ -126,6 +125,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initViews() {
+        addFragmentListner()
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
         initializeFoodSubstitution()
@@ -148,6 +148,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         activity?.apply {
             view?.setOnClickListener {
                 Utils.hideSoftKeyboard(this)
+            }
+        }
+    }
+
+    private fun addFragmentListner() {
+        setFragmentResultListener(ErrorHandlerBottomSheetDialog.RESULT_ERROR_CODE_RETRY) { _, bundle ->
+            when (bundle.getInt("bundle")) {
+                ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS -> {
+                    getConfirmDeliveryAddressDetails()
+                }
             }
         }
     }
@@ -354,9 +364,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun getConfirmDeliveryAddressDetails() {
 
         if (TextUtils.isEmpty(suburbId)) {
-            showErrorScreen(
-                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                getString(R.string.common_error_message_without_contact_info)
+            presentErrorDialog(
+                getString(R.string.common_error_unfortunately_something_went_wrong),
+                getString(R.string.common_error_message_without_contact_info),
+                ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
             )
             return
         }
@@ -373,22 +384,31 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         initializeOrderSummary(response.orderSummary)
                     }
                     is Throwable -> {
-                        showErrorScreen(
-                            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
-                            getString(R.string.common_error_message_without_contact_info)
+                        presentErrorDialog(
+                            getString(R.string.common_error_unfortunately_something_went_wrong),
+                            getString(R.string.no_internet_subtitle),
+                            ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
                         )
                     }
                 }
             })
     }
 
-    private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
-        activity?.apply {
-            val intent = Intent(this, ErrorHandlerActivity::class.java)
-            intent.putExtra("errorType", errorType)
-            intent.putExtra("errorMessage", errorMessage)
-            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
-        }
+    private fun presentErrorDialog(title: String, subTitle: String, type: Int) {
+        val bundle = Bundle()
+        bundle.putString(
+            ErrorHandlerBottomSheetDialog.ERROR_TITLE,
+            title
+        )
+        bundle.putString(
+            ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION,
+            subTitle
+        )
+        bundle.putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, type)
+        view?.findNavController()?.navigate(
+            R.id.action_CheckoutAddAddressNewUserFragment_to_ErrorHandlerBottomSheetDialog,
+            bundle
+        )
     }
 
     private fun getAvailableDeliverySlots() {

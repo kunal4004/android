@@ -216,10 +216,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private fun initView() {
         if (selectedAddressId.isNotEmpty()) {
             //it's not empty means it's a edit address call.
-            if (savedAddressResponse?.defaultAddressNickname == arguments?.getBundle("bundle")
-                    ?.getInt(EDIT_ADDRESS_POSITION_KEY)?.let {
-                        savedAddressResponse?.addresses?.get(it)?.nickname
-                    }
+            if (savedAddressResponse?.defaultAddressNickname == arguments?.getInt(
+                    EDIT_ADDRESS_POSITION_KEY
+                )?.let {
+                    savedAddressResponse?.addresses?.get(it)?.nickname
+                }
             ) {
                 // Do Nothing
             } else if (savedAddressResponse?.addresses?.size!! > 1) {
@@ -498,7 +499,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         if (!selectedAddress.savedAddress.city.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
         selectedAddress.savedAddress.apply {
-            address1 = addressText1.plus(" ").plus(addressText2)
+            address1 = if (place.name.isNullOrEmpty()) addressText1.plus(" ")
+                .plus(addressText2) else place.name
             latitude = place.latLng?.latitude
             longitude = place.latLng?.longitude
             placesId = place.id
@@ -672,6 +674,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     options
                 )
             ) {
+                selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
                 titleTextView?.background =
                     bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
                 titleTextView?.setTextColor(
@@ -684,6 +687,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             titleTextView?.setOnClickListener {
                 resetOtherDeliveringTitle(it.tag as Int)
                 selectedDeliveryAddressType = (it as TextView).text as? String
+                selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
                 deliveringAddressTypesErrorMsg.visibility = View.GONE
                 // change background of selected textView
                 it.background =
@@ -1157,8 +1161,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         when (response.httpCode) {
                             HTTP_OK, HTTP_OK_201 -> {
                                 if (savedAddressResponse != null && response != null) {
-                                    arguments?.getBundle("bundle")
-                                        ?.getInt(EDIT_ADDRESS_POSITION_KEY)
+                                    arguments?.getInt(EDIT_ADDRESS_POSITION_KEY)
                                         ?.let { position ->
                                             (savedAddressResponse?.addresses as? MutableList<Address>)?.removeAt(
                                                 position

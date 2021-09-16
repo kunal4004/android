@@ -687,6 +687,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
                                     // Set default address to selected address
                                     savedAddress?.defaultAddressNickname = nickname
+                                    baseFragBundle?.putString(
+                                        SAVED_ADDRESS_KEY,
+                                        Utils.toJson(savedAddress)
+                                    )
 
                                     // Check if any unSellableCommerceItems[ ] > 0 display the items in modal as per the design
                                     if (!response.unSellableCommerceItems.isNullOrEmpty()) {
