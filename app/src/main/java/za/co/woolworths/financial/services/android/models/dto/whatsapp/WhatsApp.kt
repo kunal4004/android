@@ -9,5 +9,5 @@ data class WhatsApp(
         @SerializedName("text") val text: String,
         @SerializedName("showWhatsAppIcon") var showWhatsAppIcon: ShowWhatsAppIcon,
         @SerializedName("availabilityTimes") val availabilityTimes: AvailabilityTimes,
-        @SerializedName("minimumSupportedAppBuildNumber") val minimumSupportedAppBuildNumber: String
+        @SerializedName("minimumSupportedAppBuildNumber") val minimumSupportedAppBuildNumber: Int
 )
