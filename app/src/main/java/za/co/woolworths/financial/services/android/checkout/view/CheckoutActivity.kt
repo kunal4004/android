@@ -116,14 +116,14 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
 
-        when {
-            fragmentList[0] is ProvinceSelectorFragment -> {
+        when(fragmentList[0]) {
+             is ProvinceSelectorFragment -> {
                 (fragmentList[0] as ProvinceSelectorFragment).onBackPressed()
             }
-            fragmentList[0] is SuburbSelectorFragment -> {
+             is SuburbSelectorFragment -> {
                 (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
             }
-            fragmentList[0] is UnsellableItemsFragment -> {
+             is UnsellableItemsFragment, is CheckoutAddAddressReturningUserFragment -> {
                 overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
                 finish()
             }
