@@ -170,8 +170,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun setSuburb() {
-        localSuburbId.let { suburbId ->
-            checkoutAddressConfirmationViewModel.setSuburb(suburbId).observe(viewLifecycleOwner, {
+        selectedSuburb.storeAddress.suburbId?.let { storeId ->
+            checkoutAddressConfirmationViewModel.setSuburb(storeId).observe(viewLifecycleOwner, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
                         loadingProgressBar.visibility = View.GONE
@@ -324,7 +324,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 "",
                 selectedSuburb.postalCode,
                 validateStoreList?.storeName,
-                "st".plus(validateStoreList?.storeId),
+                validateStoreList?.storeId,
                 selectedProvince.name
             )
 
