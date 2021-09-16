@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -66,17 +65,6 @@ class CheckoutAddressConfirmationListAdapter(
         holder.bindItem(position)
     }
 
-    fun setData(savedAddressResponse: SavedAddressResponse?) {
-        savedAddress = savedAddressResponse
-        // If there is a default address nickname present set it selected
-        savedAddress?.addresses?.forEach { address ->
-            if (savedAddress?.defaultAddressNickname == address.nickname) {
-                checkedItemPosition = savedAddress?.addresses?.indexOf(address) ?: -1
-                return@forEach
-            }
-        }
-    }
-
     inner class CheckoutAddressConfirmationViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         fun bindItem(position: Int) {
@@ -116,7 +104,7 @@ class CheckoutAddressConfirmationListAdapter(
                     bundle.putInt(EDIT_ADDRESS_POSITION_KEY, position)
                     navController?.navigate(
                         R.id.CheckoutAddAddressNewUserFragment,
-                        bundleOf("bundle" to bundle)
+                        bundle
                     )
                 }
             }

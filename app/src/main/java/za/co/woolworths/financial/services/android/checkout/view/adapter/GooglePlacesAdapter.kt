@@ -110,7 +110,6 @@ class GooglePlacesAdapter(context: Activity, geoData: PlacesClient) : BaseAdapte
         val token = AutocompleteSessionToken.newInstance()
         val request = FindAutocompletePredictionsRequest.builder()
             .setCountry("ZA")
-            .setTypeFilter(TypeFilter.ADDRESS)
             .setSessionToken(token)
             .setQuery(constraint.toString())
             .build()
