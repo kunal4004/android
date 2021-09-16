@@ -6,7 +6,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 import java.net.URLEncoder
 import java.util.*
 
-data class PayMyAccount(var minimumSupportedAppBuildNumber: String? = "0", private var addCardBaseUrl: String?="") {
+data class PayMyAccount(var minimumSupportedAppBuildNumber: Int, private var addCardBaseUrl: String?="") {
 
     fun addCardUrl(productGroupCode: String): String {
         return addCardBaseUrl
