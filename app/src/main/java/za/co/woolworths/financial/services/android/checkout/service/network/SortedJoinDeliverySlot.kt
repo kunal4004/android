@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 class SortedJoinDeliverySlot {
     @SerializedName("hourSlots")
-    var hourSlots: List<String>? = null
+    var hourSlots: List<HourSlots>? = null
 
     @SerializedName("headerDates")
     var headerDates: List<HeaderDate>? = null
