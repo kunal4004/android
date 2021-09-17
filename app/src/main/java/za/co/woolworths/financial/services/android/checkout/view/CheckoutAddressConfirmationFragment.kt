@@ -171,40 +171,55 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun setSuburb() {
         selectedSuburb.storeAddress.suburbId?.let { storeId ->
-            checkoutAddressConfirmationViewModel.setSuburb(storeId).observe(viewLifecycleOwner, {
-                when (it.responseStatus) {
-                    ResponseStatus.SUCCESS -> {
-                        loadingProgressBar.visibility = View.GONE
-                        val store = selectedSuburb.let { suburb ->
-                            Store(
-                                suburb.storeAddress.suburbId,
-                                suburb.storeAddress.suburb,
-                                suburb.fulfillmentStores,
-                                suburb.storeAddress.address1
+            loadingProgressBar.visibility = View.VISIBLE
+            checkoutAddressConfirmationViewModel.setSuburb(storeId)
+                .observe(viewLifecycleOwner, { response ->
+                    loadingProgressBar.visibility = View.GONE
+                    when (response) {
+                        is SetDeliveryLocationSuburbResponse -> {
+                            when (response.httpCode) {
+                                HttpURLConnection.HTTP_OK, AppConstant.HTTP_OK_201 -> {
+                                    val store = selectedSuburb.let { suburb ->
+                                        Store(
+                                            suburb.storeAddress.suburbId,
+                                            suburb.storeAddress.suburb,
+                                            suburb.fulfillmentStores,
+                                            suburb.storeAddress.address1
+                                        )
+                                    }
+                                    val shoppingDeliveryLocation = ShoppingDeliveryLocation(
+                                        selectedProvince,
+                                        null,
+                                        store
+                                    )
+                                    shoppingDeliveryLocation.storePickup = true
+                                    Utils.savePreferredDeliveryLocation(
+                                        shoppingDeliveryLocation
+                                    )
+                                    if (!isDeliverySelected) {
+                                        // call slot selection
+                                        navController?.navigate(
+                                            R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
+                                            baseFragBundle
+                                        )
+                                    }
+                                }
+                                else -> {
+                                    showErrorScreen(
+                                        ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                        getString(R.string.common_error_message_without_contact_info)
+                                    )
+                                }
+                            }
+                        }
+                        is Throwable -> {
+                            showErrorScreen(
+                                ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                getString(R.string.common_error_message_without_contact_info)
                             )
                         }
-                        val shoppingDeliveryLocation = ShoppingDeliveryLocation(
-                            selectedProvince,
-                            null,
-                            store
-                        )
-                        shoppingDeliveryLocation.storePickup = true
-                        Utils.savePreferredDeliveryLocation(
-                            shoppingDeliveryLocation
-                        )
-                        if (!isDeliverySelected) {
-                            // call slot selection
-                            navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment)
-                        }
                     }
-                    ResponseStatus.LOADING -> {
-                        loadingProgressBar.visibility = View.VISIBLE
-                    }
-                    ResponseStatus.ERROR -> {
-                        loadingProgressBar.visibility = View.GONE
-                    }
-                }
-            })
+                })
         }
     }
 
@@ -324,7 +339,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 "",
                 selectedSuburb.postalCode,
                 validateStoreList?.storeName,
-                validateStoreList?.storeId,
+                "st".plus(validateStoreList?.storeId),
                 selectedProvince.name
             )
 

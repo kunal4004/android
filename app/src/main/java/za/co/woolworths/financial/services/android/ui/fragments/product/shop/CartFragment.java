@@ -1264,7 +1264,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         String currentSuburbId = null;
         String currentStoreId = null;
         int currentCartCount = QueryBadgeCounter.getInstance().getCartCount();
-        if (deliveryLocation !=null) {
+        if (deliveryLocation != null) {
             if (deliveryLocation.suburb != null)
                 currentSuburbId = deliveryLocation.suburb.id;
             if (deliveryLocation.store != null)
@@ -1299,7 +1299,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentByTag(CartActivity.TAG);
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         if (fragmentTransaction != null && currentFragment != null) {
-            fragmentTransaction.detach(this).attach(this).commit();
+            getActivity().getSupportFragmentManager().beginTransaction().detach(this).commit();
+            getActivity().getSupportFragmentManager().beginTransaction().attach(this).commit();
         }
     }
 
