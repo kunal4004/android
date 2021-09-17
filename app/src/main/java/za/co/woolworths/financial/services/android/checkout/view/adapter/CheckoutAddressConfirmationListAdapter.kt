@@ -103,7 +103,7 @@ class CheckoutAddressConfirmationListAdapter(
                     bundle.putString(EDIT_SAVED_ADDRESS_RESPONSE_KEY, Utils.toJson(savedAddress))
                     bundle.putInt(EDIT_ADDRESS_POSITION_KEY, position)
                     navController?.navigate(
-                        R.id.CheckoutAddAddressNewUserFragment,
+                        R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment,
                         bundle
                     )
                 }

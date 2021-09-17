@@ -26,9 +26,14 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
+
         <action
             android:id="@+id/action_CheckoutAddAddressNewUserFragment_to_checkoutAddressConfirmationFragment"
-            app:destination="@id/checkoutAddressConfirmationFragment" />
+            app:destination="@id/checkoutAddressConfirmationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
 
         <action
             android:id="@+id/action_to_unsellableItemsFragment"
@@ -66,7 +71,11 @@
         tools:layout="@layout/checkout_add_address_retuning_user">
         <action
             android:id="@+id/action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment"
-            app:destination="@id/checkoutAddressConfirmationFragment" />
+            app:destination="@id/checkoutAddressConfirmationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
 
     <fragment
@@ -84,7 +93,11 @@
         tools:layout="@layout/checkout_address_confirmation">
         <action
             android:id="@+id/action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressNewUserFragment"
-            app:destination="@id/CheckoutAddAddressNewUserFragment" />
+            app:destination="@id/CheckoutAddAddressNewUserFragment"
+            app:enterAnim="@anim/slide_up_anim"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_down_anim"/>
 
         <action
             android:id="@+id/action_getSuburb_suburbSelectorFragment"
