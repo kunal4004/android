@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.detail.
 
 import android.app.Activity
 import android.net.UrlQuerySanitizer
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.awfs.coordination.R
