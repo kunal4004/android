@@ -78,7 +78,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(WoolworthsApplication.getAppContext(), channelId);
 
         Intent intent = null;
-        if(payload.get("feature")!=null) {
+
             if (payload.get("feature") != null && payload.get("feature").equals("Product Listing"))
             {
                 String json = payload.get("parameters").replaceAll("\\\\", "");
@@ -88,7 +88,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
                 intent.setData(Uri.parse(parameters.get("url").getAsString()));
                 intent.setAction(Intent.ACTION_VIEW);
             }
-        }
+        
         /*Deep link to PDP disabled*/
         /*else if (payload.get("feature").equals("Product Detail")){
             String json = payload.get("parameters").replaceAll("\\\\", "");
