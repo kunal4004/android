@@ -241,9 +241,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         deliveringToAddress.append(addressName)
                         return@forEach
                     }
+                    if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
+                        checkoutDeliveryDetailsLayout.visibility = View.GONE
+                    }
                 }
                 tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
-
                 checkoutDeliveryDetailsLayout?.setOnClickListener(this@CheckoutAddAddressReturningUserFragment)
 
             }

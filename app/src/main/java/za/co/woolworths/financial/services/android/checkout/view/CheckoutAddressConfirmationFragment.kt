@@ -171,6 +171,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun setSuburb() {
         selectedSuburb.storeAddress.suburbId?.let { storeId ->
+            loadingProgressBar.visibility = View.VISIBLE
             checkoutAddressConfirmationViewModel.setSuburb(storeId)
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
@@ -197,7 +198,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     )
                                     if (!isDeliverySelected) {
                                         // call slot selection
-                                        navController?.navigate(R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment, baseFragBundle)
+                                        navController?.navigate(
+                                            R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
+                                            baseFragBundle
+                                        )
                                     }
                                 }
                                 else -> {
@@ -335,7 +339,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 "",
                 selectedSuburb.postalCode,
                 validateStoreList?.storeName,
-                validateStoreList?.storeId,
+                "st".plus(validateStoreList?.storeId),
                 selectedProvince.name
             )
 
