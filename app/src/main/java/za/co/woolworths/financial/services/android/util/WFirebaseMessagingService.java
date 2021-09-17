@@ -79,7 +79,8 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         Intent intent = null;
         if(payload.get("feature")!=null) {
-            if (payload.get("feature").equals("Product Listing")) {
+            if (payload.get("feature") != null && payload.get("feature").equals("Product Listing"))
+            {
                 String json = payload.get("parameters").replaceAll("\\\\", "");
                 JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
