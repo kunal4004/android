@@ -162,7 +162,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public static final int RESULT_CODE_DEVICE_LINKED = 5431;
 
     private final List<String> unavailableAccounts;
-    private AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
+    public static AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
 
     private NestedScrollView mScrollView;
     private ErrorHandlerView mErrorHandlerView;
@@ -1569,6 +1569,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 case PERSONAL_LOAN:
                     navigateToLinkedPersonalLoan();
                     break;
+                case GOLD_CREDIT_CARD:
+                case BLACK_CREDIT_CARD:
                 case SILVER_CREDIT_CARD:
                     navigateToLinkedCreditCard();
                     break;
