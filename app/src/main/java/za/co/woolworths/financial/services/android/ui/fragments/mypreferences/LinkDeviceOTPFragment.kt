@@ -607,17 +607,16 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                         }
                                                     }
                                                 }
-
-                                            }else -> {
-                                            goToProduct()
-                                        }
+                                            }
+                                            else -> {
+                                                goToProduct()
+                                            }
                                         }
                                     }
                                     false -> {
                                         //Todo: schedule delivery WOP-12589
                                     }
                                 }
-
                             }
                         }
                         else {
