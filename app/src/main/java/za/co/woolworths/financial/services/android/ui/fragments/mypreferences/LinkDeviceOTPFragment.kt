@@ -627,7 +627,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    System.err.println("TEST error: "+ error.toString())
                     goToProduct()
                 }
 
@@ -651,7 +650,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun isPLCInGoodStanding(): Boolean {
         var isEnable = false
-        System.err.println("TEST: cardWithPLCState?.envelopeNumber " + cardWithPLCState?.envelopeNumber.isNullOrEmpty())
         if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
             val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
             for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
@@ -665,7 +663,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun goToProduct() {
-        System.err.println("TEST: go to product")
         val intent = Intent()
         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
         intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
