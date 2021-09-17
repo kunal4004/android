@@ -308,7 +308,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
             Activity activity = (Activity) context;
+        if (activity != null) {
             mToggleItemRemoved = (ToggleRemoveItem) activity;
+        }
 
     }
 
