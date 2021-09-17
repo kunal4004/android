@@ -438,6 +438,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
         checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
         startActivity(checkoutActivityIntent);
+        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
     }
 
     @Override
