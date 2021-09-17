@@ -43,6 +43,8 @@ class AppConstant {
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT = "Accounts Product Statement"
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT = "Pay My Account"
 
+        const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }

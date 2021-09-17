@@ -6,7 +6,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.LiveChatEnabl
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 
 data class InAppChat(
-        val minimumSupportedAppBuildNumber: String,
+        val minimumSupportedAppBuildNumber: Int,
         val apiURI: String,
         val userPoolId: String,
         val userPoolWebClientId: String,

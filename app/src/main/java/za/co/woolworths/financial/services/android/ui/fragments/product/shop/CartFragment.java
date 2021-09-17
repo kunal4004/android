@@ -1148,10 +1148,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == CART_DEFAULT_ERROR_TAPPED || resultCode == DIALOG_REQUEST_CODE) {
             Activity activity = getActivity();
-            activity.setResult(CART_DEFAULT_ERROR_TAPPED);
-            activity.finish();
-            activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
-            return;
+            if (activity != null) {
+                activity.setResult(CART_DEFAULT_ERROR_TAPPED);
+                activity.finish();
+                activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+                return;
+            }
         }
         if (requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
             if (SessionUtilities.getInstance().isUserAuthenticated()) {
