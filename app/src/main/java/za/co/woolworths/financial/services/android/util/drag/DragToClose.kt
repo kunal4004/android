@@ -261,10 +261,10 @@ class DragToClose : FrameLayout {
     private fun initializeAttributes(attrs: AttributeSet?) {
         val array = context.theme.obtainStyledAttributes(attrs, R.styleable.DragToClose, 0, 0)
         try {
-            draggableViewId = array.getResourceId(R.styleable.DragToClose_dragtoclose_draggableView, -1)
-            draggableContainerId = array.getResourceId(R.styleable.DragToClose_dragtoclose_draggableContainer, -1)
-            finishActivity = array.getBoolean(R.styleable.DragToClose_dragtoclose_finishActivity, true)
-            closeOnClick = array.getBoolean(R.styleable.DragToClose_dragtoclose_closeOnClick, false)
+            draggableViewId = array.getResourceId(R.styleable.DragToClose_dragToClose_draggableView, -1)
+            draggableContainerId = array.getResourceId(R.styleable.DragToClose_dragToClose_draggableContainer, -1)
+            finishActivity = array.getBoolean(R.styleable.DragToClose_dragToClose_finishActivity, true)
+            closeOnClick = array.getBoolean(R.styleable.DragToClose_dragToClose_closeOnClick, false)
             if (draggableViewId == -1 || draggableContainerId == -1) {
                 throw IllegalArgumentException("draggableView and draggableContainer attributes are required.")
             }

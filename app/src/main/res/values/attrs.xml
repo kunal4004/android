@@ -416,13 +416,11 @@
         <attr name="nbEllipsizeText" format="string" />
     </declare-styleable>
 
-        <declare-styleable name="DragToClose">
-            <attr name="dragtoclose_draggableView" format="reference" />
-            <attr name="dragtoclose_draggableContainer" format="reference" />
-            <attr name="dragtoclose_finishActivity" format="boolean" />
-            <attr name="dragtoclose_closeOnClick" format="boolean" />
-        </declare-styleable>
-
-
+    <declare-styleable name="DragToClose">
+        <attr name="dragToClose_draggableView" format="reference" />
+        <attr name="dragToClose_draggableContainer" format="reference" />
+        <attr name="dragToClose_finishActivity" format="boolean" />
+        <attr name="dragToClose_closeOnClick" format="boolean" />
+    </declare-styleable>
 
 </resources>

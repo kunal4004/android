@@ -5,8 +5,8 @@
     android:id="@+id/drag_to_close"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    drag:dragtoclose_draggableContainer="@+id/mainLayout"
-    drag:dragtoclose_draggableView="@+id/imProductView">
+    drag:dragToClose_draggableContainer="@+id/mainLayout"
+    drag:dragToClose_draggableView="@+id/imProductView">
 
 
     <RelativeLayout
@@ -42,8 +42,8 @@
 
             <ImageView
                 android:id="@+id/imClose"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="@dimen/product_close_image_size"
+                android:layout_height="@dimen/product_close_image_size"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="@dimen/default_margin"
                 android:layout_marginEnd="@dimen/sixteen_dp"
