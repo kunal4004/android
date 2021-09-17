@@ -67,6 +67,10 @@
         <action
             android:id="@+id/action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment"
             app:destination="@id/checkoutAddressConfirmationFragment" />
+
+        <action
+            android:id="@+id/action_CheckoutAddAddressReturningUserFragment_to_ErrorHandlerBottomSheetDialog"
+            app:destination="@id/errorHandlerBottomSheetDialog" />
     </fragment>
 
     <fragment
