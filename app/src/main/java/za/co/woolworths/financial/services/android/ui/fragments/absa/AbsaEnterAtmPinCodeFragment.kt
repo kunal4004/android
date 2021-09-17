@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDia
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.account.GeneralErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
@@ -201,6 +202,11 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
                 responseMessage.trim().contains("218-invalid card status.", true) -> {
                     FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
                     showErrorScreen(ErrorHandlerActivity.ATM_PIN_LOCKED)
+                    activity?.apply {
+                        val intent = Intent(this, GeneralErrorHandlerActivity::class.java)
+                        startActivity(intent)
+                        overridePendingTransition(0,0)
+                    }
                 }
                 else -> {
                     FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)

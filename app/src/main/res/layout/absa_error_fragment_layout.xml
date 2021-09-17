@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/errorLogoImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/placeholder"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineForErrorLogoImageView"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEndMargin"
+        app:layout_constraintStart_toStartOf="@+id/guidelineBeginMargin"
+        app:srcCompat="@drawable/ic_passcode_locked_icon" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineForErrorLogoImageView"
+        style="@style/guideLineDefaultHorizontalStyle"
+        app:layout_constraintGuide_percent="0.18" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineForErrorTitleTextView"
+        style="@style/guideLineDefaultHorizontalStyle"
+        app:layout_constraintGuide_percent="0.35" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBeginMargin"
+        style="@style/guideLineDefaultVerticalStyle"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEndMargin"
+        style="@style/guideLineDefaultVerticalStyle"
+        app:layout_constraintGuide_end="24dp" />
+
+    <TextView
+        android:id="@+id/errorTitleTextView"
+        style="@style/absa_page_title_style"
+        android:text="@string/absa_mobile_app_pin_blocked_title"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineForErrorTitleTextView"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEndMargin"
+        app:layout_constraintStart_toStartOf="@+id/guidelineBeginMargin" />
+
+    <TextView
+        android:id="@+id/errorDescriptionBlock1TextView"
+        style="@style/absa_page_desc_style"
+        android:text="@string/absa_mobile_app_pin_blocked_desc_block_1"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEndMargin"
+        app:layout_constraintStart_toStartOf="@+id/guidelineBeginMargin"
+        app:layout_constraintTop_toTopOf="@+id/guidelineForErrorTitleTextView" />
+
+    <TextView
+        android:id="@+id/errorDescriptionBlock2TextView"
+        style="@style/absa_page_desc_style"
+        android:layout_marginTop="8dp"
+        android:text="@string/absa_mobile_app_pin_blocked_desc_block_2"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEndMargin"
+        app:layout_constraintStart_toStartOf="@+id/guidelineBeginMargin"
+        app:layout_constraintTop_toBottomOf="@+id/errorDescriptionBlock1TextView" />
+
+    <Button
+        android:id="@+id/actionButton"
+        style="@style/blackButtonStyle"
+        android:layout_width="0dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/ok_got_it"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineEndMargin"
+        app:layout_constraintStart_toStartOf="@+id/guidelineBeginMargin" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
