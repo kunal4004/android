@@ -259,12 +259,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 selectedAddress.savedAddress.address2 = it
             }
         }
-        postalCode?.apply {
-            afterTextChanged {
-                if (it.isNotEmpty())
-                    showErrorInputField(this, View.GONE)
-            }
-        }
         recipientNameEditText?.apply {
             afterTextChanged {
                 if (it.isNotEmpty())
@@ -633,6 +627,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun disablePostalCode() {
+        showErrorInputField(postalCode, View.GONE)
         postalCode.setBackgroundResource(R.drawable.input_box_inactive_bg)
         postalCode.isClickable = false
         postalCode.isEnabled = false

@@ -249,7 +249,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             setMarginToStoreListView()
         clickNCollectTitleLayout.visibility = View.VISIBLE
         addressConfirmationClicknCollect.visibility = View.VISIBLE
-        showStoreListView(suburbId)
+        fetchStoreListFromValidateSelectedSuburb(suburbId)
         if (!earliestDateValue?.text.isNullOrEmpty()) {
             earliestDateTitleLayout.visibility = View.VISIBLE
         }
@@ -441,7 +441,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         whereWeDeliveringTitle.text = bindString(R.string.where_should_we_deliver)
     }
 
-    private fun showStoreListView(suburbId: String?) {
+    private fun fetchStoreListFromValidateSelectedSuburb(suburbId: String?) {
         if (suburbId.equals(DEFAULT_STORE_ID)) {
             // This means collection tab clicked for the first time.
             getSuburb(selectedProvince)
@@ -577,6 +577,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun showStoreList() {
         if (!validatedSuburbProductResponse?.stores.isNullOrEmpty()) {
             searchLayout.visibility = View.VISIBLE
+            storeInputValue.text.clear()
             changeTextView.visibility = View.VISIBLE
             changeProvinceTextView.visibility = View.GONE
             btnAddressConfirmation.text = getString(R.string.confirm)
@@ -585,8 +586,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             changeProvinceTextView.visibility = View.VISIBLE
             btnAddressConfirmation.text = getString(R.string.change_suburb)
         }
-        earliestDateValue?.text =
-            validatedSuburbProductResponse?.firstAvailableFoodDeliveryDate ?: ""
+        setEarliestDeliveryDates(validateStoreList)
         storeListAdapter =
             validatedSuburbProductResponse?.stores?.let { it1 ->
                 CheckoutStoreSelectionAdapter(
@@ -615,9 +615,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun setEarliestDeliveryDates(validateStoreList: ValidateStoreList?) {
         earliestDateValue?.text =
             validateStoreList?.firstAvailableFoodDeliveryDate ?: ""
-        if (!earliestDateValue?.text.isNullOrEmpty()) {
+        if (earliestDateValue?.text.isNullOrEmpty()) {
+            earliestDateTitleLayout.visibility = View.GONE
+        } else
             earliestDateTitleLayout.visibility = View.VISIBLE
-        }
     }
 
     private fun setupViewModel() {
