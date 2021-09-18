@@ -197,7 +197,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         shoppingDeliveryLocation
                                     )
                                     if (!isDeliverySelected) {
-                                        // call slot selection
+                                        //TODO Add web breakout implementation here instead of slot selection.
                                         navController?.navigate(
                                             R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
                                             baseFragBundle
@@ -247,8 +247,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             removeMarginToStoreListView()
         } else
             setMarginToStoreListView()
-        clickNCollectTitleLayout.visibility = View.VISIBLE
-        addressConfirmationClicknCollect.visibility = View.VISIBLE
         fetchStoreListFromValidateSelectedSuburb(suburbId)
         if (!earliestDateValue?.text.isNullOrEmpty()) {
             earliestDateTitleLayout.visibility = View.VISIBLE
@@ -446,6 +444,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             // This means collection tab clicked for the first time.
             getSuburb(selectedProvince)
         } else if (suburbId.isNullOrEmpty()) {
+            clickNCollectTitleLayout.visibility = View.VISIBLE
+            addressConfirmationClicknCollect.visibility = View.VISIBLE
             showStoreList()
         } else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
@@ -455,6 +455,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         when (it.responseStatus) {
                             ResponseStatus.SUCCESS -> {
                                 loadingProgressBar.visibility = View.GONE
+                                clickNCollectTitleLayout.visibility = View.VISIBLE
+                                addressConfirmationClicknCollect.visibility = View.VISIBLE
                                 if (it?.data != null) {
                                     validatedSuburbProductResponse =
                                         (it.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
@@ -494,6 +496,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     })
             }
         } else if (localSuburbId != null && validatedSuburbProductResponse != null) {
+            clickNCollectTitleLayout.visibility = View.VISIBLE
+            addressConfirmationClicknCollect.visibility = View.VISIBLE
             showStoreList()
         }
     }
