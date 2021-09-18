@@ -157,14 +157,15 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     @Override
     public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
         if (productLists != null) {
-            if (productLists.size() == 1) {
-                ScreenManager.presentProductDetails(getActivity(), mSearchText, productLists.get(0));
+            //.. this condition not required as per the requirement..
+            //    only product list screen will open
+//            if (productLists.size() == 1) {
+//                ScreenManager.presentProductDetails(getActivity(), mSearchText, productLists.get(0));
+//            } else {
+            if (!loadMoreData) {
+                bindRecyclerViewWithUI(productLists);
             } else {
-                if (!loadMoreData) {
-                    bindRecyclerViewWithUI(productLists);
-                } else {
-                    loadMoreData(productLists);
-                }
+                loadMoreData(productLists);
             }
         }
     }
