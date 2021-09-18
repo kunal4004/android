@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.checkout.service.network.HourSlots
 
 /**
  * Created by Kunal Uttarwar on 22/07/21.
  */
 class SlotsTimeGridViewAdapter(
-    context: Context, val resource: Int, private val deliveryGridTitleList: List<String>
-) : ArrayAdapter<String>(context, resource, deliveryGridTitleList) {
+    context: Context, val resource: Int, private val deliveryGridTitleList: List<HourSlots>
+) : ArrayAdapter<HourSlots>(context, resource, deliveryGridTitleList) {
     private val contxt: Context = context
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -32,7 +33,7 @@ class SlotsTimeGridViewAdapter(
         } else {
             mHolder = convrtView.tag as GridViewHolder
         }
-        mHolder.gridTitle?.text = deliveryGridTitleList[position]
+        mHolder.gridTitle?.text = deliveryGridTitleList[position].slot
         return convrtView!!
     }
 
@@ -44,7 +45,7 @@ class SlotsTimeGridViewAdapter(
         return position.toLong()
     }
 
-    override fun getItem(position: Int): String {
+    override fun getItem(position: Int): HourSlots {
         return deliveryGridTitleList[position]
     }
 

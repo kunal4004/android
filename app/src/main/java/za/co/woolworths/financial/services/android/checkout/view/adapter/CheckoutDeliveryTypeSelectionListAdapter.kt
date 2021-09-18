@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
-import android.content.Context
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
@@ -53,12 +52,6 @@ class CheckoutDeliveryTypeSelectionListAdapter(
         holder.bindItem(position)
     }
 
-    fun getEstimatedDeliveryDates(deliverySlotsList: Map<Any, Double>, context: Context): String {
-        val startDeliveryDay = ((deliverySlotsList).getValue("startDeliveryDay")).toInt().toString()
-        val endDeliveryDay = ((deliverySlotsList).getValue("endDeliveryDay")).toInt().toString()
-        return context.getString(R.string.working_days_text, startDeliveryDay, endDeliveryDay)
-    }
-
     inner class CheckoutDeliveryTypeSelectionViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         fun bindItem(position: Int) {
@@ -75,11 +68,9 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                             )
                         )
                     } else {
-                        getEstimatedDeliveryDates(
-                            openDayDeliverySlotsList?.get(position) as Map<Any, Double>,
-                            context
-                        )
+                        (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue("deliveryInDays")
                     }
+
                     editAddressImageView.visibility = View.GONE
                     slotPriceButton.visibility = View.VISIBLE
                     slotPriceButton.text = context.getString(R.string.currency).plus(

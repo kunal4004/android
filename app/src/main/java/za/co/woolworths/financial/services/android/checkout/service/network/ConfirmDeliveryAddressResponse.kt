@@ -26,7 +26,7 @@ class ConfirmDeliveryAddressResponse {
     var hasDeliverySlotsConflict: Boolean? = null
 
     @SerializedName("sortedFoodDeliverySlots")
-    var sortedFoodDeliverySlots: List<Any>? = null
+    var sortedFoodDeliverySlots: List<SortedFoodDeliverySlot>? = null
 
     @SerializedName("sortedJoinDeliverySlots")
     var sortedJoinDeliverySlots: List<SortedJoinDeliverySlot>? = null
@@ -47,7 +47,7 @@ class ConfirmDeliveryAddressResponse {
     var links: List<Any>? = null
 
     @SerializedName("sortedOtherDeliverySlots")
-    var sortedOtherDeliverySlots: List<Any>? = null
+    var sortedOtherDeliverySlots: List<SortedOtherDeliverySlot>? = null
 
     @SerializedName("splitEnabled")
     var splitEnabled: Boolean? = null

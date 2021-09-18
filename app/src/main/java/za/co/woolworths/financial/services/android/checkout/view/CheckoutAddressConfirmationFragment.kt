@@ -630,8 +630,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             this,
             ViewModelFactory(
                 CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper(),
-                    CheckoutMockApiHelper()
+                    CheckoutAddAddressNewUserApiHelper()
                 )
             )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)

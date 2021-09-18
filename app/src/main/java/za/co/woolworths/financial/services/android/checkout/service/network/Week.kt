@@ -6,6 +6,6 @@ class Week {
     @SerializedName("date")
     var date: String? = null
 
-    @SerializedName("slots")
+    @SerializedName("daySlots")
     var slots: List<Slot>? = null
 }

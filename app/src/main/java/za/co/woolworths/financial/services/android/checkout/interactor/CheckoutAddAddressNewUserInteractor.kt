@@ -10,8 +10,7 @@ import za.co.woolworths.financial.services.android.models.network.ConfirmDeliver
  * Created by Kunal Uttarwar on 04/06/21.
  */
 class CheckoutAddAddressNewUserInteractor(
-    private val checkoutAddAddressNewUserApiHelper: CheckoutAddAddressNewUserApiHelper,
-    private val checkoutMockApiHelper: CheckoutMockApiHelper
+    private val checkoutAddAddressNewUserApiHelper: CheckoutAddAddressNewUserApiHelper
 ) {
 
     fun getSuburbs(provinceId: String) = checkoutAddAddressNewUserApiHelper.getSuburbs(provinceId)
@@ -29,7 +28,6 @@ class CheckoutAddAddressNewUserInteractor(
         checkoutAddAddressNewUserApiHelper.deleteAddress(addressId)
 
     fun changeAddress(nickName: String) = checkoutAddAddressNewUserApiHelper.changeAddress(nickName)
-    fun getAvailableDeliverySlots() = checkoutMockApiHelper.getAvailableDeliverySlots()
     fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody) =
         checkoutAddAddressNewUserApiHelper.getConfirmDeliveryAddressDetails(body = body)
 }
