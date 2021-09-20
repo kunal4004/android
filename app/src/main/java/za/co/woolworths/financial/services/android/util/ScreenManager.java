@@ -39,12 +39,14 @@ public class ScreenManager {
     public static final int SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE = 2330;
 
     public static void presentSSOSignin(Activity activity) {
-        Intent intent = new Intent(activity, SSOActivity.class);
-        intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
-        intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
-        intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
-        activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
-        activity.overridePendingTransition(0, 0);
+        if(activity!=null) {
+            Intent intent = new Intent(activity, SSOActivity.class);
+            intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+            intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+            intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+            activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+            activity.overridePendingTransition(0, 0);
+        }
     }
 
     public static void presentCartSSOSignin(Activity activity) {
@@ -154,12 +156,15 @@ public class ScreenManager {
     }
 
     public static void presentSSOSignin(Activity activity, int requestCode) {
-        Intent intent = new Intent(activity, SSOActivity.class);
-        intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
-        intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
-        intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
-        activity.startActivityForResult(intent, requestCode);
-        activity.overridePendingTransition(0, 0);
+        if(activity!=null) {
+            Intent intent = new Intent(activity, SSOActivity.class);
+            intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+            intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+            intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+
+            activity.startActivityForResult(intent, requestCode);
+            activity.overridePendingTransition(0, 0);
+        }
     }
 
     public static void presentProductDetails(Activity activity, Bundle bundle) {

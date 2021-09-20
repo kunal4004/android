@@ -135,6 +135,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                     (parentFragment as? WRewardsLoggedinAndLinkedFragment)?.wrewardsViewPager?.currentItem == 0
                 // disable shake action when barcode is invisible
                 if (SessionUtilities.getInstance().isUserAuthenticated &&
+                    SessionUtilities.getInstance().isC2User &&
                     (barCodeNumber?.text?.length ?: 0 > 0) &&
                     isCurrentFragmentWRewardsFragmentSection &&
                     isCurrentFragmentWRewardsOverviewFragment
