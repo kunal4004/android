@@ -586,7 +586,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                             PLC -> {
                                                 when (isPLCInGoodStanding()) {
                                                     true -> {
-                                                        //Todo: schedule delivery WOP-12589
+                                                        //Todo: schedule delivery WOP-12589, go to product for now
+                                                        goToProduct()
                                                     }
                                                     false -> {
                                                         if (Utils.isCreditCardActivationEndpointAvailable()){
@@ -617,7 +618,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                         }
                                     }
                                     false -> {
-                                        //Todo: schedule delivery WOP-12589
+                                        //Todo: schedule delivery WOP-12589, go to product for now
+                                        goToProduct()
                                     }
                                 }
                             }
