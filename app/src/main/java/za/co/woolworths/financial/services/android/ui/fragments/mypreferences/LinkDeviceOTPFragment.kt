@@ -760,17 +760,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
-            Activity.RESULT_CANCELED -> {
-                Handler().postDelayed({
-                    linkDeviceOTPEdtTxt5.requestFocus()
-                    val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                    imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
-                }, AppConstant.DELAY_200_MS)
-                linkDeviceOTPScreen?.visibility = View.VISIBLE
-            }
-            GO_TO_PRODUCT -> {
-                goToProduct()
-            }
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
                     ErrorHandlerActivity.RESULT_RETRY -> {
@@ -785,6 +774,20 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     }
                 }
             }
+            else ->
+                when (resultCode) {
+                    Activity.RESULT_CANCELED -> {
+                        Handler().postDelayed({
+                            linkDeviceOTPEdtTxt5.requestFocus()
+                            val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                            imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                        }, AppConstant.DELAY_200_MS)
+                        linkDeviceOTPScreen?.visibility = View.VISIBLE
+                    }
+                    GO_TO_PRODUCT -> {
+                        goToProduct()
+                    }
+                }
         }
     }
 
