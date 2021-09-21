@@ -32,6 +32,16 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
         const val APPLY_NOW_STATE = "APPLY_NOW_STATE"
         const val DEEP_LINKING_PARAMS = "DEEP_LINKING_PARAMS"
+
+        fun getProductCode(applyNowState: ApplyNowState): String {
+            return when (applyNowState) {
+                ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode
+                ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
+                ApplyNowState.GOLD_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
+                ApplyNowState.BLACK_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
+                ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN.groupCode
+            }
+        }
     }
 
     override fun getAccountBundle(bundle: Bundle?): Pair<ApplyNowState?, AccountsResponse?>? {
@@ -40,16 +50,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         mDeepLinkingData = bundle?.getString(DEEP_LINKING_PARAMS, "")
         mAccountResponse = Gson().fromJson(accountResponseString, AccountsResponse::class.java)
         return Pair(mApplyNowState, mAccountResponse)
-    }
-
-    private fun getProductCode(applyNowState: ApplyNowState): String {
-        return when (applyNowState) {
-            ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode
-            ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
-            ApplyNowState.GOLD_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
-            ApplyNowState.BLACK_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
-            ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN.groupCode
-        }
     }
 
     override fun setAvailableFundBundleInfo(navDetailController: NavController?) {

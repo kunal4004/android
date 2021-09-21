@@ -63,9 +63,12 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
     private var cardWithPLCState: Card? = null
-    private val REQUEST_CREDIT_CARD_ACTIVATION = 1983
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+
+    companion object {
+        const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
