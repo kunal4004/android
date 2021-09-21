@@ -280,7 +280,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         if (confirmDeliveryAddressResponse?.requiredToDisplayOnlyODD == false) {
             val timeSlotListItem: MutableMap<Any, Any> = HashMap()
             timeSlotListItem["deliveryType"] = DELIVERY_TYPE_TIMESLOT
-            timeSlotListItem["amount"] = (selectedSlotResponseFood?.timedDeliveryCosts?.other!!)
+            timeSlotListItem["amount"] = (selectedSlotResponseFood?.timedDeliveryCosts?.join!!)
 
             val date = selectedSlotResponseFood?.timedDeliveryStartDates?.other
             val deliveryText = getString(R.string.earliest_delivery_date_text)
