@@ -77,11 +77,12 @@
     <TextView
         android:id="@+id/totalAmountDueLabelTextView"
         style="@style/amountDescriptionStyle"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="@dimen/zero_dp"
         android:text="@string/total_amount_due"
         android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueValueTextView"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintStart_toEndOf="@+id/totalAmountDueInfoDescImageButton"
         app:layout_constraintTop_toTopOf="@+id/totalAmountDueValueTextView" />
 
     <View
@@ -95,10 +96,11 @@
     <TextView
         android:id="@+id/amountOverdueLabelTextView"
         style="@style/enterPaymentAmountOverdueStyle"
+        android:layout_marginStart="16dp"
         android:text="@string/overdue_amount_label"
         android:textSize="@dimen/fourteen_sp"
         app:layout_constraintBottom_toBottomOf="@+id/amountOutstandingValueTextView"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintStart_toEndOf="@+id/currentBalanceDescImageButton"
         app:layout_constraintTop_toTopOf="@+id/amountOutstandingValueTextView" />
 
     <TextView
@@ -111,5 +113,22 @@
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintTop_toBottomOf="@+id/totalAmountDueHorizontalDividerView" />
 
+    <ImageButton
+        android:id="@+id/totalAmountDueInfoDescImageButton"
+        style="@style/iconInfoRoundedStyle"
+        android:alpha="0.4"
+        app:layout_constraintBottom_toTopOf="@+id/totalAmountDueHorizontalDividerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amountDividerView"
+        app:srcCompat="@drawable/icon_info"/>
+
+    <ImageButton
+        android:id="@+id/currentBalanceDescImageButton"
+        style="@style/iconInfoRoundedStyle"
+        android:alpha="0.4"
+        app:layout_constraintBottom_toBottomOf="@+id/amountOverdueLabelTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amountOverdueLabelTextView"
+        app:srcCompat="@drawable/icon_info"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

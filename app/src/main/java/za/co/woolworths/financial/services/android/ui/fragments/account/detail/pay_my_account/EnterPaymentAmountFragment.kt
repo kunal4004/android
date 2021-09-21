@@ -16,7 +16,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.enter_payment_amount_fragment.*
@@ -25,8 +27,9 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumFont
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.InfoDialogFragment
+
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
-import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class EnterPaymentAmountFragment : Fragment(), OnClickListener {
@@ -71,6 +74,9 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     }
 
     private fun setListeners() {
+        currentBalanceDescImageButton?.setOnClickListener(this)
+        totalAmountDueInfoDescImageButton?.setOnClickListener(this)
+
         totalAmountDueValueTextView?.apply {
             if (isZeroAmount(payMyAccountViewModel.getTotalAmountDue())) return
             AnimationUtilExtension.animateViewPushDown(this)
@@ -85,6 +91,12 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
             }
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@EnterPaymentAmountFragment)
+        }
+
+        setFragmentResultListener(InfoDialogFragment::class.java.simpleName) { _, bundle ->
+            when (bundle.getString(InfoDialogFragment::class.java.simpleName)) {
+                InfoDialogFragment::class.java.simpleName -> { showKeyboard() }
+            }
         }
     }
 
@@ -210,6 +222,16 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                 enterPaymentAmountTextView?.tag = R.id.amountOutstandingValueTextView
                 isAmountSelected = true
 
+            }
+
+            R.id.totalAmountDueInfoDescImageButton-> {
+                hideKeyboard()
+                view?.findNavController()?.navigate(EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(R.string.total_amount_due,R.string.collection_remove_block_total_amount_due_popup_desc))
+
+            }
+            R.id.currentBalanceDescImageButton -> {
+                hideKeyboard()
+                view?.findNavController()?.navigate(EnterPaymentAmountFragmentDirections.actionEnterPaymentAmountFragmentToInfoDialogFragment(R.string.current_balance_label,R.string.collection_remove_block_current_balance_popup_desc))
             }
         }
     }
