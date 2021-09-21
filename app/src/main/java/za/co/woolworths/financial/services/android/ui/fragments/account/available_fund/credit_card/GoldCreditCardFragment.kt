@@ -45,16 +45,16 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                                 FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD,
                                 arguments,
                                 this)
-                            when (WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode){
+                            when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
                                 NATIVE_BROWSER ->
                                     KotlinUtils.openUrlInPhoneBrowser(
-                                        WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.creditCard.collectionsUrl, this)
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.collectionsUrl, this)
 
                                 else ->
                                     KotlinUtils.openLinkInInternalWebView(activity,
-                                        WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.creditCard.collectionsUrl,
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.collectionsUrl,
                                         true,
-                                        WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.creditCard.exitUrl)
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.exitUrl)
                             }
                         }
                     }

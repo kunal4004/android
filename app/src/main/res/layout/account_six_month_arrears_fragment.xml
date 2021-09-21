@@ -10,6 +10,7 @@
         android:id="@+id/toolbarContainer"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/ten_dp"
         android:layout_gravity="top"
         android:contentDescription="@string/account_six_month_arrear_toolbar"
         android:background="@color/white"
@@ -82,25 +83,27 @@
         android:layout_marginBottom="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintGuide_begin="32dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/endGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="32dp" />
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
     <TextView
+        android:id="@+id/arrearsDescTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
+        android:layout_marginTop="@dimen/eleven_dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
-        android:lineSpacingExtra="2dp"
+        android:lineSpacingExtra="@dimen/two_dp"
         android:lineSpacingMultiplier="1.3"
         android:text="@string/account_arrears_description"
         android:textColor="@color/permanent_card_block_desc_color"
-        android:textSize="15sp"
+        android:textSize="@dimen/fifteen_sp"
+        android:gravity="center"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline"
         app:layout_constraintTop_toBottomOf="@+id/accountInArrearsTextView" />
@@ -110,13 +113,43 @@
         style="@style/blackButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:text="@string/call_the_call_centre"
         android:textAllCaps="true"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintStart_toStartOf="@+id/startGuideline" />
 
+    <Button
+        android:id="@+id/viewTreatmentPlansButton"
+        style="@style/blackButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:text="@string/view_payment_plans_button_label"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintBottom_toTopOf="@+id/callTheCallCenterUnderlinedButton"/>
+
+
+    <Button
+        android:id="@+id/callTheCallCenterUnderlinedButton"
+        style="@style/whiteButtonBackgroundStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:background="@color/white"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:text="@string/call_the_call_centre"
+        android:textAllCaps="true"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endGuideline"
+        app:layout_constraintStart_toStartOf="@+id/startGuideline" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
