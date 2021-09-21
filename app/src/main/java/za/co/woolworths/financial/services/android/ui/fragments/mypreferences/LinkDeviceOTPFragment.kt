@@ -47,6 +47,8 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
@@ -58,6 +60,8 @@ import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesIn
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
+import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
@@ -91,6 +95,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private val PLC = "PLC"
     private val absaCardToken = "absaCardToken"
     private val productOfferingId = "productOfferingId"
+    private val envelopeNumber = "envelopeNumber"
+    private val accountBinNumber = "accountBinNumber"
+    private val statusResponse = "StatusResponse"
+    private val setUpDeliveryNowClicked = "setUpDeliveryNowClicked"
     private val bundle = "bundle"
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
@@ -574,68 +582,60 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun activateCreditCardOrScheduleCardDelivery() {
         activity?.apply {
-            OneAppService.getCreditCardToken().enqueue(CompletionHandler(object : IResponseListener<CreditCardTokenResponse> {
-                override fun onSuccess(response: CreditCardTokenResponse?) {
-                    response?.apply {
-                        if (!cards.isNullOrEmpty()) {
-                            cardWithPLCState = getCardWithPLCState(cards)
-                            cards?.get(0)?.apply {
-                                when (envelopeNumber.isNullOrEmpty()) {
-                                    true -> {
-                                        when (cardStatus) {
-                                            PLC -> {
-                                                when (isPLCInGoodStanding()) {
-                                                    true -> {
-                                                        //Todo: schedule delivery WOP-12589, go to product for now
-                                                        goToProduct()
-                                                    }
-                                                    false -> {
-                                                        if (Utils.isCreditCardActivationEndpointAvailable()){
-                                                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(
-                                                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                                                                FirebaseManagerAnalyticsProperties.PropertyNames.activationInitiated
-                                                            )), activity)
-                                                            val mIntent = Intent(activity, CreditCardActivationActivity::class.java)
-                                                            val mBundle = Bundle()
-                                                            mBundle.putString(absaCardToken, cardWithPLCState?.absaCardToken)
-                                                            mBundle.putString(productOfferingId, getAccount()?.productOfferingId.toString())
-                                                            mIntent.putExtra(bundle, mBundle)
-                                                            mIntent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                                                            startActivityIfNeeded(mIntent,
-                                                                AccountsOptionFragment.REQUEST_CREDIT_CARD_ACTIVATION
-                                                            )
-                                                            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                                                        }
-                                                        else {
-                                                            goToProduct()
-                                                        }
+            OneAppService.getCreditCardToken()
+                .enqueue(CompletionHandler(object : IResponseListener<CreditCardTokenResponse> {
+                    override fun onSuccess(response: CreditCardTokenResponse?) {
+                        response?.apply {
+                            if (!cards.isNullOrEmpty()) {
+                                cardWithPLCState = getCardWithPLCState(cards)
+                                cards?.get(0)?.apply {
+                                    when (envelopeNumber.isNullOrEmpty()) {
+                                        true -> {
+                                            when (cardStatus) {
+                                                PLC -> {
+                                                    when (isPLCInGoodStanding()) {
+                                                        true -> checkCreditCardDeliveryStatus()
+
+                                                        false -> goToCreditCardActivation()
                                                     }
                                                 }
-                                            }
-                                            else -> {
-                                                goToProduct()
+                                                else -> goToProduct()
                                             }
                                         }
-                                    }
-                                    false -> {
-                                        //Todo: schedule delivery WOP-12589, go to product for now
-                                        goToProduct()
+                                        false -> checkCreditCardDeliveryStatus()
                                     }
                                 }
+                            } else {
+                                goToProduct()
                             }
                         }
-                        else {
-                            goToProduct()
-                        }
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+                        goToProduct()
+                    }
+                }, CreditCardTokenResponse::class.java))
+        }
+    }
+
+    private fun checkCreditCardDeliveryStatus() {
+        OneAppService.getCreditCardDeliveryStatus(
+            cardWithPLCState!!.envelopeNumber,
+            getAccount()?.productOfferingId.toString())
+            .enqueue(CompletionHandler(object : IResponseListener<CreditCardDeliveryStatusResponse>
+            {
+                override fun onSuccess(response: CreditCardDeliveryStatusResponse?) {
+                    when (response?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(
+                        CreditCardDeliveryStatus.DEFAULT)) {
+                        CreditCardDeliveryStatus.CARD_RECEIVED ->
+                            goToScheduleDelivery(response)
+                        else -> goToProduct()
                     }
                 }
-
                 override fun onFailure(error: Throwable?) {
                     goToProduct()
                 }
-
-            }, CreditCardTokenResponse::class.java))
-        }
+            }, CreditCardDeliveryStatusResponse::class.java))
     }
 
     private fun getAccount(): Account? {
@@ -672,6 +672,44 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
         activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
         activity?.finish()
+    }
+
+    private fun goToCreditCardActivation() {
+        activity?.apply {
+            if (Utils.isCreditCardActivationEndpointAvailable()){
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                    FirebaseManagerAnalyticsProperties.PropertyNames.activationInitiated
+                )), this)
+                val mIntent = Intent(this, CreditCardActivationActivity::class.java)
+                val mBundle = Bundle()
+                mBundle.putString(absaCardToken, cardWithPLCState?.absaCardToken)
+                mBundle.putString(productOfferingId, getAccount()?.productOfferingId.toString())
+                mIntent.putExtra(bundle, mBundle)
+                mIntent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                startActivityIfNeeded(mIntent,
+                    AccountsOptionFragment.REQUEST_CREDIT_CARD_ACTIVATION
+                )
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+            else {
+                goToProduct()
+            }
+        }
+    }
+
+    private fun goToScheduleDelivery(response: CreditCardDeliveryStatusResponse) {
+        val account = MyAccountsFragment.mAccountResponse.accountList[0]
+        val intent = Intent(context, CreditCardDeliveryActivity::class.java)
+        val mBundle = Bundle()
+        mBundle.putString(envelopeNumber, account.cards[0].envelopeNumber)
+        mBundle.putString(accountBinNumber, account.accountNumberBin)
+        mBundle.putString(statusResponse, Utils.toJson(response.statusResponse))
+        mBundle.putString(productOfferingId, account.productOfferingId.toString())
+        mBundle.putBoolean(setUpDeliveryNowClicked, true)
+        mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+        intent.putExtra(bundle, mBundle)
+        startActivity(intent)
     }
 
     private fun getLocationAddress(latitude: Double?, longitude: Double?): String? {
