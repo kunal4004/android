@@ -17,7 +17,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CreditCardActivationActivity : AppCompatActivity() {
 
     var bundle: Bundle? = null
-    var applyNowState: ApplyNowState? = null
+    private var applyNowState: ApplyNowState? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

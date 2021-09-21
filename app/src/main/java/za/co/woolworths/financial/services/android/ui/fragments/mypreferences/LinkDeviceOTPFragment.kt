@@ -88,7 +88,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             }
         }
     }
-
+    private val PLC = "PLC"
+    private val absaCardToken = "absaCardToken"
+    private val productOfferingId = "productOfferingId"
+    private val bundle = "bundle"
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             when {
@@ -580,7 +583,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                 when (envelopeNumber.isNullOrEmpty()) {
                                     true -> {
                                         when (cardStatus) {
-                                            "PLC" -> {
+                                            PLC -> {
                                                 when (isPLCInGoodStanding()) {
                                                     true -> {
                                                         //Todo: schedule delivery WOP-12589
@@ -593,9 +596,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                             )), activity)
                                                             val mIntent = Intent(activity, CreditCardActivationActivity::class.java)
                                                             val mBundle = Bundle()
-                                                            mBundle.putString("absaCardToken", cardWithPLCState?.absaCardToken)
-                                                            mBundle.putString("productOfferingId", getAccount()?.productOfferingId.toString())
-                                                            mIntent.putExtra("bundle", mBundle)
+                                                            mBundle.putString(absaCardToken, cardWithPLCState?.absaCardToken)
+                                                            mBundle.putString(productOfferingId, getAccount()?.productOfferingId.toString())
+                                                            mIntent.putExtra(bundle, mBundle)
                                                             mIntent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
                                                             startActivityIfNeeded(mIntent,
                                                                 AccountsOptionFragment.REQUEST_CREDIT_CARD_ACTIVATION
@@ -756,19 +759,18 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_CANCELED) {
-            Handler().postDelayed({
-                linkDeviceOTPEdtTxt5.requestFocus()
-                val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
-            }, AppConstant.DELAY_200_MS)
-            linkDeviceOTPScreen?.visibility = View.VISIBLE
-        }
-        if(resultCode == GO_TO_PRODUCT){
-            goToProduct()
-        }
-
         when (requestCode) {
+            Activity.RESULT_CANCELED -> {
+                Handler().postDelayed({
+                    linkDeviceOTPEdtTxt5.requestFocus()
+                    val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                }, AppConstant.DELAY_200_MS)
+                linkDeviceOTPScreen?.visibility = View.VISIBLE
+            }
+            GO_TO_PRODUCT -> {
+                goToProduct()
+            }
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
                     ErrorHandlerActivity.RESULT_RETRY -> {
