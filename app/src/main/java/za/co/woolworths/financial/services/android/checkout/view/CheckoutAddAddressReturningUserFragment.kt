@@ -282,7 +282,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             timeSlotListItem["deliveryType"] = DELIVERY_TYPE_TIMESLOT
             timeSlotListItem["amount"] = (selectedSlotResponseFood?.timedDeliveryCosts?.join!!)
 
-            val date = selectedSlotResponseFood?.timedDeliveryStartDates?.other
+            val date = selectedSlotResponseFood?.timedDeliveryStartDates?.join
             val deliveryText = getString(R.string.earliest_delivery_date_text)
             timeSlotListItem["description"] = "$deliveryText <b>$date</b>"
 

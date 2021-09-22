@@ -13,9 +13,6 @@ class SavedAddressResponse : Serializable {
     @SerializedName("defaultAddressNickname")
     var defaultAddressNickname: String? = null
 
-    @SerializedName("isStorePickup")
-    var isStorePickup: Boolean? = null
-
     @SerializedName("response")
     var response: Response? = null
 
