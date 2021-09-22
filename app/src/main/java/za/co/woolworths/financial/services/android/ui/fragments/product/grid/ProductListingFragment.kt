@@ -573,6 +573,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (!isLoadMore) {
             incCenteredProgress?.visibility = GONE
         }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
