@@ -28,10 +28,16 @@ import za.co.woolworths.financial.services.android.util.Utils
 class AccountSixMonthArrearsFragment : Fragment() {
 
     private var mApplyNowAccountKeyPair: Pair<Int, Int>? = null
+    private var isViewTreatmentPlanSupported: Boolean = false
+
+    companion object {
+        const val IS_VIEW_TREATMENT_PLAN = "IS_VIEW_TREATMENT_PLAN"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE,"")
+        val isViewTreatmentPlanSupported = arguments?.getBoolean(IS_VIEW_TREATMENT_PLAN,false)
         mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
     }
 
@@ -80,18 +86,12 @@ class AccountSixMonthArrearsFragment : Fragment() {
         myCardTextView?.visibility = GONE
         myCardDetailTextView?.visibility = GONE
         userNameTextView?.visibility = GONE
-        mApplyNowAccountKeyPair?.second?.let { resourceId ->
-            if (resourceId == R.string.blackCreditCard_title ||
-                resourceId == R.string.goldCreditCard_title ||
-                resourceId == R.string.silverCreditCard_title) {
-                imLogoIncreaseLimit?.visibility = GONE
-                manageMyCardTextView?.visibility = GONE
-                manageMyCardImageView?.visibility = GONE
-                manageCardDivider?.background = null
-                includeManageMyCard?.layoutParams?.apply {
-                    height = 0
-                }
-            }
+        imLogoIncreaseLimit?.visibility = GONE
+        manageMyCardTextView?.visibility = GONE
+        manageMyCardImageView?.visibility = GONE
+        manageCardDivider?.background = null
+        includeManageMyCard?.layoutParams?.apply {
+            height = 0
         }
     }
 
@@ -99,9 +99,9 @@ class AccountSixMonthArrearsFragment : Fragment() {
         mApplyNowAccountKeyPair?.first?.let { resourceId -> cardDetailImageView?.setImageResource(resourceId) }
         mApplyNowAccountKeyPair?.second?.let { resourceId ->
             toolbarTitleTextView?.text = bindString(resourceId)
-            if(resourceId == R.string.blackCreditCard_title ||
-                    resourceId == R.string.goldCreditCard_title ||
-                    resourceId == R.string.silverCreditCard_title){
+            if(isViewTreatmentPlanSupported && (resourceId == R.string.blackCreditCard_title ||
+                        resourceId == R.string.goldCreditCard_title ||
+                        resourceId == R.string.silverCreditCard_title)){
                 arrearsDescTextView?.text = bindString(R.string.account_arrears_cc_description)
                 callTheCallCenterButton?.visibility = GONE
                 viewTreatmentPlansButton?.visibility = VISIBLE
