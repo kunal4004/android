@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,9 +36,13 @@ class InfoDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.gotITButton -> {
-                setFragmentResult(InfoDialogFragment::class.java.simpleName, bundleOf())
                 dismiss()
             }
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        setFragmentResult(InfoDialogFragment::class.java.simpleName, bundleOf())
+        super.onDismiss(dialog)
     }
 }
