@@ -551,6 +551,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
 
         mProductAdapter?.notifyItemChanged(actualSize, sizeOfList)
+
+
+
         canLoadMore(numItemsInTotal, sizeOfList)
     }
 
