@@ -197,7 +197,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         shoppingDeliveryLocation
                                     )
                                     if (!isDeliverySelected) {
-                                        // call slot selection
+                                        //TODO Add web breakout implementation here instead of slot selection.
                                         navController?.navigate(
                                             R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
                                             baseFragBundle
@@ -247,9 +247,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             removeMarginToStoreListView()
         } else
             setMarginToStoreListView()
-        clickNCollectTitleLayout.visibility = View.VISIBLE
-        addressConfirmationClicknCollect.visibility = View.VISIBLE
-        showStoreListView(suburbId)
+        fetchStoreListFromValidateSelectedSuburb(suburbId)
         if (!earliestDateValue?.text.isNullOrEmpty()) {
             earliestDateTitleLayout.visibility = View.VISIBLE
         }
@@ -441,11 +439,13 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         whereWeDeliveringTitle.text = bindString(R.string.where_should_we_deliver)
     }
 
-    private fun showStoreListView(suburbId: String?) {
+    private fun fetchStoreListFromValidateSelectedSuburb(suburbId: String?) {
         if (suburbId.equals(DEFAULT_STORE_ID)) {
             // This means collection tab clicked for the first time.
             getSuburb(selectedProvince)
         } else if (suburbId.isNullOrEmpty()) {
+            clickNCollectTitleLayout.visibility = View.VISIBLE
+            addressConfirmationClicknCollect.visibility = View.VISIBLE
             showStoreList()
         } else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
@@ -455,6 +455,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         when (it.responseStatus) {
                             ResponseStatus.SUCCESS -> {
                                 loadingProgressBar.visibility = View.GONE
+                                clickNCollectTitleLayout.visibility = View.VISIBLE
+                                addressConfirmationClicknCollect.visibility = View.VISIBLE
                                 if (it?.data != null) {
                                     validatedSuburbProductResponse =
                                         (it.data as? ValidateSelectedSuburbResponse)?.validatedSuburbProducts
@@ -494,6 +496,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     })
             }
         } else if (localSuburbId != null && validatedSuburbProductResponse != null) {
+            clickNCollectTitleLayout.visibility = View.VISIBLE
+            addressConfirmationClicknCollect.visibility = View.VISIBLE
             showStoreList()
         }
     }
@@ -577,6 +581,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun showStoreList() {
         if (!validatedSuburbProductResponse?.stores.isNullOrEmpty()) {
             searchLayout.visibility = View.VISIBLE
+            storeInputValue.text.clear()
             changeTextView.visibility = View.VISIBLE
             changeProvinceTextView.visibility = View.GONE
             btnAddressConfirmation.text = getString(R.string.confirm)
@@ -585,8 +590,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             changeProvinceTextView.visibility = View.VISIBLE
             btnAddressConfirmation.text = getString(R.string.change_suburb)
         }
-        earliestDateValue?.text =
-            validatedSuburbProductResponse?.firstAvailableFoodDeliveryDate ?: ""
+        setEarliestDeliveryDates(validateStoreList)
         storeListAdapter =
             validatedSuburbProductResponse?.stores?.let { it1 ->
                 CheckoutStoreSelectionAdapter(
@@ -615,9 +619,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun setEarliestDeliveryDates(validateStoreList: ValidateStoreList?) {
         earliestDateValue?.text =
             validateStoreList?.firstAvailableFoodDeliveryDate ?: ""
-        if (!earliestDateValue?.text.isNullOrEmpty()) {
+        if (earliestDateValue?.text.isNullOrEmpty()) {
+            earliestDateTitleLayout.visibility = View.GONE
+        } else
             earliestDateTitleLayout.visibility = View.VISIBLE
-        }
     }
 
     private fun setupViewModel() {
@@ -625,8 +630,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             this,
             ViewModelFactory(
                 CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper(),
-                    CheckoutMockApiHelper()
+                    CheckoutAddAddressNewUserApiHelper()
                 )
             )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)

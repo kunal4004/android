@@ -525,10 +525,6 @@ interface ApiInterface {
     ): Call<ChangeAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("availableDeliverySlots")
-    fun getAvailableDeliverySlots(): Call<AvailableDeliverySlotsResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cart/checkout/confirmDeliveryAddress")
     fun getConfirmDeliveryAddressDetails(
         @Header("userAgent") userAgent: String,

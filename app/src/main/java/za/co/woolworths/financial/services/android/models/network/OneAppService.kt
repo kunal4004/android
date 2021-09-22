@@ -234,9 +234,6 @@ object OneAppService : RetrofitConfig() {
             getDeviceIdentityToken())
     }
 
-    fun getAvailableDeliverySlots(): Call<AvailableDeliverySlotsResponse>{
-        return mockApiInterface.getAvailableDeliverySlots()
-    }
     fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): Call<ConfirmDeliveryAddressResponse>{
         return mApiInterface.getConfirmDeliveryAddressDetails("", "", getSessionToken(),
         getDeviceIdentityToken(), body)

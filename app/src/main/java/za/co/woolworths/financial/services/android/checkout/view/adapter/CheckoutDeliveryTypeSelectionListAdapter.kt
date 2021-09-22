@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.checkout.view.adapter
 
-import android.content.Context
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +25,10 @@ class CheckoutDeliveryTypeSelectionListAdapter(
 
     companion object {
         const val DELIVERY_TYPE_TIMESLOT = "Timeslot"
+        const val KEY_DELIVERY_TYPE = "deliveryType"
+        const val KEY_DELIVERY_IN_DAYS = "deliveryInDays"
+        const val KEY_AMOUNT = "amount"
+        const val KEY_DESCRIPTION = "description"
     }
 
     override fun onCreateViewHolder(
@@ -53,12 +56,6 @@ class CheckoutDeliveryTypeSelectionListAdapter(
         holder.bindItem(position)
     }
 
-    fun getEstimatedDeliveryDates(deliverySlotsList: Map<Any, Double>, context: Context): String {
-        val startDeliveryDay = ((deliverySlotsList).getValue("startDeliveryDay")).toInt().toString()
-        val endDeliveryDay = ((deliverySlotsList).getValue("endDeliveryDay")).toInt().toString()
-        return context.getString(R.string.working_days_text, startDeliveryDay, endDeliveryDay)
-    }
-
     inner class CheckoutDeliveryTypeSelectionViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         fun bindItem(position: Int) {
@@ -66,24 +63,28 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                 hideShimmer(this)
                 openDayDeliverySlotsList?.get(position)?.let {
                     val deliveryType =
-                        (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue("deliveryType")
+                        (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue(
+                            KEY_DELIVERY_TYPE
+                        )
                     title.text = deliveryType.capitalize(Locale.ROOT)
                     subTitle.text = if (deliveryType.equals(DELIVERY_TYPE_TIMESLOT)) {
                         Html.fromHtml(
                             (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue(
-                                "description"
+                                KEY_DESCRIPTION
                             )
                         )
                     } else {
-                        getEstimatedDeliveryDates(
-                            openDayDeliverySlotsList?.get(position) as Map<Any, Double>,
-                            context
+                        (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue(
+                            KEY_DELIVERY_IN_DAYS
                         )
                     }
+
                     editAddressImageView.visibility = View.GONE
                     slotPriceButton.visibility = View.VISIBLE
                     slotPriceButton.text = context.getString(R.string.currency).plus(
-                        (openDayDeliverySlotsList?.get(position) as Map<Any, Int>).getValue("amount")
+                        (openDayDeliverySlotsList?.get(position) as Map<Any, Int>).getValue(
+                            KEY_AMOUNT
+                        )
                             .toString()
                     )
                     selector.isChecked = checkedItemPosition == position

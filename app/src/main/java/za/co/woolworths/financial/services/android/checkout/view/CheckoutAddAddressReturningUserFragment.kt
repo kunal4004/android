@@ -15,8 +15,6 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
@@ -40,7 +38,6 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
-import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
@@ -77,8 +74,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private val expandableGrid = ExpandableGrid(this)
-    private var selectedSlotResponseFood: AvailableDeliverySlotsResponse? = null
-    private var selectedSlotResponseOther: AvailableDeliverySlotsResponse? = null
+    private var selectedSlotResponseFood: ConfirmDeliveryAddressResponse? = null
+    private var selectedSlotResponseOther: ConfirmDeliveryAddressResponse? = null
     private var selectedFoodSlot = Slot()
     private var selectedOtherSlot = Slot()
     private var foodType = ONLY_FOOD
@@ -275,27 +272,29 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initializeDeliveryTypeSelectionView(
-        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
+        confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse?,
         type: DeliveryType
     ) {
         // To show How would you like it to delivered.
         checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
-        if (availableDeliverySlotsResponse?.requiredToDisplayOnlyODD == false) {
+        if (confirmDeliveryAddressResponse?.requiredToDisplayOnlyODD == false) {
             val timeSlotListItem: MutableMap<Any, Any> = HashMap()
             timeSlotListItem["deliveryType"] = DELIVERY_TYPE_TIMESLOT
-            timeSlotListItem["amount"] = (selectedSlotResponseFood?.timedDeliveryCosts?.other!!)
+            timeSlotListItem["amount"] = (selectedSlotResponseFood?.timedDeliveryCosts?.join!!)
 
             val date = selectedSlotResponseFood?.timedDeliveryStartDates?.other
             val deliveryText = getString(R.string.earliest_delivery_date_text)
             timeSlotListItem["description"] = "$deliveryText <b>$date</b>"
 
-            (availableDeliverySlotsResponse.openDayDeliverySlots as ArrayList).add(timeSlotListItem)
+            (confirmDeliveryAddressResponse.openDayDeliverySlots as? ArrayList)?.add(
+                timeSlotListItem
+            )
         }
         checkoutDeliveryTypeSelectionShimmerAdapter = null
         deliveryTypeSelectionRecyclerView.adapter = null
         checkoutDeliveryTypeSelectionListAdapter =
             CheckoutDeliveryTypeSelectionListAdapter(
-                availableDeliverySlotsResponse?.openDayDeliverySlots,
+                confirmDeliveryAddressResponse?.openDayDeliverySlots,
                 this,
                 type
             )
@@ -308,7 +307,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     private fun initializeDeliveryFoodOtherItems() {
         setupViewModel()
-        getAvailableDeliverySlots()
         previousImgBtnFood.setOnClickListener(this)
         nextImgBtnFood.setOnClickListener(this)
         previousImgBtnOther.setOnClickListener(this)
@@ -356,8 +354,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             this,
             ViewModelFactory(
                 CheckoutAddAddressNewUserInteractor(
-                    CheckoutAddAddressNewUserApiHelper(),
-                    CheckoutMockApiHelper()
+                    CheckoutAddAddressNewUserApiHelper()
                 )
             )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
@@ -375,14 +372,21 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
 
         loadingBar.visibility = View.VISIBLE
+        expandableGrid.setUpShimmerView()
+        expandableGrid.showDeliveryTypeShimmerView()
+        showDeliverySubTypeShimmerView()
         val body = ConfirmDeliveryAddressBody(suburbId)
         checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails(body)
             .observe(viewLifecycleOwner, { response ->
                 loadingBar.visibility = View.GONE
-
+                expandableGrid.hideDeliveryTypeShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
                         confirmDeliveryAddressResponse = response
+                        // Keeping two diff response not to get merge while showing 2 diff slots.
+                        selectedSlotResponseFood = response
+                        selectedSlotResponseOther = response
+                        showDeliverySlotSelectionView()
                         initializeOrderSummary(response.orderSummary)
                     }
                     is Throwable -> {
@@ -413,80 +417,46 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         )
     }
 
-    private fun getAvailableDeliverySlots() {
-        expandableGrid.setUpShimmerView()
-        expandableGrid.showDeliveryTypeShimmerView()
-        showDeliverySubTypeShimmerView()
-        checkoutAddAddressNewUserViewModel.getAvailableDeliverySlots().observe(viewLifecycleOwner, {
-            when (it.responseStatus) {
-                ResponseStatus.SUCCESS -> {
-                    loadingBar.visibility = View.GONE
-                    expandableGrid.hideDeliveryTypeShimmerView()
-                    /*if (it.data != null) {
-                    // Keeping two diff response not to get merge while showing 2 diff slots.
-                       selectedSlotResponseFood = it.data as? AvailableDeliverySlotsResponse
-                       selectedSlotResponseOther = it.data as? AvailableDeliverySlotsResponse */
+    private fun showDeliverySlotSelectionView() {
 
-                    //use mock data from json file
-                    val jsonFileString = Utils.getJsonDataFromAsset(
-                        activity?.applicationContext,
-                        "mocks/confirmDelivery_Response.json"
-                    )
-                    val mockDeliverySlotResponse: AvailableDeliverySlotsResponse = Gson().fromJson(
-                        jsonFileString,
-                        object : TypeToken<AvailableDeliverySlotsResponse>() {}.type
-                    )
-                    selectedSlotResponseFood = mockDeliverySlotResponse
-                    selectedSlotResponseOther = mockDeliverySlotResponse
-                    if (FOOD.type == selectedSlotResponseFood?.fulfillmentTypes?.join) {
-                        //Only for Food
-                        foodType = ONLY_FOOD
-                        checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
-                        selectDeliveryTimeSlotTitle.text =
-                            getString(R.string.slot_delivery_title_when)
-                        selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
-                        expandableGrid.initialiseGridView(
-                            selectedSlotResponseFood,
-                            FIRST.week,
-                            ONLY_FOOD
-                        )
-                    } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
-                        // For mix basket
-                        foodType = MIXED_FOOD
-                        checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
-                        expandableGrid.initialiseGridView(
-                            selectedSlotResponseFood,
-                            FIRST.week,
-                            MIXED_FOOD
-                        )
-                        if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
-                            howWouldYouDeliveredTitle.text =
-                                getString(R.string.delivery_timeslot_title_other_items)
-                            initializeDeliveryTypeSelectionView(
-                                selectedSlotResponseFood,
-                                MIXED_OTHER
-                            ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
-                        }
-                    } else {
-                        // for Other
-                        if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
-                            initializeDeliveryTypeSelectionView(
-                                selectedSlotResponseFood,
-                                ONLY_OTHER
-                            )
-                        }
-                    }
-                    //}
-
-                }
-                ResponseStatus.LOADING -> {
-                    loadingBar.visibility = View.VISIBLE
-                }
-                ResponseStatus.ERROR -> {
-                    loadingBar.visibility = View.GONE
-                }
+        if (FOOD.type == selectedSlotResponseFood?.fulfillmentTypes?.join) {
+            //Only for Food
+            foodType = ONLY_FOOD
+            checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+            selectDeliveryTimeSlotTitle.text =
+                getString(R.string.slot_delivery_title_when)
+            selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
+            expandableGrid.initialiseGridView(
+                selectedSlotResponseFood,
+                FIRST.week,
+                ONLY_FOOD
+            )
+        } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
+            // For mix basket
+            foodType = MIXED_FOOD
+            checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+            expandableGrid.initialiseGridView(
+                selectedSlotResponseFood,
+                FIRST.week,
+                MIXED_FOOD
+            )
+            if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
+                howWouldYouDeliveredTitle.text =
+                    getString(R.string.delivery_timeslot_title_other_items)
+                initializeDeliveryTypeSelectionView(
+                    selectedSlotResponseFood,
+                    MIXED_OTHER
+                ) // Sending params MIXED_OTHER here to get mixed_other grid while click on timeslot radiobutton.
             }
-        })
+        } else {
+            // for Other
+            if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
+                initializeDeliveryTypeSelectionView(
+                    selectedSlotResponseFood,
+                    ONLY_OTHER
+                )
+            }
+        }
     }
 
     private fun showDeliverySubTypeShimmerView() {
@@ -500,18 +470,18 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
     }
 
-    fun getSelectedSlotResponse(deliveryType: DeliveryType): AvailableDeliverySlotsResponse? {
+    fun getSelectedSlotResponse(deliveryType: DeliveryType): ConfirmDeliveryAddressResponse? {
         return if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD)) selectedSlotResponseFood else selectedSlotResponseOther
     }
 
     fun setSelectedSlotResponse(
-        availableDeliverySlotsResponse: AvailableDeliverySlotsResponse?,
+        confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse?,
         deliveryType: DeliveryType
     ) {
         if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD))
-            selectedSlotResponseFood = availableDeliverySlotsResponse
+            selectedSlotResponseFood = confirmDeliveryAddressResponse
         else
-            selectedSlotResponseOther = availableDeliverySlotsResponse
+            selectedSlotResponseOther = confirmDeliveryAddressResponse
     }
 
     fun setSelectedFoodOrOtherSlot(selectedSlot: Slot, deliveryType: DeliveryType) {
