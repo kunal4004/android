@@ -10,9 +10,6 @@ class Address : Serializable {
     @SerializedName("address2")
     var address2: String? = null
 
-    @SerializedName("city")
-    var city: String? = null
-
     @SerializedName("address1")
     var address1: String? = null
 
@@ -33,9 +30,6 @@ class Address : Serializable {
 
     @SerializedName("id")
     var id: String? = null
-
-    @SerializedName("state")
-    var state: String? = null
 
     @SerializedName("region")
     var region: String? = null
