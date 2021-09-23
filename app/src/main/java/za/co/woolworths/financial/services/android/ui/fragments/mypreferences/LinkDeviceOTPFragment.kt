@@ -551,7 +551,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                 activateCreditCardOrScheduleCardDelivery()
                                             }
                                             ApplyNowState.STORE_CARD -> {
-                                                freezeStoreCard()
+                                                if(MyCardDetailFragment.FROM_CARD_DETAIL_FRAGMENT){
+                                                    showFreezeStoreCardDialog()
+                                                }
+                                                else {
+                                                    goToProduct()
+                                                }
                                             }
 
                                             else -> goToProduct()
@@ -592,16 +597,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         }, LinkedDeviceResponse::class.java))
     }
 
-    private fun freezeStoreCard(){
-        if(MyCardDetailFragment.FROM_CARD_DETAIL_FRAGMENT){
-            MyAccountsFragment.updateLinkedDevices()
-            MyCardDetailFragment.SHOW_TEMPORARY_FREEZE_DIALOG = true
-            MyCardDetailFragment.FROM_CARD_DETAIL_FRAGMENT = false
-            activity?.finish()
-        }
-        else {
-            goToProduct()
-        }
+    private fun showFreezeStoreCardDialog(){
+        MyAccountsFragment.updateLinkedDevices()
+        MyCardDetailFragment.SHOW_TEMPORARY_FREEZE_DIALOG = true
+        MyCardDetailFragment.FROM_CARD_DETAIL_FRAGMENT = false
+        activity?.finish()
     }
 
     private fun activateCreditCardOrScheduleCardDelivery() {
