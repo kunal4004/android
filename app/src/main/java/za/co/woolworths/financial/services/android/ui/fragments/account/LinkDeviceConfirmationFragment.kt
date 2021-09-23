@@ -196,7 +196,8 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             when(mApplyNowState){
                 ApplyNowState.SILVER_CREDIT_CARD,
                 ApplyNowState.GOLD_CREDIT_CARD,
-                ApplyNowState.BLACK_CREDIT_CARD -> {
+                ApplyNowState.BLACK_CREDIT_CARD,
+                ApplyNowState.STORE_CARD -> {
                     linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
                     linkDeviceResultSubitle?.text = it.getString(R.string.link_device_confirm_desc_cc)
 

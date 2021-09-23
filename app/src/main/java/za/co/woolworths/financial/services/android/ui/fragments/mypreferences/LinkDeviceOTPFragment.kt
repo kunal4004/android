@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
@@ -513,7 +514,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         linkDeviceOTPScreen?.visibility = View.GONE
         OneAppService.linkDeviceApi(
             KotlinUtils.getUserDefinedDeviceName(activity),
-            Utils.getUniqueDeviceID(context),
+            Utils.getUniqueDeviceID(),
             getLocationAddress(currentLocation?.latitude, currentLocation?.longitude),
             true,
             token,
@@ -542,8 +543,19 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             mApplyNowState?.let {
                                 activity?.apply {
                                     if (this is LinkDeviceConfirmationActivity) {
-                                        //check if should activate credit card or should schedule delivery
-                                        activateCreditCardOrScheduleCardDelivery()
+                                        when (mApplyNowState) {
+                                            ApplyNowState.BLACK_CREDIT_CARD,
+                                            ApplyNowState.GOLD_CREDIT_CARD,
+                                            ApplyNowState.SILVER_CREDIT_CARD -> {
+                                                //check if should activate credit card or should schedule delivery
+                                                activateCreditCardOrScheduleCardDelivery()
+                                            }
+                                            ApplyNowState.STORE_CARD -> {
+                                                freezeStoreCard()
+                                            }
+
+                                            else -> goToProduct()
+                                        }
                                     }
                                 }
                                 return@postDelayed
@@ -578,6 +590,18 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
             }
         }, LinkedDeviceResponse::class.java))
+    }
+
+    private fun freezeStoreCard(){
+        if(MyCardDetailFragment.FROM_CARD_DETAIL_FRAGMENT){
+            MyAccountsFragment.updateLinkedDevices()
+            MyCardDetailFragment.SHOW_TEMPORARY_FREEZE_DIALOG = true
+            MyCardDetailFragment.FROM_CARD_DETAIL_FRAGMENT = false
+            activity?.finish()
+        }
+        else {
+            goToProduct()
+        }
     }
 
     private fun activateCreditCardOrScheduleCardDelivery() {
