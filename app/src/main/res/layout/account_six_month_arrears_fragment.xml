@@ -10,7 +10,7 @@
         android:id="@+id/toolbarContainer"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginTop="@dimen/fifteen_dp"
         android:layout_gravity="top"
         android:contentDescription="@string/account_six_month_arrear_toolbar"
         android:background="@color/white"
