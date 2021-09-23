@@ -1113,7 +1113,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
                     if(response !=null && response.getUserDevices() != null ){
                         deviceList = response.getUserDevices();
-                        System.err.println("TEST: devices updated");
                     }
                 }}, ViewAllLinkedDeviceResponse.class)
             );
