@@ -75,17 +75,12 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(p0: View?) {
         KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.DASH_DOWNLOAD_SCREEN_NAME, OneAppEvents.FeatureName.DASH_FEATURE_NAME)
-
         try {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(wooliesAppLink)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            this.startActivity(intent)
-
+            KotlinUtils.openUrlInPhoneBrowser(wooliesAppLink,this)
         } catch (e: ActivityNotFoundException) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dashConfig?.appURI}")))
+            KotlinUtils.openUrlInPhoneBrowser(AppConstant.PLAY_STORE_URL + WoolworthsApplication.getInstance().dashConfig?.appURI,this)
         } catch (e: PackageManager.NameNotFoundException) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${WoolworthsApplication.getInstance().dashConfig?.appURI}")))
+            KotlinUtils.openUrlInPhoneBrowser(AppConstant.PLAY_STORE_URL + WoolworthsApplication.getInstance().dashConfig?.appURI,this)
         }
     }
 }

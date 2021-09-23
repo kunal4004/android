@@ -9,10 +9,10 @@ class OnBoardingModelImpl : IOnBoardingContract.ModelInteractor {
 
         val onBoardingLists = mutableListOf<OnBoardingModel>()
         with(onBoardingLists) {
-            add(OnBoardingModel(R.string.on_boarding_screen_title_1, R.drawable.walkthrough_welcome))
-            add(OnBoardingModel(R.string.on_boarding_screen_title_2, R.drawable.walkthrough_shop))
-            add(OnBoardingModel(R.string.on_boarding_screen_title_3, R.drawable.welcome_wrewards))
-            add(OnBoardingModel(R.string.on_boarding_screen_title_4, R.drawable.walkthrough_wrewards))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_1, R.drawable.onboarding_walkthrough_welcome))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_2, R.drawable.onboarding_walkthrough_shop))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_3, R.drawable.onboarding_walkthrough_wrewards))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_4, R.drawable.onboarding_walkthrough_accounts))
         }
 
         return onBoardingLists
@@ -21,10 +21,10 @@ class OnBoardingModelImpl : IOnBoardingContract.ModelInteractor {
     override fun getAccountOnBoardingModel(): MutableList<OnBoardingModel> {
         val onBoardingLists = mutableListOf<OnBoardingModel>()
         with(onBoardingLists) {
-            add(OnBoardingModel(R.string.on_boarding_screen_title_1, R.drawable.accounts_walkthrough_1))
-            add(OnBoardingModel(R.string.on_boarding_screen_title_2, R.drawable.accounts_walkthrough_2))
-            add(OnBoardingModel(R.string.on_boarding_screen_title_3, R.drawable.accounts_walkthrough_3))
-            add(OnBoardingModel(R.string.on_boarding_screen_title_4, R.drawable.accounts_walkthrough_4))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_1, R.drawable.accounts_walkthrough_welcome))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_2, R.drawable.accounts_walkthrough_shop))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_3, R.drawable.accounts_walkthrough_wrewards))
+            add(OnBoardingModel(R.string.on_boarding_screen_title_4, R.drawable.accounts_walkthrough_accounts))
         }
         return onBoardingLists
     }
