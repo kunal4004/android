@@ -159,10 +159,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                         delinquencyCycle>=minimumDelinquencyCycle -> {
                     if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
                         if(!isCreditCard){
-                            mainView?.removeBlocksWhenChargedOff()
+                            mainView?.removeBlocksWhenChargedOff(supported)
                             mainView?.showViewTreatmentPlan(false)!!
                         } else{
-                            mainView?.removeBlocksWhenChargedOff()!!
+                            mainView?.removeBlocksWhenChargedOff(supported)!!
                         }
                     } else if(productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true)){
                             //display treatment plan popup with view payment options

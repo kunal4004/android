@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountSixMonthArrearsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -156,7 +157,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment, bundle)
     }
 
-    override fun removeBlocksWhenChargedOff() {
+    override fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean) {
         availableFundFragmentFrameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
         removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
@@ -170,6 +171,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 else -> {
                     val bundle = Bundle()
                     bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(getSixMonthOutstandingTitleAndCardResource()))
+                    bundle.putBoolean(AccountSixMonthArrearsFragment.IS_VIEW_TREATMENT_PLAN, isViewTreatmentPlanActive)
                     navigationController?.navigate(R.id.accountInDelinquencyFragment, bundle)
                 }
             }

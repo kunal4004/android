@@ -97,6 +97,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/eleven_dp"
+        android:layout_marginStart="@dimen/five_dp"
+        android:layout_marginEnd="@dimen/five_dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:lineSpacingExtra="@dimen/two_dp"
         android:lineSpacingMultiplier="1.3"
