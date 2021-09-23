@@ -29,7 +29,7 @@ class ConfirmDeliveryAddressResponse {
     var sortedJoinDeliverySlots: List<SortedJoinDeliverySlot>? = null
 
     @SerializedName("openDayDeliverySlots")
-    var openDayDeliverySlots: List<Any>? = null
+    var openDayDeliverySlots: ArrayList<OpenDayDeliverySlot>? = null
 
     @SerializedName("requiredToDisplayOnlyODD")
     var requiredToDisplayOnlyODD: Boolean? = null

@@ -7,6 +7,9 @@ class Slot {
     @SerializedName("slotCost")
     var slotCost: Int? = null
 
+    @SerializedName("slotId")
+    var slotId: String? = null
+
     @SerializedName("freeDeliverySlot")
     var freeDeliverySlot: Boolean? = null
 

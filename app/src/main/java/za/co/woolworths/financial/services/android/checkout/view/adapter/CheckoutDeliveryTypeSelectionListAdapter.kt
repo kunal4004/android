@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
+import za.co.woolworths.financial.services.android.checkout.service.network.OpenDayDeliverySlot
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import java.util.*
@@ -25,10 +26,6 @@ class CheckoutDeliveryTypeSelectionListAdapter(
 
     companion object {
         const val DELIVERY_TYPE_TIMESLOT = "Timeslot"
-        const val KEY_DELIVERY_TYPE = "deliveryType"
-        const val KEY_DELIVERY_IN_DAYS = "deliveryInDays"
-        const val KEY_AMOUNT = "amount"
-        const val KEY_DESCRIPTION = "description"
     }
 
     override fun onCreateViewHolder(
@@ -62,31 +59,21 @@ class CheckoutDeliveryTypeSelectionListAdapter(
             itemView.apply {
                 hideShimmer(this)
                 openDayDeliverySlotsList?.get(position)?.let {
-                    val deliveryType =
-                        (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue(
-                            KEY_DELIVERY_TYPE
-                        )
-                    title.text = deliveryType.capitalize(Locale.ROOT)
-                    subTitle.text = if (deliveryType.equals(DELIVERY_TYPE_TIMESLOT)) {
-                        Html.fromHtml(
-                            (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue(
-                                KEY_DESCRIPTION
+                    when (it) {
+                        is OpenDayDeliverySlot -> {
+                            val deliveryType =
+                                it.deliveryType
+                            title.text = deliveryType?.capitalize(Locale.ROOT)
+                            subTitle.text = if (deliveryType.equals(DELIVERY_TYPE_TIMESLOT))
+                                Html.fromHtml(it.description) else it.deliveryInDays
+                            editAddressImageView.visibility = View.GONE
+                            slotPriceButton.visibility = View.VISIBLE
+                            slotPriceButton.text = context.getString(R.string.currency).plus(
+                                it.amount?.toString()
                             )
-                        )
-                    } else {
-                        (openDayDeliverySlotsList?.get(position) as Map<Any, String>).getValue(
-                            KEY_DELIVERY_IN_DAYS
-                        )
+                        }
                     }
 
-                    editAddressImageView.visibility = View.GONE
-                    slotPriceButton.visibility = View.VISIBLE
-                    slotPriceButton.text = context.getString(R.string.currency).plus(
-                        (openDayDeliverySlotsList?.get(position) as Map<Any, Int>).getValue(
-                            KEY_AMOUNT
-                        )
-                            .toString()
-                    )
                     selector.isChecked = checkedItemPosition == position
                     addressSelectionLayout.setBackgroundColor(
                         if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
