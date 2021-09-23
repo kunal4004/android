@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_voice_of_customer.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GenericActionOrCancelDialogFragment
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -70,6 +71,7 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
     }
 
     override fun onBackPressed() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VOC_SKIP, this)
         val currentDestination = navigationHost?.currentDestination ?: return
         when (currentDestination.id) {
             R.id.surveyVocFragment -> finishActivity()
@@ -105,6 +107,7 @@ class VoiceOfCustomerActivity : AppCompatActivity(), VoiceOfCustomerInterface, G
 
     override fun onDialogActionClicked(dialogId: Int) {
         if (dialogId == DIALOG_SKIP_ID) {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.VOC_SKIP, this)
             finishActivity()
         }
     }

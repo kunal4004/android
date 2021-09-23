@@ -67,6 +67,9 @@ class KotlinUtils {
 
         const val DELAY: Long = 900
         const val productImageUrlPrefix = "https://images.woolworthsstatic.co.za/"
+        const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
+        const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
+        const val TREATMENT_PLAN = "treamentPlan"
 
         fun highlightTextInDesc(
                 context: Context?,
@@ -394,7 +397,6 @@ class KotlinUtils {
             val appVersionParam = "appVersion"
             val jSessionIdParam = "JSESSIONID"
             val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
-
             val context = WoolworthsApplication.getAppContext()
             val packageManager = context.packageManager
 
@@ -404,10 +406,10 @@ class KotlinUtils {
             val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode.toInt() else packageInfo.versionCode
             val appVersion = "$versionName.$versionCode"
 
-            val symbolType= if(checkoutLink.contains("?")) "&" else "?"
-            val checkOutLink = "$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId"
-
-            WoolworthsApplication.setCartCheckoutLinkWithParams(checkOutLink)
+            if(checkoutLink!=null) {
+                val symbolType = if (checkoutLink.contains("?")) "&" else "?"
+                WoolworthsApplication.setCartCheckoutLinkWithParams("$checkoutLink$symbolType$appVersionParam=$appVersion&$jSessionIdParam=$jSessionId")
+            }
         }
 
         fun sendEmail(activity: Activity?, emailId: String, subject: String?) {
@@ -794,11 +796,18 @@ class KotlinUtils {
             }
         }
 
-        fun openLinkInInternalWebView(activity: Activity?, url: String?) {
+        fun openLinkInInternalWebView(activity: Activity?,
+                                      url: String?,
+                                      treatmentPlan: Boolean,
+                                      collectionsExitUrl: String?) {
             activity?.apply {
                 val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
                 openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 openInternalWebView.putExtra("externalLink", url)
+                if(treatmentPlan){
+                    openInternalWebView.putExtra(TREATMENT_PLAN, treatmentPlan)
+                    openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                }
                 startActivity(openInternalWebView)
             }
         }

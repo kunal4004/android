@@ -148,6 +148,27 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         this.mAccountHelpInformation = informationModelAccount
     }
 
+    override fun showViewTreatmentPlan(){
+        mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment)
+    }
+
+    override fun removeBlocksWhenChargedOff() {
+        availableFundFragmentFrameLayout?.visibility = GONE
+        bottomSheetBehaviourLinearLayout?.visibility = GONE
+        removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
+        val removeBlockOnCollectionFragmentContainerView = supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
+        val navigationController: NavController? = removeBlockOnCollectionFragmentContainerView?.navController
+        mAccountSignedInPresenter?.apply {
+            when (getMyAccountCardInfo()?.first) {
+                ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
+                    navigationController?.navigate(R.id.removeBlockDCFragment)
+                }
+                else -> {
+                }
+            }
+        }
+    }
+
     override fun removeBlocksOnCollectionCustomer() {
         availableFundFragmentFrameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
