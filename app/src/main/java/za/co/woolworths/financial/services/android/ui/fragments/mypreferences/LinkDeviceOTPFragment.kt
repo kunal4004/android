@@ -619,23 +619,25 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun checkCreditCardDeliveryStatus() {
-        OneAppService.getCreditCardDeliveryStatus(
-            cardWithPLCState!!.envelopeNumber,
-            getAccount()?.productOfferingId.toString())
-            .enqueue(CompletionHandler(object : IResponseListener<CreditCardDeliveryStatusResponse>
-            {
-                override fun onSuccess(response: CreditCardDeliveryStatusResponse?) {
-                    when (response?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(
-                        CreditCardDeliveryStatus.DEFAULT)) {
-                        CreditCardDeliveryStatus.CARD_RECEIVED ->
-                            goToScheduleDelivery(response)
-                        else -> goToProduct()
+        cardWithPLCState?.envelopeNumber?.let {
+            OneAppService.getCreditCardDeliveryStatus(
+                it,
+                getAccount()?.productOfferingId.toString())
+                .enqueue(CompletionHandler(object : IResponseListener<CreditCardDeliveryStatusResponse> {
+                    override fun onSuccess(response: CreditCardDeliveryStatusResponse?) {
+                        when (response?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(
+                            CreditCardDeliveryStatus.DEFAULT)) {
+                            CreditCardDeliveryStatus.CARD_RECEIVED ->
+                                goToScheduleDelivery(response)
+                            else -> goToProduct()
+                        }
                     }
-                }
-                override fun onFailure(error: Throwable?) {
-                    goToProduct()
-                }
-            }, CreditCardDeliveryStatusResponse::class.java))
+
+                    override fun onFailure(error: Throwable?) {
+                        goToProduct()
+                    }
+                }, CreditCardDeliveryStatusResponse::class.java))
+        }
     }
 
     private fun getAccount(): Account? {
