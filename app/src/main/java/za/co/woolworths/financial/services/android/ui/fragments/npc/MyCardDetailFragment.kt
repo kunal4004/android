@@ -69,7 +69,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     companion object {
         var SHOW_TEMPORARY_FREEZE_DIALOG = false
-        var FROM_CARD_DETAIL_FRAGMENT = false
+        var SHOW_BLOCK_CARD_SCREEN = false
+        var FREEZE_CARD_DETAIL = false
+        var BLOCK_CARD_DETAIL = false
 
         fun newInstance(storeCardDetail: String?, shouldActivateUnblockCardOnLanding: Boolean) = MyCardDetailFragment().withArgs {
             putString(STORE_CARD_DETAIL, storeCardDetail)
@@ -138,20 +140,12 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             if (compoundButton.isPressed) {
                 when (isChecked) {
                     true -> {
-                        if (!MyAccountsFragment.verifyAppInstanceId() &&
-                            Utils.isGooglePlayServicesAvailable()) {
-                            FROM_CARD_DETAIL_FRAGMENT = true
+                        linkDeviceIfNecessary({
+                            FREEZE_CARD_DETAIL = true
                             temporaryCardFreezeSwitch?.isChecked = false
-                            activity?.let {
-                                val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
-                                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, ApplyNowState.STORE_CARD)
-                                it.startActivity(intent)
-                                it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
-                            }
-                        }
-                        else{
+                        },{
                             temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
-                        }
+                        })
                     }
                     false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
                 }
@@ -170,6 +164,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             SHOW_TEMPORARY_FREEZE_DIALOG = false
             temporaryCardFreezeSwitch?.isChecked = true
             temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
+        }
+        else if(SHOW_BLOCK_CARD_SCREEN){
+            SHOW_BLOCK_CARD_SCREEN = false
+            activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
         }
     }
 
@@ -366,7 +364,13 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     override fun onClick(v: View?) {
         if (isTemporaryCardFreezeInProgress()) return
         when (v?.id) {
-            R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
+            R.id.blockCard -> {
+                linkDeviceIfNecessary({
+                    BLOCK_CARD_DETAIL = true
+                },{
+                    activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
+                })
+            }
             R.id.howItWorks -> {
                 if (isApiCallInProgress())
                     return
@@ -516,4 +520,19 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     fun isTemporaryCardFreezeInProgress() = temporaryFreezeCardProgressBar?.visibility == VISIBLE
+
+    private fun linkDeviceIfNecessary(doJob: () -> Unit, elseJob: () -> Unit){
+        if (!MyAccountsFragment.verifyAppInstanceId() && Utils.isGooglePlayServicesAvailable()) {
+            doJob()
+            activity?.let {
+                val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
+                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, ApplyNowState.STORE_CARD)
+                it.startActivity(intent)
+                it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+            }
+        }
+        else{
+            elseJob()
+        }
+    }
 }
