@@ -142,6 +142,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
         }
 
+        txtContinueToPayment?.setOnClickListener(this)
         activity?.apply {
             view?.setOnClickListener {
                 Utils.hideSoftKeyboard(this)
@@ -527,14 +528,34 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     baseFragBundle
                 )
             }
+            R.id.txtContinueToPayment -> {
+                onCheckoutPaymentClick(v)
+            }
         }
     }
 
-    override fun selectedDeliveryType(deliveryType: Any, type: DeliveryType) {
-        if (((deliveryType as? Map<Any, String>)?.getValue("deliveryType")).equals(
-                DELIVERY_TYPE_TIMESLOT
-            )
-        ) {
+    private fun onCheckoutPaymentClick(view: View) {
+        val body = getShipmentDetailsBody()
+        checkoutAddAddressNewUserViewModel.getShippingDetails(body)
+            .observe(viewLifecycleOwner, { response ->
+                when (response) {
+                    is ShippingDetailsResponse -> {
+
+                    }
+                    is Throwable -> {
+
+                    }
+                }
+            })
+    }
+
+    private fun getShipmentDetailsBody(): ShippingDetailsBody {
+        val body = ShippingDetailsBody()
+        return body
+    }
+    override fun selectedDeliveryType(deliveryType: Any, type: DeliveryType, position: Int) {
+        oddSelectedPosition = position
+        if ((DELIVERY_TYPE_TIMESLOT).equals(((deliveryType as? OpenDayDeliverySlot)?.deliveryType))) {
             gridLayoutDeliveryOptions.visibility = View.VISIBLE
             otherType = type
             expandableGrid.apply {

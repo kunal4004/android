@@ -239,6 +239,11 @@ object OneAppService : RetrofitConfig() {
         getDeviceIdentityToken(), body)
     }
 
+    fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
+        return mApiInterface.getShippingDetails("", "", getSessionToken(),
+        getDeviceIdentityToken(), body)
+    }
+
     fun getCartSummary(): Call<CartSummaryResponse> {
         return mApiInterface.getCartSummary( "", "", getSessionToken(),
             getDeviceIdentityToken())

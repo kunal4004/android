@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutMockApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 
 /**
@@ -28,6 +29,10 @@ class CheckoutAddAddressNewUserInteractor(
         checkoutAddAddressNewUserApiHelper.deleteAddress(addressId)
 
     fun changeAddress(nickName: String) = checkoutAddAddressNewUserApiHelper.changeAddress(nickName)
+
     fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody) =
         checkoutAddAddressNewUserApiHelper.getConfirmDeliveryAddressDetails(body = body)
+
+    fun getShippingDetails(body: ShippingDetailsBody) =
+        checkoutAddAddressNewUserApiHelper.getShippingDetails(body = body)
 }

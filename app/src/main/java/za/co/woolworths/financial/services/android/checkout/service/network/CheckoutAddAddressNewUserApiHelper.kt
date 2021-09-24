@@ -118,6 +118,23 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
         }, ConfirmDeliveryAddressResponse::class.java))
         return confirmDeliveryAddress
+    }
 
+    fun getShippingDetails(body: ShippingDetailsBody): LiveData<Any> {
+        val shippingDetailsResp = MutableLiveData<Any>()
+        OneAppService.getShippingDetails(body).enqueue(CompletionHandler(object :
+            IResponseListener<ShippingDetailsResponse> {
+            override fun onSuccess(shippingDetailsResponse: ShippingDetailsResponse?) {
+                shippingDetailsResp.value = shippingDetailsResponse ?: null
+            }
+
+            override fun onFailure(error: Throwable?) {
+                if (error != null) {
+                    shippingDetailsResp.value = error!!
+                }
+            }
+
+        }, ShippingDetailsResponse::class.java))
+        return shippingDetailsResp
     }
 }
