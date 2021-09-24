@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Head
 import za.co.woolworths.financial.services.android.checkout.service.network.HourSlots
 import za.co.woolworths.financial.services.android.checkout.service.network.Week
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.SECOND
 import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.DeliveryFoodOrOther.FOOD
 import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.DeliveryFoodOrOther.OTHER
 import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.SlotGridColors.*
@@ -53,6 +54,10 @@ class ExpandableGrid(val fragment: Fragment) {
     ) {
         when (deliveryType) {
             DeliveryType.MIXED_FOOD -> {
+                if (confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.size ?: -1 == SECOND.week) {
+                    hidePreviousNextFoodBtn()
+                } else
+                    showPreviousNextFoodBtn()
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.get(weekNumber)
                 createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewFood)
@@ -66,6 +71,10 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.MIXED_OTHER -> {
+                if (confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.size ?: -1 == SECOND.week) {
+                    hidePreviousNextOtherBtn()
+                } else
+                    showPreviousNextOtherBtn()
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.get(weekNumber)
                 createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
@@ -79,6 +88,10 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.ONLY_FOOD -> {
+                if (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size ?: -1 == SECOND.week) {
+                    hidePreviousNextFoodBtn()
+                } else
+                    showPreviousNextFoodBtn()
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
 
@@ -93,6 +106,10 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.ONLY_OTHER -> {
+                if (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size ?: -1 == SECOND.week) {
+                    hidePreviousNextOtherBtn()
+                } else
+                    showPreviousNextOtherBtn()
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
 
@@ -396,6 +413,22 @@ class ExpandableGrid(val fragment: Fragment) {
 
     fun disablePreviousBtnOther() {
         setDisableBackgroundColor(fragment.previousImgBtnOther, fragment.previousOtherTextView)
+    }
+
+    fun hidePreviousNextOtherBtn() {
+        fragment.previousNextBtnLayoutOther.visibility = View.GONE
+    }
+
+    fun showPreviousNextOtherBtn() {
+        fragment.previousNextBtnLayoutOther.visibility = View.VISIBLE
+    }
+
+    fun hidePreviousNextFoodBtn() {
+        fragment.previousNextBtnLayoutFood.visibility = View.GONE
+    }
+
+    fun showPreviousNextFoodBtn() {
+        fragment.previousNextBtnLayoutFood.visibility = View.VISIBLE
     }
 
     private fun setDisableBackgroundColor(imgBtn: ImageButton, textView: TextView) {

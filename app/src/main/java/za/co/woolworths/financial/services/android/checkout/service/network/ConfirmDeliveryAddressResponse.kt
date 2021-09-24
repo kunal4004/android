@@ -22,20 +22,14 @@ class ConfirmDeliveryAddressResponse {
     @SerializedName("requiredToDisplayODD")
     var requiredToDisplayODD: Boolean? = null
 
-    @SerializedName("hasDeliverySlotsConflict")
-    var hasDeliverySlotsConflict: Boolean? = null
-
     @SerializedName("sortedFoodDeliverySlots")
     var sortedFoodDeliverySlots: List<SortedFoodDeliverySlot>? = null
 
     @SerializedName("sortedJoinDeliverySlots")
     var sortedJoinDeliverySlots: List<SortedJoinDeliverySlot>? = null
 
-    @SerializedName("reservedDeliverySlots")
-    var reservedDeliverySlots: List<Any>? = null
-
     @SerializedName("openDayDeliverySlots")
-    var openDayDeliverySlots: List<Any>? = null
+    var openDayDeliverySlots: ArrayList<OpenDayDeliverySlot>? = null
 
     @SerializedName("requiredToDisplayOnlyODD")
     var requiredToDisplayOnlyODD: Boolean? = null

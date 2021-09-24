@@ -4,20 +4,11 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 class Address : Serializable {
-    @SerializedName("lastName")
-    var lastName: String? = null
-
-    @SerializedName("country")
-    var country: String? = null
-
     @SerializedName("suburbId")
     var suburbId: String? = null
 
     @SerializedName("address2")
     var address2: String? = null
-
-    @SerializedName("city")
-    var city: String? = null
 
     @SerializedName("address1")
     var address1: String? = null
@@ -27,24 +18,6 @@ class Address : Serializable {
 
     @SerializedName("primaryContactNo")
     var primaryContactNo: String? = null
-
-    @SerializedName("title")
-    var title: String? = null
-
-    @SerializedName("ownerId")
-    var ownerId: String? = null
-
-    @SerializedName("secondaryContactNo")
-    var secondaryContactNo: String? = null
-
-    @SerializedName("firstName")
-    var firstName: String? = null
-
-    @SerializedName("phoneNumber")
-    var phoneNumber: String? = null
-
-    @SerializedName("storeAddress")
-    var storeAddress: Boolean? = null
 
     @SerializedName("nickname")
     var nickname: String? = null
@@ -57,9 +30,6 @@ class Address : Serializable {
 
     @SerializedName("id")
     var id: String? = null
-
-    @SerializedName("state")
-    var state: String? = null
 
     @SerializedName("region")
     var region: String? = null
