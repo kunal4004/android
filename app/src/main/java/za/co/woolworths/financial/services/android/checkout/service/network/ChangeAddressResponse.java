@@ -18,9 +18,6 @@ public class ChangeAddressResponse {
     @SerializedName("unDeliverableCommerceItems")
     public List<Object> unDeliverableCommerceItems = null;
 
-    @SerializedName("stores")
-    public String stores;
-
     @SerializedName("navSuburbDetails")
     public String navSuburbDetails;
 
@@ -36,14 +33,8 @@ public class ChangeAddressResponse {
     @SerializedName("firstAvailableOtherDeliveryDate")
     public String firstAvailableOtherDeliveryDate;
 
-    @SerializedName("quantityLimit")
-    public QuantityLimit quantityLimit;
-
     @SerializedName("unSellableCommerceItems")
     public List<UnSellableCommerceItem> unSellableCommerceItems = null;
-
-    @SerializedName("deliveryStatus")
-    public DeliveryStatus deliveryStatus;
 
     @SerializedName("response")
     public Response response;
@@ -73,14 +64,6 @@ public class ChangeAddressResponse {
 
     public void setUnDeliverableCommerceItems(List<Object> unDeliverableCommerceItems) {
         this.unDeliverableCommerceItems = unDeliverableCommerceItems;
-    }
-
-    public String getStores() {
-        return stores;
-    }
-
-    public void setStores(String stores) {
-        this.stores = stores;
     }
 
     public String getNavSuburbDetails() {
@@ -123,28 +106,12 @@ public class ChangeAddressResponse {
         this.firstAvailableOtherDeliveryDate = firstAvailableOtherDeliveryDate;
     }
 
-    public QuantityLimit getQuantityLimit() {
-        return quantityLimit;
-    }
-
-    public void setQuantityLimit(QuantityLimit quantityLimit) {
-        this.quantityLimit = quantityLimit;
-    }
-
     public List<UnSellableCommerceItem> getUnSellableCommerceItems() {
         return unSellableCommerceItems;
     }
 
     public void setUnSellableCommerceItems(List<UnSellableCommerceItem> unSellableCommerceItems) {
         this.unSellableCommerceItems = unSellableCommerceItems;
-    }
-
-    public DeliveryStatus getDeliveryStatus() {
-        return deliveryStatus;
-    }
-
-    public void setDeliveryStatus(DeliveryStatus deliveryStatus) {
-        this.deliveryStatus = deliveryStatus;
     }
 
     public Response getResponse() {

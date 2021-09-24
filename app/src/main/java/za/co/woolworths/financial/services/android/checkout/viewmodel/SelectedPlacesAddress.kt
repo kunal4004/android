@@ -9,4 +9,5 @@ class SelectedPlacesAddress {
     var savedAddress = Address()
     var store: String = ""
     var storeId: String = ""
+    var provinceName: String = ""
 }

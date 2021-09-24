@@ -133,6 +133,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     selectedDeliveryAddressType = savedAddress?.addressType
                     if (savedAddress != null) {
                         selectedAddress.savedAddress = savedAddress
+                        selectedAddress.provinceName = getProvinceName(savedAddress.region)
                     }
                     setHasOptionsMenu(true)
                 }
@@ -153,6 +154,20 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     ?: getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
             }
         }
+    }
+
+    private fun getProvinceName(provinceId: String?): String {
+        val provinceList =
+            WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>
+        if (!provinceId.isNullOrEmpty()) {
+            for (provinces in provinceList) {
+                if (provinceId.equals(provinces.id)) {
+                    // province id is matching with the province list from config.
+                    return provinces.name
+                }
+            }
+        }
+        return ""
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -203,7 +218,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
         unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
         suburbEditText.setText(selectedAddress.savedAddress.suburb)
-        provinceAutocompleteEditText.setText(selectedAddress.savedAddress.city)
+        provinceAutocompleteEditText.setText(selectedAddress.provinceName)
         cellphoneNumberEditText.setText(selectedAddress.savedAddress.primaryContactNo)
         recipientNameEditText.setText(selectedAddress.savedAddress.recipientName)
         if (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
@@ -354,7 +369,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
 
         setFragmentResultListener(RESULT_ERROR_CODE_SUBURB_NOT_FOUND) { _, _ ->
-            if (selectedAddress.savedAddress.city.isNullOrEmpty()) return@setFragmentResultListener
+            if (selectedAddress.provinceName.isNullOrEmpty()) return@setFragmentResultListener
             provinceSuburbEnableType = ONLY_SUBURB
             enableEditText()
             getSuburbs()
@@ -402,9 +417,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun onProvinceSelected(province: Province?) {
-        selectedAddress.savedAddress.apply {
-            city = province?.name.toString()
-            region = province?.id.toString()
+        selectedAddress.apply {
+            provinceName = province?.name.toString()
+            savedAddress.region = province?.id.toString()
         }
         enableEditText()
         provinceAutocompleteEditText?.setText(province?.name)
@@ -474,7 +489,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 STREET_NUMBER.value -> addressText1 = address.name
                 ROUTE.value -> addressText2 = address.name
                 ADMINISTRATIVE_AREA_LEVEL_1.value -> {
-                    selectedAddress.savedAddress.city = address.name
+                    selectedAddress.provinceName = address.name
                 }
                 POSTAL_CODE.value -> selectedAddress.savedAddress.postalCode = address.name
                 SUBLOCALITY_LEVEL_1.value -> {
@@ -486,11 +501,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         selectedAddress.savedAddress.suburb = address.name
                 }
 
-                LOCALITY.value -> selectedAddress.savedAddress.city = address.name
+                LOCALITY.value -> selectedAddress.provinceName = address.name
 
             }
         }
-        if (!selectedAddress.savedAddress.city.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
+        if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
         selectedAddress.savedAddress.apply {
             address1 = if (place.name.isNullOrEmpty()) addressText1.plus(" ")
@@ -525,7 +540,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
         val localProvince = Province()
-        val provinceName = selectedAddress.savedAddress.city
+        val provinceName = selectedAddress.provinceName
         if (!provinceName.isNullOrEmpty()) {
             for (provinces in provinceList) {
                 if (provinceName.equals(provinces.name)) {
@@ -536,9 +551,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     }
                     provinceAutocompleteEditText.setText(provinceName)
                     disableProvinceSelection()
-                    selectedAddress.savedAddress.apply {
-                        city = localProvince.name
-                        region = localProvince.id
+                    selectedAddress.apply {
+                        this.provinceName = localProvince.name
+                        savedAddress.region = localProvince.id
                     }
                 }
             }
@@ -555,7 +570,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         if (selectedAddress.savedAddress.suburb.isNullOrEmpty()) {
             resetSuburbSelection()
             provinceSuburbEnableType =
-                if (selectedAddress.savedAddress.city.isNullOrEmpty()) BOTH else ONLY_SUBURB
+                if (selectedAddress.provinceName.isNullOrEmpty()) BOTH else ONLY_SUBURB
         } else {
             suburbEditText.setText(selectedAddress.savedAddress.suburb)
             disableSuburbSelection()
@@ -722,7 +737,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 onSaveAddressClicked()
             }
             R.id.selectSuburbLayout, R.id.suburbEditText -> {
-                if (selectedAddress.savedAddress.city.isNullOrEmpty()) return
+                if (selectedAddress.provinceName.isNullOrEmpty()) return
                 getSuburbs()
             }
             R.id.selectProvinceLayout, R.id.provinceAutocompleteEditText -> {
@@ -1103,7 +1118,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             suburbDeliverable = deliverable
         }
         province.apply {
-            name = selectedAddress.savedAddress.city
+            name = selectedAddress.provinceName
             id = selectedAddress.savedAddress.region
         }
 
@@ -1133,7 +1148,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             "",
             selectedAddress.savedAddress.region ?: "",
             selectedAddress.savedAddress.suburbId ?: "",
-            selectedAddress.savedAddress.city ?: "",
+            selectedAddress.provinceName ?: "",
             suburbEditText?.text.toString(),
             "",
             false,

@@ -279,17 +279,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         // To show How would you like it to delivered.
         checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
         if (confirmDeliveryAddressResponse?.requiredToDisplayOnlyODD == false) {
-            val timeSlotListItem: MutableMap<Any, Any> = HashMap()
-            timeSlotListItem["deliveryType"] = DELIVERY_TYPE_TIMESLOT
-            timeSlotListItem["amount"] = (selectedSlotResponseFood?.timedDeliveryCosts?.join!!)
+            val timeSlotListItem = OpenDayDeliverySlot()
+            timeSlotListItem.apply {
+                deliveryType = DELIVERY_TYPE_TIMESLOT
+                amount = selectedSlotResponseOther?.timedDeliveryCosts?.join?.toLong()
+                val date = selectedSlotResponseOther?.timedDeliveryStartDates?.other
+                val deliveryText = getString(R.string.earliest_delivery_date_text)
+                description = "$deliveryText <b>$date</b>"
+            }
 
-            val date = selectedSlotResponseFood?.timedDeliveryStartDates?.other
-            val deliveryText = getString(R.string.earliest_delivery_date_text)
-            timeSlotListItem["description"] = "$deliveryText <b>$date</b>"
-
-            (confirmDeliveryAddressResponse.openDayDeliverySlots as? ArrayList)?.add(
-                timeSlotListItem
-            )
+            (confirmDeliveryAddressResponse.openDayDeliverySlots)?.add(timeSlotListItem)
         }
         checkoutDeliveryTypeSelectionShimmerAdapter = null
         deliveryTypeSelectionRecyclerView.adapter = null

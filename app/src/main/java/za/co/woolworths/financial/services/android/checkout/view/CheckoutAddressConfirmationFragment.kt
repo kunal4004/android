@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.add_to_list_content.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_click_and_collect.*
 import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
+import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddressConfirmationInteractor
@@ -327,7 +328,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 suburbId = selectedSuburb.id
                 suburb = selectedSuburb.name
                 postalCode = selectedSuburb.postalCode
-                city = selectedProvince.name
                 region = selectedProvince.id
             }
 
@@ -661,7 +661,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
         val province = Province()
         province.apply {
-            name = address.city
+            name = getProvinceName(address.region)
             id = address.region
         }
         val bundle = Bundle()
@@ -675,6 +675,20 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             R.id.action_to_unsellableItemsFragment,
             bundleOf("bundle" to bundle)
         )
+    }
+
+    private fun getProvinceName(provinceId: String?): String {
+        val provinceList =
+            WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>
+        if (!provinceId.isNullOrEmpty()) {
+            for (provinces in provinceList) {
+                if (provinceId.equals(provinces.id)) {
+                    // province id is matching with the province list from config.
+                    return provinces.name
+                }
+            }
+        }
+        return ""
     }
 
     override fun hideErrorView() {
