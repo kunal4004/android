@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddressConfirmationViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -110,6 +111,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         when (v?.id) {
             R.id.deliveryTab -> {
                 if (loadingProgressBar.visibility == View.GONE) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY,
+                        activity
+                    )
                     showDeliveryTab()
                     showDeliveryAddressListView()
                     initialiseDeliveryAddressRecyclerView()
@@ -117,10 +122,18 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             }
             R.id.collectionTab -> {
                 if (loadingProgressBar.visibility == View.GONE) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_COLLECTION,
+                        activity
+                    )
                     showCollectionTab(localSuburbId)
                 }
             }
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_ADD_NEW_ADDRESS,
+                    activity
+                )
                 navigateToAddAddress()
             }
             R.id.btnAddressConfirmation -> {
@@ -129,6 +142,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
                             addNewAddressErrorMsg.visibility = View.VISIBLE
                         else {
+                            Utils.triggerFireBaseEvents(
+                                FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY_CONFIRM_BTN,
+                                activity
+                            )
                             callChangeAddressApi()
                         }
                     } else {
@@ -137,6 +154,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                             //Zero stores and user clicks on change suburb.
                             getSuburb(selectedProvince)
                         } else if (selectedSuburb.storeAddress != null) {
+                            Utils.triggerFireBaseEvents(
+                                FirebaseManagerAnalyticsProperties.CHECKOUT_CONFIRM_NEW_STORE,
+                                activity
+                            )
                             checkUnsellableItems()
                         }
                     }
@@ -226,6 +247,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun changeLocation() {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_COLECTION_CHANGE_BTN,
+            activity
+        )
         val bundle = Bundle()
         bundle.apply {
             putString(
@@ -397,7 +422,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         )
         checkoutAddressConfirmationListAdapter = null
         checkoutAddressConfirmationListAdapter =
-            CheckoutAddressConfirmationListAdapter(savedAddress, navController, this)
+            CheckoutAddressConfirmationListAdapter(savedAddress, navController, this, activity)
         saveAddressRecyclerView?.apply {
             addItemDecoration(object : ItemDecoration() {})
             layoutManager = activity?.let { LinearLayoutManager(it) }

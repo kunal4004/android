@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -19,7 +21,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 class CheckoutAddressConfirmationListAdapter(
     private var savedAddress: SavedAddressResponse?,
     private val navController: NavController?,
-    private val listner: EventListner
+    private val listner: EventListner,
+    private val activity: FragmentActivity?
 ) :
     RecyclerView.Adapter<CheckoutAddressConfirmationListAdapter.CheckoutAddressConfirmationViewHolder>() {
 
@@ -100,6 +103,10 @@ class CheckoutAddressConfirmationListAdapter(
                 }
                 editAddressImageView.setOnClickListener {
                     val bundle = Bundle()
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_EDIT_ADDRESS,
+                        activity
+                    )
                     bundle.putString(EDIT_SAVED_ADDRESS_RESPONSE_KEY, Utils.toJson(savedAddress))
                     bundle.putInt(EDIT_ADDRESS_POSITION_KEY, position)
                     navController?.navigate(

@@ -211,6 +211,17 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
 
+        //Native Checkout
+        const val CHANGE_FULFILLMENT_DELIVERY = "chckout_dlvry"
+        const val CHANGE_FULFILLMENT_COLLECTION = "chckout_cllct"
+        const val CHECKOUT_COLECTION_CHANGE_BTN = "chckout_cllct_chnge"
+        const val CHECKOUT_CONFIRM_NEW_STORE = "chckout_cllct_cnfrm_str"
+        const val CHANGE_FULFILLMENT_ADD_NEW_ADDRESS = "chckout_dlvry_ad_adrs"
+        const val CHANGE_FULFILLMENT_EDIT_ADDRESS = "chckout_dlvry_edt_adrs"
+        const val CHANGE_FULFILLMENT_DELETE_ADDRESS = "chckout_dlvry_dlte_adrs"
+        const val CHANGE_FULFILLMENT_DELIVERY_CONFIRM_BTN = "chckout_dlvry_cnfrm_adrs"
+        const val CHECKOUT_SAVE_ADDRESS = "chckout_dlvry_sve_adrs"
+
         //PLDD
         const val personalLoanDrawdownStart = "pldd_start"
         const val personalLoanDrawdownComplete = "pldd_complete"

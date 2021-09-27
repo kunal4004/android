@@ -53,6 +53,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressCom
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -750,6 +751,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun deleteAddress() {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELETE_ADDRESS,
+            activity
+        )
         loadingProgressBar.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.deleteAddress(selectedAddressId)
             .observe(viewLifecycleOwner, { response ->
@@ -873,6 +878,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun onSaveAddressClicked() {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_SAVE_ADDRESS,
+            activity
+        )
 
         if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
             && cellphoneNumberEditText?.text.toString().trim().length < 10
