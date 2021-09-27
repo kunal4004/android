@@ -93,14 +93,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             }
         }
     }
-    private val PLC = "PLC"
-    private val absaCardToken = "absaCardToken"
-    private val productOfferingId = "productOfferingId"
-    private val envelopeNumber = "envelopeNumber"
-    private val accountBinNumber = "accountBinNumber"
-    private val statusResponse = "StatusResponse"
-    private val setUpDeliveryNowClicked = "setUpDeliveryNowClicked"
-    private val bundle = "bundle"
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             when {
@@ -259,6 +251,14 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         const val RETRY_VALIDATE: String = "VALIDATE_OTP"
         const val RETRY_LINK_DEVICE: String = "LINK_DEVICE"
         const val GO_TO_PRODUCT: Int = 999
+        const val PLC = "PLC"
+        const val KEY_ENVELOPE_NUMBER = "envelopeNumber"
+        const val KEY_ABSA_CARD_TOKEN = "absaCardToken"
+        const val KEY_PRODUCT_OFFERING_ID = "productOfferingId"
+        const val KEY_ACCOUNT_BIN_NUMBER = "accountBinNumber"
+        const val KEY_STATUS_RESPONSE = "StatusResponse"
+        const val KEY_SETUP_DELIVERY_NOW_CLICKED = "setUpDeliveryNowClicked"
+        const val KEY_BUNDLE = "bundle"
     }
 
     override fun onClick(v: View?) {
@@ -655,23 +655,25 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun checkCreditCardDeliveryStatus() {
-        OneAppService.getCreditCardDeliveryStatus(
-            cardWithPLCState!!.envelopeNumber,
-            getAccount()?.productOfferingId.toString())
-            .enqueue(CompletionHandler(object : IResponseListener<CreditCardDeliveryStatusResponse>
-            {
-                override fun onSuccess(response: CreditCardDeliveryStatusResponse?) {
-                    when (response?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(
-                        CreditCardDeliveryStatus.DEFAULT)) {
-                        CreditCardDeliveryStatus.CARD_RECEIVED ->
-                            goToScheduleDelivery(response)
-                        else -> goToProduct()
+        cardWithPLCState?.envelopeNumber?.let {
+            OneAppService.getCreditCardDeliveryStatus(
+                it,
+                getAccount()?.productOfferingId.toString())
+                .enqueue(CompletionHandler(object : IResponseListener<CreditCardDeliveryStatusResponse> {
+                    override fun onSuccess(response: CreditCardDeliveryStatusResponse?) {
+                        when (response?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(
+                            CreditCardDeliveryStatus.DEFAULT)) {
+                            CreditCardDeliveryStatus.CARD_RECEIVED ->
+                                goToScheduleDelivery(response)
+                            else -> goToProduct()
+                        }
                     }
-                }
-                override fun onFailure(error: Throwable?) {
-                    goToProduct()
-                }
-            }, CreditCardDeliveryStatusResponse::class.java))
+
+                    override fun onFailure(error: Throwable?) {
+                        goToProduct()
+                    }
+                }, CreditCardDeliveryStatusResponse::class.java))
+        }
     }
 
     private fun getAccount(): Account? {
@@ -719,9 +721,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 )), this)
                 val mIntent = Intent(this, CreditCardActivationActivity::class.java)
                 val mBundle = Bundle()
-                mBundle.putString(absaCardToken, cardWithPLCState?.absaCardToken)
-                mBundle.putString(productOfferingId, getAccount()?.productOfferingId.toString())
-                mIntent.putExtra(bundle, mBundle)
+                mBundle.putString(KEY_ABSA_CARD_TOKEN, cardWithPLCState?.absaCardToken)
+                mBundle.putString(KEY_PRODUCT_OFFERING_ID, getAccount()?.productOfferingId.toString())
+                mIntent.putExtra(KEY_BUNDLE, mBundle)
                 mIntent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
                 startActivityIfNeeded(mIntent,
                     AccountsOptionFragment.REQUEST_CREDIT_CARD_ACTIVATION
@@ -738,13 +740,13 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         val account = MyAccountsFragment.mAccountResponse.accountList[0]
         val intent = Intent(context, CreditCardDeliveryActivity::class.java)
         val mBundle = Bundle()
-        mBundle.putString(envelopeNumber, account.cards[0].envelopeNumber)
-        mBundle.putString(accountBinNumber, account.accountNumberBin)
-        mBundle.putString(statusResponse, Utils.toJson(response.statusResponse))
-        mBundle.putString(productOfferingId, account.productOfferingId.toString())
-        mBundle.putBoolean(setUpDeliveryNowClicked, true)
+        mBundle.putString(KEY_ENVELOPE_NUMBER, account.cards[0].envelopeNumber)
+        mBundle.putString(KEY_ACCOUNT_BIN_NUMBER, account.accountNumberBin)
+        mBundle.putString(KEY_STATUS_RESPONSE, Utils.toJson(response.statusResponse))
+        mBundle.putString(KEY_PRODUCT_OFFERING_ID, account.productOfferingId.toString())
+        mBundle.putBoolean(KEY_SETUP_DELIVERY_NOW_CLICKED, true)
         mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-        intent.putExtra(bundle, mBundle)
+        intent.putExtra(KEY_BUNDLE, mBundle)
         startActivity(intent)
     }
 
