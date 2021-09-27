@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.*
 import android.text.style.*
+import android.util.Log
 import android.util.Pair
 import android.util.TypedValue
 import android.view.View
@@ -61,6 +62,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 class KotlinUtils {
     companion object {
@@ -72,10 +74,10 @@ class KotlinUtils {
         const val TREATMENT_PLAN = "treamentPlan"
 
         fun highlightTextInDesc(
-                context: Context?,
-                spannableTitle: SpannableString,
-                searchTerm: String,
-                textIsClickable: Boolean = true
+            context: Context?,
+            spannableTitle: SpannableString,
+            searchTerm: String,
+            textIsClickable: Boolean = true,
         ): SpannableString {
             var start = spannableTitle.indexOf(searchTerm)
             if (start == -1) {
@@ -286,8 +288,8 @@ class KotlinUtils {
         }
 
         fun setAccountNavigationGraph(
-                navigationController: NavController,
-                screenType: OnBoardingScreenType
+            navigationController: NavController,
+            screenType: OnBoardingScreenType,
         ) {
             val bundle = Bundle()
             bundle.putSerializable(ON_BOARDING_SCREEN_TYPE, screenType)
@@ -344,9 +346,9 @@ class KotlinUtils {
         }
 
         fun presentEditDeliveryLocationActivity(
-                activity: Activity?,
-                requestCode: Int,
-                deliveryType: DeliveryType? = null
+            activity: Activity?,
+            requestCode: Int,
+            deliveryType: DeliveryType? = null,
         ) {
             var type = deliveryType
             if (type == null) {
@@ -366,11 +368,11 @@ class KotlinUtils {
         }
 
         fun setDeliveryAddressView(
-                context: Activity?,
-                shoppingDeliveryLocation: ShoppingDeliveryLocation,
-                tvDeliveringTo: WTextView,
-                tvDeliveryLocation: WTextView,
-                deliverLocationIcon: ImageView?
+            context: Activity?,
+            shoppingDeliveryLocation: ShoppingDeliveryLocation,
+            tvDeliveringTo: WTextView,
+            tvDeliveryLocation: WTextView,
+            deliverLocationIcon: ImageView?,
         ) {
             with(shoppingDeliveryLocation) {
                 when (storePickup) {
@@ -437,10 +439,10 @@ class KotlinUtils {
         }
 
         fun sendEmail(
-                activity: Activity?,
-                emailAddress: String,
-                subjectLine: String?,
-                emailMessage: String
+            activity: Activity?,
+            emailAddress: String,
+            subjectLine: String?,
+            emailMessage: String,
         ) {
             val emailIntent = Intent(Intent.ACTION_SENDTO)
             emailIntent.data = Uri.parse(
@@ -470,17 +472,17 @@ class KotlinUtils {
         }
 
         fun parseMoneyValue(
-                value: String,
-                groupingSeparator: String,
-                currencySymbol: String
+            value: String,
+            groupingSeparator: String,
+            currencySymbol: String,
         ): String =
                 value.replace(groupingSeparator, "").replace(currencySymbol, "")
 
         fun parseMoneyValueWithLocale(
-                locale: Locale,
-                value: String,
-                groupingSeparator: String,
-                currencySymbol: String
+            locale: Locale,
+            value: String,
+            groupingSeparator: String,
+            currencySymbol: String,
         ): Number {
             val valueWithoutSeparator = parseMoneyValue(value, groupingSeparator, currencySymbol)
             return try {
@@ -611,11 +613,11 @@ class KotlinUtils {
         }
 
         fun showGeneralInfoDialog(
-                fragmentManager: FragmentManager,
-                description: String,
-                title: String = "",
-                actionText: String = "",
-                infoIcon: Int = 0
+            fragmentManager: FragmentManager,
+            description: String,
+            title: String = "",
+            actionText: String = "",
+            infoIcon: Int = 0,
         ) {
             val dialog =
                     GeneralInfoDialogFragment.newInstance(description, title, actionText, infoIcon)
@@ -796,10 +798,12 @@ class KotlinUtils {
             }
         }
 
-        fun openLinkInInternalWebView(activity: Activity?,
-                                      url: String?,
-                                      treatmentPlan: Boolean,
-                                      collectionsExitUrl: String?) {
+        fun openLinkInInternalWebView(
+            activity: Activity?,
+            url: String?,
+            treatmentPlan: Boolean,
+            collectionsExitUrl: String?,
+        ) {
             activity?.apply {
                 val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
                 openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -812,6 +816,21 @@ class KotlinUtils {
             }
         }
 
-    }
+         fun getUpdatedUtils(rating:Float) :Float{  //4.0
+            val completeValue = rating.toInt() //4
+            val decimalValue  = rating-completeValue // 0.0---
 
+            Log.e("completeValue: ", "" + completeValue)
+            Log.e("decimalValue: ", "" + decimalValue)
+
+            if (decimalValue >= 0.0f && decimalValue <= 0.2) {
+                return completeValue.toFloat()
+            } else if (decimalValue >= 0.3 && decimalValue <= 0.7) {
+                return (completeValue + .5).toFloat()
+            }
+            return rating.roundToInt().toFloat()
+        }
+
+        //4.0
+    }
 }
