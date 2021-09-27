@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -206,13 +207,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        try {
-            Activity activity = getActivity();
-            if (activity != null) {
-                mToggleItemRemoved = (ToggleRemoveItem) activity;
-            }
-        } catch (IllegalStateException ex) {
-        }
+
         mMapStoreId = new HashMap<>();
         mChangeQuantityList = new ArrayList<>();
         mChangeQuantity = new ChangeQuantity();
@@ -310,6 +305,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         }
                     }
                 }));
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+            Activity activity = (Activity) context;
+        if (activity != null) {
+            mToggleItemRemoved = (ToggleRemoveItem) activity;
+        }
+
     }
 
     /****
