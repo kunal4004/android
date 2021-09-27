@@ -42,10 +42,10 @@ class ShippingDetailsBody : Serializable {
     var deliverySpecialInstructions: String? = null
 
     @SerializedName("plasticBags")
-    var plasticBags: Boolean? = null
+    var plasticBags: Boolean = false
 
     @SerializedName("giftNoteSelected")
-    var giftNoteSelected: Boolean? = null
+    var giftNoteSelected: Boolean = false
 
     @SerializedName("giftMessage")
     var giftMessage: String? = null
