@@ -8,7 +8,6 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
@@ -55,8 +54,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
     }
 
-    private var selectedOpedDayDeliverySlot = OpenDayDeliverySlot()
-    private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var oddSelectedPosition: Int = -1
     private var suburbId: String = ""
 
@@ -82,9 +79,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var selectedSlotResponseOther: ConfirmDeliveryAddressResponse? = null
     private var selectedFoodSlot = Slot()
     private var selectedOtherSlot = Slot()
-    private var foodType = DEFAULT
-    private var otherType = DEFAULT
-    private var savedAddress = SavedAddressResponse()
+    private var foodType = ONLY_FOOD
+    private var otherType = ONLY_OTHER
     private var checkoutDeliveryTypeSelectionListAdapter: CheckoutDeliveryTypeSelectionListAdapter? =
         null
     private var checkoutDeliveryTypeSelectionShimmerAdapter: CheckoutDeliveryTypeSelectionShimmerAdapter? =
@@ -100,8 +96,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         ONLY_FOOD("only_food"),
         MIXED_FOOD("mixed_food"),
         MIXED_OTHER("mixed_other"),
-        ONLY_OTHER("only_other"),
-        DEFAULT("default")
+        ONLY_OTHER("only_other")
     }
 
     enum class WeekCounter(val week: Int) {
@@ -133,7 +128,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         initializeDeliveryFoodOtherItems()
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
-        validateContinueToPaymentButton()
 
         expandableGrid.apply {
             disablePreviousBtnFood()
@@ -146,6 +140,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             else -> {
                 initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
+                expandableGrid.hideDeliveryTypeShimmerView()
+                showDeliverySlotSelectionView()
             }
         }
 
@@ -204,12 +200,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             return
         }
         context?.let { context ->
-            savedAddress = Utils.jsonStringToObject(
+            val savedAddress = Utils.jsonStringToObject(
                 baseFragBundle?.getString(SAVED_ADDRESS_KEY),
                 SavedAddressResponse::class.java
             ) as? SavedAddressResponse
                 ?: baseFragBundle?.getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
-                        ?: SavedAddressResponse()
 
             if (savedAddress == null || savedAddress.addresses.isNullOrEmpty()) {
                 checkoutDeliveryDetailsLayout?.visibility = View.GONE
@@ -270,7 +265,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
      * @see [FoodSubstitution]
      */
     private fun initializeFoodSubstitution() {
-        selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
+        var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
         radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
@@ -292,24 +287,32 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     ) {
         // To show How would you like it to delivered.
         checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
+        val localOpenDayDeliverySlots = confirmDeliveryAddressResponse?.openDayDeliverySlots
         if (confirmDeliveryAddressResponse?.requiredToDisplayOnlyODD == false) {
-            otherType = if (foodType == DEFAULT) ONLY_OTHER else MIXED_OTHER
-
             val timeSlotListItem = OpenDayDeliverySlot()
             timeSlotListItem.apply {
                 deliveryType = DELIVERY_TYPE_TIMESLOT
                 amount = selectedSlotResponseOther?.timedDeliveryCosts?.join?.toLong()
-                val date = selectedSlotResponseOther?.timedDeliveryStartDates?.join ?: ""
+                val date = selectedSlotResponseOther?.timedDeliveryStartDates?.other
                 val deliveryText = getString(R.string.earliest_delivery_date_text)
                 description = "$deliveryText <b>$date</b>"
             }
-            confirmDeliveryAddressResponse.openDayDeliverySlots?.add(timeSlotListItem)
+            var isTimeSlotAvailable = false
+            if (!localOpenDayDeliverySlots.isNullOrEmpty()) {
+                for (openDaySlot in localOpenDayDeliverySlots) {
+                    // check if timeslot already exist then don't add it again.
+                    if (openDaySlot.deliveryType == DELIVERY_TYPE_TIMESLOT)
+                        isTimeSlotAvailable = true
+                }
+            }
+            if (!isTimeSlotAvailable)
+                localOpenDayDeliverySlots?.add(timeSlotListItem)
         }
         checkoutDeliveryTypeSelectionShimmerAdapter = null
         deliveryTypeSelectionRecyclerView.adapter = null
         checkoutDeliveryTypeSelectionListAdapter =
             CheckoutDeliveryTypeSelectionListAdapter(
-                confirmDeliveryAddressResponse?.openDayDeliverySlots,
+                localOpenDayDeliverySlots,
                 this,
                 type
             )
@@ -504,10 +507,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             selectedFoodSlot = selectedSlot
         else
             selectedOtherSlot = selectedSlot
-
-        validateContinueToPaymentButton()
     }
-
 
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -558,11 +558,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             return
         }
         loadingBar?.visibility = View.VISIBLE
-        setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
             .observe(viewLifecycleOwner, { response ->
                 loadingBar.visibility = View.GONE
-                setScreenClickEvents(true)
                 when (response) {
                     is ShippingDetailsResponse -> {
 
@@ -590,159 +588,13 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun navigateToPaymentWebpage() {
         // TODO: Payment Web page integration.
     }
-
-    private fun setScreenClickEvents(isClickable: Boolean) {
-        radioGroupFoodSubstitution?.isClickable = isClickable
-        checkoutDeliveryDetailsLayout?.isClickable = isClickable
-        switchNeedBags?.isClickable = isClickable
-        switchGiftInstructions?.isClickable = isClickable
-        switchSpecialDeliveryInstruction?.isClickable = isClickable
-    }
-
     private fun getShipmentDetailsBody(): ShippingDetailsBody {
         val body = ShippingDetailsBody()
-        when {
-            // Food Items Basket
-            foodType == ONLY_FOOD -> {
-                body.apply {
-                    requestFrom = "express"
-                    joinBasket = true
-                    foodShipOnDate = selectedFoodSlot?.stringShipOnDate
-                    otherShipOnDate = ""
-                    foodDeliverySlotId = selectedFoodSlot?.slotId
-                    otherDeliverySlotId = ""
-                    oddDeliverySlotId = ""
-                    foodDeliveryStartHour = selectedFoodSlot?.hourFrom?.toLong() ?: 0
-                    otherDeliveryStartHour = 0
-                }
-            }
-            // Other Items Basket
-            otherType == ONLY_OTHER -> {
-
-                body.apply {
-                    joinBasket = true
-                    foodShipOnDate = ""
-                    foodDeliverySlotId = ""
-                    foodDeliveryStartHour = 0
-                    if (selectedOpedDayDeliverySlot.deliveryType != null && selectedOpedDayDeliverySlot.deliveryType != DELIVERY_TYPE_TIMESLOT) {
-                        oddDeliverySlotId = selectedOpedDayDeliverySlot?.deliverySlotId ?: ""
-                        otherShipOnDate = ""
-                        otherDeliverySlotId = ""
-                        otherDeliveryStartHour = 0
-                    } else {
-                        otherShipOnDate = selectedOtherSlot?.stringShipOnDate
-                        otherDeliverySlotId = selectedOtherSlot?.slotId
-                        otherDeliveryStartHour = selectedOtherSlot?.hourFrom?.toLong() ?: 0
-                        oddDeliverySlotId = ""
-                    }
-                }
-            }
-            //Mixed Basket
-            foodType == MIXED_FOOD || otherType == MIXED_OTHER -> {
-                body.apply {
-                    joinBasket = false
-                    if (selectedOpedDayDeliverySlot.deliveryType != null && selectedOpedDayDeliverySlot.deliveryType == DELIVERY_TYPE_TIMESLOT) {
-                        foodShipOnDate = selectedFoodSlot?.stringShipOnDate
-                        otherShipOnDate = selectedOtherSlot?.stringShipOnDate
-                        foodDeliverySlotId = selectedFoodSlot?.slotId
-                        otherDeliverySlotId = selectedOtherSlot?.slotId
-                        foodDeliveryStartHour = selectedFoodSlot?.hourFrom?.toLong() ?: 0
-                        otherDeliveryStartHour = selectedOtherSlot?.hourFrom?.toLong() ?: 0
-                        oddDeliverySlotId = ""
-                    } else {
-                        foodShipOnDate = selectedFoodSlot?.stringShipOnDate
-                        otherShipOnDate = ""
-                        foodDeliverySlotId = selectedFoodSlot?.slotId
-                        otherDeliverySlotId = ""
-                        foodDeliveryStartHour = selectedFoodSlot?.hourFrom?.toLong() ?: 0
-                        otherDeliveryStartHour = 0
-                        oddDeliverySlotId = selectedOtherSlot?.slotId
-                    }
-                }
-            }
-            else -> return body
-        }
-
-        // default body params
-        body.apply {
-            requestFrom = "express"
-            shipToAddressName = savedAddress?.defaultAddressNickname
-            substituesAllowed = selectedFoodSubstitution.rgb
-            plasticBags = switchNeedBags?.isChecked ?: false
-            giftNoteSelected = switchGiftInstructions?.isChecked ?: false
-            deliverySpecialInstructions =
-                if (switchSpecialDeliveryInstruction?.isChecked == true) edtTxtSpecialDeliveryInstruction?.text.toString() else ""
-            giftMessage =
-                if (switchGiftInstructions?.isChecked == true) edtTxtGiftInstructions?.text.toString() else ""
-            suburbId = this@CheckoutAddAddressReturningUserFragment.suburbId
-            storeId = ""
-        }
-
         return body
     }
-
-
-    private fun validateContinueToPaymentButton() {
-        when {
-            // Food Items Basket
-            foodType == ONLY_FOOD -> {
-                if (TextUtils.isEmpty(selectedFoodSlot.slotId)) {
-                    disablePaymentButton()
-                } else {
-                    enablePaymentButton()
-                }
-            }
-            // Other Items Basket
-            otherType == ONLY_OTHER -> {
-                if ((selectedOpedDayDeliverySlot?.deliveryType == DELIVERY_TYPE_TIMESLOT
-                            && TextUtils.isEmpty(selectedOtherSlot.slotId))
-                    || TextUtils.isEmpty(selectedOpedDayDeliverySlot?.deliveryType)
-                ) {
-                    disablePaymentButton()
-                } else {
-                    enablePaymentButton()
-                }
-            }
-            //Mixed Basket
-            foodType == MIXED_FOOD || otherType == MIXED_OTHER -> {
-                if ((selectedOpedDayDeliverySlot?.deliveryType == DELIVERY_TYPE_TIMESLOT
-                            && TextUtils.isEmpty(selectedOtherSlot.slotId))
-                    || TextUtils.isEmpty(selectedOpedDayDeliverySlot?.deliveryType)
-                ) {
-                    disablePaymentButton()
-                } else {
-                    enablePaymentButton()
-                }
-            }
-            else -> {
-                disablePaymentButton()
-            }
-        }
-    }
-
-    private fun disablePaymentButton() {
-        txtContinueToPayment?.isEnabled = false
-        txtContinueToPayment?.isClickable = false
-        txtContinueToPayment?.background =
-            context?.let { ContextCompat.getDrawable(it, R.drawable.button_disable_color) }
-    }
-
-    private fun enablePaymentButton() {
-        txtContinueToPayment?.isEnabled = true
-        txtContinueToPayment?.isClickable = true
-        txtContinueToPayment?.background =
-            context?.let { ContextCompat.getDrawable(it, R.drawable.button_selector) }
-    }
-
-    override fun selectedDeliveryType(
-        openDayDeliverySlot: OpenDayDeliverySlot,
-        type: DeliveryType,
-        position: Int
-    ) {
+    override fun selectedDeliveryType(deliveryType: Any, type: DeliveryType, position: Int) {
         oddSelectedPosition = position
-        selectedOpedDayDeliverySlot = openDayDeliverySlot
-        validateContinueToPaymentButton()
-        if (DELIVERY_TYPE_TIMESLOT == openDayDeliverySlot.deliveryType) {
+        if ((DELIVERY_TYPE_TIMESLOT).equals(((deliveryType as? OpenDayDeliverySlot)?.deliveryType))) {
             gridLayoutDeliveryOptions.visibility = View.VISIBLE
             otherType = type
             expandableGrid.apply {

@@ -327,7 +327,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     request.let { placeRequest ->
                         placesClient.fetchPlace(placeRequest)
                             .addOnSuccessListener { response ->
-                                val place = response!!.place
+                                val place = response.place
                                 selectedAddress = SelectedPlacesAddress()
                                 setAddress(place)
                             }.addOnFailureListener { exception ->
