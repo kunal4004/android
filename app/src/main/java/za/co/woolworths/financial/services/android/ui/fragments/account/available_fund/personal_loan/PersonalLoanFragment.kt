@@ -87,16 +87,16 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                                 FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
                                 arguments,
                                 this)
-                            when (WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode){
+                            when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
                                 NATIVE_BROWSER ->
                                     KotlinUtils.openUrlInPhoneBrowser(
-                                        WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl, this)
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl, this)
 
                                 else ->
                                     KotlinUtils.openLinkInInternalWebView(activity,
-                                        WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl,
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl,
                                         true,
-                                        WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.exitUrl)
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.exitUrl)
                             }
                         }
                     }
