@@ -2154,4 +2154,5 @@
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
+    <string name="credit_card_title">Credit Card</string>
 </resources>
