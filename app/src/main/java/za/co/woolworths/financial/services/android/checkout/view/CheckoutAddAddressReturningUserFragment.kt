@@ -54,6 +54,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
     }
 
+    private var oddSelectedPosition: Int = -1
     private var suburbId: String = ""
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
