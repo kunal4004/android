@@ -61,6 +61,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 class KotlinUtils {
     companion object {
@@ -812,6 +813,16 @@ class KotlinUtils {
             }
         }
 
-    }
+         fun getUpdatedUtils(rating:Float) :Float{
+            val completeValue = rating.toInt()
+            val decimalValue  = rating-completeValue
 
+            if (decimalValue >= 0.0f && decimalValue <= 0.2) {
+                return completeValue.toFloat()
+            } else if (decimalValue >= 0.3 && decimalValue <= 0.7) {
+                return (completeValue + .5).toFloat()
+            }
+            return rating.roundToInt().toFloat()
+        }
+    }
 }

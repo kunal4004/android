@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.RefinementAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
+import za.co.woolworths.financial.services.android.util.Constant
 import za.co.woolworths.financial.services.android.util.Utils
 
 class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
@@ -67,12 +68,17 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         }
         backButton?.setOnClickListener { onBackPressed() }
         clearAndResetFilter?.apply {
-            text = getString(R.string.clear_filter)
-            setOnClickListener { refinementAdapter?.clearRefinement() }
-            visibility = when (refinementNavigation?.multiSelect) {
-                true -> View.VISIBLE
-                else -> View.INVISIBLE
+            if (refinementNavigation?.displayName == Constant.RATING) {
+                this.text = getString(R.string.reset_filter)
+                visibility = View.VISIBLE
+            } else {
+                text = getString(R.string.clear_filter)
+                visibility = when (refinementNavigation?.multiSelect) {
+                    true -> View.VISIBLE
+                    else -> View.INVISIBLE
+                }
             }
+            setOnClickListener { refinementAdapter?.clearRefinement() }
         }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
@@ -176,9 +182,14 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
             } else if (item is RefinementCrumb && it.isSelected) {
                 selectedItems.add(item.label)
             }
-
         }
 
+        if (refinementNavigation?.displayName == Constant.RATING) {
+            if (selectedItems.size == 0) {
+                return getString(R.string.see_results)
+            }
+            return getString(R.string.see_results) + " (" + selectedItems.size + ")"
+        }
         return getString(R.string.refinement_see_result_button_text) + if (selectedItems.size > 0) selectedItems.joinToString(",") else refinementNavigation?.displayName
     }
 

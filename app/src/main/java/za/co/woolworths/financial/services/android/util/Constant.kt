@@ -5,5 +5,6 @@ class Constant {
     companion object {
         const val GET_PAYMENT_METHOD_ERROR = "GET_PAYMENT_METHOD_ERROR"
         const val queryServiceGetPaymentMethod = "queryServiceGetPaymentMethod"
+        const val RATING  = "Rating"
     }
 }

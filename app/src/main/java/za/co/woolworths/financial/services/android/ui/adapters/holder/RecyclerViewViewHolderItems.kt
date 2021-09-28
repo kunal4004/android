@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
-import android.graphics.Color
 import android.text.Html
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -21,7 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
-
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 
@@ -32,6 +30,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setProductName(this)
             setBrandText(this, nextProduct, previousProduct)
             setPromotionalText(this)
+            setRatingAndReviewCount(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
@@ -48,6 +47,13 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         tvProductName.maxLines = 3
         tvProductName.minLines = 1
         tvProductName?.text = productList?.productName ?: ""
+    }
+
+
+    private fun setRatingAndReviewCount(productList: ProductList) = with(itemView) {
+        val rating = 3.2f
+        rating_bar.rating = KotlinUtils.getUpdatedUtils(rating)
+        txt_rating_count.text = "(170)"
     }
 
     private fun setPromotionalText(productList: ProductList?) = with(itemView) {
