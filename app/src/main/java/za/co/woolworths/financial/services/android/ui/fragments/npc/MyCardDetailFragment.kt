@@ -19,11 +19,14 @@ import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreez
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.*
+import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
@@ -35,6 +38,7 @@ import za.co.woolworths.financial.services.android.ui.activities.temporary_store
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.ACTIVATE_UNBLOCK_CARD_ON_LANDING
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard.Companion.NOW
@@ -64,6 +68,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private var autoConnectStoreCardType : AutoConnectStoreCardType = AutoConnectStoreCardType.FREEZE
 
     companion object {
+        var SHOW_TEMPORARY_FREEZE_DIALOG = false
+        var FROM_CARD_DETAIL_FRAGMENT = false
+
         fun newInstance(storeCardDetail: String?, shouldActivateUnblockCardOnLanding: Boolean) = MyCardDetailFragment().withArgs {
             putString(STORE_CARD_DETAIL, storeCardDetail)
             putBoolean(ACTIVATE_UNBLOCK_CARD_ON_LANDING, shouldActivateUnblockCardOnLanding)
@@ -124,22 +131,46 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-            initListener()
-            populateView()
+        initListener()
+        populateView()
 
-            temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
-                if (compoundButton.isPressed) {
-                    when (isChecked) {
-                        true -> temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
-                        false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
+        temporaryCardFreezeSwitch?.setOnCheckedChangeListener { compoundButton, isChecked ->
+            if (compoundButton.isPressed) {
+                when (isChecked) {
+                    true -> {
+                        if (!MyAccountsFragment.verifyAppInstanceId() &&
+                            Utils.isGooglePlayServicesAvailable()) {
+                            FROM_CARD_DETAIL_FRAGMENT = true
+                            temporaryCardFreezeSwitch?.isChecked = false
+                            activity?.let {
+                                val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
+                                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, ApplyNowState.STORE_CARD)
+                                it.startActivity(intent)
+                                it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+                            }
+                        }
+                        else{
+                            temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
+                        }
                     }
+                    false -> temporaryFreezeCard?.showUnFreezeStoreCardDialog(childFragmentManager)
                 }
             }
+        }
 
-            // call to unblock/unfreeze store Card
-            if (mShouldActivateBlockCardOnLanding) {
-                temporaryFreezeCard?.unblockStoreCardRequest()
-            }
+        // call to unblock/unfreeze store Card
+        if (mShouldActivateBlockCardOnLanding) {
+            temporaryFreezeCard?.unblockStoreCardRequest()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(SHOW_TEMPORARY_FREEZE_DIALOG){
+            SHOW_TEMPORARY_FREEZE_DIALOG = false
+            temporaryCardFreezeSwitch?.isChecked = true
+            temporaryFreezeCard?.showFreezeStoreCardDialog(childFragmentManager)
+        }
     }
 
     private fun initTemporaryFreezeCard() {
