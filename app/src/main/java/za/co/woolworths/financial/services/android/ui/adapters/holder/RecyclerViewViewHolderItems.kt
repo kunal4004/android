@@ -19,19 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
-import android.annotation.SuppressLint
-import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
-
-import android.os.Build
-
-import android.graphics.drawable.LayerDrawable
-import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import kotlin.math.roundToInt
-
 
 class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 

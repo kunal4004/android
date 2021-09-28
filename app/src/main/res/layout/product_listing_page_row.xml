@@ -90,11 +90,10 @@
 
     <RatingBar
         android:id="@+id/rating_bar"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/eight_dp"
         android:numStars="5"
-        android:rating="4"
         style="@style/StarRating"
         android:isIndicator="true"
         app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
