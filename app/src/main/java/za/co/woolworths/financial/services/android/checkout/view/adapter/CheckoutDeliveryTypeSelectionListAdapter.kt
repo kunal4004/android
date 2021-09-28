@@ -99,7 +99,7 @@ class CheckoutDeliveryTypeSelectionListAdapter(
 
                 setOnClickListener {
                     openDayDeliverySlotsList?.get(position)?.let {
-                        listner.selectedDeliveryType(it, type)
+                        listner.selectedDeliveryType(it, type, position)
                     }
 
                     checkedItemPosition = position
@@ -132,7 +132,8 @@ class CheckoutDeliveryTypeSelectionListAdapter(
     interface EventListner {
         fun selectedDeliveryType(
             deliveryType: Any,
-            type: CheckoutAddAddressReturningUserFragment.DeliveryType
+            type: CheckoutAddAddressReturningUserFragment.DeliveryType,
+            position: Int
         )
     }
 }

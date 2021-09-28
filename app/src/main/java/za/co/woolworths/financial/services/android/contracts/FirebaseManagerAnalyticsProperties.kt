@@ -234,6 +234,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val CHECKOUT_SHOPPING_BAGS_INFO = "chckout_bgs_info"
         const val CHECKOUT_REMOVE_UNSELLABLE_ITEMS = "chckout_rmve_itms"
         const val CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS = "chckout_cncl_rmve_itms"
+        const val CHECKOUT_CONTINUE_TO_PAYMENT = "chckout_cnt_to_pmnt"
 
         //PLDD
         const val personalLoanDrawdownStart = "pldd_start"
