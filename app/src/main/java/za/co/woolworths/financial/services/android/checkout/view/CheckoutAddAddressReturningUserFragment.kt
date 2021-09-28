@@ -146,6 +146,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             else -> {
                 initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
+                expandableGrid.hideDeliveryTypeShimmerView()
+                showDeliverySlotSelectionView()
             }
         }
 
@@ -292,6 +294,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     ) {
         // To show How would you like it to delivered.
         checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
+        val localOpenDayDeliverySlots = confirmDeliveryAddressResponse?.openDayDeliverySlots
         if (confirmDeliveryAddressResponse?.requiredToDisplayOnlyODD == false) {
             otherType = if (foodType == DEFAULT) ONLY_OTHER else MIXED_OTHER
 
@@ -303,13 +306,22 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 val deliveryText = getString(R.string.earliest_delivery_date_text)
                 description = "$deliveryText <b>$date</b>"
             }
-            confirmDeliveryAddressResponse.openDayDeliverySlots?.add(timeSlotListItem)
+            var isTimeSlotAvailable = false
+            if (!localOpenDayDeliverySlots.isNullOrEmpty()) {
+                for (openDaySlot in localOpenDayDeliverySlots) {
+                    // check if timeslot already exist then don't add it again.
+                    if (openDaySlot.deliveryType == DELIVERY_TYPE_TIMESLOT)
+                        isTimeSlotAvailable = true
+                }
+            }
+            if (!isTimeSlotAvailable)
+                localOpenDayDeliverySlots?.add(timeSlotListItem)
         }
         checkoutDeliveryTypeSelectionShimmerAdapter = null
         deliveryTypeSelectionRecyclerView.adapter = null
         checkoutDeliveryTypeSelectionListAdapter =
             CheckoutDeliveryTypeSelectionListAdapter(
-                confirmDeliveryAddressResponse?.openDayDeliverySlots,
+                localOpenDayDeliverySlots,
                 this,
                 type
             )
@@ -680,7 +692,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
         return body
     }
-
 
     private fun validateContinueToPaymentButton() {
         when {
