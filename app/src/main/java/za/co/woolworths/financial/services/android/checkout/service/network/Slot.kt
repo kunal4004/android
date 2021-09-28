@@ -10,6 +10,12 @@ class Slot {
     @SerializedName("slotId")
     var slotId: String? = null
 
+    @SerializedName("shipOnDate")
+    var shipOnDate: Long? = null
+
+    @SerializedName("stringShipOnDate")
+    var stringShipOnDate: String? = null
+
     @SerializedName("freeDeliverySlot")
     var freeDeliverySlot: Boolean? = null
 
@@ -22,4 +28,6 @@ class Slot {
     @SerializedName("available")
     var available: Boolean? = null
 
+    @SerializedName("hourFrom")
+    var hourFrom: String? = null
 }

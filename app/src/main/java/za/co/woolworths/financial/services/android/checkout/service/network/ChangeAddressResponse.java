@@ -24,9 +24,6 @@ public class ChangeAddressResponse {
     @SerializedName("deliverable")
     public Boolean deliverable;
 
-    @SerializedName("deliverySlotsDetails")
-    public String deliverySlotsDetails;
-
     @SerializedName("firstAvailableFoodDeliveryDate")
     public String firstAvailableFoodDeliveryDate;
 
@@ -80,14 +77,6 @@ public class ChangeAddressResponse {
 
     public void setDeliverable(Boolean deliverable) {
         this.deliverable = deliverable;
-    }
-
-    public String getDeliverySlotsDetails() {
-        return deliverySlotsDetails;
-    }
-
-    public void setDeliverySlotsDetails(String deliverySlotsDetails) {
-        this.deliverySlotsDetails = deliverySlotsDetails;
     }
 
     public String getFirstAvailableFoodDeliveryDate() {
