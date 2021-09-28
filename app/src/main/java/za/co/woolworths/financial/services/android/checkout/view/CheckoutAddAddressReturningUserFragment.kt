@@ -600,7 +600,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun navigateToPaymentWebpage() {
-        // TODO: Payment Web page integration.
+        // TODO: WOP-12297: Payment Web page integration.
     }
 
     private fun setScreenClickEvents(isClickable: Boolean) {
