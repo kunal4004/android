@@ -32,10 +32,13 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_STANDARD
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_VALUE
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
@@ -170,6 +173,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
 
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked)
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
+                    activity
+                )
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
             edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
@@ -178,6 +186,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
 
         switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked)
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
+                    activity
+                )
             edtTxtInputLayoutGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
             edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
@@ -261,12 +274,20 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME,
+                        activity
+                    )
                     selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
                 }
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
                 }
                 R.id.radioBtnNoThanks -> {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
+                        activity
+                    )
                     selectedFoodSubstitution = FoodSubstitution.NO_THANKS
                 }
             }
@@ -541,16 +562,36 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     override fun selectedDeliveryType(deliveryType: Any, type: DeliveryType) {
-        if ((DELIVERY_TYPE_TIMESLOT).equals(((deliveryType as? OpenDayDeliverySlot)?.deliveryType))) {
-            gridLayoutDeliveryOptions.visibility = View.VISIBLE
-            otherType = type
-            expandableGrid.apply {
-                disablePreviousBtnOther()
-                enableNextBtnOther()
-                initialiseGridView(selectedSlotResponseOther, FIRST.week, type)
+        when ((deliveryType as? OpenDayDeliverySlot)?.deliveryType) {
+            DELIVERY_TYPE_TIMESLOT -> {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_TIMESLOT,
+                    activity
+                )
+                gridLayoutDeliveryOptions.visibility = View.VISIBLE
+                otherType = type
+                expandableGrid.apply {
+                    disablePreviousBtnOther()
+                    enableNextBtnOther()
+                    initialiseGridView(selectedSlotResponseOther, FIRST.week, type)
+                }
             }
-        } else {
-            gridLayoutDeliveryOptions.visibility = View.GONE
+            DELIVERY_TYPE_STANDARD -> {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_STANDARD,
+                    activity
+                )
+                gridLayoutDeliveryOptions.visibility = View.GONE
+            }
+            DELIVERY_TYPE_VALUE -> {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_VALUE,
+                    activity
+                )
+                gridLayoutDeliveryOptions.visibility = View.GONE
+            }
+            else ->
+                gridLayoutDeliveryOptions.visibility = View.GONE
         }
     }
 }

@@ -221,6 +221,16 @@ open class FirebaseManagerAnalyticsProperties {
         const val CHANGE_FULFILLMENT_DELETE_ADDRESS = "chckout_dlvry_dlte_adrs"
         const val CHANGE_FULFILLMENT_DELIVERY_CONFIRM_BTN = "chckout_dlvry_cnfrm_adrs"
         const val CHECKOUT_SAVE_ADDRESS = "chckout_dlvry_sve_adrs"
+        const val CHECKOUT_DELIVERY_OPTION_VALUE = "chckout_dlvry_valu"
+        const val CHECKOUT_DELIVERY_OPTION_STANDARD = "chckout_dlvry_stndrd"
+        const val CHECKOUT_DELIVERY_OPTION_TIMESLOT = "chckout_dlvry_tmslt"
+        const val CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME = "chckout_phne_sub"
+        const val CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS = "chckout_nothnks_sub"
+        const val CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION = "chckout_ad_spcl_instr"
+        const val CHECKOUT_IS_THIS_GIFT = "chckout_is_ths_a_gft"
+        const val CHECKOUT_MISSED_WREWARD_SAVINGS = "cnfrm_msd_wrwrds_svgs"
+        const val CHECKOUT_WREWARD_SIGN_UP = "cnfrm_wrwrds_sgn_up"
+        const val CHECKOUT_ALREADY_HAVE_WREWARD = "cnfrm_alrdy_wrwrds_crd"
 
         //PLDD
         const val personalLoanDrawdownStart = "pldd_start"
