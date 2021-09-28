@@ -169,6 +169,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
 
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
+            if(loadingBar.visibility == View.VISIBLE){
+                return@setOnCheckedChangeListener
+            }
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
             edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
@@ -177,6 +180,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
 
         switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
+            if(loadingBar.visibility == View.VISIBLE){
+                return@setOnCheckedChangeListener
+            }
             edtTxtInputLayoutGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
             edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
@@ -535,19 +541,41 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     private fun onCheckoutPaymentClick(view: View) {
         val body = getShipmentDetailsBody()
+        if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
+            && TextUtils.isEmpty(body.otherDeliverySlotId)) {
+            return
+        }
+        loadingBar?.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
             .observe(viewLifecycleOwner, { response ->
+                loadingBar.visibility = View.GONE
                 when (response) {
                     is ShippingDetailsResponse -> {
 
+                        if(TextUtils.isEmpty(response.jsessionId) || TextUtils.isEmpty(response.auth)){
+                            presentErrorDialog(
+                                getString(R.string.common_error_unfortunately_something_went_wrong),
+                                getString(R.string.common_error_message_without_contact_info),
+                                ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
+                            )
+                            return@observe
+                        }
+                        navigateToPaymentWebpage()
                     }
                     is Throwable -> {
-
+                        presentErrorDialog(
+                            getString(R.string.common_error_unfortunately_something_went_wrong),
+                            getString(R.string.common_error_message_without_contact_info),
+                            ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
+                        )
                     }
                 }
             })
     }
 
+    private fun navigateToPaymentWebpage() {
+        // TODO: Payment Web page integration.
+    }
     private fun getShipmentDetailsBody(): ShippingDetailsBody {
         val body = ShippingDetailsBody()
         return body
