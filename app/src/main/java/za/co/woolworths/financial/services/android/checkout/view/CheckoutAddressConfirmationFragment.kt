@@ -163,7 +163,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 navigateToUnsellableItemsFragment(
                     validateStoreList?.unSellableCommerceItems as List<UnSellableCommerceItem>,
                     selectedAddress!!,
-                    validateStoreList?.deliverable!!
+                    validateStoreList?.deliverable!!,
+                    DeliveryType.STORE_PICKUP
                 )
             } else {
                 // if it is store then call setSuburb API.
@@ -339,7 +340,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 "",
                 selectedSuburb.postalCode,
                 validateStoreList?.storeName,
-                "st".plus(validateStoreList?.storeId),
+                validateStoreList?.storeId,
                 selectedProvince.name
             )
 
@@ -473,9 +474,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                             val address = Address()
                                             address.suburbId = localSuburbId
                                             navigateToUnsellableItemsFragment(
-                                                validatedSuburbProductResponse?.unSellableCommerceItems!!,
+                                                validatedSuburbProductResponse?.unSellableCommerceItems as List<UnSellableCommerceItem>,
                                                 address,
-                                                validatedSuburbProductResponse?.unDeliverableProducts == false
+                                                validatedSuburbProductResponse?.unDeliverableProducts == false,
+                                                DeliveryType.STORE_PICKUP
                                             )
                                         } else
                                             showStoreList()
@@ -650,15 +652,43 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun navigateToUnsellableItemsFragment(
         unSellableCommerceItems: List<UnSellableCommerceItem>,
         address: Address,
-        deliverable: Boolean
+        deliverable: Boolean,
+        deliveryType: DeliveryType
     ) {
         val suburb = Suburb()
-        suburb.apply {
-            id = address.suburbId
-            name = address.suburb
-            postalCode = address.postalCode
-            suburbDeliverable = deliverable
+        when (deliveryType) {
+            DeliveryType.DELIVERY -> {
+                suburb.apply {
+                    id = address.suburbId
+                    name = address.suburb
+                    postalCode = address.postalCode
+                    suburbDeliverable = deliverable
+                }
+            }
+            DeliveryType.STORE_PICKUP -> {
+
+                val localStoreAddress = StoreAddress(
+                    validateStoreList?.storeAddress,
+                    "",
+                    selectedProvince.name,
+                    "",
+                    address.postalCode,
+                    validateStoreList?.storeName,
+                    validateStoreList?.storeId,
+                    selectedProvince.name
+                )
+
+                suburb.apply {
+                    id = validateStoreList?.storeId
+                    name = validateStoreList?.storeName
+                    postalCode = address.postalCode
+                    suburbDeliverable = deliverable
+                    storeAddress = localStoreAddress
+                    fulfillmentStores = selectedSuburb.fulfillmentStores
+                }
+            }
         }
+
         val province = Province()
         province.apply {
             name = getProvinceName(address.region)
@@ -666,7 +696,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
         val bundle = Bundle()
         bundle.apply {
-            putString(EditDeliveryLocationActivity.DELIVERY_TYPE, DeliveryType.DELIVERY.name)
+            putString(EditDeliveryLocationActivity.DELIVERY_TYPE, deliveryType.name)
             putString("SUBURB", Utils.toJson(suburb))
             putString("PROVINCE", Utils.toJson(province))
             putString("UnSellableCommerceItems", Utils.toJson(unSellableCommerceItems))
@@ -732,7 +762,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         navigateToUnsellableItemsFragment(
                                             response.unSellableCommerceItems,
                                             selectedAddress!!,
-                                            response.deliverable
+                                            response.deliverable,
+                                            DeliveryType.DELIVERY
                                         )
                                         return@observe
                                     }
