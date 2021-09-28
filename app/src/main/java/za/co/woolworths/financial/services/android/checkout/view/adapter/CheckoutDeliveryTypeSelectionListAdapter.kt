@@ -16,12 +16,11 @@ import java.util.*
  * Created by Kunal Uttarwar on 02/08/21.
  */
 class CheckoutDeliveryTypeSelectionListAdapter(
-    private var openDayDeliverySlotsList: List<Any>?,
+    private var openDayDeliverySlotsList: List<OpenDayDeliverySlot>?,
     private val listner: EventListner,
     private val type: CheckoutAddAddressReturningUserFragment.DeliveryType
 ) :
     RecyclerView.Adapter<CheckoutDeliveryTypeSelectionListAdapter.CheckoutDeliveryTypeSelectionViewHolder>() {
-
     var checkedItemPosition = -1
 
     companion object {
@@ -58,21 +57,17 @@ class CheckoutDeliveryTypeSelectionListAdapter(
         fun bindItem(position: Int) {
             itemView.apply {
                 hideShimmer(this)
-                openDayDeliverySlotsList?.get(position)?.let {
-                    when (it) {
-                        is OpenDayDeliverySlot -> {
-                            val deliveryType =
-                                it.deliveryType
-                            title.text = deliveryType?.capitalize(Locale.ROOT)
-                            subTitle.text = if (deliveryType.equals(DELIVERY_TYPE_TIMESLOT))
-                                Html.fromHtml(it.description) else it.deliveryInDays
-                            editAddressImageView.visibility = View.GONE
-                            slotPriceButton.visibility = View.VISIBLE
-                            slotPriceButton.text = context.getString(R.string.currency).plus(
-                                it.amount?.toString()
-                            )
-                        }
-                    }
+                openDayDeliverySlotsList?.get(position)?.let { it ->
+                    val deliveryType =
+                        it.deliveryType
+                    title.text = deliveryType?.capitalize(Locale.ROOT)
+                    subTitle.text = if (deliveryType.equals(DELIVERY_TYPE_TIMESLOT))
+                        Html.fromHtml(it.description) else it.deliveryInDays
+                    editAddressImageView.visibility = View.GONE
+                    slotPriceButton.visibility = View.VISIBLE
+                    slotPriceButton.text = context.getString(R.string.currency).plus(
+                        it.amount?.toString()
+                    )
 
                     selector.isChecked = checkedItemPosition == position
                     addressSelectionLayout.setBackgroundColor(
@@ -94,12 +89,10 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                         //listner.hideErrorView()
                     }
                 }
-
                 setOnClickListener {
                     openDayDeliverySlotsList?.get(position)?.let {
                         listner.selectedDeliveryType(it, type, position)
                     }
-
                     checkedItemPosition = position
                     notifyDataSetChanged()
                 }
@@ -112,15 +105,12 @@ class CheckoutDeliveryTypeSelectionListAdapter(
             selectorShimmerFrameLayout?.setShimmer(null)
             selectorShimmerFrameLayout?.stopShimmer()
             selector.visibility = View.VISIBLE
-
             titleShimmerLayout?.setShimmer(null)
             titleShimmerLayout?.stopShimmer()
             title.visibility = View.VISIBLE
-
             subtitleShimmerLayout?.setShimmer(null)
             subtitleShimmerLayout?.stopShimmer()
             subTitle.visibility = View.VISIBLE
-
             slotPriceButtonShimmerFrameLayout?.setShimmer(null)
             slotPriceButtonShimmerFrameLayout?.stopShimmer()
             slotPriceButton.visibility = View.VISIBLE
@@ -129,7 +119,7 @@ class CheckoutDeliveryTypeSelectionListAdapter(
 
     interface EventListner {
         fun selectedDeliveryType(
-            deliveryType: Any,
+            openDayDeliverySlot: OpenDayDeliverySlot,
             type: CheckoutAddAddressReturningUserFragment.DeliveryType,
             position: Int
         )
