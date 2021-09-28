@@ -319,8 +319,10 @@ open class FirebaseManagerAnalyticsProperties {
         //view payment plan
         const val VIEW_PAYMENT_PLAN_PERSONAL_LOAN = "pl_viewtreatmentplan"
         const val VIEW_PAYMENT_PLAN_STORE_CARD = "sc_viewtreatmentplan"
+        const val VIEW_PAYMENT_PLAN_CREDIT_CARD = "cc_viewtreatmentplan"
         const val VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION = "Personal Loan landing - Arrears popup - View Treatment plan"
         const val VIEW_PAYMENT_PLAN_STORE_CARD_ACTION  = "Store Card landing - Arrears popup - View Treatment plan"
+        const val VIEW_PAYMENT_PLAN_CREDIT_CARD_ACTION  = "Credit Card landing - Arrears popup - View Treatment plan"
 
         // Voice of Customer
         const val VOC_SKIP = "voc_skip"
