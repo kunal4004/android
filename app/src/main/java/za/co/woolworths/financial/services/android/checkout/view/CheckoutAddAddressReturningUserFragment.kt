@@ -197,6 +197,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             edtTxtGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
         }
+        switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+                    activity
+                )
+            }
+        }
     }
 
     private fun initializeDeliveringToView() {

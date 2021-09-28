@@ -231,6 +231,9 @@ open class FirebaseManagerAnalyticsProperties {
         const val CHECKOUT_MISSED_WREWARD_SAVINGS = "cnfrm_msd_wrwrds_svgs"
         const val CHECKOUT_WREWARD_SIGN_UP = "cnfrm_wrwrds_sgn_up"
         const val CHECKOUT_ALREADY_HAVE_WREWARD = "cnfrm_alrdy_wrwrds_crd"
+        const val CHECKOUT_SHOPPING_BAGS_INFO = "chckout_bgs_info"
+        const val CHECKOUT_REMOVE_UNSELLABLE_ITEMS = "chckout_rmve_itms"
+        const val CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS = "chckout_cncl_rmve_itms"
 
         //PLDD
         const val personalLoanDrawdownStart = "pldd_start"

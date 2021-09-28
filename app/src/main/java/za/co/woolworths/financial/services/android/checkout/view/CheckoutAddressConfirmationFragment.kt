@@ -317,6 +317,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             initialiseDeliveryAddressRecyclerView()
         }
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
+                activity
+            )
             if (isDeliverySelected) {
                 view?.findNavController()?.navigate(
                     R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
