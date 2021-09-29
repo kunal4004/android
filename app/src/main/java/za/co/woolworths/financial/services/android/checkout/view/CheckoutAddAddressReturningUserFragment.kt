@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
@@ -32,6 +33,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment.Companion.KEY_ARGS_WEB_TOKEN
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
@@ -124,6 +126,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? CheckoutActivity)?.apply {
+            supportActionBar?.show()
+        }
         initViews()
     }
 
@@ -178,7 +183,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
 
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
-            if(loadingBar.visibility == View.VISIBLE){
+            if (loadingBar.visibility == View.VISIBLE) {
                 return@setOnCheckedChangeListener
             }
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
@@ -189,7 +194,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
 
         switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
-            if(loadingBar.visibility == View.VISIBLE){
+            if (loadingBar.visibility == View.VISIBLE) {
                 return@setOnCheckedChangeListener
             }
             edtTxtInputLayoutGiftInstructions?.visibility =
@@ -566,7 +571,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun onCheckoutPaymentClick(view: View) {
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
-            && TextUtils.isEmpty(body.otherDeliverySlotId)) {
+            && TextUtils.isEmpty(body.otherDeliverySlotId)
+        ) {
             return
         }
         loadingBar?.visibility = View.VISIBLE
@@ -578,7 +584,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 when (response) {
                     is ShippingDetailsResponse -> {
 
-                        if(TextUtils.isEmpty(response.jsessionId) || TextUtils.isEmpty(response.auth)){
+                        if (TextUtils.isEmpty(response.jsessionId) || TextUtils.isEmpty(response.auth)) {
                             presentErrorDialog(
                                 getString(R.string.common_error_unfortunately_something_went_wrong),
                                 getString(R.string.common_error_message_without_contact_info),
@@ -586,7 +592,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                             )
                             return@observe
                         }
-                        navigateToPaymentWebpage()
+                        navigateToPaymentWebpage(response)
                     }
                     is Throwable -> {
                         presentErrorDialog(
@@ -599,8 +605,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             })
     }
 
-    private fun navigateToPaymentWebpage() {
-        // TODO: WOP-12297: Payment Web page integration.
+    private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
+        view?.findNavController()?.navigate(
+            R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutPaymentWebFragment,
+            bundleOf(KEY_ARGS_WEB_TOKEN to webTokens)
+        )
     }
 
     private fun setScreenClickEvents(isClickable: Boolean) {
