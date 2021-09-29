@@ -270,7 +270,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (deepLinkData == null) {
             return;
         }
-        appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
+        try
+            {
+                appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
+            }
+            catch(Exception e){
+                mOnNavigationItemSelectedListener.onNavigationItemSelected(
+                        getBottomNavigationById().getMenu().findItem(R.id.navigation_today));
+            }
+
     }
 
     private void queryBadgeCountOnStart() {
