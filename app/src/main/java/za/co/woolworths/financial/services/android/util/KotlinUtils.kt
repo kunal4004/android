@@ -17,7 +17,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.*
 import android.text.style.*
-import android.util.Log
 import android.util.Pair
 import android.util.TypedValue
 import android.view.View

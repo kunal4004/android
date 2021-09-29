@@ -55,7 +55,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             rating_bar.visibility = VISIBLE
             txt_rating_count.visibility = VISIBLE
             rating_bar.rating = KotlinUtils.getUpdatedUtils(productList.averageRating.toFloat())
-            txt_rating_count.text = productList.reviewCount
+            txt_rating_count.text = "( " + productList.reviewCount + " )"
         } else {
             rating_bar.visibility = GONE
             txt_rating_count.visibility = GONE
