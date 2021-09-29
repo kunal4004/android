@@ -415,4 +415,12 @@
         <attr name="nbMaxTextLength" format="integer" />
         <attr name="nbEllipsizeText" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="DragToClose">
+        <attr name="dragToClose_draggableView" format="reference" />
+        <attr name="dragToClose_draggableContainer" format="reference" />
+        <attr name="dragToClose_finishActivity" format="boolean" />
+        <attr name="dragToClose_closeOnClick" format="boolean" />
+    </declare-styleable>
+
 </resources>
