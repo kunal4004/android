@@ -637,7 +637,7 @@ class KotlinUtils {
                 }
             }
             catch (exception: ActivityNotFoundException){
-                //Todo: Handle exception - need more info
+                FirebaseManager.logException("no browser found - $exception")
             }
         }
 
