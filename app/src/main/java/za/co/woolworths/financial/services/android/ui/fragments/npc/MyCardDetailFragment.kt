@@ -140,7 +140,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             if (compoundButton.isPressed) {
                 when (isChecked) {
                     true -> {
-                        linkDeviceIfNecessary({
+                        KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
                             FREEZE_CARD_DETAIL = true
                             temporaryCardFreezeSwitch?.isChecked = false
                         },{
@@ -365,7 +365,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         if (isTemporaryCardFreezeInProgress()) return
         when (v?.id) {
             R.id.blockCard -> {
-                linkDeviceIfNecessary({
+                KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
                     BLOCK_CARD_DETAIL = true
                 },{
                     activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
@@ -520,19 +520,4 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     fun isTemporaryCardFreezeInProgress() = temporaryFreezeCardProgressBar?.visibility == VISIBLE
-
-    private fun linkDeviceIfNecessary(doJob: () -> Unit, elseJob: () -> Unit){
-        if (!MyAccountsFragment.verifyAppInstanceId() && Utils.isGooglePlayServicesAvailable()) {
-            doJob()
-            activity?.let {
-                val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
-                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, ApplyNowState.STORE_CARD)
-                it.startActivity(intent)
-                it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
-            }
-        }
-        else{
-            elseJob()
-        }
-    }
 }
