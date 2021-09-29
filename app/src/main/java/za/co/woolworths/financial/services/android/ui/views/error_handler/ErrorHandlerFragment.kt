@@ -28,16 +28,23 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
     private fun descriptionBlock() {
         val descBlock1Text = WSpannableStringBuilder(getString(R.string.absa_mobile_app_pin_blocked_desc_block_1))
 
+        val emailLabel = "queries@wfs.co.za"
+        val phoneLabel = "086 150 2020"
+        val textLabel = "release the hold"
+
         with(descBlock1Text) {
-            makeStringInteractable("queries@wfs.co.za", LinkType.EMAIL)
-            makeStringInteractable("086 150 2020", LinkType.PHONE)
-            makeChangeToStringFont("release the hold", R.font.myriad_pro_semi_bold_otf)
-            makeChangeToStringFont("086 150 2020", R.font.myriad_pro_semi_bold_otf)
-            makeChangeToStringFont("queries@wfs.co.za", R.font.myriad_pro_semi_bold_otf)
+            makeStringInteractable(emailLabel, LinkType.EMAIL)
+            makeStringInteractable(phoneLabel, LinkType.PHONE)
+            makeChangeToStringFont(textLabel, R.font.myriad_pro_semi_bold_otf)
+            makeChangeToStringFont(phoneLabel, R.font.myriad_pro_semi_bold_otf)
+            makeChangeToStringFont(emailLabel, R.font.myriad_pro_semi_bold_otf)
+            makeTextFontColor(emailLabel)
+            makeTextFontColor(phoneLabel)
+            makeTextFontColor(textLabel)
         }
 
         errorDescriptionBlock1TextView?.apply {
-            descBlock1Text.build()
+            text = descBlock1Text.build()
             movementMethod = LinkMovementMethod.getInstance()
             highlightColor = Color.TRANSPARENT
         }

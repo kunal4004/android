@@ -9,6 +9,10 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.general_error_handler_activity.*
 import za.co.woolworths.financial.services.android.util.Utils
+import android.content.Intent
+
+
+
 
 class GeneralErrorHandlerActivity : AppCompatActivity() {
 
@@ -55,6 +59,8 @@ class GeneralErrorHandlerActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        val intent = Intent()
+        setResult(-1, intent)
         finish()
         overridePendingTransition(0, 0)
     }
