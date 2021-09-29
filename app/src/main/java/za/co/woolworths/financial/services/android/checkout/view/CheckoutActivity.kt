@@ -33,6 +33,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         setActionBar()
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+            baseFragBundle = Bundle()
             baseFragBundle?.putString(
                 SAVED_ADDRESS_KEY,
                 Utils.toJson(savedAddressResponse)
