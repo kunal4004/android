@@ -294,7 +294,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		private void setTotalItem(ProductList productList) {
 			if (null != productList.numberOfItems)
 				tvNumberOfItem.setText(String.valueOf(productList.numberOfItems));
-			if (productList.numberOfItems == 1 || productList.numberOfItems == 0) {
+			if (productList.numberOfItems == 1) {
 				tvFoundItem.setText(context.getString(R.string.product_item));
 			}
 		}

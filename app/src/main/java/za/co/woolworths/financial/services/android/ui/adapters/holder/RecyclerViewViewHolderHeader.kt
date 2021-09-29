@@ -12,7 +12,7 @@ class RecyclerViewViewHolderHeader(parent: ViewGroup) : RecyclerViewViewHolder(
 ) {
     fun setNumberOfItems(activity: FragmentActivity?, productList: ProductList?) {
         when (productList?.numberOfItems) {
-            1, 0 -> productList?.numberOfItems?.toString()?.let { numberOfItems ->
+            1 -> productList?.numberOfItems?.toString()?.let { numberOfItems ->
                 itemView.tvNumberOfItem.text = numberOfItems; itemView.tvFoundItem.text =
                 activity?.getString(R.string.product_item)
             }
