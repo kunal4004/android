@@ -227,6 +227,7 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
