@@ -415,24 +415,43 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         val fulfillmentsType = confirmDeliveryAddressResponse?.fulfillmentTypes
         if (fulfillmentsType?.join == FOOD.type) {
             //Food Basket
-            foodItemsDeliveryDateLayout.visibility = View.VISIBLE
-            otherItemsDeliveryDateLayout.visibility = View.GONE
-            foodItemsDeliveryDate.text =
+            val foodItemDate =
                 WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join)
+            if (foodItemDate.isNullOrEmpty()) {
+                hideEarliestDeliveryView()
+            } else {
+                foodItemsDeliveryDateLayout.visibility = View.VISIBLE
+                otherItemsDeliveryDateLayout.visibility = View.GONE
+                foodItemsDeliveryDate.text = foodItemDate
+            }
         } else if (fulfillmentsType?.join == OTHER.type && fulfillmentsType.other == OTHER.type) {
             //Mixed Basket
-            foodItemsDeliveryDateLayout.visibility = View.VISIBLE
-            otherItemsDeliveryDateLayout.visibility = View.VISIBLE
-            foodItemsDeliveryDate.text =
+            val foodItemDate =
                 WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food)
-            otherItemsDeliveryDate.text =
+            val otherItemDate =
                 WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.other)
+            if (foodItemDate.isNullOrEmpty() && otherItemDate.isNullOrEmpty()) {
+                hideEarliestDeliveryView()
+            } else {
+                foodItemsDeliveryDateLayout.visibility =
+                    if (foodItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                otherItemsDeliveryDateLayout.visibility =
+                    if (otherItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                foodItemsDeliveryDate.text = foodItemDate
+                otherItemsDeliveryDate.text = otherItemDate
+            }
+
         } else {
             //Other Basket
-            foodItemsDeliveryDateLayout.visibility = View.GONE
-            otherItemsDeliveryDateLayout.visibility = View.VISIBLE
-            otherItemsDeliveryDate.text =
+            val otherItemDate =
                 WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join)
+            if (otherItemDate.isNullOrEmpty()) {
+                hideEarliestDeliveryView()
+            } else {
+                foodItemsDeliveryDateLayout.visibility = View.GONE
+                otherItemsDeliveryDateLayout.visibility = View.VISIBLE
+                otherItemsDeliveryDate.text = otherItemDate
+            }
         }
 
     }
