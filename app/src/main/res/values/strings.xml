@@ -1178,9 +1178,9 @@
     <string name="storeCardCardCollection_row_1">Valid South African ID</string>
     <string name="storeCardCardCollection_row_2">Latest payslip or bank statement</string>
 
-    <string name="goldCreditCard_title">Gold Credit Card</string>
+    <string name="gold_credit_card_title">Gold Credit Card</string>
     <string name="goldCreditCard_title_small">gold credit card</string>
-    <string name="silverCreditCard_title">Silver Credit Card</string>
+    <string name="silver_credit_card_title">Silver Credit Card</string>
     <string name="goldCreditCard_desc">Get 2% back on all Woolies purchases when you pay with your card</string>
 
     <string name="goldCreditCardQualify_row_1">Be 18 years of age, or older</string>
@@ -1191,7 +1191,7 @@
     <string name="goldCreditCardCollection_row_2">Latest payslip or bank statement</string>
     <string name="goldCreditCardCollection_row_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
 
-    <string name="blackCreditCard_title">Black Credit Card</string>
+    <string name="black_credit_card_title">Black Credit Card</string>
     <string name="blackCreditCard_desc">The most rewarding way to shop at Woolies.</string>
 
     <string name="blackCreditCardQualify_row_1">Be 18 years of age, or older</string>
@@ -1202,7 +1202,7 @@
     <string name="blackCreditCardCollection_row_2">Latest payslip or bank statement</string>
     <string name="blackCreditCardCollection_row_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
 
-    <string name="personalLoanCard_title">Personal Loan</string>
+    <string name="personal_loan_card_title">Personal Loan</string>
     <string name="personalLoanCard_desc">Access funds again and again</string>
 
     <string name="personalLoanQualifyingCriteria_row_1">Be 18 years of age, or older</string>
@@ -1812,7 +1812,6 @@
     <string name="set_up_by_debit_order_button_label">"Setup my debit order "</string>
     <string name="easily_pay_your_woolies_account_in_the_app">Easily Pay Your Woolies\nAccount In The App:</string>
     <string name="you_can_also_pay_your_woolies_account_at_desc"> You Can Also Pay Your\nWoolies Account At:</string>
-    <string name="credit_card_title">Credit Card</string>
     <string name="pay_by_credit_card_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account.</string>
     <string name="pay_by_credit_card_button_label">Pay By Credit Card Now</string>
     <string name="debit_order_desc">Debit order is the most convenient way to pay your Woolies account.</string>
@@ -2154,4 +2153,5 @@
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
+    <string name="credit_card_title">Credit Card</string>
 </resources>
