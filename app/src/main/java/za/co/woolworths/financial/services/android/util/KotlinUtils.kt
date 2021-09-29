@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.*
 import android.text.style.*
+import android.util.Log
 import android.util.Pair
 import android.util.TypedValue
 import android.view.View
@@ -813,13 +814,14 @@ class KotlinUtils {
             }
         }
 
-         fun getUpdatedUtils(rating:Float) :Float{
-            val completeValue = rating.toInt()
-            val decimalValue  = rating-completeValue
+         fun getUpdatedUtils(rating:Float) :Float{   // 4.7
 
-            if (decimalValue >= 0.0f && decimalValue <= 0.2) {
+             var completeValue: Int =  rating.toInt() %10 // 3
+             var decimalValue:Int = ((rating %1)*10).toInt()//7
+
+            if (decimalValue >= 0 && decimalValue <= 2) {
                 return completeValue.toFloat()
-            } else if (decimalValue >= 0.3 && decimalValue <= 0.7) {
+            } else if (decimalValue > 2 && decimalValue <= 7) {
                 return (completeValue + .5).toFloat()
             }
             return rating.roundToInt().toFloat()

@@ -62,6 +62,14 @@ public class ProductList {
     public String productVariants;
     @SerializedName("isLiquor")
     public Boolean isLiquor;
+    @SerializedName("isRnREnabled")
+    public Boolean isRnREnabled;
+    @SerializedName("averageRating")
+    @Expose
+    public String averageRating;
+    @SerializedName("reviewCount")
+    @Expose
+    public String reviewCount;
 
     public ProductListingViewType rowType = ProductListingViewType.PRODUCT;
     public Integer numberOfItems;
