@@ -551,11 +551,16 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                 activateCreditCardOrScheduleCardDelivery()
                                             }
                                             ApplyNowState.STORE_CARD -> {
-                                                if(MyCardDetailFragment.FROM_CARD_DETAIL_FRAGMENT){
-                                                    showFreezeStoreCardDialog()
-                                                }
-                                                else {
-                                                    goToProduct()
+                                                when {
+                                                    MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
+                                                        showFreezeStoreCardDialog()
+                                                    }
+                                                    MyCardDetailFragment.BLOCK_CARD_DETAIL -> {
+                                                        showBlockStoreCardScreen()
+                                                    }
+                                                    else -> {
+                                                        goToProduct()
+                                                    }
                                                 }
                                             }
 
@@ -600,7 +605,14 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun showFreezeStoreCardDialog(){
         MyAccountsFragment.updateLinkedDevices()
         MyCardDetailFragment.SHOW_TEMPORARY_FREEZE_DIALOG = true
-        MyCardDetailFragment.FROM_CARD_DETAIL_FRAGMENT = false
+        MyCardDetailFragment.FREEZE_CARD_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showBlockStoreCardScreen(){
+        MyAccountsFragment.updateLinkedDevices()
+        MyCardDetailFragment.SHOW_BLOCK_CARD_SCREEN = true
+        MyCardDetailFragment.BLOCK_CARD_DETAIL = false
         activity?.finish()
     }
 
