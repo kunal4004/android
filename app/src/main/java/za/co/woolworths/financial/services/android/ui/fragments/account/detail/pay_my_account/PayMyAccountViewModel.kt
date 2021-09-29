@@ -211,7 +211,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getProductLabelId() = when (getApplyNowState()) {
         ApplyNowState.STORE_CARD -> R.string.store_card_title
-        ApplyNowState.PERSONAL_LOAN -> R.string.personalLoanCard_title
+        ApplyNowState.PERSONAL_LOAN -> R.string.personal_loan_card_title
         else ->  R.string.credit_card_title
     }
 
