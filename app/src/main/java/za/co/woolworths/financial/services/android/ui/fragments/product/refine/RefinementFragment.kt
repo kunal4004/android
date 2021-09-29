@@ -121,19 +121,11 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else refinementNavigation?.multiSelect?.let { listener.onBackPressedWithRefinement(navigationState, it) }
     }
 
-    private fun seeResults() {// Prevent creation of new product listing page when user did not multi-select a brand or category
-        when (refinementNavigation?.multiSelect == true && !isAnyRefinementSelected()) {
-            true -> refinementNavigation?.multiSelect?.let {
-                listener.onSeeResults(getNavigationState(),
-                    it)
+    private fun seeResults() =// Prevent creation of new product listing page when user did not multi-select a brand or category
+            when(refinementNavigation?.multiSelect == true &&  !isAnyRefinementSelected()){
+                true -> refinementNavigation?.multiSelect?.let { listener.onSeeResults(getNavigationState(), it) }
+                else  -> refinementNavigation?.multiSelect?.let { listener.onSeeResults(getNavigationState(), it) }
             }
-            else -> refinementNavigation?.multiSelect?.let {
-                listener.onSeeResults(getNavigationState(),
-                    it)
-            }
-        }
-    }
-
 
     private fun getNavigationState(): String {
         dataList.forEach {
