@@ -256,16 +256,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             bindRecyclerViewWithUI(productLists)
 
-            //.. this condition not required as per the requirement..
-            //     only product list screen will open
-
-//        else if (productLists.size == 1) {
-//            (activity as? BottomNavigationActivity)?.apply {
-//                popFragmentNoAnim()
-//                isReloadNeeded = false
-//                openProductDetailFragment(mSubCategoryName, productLists[0])
-//            }
-
         } else {
             this.productView = null
             this.productView = response
