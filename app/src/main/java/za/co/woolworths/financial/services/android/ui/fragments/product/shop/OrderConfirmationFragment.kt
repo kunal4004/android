@@ -20,13 +20,11 @@ import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
-import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
@@ -280,7 +278,11 @@ class OrderConfirmationFragment : Fragment() {
             .formatAmountToRandAndCentWithSpace(amount)
 
         wrewardsIconImageView.setOnClickListener {
-            val bottomSheetFragment = WrewardsBottomSheetFragment()
+            Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
+                activity
+            )
+            val bottomSheetFragment = WrewardsBottomSheetFragment(activity)
 
             val bundle = Bundle()
             bundle.putString(WrewardsBottomSheetFragment.TAG, missedRewardsTextView.text.toString())
