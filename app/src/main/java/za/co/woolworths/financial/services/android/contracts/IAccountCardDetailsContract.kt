@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
@@ -23,7 +23,7 @@ interface IAccountCardDetailsContract {
         fun navigateToGetTemporaryStoreCardPopupActivity(storeCardResponse: StoreCardsResponse)
         fun navigateToDebitOrderActivity(debitOrder: DebitOrder)
         fun navigateToBalanceProtectionInsurance(accountInfo: String?)
-        fun setBalanceProtectionInsuranceState(coveredText: Boolean)
+        fun showBalanceProtectionInsuranceLead(bpiInsuranceApplication: BpiInsuranceApplication?){}
         fun displayCardHolderName(name: String?)
         fun hideUserOfferActiveProgress()
         fun showUserOfferActiveProgress()
@@ -54,7 +54,8 @@ interface IAccountCardDetailsContract {
         fun createCardHolderName(): String?
         fun displayCardHolderName()
         fun balanceProtectionInsuranceIsCovered(account: Account?): Boolean
-        fun setBalanceProtectionInsuranceState()
+        fun bpiInsuranceApplication(): BpiInsuranceApplication?
+        fun showBalanceProtectionInsuranceLead()
         fun getAppCompatActivity(): AppCompatActivity?
         fun setAccountDetailBundle(arguments: Bundle?)
         fun getAccount(): Account?

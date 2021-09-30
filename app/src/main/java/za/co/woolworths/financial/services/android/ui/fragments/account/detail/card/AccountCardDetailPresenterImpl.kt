@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenRes
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -60,8 +61,13 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return getAccount()?.insuranceCovered ?: false
     }
 
-    override fun setBalanceProtectionInsuranceState() {
-        mainView?.setBalanceProtectionInsuranceState(balanceProtectionInsuranceIsCovered(getAccount()))
+
+    override fun bpiInsuranceApplication(): BpiInsuranceApplication? {
+        return getAccount()?.bpiInsuranceApplication
+    }
+
+    override fun showBalanceProtectionInsuranceLead() {
+        mainView?.showBalanceProtectionInsuranceLead(bpiInsuranceApplication())
     }
 
     override fun getAppCompatActivity(): AppCompatActivity? = WoolworthsApplication.getInstance()?.currentActivity as? AppCompatActivity
