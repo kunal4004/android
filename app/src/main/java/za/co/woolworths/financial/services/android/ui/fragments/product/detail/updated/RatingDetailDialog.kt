@@ -20,7 +20,7 @@ class RatingDetailDialog : WBottomSheetDialogFragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         ratingBarTop.visibility = View.VISIBLE
         tvTotalReviews.visibility = View.VISIBLE
-        ratingBarTop.rating = 5f
+        ratingBarTop.rating = 3.5f
         close_top?.setOnClickListener(this@RatingDetailDialog)
         close?.setOnClickListener(this@RatingDetailDialog)
     }
