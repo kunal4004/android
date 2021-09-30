@@ -1911,7 +1911,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-    public void navigateToBalanceProtectionInsurance(@org.jetbrains.annotations.Nullable String accountInfo) {
+    public void navigateToBalanceProtectionInsuranceApplicationStatusCovered(@org.jetbrains.annotations.Nullable String accountInfo) {
 
     }
 

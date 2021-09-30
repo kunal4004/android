@@ -95,7 +95,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
         mCardPresenterImpl?.apply {
-            bpiInsuranceApplication()
+            getBpiInsuranceApplication()
             displayCardHolderName()
             creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
             showBalanceProtectionInsuranceLead()
@@ -288,7 +288,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         MyAccountsScreenNavigator.navigateToDebitOrderActivity(activity, debitOrder)
     }
 
-    override fun navigateToBalanceProtectionInsurance(accountInfo: String?) {
+    override fun navigateToBalanceProtectionInsuranceApplicationStatusCovered(accountInfo: String?) {
         MyAccountsScreenNavigator.navigateToBalanceProtectionInsurance(activity, accountInfo, mCardPresenterImpl?.getAccount())
     }
 

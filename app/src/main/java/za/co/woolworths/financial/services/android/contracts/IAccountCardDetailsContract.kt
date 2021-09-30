@@ -22,7 +22,7 @@ interface IAccountCardDetailsContract {
         fun hideStoreCardProgress()
         fun navigateToGetTemporaryStoreCardPopupActivity(storeCardResponse: StoreCardsResponse)
         fun navigateToDebitOrderActivity(debitOrder: DebitOrder)
-        fun navigateToBalanceProtectionInsurance(accountInfo: String?)
+        fun navigateToBalanceProtectionInsuranceApplicationStatusCovered(accountInfo: String?)
         fun showBalanceProtectionInsuranceLead(bpiInsuranceApplication: BpiInsuranceApplication?){}
         fun displayCardHolderName(name: String?)
         fun hideUserOfferActiveProgress()
@@ -54,7 +54,7 @@ interface IAccountCardDetailsContract {
         fun createCardHolderName(): String?
         fun displayCardHolderName()
         fun balanceProtectionInsuranceIsCovered(account: Account?): Boolean
-        fun bpiInsuranceApplication(): BpiInsuranceApplication?
+        fun getBpiInsuranceApplication(): BpiInsuranceApplication?
         fun showBalanceProtectionInsuranceLead()
         fun getAppCompatActivity(): AppCompatActivity?
         fun setAccountDetailBundle(arguments: Bundle?)
