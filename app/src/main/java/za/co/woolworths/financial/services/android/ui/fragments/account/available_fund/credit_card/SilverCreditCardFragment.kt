@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.setFragmentResultListener
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.available_funds_fragment.*
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
@@ -35,7 +35,7 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         navigateToDeepLinkView()
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
-            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
                     ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {

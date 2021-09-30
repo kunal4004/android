@@ -43,10 +43,7 @@ import com.amplifyframework.core.Amplify
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -301,6 +298,13 @@ fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
     launch {
         delay(time)
         launch(Dispatchers.Main) { code() }
+    }
+}
+
+fun CoroutineScope.doAfterDelay(time: Long, code: () -> Unit) {
+    launch {
+        delay(time)
+        launch { code() }
     }
 }
 
