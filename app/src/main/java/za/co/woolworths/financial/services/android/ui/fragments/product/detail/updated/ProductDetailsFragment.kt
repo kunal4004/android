@@ -20,12 +20,14 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
@@ -38,6 +40,7 @@ import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
+import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -68,6 +71,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderHistoryErrorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -153,6 +157,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         dietaryInformation.setOnClickListener(this)
         allergensInformation.setOnClickListener(this)
         moreColor.setOnClickListener(this)
+        tvRatingDetails.setOnClickListener(this)
         closePage.setOnClickListener {
             activity?.apply {
                 setResult(RESULT_CANCELED)
@@ -183,8 +188,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.moreColor -> showMoreColors()
             R.id.share -> shareProduct()
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
+            R.id.tvRatingDetails -> showRatingDetailsDailog()
         }
     }
+
+    fun showRatingDetailsDailog() {
+        val dialog = RatingDetailDialog()
+        activity?.apply {
+            this@ProductDetailsFragment.childFragmentManager.beginTransaction()
+                .let { fragmentTransaction ->
+                    dialog.show(
+                        fragmentTransaction,
+                        RatingDetailDialog::class.java.simpleName
+                    )
+                }
+        }
+    }
+
 
     private fun onQuantitySelector() {
         activity?.supportFragmentManager?.apply {
@@ -194,7 +214,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             getSelectedSku()?.quantity?.let {
                 if (it > 0) {
-                    QuantitySelectorFragment.newInstance(it, this@ProductDetailsFragment).show(this, QuantitySelectorFragment::class.java.simpleName)
+                    QuantitySelectorFragment.newInstance(it, this@ProductDetailsFragment)
+                        .show(this, QuantitySelectorFragment::class.java.simpleName)
                 }
             }
         }
@@ -549,7 +570,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
-            if(it.isRnREnabled) {
+            if (it.isRnREnabled) {
                 ratingBarTop.rating = it.averageRating
                 tvTotalReviews.text = getString(R.string.no_reviews, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
