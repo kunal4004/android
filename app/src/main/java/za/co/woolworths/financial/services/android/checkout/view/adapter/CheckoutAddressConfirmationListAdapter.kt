@@ -30,6 +30,7 @@ class CheckoutAddressConfirmationListAdapter(
         savedAddress?.addresses?.forEach { address ->
             if (savedAddress?.defaultAddressNickname == address.nickname) {
                 checkedItemPosition = savedAddress?.addresses?.indexOf(address) ?: -1
+                onItemClick(checkedItemPosition)
                 return@forEach
             }
         }
