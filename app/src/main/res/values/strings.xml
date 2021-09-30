@@ -2157,7 +2157,7 @@
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
-    <string name="customer_reviews">Customer Reviews (170)</string>
+    <string name="customer_reviews">Customer Reviews %s</string>
     <string name="percent_recommend_to_friend">%s Would recommend this product to a friend</string>
     <string name="rating_details">Rating details</string>
     <string name="no_reviews">%d Reviews</string>

@@ -556,10 +556,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvTotalReviews.visibility = View.VISIBLE
                 tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
                 ratingBar.rating = it.averageRating
-                tvCustomerReviewCount.text = getString(R.string.no_reviews, it.reviewCount)
+                tvCustomerReviewCount.text = getString(R.string.customer_reviews, "("+it.reviewCount+")")
                 tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
             }else{
-
+                headerCustomerReview.visibility = View.GONE
+                reviewDetailsInformation.visibility = View.GONE
             }
 
             if (!it.freeGiftText.isNullOrEmpty()) {
