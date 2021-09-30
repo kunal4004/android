@@ -106,6 +106,7 @@
         android:layout_marginStart="@dimen/eight_dp"
         style="@style/reviewCount"
         android:gravity="start"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/rating_bar"
         app:layout_constraintStart_toEndOf="@+id/rating_bar"
         app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"

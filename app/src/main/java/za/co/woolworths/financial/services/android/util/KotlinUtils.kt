@@ -814,12 +814,12 @@ class KotlinUtils {
         }
 
          fun getUpdatedUtils(rating:Float) :Float{
-            val completeValue = rating.toInt()
-            val decimalValue  = rating-completeValue
+             val completeValue: Int =  rating.toInt() %10
+             val decimalValue:Int = ((rating %1)*10).toInt()
 
-            if (decimalValue >= 0.0f && decimalValue <= 0.2) {
+            if (decimalValue >= 0 && decimalValue <= 2) {
                 return completeValue.toFloat()
-            } else if (decimalValue >= 0.3 && decimalValue <= 0.7) {
+            } else if (decimalValue > 2 && decimalValue <= 7) {
                 return (completeValue + .5).toFloat()
             }
             return rating.roundToInt().toFloat()
