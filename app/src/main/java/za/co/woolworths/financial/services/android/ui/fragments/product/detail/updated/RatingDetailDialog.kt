@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,8 @@ class RatingDetailDialog : WBottomSheetDialogFragment(), View.OnClickListener {
         ratingBarTop.visibility = View.VISIBLE
         tvTotalReviews.visibility = View.VISIBLE
         ratingBarTop.rating = 3.5f
+        tvTotalReviews.text = "170 Reviews"
+        tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
         close_top?.setOnClickListener(this@RatingDetailDialog)
         close?.setOnClickListener(this@RatingDetailDialog)
     }
