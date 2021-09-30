@@ -95,34 +95,99 @@
             android:layout_marginBottom="@dimen/twelve_dp"
             android:background="@color/sign_in_register_button_border" />
 
-        <RelativeLayout
-            android:id="@+id/earliestDateTitleLayout"
+        <LinearLayout
+            android:id="@+id/deliveryDateLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/ten_dp"
-            android:paddingLeft="@dimen/fifteen_dp"
-            android:paddingRight="@dimen/fifteen_dp"
-            android:visibility="gone">
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/twenty_four_dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/confirmAddressPartition">
 
-            <TextView
-                android:id="@+id/earliestDateTitle"
-                style="@style/myriad_pro_regular_black"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/earliestDateTitleLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/earliest_collection_date"
-                android:textColor="@color/checkout_delivering_title"
-                android:textSize="@dimen/fifteen_sp" />
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:paddingLeft="@dimen/twenty_four_dp"
+                android:paddingRight="@dimen/twenty_four_dp">
 
-            <TextView
-                android:id="@+id/earliestDateValue"
-                style="@style/myriad_pro_semi_bold_black_15_text_style"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/earliestDateTitle"
+                    style="@style/myriad_pro_regular_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/earliest_delivery_date"
+                    android:textSize="@dimen/thirteen_sp" />
+
+                <TextView
+                    android:id="@+id/earliestDateValue"
+                    style="@style/myriad_pro_semi_bold_black_15_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="@dimen/thirteen_sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/foodItemsDeliveryDateLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:textSize="@dimen/fifteen_sp" />
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:paddingLeft="@dimen/twenty_four_dp"
+                android:paddingRight="@dimen/twenty_four_dp">
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/foodItemsLabel"
+                    style="@style/myriad_pro_regular_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/food_items"
+                    android:textSize="@dimen/thirteen_sp" />
+
+                <TextView
+                    android:id="@+id/foodItemsDeliveryDate"
+                    style="@style/myriad_pro_semi_bold_black_15_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="@dimen/thirteen_sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/otherItemsDeliveryDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/five_dp"
+                android:paddingLeft="@dimen/twenty_four_dp"
+                android:paddingRight="@dimen/twenty_four_dp">
+
+                <TextView
+                    android:id="@+id/otherItemsLabel"
+                    style="@style/myriad_pro_regular_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/fashion_beauty_home"
+                    android:textSize="@dimen/thirteen_sp" />
+
+                <TextView
+                    android:id="@+id/otherItemsDeliveryDate"
+                    style="@style/myriad_pro_semi_bold_black_15_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="@dimen/thirteen_sp" />
+            </RelativeLayout>
+
+        </LinearLayout>
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnAddressConfirmation"
