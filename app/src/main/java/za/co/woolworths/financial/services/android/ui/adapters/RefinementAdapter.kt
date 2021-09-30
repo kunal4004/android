@@ -16,7 +16,6 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementSelectab
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
-import za.co.woolworths.financial.services.android.util.Constant
 
 class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListner, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, refinementNavigation: RefinementNavigation) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
@@ -66,12 +65,7 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
             } else {
                 item = item as Refinement
                 itemView.labelSingleSelector.text = item.label
-
-                if(item.displayName == Constant.RATING) {
-                    itemView.countSingleSelector.visibility = View.GONE
-                } else  {
-                    itemView.countSingleSelector.text = item.count.toString()
-                }
+                itemView.countSingleSelector.text = item.count.toString()
             }
 
             itemView.singleSelector.isChecked = dataList[position].isSelected
