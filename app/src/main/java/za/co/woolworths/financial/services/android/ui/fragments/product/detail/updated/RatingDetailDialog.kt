@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.ccs_end_session_dialog_fragment.*
+import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
@@ -17,10 +18,11 @@ class RatingDetailDialog : WBottomSheetDialogFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        ratingBarTop.visibility = View.VISIBLE
+        tvTotalReviews.visibility = View.VISIBLE
+        ratingBarTop.rating = 5f
         close_top?.setOnClickListener(this@RatingDetailDialog)
         close?.setOnClickListener(this@RatingDetailDialog)
-
     }
 
     override fun onClick(view: View?) {
