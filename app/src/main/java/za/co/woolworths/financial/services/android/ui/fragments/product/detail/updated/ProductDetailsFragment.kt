@@ -552,6 +552,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if(it.isRnREnabled) {
                 ratingBarTop.rating = it.averageRating
                 tvTotalReviews.text = getString(R.string.no_reviews, it.reviewCount)
+                ratingBarTop.visibility = View.VISIBLE
+                tvTotalReviews.visibility = View.VISIBLE
                 tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
                 ratingBar.rating = it.averageRating
                 tvCustomerReviewCount.text = getString(R.string.no_reviews, it.reviewCount)

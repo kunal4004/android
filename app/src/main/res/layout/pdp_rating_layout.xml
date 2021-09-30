@@ -12,7 +12,7 @@
         android:numStars="5"
         android:layout_gravity="center"
         android:isIndicator="true"
-        android:rating="3"
+        android:visibility="gone"
         />
 
     <TextView
@@ -22,6 +22,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_vertical"
-        android:text="@string/no_reviews"
+        android:visibility="gone"
          />
 </LinearLayout>
