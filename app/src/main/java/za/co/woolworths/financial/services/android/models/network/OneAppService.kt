@@ -5,12 +5,11 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.checkout.service.network.MockRetrofitConfig.Companion.mockApiInterface
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
@@ -18,7 +17,6 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
-import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*

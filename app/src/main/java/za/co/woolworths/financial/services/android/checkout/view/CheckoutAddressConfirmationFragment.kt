@@ -25,6 +25,8 @@ import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddressConfirmationInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
@@ -42,10 +44,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.DeliveryType
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.Utils
 import java.net.HttpURLConnection
 
 
@@ -70,6 +70,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private var selectedSuburb = Suburb()
     private var selectedProvince = Province()
     private var isDeliverySelected: Boolean = true
+    private var isConfirmDeliveryResponse: Boolean = false
     private var validateStoreList: ValidateStoreList? = null
 
     companion object {
@@ -80,6 +81,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         const val SAVED_ADDRESS_KEY = "savedAddress"
         const val UNSELLABLE_CHANGE_STORE_REQUEST_KEY = "unsellableChangeStore"
         const val STORE_SELECTION_REQUEST_KEY = "storeSelectionResponse"
+        const val CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY = "confirmDeliveryAddressResponse"
         const val DEFAULT_STORE_ID = "-1"
     }
 
@@ -253,7 +255,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             setMarginToStoreListView()
         fetchStoreListFromValidateSelectedSuburb(suburbId)
         if (!earliestDateValue?.text.isNullOrEmpty()) {
-            earliestDateTitleLayout.visibility = View.VISIBLE
+            showEarliestCollectionView(earliestDateValue?.text.toString())
         }
     }
 
@@ -265,7 +267,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         btnConfirmLayout.visibility = View.VISIBLE
         suburbSelectionLayout.visibility = View.GONE
         addressConfirmationClicknCollect.visibility = View.GONE
-        earliestDateTitleLayout.visibility = View.GONE
+        if (isConfirmDeliveryResponse) {
+            showEarliestDeliveryDates()
+        } else
+            hideEarliestDeliveryView()
     }
 
     private fun navigateToAddAddress() {
@@ -346,7 +351,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
             selectedSuburb.storeAddress = storeAddress
             setMarginToStoreListView()
-            setEarliestDeliveryDates(validateStoreList)
+            showEarliestCollectionView(validateStoreList?.firstAvailableFoodDeliveryDate ?: "")
         }
     }
 
@@ -365,6 +370,13 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun initView() {
         if (isDeliverySelected) {
+            if (baseFragBundle?.containsKey(CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY) == true) {
+                isConfirmDeliveryResponse = true
+                showEarliestDeliveryDates()
+            } else {
+                isConfirmDeliveryResponse = false
+                hideEarliestDeliveryView()
+            }
             selectedProvince = Utils.getPreferredDeliveryLocation().province
             if (savedAddress?.addresses?.isNullOrEmpty() == true) {
                 //Show No Address view
@@ -392,6 +404,79 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
     }
 
+    private fun showEarliestDeliveryDates() {
+        val confirmDeliveryAddressResponse = Utils.jsonStringToObject(
+            baseFragBundle?.getString(CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY),
+            ConfirmDeliveryAddressResponse::class.java
+        ) as? ConfirmDeliveryAddressResponse
+            ?: baseFragBundle?.getSerializable(CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY) as? ConfirmDeliveryAddressResponse
+
+        showEarliestDeliveryView()
+        val fulfillmentsType = confirmDeliveryAddressResponse?.fulfillmentTypes
+        if (fulfillmentsType?.join == FOOD.type) {
+            //Food Basket
+            val foodItemDate =
+                WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join)
+            if (foodItemDate.isNullOrEmpty()) {
+                hideEarliestDeliveryView()
+            } else {
+                foodItemsDeliveryDateLayout.visibility = View.VISIBLE
+                otherItemsDeliveryDateLayout.visibility = View.GONE
+                foodItemsDeliveryDate.text = foodItemDate
+            }
+        } else if (fulfillmentsType?.join == OTHER.type && fulfillmentsType.other == OTHER.type) {
+            //Mixed Basket
+            val foodItemDate =
+                WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food)
+            val otherItemDate =
+                WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.other)
+            if (foodItemDate.isNullOrEmpty() && otherItemDate.isNullOrEmpty()) {
+                hideEarliestDeliveryView()
+            } else {
+                foodItemsDeliveryDateLayout.visibility =
+                    if (foodItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                otherItemsDeliveryDateLayout.visibility =
+                    if (otherItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
+                foodItemsDeliveryDate.text = foodItemDate
+                otherItemsDeliveryDate.text = otherItemDate
+            }
+
+        } else {
+            //Other Basket
+            val otherItemDate =
+                WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join)
+            if (otherItemDate.isNullOrEmpty()) {
+                hideEarliestDeliveryView()
+            } else {
+                foodItemsDeliveryDateLayout.visibility = View.GONE
+                otherItemsDeliveryDateLayout.visibility = View.VISIBLE
+                otherItemsDeliveryDate.text = otherItemDate
+            }
+        }
+
+    }
+
+    private fun showEarliestDeliveryView() {
+        deliveryDateLayout.visibility = View.VISIBLE
+        earliestDateTitle.text = bindString(R.string.earliest_delivery_date)
+        earliestDateValue.text = ""
+    }
+
+    private fun hideEarliestDeliveryView() {
+        deliveryDateLayout.visibility = View.GONE
+    }
+
+    private fun showEarliestCollectionView(dateValue: String) {
+        earliestDateTitle.text = bindString(R.string.earliest_collection_date)
+        earliestDateValue?.text = dateValue
+        if (dateValue.isNullOrEmpty()) {
+            deliveryDateLayout.visibility = View.GONE
+        } else
+            deliveryDateLayout.visibility = View.VISIBLE
+        foodItemsDeliveryDateLayout.visibility = View.GONE
+        otherItemsDeliveryDateLayout.visibility = View.GONE
+    }
+
     private fun initialiseDeliveryAddressRecyclerView() {
         setRecyclerViewMaximumHeight(
             saveAddressRecyclerView.layoutParams,
@@ -411,7 +496,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         val rowHeight = 65
-        val totalRemovalHeight = 370
+        val totalRemovalHeight =
+            if (isConfirmDeliveryResponse) 420 else 330
         val recyclerViewSpace =
             displayMetrics.heightPixels - KotlinUtils.dpToPxConverter(totalRemovalHeight)
         val totalRowHeight = KotlinUtils.dpToPxConverter(rowHeight * size)
@@ -594,7 +680,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             changeProvinceTextView.visibility = View.VISIBLE
             btnAddressConfirmation.text = getString(R.string.change_suburb)
         }
-        setEarliestDeliveryDates(validateStoreList)
+        showEarliestCollectionView(validateStoreList?.firstAvailableFoodDeliveryDate ?: "")
         storeListAdapter =
             validatedSuburbProductResponse?.stores?.let { it1 ->
                 CheckoutStoreSelectionAdapter(
@@ -618,15 +704,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             layoutManager = activity?.let { LinearLayoutManager(it) }
             storeListAdapter?.let { adapter = it }
         }
-    }
-
-    private fun setEarliestDeliveryDates(validateStoreList: ValidateStoreList?) {
-        earliestDateValue?.text =
-            validateStoreList?.firstAvailableFoodDeliveryDate ?: ""
-        if (earliestDateValue?.text.isNullOrEmpty()) {
-            earliestDateTitleLayout.visibility = View.GONE
-        } else
-            earliestDateTitleLayout.visibility = View.VISIBLE
     }
 
     private fun setupViewModel() {

@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
@@ -172,7 +173,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
 
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
-            if(loadingBar.visibility == View.VISIBLE){
+            if (loadingBar.visibility == View.VISIBLE) {
                 return@setOnCheckedChangeListener
             }
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
@@ -183,7 +184,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
 
         switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
-            if(loadingBar.visibility == View.VISIBLE){
+            if (loadingBar.visibility == View.VISIBLE) {
                 return@setOnCheckedChangeListener
             }
             edtTxtInputLayoutGiftInstructions?.visibility =
@@ -540,10 +541,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             }
             R.id.checkoutDeliveryDetailsLayout -> {
-                view?.findNavController()?.navigate(
-                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
-                    baseFragBundle
-                )
+                if (loadingBar.visibility == View.GONE) {
+                    baseFragBundle?.putString(
+                        CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
+                        Utils.toJson(confirmDeliveryAddressResponse)
+                    )
+                    view?.findNavController()?.navigate(
+                        R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
+                        baseFragBundle
+                    )
+                }
             }
             R.id.txtContinueToPayment -> {
                 onCheckoutPaymentClick(v)
@@ -554,7 +561,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun onCheckoutPaymentClick(view: View) {
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
-            && TextUtils.isEmpty(body.otherDeliverySlotId)) {
+            && TextUtils.isEmpty(body.otherDeliverySlotId)
+        ) {
             return
         }
         loadingBar?.visibility = View.VISIBLE
@@ -564,7 +572,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 when (response) {
                     is ShippingDetailsResponse -> {
 
-                        if(TextUtils.isEmpty(response.jsessionId) || TextUtils.isEmpty(response.auth)){
+                        if (TextUtils.isEmpty(response.jsessionId) || TextUtils.isEmpty(response.auth)) {
                             presentErrorDialog(
                                 getString(R.string.common_error_unfortunately_something_went_wrong),
                                 getString(R.string.common_error_message_without_contact_info),
@@ -588,10 +596,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun navigateToPaymentWebpage() {
         // TODO: Payment Web page integration.
     }
+
     private fun getShipmentDetailsBody(): ShippingDetailsBody {
         val body = ShippingDetailsBody()
         return body
     }
+
     override fun selectedDeliveryType(deliveryType: Any, type: DeliveryType, position: Int) {
         oddSelectedPosition = position
         if ((DELIVERY_TYPE_TIMESLOT).equals(((deliveryType as? OpenDayDeliverySlot)?.deliveryType))) {
