@@ -191,7 +191,7 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
             FragmentManager fm = getSupportFragmentManager();
             Fragment fragmentId = fm.findFragmentById(R.id.flEStatement);
             if (fragmentId instanceof StatementFragment) {
-                ((StatementFragment) fragmentId).getPDFFile();
+                ((StatementFragment) fragmentId).getPDFFile(mAccountWithApplyNowState.first);
             }
         });
     }

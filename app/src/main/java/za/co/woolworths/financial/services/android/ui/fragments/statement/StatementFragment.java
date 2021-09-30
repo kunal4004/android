@@ -70,6 +70,7 @@ import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_VALUE;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.PAGE_TITLE;
+import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.APPLY_NOW_STATE;
 
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
@@ -95,6 +96,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private FloatingActionButton chatWithAgentFloatingButton;
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
+    private ApplyNowState applyNowState;
 
     public StatementFragment() {
     }
@@ -325,7 +327,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         showView(relNextButton);
     }
 
-    public void getPDFFile() {
+    public void getPDFFile(ApplyNowState state) {
+        applyNowState = state;
         showViewProgress();
         final FragmentActivity activity = getActivity();
         if (activity == null || !isAdded()) return;
@@ -345,6 +348,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                     openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
                                     openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());
                                     openPdfIntent.putExtra(PAGE_TITLE, mSelectedStatement.docDesc);
+                                    openPdfIntent.putExtra(APPLY_NOW_STATE, applyNowState);
                                     activity.startActivity(openPdfIntent);
                                 }
                             } catch (Exception ex) {
@@ -394,7 +398,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             activity.runOnUiThread(() -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
                     if (!loadState.onLoanCompleted()) {
-                        getPDFFile();
+                        getPDFFile(applyNowState);
                     }
                 }
             });
