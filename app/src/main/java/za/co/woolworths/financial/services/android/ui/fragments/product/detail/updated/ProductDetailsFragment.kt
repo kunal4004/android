@@ -79,12 +79,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
-    MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
-    ILocationProvider, View.OnClickListener,
-    OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
-    DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
-    ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -134,10 +129,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
-            productDetails = Utils.jsonStringToObject(
-                getString("strProductList"),
-                ProductDetails::class.java
-            ) as ProductDetails
+            productDetails = Utils.jsonStringToObject(getString("strProductList"), ProductDetails::class.java) as ProductDetails
             subCategoryTitle = getString("strProductCategory")
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
@@ -229,11 +221,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.product_details_fragment, container, false)
     }
 
@@ -250,17 +238,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
-            BaseProductUtils.displayPrice(
-                fromPricePlaceHolder,
-                textPrice,
-                textActualPrice,
-                it.price,
-                it.wasPrice,
-                it.priceType,
-                it.kilogramPrice
-            )
-            auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }
-                .toString())
+            BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
+            auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
         }
 
@@ -273,12 +252,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             this.onProductDetailsSuccess(productDetails)
         } else {
             //loadProductDetails.
-            productDetailsPresenter?.loadProductDetails(
-                ProductRequest(
-                    productDetails?.productId,
-                    productDetails?.sku
-                )
-            )
+            productDetailsPresenter?.loadProductDetails(ProductRequest(productDetails?.productId, productDetails?.sku))
         }
     }
 
@@ -308,9 +282,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             return
         }
 
-        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType)
-                .equals(storeIdForInventory, ignoreCase = true)
-        ) {
+        if (!Utils.retrieveStoreId(productDetails?.fulfillmentType).equals(storeIdForInventory, ignoreCase = true)) {
             updateStockAvailability(false)
             return
         }
@@ -323,22 +295,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             when (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails?.fulfillmentType))) {
                 true -> {
                     title = getString(R.string.product_unavailable)
-                    message =
-                        "Unfortunately this item is unavailable in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
+                    message = "Unfortunately this item is unavailable in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
-                    message =
-                        "Unfortunately this item is out of stock in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
+                    message = "Unfortunately this item is out of stock in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
                 }
             }
             activity?.apply {
-                Utils.displayValidationMessage(
-                    this,
-                    CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
-                    title,
-                    message
-                )
+                Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, title, message)
             }
             updateAddToCartButtonForSelectedSKU()
             return
@@ -352,21 +317,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun addToCartForSelectedSKU() {
         val item = getSelectedQuantity()?.let {
-            AddItemToCart(
-                productDetails?.productId,
-                getSelectedSku()?.sku,
-                if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it
-            )
+            AddItemToCart(productDetails?.productId, getSelectedSku()?.sku, if (it > getSelectedSku()?.quantity!!) getSelectedSku()?.quantity!! else it)
         }
         val listOfItems = ArrayList<AddItemToCart>()
         item?.let { listOfItems.add(it) }
         if (listOfItems.isNotEmpty()) {
-            activity?.apply {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.SHOP_PDP_ADD_TO_CART,
-                    this
-                )
-            }
+            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_ADD_TO_CART, this) }
             productDetailsPresenter?.postAddItemToCart(listOfItems)
         }
     }
@@ -384,7 +340,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
 
-        if (productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
+        if(productDetails?.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
         }
@@ -399,11 +355,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         Utils.getPreferredDeliveryLocation()?.let {
             updateDefaultUI(false)
-            if (!this.productDetails?.productType.equals(
-                    getString(R.string.food_product_type),
-                    ignoreCase = true
-                ) && it.storePickup
-            ) {
+            if (!this.productDetails?.productType.equals(getString(R.string.food_product_type), ignoreCase = true) && it.storePickup) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
                 return
@@ -411,20 +363,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
-            storeIdForInventory =
-                RecyclerViewViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
+            storeIdForInventory = RecyclerViewViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
                 true -> showProductUnavailable()
                 false -> {
                     showProductDetailsLoading()
-                    val multiSKUs =
-                        productDetails.otherSkus.joinToString(separator = "-") { it.sku }
-                    productDetailsPresenter?.loadStockAvailability(
-                        storeIdForInventory!!,
-                        multiSKUs,
-                        true
-                    )
+                    val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { it.sku }
+                    productDetailsPresenter?.loadStockAvailability(storeIdForInventory!!, multiSKUs, true)
                 }
             }
 
@@ -439,10 +385,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (httpCode == HTTP_CODE_502) {
             isOutOfStock_502 = true
             val message = getString(R.string.out_of_stock_502)
-            OutOfStockMessageDialogFragment.newInstance(message).show(
-                this@ProductDetailsFragment.childFragmentManager,
-                OutOfStockMessageDialogFragment::class.java.simpleName
-            )
+            OutOfStockMessageDialogFragment.newInstance(message).show(this@ProductDetailsFragment.childFragmentManager, OutOfStockMessageDialogFragment::class.java.simpleName)
         } else if (isAdded) {
             isOutOfStock_502 = false
             showErrorWhileLoadingProductDetails()
@@ -452,10 +395,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onFailureResponse(error: String) {
     }
 
-    override fun onStockAvailabilitySuccess(
-        skusInventoryForStoreResponse: SkusInventoryForStoreResponse,
-        isDefaultRequest: Boolean
-    ) {
+    override fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse, isDefaultRequest: Boolean) {
 
         productDetails?.otherSkus?.forEach { otherSku ->
             otherSku?.quantity = 0
@@ -516,11 +456,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (hasSize)
             showSize()
 
-        if (productDetailsPresenter?.isSizeGuideApplicable(
-                productDetails?.colourSizeVariants,
-                productDetails?.sizeGuideId
-            ) == true
-        ) {
+        if (productDetailsPresenter?.isSizeGuideApplicable(productDetails?.colourSizeVariants, productDetails?.sizeGuideId) == true) {
             sizeGuide?.apply {
                 underline()
                 visibility = View.VISIBLE
@@ -535,12 +471,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (otherSKUsByGroupKey.size == 1 && !hasSize) {
             onColorSelection(this.defaultGroupKey)
         }
-        productColorSelectorAdapter = ProductColorSelectorAdapter(
-            otherSKUsByGroupKey,
-            this,
-            spanCount,
-            getSelectedGroupKey()
-        ).apply {
+        productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this, spanCount, getSelectedGroupKey()).apply {
             colorSelectorRecycleView.adapter = this
             showSelectedColor()
         }
@@ -557,10 +488,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun showSize() {
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
-        productSizeSelectorAdapter =
-            ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
-                sizeSelectorRecycleView.adapter = this
-            }
+        productSizeSelectorAdapter = ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
+            sizeSelectorRecycleView.adapter = this
+        }
 
         otherSKUsByGroupKey[getSelectedGroupKey()]?.let {
             if (it.size == 1) {
@@ -596,14 +526,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         for (otherSkuObj in otherSKUsList) {
             var groupKey = ""
-            groupKey =
-                if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                    otherSkuObj.size.trim()
-                } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
-                    otherSkuObj.colour.trim()
-                } else {
-                    otherSkuObj.colour.trim()
-                }
+            groupKey = if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                otherSkuObj.size.trim()
+            } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                otherSkuObj.colour.trim()
+            } else {
+                otherSkuObj.colour.trim()
+            }
 
             if (variant == ColourSizeVariants.NO_COLOUR_SIZE_VARIANT) {
                 otherSkuObj.apply { size = colour }
@@ -613,9 +542,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!otherSKUsByGroupKey.containsKey(groupKey)) {
                 this.otherSKUsByGroupKey[groupKey] = ArrayList<OtherSkus>()
             }
-            if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(
-                otherSkuObj
-            )
+            if (!otherSKUsByGroupKey[groupKey]!!.any { it.sku == otherSkuObj.sku }) this.otherSKUsByGroupKey[groupKey]!!.add(otherSkuObj)
         }
         return otherSKUsByGroupKey
     }
@@ -635,15 +562,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
 
         productDetails?.let {
-            BaseProductUtils.displayPrice(
-                fromPricePlaceHolder,
-                textPrice,
-                textActualPrice,
-                it.price,
-                it.wasPrice,
-                it.priceType,
-                it.kilogramPrice
-            )
+            BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             brandName.apply {
                 if (!it.brandText.isNullOrEmpty()) {
                     text = it.brandText
@@ -658,10 +577,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvTotalReviews.visibility = View.VISIBLE
                 tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
                 ratingBar.rating = it.averageRating
-                tvCustomerReviewCount.text = getString(R.string.no_reviews, it.reviewCount)
-                tvRecommend.text = getString(R.string.percent_recommend_to_friend, "96%")
-            } else {
-
+                tvCustomerReviewCount.text = getString(R.string.customer_reviews, "("+it.reviewCount+")")
+                tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
+            }else{
+                headerCustomerReview.visibility = View.GONE
+                reviewDetailsInformation.visibility = View.GONE
             }
 
             if (!it.freeGiftText.isNullOrEmpty()) {
@@ -732,13 +652,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateAuxiliaryImages(imagesList: List<String>) {
         activity?.apply {
-            productViewPagerAdapter =
-                ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
-                    productImagesViewPager?.let { pager ->
-                        pager.adapter = this
-                        productImagesViewPagerIndicator.setViewPager(pager)
-                    }
+            productViewPagerAdapter = ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
+                productImagesViewPager?.let { pager ->
+                    pager.adapter = this
+                    productImagesViewPagerIndicator.setViewPager(pager)
                 }
+            }
         }
     }
 
@@ -887,12 +806,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onQuantitySelection(quantity: Int) {
-        activity?.apply {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.SHOP_PDP_SELECT_QUANTITY,
-                this
-            )
-        }
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_SELECT_QUANTITY, this) }
         setSelectedQuantity(quantity)
         quantityText.text = quantity.toString()
     }
@@ -1036,12 +950,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun addItemToShoppingList() {
-        activity?.apply {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.SHOPADDTOLIST,
-                this
-            )
-        }
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPADDTOLIST, this) }
 
         if (getSelectedSku() == null) {
             if (getSelectedGroupKey().isNullOrEmpty())
@@ -1763,23 +1672,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun shareProduct() {
         activity?.apply {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE, hashMapOf(
-                    Pair(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID,
-                        productDetails?.productId
-                            ?: ""
-                    )
-                ), this
-            )
-            val message =
-                WoolworthsApplication.getProductDetailsPage()?.shareItemMessage + " " + productDetails?.productId?.let {
-                    WoolworthsApplication.getProductDetailsPage()?.shareItemURITemplate?.replace(
-                        "{product_id}",
-                        it,
-                        true
-                    )
-                }
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID, productDetails?.productId
+                    ?: "")), this)
+            val message = WoolworthsApplication.getProductDetailsPage()?.shareItemMessage + " " + productDetails?.productId?.let { WoolworthsApplication.getProductDetailsPage()?.shareItemURITemplate?.replace("{product_id}", it, true) }
             val shareIntent = Intent()
             shareIntent.apply {
                 action = Intent.ACTION_SEND
