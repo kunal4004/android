@@ -104,4 +104,13 @@ public class ProductDetails {
 	public String colourSizeVariants;
 	@SerializedName("isLiquor")
 	public boolean isLiquor;
+	@SerializedName("isRnREnabled")
+	@Expose
+	public Boolean isRnREnabled;
+	@SerializedName("averageRating")
+	@Expose
+	public float averageRating;
+	@SerializedName("reviewCount")
+	@Expose
+	public int reviewCount;
 }

@@ -9,6 +9,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Point
 import android.location.Location
 import android.os.Build
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
@@ -546,6 +548,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     visibility = View.VISIBLE
                 }
             }
+
+            if(it.isRnREnabled) {
+                ratingBarTop.rating = it.averageRating
+                tvTotalReviews.text = getString(R.string.no_reviews, it.reviewCount)
+                tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+                ratingBar.rating = it.averageRating
+                tvCustomerReviewCount.text = getString(R.string.no_reviews, it.reviewCount)
+                tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
+            }else{
+
+            }
+
             if (!it.freeGiftText.isNullOrEmpty()) {
                 freeGiftText.text = it.freeGiftText
                 freeGiftWithPurchaseLayout.visibility = View.VISIBLE
