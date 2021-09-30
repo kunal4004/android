@@ -19,8 +19,11 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE
@@ -29,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
@@ -333,6 +337,58 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         }
     }
 
+    companion object {
+        var SHOW_GET_REPLACEMENT_CARD_SCREEN = false
+        var GET_REPLACEMENT_CARD_DETAIL = false
+    }
+
+    private fun linkDeviceIfNecessary(doJob: () -> Unit, elseJob: () -> Unit){
+        if (!MyAccountsFragment.verifyAppInstanceId() && Utils.isGooglePlayServicesAvailable()) {
+            doJob()
+            activity?.let {
+                val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
+                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, ApplyNowState.STORE_CARD)
+                it.startActivity(intent)
+                it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+            }
+        }
+        else{
+            elseJob()
+        }
+    }
+
+    private fun getReplacementCard(){
+        mCardPresenterImpl?.apply {
+            activity?.apply {
+                getStoreCardResponse()?.let {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, this)
+                    Intent(this, SelectStoreActivity::class.java).apply {
+                        putExtra(
+                            SelectStoreActivity.STORE_DETAILS,
+                            Gson().toJson(it)
+                        )
+                        startActivityForResult(
+                            this,
+                            MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD
+                        )
+                        overridePendingTransition(
+                            R.anim.slide_from_right,
+                            R.anim.slide_to_left
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(SHOW_GET_REPLACEMENT_CARD_SCREEN) {
+            SHOW_GET_REPLACEMENT_CARD_SCREEN = false
+            getReplacementCard()
+        }
+    }
+
     override fun onClick(v: View?) {
         super.onClick(v)
         mCardPresenterImpl?.apply {
@@ -343,25 +399,12 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
                     when (manageMyCardTextView?.text?.toString()) {
                         bindString(R.string.replacement_card_label) -> {
-                            activity?.apply {
-                                getStoreCardResponse()?.let {
-                                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, this)
-                                    Intent(this, SelectStoreActivity::class.java).apply {
-                                        putExtra(
-                                            SelectStoreActivity.STORE_DETAILS,
-                                            Gson().toJson(it)
-                                        )
-                                        startActivityForResult(
-                                            this,
-                                            MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD
-                                        )
-                                        overridePendingTransition(
-                                            R.anim.slide_from_right,
-                                            R.anim.slide_to_left
-                                        )
-                                    }
-                                }
-                            }
+                            linkDeviceIfNecessary({
+                                GET_REPLACEMENT_CARD_DETAIL = true
+                            },{
+                                getReplacementCard()
+                            })
+
                         }
                         bindString(R.string.activate_vtc_title) -> {
                             activity?.apply {

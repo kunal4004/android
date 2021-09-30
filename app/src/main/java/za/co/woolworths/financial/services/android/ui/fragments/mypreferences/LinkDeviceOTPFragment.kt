@@ -64,6 +64,7 @@ import za.co.woolworths.financial.services.android.ui.activities.credit_card_del
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
@@ -544,19 +545,24 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                 activity?.apply {
                                     if (this is LinkDeviceConfirmationActivity) {
                                         when (mApplyNowState) {
-                                            ApplyNowState.BLACK_CREDIT_CARD,
+                                            //TODO: WOP-12578, WOP-12589 // credit card will be done after personal loan
+                                            /**ApplyNowState.BLACK_CREDIT_CARD,
                                             ApplyNowState.GOLD_CREDIT_CARD,
                                             ApplyNowState.SILVER_CREDIT_CARD -> {
                                                 //check if should activate credit card or should schedule delivery
                                                 activateCreditCardOrScheduleCardDelivery()
-                                            }
+                                            }*/
                                             ApplyNowState.STORE_CARD -> {
+                                                MyAccountsFragment.updateLinkedDevices()
                                                 when {
                                                     MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
                                                         showFreezeStoreCardDialog()
                                                     }
                                                     MyCardDetailFragment.BLOCK_CARD_DETAIL -> {
                                                         showBlockStoreCardScreen()
+                                                    }
+                                                    StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL -> {
+                                                        showGetReplacementStoreCardScreen()
                                                     }
                                                     else -> {
                                                         goToProduct()
@@ -603,16 +609,20 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun showFreezeStoreCardDialog(){
-        MyAccountsFragment.updateLinkedDevices()
         MyCardDetailFragment.SHOW_TEMPORARY_FREEZE_DIALOG = true
         MyCardDetailFragment.FREEZE_CARD_DETAIL = false
         activity?.finish()
     }
 
     private fun showBlockStoreCardScreen(){
-        MyAccountsFragment.updateLinkedDevices()
         MyCardDetailFragment.SHOW_BLOCK_CARD_SCREEN = true
         MyCardDetailFragment.BLOCK_CARD_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showGetReplacementStoreCardScreen(){
+        StoreCardOptionsFragment.SHOW_GET_REPLACEMENT_CARD_SCREEN = true
+        StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL = false
         activity?.finish()
     }
 

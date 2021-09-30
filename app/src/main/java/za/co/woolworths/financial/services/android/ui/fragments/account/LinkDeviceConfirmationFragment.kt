@@ -194,9 +194,11 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         context?.let {
             linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))
             when(mApplyNowState){
+                //TODO: WOP-12578, WOP-12589 // credit card implementations will be activated after personal loan
+                /**
                 ApplyNowState.SILVER_CREDIT_CARD,
                 ApplyNowState.GOLD_CREDIT_CARD,
-                ApplyNowState.BLACK_CREDIT_CARD,
+                ApplyNowState.BLACK_CREDIT_CARD,*/
                 ApplyNowState.STORE_CARD -> {
                     linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
                     linkDeviceResultSubitle?.text = it.getString(R.string.link_device_confirm_desc_cc)
