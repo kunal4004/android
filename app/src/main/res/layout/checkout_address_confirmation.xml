@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/twenty_four_dp"
+            android:paddingBottom="@dimen/sixteen_dp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +111,7 @@
                 android:id="@+id/earliestDateTitleLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sixteen_dp"
+                android:layout_marginTop="@dimen/five_dp"
                 android:paddingLeft="@dimen/twenty_four_dp"
                 android:paddingRight="@dimen/twenty_four_dp">
 
@@ -138,7 +138,7 @@
                 android:id="@+id/foodItemsDeliveryDateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sixteen_dp"
+                android:layout_marginTop="@dimen/twelve_dp"
                 android:paddingLeft="@dimen/twenty_four_dp"
                 android:paddingRight="@dimen/twenty_four_dp">
 
@@ -165,7 +165,7 @@
                 android:id="@+id/otherItemsDeliveryDateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/five_dp"
+                android:layout_marginTop="@dimen/three_dp"
                 android:paddingLeft="@dimen/twenty_four_dp"
                 android:paddingRight="@dimen/twenty_four_dp">
 
