@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment">
 
-    <WebView
+    <za.co.woolworths.financial.services.android.util.AdvancedWebView
         android:id="@+id/checkoutPaymentWebView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

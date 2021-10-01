@@ -10,6 +10,7 @@ import android.os.Handler
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,16 +31,16 @@ import android.webkit.WebResourceResponse
 import com.google.common.net.HttpHeaders
 import okhttp3.Request
 import okhttp3.Response
+import za.co.woolworths.financial.services.android.util.AdvancedWebView
+import java.net.URI
 
 
-class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
+class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
 
     companion object {
         const val KEY_ARGS_WEB_TOKEN = "web_tokens"
         const val KEY_STATUS = "status"
     }
-
-    private var headers = HashMap<String, String>()
 
     enum class PaymentStatus(val type: String) {
         PAYMENT_SUCCESS("success"),
@@ -71,138 +72,79 @@ class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initPaymentWebView() {
-        clearWebCache()
-        activity?.let {
-            checkoutPaymentWebView?.apply {
-                settings.javaScriptEnabled = true
-                settings.useWideViewPort = true
-                settings.loadsImagesAutomatically = true
-                settings.builtInZoomControls = true; // allow pinch to zooom
-                settings.displayZoomControls =
-                    false; // disable the default zoom controls on the page
-
-                webViewClient = CheckoutPaymentWebViewClient(this@CheckoutPaymentWebFragment)
-//                webViewClient = CustomWebViewClient(this@CheckoutPaymentWebFragment)
-                val paymentUrl = WoolworthsApplication.getNativeCheckout()?.checkoutPaymentURL ?: ""
-                val webTokens =
-                    arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
-                if (webTokens != null) {
-
-                    val cookies = "TOKEN=${webTokens.jsessionId};AUTHENTICATION=${webTokens.auth}"
-                    Log.d("EJ", "New Cookies >> $cookies")
-
-                    val cookieManager = CookieManager.getInstance()
-                    cookieManager.setAcceptThirdPartyCookies(this, true);
-//                    cookieManager.setAcceptCookie(true)
-
-                    cookies.split(";").forEach { item ->
-                        cookieManager.setCookie("https://www-win-qa.woolworths.co.za/", item)
-                        cookieManager.setCookie("http://www-win-qa.woolworths.co.za/", item)
-                    }
-                    cookieManager.flush()
-
-                    val additionalHeaders: MutableMap<String, String> = java.util.HashMap()
-                    additionalHeaders["Cookie"] = cookies
-//                    additionalHeaders["Set-Cookie"] = cookies
-
-                    loadUrl(paymentUrl, additionalHeaders)
-                } else {
-                    view?.findNavController()?.navigateUp()
-                }
-            }
-        }
-    }
-
-    class CheckoutPaymentWebViewClient internal constructor(private val listener: WebViewCallbackListener): WebViewClient(){
-
-        private var isPageReloadRequired = false
-
-        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-            super.onPageStarted(view, url, favicon)
-
-            view?.evaluateJavascript("(function(){return document.cookie; })()") { cookie ->
-                Log.d("EJ", "onPageStarted Document Cookie >> $cookie")
-                if ("null".equals(cookie)){
-                    isPageReloadRequired = true
-                }
-            }
-            listener.onPageStarted(view, url, favicon)
-        }
-
-        override fun onPageFinished(view: WebView?, url: String?) {
-            super.onPageFinished(view, url)
-
-            view?.evaluateJavascript("(function(){return document.URL + document.cookie; })()") { cookie ->
-                Log.d("EJ", "onPageFinished Document Cookie >> $cookie")
-                if (!"null".equals(cookie) && isPageReloadRequired){
-                    isPageReloadRequired = false
-                    view?.reload()
-                }
-            }
-
-            listener.onPageFinished(view, url)
-        }
-
-        override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
-            super.onReceivedError(view, request, error)
-            listener.onReceivedError(view,request, error)
-        }
-    }
-
-    private fun clearWebCache() {
         checkoutPaymentWebView?.apply {
-            clearCache(true)
-            clearHistory()
-            context?.let { clearCookies() }
-        }
-    }
-
-    private fun clearCookies() {
-        CookieManager.getInstance().removeSessionCookies(null)
-        CookieManager.getInstance().removeAllCookies(null)
-        CookieManager.getInstance().flush()
-    }
-
-    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-        progressBar?.visibility = View.VISIBLE
-    }
-
-    override fun onPageFinished(view: WebView?, url: String?) {
-        progressBar?.visibility = View.GONE
-        when (val status = Uri.parse(url).getQueryParameter(KEY_STATUS)) {
-            PaymentStatus.PAYMENT_SUCCESS.type -> {
-                navigateToOrderConfirmation()
+            CookieManager.getInstance().removeAllCookies(null)
+            CookieManager.getInstance().removeSessionCookies {
+                Log.e("AndroidLog", "removeSessionCookies >> $it")
             }
-            PaymentStatus.PAYMENT_UNAUTHENTICATED.type, PaymentStatus.PAYMENT_ABANDON.type -> {
-                setFragmentResult(
-                    "paymentStatus", bundleOf(
-                        KEY_STATUS to status
-                    )
-                )
-            }
-        }
-    }
+            CookieManager.getInstance().flush()
 
-    override fun onReceivedError(
-        view: WebView,
-        request: WebResourceRequest,
-        error: WebResourceError
-    ) {
-        if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                error.errorCode == 400
-            } else {
-                TODO("VERSION.SDK_INT < M")
-            }
-        ) {
-            return
-        }
-    }
+            CookieManager.getInstance().acceptCookie()
+            val paymentUrl = WoolworthsApplication.getNativeCheckout()?.checkoutPaymentURL
+            val webTokens = arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
+            val cookie = "TOKEN=${webTokens?.jsessionId};AUTHENTICATION=${webTokens?.auth};"
 
-    override fun getHeaders(): MutableMap<String, String> {
-        return headers;
+            if(TextUtils.isEmpty(paymentUrl) || TextUtils.isEmpty(webTokens?.jsessionId)
+                || TextUtils.isEmpty(webTokens?.auth)){
+                return@apply
+            }
+
+            webViewClient = WebViewClient()
+            settings.javaScriptEnabled = true
+            val cookieManager = CookieManager.getInstance()
+
+            CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
+            cookie.split(";").forEach { item ->
+                cookieManager.setCookie(URI.create(paymentUrl).host, item)
+            }
+            cookieManager.flush()
+
+            setListener(activity as? CheckoutActivity, this@CheckoutPaymentWebFragment)
+            paymentUrl?.let { loadUrl(it) }
+        }
     }
 
     private fun navigateToOrderConfirmation() {
         // TODO: Navitgate to order confirmation screen as payment is successful
+    }
+
+    override fun onPageStarted(url: String?, favicon: Bitmap?) {
+        Log.d("AndroidLog", "onPageStarted $url")
+        progressBar?.visibility = View.VISIBLE
+        if(Uri.parse(url).getQueryParameter(KEY_STATUS) == PaymentStatus.PAYMENT_ABANDON.type){
+            view?.findNavController()?.navigateUp()
+        }
+    }
+
+    override fun onPageFinished(url: String?) {
+        Log.d("AndroidLog", "onPageFinished $url")
+        progressBar?.visibility = View.GONE
+        when (Uri.parse(url).getQueryParameter(KEY_STATUS)) {
+            PaymentStatus.PAYMENT_SUCCESS.type -> {
+                navigateToOrderConfirmation()
+            }
+            PaymentStatus.PAYMENT_UNAUTHENTICATED.type, PaymentStatus.PAYMENT_ABANDON.type -> {
+                view?.findNavController()?.navigateUp()
+            }
+        }
+    }
+
+    override fun onPageError(errorCode: Int, description: String?, failingUrl: String?) {
+        Log.e("AndroidLog", "onPageError $description")
+    }
+
+    override fun onDownloadRequested(
+        url: String?,
+        suggestedFilename: String?,
+        mimeType: String?,
+        contentLength: Long,
+        contentDisposition: String?,
+        userAgent: String?
+    ) {
+        Log.d("AndroidLog", "onDownloadRequested $url")
+    }
+
+    override fun onExternalPageRequest(url: String?) {
+        Log.d("AndroidLog", "onExternalPageRequest $url")
     }
 }
