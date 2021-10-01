@@ -137,12 +137,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                 override fun afterTextChanged(s: Editable) {
                     continueToPaymentButton?.isEnabled = s.isNotEmpty()
                     when (this@apply.text?.toString()) {
-                        payMyAccountViewModel.getOverdueAmount() -> {
-                            when (enterPaymentAmountTextView?.tag) {
-                                R.id.totalAmountDueValueTextView -> selectTotalAmountDue()
-                                else -> selectOutstandingAmount()
-                            }
-                        }
+                        payMyAccountViewModel.getCurrentBalance() -> selectCurrentBalance()
+                        payMyAccountViewModel.getOverdueAmount() -> selectOutstandingAmount()
                         payMyAccountViewModel.getTotalAmountDue() -> selectTotalAmountDue()
                         else -> clearSelection()
                     }
@@ -246,8 +242,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         when (isZeroAmount(payMyAccountViewModel.getOverdueAmount())) {
             true -> clearSelection()
             else -> {
-                totalAmountDueValueTextView?.isSelected = false
                 amountOutstandingValueTextView?.isSelected = true
+                totalAmountDueValueTextView?.isSelected = false
             }
         }
     }
@@ -256,8 +252,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
         when (isZeroAmount(payMyAccountViewModel.getCurrentBalance())) {
             true -> clearSelection()
             else -> {
-                totalAmountDueValueTextView?.isSelected = false
                 amountOutstandingValueTextView?.isSelected = true
+                totalAmountDueValueTextView?.isSelected = false
             }
         }
     }
@@ -331,24 +327,21 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
     }
 
     fun highlightAmountBlock() {
-            with(payMyAccountViewModel) {
-                val amount = paymentAmountInputEditText?.text?.toString()
-                val totalAmount = totalAmountDueValueTextView?.text?.toString()
-                when {
-                    convertRandFormatToDouble(amount)
-                            .equals(convertRandFormatToDouble(totalAmount)) -> {
-                        totalAmountDueValueTextView?.isActivated = true
-                        amountOutstandingValueTextView?.isActivated = false
-                    }
-                    convertRandFormatToDouble(amount)
-                            .equals(convertRandFormatToDouble(totalAmount)) -> {
-                        amountOutstandingValueTextView?.isActivated = true
-                        totalAmountDueValueTextView?.isActivated = false
-                    }
-                    else -> {
-                        amountOutstandingValueTextView?.isActivated = false
-                        totalAmountDueValueTextView?.isActivated = false
-                    }
+        val inputFieldAmount = payMyAccountViewModel.convertRandFormatToDouble(paymentAmountInputEditText?.text?.toString())
+        val totalAmountDue = totalAmountDueValueTextView?.text?.toString()
+        val overdueAmount = amountOutstandingValueTextView?.text?.toString()
+        when (inputFieldAmount.toString()) {
+            totalAmountDue -> {
+                amountOutstandingValueTextView?.isActivated = false
+                totalAmountDueValueTextView?.isActivated = true
+            }
+            overdueAmount -> { // logic applies to currentBalance as they share similar same  textview
+                amountOutstandingValueTextView?.isActivated = true
+                totalAmountDueValueTextView?.isActivated = false
+            }
+            else -> {
+                amountOutstandingValueTextView?.isActivated = false
+                totalAmountDueValueTextView?.isActivated = false
             }
         }
     }
