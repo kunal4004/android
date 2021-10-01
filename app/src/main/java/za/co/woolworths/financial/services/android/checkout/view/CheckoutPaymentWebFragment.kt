@@ -92,20 +92,17 @@ class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
                     Log.d("EJ", "New Cookies >> $cookies")
 
                     val cookieManager = CookieManager.getInstance()
-                    cookieManager.setAcceptThirdPartyCookies(this, true);
-//                    cookieManager.setAcceptCookie(true)
+                    cookieManager.acceptCookie()
+
+                    val uri = Uri.parse(paymentUrl)
 
                     cookies.split(";").forEach { item ->
-                        cookieManager.setCookie("https://www-win-qa.woolworths.co.za/", item)
-                        cookieManager.setCookie("http://www-win-qa.woolworths.co.za/", item)
+                        cookieManager.setCookie("${uri.scheme}://${uri.host}", "$item; path=${uri.path}; domain=${uri.host}")
                     }
-                    cookieManager.flush()
 
-                    val additionalHeaders: MutableMap<String, String> = java.util.HashMap()
-                    additionalHeaders["Cookie"] = cookies
-//                    additionalHeaders["Set-Cookie"] = cookies
+                    cookieManager.setAcceptThirdPartyCookies(this, true)
 
-                    loadUrl(paymentUrl, additionalHeaders)
+                    loadUrl(paymentUrl)
                 } else {
                     view?.findNavController()?.navigateUp()
                 }
@@ -115,16 +112,16 @@ class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
 
     class CheckoutPaymentWebViewClient internal constructor(private val listener: WebViewCallbackListener): WebViewClient(){
 
-        private var isPageReloadRequired = false
+//        private var isPageReloadRequired = false
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
 
             view?.evaluateJavascript("(function(){return document.cookie; })()") { cookie ->
                 Log.d("EJ", "onPageStarted Document Cookie >> $cookie")
-                if ("null".equals(cookie)){
-                    isPageReloadRequired = true
-                }
+//                if ("null".equals(cookie)){
+//                    isPageReloadRequired = true
+//                }
             }
             listener.onPageStarted(view, url, favicon)
         }
@@ -134,10 +131,10 @@ class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
 
             view?.evaluateJavascript("(function(){return document.URL + document.cookie; })()") { cookie ->
                 Log.d("EJ", "onPageFinished Document Cookie >> $cookie")
-                if (!"null".equals(cookie) && isPageReloadRequired){
-                    isPageReloadRequired = false
-                    view?.reload()
-                }
+//                if (!"null".equals(cookie) && isPageReloadRequired){
+//                    isPageReloadRequired = false
+//                    view?.reload()
+//                }
             }
 
             listener.onPageFinished(view, url)
