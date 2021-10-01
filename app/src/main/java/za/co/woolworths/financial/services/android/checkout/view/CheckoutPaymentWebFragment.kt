@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
@@ -20,9 +21,16 @@ import androidx.fragment.app.setFragmentResult
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_checkout_payment_web.*
+import okhttp3.OkHttpClient
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import android.webkit.WebResourceResponse
+
+import com.google.common.net.HttpHeaders
+import okhttp3.Request
+import okhttp3.Response
+
 
 class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
 
@@ -61,6 +69,7 @@ class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
         initPaymentWebView()
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun initPaymentWebView() {
         clearWebCache()
         activity?.let {
@@ -71,29 +80,32 @@ class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
                 settings.builtInZoomControls = true; // allow pinch to zooom
                 settings.displayZoomControls =
                     false; // disable the default zoom controls on the page
-                webViewClient = CustomWebViewClient(this@CheckoutPaymentWebFragment)
+
+                webViewClient = CheckoutPaymentWebViewClient(this@CheckoutPaymentWebFragment)
+//                webViewClient = CustomWebViewClient(this@CheckoutPaymentWebFragment)
                 val paymentUrl = WoolworthsApplication.getNativeCheckout()?.checkoutPaymentURL ?: ""
                 val webTokens =
                     arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
                 if (webTokens != null) {
-                    val cookieValue =
-                        "TOKEN=${webTokens.jsessionId};AUTHENTICATION=${webTokens.auth};"
-                    /*CookieManager.getInstance()
-                        .setCookie(paymentUrl, "TOKEN=${webTokens.jsessionId}")
-                    CookieManager.getInstance()
-                        .setCookie(paymentUrl, "AUTHENTICATION=${webTokens.auth}")
-                    CookieManager.getInstance().setAcceptCookie(true)
-*/
-                    /*headers = hashMapOf(
-                        "Cookie" to cookieValue
-                    )*/
 
-                    val extraHeaders: MutableMap<String, String> = java.util.HashMap()
-                    extraHeaders["Cookie"] = cookieValue
+                    val cookies = "TOKEN=${webTokens.jsessionId};AUTHENTICATION=${webTokens.auth}"
+                    Log.d("EJ", "New Cookies >> $cookies")
 
-                    loadUrl(
-                        paymentUrl, extraHeaders
-                    )
+                    val cookieManager = CookieManager.getInstance()
+                    cookieManager.setAcceptThirdPartyCookies(this, true);
+//                    cookieManager.setAcceptCookie(true)
+
+                    cookies.split(";").forEach { item ->
+                        cookieManager.setCookie("https://www-win-qa.woolworths.co.za/", item)
+                        cookieManager.setCookie("http://www-win-qa.woolworths.co.za/", item)
+                    }
+                    cookieManager.flush()
+
+                    val additionalHeaders: MutableMap<String, String> = java.util.HashMap()
+                    additionalHeaders["Cookie"] = cookies
+//                    additionalHeaders["Set-Cookie"] = cookies
+
+                    loadUrl(paymentUrl, additionalHeaders)
                 } else {
                     view?.findNavController()?.navigateUp()
                 }
@@ -101,69 +113,39 @@ class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
         }
     }
 
-    class CustomWebViewClient internal constructor(private val listener: WebViewCallbackListener) :
-        WebViewClient() {
+    class CheckoutPaymentWebViewClient internal constructor(private val listener: WebViewCallbackListener): WebViewClient(){
+
+        private var isPageReloadRequired = false
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
+
+            view?.evaluateJavascript("(function(){return document.cookie; })()") { cookie ->
+                Log.d("EJ", "onPageStarted Document Cookie >> $cookie")
+                if ("null".equals(cookie)){
+                    isPageReloadRequired = true
+                }
+            }
             listener.onPageStarted(view, url, favicon)
-            Log.e("nikesh", "Url >> $url")
-            Log.e("nikesh", "Url >> ${listener.getHeaders()}")
-            view?.loadUrl("javascript:console.log('nikesh >> start')")
-            view?.loadUrl("javascript:console.log(document.cookie)")
-            val cookie = "TOKEN=K1Uw_pzuEmLfYS0fx7d9FDxf2r0TZeWR99Xemf5Yk2Uob8gAs7Ti!-1723856491;"
-            val cookie2 = "AUTHENTICATION=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiJLMVV3X3B6dUVtTGZZUzBmeDdkOUZEeGYycjBUWmVXUjk5WGVtZjVZazJVb2I4Z0FzN1RpIS0xNzIzODU2NDkxIiwiaWF0IjoxNjMyOTA5NTk4LCJleHAiOjE2NjQ0NDU1OTh9.IwfUbolF976MBxF9C_eXNYkQy1UhRswu992-F3hmngM; f5avraaaaaaaaaaaaaaaa_session_=CALFLAELPEIALAMPNJICHIGFNNEHHEBOJDEPLNKMKBNPEOJEGAPONMECECBFILMLPAJDOBKNDAJAJLENGPHADBBBMENAJOAGMFLICFEMGBMKPFCMKEPIBELFGNLOIIGO; f5_cspm=1234; mt.v=2.132404388.1632911668614; mt.sc=%7B%22i%22%3A1632911673879%2C%22d%22%3A%5B%5D%7D; _gcl_au=1.1.662607130.1632911674; SearchCookie=0AJzL1632911676564hgNKLs; _hjid=0c8e3bc6-fc76-44cf-ad76-86673ee4eaa4; _hjFirstSeen=1; TS01b7ced4=01f08501b08ff44d7afaad3cb094f2eb44810f22fe105a64b47a2d7c22afb4804ef9756a2aea9ce20c387678b5df1d58cbca3219d56d8435dbf1b604b32a91accd374db964bbe3e7fe55140353453768be8b1eb7f01517b7cdb0709813204581129a06af8cdb1a4497071e49e6cccef65b8f0b789c;"
-            view?.loadUrl("javascript:document.cookie = '${cookie}'")
-            view?.loadUrl("javascript:document.cookie = '${cookie2}'")
-            view?.loadUrl("javascript:console.log(document.cookie)")
-        }
-
-        override fun shouldInterceptRequest(
-            view: WebView?,
-            request: WebResourceRequest?
-        ): WebResourceResponse? {
-            view?.loadUrl("javascript:console.log(document.cookie)")
-            val cookie = "TOKEN=K1Uw_pzuEmLfYS0fx7d9FDxf2r0TZeWR99Xemf5Yk2Uob8gAs7Ti!-1723856491; AUTHENTICATION=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiJLMVV3X3B6dUVtTGZZUzBmeDdkOUZEeGYycjBUWmVXUjk5WGVtZjVZazJVb2I4Z0FzN1RpIS0xNzIzODU2NDkxIiwiaWF0IjoxNjMyOTA5NTk4LCJleHAiOjE2NjQ0NDU1OTh9.IwfUbolF976MBxF9C_eXNYkQy1UhRswu992-F3hmngM; f5avraaaaaaaaaaaaaaaa_session_=CALFLAELPEIALAMPNJICHIGFNNEHHEBOJDEPLNKMKBNPEOJEGAPONMECECBFILMLPAJDOBKNDAJAJLENGPHADBBBMENAJOAGMFLICFEMGBMKPFCMKEPIBELFGNLOIIGO; f5_cspm=1234; mt.v=2.132404388.1632911668614; mt.sc=%7B%22i%22%3A1632911673879%2C%22d%22%3A%5B%5D%7D; _gcl_au=1.1.662607130.1632911674; SearchCookie=0AJzL1632911676564hgNKLs; _hjid=0c8e3bc6-fc76-44cf-ad76-86673ee4eaa4; _hjFirstSeen=1; TS01b7ced4=01f08501b08ff44d7afaad3cb094f2eb44810f22fe105a64b47a2d7c22afb4804ef9756a2aea9ce20c387678b5df1d58cbca3219d56d8435dbf1b604b32a91accd374db964bbe3e7fe55140353453768be8b1eb7f01517b7cdb0709813204581129a06af8cdb1a4497071e49e6cccef65b8f0b789c"
-            view?.loadUrl("javascript:document.cookie = '${cookie}'")
-            view?.loadUrl("javascript:console.log(document.cookie)")
-            return super.shouldInterceptRequest(view, request)
-        }
-
-        override fun shouldOverrideUrlLoading(
-            view: WebView?,
-            request: WebResourceRequest?
-        ): Boolean {
-            val url: String = request?.url.toString();
-            view?.loadUrl(url, listener.getHeaders())
-            Log.e("nikesh", "Url >> $url")
-            Log.e("nikesh", "Url >> ${listener.getHeaders()}")
-            view?.loadUrl("javascript:alert(document.cookie)")
-
-            return true
-        }
-
-        override fun shouldOverrideUrlLoading(webView: WebView, url: String): Boolean {
-            webView.loadUrl(url, listener.getHeaders())
-            Log.e("nikesh", "Url >> $url")
-            Log.e("nikesh", "Url >> ${listener.getHeaders()}")
-            webView?.loadUrl("javascript:console.log('nikesh')")
-
-            return true
-        }
-
-        override fun onReceivedError(
-            view: WebView,
-            request: WebResourceRequest,
-            error: WebResourceError
-        ) {
-            listener.onReceivedError(view, request, error)
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
-            view?.loadUrl("javascript:console.log('nikesh >> start')")
+
+            view?.evaluateJavascript("(function(){return document.URL + document.cookie; })()") { cookie ->
+                Log.d("EJ", "onPageFinished Document Cookie >> $cookie")
+                if (!"null".equals(cookie) && isPageReloadRequired){
+                    isPageReloadRequired = false
+                    view?.reload()
+                }
+            }
 
             listener.onPageFinished(view, url)
+        }
+
+        override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+            super.onReceivedError(view, request, error)
+            listener.onReceivedError(view,request, error)
         }
     }
 
@@ -176,6 +158,7 @@ class CheckoutPaymentWebFragment : Fragment(), WebViewCallbackListener {
     }
 
     private fun clearCookies() {
+        CookieManager.getInstance().removeSessionCookies(null)
         CookieManager.getInstance().removeAllCookies(null)
         CookieManager.getInstance().flush()
     }
