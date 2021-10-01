@@ -28,7 +28,7 @@ class ProductListingAdapter(private val navigator: IProductListing?, private val
             holder.itemView.requestLayout()
             when (productList.rowType) {
                 ProductListingViewType.HEADER -> (holder as? RecyclerViewViewHolderHeader)?.setNumberOfItems(
-                    productList
+                    activity, productList
                 )
                 ProductListingViewType.FOOTER -> (holder as? RecyclerViewViewHolderFooter)?.loadMoreProductProgressBarVisibility()
                 else -> (holder as? RecyclerViewViewHolderItems)?.let { view ->

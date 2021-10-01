@@ -203,6 +203,7 @@
     <string name="no_vouchers">NO VOUCHERS</string>
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_item_found">items found</string>
+    <string name="product_item">item found</string>
     <string name="add_to_cart">add to cart</string>
     <string name="add_to_list">ADD TO LIST</string>
     <string name="edit">EDIT</string>
@@ -1298,10 +1299,13 @@
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
     <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
+    <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
     <string name="view_payment_plan_button_label">View payment plan</string>
+    <string name="view_payment_plans_button_label">View payment plans</string>
     <string name="make_payment_now_button_label">Make a payment</string>
+    <string name="view_payment_options_button_label">View payment options</string>
 
     <!-- Unique Ids for Transactions-->
     <string name="transactions_title_layout">View Transaction Title Layout</string>
