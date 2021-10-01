@@ -13,18 +13,19 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
@@ -52,7 +53,7 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun getOrderDetails() {
-        /*OneAppService.getSubmittedOrder()
+        OneAppService.getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
                     response?.orderSummary?.orderId?.let { setToolbar(it) }
@@ -64,22 +65,7 @@ class OrderConfirmationFragment : Fragment() {
                 override fun onFailure(error: Throwable?) {
                     //TODO: handle error
                 }
-            }, SubmittedOrderResponse::class.java))*/
-
-
-        //use mock json file.
-        val jsonFileString = Utils.getJsonDataFromAsset(
-            activity?.applicationContext,
-            "mocks/submittedOrder.json"
-        )
-        val mockSubmittedOrder: SubmittedOrderResponse = Gson().fromJson(
-            jsonFileString,
-            object : TypeToken<SubmittedOrderResponse>() {}.type
-        )
-        mockSubmittedOrder?.orderSummary?.orderId?.let { setToolbar(it) }
-        setupDeliveryOrCollectionDetails(mockSubmittedOrder)
-        setupOrderTotalDetails(mockSubmittedOrder)
-        setupOrderDetailsBottomSheet(mockSubmittedOrder)
+            }, SubmittedOrderResponse::class.java))
     }
 
     private fun setToolbar(orderId: String) {
@@ -253,10 +239,10 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun initialiseItemsOrder(items: OrderItems?) {
-        if (items?.other?.size!! > 0) {
-            itemsOrder?.addAll(items.other!!)
+        if (items?.other != null && items?.other!!.isNotEmpty()) {
+            itemsOrder?.addAll(items?.other!!)
         }
-        if (items.food?.size!! > 0) {
+        if (items?.food != null && items?.food!!.isNotEmpty()) {
             itemsOrder?.addAll(items.food!!)
         }
     }

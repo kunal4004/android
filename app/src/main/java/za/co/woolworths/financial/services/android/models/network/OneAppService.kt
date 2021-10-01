@@ -636,13 +636,8 @@ object OneAppService : RetrofitConfig() {
 
     fun getSubmittedOrder(): Call<SubmittedOrderResponse> {
         return mApiInterface.getSubmittedOrder(
-            getApiId(),
-            getSha1Password(),
-            getDeviceManufacturer(),
-            getDeviceModel(),
-            getNetworkCarrier(),
-            getOS(),
-            getOsVersion(),
+            "",
+            "",
             getSessionToken(),
             getDeviceIdentityToken())
     }
