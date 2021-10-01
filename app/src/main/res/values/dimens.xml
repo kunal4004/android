@@ -228,5 +228,6 @@
     <item name="slider_guideline_percent_for_arrears_account_product" type="dimen" format="float">0.82</item>
     <item name="slider_guideline_percent_for_account_product" type="dimen" format="float">0.72</item>
     <dimen name="twenty_two_sp">22sp</dimen>
+    <dimen name="product_close_image_size">35sp</dimen>
 </resources>
 
