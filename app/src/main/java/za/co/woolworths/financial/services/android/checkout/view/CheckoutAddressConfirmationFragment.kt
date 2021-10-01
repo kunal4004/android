@@ -526,7 +526,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         val rowHeight = 65
         val totalRemovalHeight =
-            if (isConfirmDeliveryResponse) 420 else 330
+            if (isConfirmDeliveryResponse) 405 else 315
         val recyclerViewSpace =
             displayMetrics.heightPixels - KotlinUtils.dpToPxConverter(totalRemovalHeight)
         val totalRowHeight = KotlinUtils.dpToPxConverter(rowHeight * size)
