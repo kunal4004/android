@@ -340,6 +340,8 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     companion object {
         var SHOW_GET_REPLACEMENT_CARD_SCREEN = false
         var GET_REPLACEMENT_CARD_DETAIL = false
+        var SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+        var ACTIVATE_VIRTUAL_CARD_DETAIL = false
     }
 
     private fun getReplacementCard(){
@@ -372,6 +374,12 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             SHOW_GET_REPLACEMENT_CARD_SCREEN = false
             getReplacementCard()
         }
+        else if(SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN) {
+            SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+            mCardPresenterImpl?.apply {
+                navigateToTemporaryStoreCard()
+            }
+        }
     }
 
     override fun onClick(v: View?) {
@@ -392,9 +400,11 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
                         }
                         bindString(R.string.activate_vtc_title) -> {
-                            activity?.apply {
+                            KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+                                ACTIVATE_VIRTUAL_CARD_DETAIL = true
+                            },{
                                 navigateToTemporaryStoreCard()
-                            }
+                            })
                         }
                         else -> {
                             activity?.apply {
