@@ -53,6 +53,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.AddressCom
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Suburb
@@ -147,6 +148,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     ?: getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
                 setHasOptionsMenu(true)
             } else if (containsKey(SAVED_ADDRESS_KEY)) {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_ADD_NEW_ADDRESS,
+                    activity
+                )
                 savedAddressResponse = Utils.jsonStringToObject(
                     getString(SAVED_ADDRESS_KEY),
                     SavedAddressResponse::class.java
@@ -394,6 +399,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
             when (screenName) {
                 SCREEN_NAME_ADD_NEW_ADDRESS -> {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
+                        activity
+                    )
                     savedAddressResponse?.defaultAddressNickname =
                         selectedAddress.savedAddress.nickname
                     view?.findNavController()?.navigate(
@@ -404,6 +413,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     )
                 }
                 SCREEN_NAME_EDIT_ADDRESS -> {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
+                        activity
+                    )
                     setFragmentResult(
                         UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
                             SAVED_ADDRESS_KEY to savedAddressResponse
@@ -751,6 +764,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun deleteAddress() {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELETE_ADDRESS,
+            activity
+        )
         loadingProgressBar.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.deleteAddress(selectedAddressId)
             .observe(viewLifecycleOwner, { response ->
@@ -874,6 +891,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun onSaveAddressClicked() {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_SAVE_ADDRESS,
+            activity
+        )
 
         if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
             && cellphoneNumberEditText?.text.toString().trim().length < 10

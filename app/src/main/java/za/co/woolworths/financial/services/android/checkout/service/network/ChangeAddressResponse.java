@@ -12,14 +12,8 @@ public class ChangeAddressResponse {
     @SerializedName("suburbId")
     public String suburbId;
 
-    @SerializedName("hasDeliverySlotReservations")
-    public Boolean hasDeliverySlotReservations;
-
     @SerializedName("unDeliverableCommerceItems")
     public List<Object> unDeliverableCommerceItems = null;
-
-    @SerializedName("navSuburbDetails")
-    public String navSuburbDetails;
 
     @SerializedName("deliverable")
     public Boolean deliverable;
@@ -45,62 +39,6 @@ public class ChangeAddressResponse {
 
     public void setSuburbId(String suburbId) {
         this.suburbId = suburbId;
-    }
-
-    public Boolean getHasDeliverySlotReservations() {
-        return hasDeliverySlotReservations;
-    }
-
-    public void setHasDeliverySlotReservations(Boolean hasDeliverySlotReservations) {
-        this.hasDeliverySlotReservations = hasDeliverySlotReservations;
-    }
-
-    public List<Object> getUnDeliverableCommerceItems() {
-        return unDeliverableCommerceItems;
-    }
-
-    public void setUnDeliverableCommerceItems(List<Object> unDeliverableCommerceItems) {
-        this.unDeliverableCommerceItems = unDeliverableCommerceItems;
-    }
-
-    public String getNavSuburbDetails() {
-        return navSuburbDetails;
-    }
-
-    public void setNavSuburbDetails(String navSuburbDetails) {
-        this.navSuburbDetails = navSuburbDetails;
-    }
-
-    public Boolean getDeliverable() {
-        return deliverable;
-    }
-
-    public void setDeliverable(Boolean deliverable) {
-        this.deliverable = deliverable;
-    }
-
-    public String getFirstAvailableFoodDeliveryDate() {
-        return firstAvailableFoodDeliveryDate;
-    }
-
-    public void setFirstAvailableFoodDeliveryDate(String firstAvailableFoodDeliveryDate) {
-        this.firstAvailableFoodDeliveryDate = firstAvailableFoodDeliveryDate;
-    }
-
-    public String getFirstAvailableOtherDeliveryDate() {
-        return firstAvailableOtherDeliveryDate;
-    }
-
-    public void setFirstAvailableOtherDeliveryDate(String firstAvailableOtherDeliveryDate) {
-        this.firstAvailableOtherDeliveryDate = firstAvailableOtherDeliveryDate;
-    }
-
-    public List<UnSellableCommerceItem> getUnSellableCommerceItems() {
-        return unSellableCommerceItems;
-    }
-
-    public void setUnSellableCommerceItems(List<UnSellableCommerceItem> unSellableCommerceItems) {
-        this.unSellableCommerceItems = unSellableCommerceItems;
     }
 
     public Response getResponse() {

@@ -52,6 +52,9 @@ class ConfirmDeliveryAddressResponse {
     @SerializedName("timedDeliveryStartDates")
     var timedDeliveryStartDates: TimedDeliveryStartDates? = null
 
+    @SerializedName("timedDeliveryFirstAvailableDates")
+    var timedDeliveryFirstAvailableDates: TimedDeliveryFirstAvailableDates? = null
+
     @SerializedName("response")
     var response: Response? = null
 
