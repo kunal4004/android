@@ -135,7 +135,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             is SuburbSelectorFragment -> {
                 (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
             }
-            is UnsellableItemsFragment ->{
+            is UnsellableItemsFragment -> {
                 Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS,
                     this
