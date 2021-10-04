@@ -17,7 +17,8 @@ class BPIViewModel : ViewModel() {
             BPIOverviewOverviewImpl(argument),
             BPISubmitClaimImpl(),
             NavGraphRouterImpl(),
-            BPIDefaultLabelListImpl()
+            BPIDefaultLabelListImpl(),
+            BPIBenefitsOptInBenefitCarouselImpl()
         )
         return bpiPresenter
     }
