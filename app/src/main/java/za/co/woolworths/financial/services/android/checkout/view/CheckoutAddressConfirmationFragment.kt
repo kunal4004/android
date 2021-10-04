@@ -39,12 +39,14 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Store
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.setDivider
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.EditDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import java.net.HttpURLConnection
@@ -224,11 +226,13 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         shoppingDeliveryLocation
                                     )
                                     if (!isDeliverySelected) {
-                                        //TODO Add web breakout implementation here instead of slot selection.
-                                        navController?.navigate(
-                                            R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
-                                            baseFragBundle
+                                        val openCheckOutActivity =
+                                            Intent(context, CartCheckoutActivity::class.java)
+                                        activity?.startActivityForResult(
+                                            openCheckOutActivity,
+                                            CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY
                                         )
+                                        activity?.overridePendingTransition(0, 0)
                                     }
                                 }
                                 else -> {
