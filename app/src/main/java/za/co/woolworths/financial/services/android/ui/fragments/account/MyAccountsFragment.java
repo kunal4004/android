@@ -66,6 +66,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.account.Products;
@@ -87,7 +88,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.ViewApplicationStatusImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
@@ -1911,14 +1911,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-    public void navigateToBalanceProtectionInsurance(@org.jetbrains.annotations.Nullable String accountInfo) {
+    public void navigateToBalanceProtectionInsuranceApplicationStatusCovered(@org.jetbrains.annotations.Nullable String accountInfo) {
 
     }
 
-    @Override
-    public void setBalanceProtectionInsuranceState(boolean coveredText) {
-
-    }
 
     @Override
     public void displayCardHolderName(@org.jetbrains.annotations.Nullable String name) {
@@ -2066,4 +2062,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             applyNowRelativeLayout.performClick();
     }
 
+    @Override
+    public void showBalanceProtectionInsuranceLead(@Nullable BpiInsuranceApplication bpiInsuranceApplication) {
+
+    }
 }

@@ -21,6 +21,8 @@ import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenRes
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -60,8 +62,13 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return getAccount()?.insuranceCovered ?: false
     }
 
-    override fun setBalanceProtectionInsuranceState() {
-        mainView?.setBalanceProtectionInsuranceState(balanceProtectionInsuranceIsCovered(getAccount()))
+
+    override fun getBpiInsuranceApplication(): BpiInsuranceApplication? {
+        return getAccount()?.bpiInsuranceApplication
+    }
+
+    override fun showBalanceProtectionInsuranceLead() {
+        mainView?.showBalanceProtectionInsuranceLead(getBpiInsuranceApplication())
     }
 
     override fun getAppCompatActivity(): AppCompatActivity? = WoolworthsApplication.getInstance()?.currentActivity as? AppCompatActivity
@@ -235,7 +242,15 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun navigateToBalanceProtectionInsurance() {
-        mainView?.navigateToBalanceProtectionInsurance(convertAccountObjectToJsonString())
+        val bpiInsuranceApplication : BpiInsuranceApplication? = getBpiInsuranceApplication()
+        when(bpiInsuranceApplication?.status){
+            BpiInsuranceApplicationStatusType.OPTED_IN -> {}
+            BpiInsuranceApplicationStatusType.NOT_OPTED_IN -> {
+            }
+            BpiInsuranceApplicationStatusType.COVERED -> {
+                mainView?.navigateToBalanceProtectionInsuranceApplicationStatusCovered(convertAccountObjectToJsonString())
+            }
+        }
     }
 
     override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding
