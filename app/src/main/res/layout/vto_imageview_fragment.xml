@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/tools"
+    android:id="@+id/vtoImageRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:descendantFocusability="blocksDescendants">
+
+
+
+    <za.co.woolworths.financial.services.android.util.photo.PhotoDraweeView
+        android:id="@+id/imgVTOEffect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="false"
+
+        fresco:placeholderImage="@drawable/woolworth_logo_icon"
+        fresco:viewAspectRatio="1.0" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgCloseVTO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/acc_fifteen_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_vto_back" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgDownloadVTO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/acc_fifteen_dp"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="@+id/guidelineEnd"
+        app:srcCompat="@drawable/ic_vto_download" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgVTOSplit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/acc_fifteen_dp"
+        app:layout_constraintBottom_toTopOf="@+id/imgDownloadVTO"
+        app:layout_constraintEnd_toEndOf="@+id/guidelineEnd"
+        app:srcCompat="@drawable/ic_vto_split_screen" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgVTORefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/acc_fifteen_dp"
+        app:layout_constraintBottom_toTopOf="@+id/imgVTOSplit"
+        app:layout_constraintEnd_toEndOf="@+id/guidelineEnd"
+        app:srcCompat="@drawable/ic_vto_refresh" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2154,4 +2154,12 @@
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
+    <string name="capture">Capture Image</string>
+    <string name="use_live_camera">Use Live Camera</string>
+    <string name="take_a_photo">Take a Photo</string>
+    <string name="choose_from_photo_library">Choose from Photo Library</string>
+    <string name="browse">Browse</string>
+    <string name="lighting_tips">Lighting Tips</string>
+    <string name="for_the_best_experience_make_sure_that_you_are_surrounded_by_multiple_light_sources_with_no_harsh_lighting_spots_as_these_may_cause_dark_shadows">For the best experience, make sure that you are surrounded by multiple light sources with no harsh lighting spots, as these may cause dark shadows.</string>
+    <string name="choose">Choose</string>
 </resources>

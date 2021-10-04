@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="30dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="40dp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/hintImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guidelineTop"
+        app:srcCompat="@drawable/ic_rectangle" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgLighting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_six_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hintImage"
+        app:srcCompat="@drawable/ic_lighting" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txtLightingTips"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_six_dp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center"
+        android:text="@string/lighting_tips"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_20sp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/imgLighting" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txtLightingDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:gravity="center"
+        android:text="@string/for_the_best_experience_make_sure_that_you_are_surrounded_by_multiple_light_sources_with_no_harsh_lighting_spots_as_these_may_cause_dark_shadows"
+        android:textColor="#444444"
+        android:textSize="@dimen/text_size_15sp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/txtLightingTips" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnLightingGotIt"
+        style="@style/futura_semi_bold_white_12_text_style"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_marginTop="@dimen/twenty_six_dp"
+        android:background="@color/black"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:text="@string/got_it"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/txtLightingDescription" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

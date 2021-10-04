@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
 import com.google.gson.JsonElement
+import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
@@ -20,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 /**
  * Created by Kunal Uttarwar on 25/3/21.
  */
+@AndroidEntryPoint
 class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
 
     var productDetailsFragmentNew: ProductDetailsFragment? = null

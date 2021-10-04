@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import dagger.hilt.android.HiltAndroidApp;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
@@ -83,6 +84,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
 
+@HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
     private static Context context;

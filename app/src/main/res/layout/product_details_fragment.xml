@@ -37,6 +37,35 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+
+
+                <include
+                    android:id="@+id/vtoLayout"
+                    layout="@layout/vto_imageview_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="360dp"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
+                <!-- <androidx.fragment.app.FragmentContainerView-->
+<!--                    android:id="@+id/nav_host_container"-->
+<!--                    android:name="androidx.navigation.fragment.NavHostFragment"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="400dp"-->
+<!--                    android:keepScreenOn="true"-->
+<!--                    app:defaultNavHost="true"-->
+<!--                    android:visibility="gone"-->
+<!--                    app:navGraph="@navigation/vto_graph"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"/>-->
+
+
                 <RelativeLayout
                     android:id="@+id/relViewPager"
                     android:layout_width="0dp"
@@ -81,6 +110,16 @@
                         android:layout_marginEnd="@dimen/sixteen_dp"
                         android:layout_marginBottom="10dp"
                         android:src="@drawable/ic_share_circle" />
+
+                    <ImageView
+                        android:id="@+id/imgVTOOpen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginStart="@dimen/sixteen_dp"
+                        android:padding="@dimen/fifteen_dp"
+                        android:src="@drawable/ic_vto_camera" />
 
                 </RelativeLayout>
 

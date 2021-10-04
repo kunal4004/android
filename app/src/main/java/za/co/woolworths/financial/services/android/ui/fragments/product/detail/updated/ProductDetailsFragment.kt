@@ -8,13 +8,17 @@ import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.createChooser
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Point
 import android.location.Location
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
@@ -23,8 +27,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
@@ -36,6 +42,8 @@ import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
+import kotlinx.android.synthetic.main.select_vto_option.*
+import kotlinx.android.synthetic.main.select_vto_option.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -68,11 +76,29 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.Ba
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
+import za.co.woolworths.financial.services.android.ui.vto.presentation.PermissionViewModel
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.lifecycle.Observer
+
+import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
+import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 
 
+
+import kotlinx.android.synthetic.main.vto_imageview_fragment.*
+import kotlinx.android.synthetic.main.vto_lighting_tips.view.*
+
+import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.ui.vto.presentation.DataPrefViewModel
+
+
+
+
+
+
+@AndroidEntryPoint
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
 
     private var productDetails: ProductDetails? = null
@@ -109,6 +135,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isOutOfStockFragmentAdded = false
     private var liquorDialog: Dialog? = null
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
+    private val permissionViewModel: PermissionViewModel by viewModels()
+    private val dataPrefViewModel: DataPrefViewModel by viewModels()
+    private var isFromFile = false
+
 
     companion object {
         const val INDEX_STORE_FINDER = 1
@@ -118,6 +148,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL = 4002
         const val HTTP_CODE_502 = 502
         fun newInstance() = ProductDetailsFragment()
+        const val REQUEST_PERMISSION_MEDIA = 100
+        const val IMAGE_CHOOSE = 1000;
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,11 +190,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 onBackPressed()
             }
         }
+        imgCloseVTO.setOnClickListener {
+            activity?.apply {
+                setResult(RESULT_CANCELED)
+                onBackPressed()
+            }
+        }
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
+        imgVTOOpen?.setOnClickListener(this)
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
     }
+
+
 
     override fun onClick(v: View?) {
         KotlinUtils.avoidDoubleClicks(v)
@@ -181,6 +223,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.moreColor -> showMoreColors()
             R.id.share -> shareProduct()
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
+            R.id.imgVTOOpen -> openVTOSelectOption()
         }
     }
 
@@ -1050,6 +1093,28 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             reloadFragment()
                         }
                     }
+                     IMAGE_CHOOSE ->
+                     {
+                         vtoLayout.visibility =View.VISIBLE
+                         share.visibility =View.GONE
+                         productImagesViewPagerIndicator.visibility =View.GONE
+                         closePage.visibility =View.GONE
+                         productImagesViewPager.visibility =View.GONE
+                         dataPrefViewModel.isLightingTips.observe(requireActivity()) { lightingTips ->
+
+                             Log.d("tips",lightingTips.toString())
+                             if(lightingTips){
+                                 showLighting()
+                             }
+                         }
+
+
+                         imgVTOEffect.setPhotoUri(Uri.parse(data?.data.toString()))
+
+                         Log.d("testImage", (data?.data).toString())
+
+
+                      }
 
                 }
             }
@@ -1090,9 +1155,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                 }
             }
+
+
         }
     }
 
+
+//    fun getPath(uri: Uri?): String? {
+//        val projection = arrayOf(MediaStore.Images.Media.DATA)
+//        val cursor: Cursor? = requireActivity().getContentResolver().query(uri!!, projection, null, null, null)
+//        val column_index: Int = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+//        cursor!!.moveToFirst()
+//        val columnIndex: Int = cursor.getColumnIndex(projection[0])
+//        val filePath: String = cursor.getString(columnIndex)
+//        cursor.close()
+//       // yourSelectedImage = BitmapFactory.decodeFile(filePath)
+//        return cursor.getString(column_index)
+//    }
     private fun findItemInStore() {
 
         if (getSelectedSku() == null) {
@@ -1176,6 +1255,27 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionUtils?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_PERMISSION_MEDIA -> {
+                when {
+                    grantResults.isEmpty() -> {
+                        //Do nothing
+                    }
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED -> {
+                        if (isFromFile) {
+                            openFiles()
+                        } else {
+                            // open gallery
+                            chooseImageGallery()
+                        }
+                    }
+                    else -> {
+                        // permissionDenied = true
+
+                    }
+                }
+            }
+        }
     }
 
     private fun startLocationUpdates() {
@@ -1694,4 +1794,92 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             show()
         }
     }
+    private fun openVTOSelectOption() {
+        val dialog = BottomSheetDialog(requireActivity())
+        val view = layoutInflater.inflate(R.layout.select_vto_option, null)
+        // closing of dialog box when clicking on the screen.
+        view.cancelVTO.setOnClickListener {
+            dialog.dismiss()
+        }
+        view.browseFiles.setOnClickListener {
+            isFromFile = true
+            permissionViewModel.actions.observe(viewLifecycleOwner, Observer { handleAction(it) })
+            checkStoragePermission()
+            dialog.dismiss()
+
+        }
+        view.choosePhoto.setOnClickListener {
+            isFromFile = false
+            permissionViewModel.actions.observe(viewLifecycleOwner, Observer { handleAction(it) })
+            checkStoragePermission()
+            dialog.dismiss()
+        }
+        dialog.setCancelable(false)
+        dialog.setContentView(view)
+        dialog.show()
+
+    }
+
+    private fun handleAction(action: PermissionAction?) {
+        when (action) {
+            PermissionAction.StoragePermissionsRequested -> PermissionUtil.requestStoragePermission(
+                this,
+                REQUEST_PERMISSION_MEDIA
+            )
+            else -> null
+        }
+
+    }
+
+    private fun checkStoragePermission() {
+        if (!PermissionUtil.hasStoragePermission(requireContext())) {
+            permissionViewModel.requestStoragePermissions()
+
+        } else {
+            if (isFromFile) {
+                openFiles()
+            } else {
+                // open gallery
+                chooseImageGallery()
+            }
+        }
+    }
+
+    private fun openFiles() {
+        Intent(Intent.ACTION_GET_CONTENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            val mimeTypes = arrayOf("image/png", "image/jpg", "image/jpeg")
+            type = "image/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            startActivityForResult(
+                createChooser(this, "Select Picture"),
+                IMAGE_CHOOSE
+            )
+        }
+    }
+
+    private fun chooseImageGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(
+            intent,
+            IMAGE_CHOOSE
+        )
+    }
+
+    private fun showLighting() {
+
+        val dialog = BottomSheetDialog(requireActivity())
+        val view = layoutInflater.inflate(R.layout.vto_lighting_tips, null)
+        // closing of dialog box when clicking on the screen.
+        view.btnLightingGotIt.setOnClickListener {
+            dataPrefViewModel.disableLightingTips(false)
+            dialog.dismiss()
+        }
+        dialog.setCancelable(false)
+        dialog.setContentView(view)
+        dialog.show()
+
+    }
+
 }
