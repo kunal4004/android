@@ -1,18 +1,15 @@
 package za.co.woolworths.financial.services.android.util.spannable;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.view.View;
 
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -52,7 +49,8 @@ public class WSpannableStringBuilder extends SpannableStringBuilder {
     public void makeTextFontColor (String stringToUnderline) {
         Context context = WoolworthsApplication.getAppContext();
         if (context == null) return;
-        Object foregroundColorSpan = new ForegroundColorSpan(Color.BLACK);
+        int color =ContextCompat.getColor(context,R.color.black60);
+        Object foregroundColorSpan = new ForegroundColorSpan(color);
         make(stringToUnderline, foregroundColorSpan);
     }
 
