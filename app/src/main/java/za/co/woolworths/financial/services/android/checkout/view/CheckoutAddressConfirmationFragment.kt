@@ -334,7 +334,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     baseFragBundle
                 )
             } else {
-                showCollectionTab(localSuburbId)
+                val suburbId = localSuburbId
+                localSuburbId =
+                    DEFAULT_STORE_ID // setting to default so that it will again call validateSelectedSuburb.
+                showCollectionTab(suburbId)
             }
         }
 
