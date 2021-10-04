@@ -21,7 +21,9 @@ import za.co.woolworths.financial.services.android.util.Utils
  * Created by Kunal Uttarwar on 13/07/21.
  */
 class CheckoutStoreSelectionAdapter(
-    private val storeList: List<ValidateStoreList>, private val fragment: Fragment, private val itemPosition: Int
+    private val storeList: List<ValidateStoreList>,
+    private val fragment: Fragment,
+    private val itemPosition: Int
 ) : RecyclerView.Adapter<CheckoutStoreSelectionAdapter.StoreViewHolder>(),
     Filterable {
 
@@ -67,13 +69,30 @@ class CheckoutStoreSelectionAdapter(
                     )
                     title.paintFlags =
                         if (!it.deliverable!!) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
+                    if (selector.isChecked && storeFilterList[position].deliverable == true) {
+                        val bundle = Bundle()
+                        bundle.putString(
+                            CheckoutAddressConfirmationFragment.STORE_SELECTION_REQUEST_KEY,
+                            Utils.toJson(storeFilterList[position])
+                        )
+                        fragment.setFragmentResult(
+                            CheckoutAddressConfirmationFragment.STORE_SELECTION_REQUEST_KEY,
+                            bundle
+                        )
+                    }
                 }
                 setOnClickListener {
-                    if (!storeFilterList[position].deliverable!!) return@setOnClickListener
+                    if (storeFilterList[position].deliverable == false) return@setOnClickListener
 
                     val bundle = Bundle()
-                    bundle.putString(CheckoutAddressConfirmationFragment.STORE_SELECTION_REQUEST_KEY, Utils.toJson(storeFilterList[position]))
-                    fragment.setFragmentResult(CheckoutAddressConfirmationFragment.STORE_SELECTION_REQUEST_KEY, bundle)
+                    bundle.putString(
+                        CheckoutAddressConfirmationFragment.STORE_SELECTION_REQUEST_KEY,
+                        Utils.toJson(storeFilterList[position])
+                    )
+                    fragment.setFragmentResult(
+                        CheckoutAddressConfirmationFragment.STORE_SELECTION_REQUEST_KEY,
+                        bundle
+                    )
 
                     checkedItemPosition = position
                     checkedItemStoreId = storeFilterList[position].storeId!!
