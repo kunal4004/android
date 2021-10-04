@@ -75,7 +75,6 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
         checkoutPaymentWebView?.apply {
             CookieManager.getInstance().removeAllCookies(null)
             CookieManager.getInstance().removeSessionCookies {
-                Log.e("AndroidLog", "removeSessionCookies >> $it")
             }
             CookieManager.getInstance().flush()
 
@@ -109,7 +108,6 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
-        Log.d("AndroidLog", "onPageStarted $url")
         progressBar?.visibility = View.VISIBLE
         if(Uri.parse(url).getQueryParameter(KEY_STATUS) == PaymentStatus.PAYMENT_ABANDON.type){
             view?.findNavController()?.navigateUp()
@@ -117,7 +115,6 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
     }
 
     override fun onPageFinished(url: String?) {
-        Log.d("AndroidLog", "onPageFinished $url")
         progressBar?.visibility = View.GONE
         when (Uri.parse(url).getQueryParameter(KEY_STATUS)) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
@@ -130,7 +127,6 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
     }
 
     override fun onPageError(errorCode: Int, description: String?, failingUrl: String?) {
-        Log.e("AndroidLog", "onPageError $description")
     }
 
     override fun onDownloadRequested(
@@ -141,10 +137,8 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
         contentDisposition: String?,
         userAgent: String?
     ) {
-        Log.d("AndroidLog", "onDownloadRequested $url")
     }
 
     override fun onExternalPageRequest(url: String?) {
-        Log.d("AndroidLog", "onExternalPageRequest $url")
     }
 }
