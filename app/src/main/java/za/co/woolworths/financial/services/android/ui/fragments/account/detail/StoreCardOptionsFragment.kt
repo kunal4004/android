@@ -342,21 +342,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         var GET_REPLACEMENT_CARD_DETAIL = false
     }
 
-    private fun linkDeviceIfNecessary(doJob: () -> Unit, elseJob: () -> Unit){
-        if (!MyAccountsFragment.verifyAppInstanceId() && Utils.isGooglePlayServicesAvailable()) {
-            doJob()
-            activity?.let {
-                val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
-                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, ApplyNowState.STORE_CARD)
-                it.startActivity(intent)
-                it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
-            }
-        }
-        else{
-            elseJob()
-        }
-    }
-
     private fun getReplacementCard(){
         mCardPresenterImpl?.apply {
             activity?.apply {
@@ -399,7 +384,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
                     when (manageMyCardTextView?.text?.toString()) {
                         bindString(R.string.replacement_card_label) -> {
-                            linkDeviceIfNecessary({
+                            KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
                                 GET_REPLACEMENT_CARD_DETAIL = true
                             },{
                                 getReplacementCard()
