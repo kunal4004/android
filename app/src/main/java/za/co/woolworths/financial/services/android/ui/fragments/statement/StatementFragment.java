@@ -327,7 +327,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         showView(relNextButton);
     }
 
-    public void getPDFFile(ApplyNowState state) {
+    public void getPdfFile(ApplyNowState state) {
         applyNowState = state;
         showViewProgress();
         final FragmentActivity activity = getActivity();
@@ -398,7 +398,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             activity.runOnUiThread(() -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
                     if (!loadState.onLoanCompleted()) {
-                        getPDFFile(applyNowState);
+                        getPdfFile(applyNowState);
                     }
                 }
             });
