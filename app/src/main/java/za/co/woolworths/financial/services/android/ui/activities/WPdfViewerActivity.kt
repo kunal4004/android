@@ -19,12 +19,12 @@ import java.lang.Exception
 
 class WPdfViewerActivity : AppCompatActivity() {
 
-    var pageTitle: String? = null
-    var fileName: String? = null
-    var fileData: ByteArray? = null
-    var cacheFile: File? = null
-    var gtmTag: String? = null
-    var applyNowState: ApplyNowState? = null
+    private var pageTitle: String? = null
+    private var fileName: String? = null
+    private var fileData: ByteArray? = null
+    private var cacheFile: File? = null
+    private var gtmTag: String? = null
+    private var applyNowState: ApplyNowState? = null
 
     companion object {
         const val FILE_NAME = "FILE_NAME"
