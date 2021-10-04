@@ -50,13 +50,13 @@
         android:text="@string/loan_request_high_desc"
         android:textColor="@color/description_color"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/gotITButton"
+        app:layout_constraintBottom_toTopOf="@+id/gotItButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/gotITButton"
+        android:id="@+id/gotItButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -27,7 +27,7 @@ class InfoDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
         tvTitleTextView?.text = bindString(args.infoWindowTitle)
         tvDescriptionTextView?.text =  bindString(args.infoWindowDesc)
 
-        gotITButton?.apply {
+        gotItButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@InfoDialogFragment)
         }
@@ -35,7 +35,7 @@ class InfoDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.gotITButton -> {
+            R.id.gotItButton -> {
                 dismiss()
             }
         }

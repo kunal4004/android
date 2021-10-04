@@ -335,7 +335,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                 amountOutstandingValueTextView?.isActivated = false
                 totalAmountDueValueTextView?.isActivated = true
             }
-            overdueAmount -> { // logic applies to currentBalance as they share similar same  textview
+            overdueAmount -> { // logic applies to currentBalance as they share amountOutstandingValueTextView
                 amountOutstandingValueTextView?.isActivated = true
                 totalAmountDueValueTextView?.isActivated = false
             }
