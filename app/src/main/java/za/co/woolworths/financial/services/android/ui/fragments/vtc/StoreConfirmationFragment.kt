@@ -6,15 +6,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_store_confirmation.*
+import kotlinx.android.synthetic.main.layout_address_residential_or_business.*
 import kotlinx.android.synthetic.main.layout_confirmation.*
 import kotlinx.android.synthetic.main.layout_store_card_confirmed.*
+import kotlinx.android.synthetic.main.layout_store_card_confirmed.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -56,6 +60,9 @@ class StoreConfirmationFragment : Fragment() {
 
         setHasOptionsMenu(true)
         setActionBar()
+
+        storeConfirmedLayout.titleTextView.text = WoolworthsApplication.getVirtualTempCard().replacementCardSuccessfullyOrderedTitle ?: getString(R.string.replacement_card_success_title)
+        storeConfirmedLayout.descTextView.text = WoolworthsApplication.getVirtualTempCard().replacementCardSuccessfullyOrderedDescription ?: getString(R.string.replacement_card_success_desc)
 
         if (!TextUtils.isEmpty(body?.storeAddress)) {
             isConfirmStore = true
