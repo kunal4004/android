@@ -2162,4 +2162,7 @@
     <string name="percent_recommend_to_friend">%s Would recommend this product to a friend</string>
     <string name="rating_details">Rating details</string>
     <string name="no_reviews">%d Reviews</string>
+    <string name="verified_buyer">Verified Buyer</string>
+    <string name="view_skin_profile">VIEW SKIN PROFILE</string>
+    <string name="verified_staff_member">Verified Staff Member</string>
 </resources>
