@@ -10,6 +10,7 @@ import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.core.app.ShareCompat
 import com.awfs.coordination.BuildConfig
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.OneAppEvents
@@ -18,11 +19,12 @@ import java.lang.Exception
 
 class WPdfViewerActivity : AppCompatActivity() {
 
-    var pageTitle: String? = null
-    var fileName: String? = null
-    var fileData: ByteArray? = null
-    var cacheFile: File? = null
-    var gtmTag: String? = null
+    private var pageTitle: String? = null
+    private var fileName: String? = null
+    private var fileData: ByteArray? = null
+    private var cacheFile: File? = null
+    private var gtmTag: String? = null
+    private var applyNowState: ApplyNowState? = null
 
     companion object {
         const val FILE_NAME = "FILE_NAME"
@@ -30,6 +32,9 @@ class WPdfViewerActivity : AppCompatActivity() {
         const val PAGE_TITLE = "PAGE_TITLE"
         const val GTM_TAG = "GTM_TAG"
         const val REQUEST_CODE_SHARE = 111
+        const val APPLY_NOW_STATE = "APPLY_NOW_STATE"
+        var SHOW_SEND_STATEMENT_SCREEN = false
+        var SEND_STATEMENT_DETAIL = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,12 +53,28 @@ class WPdfViewerActivity : AppCompatActivity() {
             fileName = getString(FILE_NAME)
             fileData = getByteArray(FILE_VALUE)
             gtmTag = getString(GTM_TAG)
+            applyNowState = getSerializable(APPLY_NOW_STATE) as ApplyNowState
         }
     }
 
     private fun initView() {
         done.setOnClickListener { onBackPressed() }
-        share.setOnClickListener { shareInvoice() }
+        share.setOnClickListener {
+            if (applyNowState != null) {
+                applyNowState?.let {
+                    KotlinUtils.linkDeviceIfNecessary(this, it,
+                        {
+                            SEND_STATEMENT_DETAIL = true
+                        },
+                        {
+                            shareInvoice()
+                        })
+                }
+            }
+            else {
+                shareInvoice()
+            }
+        }
         configureUI()
     }
 
@@ -96,6 +117,14 @@ class WPdfViewerActivity : AppCompatActivity() {
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         startActivityForResult(intent, REQUEST_CODE_SHARE)
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(SHOW_SEND_STATEMENT_SCREEN) {
+            SHOW_SEND_STATEMENT_SCREEN = false
+            shareInvoice()
+        }
     }
 
     override fun onBackPressed() {

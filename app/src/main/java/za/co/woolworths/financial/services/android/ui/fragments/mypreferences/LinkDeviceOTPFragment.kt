@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
@@ -567,6 +568,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     AccountsOptionFragment.CLI_DETAIL -> {
                                                         showCLIScreen()
                                                     }
+                                                    WPdfViewerActivity.SEND_STATEMENT_DETAIL -> {
+                                                        showSendStatementScreen()
+                                                    }
                                                     else -> {
                                                         goToProduct()
                                                     }
@@ -632,6 +636,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun showCLIScreen(){
         AccountsOptionFragment.SHOW_CLI_SCREEN = true
         AccountsOptionFragment.CLI_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showSendStatementScreen(){
+        WPdfViewerActivity.SHOW_SEND_STATEMENT_SCREEN = true
+        WPdfViewerActivity.SEND_STATEMENT_DETAIL = false
         activity?.finish()
     }
 
