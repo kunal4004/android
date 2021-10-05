@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -143,7 +144,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
                 overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
             }
-            is CheckoutAddAddressReturningUserFragment -> {
+            is CheckoutAddAddressReturningUserFragment, is OrderConfirmationFragment -> {
                 finish()
                 overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
             }

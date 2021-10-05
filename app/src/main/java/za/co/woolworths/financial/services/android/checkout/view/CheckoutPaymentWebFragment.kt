@@ -80,11 +80,13 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
 
             CookieManager.getInstance().acceptCookie()
             val paymentUrl = WoolworthsApplication.getNativeCheckout()?.checkoutPaymentURL
-            val webTokens = arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
+            val webTokens =
+                arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
             val cookie = "TOKEN=${webTokens?.jsessionId};AUTHENTICATION=${webTokens?.auth};"
 
-            if(TextUtils.isEmpty(paymentUrl) || TextUtils.isEmpty(webTokens?.jsessionId)
-                || TextUtils.isEmpty(webTokens?.auth)){
+            if (TextUtils.isEmpty(paymentUrl) || TextUtils.isEmpty(webTokens?.jsessionId)
+                || TextUtils.isEmpty(webTokens?.auth)
+            ) {
                 return@apply
             }
 
@@ -104,12 +106,12 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
     }
 
     private fun navigateToOrderConfirmation() {
-        // TODO: Navitgate to order confirmation screen as payment is successful
+        view?.findNavController()?.navigate(R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment)
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
         progressBar?.visibility = View.VISIBLE
-        if(Uri.parse(url).getQueryParameter(KEY_STATUS) == PaymentStatus.PAYMENT_ABANDON.type){
+        if (Uri.parse(url).getQueryParameter(KEY_STATUS) == PaymentStatus.PAYMENT_ABANDON.type) {
             view?.findNavController()?.navigateUp()
         }
     }
