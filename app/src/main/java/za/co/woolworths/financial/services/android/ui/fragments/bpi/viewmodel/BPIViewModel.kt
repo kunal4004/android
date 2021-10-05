@@ -1,8 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel
 
 import android.os.Bundle
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
+import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.helper.NavGraphRouterImpl
+
 
 class BPIViewModel : ViewModel() {
 
@@ -17,10 +21,13 @@ class BPIViewModel : ViewModel() {
             BPIOverviewOverviewImpl(argument),
             BPISubmitClaimImpl(),
             NavGraphRouterImpl(),
-            BPIDefaultLabelListImpl(),
-            BPIBenefitsOptInBenefitCarouselImpl()
+            BPIDefaultLabelListImpl()
         )
         return bpiPresenter
+    }
+
+    fun insuranceLeadGenCarouselList(): Array<InsuranceLeadCarousel> {
+        return InsuranceLeadCarousel.values()
     }
 
 }

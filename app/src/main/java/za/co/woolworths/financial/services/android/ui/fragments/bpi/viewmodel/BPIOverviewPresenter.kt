@@ -6,10 +6,10 @@ class BPIOverviewPresenter(
     private val overview: BPIOverviewInterface,
     private val submitClaim: BPISubmitClaimInterface,
     private val route: NavigationGraphRouterInterface,
-    private val bpiLabel : BPIDefaultLabelInterface,
-    private val optInBenefitCarousel : BPIOptInBenefitCarouselInterface
+    private val bpiLabel : BPIDefaultLabelInterface
 ) : BPIOverviewInterface by overview,
     BPISubmitClaimInterface by submitClaim,
     NavigationGraphRouterInterface by route,
-    BPIDefaultLabelInterface by bpiLabel,
-    BPIOptInBenefitCarouselInterface by optInBenefitCarousel
+    BPIDefaultLabelInterface by bpiLabel
+
+

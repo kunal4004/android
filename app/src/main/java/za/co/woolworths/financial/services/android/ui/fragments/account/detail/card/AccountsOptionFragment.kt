@@ -284,6 +284,19 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, storeCardResponse, requestUnblockStoreCardCall)
     }
 
+    override fun showBalanceProtectionInsurance(insuranceCovered: Boolean?) {
+        when (insuranceCovered){
+            true -> {
+                bpiCoveredTextView?.visibility = VISIBLE
+                bpiNotCoveredGroup?.visibility = GONE
+            }
+            false -> {
+                bpiCoveredTextView?.visibility = GONE
+                bpiNotCoveredGroup?.visibility = VISIBLE
+            }
+        }
+    }
+
     override fun navigateToDebitOrderActivity(debitOrder: DebitOrder) {
         MyAccountsScreenNavigator.navigateToDebitOrderActivity(activity, debitOrder)
     }

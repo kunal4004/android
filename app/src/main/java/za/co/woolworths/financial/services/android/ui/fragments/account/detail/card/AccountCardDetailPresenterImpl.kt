@@ -68,7 +68,13 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun showBalanceProtectionInsuranceLead() {
-        mainView?.showBalanceProtectionInsuranceLead(getBpiInsuranceApplication())
+        val balanceProtectionInsurance = getBpiInsuranceApplication()
+        val account = getAccount()
+        if (balanceProtectionInsurance != null)
+            mainView?.showBalanceProtectionInsuranceLead(balanceProtectionInsurance)
+        else
+            mainView?.showBalanceProtectionInsurance(account?.insuranceCovered)
+
     }
 
     override fun getAppCompatActivity(): AppCompatActivity? = WoolworthsApplication.getInstance()?.currentActivity as? AppCompatActivity
@@ -244,7 +250,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     override fun navigateToBalanceProtectionInsurance() {
         val bpiInsuranceApplication : BpiInsuranceApplication? = getBpiInsuranceApplication()
         when(bpiInsuranceApplication?.status){
-            BpiInsuranceApplicationStatusType.OPTED_IN -> {}
+            BpiInsuranceApplicationStatusType.OPTED_IN -> {
+                mainView?.navigateToBalanceProtectionInsuranceApplicationStatusCovered(convertAccountObjectToJsonString())
+            }
             BpiInsuranceApplicationStatusType.NOT_OPTED_IN -> {
             }
             BpiInsuranceApplicationStatusType.COVERED -> {
