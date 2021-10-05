@@ -256,12 +256,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 productLists.add(0, headerProduct)
             }
             bindRecyclerViewWithUI(productLists)
-        } else if (productLists.size == 1) {
-            (activity as? BottomNavigationActivity)?.apply {
-                popFragmentNoAnim()
-                isReloadNeeded = false
-                openProductDetailFragment(mSubCategoryName, productLists[0])
-            }
 
         } else {
             this.productView = null
@@ -286,9 +280,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showDeliveryOptionDialog()
                 }
 
-                if(WoolworthsApplication.isProductItemForLiquorInvetoryPending()){
+                if (WoolworthsApplication.isProductItemForLiquorInvetoryPending()) {
                     WoolworthsApplication.getProductItemForInventory()?.let { productList ->
-                            WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId?.let {
+                        WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId?.let {
                             dismissProgressBar()
                             queryInventoryForStore(
                                 it,
