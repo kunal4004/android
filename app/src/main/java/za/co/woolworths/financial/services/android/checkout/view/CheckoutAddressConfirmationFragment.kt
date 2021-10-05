@@ -231,7 +231,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         openCheckOutActivity.putExtra(CheckOutFragment.IS_NATIVE_CHECKOUT, true)
                                         activity?.startActivityForResult(
                                             openCheckOutActivity,
-                                            CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY
+                                            CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
                                         )
                                         activity?.overridePendingTransition(0, 0)
                                     }

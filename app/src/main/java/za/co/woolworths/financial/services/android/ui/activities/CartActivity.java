@@ -4,6 +4,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.AddToSho
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY;
 
 import android.content.Intent;
 import android.view.View;
@@ -221,6 +222,10 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         }
 
         if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY && resultCode == RESULT_OK) {
+            finishActivityOnCheckoutSuccess();
+            return;
+        }
+        if (requestCode == REQUEST_CHECKOUT_ON_DESTROY && resultCode == RESULT_CANCELED){
             finishActivityOnCheckoutSuccess();
             return;
         }

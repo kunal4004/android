@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class CheckOutFragment extends Fragment {
 
     public static int REQUEST_CART_REFRESH_ON_DESTROY = 9;
+    public static int REQUEST_CHECKOUT_ON_DESTROY = 107;
     public static String ORDER_CONFIRMATION = "order-confirmation.jsp";
     public static String IS_NATIVE_CHECKOUT = "isNativeCheckout";
 
