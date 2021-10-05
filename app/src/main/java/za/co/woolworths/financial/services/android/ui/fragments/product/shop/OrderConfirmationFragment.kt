@@ -86,12 +86,14 @@ class OrderConfirmationFragment : Fragment() {
                 optionImage.background =
                     AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
                 optionTitle.text = it.getText(R.string.collecting_from)
+                deliveryTextView.text = it.getText(R.string.collection_semicolon)
                 optionLocation.text = response.orderSummary?.store?.name
 
             } else {
                 optionImage.background =
                     AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
                 optionTitle.text = it.getText(R.string.delivering_to)
+                deliveryTextView.text = it.getText(R.string.delivery_semicolon)
                 optionLocation.text = response?.deliveryDetails?.shippingAddress?.address1
             }
 
@@ -175,6 +177,13 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
+        if (response?.orderSummary?.store?.name != null) {
+            deliveryLocationText.text = context?.getText(R.string.collection_location_semicolon)
+            deliveryOrderDetailsTextView.text = context?.getText(R.string.collection_semicolon)
+        } else {
+            deliveryLocationText.text = context?.getText(R.string.delivery_location_semicolon)
+            deliveryOrderDetailsTextView.text = context?.getText(R.string.delivery_semicolon)
+        }
         bottomSheetScrollView.visibility = View.VISIBLE
         orderStatusTextView.text = response?.orderSummary?.state
         deliveryLocationTextView.text = optionLocation.text
