@@ -4,12 +4,15 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,12 +55,13 @@ public class CheckOutFragment extends Fragment {
 
     public static int REQUEST_CART_REFRESH_ON_DESTROY = 9;
     public static String ORDER_CONFIRMATION = "order-confirmation.jsp";
+    public static String IS_NATIVE_CHECKOUT = "isNativeCheckout";
 
     private enum QueryString {
         COMPLETE("goto=complete"),
         ABANDON("goto=abandon");
 
-        private String value;
+        private final String value;
 
         QueryString(String value) {
             this.value = value;
@@ -69,7 +73,7 @@ public class CheckOutFragment extends Fragment {
     }
 
     private WebView mWebCheckOut;
-    private String TAG = this.getClass().getSimpleName();
+    private final String TAG = this.getClass().getSimpleName();
     private ProgressBar mProgressLayout;
     private ErrorHandlerView mErrorHandlerView;
     private QueryString closeOnNextPage;
@@ -138,7 +142,6 @@ public class CheckOutFragment extends Fragment {
                 handleNetworkConnectionError(view, error.getErrorCode(), error.toString());
             }
 
-            @SuppressWarnings("deprecation")
             @Override
             public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
                 handleNetworkConnectionError(webView, errorCode, description);
@@ -151,7 +154,7 @@ public class CheckOutFragment extends Fragment {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Activity activity = getActivity();
+                FragmentActivity activity = getActivity();
                 if (activity == null) return true;
                 if (url.contains(QueryString.COMPLETE.getValue())) {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_COMPLETE, activity);
@@ -160,7 +163,14 @@ public class CheckOutFragment extends Fragment {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CHECKOUT_ABANDON, activity);
                     closeOnNextPage = QueryString.ABANDON;
                 }
-                view.loadUrl(url);
+                Intent intent = getActivity().getIntent();
+                if (url.contains(ORDER_CONFIRMATION) && intent.hasExtra(IS_NATIVE_CHECKOUT) && intent.getBooleanExtra(IS_NATIVE_CHECKOUT, false)) {
+                    OrderConfirmationFragment orderConfirmationFragment = new OrderConfirmationFragment();
+                    FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.content_frame, orderConfirmationFragment).commit();
+                } else
+                    view.loadUrl(url);
                 return true;
             }
 

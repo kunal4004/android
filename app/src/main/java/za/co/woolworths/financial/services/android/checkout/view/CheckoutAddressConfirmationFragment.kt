@@ -228,6 +228,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     if (!isDeliverySelected) {
                                         val openCheckOutActivity =
                                             Intent(context, CartCheckoutActivity::class.java)
+                                        openCheckOutActivity.putExtra(CheckOutFragment.IS_NATIVE_CHECKOUT, true)
                                         activity?.startActivityForResult(
                                             openCheckOutActivity,
                                             CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY
