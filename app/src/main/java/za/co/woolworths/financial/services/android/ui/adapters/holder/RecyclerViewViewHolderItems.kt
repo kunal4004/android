@@ -52,13 +52,19 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setRatingAndReviewCount(productList: ProductList) = with(itemView) {
         if (productList.isRnREnabled) {
-            rating_bar.visibility = VISIBLE
-            txt_rating_count.visibility = VISIBLE
-            rating_bar.rating = KotlinUtils.getUpdatedUtils(productList.averageRating.toFloat())
-            txt_rating_count.text = "( " + productList.reviewCount + " )"
+            if (productList.averageRating.equals("0.0") ||
+                productList.averageRating.equals("0")) {
+                rating_bar.visibility = View.INVISIBLE
+                txt_rating_count.visibility = View.INVISIBLE
+            } else {
+                rating_bar.visibility = VISIBLE
+                txt_rating_count.visibility = VISIBLE
+                rating_bar.rating = KotlinUtils.getUpdatedUtils(productList.averageRating.toFloat())
+                txt_rating_count.text = String.format("(\t%s\t)",productList.reviewCount)
+            }
         } else {
-            rating_bar.visibility = GONE
-            txt_rating_count.visibility = GONE
+            rating_bar.visibility = View.INVISIBLE
+            txt_rating_count.visibility = View.INVISIBLE
         }
     }
 
