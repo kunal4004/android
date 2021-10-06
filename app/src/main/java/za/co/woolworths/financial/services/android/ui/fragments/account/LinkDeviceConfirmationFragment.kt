@@ -92,6 +92,14 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             askLocationPermission()
         }
 
+        context?.let {
+            when(mApplyNowState){
+                ApplyNowState.STORE_CARD ->
+                    linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_sc)
+
+                else -> linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc)
+            }
+        }
     }
 
     private fun askLocationPermission() {
