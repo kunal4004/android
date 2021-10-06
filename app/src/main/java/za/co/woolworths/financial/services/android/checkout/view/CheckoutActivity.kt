@@ -161,4 +161,14 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        navHostFrag.childFragmentManager.fragments.let {
+            if (it.isNullOrEmpty()) {
+                return
+            }
+            it[0].onActivityResult(requestCode, resultCode, data)
+        }
+    }
 }

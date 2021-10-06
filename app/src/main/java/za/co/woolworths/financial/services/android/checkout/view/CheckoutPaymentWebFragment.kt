@@ -129,6 +129,28 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
     }
 
     override fun onPageError(errorCode: Int, description: String?, failingUrl: String?) {
+        showErrorScreen(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON)
+    }
+
+    private fun showErrorScreen(errorType: Int) {
+        activity?.apply {
+            val intent = Intent(this, ErrorHandlerActivity::class.java)
+            intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType)
+            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
+                when (resultCode) {
+                    ErrorHandlerActivity.RESULT_RETRY -> {
+                        initPaymentWebView()
+                    }
+                }
+            }
+        }
     }
 
     override fun onDownloadRequested(
