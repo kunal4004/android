@@ -571,6 +571,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     WPdfViewerActivity.SEND_STATEMENT_DETAIL -> {
                                                         showSendStatementScreen()
                                                     }
+                                                    StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
+                                                        showActivateVirtualTempCardScreen()
+                                                    }
                                                     else -> {
                                                         goToProduct()
                                                     }
@@ -642,6 +645,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun showSendStatementScreen(){
         WPdfViewerActivity.SHOW_SEND_STATEMENT_SCREEN = true
         WPdfViewerActivity.SEND_STATEMENT_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showActivateVirtualTempCardScreen(){
+        StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
+        StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
         activity?.finish()
     }
 
