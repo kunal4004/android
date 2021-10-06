@@ -1,14 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.vto.presentation
 
-import androidx.hilt.lifecycle.ViewModelInject
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import za.co.woolworths.financial.services.android.ui.vto.prefstore.PrefsStore
 
-
-class DataPrefViewModel @ViewModelInject constructor(
+@HiltViewModel
+class DataPrefViewModel @Inject constructor(
     private val prefsStore: PrefsStore
 
 ) : ViewModel() {

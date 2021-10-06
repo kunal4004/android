@@ -250,7 +250,7 @@ class LibstickImageViewFragment : Fragment() {
                     if (selectedImage!!.getWidth() / selectedImage!!.getHeight() >= imgVTOEffect.getWidth() / imgVTOEffect.getHeight()) imgVTOEffect.getWidth() / selectedImage.getWidth()  else imgVTOEffect.getHeight() / selectedImage!!.getHeight()
                 val faceRectView = View(requireActivity())
                 //TODO: remove after test
-                faceRectView.setBackgroundResource(R.drawable.selector_item_border)
+               // faceRectView.setBackgroundResource(R.drawable.selector_item_border)
                 val params = ConstraintLayout.LayoutParams(
                     (scale * (faceRect.right - faceRect.left)).toInt(),
                     (scale * (faceRect.bottom - faceRect.top)).toInt()

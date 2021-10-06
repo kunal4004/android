@@ -40,10 +40,10 @@
         android:clipToPadding="false"
         android:orientation="vertical">
 
-        <include
-            android:id="@+id/recentSearchLayout"
-            layout="@layout/recent_serachs_layout"
-            android:visibility="gone"/>
+<!--        <include-->
+<!--            android:id="@+id/recentSearchLayout"-->
+<!--            layout="@layout/recent_serachs_layout"-->
+<!--            android:visibility="gone"/>-->
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="match_parent"

@@ -18,7 +18,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
@@ -81,20 +80,12 @@ import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 import kotlin.collections.ArrayList
 import androidx.lifecycle.Observer
-
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
-
-
-
 import kotlinx.android.synthetic.main.vto_imageview_fragment.*
 import kotlinx.android.synthetic.main.vto_lighting_tips.view.*
-
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.ui.vto.presentation.DataPrefViewModel
-
-
-
 
 
 
@@ -1101,18 +1092,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                          closePage.visibility =View.GONE
                          productImagesViewPager.visibility =View.GONE
                          dataPrefViewModel.isLightingTips.observe(requireActivity()) { lightingTips ->
-
-                             Log.d("tips",lightingTips.toString())
                              if(lightingTips){
                                  showLighting()
                              }
                          }
 
-
                          imgVTOEffect.setPhotoUri(Uri.parse(data?.data.toString()))
-
-                         Log.d("testImage", (data?.data).toString())
-
 
                       }
 

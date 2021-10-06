@@ -282,16 +282,12 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.4.0-alpha04'
     //UI testing with Espresso
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0-alpha04'
-    //kotlinx-coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.5'
     //Data store
-    implementation "androidx.datastore:datastore-preferences:1.0.0-alpha01"
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
     // Hilt DI
-    implementation "com.google.dagger:hilt-android:2.28.3-alpha"
-    kapt "com.google.dagger:hilt-android-compiler:2.28.3-alpha"
-    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
-    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
+    implementation "com.google.dagger:hilt-android:2.38.1"
+    kapt "com.google.dagger:hilt-android-compiler:2.37"
+
 }
 
 apply plugin: 'com.google.gms.google-services'

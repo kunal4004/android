@@ -11,6 +11,4 @@ interface PrefsStore {
     fun isTryItOnFirstTime(): Flow<Boolean>
 
     suspend fun disableTryItOnMode(lighting: Boolean)
-
-
 }

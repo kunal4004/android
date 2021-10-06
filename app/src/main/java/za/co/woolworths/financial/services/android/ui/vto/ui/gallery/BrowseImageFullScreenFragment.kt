@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-import androidx.datastore.preferences.preferencesKey
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.databinding.BrowseFullScreenPhotoFragmentBinding
 import java.io.File
@@ -44,7 +43,7 @@ class BrowseImageFullScreenFragment : Fragment() {
                 putString(FILE_NAME_KEY, image.absolutePath)
             }
         }
-        private val USERNAME = preferencesKey<String>("username")
+
     }
 
 

@@ -1,8 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.vto.prefstore
 
 import android.content.Context
-import androidx.datastore.preferences.createDataStore
-import androidx.datastore.preferences.preferencesKey
+
+
+import androidx.datastore.core.DataStore
+
+import androidx.datastore.preferences.core.*
+
+
+
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
 import za.co.woolworths.financial.services.android.util.datastorepref.getPrefData
@@ -11,15 +19,15 @@ import javax.inject.Inject
 
 private const val PREF_NAME = "wool-retail"
 
+
 class PrefStoreImpl
 @Inject constructor(
     @ApplicationContext context: Context
+
 ) : PrefsStore {
 
-
-    private val dataStore = context.createDataStore(
-        name = PREF_NAME
-    )
+    private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = PREF_NAME)
+    private val dataStore : DataStore<Preferences> = context._dataStore
 
     override fun isLightingTipsFirstTime() =
         dataStore.getPrefData(LIGHTING_TIPS, true)
@@ -43,8 +51,8 @@ class PrefStoreImpl
     }
 
     companion object {
-        private val TRY_IT_ON = preferencesKey<Boolean>("try_it_on")
-        private val LIGHTING_TIPS = preferencesKey<Boolean>("lighting_tips")
+        private val TRY_IT_ON = booleanPreferencesKey("try_it_on")
+        private val LIGHTING_TIPS = booleanPreferencesKey("lighting_tips")
     }
 
 

@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.util.datastorepref
 
-import androidx.datastore.DataStore
-
-import androidx.datastore.preferences.Preferences
-
-import androidx.datastore.preferences.edit
-import androidx.datastore.preferences.emptyPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
