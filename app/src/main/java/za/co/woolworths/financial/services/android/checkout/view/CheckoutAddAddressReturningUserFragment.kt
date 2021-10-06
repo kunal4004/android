@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment.Companion.KEY_ARGS_WEB_TOKEN
+import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.Companion.DEFAULT_POSITION
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
@@ -714,7 +715,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         otherDeliverySlotId = ""
                         foodDeliveryStartHour = selectedFoodSlot?.hourFrom?.toLong() ?: 0
                         otherDeliveryStartHour = 0
-                        oddDeliverySlotId = selectedOtherSlot?.slotId
+                        oddDeliverySlotId = selectedOpedDayDeliverySlot?.deliverySlotId
                     }
                 }
             }
@@ -798,6 +799,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     ) {
         oddSelectedPosition = position
         selectedOpedDayDeliverySlot = openDayDeliverySlot
+        validateContinueToPaymentButton()
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_.plus(openDayDeliverySlot.deliveryType),
             activity
@@ -812,8 +814,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     initialiseGridView(selectedSlotResponseOther, FIRST.week, type)
                 }
             }
-            else ->
+            else -> {
                 gridLayoutDeliveryOptions.visibility = View.GONE
+                expandableGrid.gridOnClickListner(
+                    type,
+                    DEFAULT_POSITION,
+                    FIRST.week,
+                    expandableGrid.deliverySlotsGridViewAdapter
+                )
+                selectedOtherSlot = Slot()
+            }
         }
     }
 }

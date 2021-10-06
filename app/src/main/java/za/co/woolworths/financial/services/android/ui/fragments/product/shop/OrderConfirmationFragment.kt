@@ -59,6 +59,8 @@ class OrderConfirmationFragment : Fragment() {
         OneAppService.getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
+                    if (response == null)
+                        activity?.finish()
                     response?.orderSummary?.orderId?.let { setToolbar(it) }
                     setupDeliveryOrCollectionDetails(response)
                     setupOrderTotalDetails(response)

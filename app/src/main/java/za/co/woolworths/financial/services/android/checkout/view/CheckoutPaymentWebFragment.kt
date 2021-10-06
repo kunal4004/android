@@ -1,36 +1,22 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_checkout_payment_web.*
-import okhttp3.OkHttpClient
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import android.webkit.WebResourceResponse
-
-import com.google.common.net.HttpHeaders
-import okhttp3.Request
-import okhttp3.Response
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
 import java.net.URI
 
@@ -106,7 +92,8 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
     }
 
     private fun navigateToOrderConfirmation() {
-        view?.findNavController()?.navigate(R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment)
+        view?.findNavController()
+            ?.navigate(R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment)
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
