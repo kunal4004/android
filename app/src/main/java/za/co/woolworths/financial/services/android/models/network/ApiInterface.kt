@@ -1089,4 +1089,13 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body optOutBody: SurveyOptOutBody
     ): Call<Void>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("user/takeUpPlan/eligibility")
+    fun getEligibilityForTakeUpPlan(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): Call<EligibilityTakeUpPlanResponse>
 }
