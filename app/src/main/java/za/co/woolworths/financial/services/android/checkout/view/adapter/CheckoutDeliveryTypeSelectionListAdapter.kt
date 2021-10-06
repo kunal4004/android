@@ -25,8 +25,6 @@ class CheckoutDeliveryTypeSelectionListAdapter(
 
     companion object {
         const val DELIVERY_TYPE_TIMESLOT = "Timeslot"
-        const val DELIVERY_TYPE_STANDARD = "standard"
-        const val DELIVERY_TYPE_VALUE = "value"
     }
 
     override fun onCreateViewHolder(
