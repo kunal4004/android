@@ -80,6 +80,13 @@
         <action
             android:id="@+id/action_CheckoutAddAddressReturningUserFragment_to_ErrorHandlerBottomSheetDialog"
             app:destination="@id/errorHandlerBottomSheetDialog" />
+        <action
+            android:id="@+id/action_CheckoutAddAddressReturningUserFragment_to_checkoutPaymentWebFragment"
+            app:destination="@id/checkoutPaymentWebFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
 
     <fragment
@@ -176,5 +183,23 @@
         android:id="@+id/errorHandlerBottomSheetDialog"
         android:name="za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog"
         android:label="ErrorHandlerBottomSheetDialog" />
+
+    <fragment
+        android:id="@+id/checkoutPaymentWebFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment"
+        android:label="fragment_checkout_payment_web"
+        tools:layout="@layout/fragment_checkout_payment_web">
+
+        <action
+            android:id="@+id/action_checkoutPaymentWebFragment_orderConfirmationFragment"
+            app:destination="@id/OrderConfirmationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"
+            app:popUpTo="@id/checkoutAddressConfirmationFragment" />
+
+    </fragment>
+
 
 </navigation>

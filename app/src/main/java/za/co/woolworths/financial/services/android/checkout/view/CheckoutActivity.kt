@@ -14,12 +14,11 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -84,17 +83,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         toolbar?.visibility = View.GONE
     }
 
-    fun showTitleWithCrossButton(titleText: String) {
-        toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(toolbar)
-        btnClose?.visibility = View.VISIBLE
-        btnClose.setOnClickListener(this)
-        toolbarText.text = titleText
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(false)
-        }
-    }
-
     private fun loadNavHostFragment() {
         navHostFrag = navHostFragment as NavHostFragment
         val graph =
@@ -153,7 +141,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
                 overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
             }
-            is CheckoutAddAddressReturningUserFragment -> {
+            is CheckoutAddAddressReturningUserFragment, is OrderConfirmationFragment -> {
                 finish()
                 overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
             }
@@ -163,20 +151,25 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_CHECKOUT_ON_DESTROY && resultCode == RESULT_CANCELED) {
-            finishActivityOnCheckoutSuccess()
-            return
-        }
-    }
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.btnClose -> {
                 onBackPressed()
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CHECKOUT_ON_DESTROY && resultCode == RESULT_CANCELED) {
+            finishActivityOnCheckoutSuccess()
+            return
+        }
+        navHostFrag.childFragmentManager.fragments.let {
+            if (it.isNullOrEmpty()) {
+                return
+            }
+            it[0].onActivityResult(requestCode, resultCode, data)
         }
     }
 }

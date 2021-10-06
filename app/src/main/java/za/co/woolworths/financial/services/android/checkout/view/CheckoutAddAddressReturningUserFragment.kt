@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.WeekCounter.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment.Companion.KEY_ARGS_WEB_TOKEN
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
@@ -126,6 +128,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? CheckoutActivity)?.apply {
+            supportActionBar?.show()
+        }
         initViews()
     }
 
@@ -625,7 +630,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                             )
                             return@observe
                         }
-                        navigateToPaymentWebpage()
+                        navigateToPaymentWebpage(response)
                     }
                     is Throwable -> {
                         presentErrorDialog(
@@ -637,8 +642,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             })
     }
 
-    private fun navigateToPaymentWebpage() {
-        // TODO: WOP-12297: Payment Web page integration.
+    private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
+        view?.findNavController()?.navigate(
+            R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutPaymentWebFragment,
+            bundleOf(KEY_ARGS_WEB_TOKEN to webTokens)
+        )
     }
 
     private fun setScreenClickEvents(isClickable: Boolean) {
