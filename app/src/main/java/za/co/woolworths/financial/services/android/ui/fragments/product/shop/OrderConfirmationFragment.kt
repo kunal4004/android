@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +15,6 @@ import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -26,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
@@ -52,10 +50,17 @@ class OrderConfirmationFragment : Fragment() {
         getOrderDetails()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_item, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
     private fun getOrderDetails() {
         OneAppService.getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
+                    if (response == null)
+                        activity?.finish()
                     response?.orderSummary?.orderId?.let { setToolbar(it) }
                     setupDeliveryOrCollectionDetails(response)
                     setupOrderTotalDetails(response)
@@ -69,8 +74,8 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setToolbar(orderId: String) {
-        if (activity is CheckoutActivity) {
-            (activity as? CheckoutActivity)?.apply {
+        if (activity is CartCheckoutActivity) {
+            (activity as? CartCheckoutActivity)?.apply {
                 showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
             }
         }
@@ -83,12 +88,14 @@ class OrderConfirmationFragment : Fragment() {
                 optionImage.background =
                     AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
                 optionTitle.text = it.getText(R.string.collecting_from)
+                deliveryTextView.text = it.getText(R.string.collection_semicolon)
                 optionLocation.text = response.orderSummary?.store?.name
 
             } else {
                 optionImage.background =
                     AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
                 optionTitle.text = it.getText(R.string.delivering_to)
+                deliveryTextView.text = it.getText(R.string.delivery_semicolon)
                 optionLocation.text = response?.deliveryDetails?.shippingAddress?.address1
             }
 
@@ -172,6 +179,13 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
+        if (response?.orderSummary?.store?.name != null) {
+            deliveryLocationText.text = context?.getText(R.string.collection_location_semicolon)
+            deliveryOrderDetailsTextView.text = context?.getText(R.string.collection_semicolon)
+        } else {
+            deliveryLocationText.text = context?.getText(R.string.delivery_location_semicolon)
+            deliveryOrderDetailsTextView.text = context?.getText(R.string.delivery_semicolon)
+        }
         bottomSheetScrollView.visibility = View.VISIBLE
         orderStatusTextView.text = response?.orderSummary?.state
         deliveryLocationTextView.text = optionLocation.text

@@ -33,6 +33,11 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 class ExpandableGrid(val fragment: Fragment) {
 
     private val slotGridList: HashMap<DeliveryFoodOrOther, ArrayList<DeliveryGridModel>> = HashMap()
+    var deliverySlotsGridViewAdapter: DeliverySlotsGridViewAdapter? = null
+
+    companion object {
+        const val DEFAULT_POSITION = -1
+    }
 
     enum class SlotGridColors(val color: Int) {
         LIGHT_GREEN(R.color.light_green),
@@ -180,7 +185,7 @@ class ExpandableGrid(val fragment: Fragment) {
                 slotGridList[OTHER] = deliveryGridList
             }
         }
-        val adapter = fragment.context?.let {
+        deliverySlotsGridViewAdapter = fragment.context?.let {
             DeliverySlotsGridViewAdapter(
                 it,
                 R.layout.delivery_grid_card_item,
@@ -190,44 +195,61 @@ class ExpandableGrid(val fragment: Fragment) {
         slotGridView.apply {
             numColumns = deliveryHoursSlots?.size ?: 0
             setViewExpanded(true)
-            this.adapter = adapter
+            this.adapter = deliverySlotsGridViewAdapter
         }
 
         slotGridView.setOnItemClickListener { _, _, position, id ->
             val deliveryList =
                 if (deliveryType.equals(DeliveryType.ONLY_FOOD) || deliveryType.equals(DeliveryType.MIXED_FOOD)) slotGridList[FOOD] else slotGridList[OTHER]
-
             if (deliveryList?.get(position)?.slot?.available == true) {
-                for (model in deliveryList) {
-                    model.slot.selected = false
-                    if (model.slot.available == true) {
-                        if (model.slot.freeDeliverySlot == true)
-                            model.backgroundImgColor = LIGHT_GREEN.color
-                        else
-                            model.backgroundImgColor = WHITE.color
-                    } else {
-                        model.backgroundImgColor = LIGHT_GREY.color
-                    }
-                }
-
-                val deliveryGridModel: DeliveryGridModel = deliveryList[position]
-                deliveryGridModel.slot.selected = true
-                deliveryGridModel.backgroundImgColor =
-                    if (deliveryGridModel.slot.freeDeliverySlot == true) DARK_GREEN.color else LIGHT_BLUE.color
-                //set selected slot in Main list
-                if (fragment is CheckoutAddAddressReturningUserFragment) {
-                    setSlotSelection(
-                        weekNumber,
-                        position,
-                        true,
-                        fragment.getSelectedSlotResponse(deliveryType),
-                        deliveryType
-                    )
-                    fragment.setSelectedFoodOrOtherSlot(deliveryGridModel.slot, deliveryType)
-                }
-                adapter?.notifyDataSetChanged()
+                gridOnClickListner(deliveryType, position, weekNumber,
+                    slotGridView.adapter as? DeliverySlotsGridViewAdapter
+                )
             }
         }
+    }
+
+    fun gridOnClickListner(
+        deliveryType: DeliveryType,
+        position: Int,
+        weekNumber: Int,
+        adapter: DeliverySlotsGridViewAdapter?
+    ) {
+        val deliveryList =
+            if (deliveryType.equals(DeliveryType.ONLY_FOOD) || deliveryType.equals(DeliveryType.MIXED_FOOD)) slotGridList[FOOD] else slotGridList[OTHER]
+
+        if (!deliveryList.isNullOrEmpty()) {
+            for (model in deliveryList) {
+                model.slot.selected = false
+                if (model.slot.available == true) {
+                    if (model.slot.freeDeliverySlot == true)
+                        model.backgroundImgColor = LIGHT_GREEN.color
+                    else
+                        model.backgroundImgColor = WHITE.color
+                } else {
+                    model.backgroundImgColor = LIGHT_GREY.color
+                }
+            }
+        }
+
+        if (position != DEFAULT_POSITION && !deliveryList.isNullOrEmpty()) {
+            val deliveryGridModel: DeliveryGridModel = deliveryList[position]
+            deliveryGridModel.slot.selected = true
+            deliveryGridModel.backgroundImgColor =
+                if (deliveryGridModel.slot.freeDeliverySlot == true) DARK_GREEN.color else LIGHT_BLUE.color
+            //set selected slot in Main list
+            if (fragment is CheckoutAddAddressReturningUserFragment) {
+                setSlotSelection(
+                    weekNumber,
+                    position,
+                    true,
+                    fragment.getSelectedSlotResponse(deliveryType),
+                    deliveryType
+                )
+                fragment.setSelectedFoodOrOtherSlot(deliveryGridModel.slot, deliveryType)
+            }
+        }
+        adapter?.notifyDataSetChanged()
     }
 
     private fun setSlotSelection(

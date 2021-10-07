@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -82,17 +83,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         toolbar?.visibility = View.GONE
     }
 
-    fun showTitleWithCrossButton(titleText: String) {
-        toolbar?.visibility = View.VISIBLE
-        setSupportActionBar(toolbar)
-        btnClose?.visibility = View.VISIBLE
-        btnClose.setOnClickListener(this)
-        toolbarText.text = titleText
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(false)
-        }
-    }
-
     private fun loadNavHostFragment() {
         navHostFrag = navHostFragment as NavHostFragment
         val graph =
@@ -108,6 +98,12 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             else -> R.id.CheckoutAddAddressReturningUserFragment
         }
         findNavController(R.id.navHostFragment).setGraph(graph, baseFragBundle)
+    }
+
+    private fun finishActivityOnCheckoutSuccess() {
+        setResult(RESULT_CANCELED)
+        finish()
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -171,6 +167,10 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CHECKOUT_ON_DESTROY && resultCode == RESULT_CANCELED) {
+            finishActivityOnCheckoutSuccess()
+            return
+        }
         navHostFrag.childFragmentManager.fragments.let {
             if (it.isNullOrEmpty()) {
                 return
