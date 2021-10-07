@@ -6,6 +6,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResultListener
@@ -201,9 +202,14 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun setSuburb() {
         selectedSuburb.storeAddress.suburbId?.let { storeId ->
             loadingProgressBar.visibility = View.VISIBLE
+            activity?.getWindow()?.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
             checkoutAddressConfirmationViewModel.setSuburb(storeId)
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
+                    activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
                         is SetDeliveryLocationSuburbResponse -> {
                             when (response.httpCode) {
@@ -228,9 +234,13 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     if (!isDeliverySelected) {
                                         val openCheckOutActivity =
                                             Intent(context, CartCheckoutActivity::class.java)
+                                        openCheckOutActivity.putExtra(
+                                            CheckOutFragment.IS_NATIVE_CHECKOUT,
+                                            true
+                                        )
                                         activity?.startActivityForResult(
                                             openCheckOutActivity,
-                                            CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY
+                                            CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
                                         )
                                         activity?.overridePendingTransition(0, 0)
                                     }
@@ -456,9 +466,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             if (foodItemDate.isNullOrEmpty()) {
                 hideEarliestDeliveryView()
             } else {
-                foodItemsDeliveryDateLayout.visibility = View.VISIBLE
+                foodItemsDeliveryDateLayout.visibility = View.GONE
                 otherItemsDeliveryDateLayout.visibility = View.GONE
-                foodItemsDeliveryDate.text = foodItemDate
+                earliestDateValue.text = foodItemDate
             }
         } else if (fulfillmentsType?.join == OTHER.type && fulfillmentsType.other == OTHER.type) {
             //Mixed Basket
@@ -473,8 +483,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     if (foodItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                 otherItemsDeliveryDateLayout.visibility =
                     if (otherItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                foodItemsDeliveryDate.text = foodItemDate
-                otherItemsDeliveryDate.text = otherItemDate
+                if (foodItemsDeliveryDateLayout.visibility == View.GONE || otherItemsDeliveryDateLayout.visibility == View.GONE) {
+                    earliestDateValue.text = foodItemDate ?: otherItemDate
+                } else {
+                    foodItemsDeliveryDate.text = foodItemDate
+                    otherItemsDeliveryDate.text = otherItemDate
+                }
             }
 
         } else {
@@ -485,8 +499,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 hideEarliestDeliveryView()
             } else {
                 foodItemsDeliveryDateLayout.visibility = View.GONE
-                otherItemsDeliveryDateLayout.visibility = View.VISIBLE
-                otherItemsDeliveryDate.text = otherItemDate
+                otherItemsDeliveryDateLayout.visibility = View.GONE
+                earliestDateValue.text = otherItemDate
             }
         }
 
@@ -846,9 +860,14 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun callChangeAddressApi() {
         selectedAddress?.nickname?.let { nickname ->
             loadingProgressBar.visibility = View.VISIBLE
+            activity?.getWindow()?.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
             checkoutAddAddressNewUserViewModel.changeAddress(nickname)
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
+                    activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
                         is ChangeAddressResponse -> {
                             when (response.httpCode) {

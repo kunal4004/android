@@ -35,10 +35,9 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment.Companion.KEY_ARGS_WEB_TOKEN
+import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.Companion.DEFAULT_POSITION
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
-import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_STANDARD
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
-import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_VALUE
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
@@ -240,7 +239,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 ?: baseFragBundle?.getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
                         ?: SavedAddressResponse()
 
-            if (savedAddress == null || savedAddress.addresses.isNullOrEmpty()) {
+            if (savedAddress?.addresses.isNullOrEmpty()) {
                 checkoutDeliveryDetailsLayout?.visibility = View.GONE
                 return
             }
@@ -427,8 +426,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         if (TextUtils.isEmpty(suburbId)) {
             presentErrorDialog(
                 getString(R.string.common_error_unfortunately_something_went_wrong),
-                getString(R.string.common_error_message_without_contact_info),
-                ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
+                getString(R.string.common_error_message_without_contact_info)
             )
             return
         }
@@ -454,15 +452,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     is Throwable -> {
                         presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
-                            getString(R.string.no_internet_subtitle),
-                            ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
+                            getString(R.string.no_internet_subtitle)
                         )
                     }
                 }
             })
     }
 
-    private fun presentErrorDialog(title: String, subTitle: String, type: Int) {
+    private fun presentErrorDialog(title: String, subTitle: String) {
         val bundle = Bundle()
         bundle.putString(
             ErrorHandlerBottomSheetDialog.ERROR_TITLE,
@@ -472,7 +469,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION,
             subTitle
         )
-        bundle.putInt(ErrorHandlerBottomSheetDialog.ERROR_TYPE, type)
+        bundle.putInt(
+            ErrorHandlerBottomSheetDialog.ERROR_TYPE,
+            ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
+        )
         view?.findNavController()?.navigate(
             R.id.action_CheckoutAddAddressReturningUserFragment_to_ErrorHandlerBottomSheetDialog,
             bundle
@@ -627,8 +627,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         if (TextUtils.isEmpty(response.jsessionId) || TextUtils.isEmpty(response.auth)) {
                             presentErrorDialog(
                                 getString(R.string.common_error_unfortunately_something_went_wrong),
-                                getString(R.string.common_error_message_without_contact_info),
-                                ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
+                                getString(R.string.common_error_message_without_contact_info)
                             )
                             return@observe
                         }
@@ -637,8 +636,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     is Throwable -> {
                         presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
-                            getString(R.string.common_error_message_without_contact_info),
-                            ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
+                            getString(R.string.common_error_message_without_contact_info)
                         )
                     }
                 }
@@ -717,7 +715,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         otherDeliverySlotId = ""
                         foodDeliveryStartHour = selectedFoodSlot?.hourFrom?.toLong() ?: 0
                         otherDeliveryStartHour = 0
-                        oddDeliverySlotId = selectedOtherSlot?.slotId
+                        oddDeliverySlotId = selectedOpedDayDeliverySlot?.deliverySlotId
                     }
                 }
             }
@@ -801,12 +799,13 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     ) {
         oddSelectedPosition = position
         selectedOpedDayDeliverySlot = openDayDeliverySlot
+        validateContinueToPaymentButton()
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_.plus(openDayDeliverySlot.deliveryType),
+            activity
+        )
         when (openDayDeliverySlot.deliveryType) {
             DELIVERY_TYPE_TIMESLOT -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_TIMESLOT,
-                    activity
-                )
                 gridLayoutDeliveryOptions.visibility = View.VISIBLE
                 otherType = type
                 expandableGrid.apply {
@@ -815,22 +814,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     initialiseGridView(selectedSlotResponseOther, FIRST.week, type)
                 }
             }
-            DELIVERY_TYPE_STANDARD -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_STANDARD,
-                    activity
+            else -> {
+                gridLayoutDeliveryOptions.visibility = View.GONE
+                expandableGrid.gridOnClickListner(
+                    type,
+                    DEFAULT_POSITION,
+                    FIRST.week,
+                    expandableGrid.deliverySlotsGridViewAdapter
                 )
-                gridLayoutDeliveryOptions.visibility = View.GONE
+                selectedOtherSlot = Slot()
             }
-            DELIVERY_TYPE_VALUE -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_VALUE,
-                    activity
-                )
-                gridLayoutDeliveryOptions.visibility = View.GONE
-            }
-            else ->
-                gridLayoutDeliveryOptions.visibility = View.GONE
         }
     }
 }
