@@ -72,7 +72,6 @@ class OrderConfirmationFragment : Fragment() {
                                     setupDeliveryOrCollectionDetails(response)
                                     setupOrderTotalDetails(response)
                                     setupOrderDetailsBottomSheet(response)
-                                    showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
                                 }
                                 else -> {
                                     showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
