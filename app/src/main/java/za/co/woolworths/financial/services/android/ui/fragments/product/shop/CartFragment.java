@@ -124,6 +124,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
+    private static final int REQUEST_PAYMENT_STATUS = 4775;
     private String mSuburbName, mProvinceName;
     private int mQuantity;
 
@@ -439,11 +440,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void navigateToCheckout(SavedAddressResponse response) {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
-        Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
-        checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
-        startActivity(checkoutActivityIntent);
-        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
+        Activity activity = getActivity();
+        if (activity != null) {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
+            Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
+            checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
+            activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
+            activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
+        }
     }
 
     @Override
@@ -1252,6 +1256,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         showVouchersOrPromoCodeAppliedToast(getString(CartUtils.Companion.getAppliedVouchersCount(voucherDetails.getVouchers()) > 0 ? R.string.vouchers_applied_toast_message : R.string.vouchers_removed_toast_message));
                     if (requestCode == APPLY_PROMO_CODE_REQUEST_CODE)
                         showVouchersOrPromoCodeAppliedToast(getString(R.string.promo_code_applied_toast_message));
+                    break;
+                case REQUEST_PAYMENT_STATUS:
+                    if(getActivity() != null) getActivity().onBackPressed();
                     break;
                 default:
                     break;

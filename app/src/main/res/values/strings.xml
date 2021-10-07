@@ -2276,5 +2276,9 @@
     <string name="sign_up">SIGN UP</string>
     <string name="wrewards_logo_rewards">REWARDS</string>
     <string name="wrewards_logo_w">W</string>
+    <string name="payment_order_confirmed">Order Confirmed</string>
+    <string name="submitted_order_error_something_went_wrong">Your order was successful,  but we’re having trouble displaying the details here.</string>
+    <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
+    <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
 
 </resources>

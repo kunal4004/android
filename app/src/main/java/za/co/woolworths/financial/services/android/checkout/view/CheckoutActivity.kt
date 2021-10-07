@@ -121,8 +121,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         //in Navigation component if Back stack entry count is 0 means it has last fragment presented.
         // if > 0 means others are in backstack but fragment list size will always be 1
         if (fragmentList.isNullOrEmpty() || navHostFrag.childFragmentManager.backStackEntryCount == 0) {
-            finish()
-            overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+            closeActivity()
             return
         }
 
@@ -138,17 +137,24 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                     FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS,
                     this
                 )
-                finish()
-                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+                closeActivity()
             }
-            is CheckoutAddAddressReturningUserFragment, is OrderConfirmationFragment -> {
-                finish()
-                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+            is CheckoutAddAddressReturningUserFragment -> {
+                closeActivity()
+            }
+            is OrderConfirmationFragment -> {
+                setResult(RESULT_OK)
+                closeActivity()
             }
             else -> {
                 super.onBackPressed()
             }
         }
+    }
+
+    private fun closeActivity() {
+        finish()
+        overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
 
     override fun onClick(v: View?) {
