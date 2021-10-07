@@ -202,8 +202,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun setSuburb() {
         selectedSuburb.storeAddress.suburbId?.let { storeId ->
             loadingProgressBar.visibility = View.VISIBLE
-            activity?.getWindow()?.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            activity?.getWindow()?.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
             checkoutAddressConfirmationViewModel.setSuburb(storeId)
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
@@ -232,7 +234,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     if (!isDeliverySelected) {
                                         val openCheckOutActivity =
                                             Intent(context, CartCheckoutActivity::class.java)
-                                        openCheckOutActivity.putExtra(CheckOutFragment.IS_NATIVE_CHECKOUT, true)
+                                        openCheckOutActivity.putExtra(
+                                            CheckOutFragment.IS_NATIVE_CHECKOUT,
+                                            true
+                                        )
                                         activity?.startActivityForResult(
                                             openCheckOutActivity,
                                             CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
@@ -461,9 +466,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             if (foodItemDate.isNullOrEmpty()) {
                 hideEarliestDeliveryView()
             } else {
-                foodItemsDeliveryDateLayout.visibility = View.VISIBLE
+                foodItemsDeliveryDateLayout.visibility = View.GONE
                 otherItemsDeliveryDateLayout.visibility = View.GONE
-                foodItemsDeliveryDate.text = foodItemDate
+                earliestDateValue.text = foodItemDate
             }
         } else if (fulfillmentsType?.join == OTHER.type && fulfillmentsType.other == OTHER.type) {
             //Mixed Basket
@@ -478,8 +483,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     if (foodItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                 otherItemsDeliveryDateLayout.visibility =
                     if (otherItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
-                foodItemsDeliveryDate.text = foodItemDate
-                otherItemsDeliveryDate.text = otherItemDate
+                if (foodItemsDeliveryDateLayout.visibility == View.GONE || otherItemsDeliveryDateLayout.visibility == View.GONE) {
+                    earliestDateValue.text = foodItemDate ?: otherItemDate
+                } else {
+                    foodItemsDeliveryDate.text = foodItemDate
+                    otherItemsDeliveryDate.text = otherItemDate
+                }
             }
 
         } else {
@@ -490,8 +499,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 hideEarliestDeliveryView()
             } else {
                 foodItemsDeliveryDateLayout.visibility = View.GONE
-                otherItemsDeliveryDateLayout.visibility = View.VISIBLE
-                otherItemsDeliveryDate.text = otherItemDate
+                otherItemsDeliveryDateLayout.visibility = View.GONE
+                earliestDateValue.text = otherItemDate
             }
         }
 
@@ -851,8 +860,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun callChangeAddressApi() {
         selectedAddress?.nickname?.let { nickname ->
             loadingProgressBar.visibility = View.VISIBLE
-            activity?.getWindow()?.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            activity?.getWindow()?.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
             checkoutAddAddressNewUserViewModel.changeAddress(nickname)
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
