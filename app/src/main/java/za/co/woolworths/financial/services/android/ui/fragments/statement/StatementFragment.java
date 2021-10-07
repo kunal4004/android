@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -70,7 +71,6 @@ import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.FILE_VALUE;
 import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.PAGE_TITLE;
-import static za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.APPLY_NOW_STATE;
 
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
@@ -97,6 +97,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
     private ApplyNowState applyNowState;
+    public static boolean SHOW_SEND_STATEMENT_SCREEN = false;
+    public static boolean SEND_STATEMENT_DETAIL = false;
 
     public StatementFragment() {
     }
@@ -215,6 +217,50 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         }
     }
 
+    private void viewPdfStatement(){
+        showViewProgress();
+        final FragmentActivity activity = getActivity();
+        if (activity == null || !isAdded()) return;
+        mGetPdfFile = OneAppService.INSTANCE.getPDFResponse(mGetStatementFile);
+        mGetPdfFile.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    if (getActivity() != null) {
+                        loadSuccess();
+                        hideViewProgress();
+                        if (response.code() == 200) {
+                            try {
+                                if (response.body() != null) {
+                                    String fileName = "statement_" + mSelectedStatement.docDesc;
+                                    Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
+                                    openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
+                                    openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());
+                                    openPdfIntent.putExtra(PAGE_TITLE, mSelectedStatement.docDesc);
+                                    activity.startActivity(openPdfIntent);
+                                }
+                            } catch (Exception ex) {
+                                FirebaseManager.Companion.logException(ex);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.runOnUiThread(() -> {
+                        mErrorHandlerView.showToast();
+                        loadFailure();
+                        hideViewProgress();
+                    });
+                }
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
         Activity activity = getActivity();
@@ -329,48 +375,17 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
     public void getPdfFile(ApplyNowState state) {
         applyNowState = state;
-        showViewProgress();
-        final FragmentActivity activity = getActivity();
-        if (activity == null || !isAdded()) return;
-        mGetPdfFile = OneAppService.INSTANCE.getPDFResponse(mGetStatementFile);
-        mGetPdfFile.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    if (getActivity() != null) {
-                        loadSuccess();
-                        hideViewProgress();
-                        if (response.code() == 200) {
-                            try {
-                                if (response.body() != null) {
-                                    String fileName = "statement_" + mSelectedStatement.docDesc;
-                                    Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
-                                    openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
-                                    openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());
-                                    openPdfIntent.putExtra(PAGE_TITLE, mSelectedStatement.docDesc);
-                                    openPdfIntent.putExtra(APPLY_NOW_STATE, applyNowState);
-                                    activity.startActivity(openPdfIntent);
-                                }
-                            } catch (Exception ex) {
-                                FirebaseManager.Companion.logException(ex);
-                            }
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
-                Activity activity = getActivity();
-                if (activity != null) {
-                    activity.runOnUiThread(() -> {
-                        mErrorHandlerView.showToast();
-                        loadFailure();
-                        hideViewProgress();
-                    });
-                }
-            }
-        });
+        if (applyNowState != null) {
+            KotlinUtils.Companion.linkDeviceIfNecessary(
+                    getActivity(),
+                    applyNowState,
+                    () -> { SEND_STATEMENT_DETAIL = true; return null; },
+                    () -> { viewPdfStatement(); return null; }
+            );
+        }
+        else {
+            viewPdfStatement();
+        }
     }
 
     @Override
@@ -415,6 +430,10 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
                 ((StatementActivity) activity).setTitle(getString(R.string.statement));
             }
+        }
+        if(SHOW_SEND_STATEMENT_SCREEN) {
+            SHOW_SEND_STATEMENT_SCREEN = false;
+            viewPdfStatement();
         }
     }
 

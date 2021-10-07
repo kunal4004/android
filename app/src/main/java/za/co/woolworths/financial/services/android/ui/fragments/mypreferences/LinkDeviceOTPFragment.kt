@@ -69,6 +69,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.S
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
+import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
@@ -568,7 +569,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     AccountsOptionFragment.CLI_DETAIL -> {
                                                         showCLIScreen()
                                                     }
-                                                    WPdfViewerActivity.SEND_STATEMENT_DETAIL -> {
+                                                    StatementFragment.SEND_STATEMENT_DETAIL -> {
                                                         showSendStatementScreen()
                                                     }
                                                     StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
@@ -643,8 +644,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun showSendStatementScreen(){
-        WPdfViewerActivity.SHOW_SEND_STATEMENT_SCREEN = true
-        WPdfViewerActivity.SEND_STATEMENT_DETAIL = false
+        StatementFragment.SHOW_SEND_STATEMENT_SCREEN = true
+        StatementFragment.SEND_STATEMENT_DETAIL = false
         activity?.finish()
     }
 
