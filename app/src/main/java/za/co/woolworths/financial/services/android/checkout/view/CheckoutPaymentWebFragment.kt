@@ -2,11 +2,13 @@ package za.co.woolworths.financial.services.android.checkout.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -31,7 +33,9 @@ import android.webkit.WebResourceResponse
 import com.google.common.net.HttpHeaders
 import okhttp3.Request
 import okhttp3.Response
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
+import za.co.woolworths.financial.services.android.util.AppConstant
 import java.net.URI
 
 
@@ -90,7 +94,7 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
                 return@apply
             }
 
-            webViewClient = WebViewClient()
+            webViewClient = CheckoutPaymentWebViewClient()
             settings.javaScriptEnabled = true
             val cookieManager = CookieManager.getInstance()
 
@@ -105,19 +109,33 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
         }
     }
 
+    inner class CheckoutPaymentWebViewClient : WebViewClient() {
+        override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+            super.doUpdateVisitedHistory(view, url, isReload)
+            url?.let { onStatusChanged(it) }
+        }
+    }
+
     private fun navigateToOrderConfirmation() {
-        view?.findNavController()?.navigate(R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment)
+        paymentSuccessConfirmationLayout?.visibility = View.VISIBLE
+        Handler(Looper.getMainLooper()).postDelayed({
+            paymentSuccessConfirmationLayout?.visibility = View.GONE
+
+            view?.findNavController()
+                ?.navigate(R.id.action_checkoutPaymentWebFragment_orderConfirmationFragment)
+        }, AppConstant.DELAY_1500_MS)
     }
 
     override fun onPageStarted(url: String?, favicon: Bitmap?) {
         progressBar?.visibility = View.VISIBLE
-        if (Uri.parse(url).getQueryParameter(KEY_STATUS) == PaymentStatus.PAYMENT_ABANDON.type) {
-            view?.findNavController()?.navigateUp()
-        }
     }
 
     override fun onPageFinished(url: String?) {
         progressBar?.visibility = View.GONE
+        url?.let { onStatusChanged(it) }
+    }
+
+    private fun onStatusChanged(url: String) {
         when (Uri.parse(url).getQueryParameter(KEY_STATUS)) {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
                 navigateToOrderConfirmation()
