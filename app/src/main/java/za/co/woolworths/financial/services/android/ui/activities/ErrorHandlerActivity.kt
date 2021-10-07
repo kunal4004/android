@@ -21,6 +21,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
 
         const val ERROR_TYPE = "errorType"
         const val ERROR_MESSAGE = "errorMessage"
+        const val ERROR_TITLE = "errorTitle"
 
         // Error Types
         const val COMMON: Int = 0
@@ -30,6 +31,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
         const val LINK_DEVICE_FAILED: Int = 4
         const val ERROR_STORE_CARD_EMAIL_CONFIRMATION: Int = 5
         const val ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT: Int = 6
+        const val ERROR_TYPE_SUBMITTED_ORDER: Int = 7
 
         const val COMMON_WITH_BACK_BUTTON: Int = 5
 
@@ -62,7 +64,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
             when (errorType) {
-                COMMON_WITH_BACK_BUTTON -> {
+                ERROR_TYPE_SUBMITTED_ORDER, COMMON_WITH_BACK_BUTTON -> {
                     setDisplayHomeAsUpEnabled(true)
                     setHomeAsUpIndicator(R.drawable.back24)
                 }
@@ -84,7 +86,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.error_handler_activity_menu, menu)
         when (errorType) {
-            COMMON_WITH_BACK_BUTTON -> {
+            ERROR_TYPE_SUBMITTED_ORDER, COMMON_WITH_BACK_BUTTON -> {
                 menu?.clear()
             }
         }

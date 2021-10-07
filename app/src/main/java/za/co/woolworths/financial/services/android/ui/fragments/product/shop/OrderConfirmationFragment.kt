@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Typeface.BOLD
 import android.os.Bundle
 import android.text.Spannable
@@ -9,7 +11,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -26,10 +31,13 @@ import za.co.woolworths.financial.services.android.models.dto.cart.OrderItems
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -56,16 +64,39 @@ class OrderConfirmationFragment : Fragment() {
         OneAppService.getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
-                    response?.orderSummary?.orderId?.let { setToolbar(it) }
-                    setupDeliveryOrCollectionDetails(response)
-                    setupOrderTotalDetails(response)
-                    setupOrderDetailsBottomSheet(response)
+                    when (response) {
+                        is SubmittedOrderResponse -> {
+                            when (response.httpCode) {
+                                AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
+                                    response.orderSummary?.orderId?.let { setToolbar(it) }
+                                    setupDeliveryOrCollectionDetails(response)
+                                    setupOrderTotalDetails(response)
+                                    setupOrderDetailsBottomSheet(response)
+                                    showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
+                                }
+                                else -> {
+                                    showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
+                                }
+                            }
+                        }
+                        else -> {
+                            showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
+                        }
+                    }
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    //TODO: handle error
+                    showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
                 }
             }, SubmittedOrderResponse::class.java))
+    }
+
+    private fun showErrorScreen(errorType: Int) {
+        activity?.apply {
+            val intent = Intent(this, ErrorHandlerActivity::class.java)
+            intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType)
+            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
     }
 
     private fun setToolbar(orderId: String) {
@@ -295,5 +326,21 @@ class OrderConfirmationFragment : Fragment() {
             )
         }
         return wordSpan
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
+                when (resultCode) {
+                    ErrorHandlerActivity.RESULT_RETRY -> {
+                        getOrderDetails()
+                    }
+                    ErrorHandlerActivity.RESULT_CALL_CENTER -> {
+                        (activity as? CheckoutActivity)?.onBackPressed()
+                    }
+                }
+            }
+        }
     }
 }
