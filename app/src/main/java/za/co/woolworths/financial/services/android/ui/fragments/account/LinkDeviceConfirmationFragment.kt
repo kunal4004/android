@@ -94,8 +94,21 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
         context?.let {
             when(mApplyNowState){
-                ApplyNowState.STORE_CARD ->
+                ApplyNowState.STORE_CARD ->{
+                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.sc_asset)
                     linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_sc)
+                }
+                ApplyNowState.PERSONAL_LOAN ->{
+                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.pl_asset)
+                    linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_pl)
+                }
+                ApplyNowState.SILVER_CREDIT_CARD,
+                ApplyNowState.GOLD_CREDIT_CARD,
+                ApplyNowState.BLACK_CREDIT_CARD ->
+                {
+                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.cc_asset)
+                    linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_cc)
+                }
 
                 else -> linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc)
             }
