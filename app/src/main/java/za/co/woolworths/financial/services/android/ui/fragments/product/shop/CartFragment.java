@@ -440,8 +440,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void navigateToCheckout(SavedAddressResponse response) {
-        if (getActivity() != null) {
-            Activity activity = getActivity();
+        Activity activity = getActivity();
+        if (activity != null) {
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
