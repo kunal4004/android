@@ -97,8 +97,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
     private ApplyNowState applyNowState;
-    public static boolean SHOW_SEND_STATEMENT_SCREEN = false;
-    public static boolean SEND_STATEMENT_DETAIL = false;
+    public static boolean SHOW_VIEW_STATEMENT_SCREEN = false;
+    public static boolean VIEW_STATEMENT_DETAIL = false;
 
     public StatementFragment() {
     }
@@ -379,7 +379,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             KotlinUtils.Companion.linkDeviceIfNecessary(
                     getActivity(),
                     applyNowState,
-                    () -> { SEND_STATEMENT_DETAIL = true; return null; },
+                    () -> { VIEW_STATEMENT_DETAIL = true; return null; },
                     () -> { viewPdfStatement(); return null; }
             );
         }
@@ -431,8 +431,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 ((StatementActivity) activity).setTitle(getString(R.string.statement));
             }
         }
-        if(SHOW_SEND_STATEMENT_SCREEN) {
-            SHOW_SEND_STATEMENT_SCREEN = false;
+        if(SHOW_VIEW_STATEMENT_SCREEN) {
+            SHOW_VIEW_STATEMENT_SCREEN = false;
             viewPdfStatement();
         }
     }

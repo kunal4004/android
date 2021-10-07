@@ -569,7 +569,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     AccountsOptionFragment.CLI_DETAIL -> {
                                                         showCLIScreen()
                                                     }
-                                                    StatementFragment.SEND_STATEMENT_DETAIL -> {
+                                                    StatementFragment.VIEW_STATEMENT_DETAIL -> {
                                                         showSendStatementScreen()
                                                     }
                                                     StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
@@ -644,8 +644,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     }
 
     private fun showSendStatementScreen(){
-        StatementFragment.SHOW_SEND_STATEMENT_SCREEN = true
-        StatementFragment.SEND_STATEMENT_DETAIL = false
+        StatementFragment.SHOW_VIEW_STATEMENT_SCREEN = true
+        StatementFragment.VIEW_STATEMENT_DETAIL = false
         activity?.finish()
     }
 
