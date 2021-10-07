@@ -588,4 +588,12 @@ object OneAppService : RetrofitConfig() {
                 )
         )
     }
+
+    fun getEligibilityForTakeUpPlan(): Call<EligibilityTakeUpPlanResponse> {
+        return mApiInterface.getEligibilityForTakeUpPlan(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken())
+    }
 }
