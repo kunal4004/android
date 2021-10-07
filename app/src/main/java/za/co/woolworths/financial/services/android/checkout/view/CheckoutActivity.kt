@@ -101,7 +101,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun finishActivityOnCheckoutSuccess() {
-        setResult(RESULT_CANCELED)
+        setResult(REQUEST_CHECKOUT_ON_DESTROY)
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
@@ -167,7 +167,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CHECKOUT_ON_DESTROY && resultCode == RESULT_CANCELED) {
+        if (requestCode == REQUEST_CHECKOUT_ON_DESTROY && resultCode == REQUEST_CHECKOUT_ON_DESTROY) {
             finishActivityOnCheckoutSuccess()
             return
         }

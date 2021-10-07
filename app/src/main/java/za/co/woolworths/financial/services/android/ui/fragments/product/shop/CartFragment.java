@@ -1,12 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
+import static za.co.woolworths.financial.services.android.ui.activities.CartActivity.CHECKOUT_SUCCESS;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
@@ -311,7 +314,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-            Activity activity = (Activity) context;
+        Activity activity = (Activity) context;
         if (activity != null) {
             mToggleItemRemoved = (ToggleRemoveItem) activity;
         }
@@ -1258,17 +1261,25 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         showVouchersOrPromoCodeAppliedToast(getString(R.string.promo_code_applied_toast_message));
                     break;
                 case REQUEST_PAYMENT_STATUS:
-                    if(getActivity() != null) getActivity().onBackPressed();
+                    if (getActivity() != null) getActivity().onBackPressed();
                     break;
                 default:
                     break;
             }
+        } else if (resultCode == REQUEST_CHECKOUT_ON_DESTROY && requestCode == REQUEST_PAYMENT_STATUS) {
+            finishActivityOnCheckoutSuccess();
         }
 
         // Retry callback when saved address api fails
         if (resultCode == ErrorHandlerActivity.RESULT_RETRY) {
             callSavedAddress();
         }
+    }
+
+    private void finishActivityOnCheckoutSuccess() {
+        getActivity().setResult(CHECKOUT_SUCCESS);
+        getActivity().finish();
+        getActivity().overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
     }
 
     private void checkLocationChangeAndReload() {
