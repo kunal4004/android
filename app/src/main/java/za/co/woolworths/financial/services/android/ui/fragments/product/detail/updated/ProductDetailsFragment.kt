@@ -78,6 +78,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 
 
@@ -576,12 +577,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             if (it.isRnREnabled) {
                 ratingBarTop.rating = it.averageRating
-                tvTotalReviews.text = getString(R.string.no_reviews, it.reviewCount)
+                if(it.reviewCount<2)
+                    tvTotalReviews.text = getString(R.string.no_review, it.reviewCount)
+                else
+                    tvTotalReviews.text = getString(R.string.no_reviews, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
                 tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
                 ratingBar.rating = it.averageRating
-                tvCustomerReviewCount.text = getString(R.string.customer_reviews, "("+it.reviewCount+")")
+                if(it.reviewCount<2)
+                    tvCustomerReviewCount.text = getString(R.string.customer_review, "("+it.reviewCount+")")
+                else
+                    tvCustomerReviewCount.text = getString(R.string.customer_reviews, "("+it.reviewCount+")")
                 tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
                 setReviewUI()
             }else{
@@ -633,7 +640,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun setReviewUI(){
-        for (i in 1..2){
+        tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+        tvSkinProfile.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+        for (i in 1..1){
             val rootView = LinearLayout(context)
             rootView.layoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -676,7 +685,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun setSecondaryRatingsUI(){
-        for (i in 1..4 step 2){
+        for (i in 1..2 step 2){
             val rootView = LinearLayout(context)
             rootView.layoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)

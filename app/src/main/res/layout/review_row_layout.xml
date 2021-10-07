@@ -79,12 +79,12 @@
     <TextView
         android:id="@+id/tvDate"
         style="@style/myriad_pro_regular_black_15_text_style"
-        android:layout_width="85dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/nineteen_dp"
         android:alpha="0.5"
         android:gravity="center_vertical"
-        android:text="@string/rating_details"
+        android:text="18 Sep 2020"
         android:textAllCaps="true"
         android:textSize="@dimen/text_size_12sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -153,9 +153,19 @@
         android:id="@+id/rvThumbnail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:itemCount="5"
+        tools:itemCount="1"
+        android:layout_marginTop="@dimen/twelve_dp"
         tools:listitem="@layout/review_thumbnail_row_item"
         app:layout_constraintTop_toBottomOf="@+id/llSecondaryRatings"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/reviewHelpfulReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/review_helpful_and_report_layout"
+        app:layout_constraintTop_toBottomOf="@+id/rvThumbnail"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/twenty_two_dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

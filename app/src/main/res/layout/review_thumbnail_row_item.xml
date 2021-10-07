@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/ten_dp"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="@dimen/five_dp"
+    android:layout_marginEnd="@dimen/eight_dp"
+    android:layout_marginTop="@dimen/eight_dp">
     <ImageView
-        android:layout_width="103dp"
-        android:layout_height="103dp"
+        android:layout_width="wrap_content"
+        android:layout_height="102dp"
         android:id="@+id/image"
         android:scaleType="fitXY"
-        android:src="@drawable/header_image"/>
+        android:src="@drawable/header_image"
+        android:contentDescription="@string/thumbnail" />
 
-</LinearLayout>
+</androidx.cardview.widget.CardView>
