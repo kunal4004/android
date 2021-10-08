@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white">
 
     <TableLayout
         android:id="@+id/deliveryOrCollectionLayout"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/fourty_dp"
+        android:layout_height="@dimen/fifty_dp"
         android:layout_marginStart="@dimen/thirty_dp"
-        android:layout_marginTop="@dimen/ten_dp"
         android:layout_marginEnd="@dimen/thirty_dp"
         android:background="@drawable/rounded_view_grey_tab_bg"
         android:gravity="center_vertical"
@@ -29,8 +28,8 @@
                 android:layout_weight="0.5"
                 android:background="@drawable/delivery_round_btn_white"
                 android:gravity="center"
-                android:paddingTop="@dimen/five_dp"
-                android:paddingBottom="@dimen/five_dp"
+                android:paddingTop="@dimen/ten_dp"
+                android:paddingBottom="@dimen/ten_dp"
                 android:text="@string/delivery"
                 android:textColor="@color/offer_title"
                 android:textSize="@dimen/fifteen_sp" />
@@ -43,8 +42,8 @@
                 android:layout_marginEnd="@dimen/five_dp"
                 android:layout_weight="0.5"
                 android:gravity="center"
-                android:paddingTop="@dimen/five_dp"
-                android:paddingBottom="@dimen/five_dp"
+                android:paddingTop="@dimen/ten_dp"
+                android:paddingBottom="@dimen/ten_dp"
                 android:text="@string/click_collect"
                 android:textColor="@color/offer_title"
                 android:textSize="@dimen/fifteen_sp" />
@@ -104,18 +103,16 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/sixteen_dp"
             android:visibility="gone"
-            tools:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/confirmAddressPartition">
+            app:layout_constraintTop_toBottomOf="@id/confirmAddressPartition"
+            tools:visibility="visible">
 
             <RelativeLayout
                 android:id="@+id/earliestDateTitleLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/five_dp"
-                android:paddingLeft="@dimen/twenty_four_dp"
-                android:paddingRight="@dimen/twenty_four_dp">
+                android:layout_marginTop="@dimen/five_dp">
 
                 <TextView
                     android:id="@+id/earliestDateTitle"
@@ -140,9 +137,7 @@
                 android:id="@+id/foodItemsDeliveryDateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/twelve_dp"
-                android:paddingLeft="@dimen/twenty_four_dp"
-                android:paddingRight="@dimen/twenty_four_dp">
+                android:layout_marginTop="@dimen/twelve_dp">
 
                 <TextView
                     android:id="@+id/foodItemsLabel"
@@ -167,9 +162,7 @@
                 android:id="@+id/otherItemsDeliveryDateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/three_dp"
-                android:paddingLeft="@dimen/twenty_four_dp"
-                android:paddingRight="@dimen/twenty_four_dp">
+                android:layout_marginTop="@dimen/three_dp">
 
                 <TextView
                     android:id="@+id/otherItemsLabel"

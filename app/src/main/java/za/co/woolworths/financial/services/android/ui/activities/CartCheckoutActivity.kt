@@ -27,7 +27,7 @@ class CartCheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 onBackPressed()
             }
             R.id.btnClose -> {
-                setResult(RESULT_CANCELED)
+                setResult(REQUEST_CHECKOUT_ON_DESTROY)
                 finish()
             }
             else -> {
