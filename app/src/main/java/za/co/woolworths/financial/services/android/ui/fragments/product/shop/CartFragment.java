@@ -1277,9 +1277,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void finishActivityOnCheckoutSuccess() {
-        getActivity().setResult(CHECKOUT_SUCCESS);
-        getActivity().finish();
-        getActivity().overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+        Activity activity = getActivity();
+        if (activity != null) {
+            activity.setResult(CHECKOUT_SUCCESS);
+            activity.finish();
+            activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+        }
     }
 
     private void checkLocationChangeAndReload() {
