@@ -50,8 +50,14 @@ class OrderConfirmationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setupActionBar()
         getOrderDetails()
+    }
+
+    private fun setupActionBar() {
+        (activity as? CheckoutActivity)?.apply {
+            supportActionBar?.let { it.show() }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
