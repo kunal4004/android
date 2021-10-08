@@ -50,7 +50,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
         val descBlock2Text = WSpannableStringBuilder(getString(R.string.absa_mobile_app_pin_blocked_desc_block_2))
 
         with(descBlock2Text) {
-            makeChangeToStringFont(appPinLabel, R.font.myriad_pro_semi_bold_otf)
+            makeStringUnderlined(appPinLabel)
             makeTextFontColor(appPinLabel)
         }
         setTextWithSpanBuilder(errorDescriptionBlock2TextView, descBlock2Text)
