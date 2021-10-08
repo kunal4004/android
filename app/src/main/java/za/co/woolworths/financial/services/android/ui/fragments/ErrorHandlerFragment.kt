@@ -4,14 +4,15 @@ import android.app.Activity
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.error_handler_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 
 class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
     override fun onDialogDismissed() {
@@ -21,10 +22,11 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
     companion object {
         var errorType: Int = 0
         var errorMessage: String? = null
+        var errorTitleText: String? = null
 
         fun newInstance(errorMessage: String, errorType: Int) = ErrorHandlerFragment().withArgs {
-            putInt("errorType", errorType)
-            putString("errorMessage", errorMessage)
+            putInt(ErrorHandlerActivity.ERROR_TYPE, errorType)
+            putString(ErrorHandlerActivity.ERROR_MESSAGE, errorMessage)
         }
     }
 
@@ -39,12 +41,16 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
-            if (containsKey("errorType")) {
-                errorType = arguments?.getInt("errorType", 0)!!
+            if (containsKey(ErrorHandlerActivity.ERROR_TYPE)) {
+                errorType = arguments?.getInt(ErrorHandlerActivity.ERROR_TYPE, 0)!!
             }
 
-            if (containsKey("errorMessage")) {
-                errorMessage = getString("errorMessage", "")
+            if (containsKey(ErrorHandlerActivity.ERROR_MESSAGE)) {
+                errorMessage = getString(ErrorHandlerActivity.ERROR_MESSAGE, "")
+            }
+
+            if (containsKey(ErrorHandlerActivity.ERROR_TITLE)) {
+                errorTitleText = getString(ErrorHandlerActivity.ERROR_TITLE, "")
             }
         }
     }
@@ -56,7 +62,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
     }
 
     private fun initListeners() {
-        if(errorType != ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT){
+        if (errorType != ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT) {
             cancelButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         }
         cancelButton.setOnClickListener(this)
@@ -90,13 +96,23 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
             ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON -> {
                 errorLogo?.setImageResource(R.drawable.ic_error_icon)
                 errorTitle?.text =
-                    getString(R.string.common_error_unfortunately_something_went_wrong)
+                    if (TextUtils.isEmpty(errorTitleText)) getString(R.string.common_error_unfortunately_something_went_wrong) else errorTitleText
                 errorDescription?.text =
-                    if(TextUtils.isEmpty(errorMessage))
-                      getString(R.string.common_error_message_without_contact_info)
+                    if (TextUtils.isEmpty(errorMessage))
+                        getString(R.string.common_error_message_without_contact_info)
                     else errorMessage
                 actionButton?.text = getString(R.string.retry)
                 cancelButton?.visibility = View.GONE
+            }
+            ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER -> {
+                errorLogo?.setImageResource(R.drawable.ic_error_icon)
+                errorTitle?.text =
+                    getString(R.string.submitted_order_error_something_went_wrong)
+                errorDescription?.text =
+                    getString(R.string.submitted_order_error_message)
+                actionButton?.text = getString(R.string.retry)
+                cancelButton?.text = getString(R.string.submitted_order_error_continue_shopping)
+                cancelButton?.visibility = View.VISIBLE
             }
             ErrorHandlerActivity.WITH_NO_ACTION -> {
                 errorLogo.setImageResource(R.drawable.ic_error_icon)
@@ -134,6 +150,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
         when (p0?.id) {
             R.id.cancelButton -> {
                 when (errorType) {
+                    ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER,
                     ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION,
                     ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT,
                     ErrorHandlerActivity.LINK_DEVICE_FAILED -> {

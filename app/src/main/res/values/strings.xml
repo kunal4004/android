@@ -2280,5 +2280,6 @@
     <string name="submitted_order_error_something_went_wrong">Your order was successful,  but we’re having trouble displaying the details here.</string>
     <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
     <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
+    <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
 
 </resources>

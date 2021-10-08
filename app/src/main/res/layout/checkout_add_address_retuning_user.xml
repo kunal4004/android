@@ -7,6 +7,7 @@
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity">
 
     <ScrollView
+        android:id="@+id/deliverySummaryScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/sign_in_register_button_border"
