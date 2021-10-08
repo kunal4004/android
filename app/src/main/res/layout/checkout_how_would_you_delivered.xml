@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:paddingBottom="@dimen/ten_dp">
 
@@ -50,6 +51,23 @@
             android:textSize="@dimen/fifteen_sp" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
+    <TextView
+        android:id="@+id/txtSelectDeliveryTimeSlotOtherError"
+        style="@style/myriad_pro_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:layout_weight="@integer/point_five"
+        android:padding="@dimen/two_dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:text="@string/select_your_preferred_delivery_time_error"
+        android:textColor="@color/color_D0021B"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/selectDeliveryTimeSlotSubTitleShimmerFrameLayout" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/deliveryTypeSelectionRecyclerView"
         android:layout_width="0dp"
@@ -60,7 +78,7 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toStartOf="@+id/rightguideline"
         app:layout_constraintStart_toEndOf="@+id/leftguideline"
-        app:layout_constraintTop_toBottomOf="@+id/selectDeliveryTimeSlotSubTitleShimmerFrameLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/txtSelectDeliveryTimeSlotOtherError" />
 
     <include
         android:id="@+id/gridLayoutDeliveryOptions"
