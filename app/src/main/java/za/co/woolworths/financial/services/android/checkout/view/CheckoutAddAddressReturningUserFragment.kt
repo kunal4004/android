@@ -17,6 +17,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
@@ -139,8 +140,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         addFragmentListner()
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
-        initializeFoodSubstitution()
-        initializeDeliveryInstructions()
         validateContinueToPaymentButton()
 
         expandableGrid.apply {
@@ -154,7 +153,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             else -> {
                 initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
-                expandableGrid.hideDeliveryTypeShimmerView()
+                stopShimmerView()
                 showDeliverySlotSelectionView()
             }
         }
@@ -421,6 +420,69 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
+    private fun startShimmerView() {
+        expandableGrid.setUpShimmerView()
+        expandableGrid.showDeliveryTypeShimmerView()
+        showDeliverySubTypeShimmerView()
+
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+
+        deliveringTitleShimmerFrameLayout.setShimmer(shimmer)
+        deliveringTitleShimmerFrameLayout.startShimmer()
+        tvNativeCheckoutDeliveringTitle.visibility = View.INVISIBLE
+
+        deliveringTitleValueShimmerFrameLayout.setShimmer(shimmer)
+        deliveringTitleValueShimmerFrameLayout.startShimmer()
+        tvNativeCheckoutDeliveringValue.visibility = View.INVISIBLE
+
+        forwardImgViewShimmerFrameLayout.setShimmer(shimmer)
+        forwardImgViewShimmerFrameLayout.startShimmer()
+        imageViewCaretForward.visibility = View.INVISIBLE
+
+        foodSubstitutionTitleShimmerFrameLayout.setShimmer(shimmer)
+        foodSubstitutionTitleShimmerFrameLayout.startShimmer()
+        txtFoodSubstitutionTitle.visibility = View.INVISIBLE
+
+        foodSubstitutionDescShimmerFrameLayout.setShimmer(shimmer)
+        foodSubstitutionDescShimmerFrameLayout.startShimmer()
+        txtFoodSubstitutionDesc.visibility = View.INVISIBLE
+
+        radioGroupFoodSubstitutionShimmerFrameLayout.setShimmer(shimmer)
+        radioGroupFoodSubstitutionShimmerFrameLayout.startShimmer()
+        radioGroupFoodSubstitution.visibility = View.INVISIBLE
+    }
+
+    private fun stopShimmerView() {
+        expandableGrid.hideDeliveryTypeShimmerView()
+
+        deliveringTitleShimmerFrameLayout.stopShimmer()
+        deliveringTitleShimmerFrameLayout.setShimmer(null)
+        tvNativeCheckoutDeliveringTitle.visibility = View.VISIBLE
+
+        deliveringTitleValueShimmerFrameLayout.stopShimmer()
+        deliveringTitleValueShimmerFrameLayout.setShimmer(null)
+        tvNativeCheckoutDeliveringValue.visibility = View.VISIBLE
+
+        forwardImgViewShimmerFrameLayout.stopShimmer()
+        forwardImgViewShimmerFrameLayout.setShimmer(null)
+        imageViewCaretForward.visibility = View.VISIBLE
+
+        foodSubstitutionTitleShimmerFrameLayout.stopShimmer()
+        foodSubstitutionTitleShimmerFrameLayout.setShimmer(null)
+        txtFoodSubstitutionTitle.visibility = View.VISIBLE
+
+        foodSubstitutionDescShimmerFrameLayout.stopShimmer()
+        foodSubstitutionDescShimmerFrameLayout.setShimmer(null)
+        txtFoodSubstitutionDesc.visibility = View.VISIBLE
+
+        radioGroupFoodSubstitutionShimmerFrameLayout.stopShimmer()
+        radioGroupFoodSubstitutionShimmerFrameLayout.setShimmer(null)
+        radioGroupFoodSubstitution.visibility = View.VISIBLE
+
+        initializeFoodSubstitution()
+        initializeDeliveryInstructions()
+    }
+
     private fun getConfirmDeliveryAddressDetails() {
 
         if (TextUtils.isEmpty(suburbId)) {
@@ -432,14 +494,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
 
         loadingBar.visibility = View.VISIBLE
-        expandableGrid.setUpShimmerView()
-        expandableGrid.showDeliveryTypeShimmerView()
-        showDeliverySubTypeShimmerView()
+        startShimmerView()
         val body = ConfirmDeliveryAddressBody(suburbId)
         checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails(body)
             .observe(viewLifecycleOwner, { response ->
                 loadingBar.visibility = View.GONE
-                expandableGrid.hideDeliveryTypeShimmerView()
+                stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
                         confirmDeliveryAddressResponse = response
