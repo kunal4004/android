@@ -83,7 +83,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
                 String json = payload.get("parameters").replaceAll("\\\\", "");
                 JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
-                intent = new Intent(this, StartupActivity.class);
                 intent.setData(Uri.parse(parameters.get("url").getAsString()));
                 intent.setAction(Intent.ACTION_VIEW);
             }
