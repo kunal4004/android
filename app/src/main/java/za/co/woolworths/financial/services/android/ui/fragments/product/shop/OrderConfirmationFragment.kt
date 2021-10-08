@@ -174,6 +174,10 @@ class OrderConfirmationFragment : Fragment() {
             companyDiscountSeparator.visibility = View.GONE
         }
 
+        wRewardsVouchersLinearLayout?.visibility =
+            if ((response?.orderSummary?.discountDetails?.voucherDiscount
+                    ?: 0.0) > 0.0
+            ) View.VISIBLE else View.GONE
         wRewardsVouchersTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
 
