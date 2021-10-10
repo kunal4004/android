@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop
 
+import android.content.Intent
 import android.graphics.Typeface.BOLD
 import android.os.Bundle
 import android.text.Spannable
@@ -15,6 +16,7 @@ import kotlinx.android.synthetic.main.delivering_to_collection_from.*
 import kotlinx.android.synthetic.main.fragment_order_confirmation.*
 import kotlinx.android.synthetic.main.order_details_bottom_sheet.*
 import kotlinx.android.synthetic.main.other_order_details.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -24,10 +26,12 @@ import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrde
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ItemsOrderListAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.WrewardsBottomSheetFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -46,8 +50,14 @@ class OrderConfirmationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setupActionBar()
         getOrderDetails()
+    }
+
+    private fun setupActionBar() {
+        (activity as? CheckoutActivity)?.apply {
+            supportActionBar?.let { it.show() }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -59,18 +69,38 @@ class OrderConfirmationFragment : Fragment() {
         OneAppService.getSubmittedOrder()
             .enqueue(CompletionHandler(object : IResponseListener<SubmittedOrderResponse> {
                 override fun onSuccess(response: SubmittedOrderResponse?) {
-                    if (response == null)
-                        activity?.finish()
-                    response?.orderSummary?.orderId?.let { setToolbar(it) }
-                    setupDeliveryOrCollectionDetails(response)
-                    setupOrderTotalDetails(response)
-                    setupOrderDetailsBottomSheet(response)
+                    when (response) {
+                        is SubmittedOrderResponse -> {
+                            when (response.httpCode) {
+                                AppConstant.HTTP_OK, AppConstant.HTTP_OK_201 -> {
+                                    response.orderSummary?.orderId?.let { setToolbar(it) }
+                                    setupDeliveryOrCollectionDetails(response)
+                                    setupOrderTotalDetails(response)
+                                    setupOrderDetailsBottomSheet(response)
+                                }
+                                else -> {
+                                    showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
+                                }
+                            }
+                        }
+                        else -> {
+                            showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
+                        }
+                    }
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    //TODO: handle error
+                    showErrorScreen(ErrorHandlerActivity.ERROR_TYPE_SUBMITTED_ORDER)
                 }
             }, SubmittedOrderResponse::class.java))
+    }
+
+    private fun showErrorScreen(errorType: Int) {
+        activity?.apply {
+            val intent = Intent(this, ErrorHandlerActivity::class.java)
+            intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, errorType)
+            startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
     }
 
     private fun setToolbar(orderId: String) {
@@ -150,6 +180,10 @@ class OrderConfirmationFragment : Fragment() {
             companyDiscountSeparator.visibility = View.GONE
         }
 
+        wRewardsVouchersLinearLayout?.visibility =
+            if ((response?.orderSummary?.discountDetails?.voucherDiscount
+                    ?: 0.0) > 0.0
+            ) View.VISIBLE else View.GONE
         wRewardsVouchersTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
 
@@ -309,5 +343,21 @@ class OrderConfirmationFragment : Fragment() {
             )
         }
         return wordSpan
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
+                when (resultCode) {
+                    ErrorHandlerActivity.RESULT_RETRY -> {
+                        getOrderDetails()
+                    }
+                    ErrorHandlerActivity.RESULT_CALL_CENTER -> {
+                        (activity as? CheckoutActivity)?.onBackPressed()
+                    }
+                }
+            }
+        }
     }
 }

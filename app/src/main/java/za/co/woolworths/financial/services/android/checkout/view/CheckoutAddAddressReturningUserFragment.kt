@@ -137,10 +137,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initViews() {
+        initializeVariables()
         addFragmentListner()
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
-        validateContinueToPaymentButton()
 
         expandableGrid.apply {
             disablePreviousBtnFood()
@@ -164,6 +164,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 Utils.hideSoftKeyboard(this)
             }
         }
+    }
+
+    private fun initializeVariables() {
+        selectedFoodSlot = Slot()
+        selectedOtherSlot = Slot()
+        selectedOpedDayDeliverySlot = OpenDayDeliverySlot()
+        foodType = DEFAULT
+        otherType = DEFAULT
     }
 
     private fun addFragmentListner() {
@@ -660,6 +668,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             selectDeliveryTimeSlotTitle.text =
                 getString(R.string.slot_delivery_title_when)
             selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
+            txtSelectDeliveryTimeSlotFoodError?.visibility = View.GONE
             expandableGrid.initialiseGridView(
                 selectedSlotResponseFood,
                 FIRST.week,
@@ -723,8 +732,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             selectedFoodSlot = selectedSlot
         else
             selectedOtherSlot = selectedSlot
-
-        validateContinueToPaymentButton()
     }
 
 
@@ -781,6 +788,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun onCheckoutPaymentClick(view: View) {
+        if (isRequiredFieldsMissing() || isInstructionsMissing()) {
+            return
+        }
+
         val body = getShipmentDetailsBody()
         if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
             && TextUtils.isEmpty(body.otherDeliverySlotId)
@@ -813,6 +824,130 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             })
+    }
+
+    private fun isInstructionsMissing(): Boolean {
+        return when {
+            switchSpecialDeliveryInstruction?.isChecked == true -> {
+                if (TextUtils.isEmpty(edtTxtSpecialDeliveryInstruction?.text.toString())) {
+                    // scroll to instructions layout
+                    deliverySummaryScrollView?.smoothScrollTo(
+                        0,
+                        layoutDeliveryInstructions?.top ?: 0
+                    )
+                    true
+                } else false
+            }
+            switchGiftInstructions?.isChecked == true -> {
+                if (TextUtils.isEmpty(edtTxtGiftInstructions?.text?.toString())) {
+                    // scroll to instructions layout
+                    deliverySummaryScrollView?.smoothScrollTo(
+                        0,
+                        layoutDeliveryInstructions?.top ?: 0
+                    )
+                    true
+                } else false
+            }
+            else -> false
+        }
+    }
+
+    private fun isRequiredFieldsMissing(): Boolean {
+        when {
+            // Food Items Basket
+            foodType == ONLY_FOOD -> {
+                if (!TextUtils.isEmpty(selectedFoodSlot?.slotId)) {
+                    txtSelectDeliveryTimeSlotFoodError?.visibility = View.GONE
+                    return false
+                }
+                // scroll to slot selection layout
+                deliverySummaryScrollView?.smoothScrollTo(
+                    0,
+                    checkoutTimeSlotSelectionLayout?.top ?: 0
+                )
+                txtSelectDeliveryTimeSlotFoodError?.visibility = View.VISIBLE
+            }
+            // Other Items Basket
+            otherType == ONLY_OTHER -> {
+                when {
+                    (selectedOpedDayDeliverySlot.deliveryType != null
+                            && selectedOpedDayDeliverySlot.deliveryType != DELIVERY_TYPE_TIMESLOT) -> {
+                        if (!TextUtils.isEmpty(selectedOpedDayDeliverySlot?.deliverySlotId)) {
+                            txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
+                            return false
+                        }
+                    }
+                    else -> {
+                        if (!TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
+                            txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
+                            return false
+                        }
+                        txtSelectDeliveryTimeSlotOtherError?.visibility = View.VISIBLE
+                    }
+                }
+                // scroll to other slot selection layout
+                deliverySummaryScrollView?.smoothScrollTo(
+                    0,
+                    checkoutHowWouldYouDeliveredLayout?.top ?: 0
+                )
+            }
+            //Mixed Basket
+            foodType == MIXED_FOOD || otherType == MIXED_OTHER -> {
+                if (selectedOpedDayDeliverySlot.deliveryType != null
+                    && selectedOpedDayDeliverySlot.deliveryType == DELIVERY_TYPE_TIMESLOT
+                ) {
+                    when {
+                        (!TextUtils.isEmpty(selectedFoodSlot?.slotId)
+                                && !TextUtils.isEmpty(selectedOtherSlot?.slotId)
+                                ) -> {
+                            txtSelectDeliveryTimeSlotFoodError?.visibility = View.GONE
+                            txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
+                            return false
+                        }
+                        (TextUtils.isEmpty(selectedFoodSlot?.slotId)) -> {
+                            // scroll to slot selection layout
+                            deliverySummaryScrollView?.smoothScrollTo(
+                                0,
+                                checkoutTimeSlotSelectionLayout?.top ?: 0
+                            )
+                            txtSelectDeliveryTimeSlotFoodError?.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
+                                // scroll to other slot selection layout
+                                deliverySummaryScrollView?.smoothScrollTo(
+                                    0,
+                                    checkoutHowWouldYouDeliveredLayout?.top ?: 0
+                                )
+                                txtSelectDeliveryTimeSlotOtherError?.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+                } else {
+                    if (!TextUtils.isEmpty(selectedFoodSlot?.slotId) &&
+                        !TextUtils.isEmpty(selectedOpedDayDeliverySlot?.deliverySlotId)
+                    ) {
+                        return false
+                    }
+                    if (TextUtils.isEmpty(selectedFoodSlot?.slotId)) {
+                        // scroll to food slot selection layout
+                        deliverySummaryScrollView?.smoothScrollTo(
+                            0,
+                            checkoutTimeSlotSelectionLayout?.top ?: 0
+                        )
+                        txtSelectDeliveryTimeSlotFoodError?.visibility = View.VISIBLE
+                    } else if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
+                        // scroll to other slot selection layout
+                        deliverySummaryScrollView?.smoothScrollTo(
+                            0,
+                            checkoutHowWouldYouDeliveredLayout?.top ?: 0
+                        )
+                    }
+                }
+            }
+            else -> return true
+        }
+        return true
     }
 
     private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
@@ -912,58 +1047,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         return body
     }
 
-    private fun validateContinueToPaymentButton() {
-        when {
-            // Food Items Basket
-            foodType == ONLY_FOOD -> {
-                if (TextUtils.isEmpty(selectedFoodSlot.slotId)) {
-                    disablePaymentButton()
-                } else {
-                    enablePaymentButton()
-                }
-            }
-            // Other Items Basket
-            otherType == ONLY_OTHER -> {
-                if ((selectedOpedDayDeliverySlot?.deliveryType == DELIVERY_TYPE_TIMESLOT
-                            && TextUtils.isEmpty(selectedOtherSlot.slotId))
-                    || TextUtils.isEmpty(selectedOpedDayDeliverySlot?.deliveryType)
-                ) {
-                    disablePaymentButton()
-                } else {
-                    enablePaymentButton()
-                }
-            }
-            //Mixed Basket
-            foodType == MIXED_FOOD || otherType == MIXED_OTHER -> {
-                if ((selectedOpedDayDeliverySlot?.deliveryType == DELIVERY_TYPE_TIMESLOT
-                            && TextUtils.isEmpty(selectedOtherSlot.slotId))
-                    || TextUtils.isEmpty(selectedOpedDayDeliverySlot?.deliveryType)
-                ) {
-                    disablePaymentButton()
-                } else {
-                    enablePaymentButton()
-                }
-            }
-            else -> {
-                disablePaymentButton()
-            }
-        }
-    }
-
-    private fun disablePaymentButton() {
-        txtContinueToPayment?.isEnabled = false
-        txtContinueToPayment?.isClickable = false
-        txtContinueToPayment?.background =
-            context?.let { ContextCompat.getDrawable(it, R.drawable.button_disable_color) }
-    }
-
-    private fun enablePaymentButton() {
-        txtContinueToPayment?.isEnabled = true
-        txtContinueToPayment?.isClickable = true
-        txtContinueToPayment?.background =
-            context?.let { ContextCompat.getDrawable(it, R.drawable.button_selector) }
-    }
-
     override fun selectedDeliveryType(
         openDayDeliverySlot: OpenDayDeliverySlot,
         type: DeliveryType,
@@ -971,7 +1054,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     ) {
         oddSelectedPosition = position
         selectedOpedDayDeliverySlot = openDayDeliverySlot
-        validateContinueToPaymentButton()
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_.plus(openDayDeliverySlot.deliveryType),
             activity
