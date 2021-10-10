@@ -80,7 +80,7 @@
         android:background="@color/white"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txtOrderTotalTitle" />
+        app:layout_constraintTop_toTopOf="@id/txtOrderTotalShimmerFrameLayout" />
 
     <View
         android:id="@+id/viewHorizontalSeparator1"
@@ -89,50 +89,74 @@
         android:background="@color/color_12000000"
         app:layout_constraintTop_toTopOf="@id/continueToPaymentButtonBackgroundView" />
 
-    <TextView
-        android:id="@+id/txtOrderTotalTitle"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/txtOrderTotalShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/futura_semi_bold"
-        android:letterSpacing="0.1"
-        android:padding="@dimen/twenty_four_dp"
-        android:text="@string/native_checkout_order_total_title"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="@dimen/twelve_sp"
-        app:layout_constraintBottom_toTopOf="@id/txtContinueToPayment"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintBottom_toTopOf="@id/continuePaymentTxtShimmerFrameLayout"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <TextView
-        android:id="@+id/txtOrderTotalValue"
+        <TextView
+            android:id="@+id/txtOrderTotalTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/futura_semi_bold"
+            android:letterSpacing="0.1"
+            android:padding="@dimen/twenty_four_dp"
+            android:text="@string/native_checkout_order_total_title"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twelve_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/orderTotalValueShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:fontFamily="@font/futura_semi_bold"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fourteen_sp"
-        app:layout_constraintBottom_toBottomOf="@id/txtOrderTotalTitle"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintBottom_toBottomOf="@id/txtOrderTotalShimmerFrameLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txtOrderTotalTitle"
-        tools:text="R 690.0" />
+        app:layout_constraintTop_toTopOf="@id/txtOrderTotalShimmerFrameLayout">
 
-    <TextView
-        android:id="@+id/txtContinueToPayment"
+        <TextView
+            android:id="@+id/txtOrderTotalValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/futura_semi_bold"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fourteen_sp"
+            tools:text="R 690.0" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/continuePaymentTxtShimmerFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:background="@color/black"
-        android:fontFamily="@font/futura_semi_bold"
-        android:gravity="center"
-        android:letterSpacing="0.1"
+        android:background="@color/shimmer_view_background"
         android:minHeight="@dimen/fifty_dp"
-        android:text="@string/native_checkout_continue_to_payment"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/twelve_sp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/txtContinueToPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:fontFamily="@font/futura_semi_bold"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:minHeight="@dimen/fifty_dp"
+            android:text="@string/native_checkout_continue_to_payment"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <ProgressBar
         android:id="@+id/loadingBar"

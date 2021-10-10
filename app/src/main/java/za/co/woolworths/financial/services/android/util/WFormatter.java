@@ -190,7 +190,7 @@ public class WFormatter {
     public static String getDayWithDate(String date) throws ParseException {
         if (date == null)
             return "";
-        return new SimpleDateFormat("EEEE, dd MMMM").format((new SimpleDateFormat("dd/MM/yyyy")).parse(date));
+        return new SimpleDateFormat("EEEE, dd MMMM").format((new SimpleDateFormat("EEEE, dd MM yyyy")).parse(date));
     }
 
     public static String getDayAndFullDate(String date) throws ParseException {

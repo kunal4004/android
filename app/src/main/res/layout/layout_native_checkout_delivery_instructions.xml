@@ -6,27 +6,43 @@
     android:background="@color/white"
     android:paddingBottom="@dimen/twenty_four_dp">
 
-    <TextView
-        android:id="@+id/txtNeedBags"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/txtNeedBagsShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
-        android:text="@string/native_checkout_delivery_instructions_need_bags"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Switch
-        android:id="@+id/switchNeedBags"
+        <TextView
+            android:id="@+id/txtNeedBags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/native_checkout_delivery_instructions_need_bags"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/switchNeedBagsShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:theme="@style/SwitchTheme"
-        app:layout_constraintBottom_toBottomOf="@id/txtNeedBags"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintBottom_toBottomOf="@id/txtNeedBagsShimmerFrameLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txtNeedBags" />
+        app:layout_constraintTop_toTopOf="@id/txtNeedBagsShimmerFrameLayout">
+
+        <Switch
+            android:id="@+id/switchNeedBags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:theme="@style/SwitchTheme" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <View
         android:id="@+id/viewHorizontalSeparator1"
@@ -34,42 +50,58 @@
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
         android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@id/txtNeedBags" />
+        app:layout_constraintTop_toBottomOf="@id/txtNeedBagsShimmerFrameLayout" />
 
-    <TextView
-        android:id="@+id/txtSpecialDeliveryInstruction"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/instructionTxtShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
-        android:text="@string/native_checkout_delivery_special_instructions"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator1" />
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator1">
 
-    <Switch
-        android:id="@+id/switchSpecialDeliveryInstruction"
+        <TextView
+            android:id="@+id/txtSpecialDeliveryInstruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/native_checkout_delivery_special_instructions"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/specialInstructionSwitchShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:theme="@style/SwitchTheme"
-        app:layout_constraintBottom_toBottomOf="@id/txtSpecialDeliveryInstruction"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintBottom_toBottomOf="@id/instructionTxtShimmerFrameLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txtSpecialDeliveryInstruction" />
+        app:layout_constraintTop_toTopOf="@id/instructionTxtShimmerFrameLayout">
+
+        <Switch
+            android:id="@+id/switchSpecialDeliveryInstruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:theme="@style/SwitchTheme" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/edtTxtInputLayoutSpecialDeliveryInstruction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
+        android:visibility="gone"
         app:counterMaxLength="240"
         app:hintEnabled="false"
-        android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtSpecialDeliveryInstruction">
+        app:layout_constraintTop_toBottomOf="@id/instructionTxtShimmerFrameLayout">
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edtTxtSpecialDeliveryInstruction"
@@ -96,41 +128,57 @@
         android:background="@color/color_12000000"
         app:layout_constraintTop_toBottomOf="@id/edtTxtInputLayoutSpecialDeliveryInstruction" />
 
-    <TextView
-        android:id="@+id/txtGiftInstructions"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/giftInstructionTxtShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:fontFamily="@font/myriad_pro_regular"
-        android:text="@string/native_checkout_delivery_gift_instructions"
-        android:textColor="@color/black"
-        android:textSize="@dimen/fifteen_sp"
+        android:background="@color/shimmer_view_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator2" />
+        app:layout_constraintTop_toBottomOf="@id/viewHorizontalSeparator2">
 
-    <Switch
-        android:id="@+id/switchGiftInstructions"
+        <TextView
+            android:id="@+id/txtGiftInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:text="@string/native_checkout_delivery_gift_instructions"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/giftInstructionSwitchShimmerFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:theme="@style/SwitchTheme"
-        app:layout_constraintBottom_toBottomOf="@id/txtGiftInstructions"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintBottom_toBottomOf="@id/giftInstructionTxtShimmerFrameLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txtGiftInstructions" />
+        app:layout_constraintTop_toTopOf="@id/giftInstructionTxtShimmerFrameLayout">
+
+        <Switch
+            android:id="@+id/switchGiftInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:theme="@style/SwitchTheme" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/edtTxtInputLayoutGiftInstructions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        app:counterMaxLength="240"
-        app:counterEnabled="false"
-        app:hintEnabled="false"
         android:visibility="gone"
+        app:counterEnabled="false"
+        app:counterMaxLength="240"
+        app:hintEnabled="false"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtGiftInstructions">
+        app:layout_constraintTop_toBottomOf="@id/giftInstructionTxtShimmerFrameLayout">
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edtTxtGiftInstructions"

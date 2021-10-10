@@ -450,6 +450,62 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         radioGroupFoodSubstitutionShimmerFrameLayout.setShimmer(shimmer)
         radioGroupFoodSubstitutionShimmerFrameLayout.startShimmer()
         radioGroupFoodSubstitution.visibility = View.INVISIBLE
+
+        txtNeedBagsShimmerFrameLayout.setShimmer(shimmer)
+        txtNeedBagsShimmerFrameLayout.startShimmer()
+        txtNeedBags.visibility = View.INVISIBLE
+
+        switchNeedBagsShimmerFrameLayout.setShimmer(shimmer)
+        switchNeedBagsShimmerFrameLayout.startShimmer()
+        switchNeedBags.visibility = View.INVISIBLE
+
+        instructionTxtShimmerFrameLayout.setShimmer(shimmer)
+        instructionTxtShimmerFrameLayout.startShimmer()
+        txtSpecialDeliveryInstruction.visibility = View.INVISIBLE
+
+        specialInstructionSwitchShimmerFrameLayout.setShimmer(shimmer)
+        specialInstructionSwitchShimmerFrameLayout.startShimmer()
+        switchSpecialDeliveryInstruction.visibility = View.INVISIBLE
+
+        giftInstructionTxtShimmerFrameLayout.setShimmer(shimmer)
+        giftInstructionTxtShimmerFrameLayout.startShimmer()
+        txtGiftInstructions.visibility = View.INVISIBLE
+
+        giftInstructionSwitchShimmerFrameLayout.setShimmer(shimmer)
+        giftInstructionSwitchShimmerFrameLayout.startShimmer()
+        switchGiftInstructions.visibility = View.INVISIBLE
+
+        txtYourCartShimmerFrameLayout.setShimmer(shimmer)
+        txtYourCartShimmerFrameLayout.startShimmer()
+        txtOrderSummaryYourCart.visibility = View.INVISIBLE
+
+        yourCartValueShimmerFrameLayout.setShimmer(shimmer)
+        yourCartValueShimmerFrameLayout.startShimmer()
+        txtOrderSummaryYourCartValue.visibility = View.INVISIBLE
+
+        deliveryFeeTxtShimmerFrameLayout.setShimmer(shimmer)
+        deliveryFeeTxtShimmerFrameLayout.startShimmer()
+        txtOrderSummaryDeliveryFee.visibility = View.INVISIBLE
+
+        deliveryFeeValueShimmerFrameLayout.setShimmer(shimmer)
+        deliveryFeeValueShimmerFrameLayout.startShimmer()
+        txtOrderSummaryDeliveryFeeValue.visibility = View.INVISIBLE
+
+        summaryNoteShimmerFrameLayout.setShimmer(shimmer)
+        summaryNoteShimmerFrameLayout.startShimmer()
+        txtOrderSummaryNote.visibility = View.INVISIBLE
+
+        txtOrderTotalShimmerFrameLayout.setShimmer(shimmer)
+        txtOrderTotalShimmerFrameLayout.startShimmer()
+        txtOrderTotalTitle.visibility = View.INVISIBLE
+
+        orderTotalValueShimmerFrameLayout.setShimmer(shimmer)
+        orderTotalValueShimmerFrameLayout.startShimmer()
+        txtOrderTotalValue.visibility = View.INVISIBLE
+
+        continuePaymentTxtShimmerFrameLayout.setShimmer(shimmer)
+        continuePaymentTxtShimmerFrameLayout.startShimmer()
+        txtContinueToPayment.visibility = View.INVISIBLE
     }
 
     private fun stopShimmerView() {
@@ -478,6 +534,62 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         radioGroupFoodSubstitutionShimmerFrameLayout.stopShimmer()
         radioGroupFoodSubstitutionShimmerFrameLayout.setShimmer(null)
         radioGroupFoodSubstitution.visibility = View.VISIBLE
+
+        txtNeedBagsShimmerFrameLayout.stopShimmer()
+        txtNeedBagsShimmerFrameLayout.setShimmer(null)
+        txtNeedBags.visibility = View.VISIBLE
+
+        switchNeedBagsShimmerFrameLayout.stopShimmer()
+        switchNeedBagsShimmerFrameLayout.setShimmer(null)
+        switchNeedBags.visibility = View.VISIBLE
+
+        instructionTxtShimmerFrameLayout.stopShimmer()
+        instructionTxtShimmerFrameLayout.setShimmer(null)
+        txtSpecialDeliveryInstruction.visibility = View.VISIBLE
+
+        specialInstructionSwitchShimmerFrameLayout.stopShimmer()
+        specialInstructionSwitchShimmerFrameLayout.setShimmer(null)
+        switchSpecialDeliveryInstruction.visibility = View.VISIBLE
+
+        giftInstructionTxtShimmerFrameLayout.stopShimmer()
+        giftInstructionTxtShimmerFrameLayout.setShimmer(null)
+        txtGiftInstructions.visibility = View.VISIBLE
+
+        giftInstructionSwitchShimmerFrameLayout.stopShimmer()
+        giftInstructionSwitchShimmerFrameLayout.setShimmer(null)
+        switchGiftInstructions.visibility = View.VISIBLE
+
+        txtYourCartShimmerFrameLayout.stopShimmer()
+        txtYourCartShimmerFrameLayout.setShimmer(null)
+        txtOrderSummaryYourCart.visibility = View.VISIBLE
+
+        yourCartValueShimmerFrameLayout.stopShimmer()
+        yourCartValueShimmerFrameLayout.setShimmer(null)
+        txtOrderSummaryYourCartValue.visibility = View.VISIBLE
+
+        deliveryFeeTxtShimmerFrameLayout.stopShimmer()
+        deliveryFeeTxtShimmerFrameLayout.setShimmer(null)
+        txtOrderSummaryDeliveryFee.visibility = View.VISIBLE
+
+        deliveryFeeValueShimmerFrameLayout.stopShimmer()
+        deliveryFeeValueShimmerFrameLayout.setShimmer(null)
+        txtOrderSummaryDeliveryFeeValue.visibility = View.VISIBLE
+
+        summaryNoteShimmerFrameLayout.stopShimmer()
+        summaryNoteShimmerFrameLayout.setShimmer(null)
+        txtOrderSummaryNote.visibility = View.VISIBLE
+
+        txtOrderTotalShimmerFrameLayout.stopShimmer()
+        txtOrderTotalShimmerFrameLayout.setShimmer(null)
+        txtOrderTotalTitle.visibility = View.VISIBLE
+
+        orderTotalValueShimmerFrameLayout.stopShimmer()
+        orderTotalValueShimmerFrameLayout.setShimmer(null)
+        txtOrderTotalValue.visibility = View.VISIBLE
+
+        continuePaymentTxtShimmerFrameLayout.stopShimmer()
+        continuePaymentTxtShimmerFrameLayout.setShimmer(null)
+        txtContinueToPayment.visibility = View.VISIBLE
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()

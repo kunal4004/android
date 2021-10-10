@@ -219,7 +219,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             isEnable = true,
             isErrorScreen = false
         )
-        autoCompleteTextView?.setText(selectedAddress.savedAddress.address1)
+        if (selectedAddress.savedAddress.placesId.isNullOrEmpty())
+            autoCompleteTextView.text.clear() // This condition will only occure when address is added from web and is now opted for edit from app.
+        else
+            autoCompleteTextView?.setText(selectedAddress.savedAddress.address1)
         addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
         unitComplexFloorEditText.setText(selectedAddress.savedAddress.address2)
         suburbEditText.setText(selectedAddress.savedAddress.suburb)
