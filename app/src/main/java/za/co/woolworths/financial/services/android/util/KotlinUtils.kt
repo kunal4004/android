@@ -816,14 +816,16 @@ class KotlinUtils {
         }
 
         fun linkDeviceIfNecessary(activity: Activity?, state: ApplyNowState, doJob: () -> Unit, elseJob: () -> Unit){
-            if (!MyAccountsFragment.verifyAppInstanceId() && Utils.isGooglePlayServicesAvailable()) {
-                doJob()
-                activity?.let {
-                    val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
-                    intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, state)
-                    it.startActivity(intent)
-                    it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
-                }
+            if (!MyAccountsFragment.verifyAppInstanceId() &&
+                Utils.isGooglePlayServicesAvailable() &&
+                state == ApplyNowState.STORE_CARD) {
+                    doJob()
+                    activity?.let {
+                        val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
+                        intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, state)
+                        it.startActivity(intent)
+                        it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+                    }
             }
             else{
                 elseJob()

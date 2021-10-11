@@ -92,6 +92,27 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             askLocationPermission()
         }
 
+        context?.let {
+            when(mApplyNowState){
+                ApplyNowState.STORE_CARD ->{
+                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.sc_asset)
+                    linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_sc)
+                }
+                ApplyNowState.PERSONAL_LOAN ->{
+                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.pl_asset)
+                    linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_pl)
+                }
+                ApplyNowState.SILVER_CREDIT_CARD,
+                ApplyNowState.GOLD_CREDIT_CARD,
+                ApplyNowState.BLACK_CREDIT_CARD ->
+                {
+                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.cc_asset)
+                    linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_cc)
+                }
+
+                else -> linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc)
+            }
+        }
     }
 
     private fun askLocationPermission() {
@@ -193,43 +214,24 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
         context?.let {
             linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))
-            when(mApplyNowState){
-                //TODO: WOP-12578, WOP-12589 // credit card implementations will be activated after personal loan
-                /**
-                ApplyNowState.SILVER_CREDIT_CARD,
-                ApplyNowState.GOLD_CREDIT_CARD,
-                ApplyNowState.BLACK_CREDIT_CARD,*/
-                ApplyNowState.STORE_CARD -> {
-                    linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
-                    linkDeviceResultSubitle?.text = it.getString(R.string.link_device_confirm_desc_cc)
 
-                    gotItLinkDeviceConfirmationButton.apply {
-                        visibility = View.VISIBLE
-                        setOnClickListener {
-                            val intent = Intent()
-                            intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                            activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
-                            activity?.finish()
-                        }
-                    }
-                    linkMyDeviceConfirmationButton.apply {
-                        visibility = View.VISIBLE
-                        paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                        setOnClickListener {
-                            askLocationPermission()
-                        }
-                    }
+            linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
+            linkDeviceResultSubitle?.text = it.getString(R.string.not_linked_device_desc)
+
+            gotItLinkDeviceConfirmationButton.apply {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    val intent = Intent()
+                    intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                    activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                    activity?.finish()
                 }
-                else -> {
-                    linkDeviceResultTitle?.text = it.getString(R.string.ok_cool)
-                    linkDeviceResultSubitle?.text = it.getString(R.string.link_device_confirm_desc)
-                    Handler().postDelayed(
-                        {
-                            val intent = Intent()
-                            intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                            activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
-                            activity?.finish()
-                        }, AppConstant.DELAY_1500_MS)
+            }
+            linkMyDeviceConfirmationButton.apply {
+                visibility = View.VISIBLE
+                paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                setOnClickListener {
+                    askLocationPermission()
                 }
             }
         }
