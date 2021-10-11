@@ -11,9 +11,6 @@ import kotlinx.android.synthetic.main.general_error_handler_activity.*
 import za.co.woolworths.financial.services.android.util.Utils
 import android.content.Intent
 
-
-
-
 class GeneralErrorHandlerActivity : AppCompatActivity() {
 
     private var navigationHost: NavController? = null
