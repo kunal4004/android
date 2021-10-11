@@ -32,11 +32,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.helper.F
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.AsteriskPasswordTransformationMethod
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-
-
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-
 
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
