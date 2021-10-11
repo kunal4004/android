@@ -6,5 +6,6 @@ class LocalConstant {
         const val emailLabel = "queries@wfs.co.za"
         const val phoneLabel = "086 150 2020"
         const val textLabel = "release the hold"
+        const val appPinLabel = "App PIN"
     }
 }

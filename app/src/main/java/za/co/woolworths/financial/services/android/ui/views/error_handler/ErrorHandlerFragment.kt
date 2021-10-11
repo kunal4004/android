@@ -6,6 +6,7 @@ import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_error_fragment_layout.*
@@ -29,9 +30,11 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
     private fun descriptionBlock() {
         val descBlock1Text = WSpannableStringBuilder(getString(R.string.absa_mobile_app_pin_blocked_desc_block_1))
 
+
         val emailLabel = LocalConstant.emailLabel
         val phoneLabel = LocalConstant.phoneLabel
         val textLabel = LocalConstant.textLabel
+        val appPinLabel = LocalConstant.appPinLabel
 
         with(descBlock1Text) {
             makeStringInteractable(emailLabel, LinkType.EMAIL)
@@ -44,8 +47,20 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
             makeTextFontColor(textLabel)
         }
 
-        errorDescriptionBlock1TextView?.apply {
-            text = descBlock1Text.build()
+        setTextWithSpanBuilder(errorDescriptionBlock1TextView, descBlock1Text)
+
+        val descBlock2Text = WSpannableStringBuilder(getString(R.string.absa_mobile_app_pin_blocked_desc_block_2))
+
+        with(descBlock2Text) {
+            makeStringUnderlined(appPinLabel)
+            makeTextFontColor(appPinLabel)
+        }
+        setTextWithSpanBuilder(errorDescriptionBlock2TextView, descBlock2Text)
+    }
+
+    private fun setTextWithSpanBuilder(textView: TextView?, spannableBuilder: WSpannableStringBuilder) {
+        textView ?.apply {
+            text = spannableBuilder.build()
             movementMethod = LinkMovementMethod.getInstance()
             highlightColor = Color.TRANSPARENT
         }

@@ -54,6 +54,8 @@
     <TextView
         android:id="@+id/errorDescriptionBlock2TextView"
         style="@style/absa_page_desc_style"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:textColor="@color/black60"
         android:layout_marginTop="@dimen/eight_dp"
         android:text="@string/absa_mobile_app_pin_blocked_desc_block_2"
         app:layout_constraintEnd_toStartOf="@+id/guidelineEndMargin"
