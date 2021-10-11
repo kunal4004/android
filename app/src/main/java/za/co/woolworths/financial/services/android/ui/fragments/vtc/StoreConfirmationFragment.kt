@@ -14,8 +14,10 @@ import kotlinx.android.synthetic.main.fragment_store_confirmation.*
 import kotlinx.android.synthetic.main.layout_confirmation.*
 import kotlinx.android.synthetic.main.layout_confirmation.titleTextView
 import kotlinx.android.synthetic.main.layout_store_card_confirmed.*
+import kotlinx.android.synthetic.main.layout_store_card_confirmed.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -52,6 +54,9 @@ class StoreConfirmationFragment : Fragment() {
 
         setHasOptionsMenu(true)
         setActionBar()
+
+        storeConfirmedLayout.titleTextView.text = WoolworthsApplication.getVirtualTempCard().replacementCardSuccessfullyOrderedTitle ?: getString(R.string.replacement_card_success_title)
+        storeConfirmedLayout.descTextView.text = WoolworthsApplication.getVirtualTempCard().replacementCardSuccessfullyOrderedDescription ?: getString(R.string.replacement_card_success_desc)
 
         if (!TextUtils.isEmpty(body?.storeAddress)) {
             isConfirmStore = true
