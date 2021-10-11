@@ -2158,9 +2158,10 @@
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
-
+    <string name="absa_mobile_app_pin_blocked_title">Mobile App PIN Is Now\nBlocked</string>
+    <string name="absa_mobile_app_pin_blocked_desc_block_1">To release the hold on your PIN, please contact customer service on 086 150 2020 or email queries@wfs.co.za.</string>
+    <string name="absa_mobile_app_pin_blocked_desc_block_2">Please use the reference App PIN as this does not impact your card pin in stores or at ATMs.</string>
     <string name="pma_total_amount_due_popup_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
     <string name="pma_amount_overdue_popup_desc">The amount that is outstanding from the previous billing due date</string>
     <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
-
 </resources>

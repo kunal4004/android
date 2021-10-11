@@ -1249,6 +1249,27 @@
         <item name="WTextView_font">medium_bold</item>
     </style>
 
+    <style name="absa_page_title_style" parent="absa_page_title_text_style">
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="absa_page_desc_style" parent="absa_page_description_text_style">
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/desc_color_code</item>
+        <item name="android:lineSpacingExtra">1.5dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+    </style>
+
+
     <style name="absa_page_description_text_style">
         <item name="android:lineSpacingExtra">1.4dp</item>
         <item name="android:textColor">@color/permanent_card_block_desc_color</item>
@@ -2595,11 +2616,20 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="guideLineDefaultStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="guideLineDefaultHorizontalStyle" parent="guideLineDefaultStyle">
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="guideLineDefaultVerticalStyle" parent="guideLineDefaultStyle">
+        <item name="android:orientation">vertical</item>
+    </style>
     <style name="iconInfoRoundedStyle"  parent="android:Theme">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">24dp</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
-
 </resources>
