@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
+import static za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.DEEP_LINK_REQUEST_CODE;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -25,9 +27,6 @@ import java.util.Map;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.fcm.FCMMessageType;
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsDeepLinkActivity;
-
-import static za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.DEEP_LINK_REQUEST_CODE;
 
 public class WFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -77,14 +76,13 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         final String channelId = getResources().getString(R.string.default_notification_channel_id);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(WoolworthsApplication.getAppContext(), channelId);
 
-        Intent intent = null;
+        Intent intent = new Intent(this, StartupActivity.class);
 
             if (payload.get("feature") != null && payload.get("feature").equals("Product Listing"))
             {
                 String json = payload.get("parameters").replaceAll("\\\\", "");
                 JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
 
-                intent = new Intent(this, StartupActivity.class);
                 intent.setData(Uri.parse(parameters.get("url").getAsString()));
                 intent.setAction(Intent.ACTION_VIEW);
             }
