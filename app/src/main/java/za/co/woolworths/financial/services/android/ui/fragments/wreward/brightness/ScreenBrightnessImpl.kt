@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import androidx.annotation.RequiresApi
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.brightness.contract.ScreenBrightnessInterface
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
@@ -31,9 +30,12 @@ class ScreenBrightnessImpl : ScreenBrightnessInterface {
         appContext = appContext()
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun isSettingPermissionAllowedForOneApp(): Boolean {
-        return Settings.System.canWrite(appContext())
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Settings.System.canWrite(appContext())
+        } else {
+            true
+        }
     }
 
     override fun setScreenBrightness(percent: Int) {
@@ -52,11 +54,15 @@ class ScreenBrightnessImpl : ScreenBrightnessInterface {
 
     override fun setBrightnessModeManual() {
         try {
-            Settings.System.putInt(
-                appContext?.contentResolver,
-                Settings.System.SCREEN_BRIGHTNESS_MODE,
-                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
-            )
+            if (!isSettingPermissionAllowedForOneApp())
+                return
+
+                Settings.System.putInt(
+                    appContext?.contentResolver,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+                )
+
         } catch (ex: Exception) {
             logException(ex)
         }
