@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_error_fragment_layout.*
+import za.co.woolworths.financial.services.android.util.LocalConstant
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
 import za.co.woolworths.financial.services.android.util.wenum.LinkType
@@ -28,9 +29,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
     private fun descriptionBlock() {
         val descBlock1Text = WSpannableStringBuilder(getString(R.string.absa_mobile_app_pin_blocked_desc_block_1))
 
-        val emailLabel = "queries@wfs.co.za"
-        val phoneLabel = "086 150 2020"
-        val textLabel = "release the hold"
+        val emailLabel = LocalConstant.emailLabel
+        val phoneLabel = LocalConstant.phoneLabel
+        val textLabel = LocalConstant.textLabel
 
         with(descBlock1Text) {
             makeStringInteractable(emailLabel, LinkType.EMAIL)

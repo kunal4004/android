@@ -28,12 +28,12 @@
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBeginMargin"
         style="@style/guideLineDefaultVerticalStyle"
-        app:layout_constraintGuide_begin="24dp" />
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineEndMargin"
         style="@style/guideLineDefaultVerticalStyle"
-        app:layout_constraintGuide_end="24dp" />
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
     <TextView
         android:id="@+id/errorTitleTextView"
@@ -54,7 +54,7 @@
     <TextView
         android:id="@+id/errorDescriptionBlock2TextView"
         style="@style/absa_page_desc_style"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/eight_dp"
         android:text="@string/absa_mobile_app_pin_blocked_desc_block_2"
         app:layout_constraintEnd_toStartOf="@+id/guidelineEndMargin"
         app:layout_constraintStart_toStartOf="@+id/guidelineBeginMargin"
@@ -64,7 +64,7 @@
         android:id="@+id/actionButton"
         style="@style/blackButtonStyle"
         android:layout_width="0dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
         android:text="@string/ok_got_it"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guidelineEndMargin"

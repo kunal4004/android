@@ -12,19 +12,15 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_store_confirmation.*
 import kotlinx.android.synthetic.main.layout_confirmation.*
+import kotlinx.android.synthetic.main.layout_confirmation.titleTextView
 import kotlinx.android.synthetic.main.layout_store_card_confirmed.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
-import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.StoreCardEmailConfirmBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
@@ -79,7 +75,11 @@ class StoreConfirmationFragment : Fragment() {
 
         context?.let {
             nextActionTextView.text =
-                if (isConfirmStore) it.getString(R.string.confirm_store) else it.getString(R.string.confirm_address)
+                    if (isConfirmStore) it.getString(R.string.confirm_store) else it.getString(R.string.confirm_address)
+            titleTextView.text =
+                    if (isConfirmStore) it.getString(R.string.please_confirm_your_nselected_store) else it.getString(R.string.please_confirm_your_address)
+            cancelActionTextView.text =
+                    if (isConfirmStore) it.getString(R.string.edit_store) else it.getString(R.string.edit_address)
         }
 
         nextActionTextView?.setOnClickListener {
