@@ -82,7 +82,12 @@ import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener, ReviewThumbnailAdapter.ThumbnailClickListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
+    MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
+    ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
+    DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
+    ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
+    ReviewThumbnailAdapter.ThumbnailClickListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
