@@ -1705,6 +1705,10 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="myriad_pro_regular_black_13_text_style" parent="myriad_pro_regular_black">
+        <item name="android:textSize">@dimen/thirteen_sp</item>
+    </style>
+
     <style name="body_text_style">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -2619,8 +2623,8 @@
 
 
     <style name="StarRating" parent="@android:style/Widget.RatingBar">
-        <item name="android:minHeight">12dip</item>
-        <item name="android:minWidth">16dip</item>
+        <item name="android:minHeight">12dp</item>
+        <item name="android:minWidth">16dp</item>
         <item name="android:progressDrawable">@drawable/rating_bar_bg</item>
     </style>
 
@@ -2630,4 +2634,16 @@
         <item name="android:textSize">@dimen/twelve_dp</item>
     </style>
 
+
+    <style name="myriad_pro_semi_bold_49BB77_15_text_style" >
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:textColor">@color/color_49BB77</item>
+    </style>
+
+    <style name="myriad_pro_semi_bold_777777_15_text_style" >
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:textColor">@color/account_card_desc_grey_color</item>
+    </style>
 </resources>

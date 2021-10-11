@@ -20,14 +20,12 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
@@ -36,11 +34,13 @@ import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
 import kotlinx.android.synthetic.main.product_details_gift_with_purchase.*
 import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
+import kotlinx.android.synthetic.main.product_details_options_and_information_layout.ratingBar
 import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
+import kotlinx.android.synthetic.main.review_row_layout.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -71,15 +71,23 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
-import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderHistoryErrorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 import kotlin.collections.ArrayList
+import android.widget.LinearLayout
+import com.facebook.FacebookSdk.getApplicationContext
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
+import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 
 
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
+    MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
+    ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener,
+    DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
+    ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
+    ReviewThumbnailAdapter.ThumbnailClickListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -115,6 +123,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isOutOfStockFragmentAdded = false
     private var liquorDialog: Dialog? = null
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
+    private lateinit var  reviewThumbnailAdapter: ReviewThumbnailAdapter
+    private var thumbnailList = mutableListOf<Thumbnail>()
 
     companion object {
         const val INDEX_STORE_FINDER = 1
@@ -572,13 +582,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             if (it.isRnREnabled) {
                 ratingBarTop.rating = it.averageRating
-                tvTotalReviews.text = getString(R.string.no_reviews, it.reviewCount)
+                if(it.reviewCount<2)
+                    tvTotalReviews.text = getString(R.string.no_review, it.reviewCount)
+                else
+                    tvTotalReviews.text = getString(R.string.no_reviews, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
                 tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
                 ratingBar.rating = it.averageRating
-                tvCustomerReviewCount.text = getString(R.string.customer_reviews, "("+it.reviewCount+")")
+                if(it.reviewCount<2)
+                    tvCustomerReviewCount.text = getString(R.string.customer_review, "("+it.reviewCount+")")
+                else
+                    tvCustomerReviewCount.text = getString(R.string.customer_reviews, "("+it.reviewCount+")")
                 tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
+                setReviewUI()
             }else{
                 headerCustomerReview.visibility = View.GONE
                 reviewDetailsInformation.visibility = View.GONE
@@ -625,6 +642,128 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showProductOutOfStock()
             return
         }
+    }
+
+    private fun setReviewUI(){
+        tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+        tvSkinProfile.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+        for (i in 1..1){
+            val rootView = LinearLayout(context)
+            rootView.layoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            rootView.orientation = LinearLayout.HORIZONTAL
+
+            val tv1 = TextView(context)
+            tv1.alpha = 0.5F
+            val tv2 = TextView(context)
+            tv2.alpha = 0.5F
+            val ivCircle = ImageView(context)
+            /*val img = requireContext().resources.getDrawable(R.drawable.ic_circle)
+            img.setBounds(20,0,0,0)
+            tv2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle,0,0,0)*/
+
+            val tvParam: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            tvParam.setMargins(25, 0, 0, 8)
+            tv2.layoutParams = tvParam
+            val ivParam: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            ivParam.setMargins(25,15,0,0)
+            ivCircle.layoutParams = ivParam
+            if (Build.VERSION.SDK_INT < 23) {
+                tv1.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
+                tv2.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
+            } else{
+                tv1.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
+                tv2.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
+            }
+            tv1.text = "Size ordered"
+            ivCircle.setImageResource(R.drawable.ic_circle)
+            tv2.text = "Medium"
+
+            rootView.addView(tv1)
+            rootView.addView(ivCircle)
+            rootView.addView(tv2)
+            llAdditionalFields.addView(rootView)
+        }
+        setSecondaryRatingsUI()
+    }
+
+    private fun setSecondaryRatingsUI(){
+        for (i in 1..2 step 2){
+            val rootView = LinearLayout(context)
+            rootView.layoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            rootView.orientation = LinearLayout.HORIZONTAL
+
+            val tv1 = TextView(context)
+            val tv2 = TextView(context)
+
+            val tvParam: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            tvParam.setMargins(15, 0, 0, 8)
+            tv2.layoutParams = tvParam
+            if (Build.VERSION.SDK_INT < 23) {
+                tv1.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
+                tv2.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
+            } else{
+                tv1.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
+                tv2.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
+            }
+            tv1.text = "Product Quality:"
+            tv2.text = "4/5"
+
+            rootView.addView(tv1)
+            rootView.addView(tv2)
+
+            val tv3 = TextView(context)
+            val tv4 = TextView(context)
+
+            val tvParam2: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            tvParam2.setMargins(65, 0, 0, 8)
+            tv3.layoutParams = tvParam2
+            val tvParam3: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            tvParam3.setMargins(15, 0, 0, 8)
+            tv4.layoutParams = tvParam3
+            if (Build.VERSION.SDK_INT < 23) {
+                tv3.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
+                tv4.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
+            } else{
+                tv3.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
+                tv4.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
+            }
+            tv3.text = "Fit:"
+            tv4.text = "Runs Large"
+
+            rootView.addView(tv3)
+            rootView.addView(tv4)
+            llSecondaryRatings.addView(rootView)
+        }
+        setReviewThumbnailUI()
+    }
+
+    private fun setReviewThumbnailUI(){
+        rvThumbnail.layoutManager = GridLayoutManager(getApplicationContext(),3)
+        reviewThumbnailAdapter = ReviewThumbnailAdapter(getApplicationContext(),this)
+        rvThumbnail.adapter = reviewThumbnailAdapter
+
+        thumbnailList.clear()
+        thumbnailList.add(Thumbnail(1,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(2,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(3,R.drawable.header_image))
+        reviewThumbnailAdapter.setDataList(thumbnailList)
+    }
+
+    override fun thumbnailClicked() {
+        thumbnailList.clear()
+        thumbnailList.add(Thumbnail(1,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(2,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(3,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(4,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(5,R.drawable.header_image))
+        reviewThumbnailAdapter.setDataList(thumbnailList)
     }
 
     private fun setBrandText(it: ProductDetails) {
@@ -1732,4 +1871,5 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             show()
         }
     }
+
 }
