@@ -1302,7 +1302,7 @@
     <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
-    <string name="treatment_plan_eligible_description_pl">Your personal loan has an amount of R%1$s outstanding, and has therefore been temporarily deactivated. To start shopping again, please pay the overdue amount.</string>
+    <string name="treatment_plan_eligible_description_pl">Your personal loan has an amount of R%1$s outstanding, and has therefore been temporarily deactivated. Please pay the overdue amount to reactivate your loan.</string>
     <string name="treatment_plan_eligible_description_sc">Your store card has an amount of R%1$s outstanding, and has therefore been temporarily deactivated. To start shopping again, please pay the overdue amount.</string>
     <string name="view_payment_plan_button_label">View payment plan</string>
     <string name="view_payment_plans_button_label">View payment plans</string>

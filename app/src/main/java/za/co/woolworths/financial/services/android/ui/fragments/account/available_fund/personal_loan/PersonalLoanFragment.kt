@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.A
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.CANNOT_AFFORD_PAYMENT_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.MAKE_A_PAYMENT_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.VIEW_PAYMENT_PLAN_BUTTON
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -79,7 +80,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
-                    VIEW_PAYMENT_PLAN_BUTTON -> {
+                    VIEW_PAYMENT_PLAN_BUTTON, CANNOT_AFFORD_PAYMENT_BUTTON -> {
                         activity?.apply {
                             val arguments = HashMap<String, String>()
                             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION

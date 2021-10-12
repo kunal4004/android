@@ -8,23 +8,30 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
 
+    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var showChatBubbleInterface: IShowChatBubble? = null
     private val mClassName = ViewTreatmentPlanDialogFragment::class.java.simpleName
     private lateinit var dialogButtonType: ViewTreatmentPlanDialogButtonType
+
     companion object {
         enum class ViewTreatmentPlanDialogButtonType { CC_ACTIVE, PL_ELIGIBLE, PL_SC_NORMAL }
         const val VIEW_PAYMENT_PLAN_BUTTON = "viewPaymentPlanButton"
         const val MAKE_A_PAYMENT_BUTTON = "makeAPaymentButton"
+        const val CANNOT_AFFORD_PAYMENT_BUTTON = "cannotAffordPaymentButton"
         const val PLAN_BUTTON_TYPE = "buttonType"
 
     }
@@ -73,7 +80,6 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
 
         cannotAffordPaymentButton?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
             visibility = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE) View.VISIBLE else View.GONE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
@@ -81,7 +87,13 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         viewTreatmentPlanDescriptionTextView?.apply {
             text = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)
-                bindString(R.string.treatment_plan_eligible_description_pl) else bindString(R.string.view_treatment_plan_description)
+
+                payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                    activity?.resources?.getString(R.string.treatment_plan_eligible_description_pl,
+                        Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)))
+                }
+
+            else bindString(R.string.view_treatment_plan_description)
         }
     }
 
@@ -98,6 +110,11 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
             R.id.makePaymentButton, R.id.viewPaymentOptionsButton -> {
                 dismiss()
                 setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
+            }
+
+            R.id.cannotAffordPaymentButton -> {
+                dismiss()
+                setFragmentResult(mClassName, bundleOf(mClassName to CANNOT_AFFORD_PAYMENT_BUTTON))
             }
 
             R.id.closeIconImageButton -> dismiss()
