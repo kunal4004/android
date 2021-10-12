@@ -462,7 +462,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         if (fulfillmentsType?.join == FOOD.type) {
             //Food Basket
             val foodItemDate =
-                WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join)
+                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join
             if (foodItemDate.isNullOrEmpty()) {
                 hideEarliestDeliveryView()
             } else {
@@ -473,9 +473,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         } else if (fulfillmentsType?.join == OTHER.type && fulfillmentsType.other == OTHER.type) {
             //Mixed Basket
             val foodItemDate =
-                WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food)
+                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
             val otherItemDate =
-                WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.other)
+                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.other
             if (foodItemDate.isNullOrEmpty() && otherItemDate.isNullOrEmpty()) {
                 hideEarliestDeliveryView()
             } else {
@@ -494,7 +494,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         } else {
             //Other Basket
             val otherItemDate =
-                WFormatter.getDayWithDate(confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join)
+                confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join
             if (otherItemDate.isNullOrEmpty()) {
                 hideEarliestDeliveryView()
             } else {
@@ -855,6 +855,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     override fun changeAddress(address: Address) {
         // Save instance of selected address to pass to other screens
         selectedAddress = address
+        if (!isConfirmDeliveryResponse || savedAddress?.defaultAddressNickname != address.nickname) {
+            deliveryDateLayout.visibility = View.GONE
+        } else
+            deliveryDateLayout.visibility = View.VISIBLE
     }
 
     private fun callChangeAddressApi() {
