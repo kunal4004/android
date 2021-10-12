@@ -41,6 +41,11 @@ class OrderConfirmationFragment : Fragment() {
     private var itemsOrder: ArrayList<OrderItem>? = ArrayList(0)
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,14 +55,7 @@ class OrderConfirmationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupActionBar()
         getOrderDetails()
-    }
-
-    private fun setupActionBar() {
-        (activity as? CheckoutActivity)?.apply {
-            supportActionBar?.let { it.show() }
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -108,6 +106,9 @@ class OrderConfirmationFragment : Fragment() {
             (activity as? CartCheckoutActivity)?.apply {
                 showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
             }
+        }
+        (activity as? CheckoutActivity)?.apply {
+            showTitleWithCrossButton(bindString(R.string.order_details_toolbar_title, orderId))
         }
     }
 
