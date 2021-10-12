@@ -6,5 +6,7 @@ data class VirtualTempCard(
         val cardDisplayTitle: String? = null,
         val barcodeDisplayTitle: String? = null,
         val barcodeDisplaySubtitle: String? = null,
+        val replacementCardSuccessfullyOrderedTitle: String? = null,
+        val replacementCardSuccessfullyOrderedDescription: String? = null,
         var isEnabled: Boolean = false
 )
