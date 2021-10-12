@@ -51,6 +51,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
@@ -134,6 +135,7 @@ import static za.co.woolworths.financial.services.android.util.FuseLocationAPISi
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
+@AndroidEntryPoint
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
     public static final int INDEX_TODAY = FragNavController.TAB1;

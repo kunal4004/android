@@ -10,8 +10,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,9 +20,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.awfs.coordination.R
-
-
 import com.awfs.coordination.databinding.VtoImageviewFragmentBinding
 import com.perfectcorp.perfectlib.FaceData
 import com.perfectcorp.perfectlib.PhotoMakeup
@@ -32,13 +27,10 @@ import com.perfectcorp.perfectlib.PhotoMakeup.DetectFaceCallback
 import com.perfectcorp.perfectlib.VtoApplier
 import com.perfectcorp.perfectlib.VtoApplier.ApplyCallback
 import kotlinx.android.synthetic.main.vto_imageview_fragment.*
-
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
 import za.co.woolworths.financial.services.android.ui.vto.presentation.PermissionViewModel
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility
-
-
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import java.lang.Exception
 import java.util.*

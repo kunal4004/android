@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.vto.prefstore
+package za.co.woolworths.financial.services.android.ui.vto.data.prefstore
 
 import kotlinx.coroutines.flow.Flow
 

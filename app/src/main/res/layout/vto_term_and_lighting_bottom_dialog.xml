@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="30dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingBottom="@dimen/thirty_dp">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineEnd"
@@ -24,15 +25,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
-
+        app:layout_constraintGuide_begin="@dimen/ten_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="40dp" />
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/hintImage"
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guidelineTop"
+        app:layout_constraintTop_toTopOf="@+id/guidelineTop"
         app:srcCompat="@drawable/ic_rectangle" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -61,7 +61,7 @@
         android:layout_marginTop="@dimen/twenty_six_dp"
         android:fontFamily="@font/futura_semi_bold"
         android:gravity="center"
-        android:text="@string/lighting_tips"
+        tools:text="@string/lighting_tips"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_20sp"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
@@ -75,8 +75,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifteen_dp"
         android:gravity="center"
-        android:text="@string/for_the_best_experience_make_sure_that_you_are_surrounded_by_multiple_light_sources_with_no_harsh_lighting_spots_as_these_may_cause_dark_shadows"
-        android:textColor="#444444"
+        android:lineSpacingExtra="1.dp"
+        android:lineSpacingMultiplier="1.10"
+        android:text="@string/vto_term_and_condition_desc"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:textColor="@color/vto_description_text_color"
         android:textSize="@dimen/text_size_15sp"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"

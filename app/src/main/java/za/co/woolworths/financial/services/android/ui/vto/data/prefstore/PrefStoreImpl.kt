@@ -1,13 +1,8 @@
-package za.co.woolworths.financial.services.android.ui.vto.prefstore
+package za.co.woolworths.financial.services.android.ui.vto.data.prefstore
 
 import android.content.Context
-
-
 import androidx.datastore.core.DataStore
-
 import androidx.datastore.preferences.core.*
-
-
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
