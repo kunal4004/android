@@ -7,6 +7,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
@@ -95,6 +97,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         null
     private var checkoutDeliveryTypeSelectionShimmerAdapter: CheckoutDeliveryTypeSelectionShimmerAdapter? =
         null
+    private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -152,9 +155,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 getConfirmDeliveryAddressDetails()
             }
             else -> {
-                initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
                 stopShimmerView()
                 showDeliverySlotSelectionView()
+                initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
             }
         }
 
@@ -187,13 +190,13 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
-        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = GONE
         edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
-        edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
+        edtTxtInputLayoutGiftInstructions?.visibility = GONE
         edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
 
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
-            if (loadingBar.visibility == View.VISIBLE) {
+            if (loadingBar.visibility == VISIBLE) {
                 return@setOnCheckedChangeListener
             }
             if (isChecked)
@@ -202,14 +205,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     activity
                 )
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+                if (isChecked) VISIBLE else GONE
             edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
             edtTxtSpecialDeliveryInstruction?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+                if (isChecked) VISIBLE else GONE
         }
 
         switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
-            if (loadingBar.visibility == View.VISIBLE) {
+            if (loadingBar.visibility == VISIBLE) {
                 return@setOnCheckedChangeListener
             }
             if (isChecked)
@@ -218,10 +221,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     activity
                 )
             edtTxtInputLayoutGiftInstructions?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+                if (isChecked) VISIBLE else GONE
             edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
             edtTxtGiftInstructions?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+                if (isChecked) VISIBLE else GONE
         }
         switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -235,7 +238,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     private fun initializeDeliveringToView() {
         if (arguments == null) {
-            checkoutDeliveryDetailsLayout.visibility = View.GONE
+            checkoutDeliveryDetailsLayout.visibility = GONE
             return
         }
         context?.let { context ->
@@ -247,7 +250,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         ?: SavedAddressResponse()
 
             if (savedAddress?.addresses.isNullOrEmpty()) {
-                checkoutDeliveryDetailsLayout?.visibility = View.GONE
+                checkoutDeliveryDetailsLayout?.visibility = GONE
                 return
             }
             savedAddress.let { savedAddresses ->
@@ -289,7 +292,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         return@forEach
                     }
                     if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
-                        checkoutDeliveryDetailsLayout.visibility = View.GONE
+                        checkoutDeliveryDetailsLayout.visibility = GONE
                     }
                 }
                 tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
@@ -334,7 +337,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         type: DeliveryType
     ) {
         // To show How would you like it to delivered.
-        checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
+        checkoutHowWouldYouDeliveredLayout.visibility = VISIBLE
         val localOpenDayDeliverySlots = confirmDeliveryAddressResponse?.openDayDeliverySlots
         if (confirmDeliveryAddressResponse?.requiredToDisplayOnlyODD == false) {
             otherType = if (foodType == DEFAULT) ONLY_OTHER else MIXED_OTHER
@@ -390,15 +393,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
             it.discountDetails?.let { discountDetails ->
                 groupOrderSummaryDiscount?.visibility =
-                    if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.otherDiscount == 0.0) GONE else VISIBLE
                 groupPromoCodeDiscount?.visibility =
-                    if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.promoCodeDiscount == 0.0) GONE else VISIBLE
                 groupWRewardsDiscount?.visibility =
-                    if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.voucherDiscount == 0.0) GONE else VISIBLE
                 groupCompanyDiscount?.visibility =
-                    if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.companyDiscount == 0.0) GONE else VISIBLE
                 groupTotalDiscount?.visibility =
-                    if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.totalDiscount == 0.0) GONE else VISIBLE
 
                 txtOrderSummaryDiscountValue?.text =
                     "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
@@ -433,179 +436,102 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         expandableGrid.showDeliveryTypeShimmerView()
         showDeliverySubTypeShimmerView()
 
+        shimmerComponentArray = listOf(
+            Pair<ShimmerFrameLayout, View>(
+                deliveringTitleShimmerFrameLayout,
+                tvNativeCheckoutDeliveringTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                deliveringTitleValueShimmerFrameLayout,
+                tvNativeCheckoutDeliveringValue
+            ),
+            Pair<ShimmerFrameLayout, View>(forwardImgViewShimmerFrameLayout, imageViewCaretForward),
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionTitleShimmerFrameLayout,
+                txtFoodSubstitutionTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionDescShimmerFrameLayout,
+                txtFoodSubstitutionDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupFoodSubstitutionShimmerFrameLayout,
+                radioGroupFoodSubstitution
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                instructionTxtShimmerFrameLayout,
+                txtSpecialDeliveryInstruction
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                specialInstructionSwitchShimmerFrameLayout,
+                switchSpecialDeliveryInstruction
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                giftInstructionTxtShimmerFrameLayout,
+                txtGiftInstructions
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                giftInstructionSwitchShimmerFrameLayout,
+                switchGiftInstructions
+            ),
+            Pair<ShimmerFrameLayout, View>(txtYourCartShimmerFrameLayout, txtOrderSummaryYourCart),
+            Pair<ShimmerFrameLayout, View>(
+                yourCartValueShimmerFrameLayout,
+                txtOrderSummaryYourCartValue
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                deliveryFeeTxtShimmerFrameLayout,
+                txtOrderSummaryDeliveryFee
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                deliveryFeeValueShimmerFrameLayout,
+                txtOrderSummaryDeliveryFeeValue
+            ),
+            Pair<ShimmerFrameLayout, View>(summaryNoteShimmerFrameLayout, txtOrderSummaryNote),
+            Pair<ShimmerFrameLayout, View>(txtOrderTotalShimmerFrameLayout, txtOrderTotalTitle),
+            Pair<ShimmerFrameLayout, View>(orderTotalValueShimmerFrameLayout, txtOrderTotalValue),
+            Pair<ShimmerFrameLayout, View>(
+                continuePaymentTxtShimmerFrameLayout,
+                txtContinueToPayment
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                newShoppingBagsTitleShimmerFrameLayout,
+                newShoppingBagsTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                newShoppingBagsDescShimmerFrameLayout,
+                txtNewShoppingBagsDesc
+            ),
+        )
+
+        txtNeedBags.visibility = GONE
+        switchNeedBags.visibility = GONE
+        newShoppingBagsTitleShimmerFrameLayout.visibility = VISIBLE
+        newShoppingBagsDescShimmerFrameLayout.visibility = VISIBLE
+
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
-
-        deliveringTitleShimmerFrameLayout.setShimmer(shimmer)
-        deliveringTitleShimmerFrameLayout.startShimmer()
-        tvNativeCheckoutDeliveringTitle.visibility = View.INVISIBLE
-
-        deliveringTitleValueShimmerFrameLayout.setShimmer(shimmer)
-        deliveringTitleValueShimmerFrameLayout.startShimmer()
-        tvNativeCheckoutDeliveringValue.visibility = View.INVISIBLE
-
-        forwardImgViewShimmerFrameLayout.setShimmer(shimmer)
-        forwardImgViewShimmerFrameLayout.startShimmer()
-        imageViewCaretForward.visibility = View.INVISIBLE
-
-        foodSubstitutionTitleShimmerFrameLayout.setShimmer(shimmer)
-        foodSubstitutionTitleShimmerFrameLayout.startShimmer()
-        txtFoodSubstitutionTitle.visibility = View.INVISIBLE
-
-        foodSubstitutionDescShimmerFrameLayout.setShimmer(shimmer)
-        foodSubstitutionDescShimmerFrameLayout.startShimmer()
-        txtFoodSubstitutionDesc.visibility = View.INVISIBLE
-
-        radioGroupFoodSubstitutionShimmerFrameLayout.setShimmer(shimmer)
-        radioGroupFoodSubstitutionShimmerFrameLayout.startShimmer()
-        radioGroupFoodSubstitution.visibility = View.INVISIBLE
-
-        txtNeedBags.visibility = View.GONE
-        switchNeedBags.visibility = View.GONE
-
-        newShoppingBagsTitleShimmerFrameLayout.visibility = View.VISIBLE
-        newShoppingBagsTitleShimmerFrameLayout.setShimmer(shimmer)
-        newShoppingBagsTitleShimmerFrameLayout.startShimmer()
-        newShoppingBagsTitle.visibility = View.INVISIBLE
-
-        newShoppingBagsDescShimmerFrameLayout.visibility = View.VISIBLE
-        newShoppingBagsDescShimmerFrameLayout.setShimmer(shimmer)
-        newShoppingBagsDescShimmerFrameLayout.startShimmer()
-        txtNewShoppingBagsDesc.visibility = View.INVISIBLE
-
-        instructionTxtShimmerFrameLayout.setShimmer(shimmer)
-        instructionTxtShimmerFrameLayout.startShimmer()
-        txtSpecialDeliveryInstruction.visibility = View.INVISIBLE
-
-        specialInstructionSwitchShimmerFrameLayout.setShimmer(shimmer)
-        specialInstructionSwitchShimmerFrameLayout.startShimmer()
-        switchSpecialDeliveryInstruction.visibility = View.INVISIBLE
-
-        giftInstructionTxtShimmerFrameLayout.setShimmer(shimmer)
-        giftInstructionTxtShimmerFrameLayout.startShimmer()
-        txtGiftInstructions.visibility = View.INVISIBLE
-
-        giftInstructionSwitchShimmerFrameLayout.setShimmer(shimmer)
-        giftInstructionSwitchShimmerFrameLayout.startShimmer()
-        switchGiftInstructions.visibility = View.INVISIBLE
-
-        txtYourCartShimmerFrameLayout.setShimmer(shimmer)
-        txtYourCartShimmerFrameLayout.startShimmer()
-        txtOrderSummaryYourCart.visibility = View.INVISIBLE
-
-        yourCartValueShimmerFrameLayout.setShimmer(shimmer)
-        yourCartValueShimmerFrameLayout.startShimmer()
-        txtOrderSummaryYourCartValue.visibility = View.INVISIBLE
-
-        deliveryFeeTxtShimmerFrameLayout.setShimmer(shimmer)
-        deliveryFeeTxtShimmerFrameLayout.startShimmer()
-        txtOrderSummaryDeliveryFee.visibility = View.INVISIBLE
-
-        deliveryFeeValueShimmerFrameLayout.setShimmer(shimmer)
-        deliveryFeeValueShimmerFrameLayout.startShimmer()
-        txtOrderSummaryDeliveryFeeValue.visibility = View.INVISIBLE
-
-        summaryNoteShimmerFrameLayout.setShimmer(shimmer)
-        summaryNoteShimmerFrameLayout.startShimmer()
-        txtOrderSummaryNote.visibility = View.INVISIBLE
-
-        txtOrderTotalShimmerFrameLayout.setShimmer(shimmer)
-        txtOrderTotalShimmerFrameLayout.startShimmer()
-        txtOrderTotalTitle.visibility = View.INVISIBLE
-
-        orderTotalValueShimmerFrameLayout.setShimmer(shimmer)
-        orderTotalValueShimmerFrameLayout.startShimmer()
-        txtOrderTotalValue.visibility = View.INVISIBLE
-
-        continuePaymentTxtShimmerFrameLayout.setShimmer(shimmer)
-        continuePaymentTxtShimmerFrameLayout.startShimmer()
-        txtContinueToPayment.visibility = View.INVISIBLE
+        shimmerComponentArray.forEach {
+            it.first.setShimmer(shimmer)
+            it.first.startShimmer()
+            it.second.visibility = INVISIBLE
+        }
     }
 
     private fun stopShimmerView() {
         expandableGrid.hideDeliveryTypeShimmerView()
 
-        deliveringTitleShimmerFrameLayout.stopShimmer()
-        deliveringTitleShimmerFrameLayout.setShimmer(null)
-        tvNativeCheckoutDeliveringTitle.visibility = View.VISIBLE
+        shimmerComponentArray.forEach {
+            if (it.first.isShimmerStarted) {
+                it.first.stopShimmer()
+                it.first.setShimmer(null)
+                it.second.visibility = VISIBLE
+            }
+        }
 
-        deliveringTitleValueShimmerFrameLayout.stopShimmer()
-        deliveringTitleValueShimmerFrameLayout.setShimmer(null)
-        tvNativeCheckoutDeliveringValue.visibility = View.VISIBLE
-
-        forwardImgViewShimmerFrameLayout.stopShimmer()
-        forwardImgViewShimmerFrameLayout.setShimmer(null)
-        imageViewCaretForward.visibility = View.VISIBLE
-
-        foodSubstitutionTitleShimmerFrameLayout.stopShimmer()
-        foodSubstitutionTitleShimmerFrameLayout.setShimmer(null)
-        txtFoodSubstitutionTitle.visibility = View.VISIBLE
-
-        foodSubstitutionDescShimmerFrameLayout.stopShimmer()
-        foodSubstitutionDescShimmerFrameLayout.setShimmer(null)
-        txtFoodSubstitutionDesc.visibility = View.VISIBLE
-
-        radioGroupFoodSubstitutionShimmerFrameLayout.stopShimmer()
-        radioGroupFoodSubstitutionShimmerFrameLayout.setShimmer(null)
-        radioGroupFoodSubstitution.visibility = View.VISIBLE
-
-        txtNeedBags.visibility = View.VISIBLE
-        switchNeedBags.visibility = View.VISIBLE
-
-        newShoppingBagsTitleShimmerFrameLayout.visibility = View.GONE
-        newShoppingBagsTitleShimmerFrameLayout.stopShimmer()
-        newShoppingBagsTitleShimmerFrameLayout.setShimmer(null)
-
-        newShoppingBagsDescShimmerFrameLayout.visibility = View.GONE
-        newShoppingBagsDescShimmerFrameLayout.stopShimmer()
-        newShoppingBagsDescShimmerFrameLayout.setShimmer(null)
-
-        instructionTxtShimmerFrameLayout.stopShimmer()
-        instructionTxtShimmerFrameLayout.setShimmer(null)
-        txtSpecialDeliveryInstruction.visibility = View.VISIBLE
-
-        specialInstructionSwitchShimmerFrameLayout.stopShimmer()
-        specialInstructionSwitchShimmerFrameLayout.setShimmer(null)
-        switchSpecialDeliveryInstruction.visibility = View.VISIBLE
-
-        giftInstructionTxtShimmerFrameLayout.stopShimmer()
-        giftInstructionTxtShimmerFrameLayout.setShimmer(null)
-        txtGiftInstructions.visibility = View.VISIBLE
-
-        giftInstructionSwitchShimmerFrameLayout.stopShimmer()
-        giftInstructionSwitchShimmerFrameLayout.setShimmer(null)
-        switchGiftInstructions.visibility = View.VISIBLE
-
-        txtYourCartShimmerFrameLayout.stopShimmer()
-        txtYourCartShimmerFrameLayout.setShimmer(null)
-        txtOrderSummaryYourCart.visibility = View.VISIBLE
-
-        yourCartValueShimmerFrameLayout.stopShimmer()
-        yourCartValueShimmerFrameLayout.setShimmer(null)
-        txtOrderSummaryYourCartValue.visibility = View.VISIBLE
-
-        deliveryFeeTxtShimmerFrameLayout.stopShimmer()
-        deliveryFeeTxtShimmerFrameLayout.setShimmer(null)
-        txtOrderSummaryDeliveryFee.visibility = View.VISIBLE
-
-        deliveryFeeValueShimmerFrameLayout.stopShimmer()
-        deliveryFeeValueShimmerFrameLayout.setShimmer(null)
-        txtOrderSummaryDeliveryFeeValue.visibility = View.VISIBLE
-
-        summaryNoteShimmerFrameLayout.stopShimmer()
-        summaryNoteShimmerFrameLayout.setShimmer(null)
-        txtOrderSummaryNote.visibility = View.VISIBLE
-
-        txtOrderTotalShimmerFrameLayout.stopShimmer()
-        txtOrderTotalShimmerFrameLayout.setShimmer(null)
-        txtOrderTotalTitle.visibility = View.VISIBLE
-
-        orderTotalValueShimmerFrameLayout.stopShimmer()
-        orderTotalValueShimmerFrameLayout.setShimmer(null)
-        txtOrderTotalValue.visibility = View.VISIBLE
-
-        continuePaymentTxtShimmerFrameLayout.stopShimmer()
-        continuePaymentTxtShimmerFrameLayout.setShimmer(null)
-        txtContinueToPayment.visibility = View.VISIBLE
+        txtNeedBags.visibility = VISIBLE
+        switchNeedBags.visibility = VISIBLE
+        newShoppingBagsTitleShimmerFrameLayout.visibility = GONE
+        newShoppingBagsDescShimmerFrameLayout.visibility = GONE
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
@@ -621,12 +547,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             return
         }
 
-        loadingBar.visibility = View.VISIBLE
         startShimmerView()
         val body = ConfirmDeliveryAddressBody(suburbId)
         checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails(body)
             .observe(viewLifecycleOwner, { response ->
-                loadingBar.visibility = View.GONE
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
@@ -672,11 +596,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         if (FOOD.type == selectedSlotResponseFood?.fulfillmentTypes?.join) {
             //Only for Food
             foodType = ONLY_FOOD
-            checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+            checkoutTimeSlotSelectionLayout.visibility = VISIBLE
             selectDeliveryTimeSlotTitle.text =
                 getString(R.string.slot_delivery_title_when)
-            selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
-            txtSelectDeliveryTimeSlotFoodError?.visibility = View.GONE
+            selectDeliveryTimeSlotSubTitleFood.visibility = GONE
+            txtSelectDeliveryTimeSlotFoodError?.visibility = GONE
             expandableGrid.initialiseGridView(
                 selectedSlotResponseFood,
                 FIRST.week,
@@ -685,7 +609,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
             // For mix basket
             foodType = MIXED_FOOD
-            checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+            checkoutTimeSlotSelectionLayout.visibility = VISIBLE
             expandableGrid.initialiseGridView(
                 selectedSlotResponseFood,
                 FIRST.week,
@@ -774,16 +698,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             }
             R.id.checkoutDeliveryDetailsLayout -> {
-                if (loadingBar.visibility == View.GONE) {
-                    baseFragBundle?.putString(
-                        CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
-                        Utils.toJson(confirmDeliveryAddressResponse)
-                    )
-                    view?.findNavController()?.navigate(
-                        R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
-                        baseFragBundle
-                    )
-                }
+                baseFragBundle?.putString(
+                    CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
+                    Utils.toJson(confirmDeliveryAddressResponse)
+                )
+                view?.findNavController()?.navigate(
+                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
+                    baseFragBundle
+                )
             }
             R.id.txtContinueToPayment -> {
                 Utils.triggerFireBaseEvents(
@@ -806,11 +728,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         ) {
             return
         }
-        loadingBar?.visibility = View.VISIBLE
+        loadingBar?.visibility = VISIBLE
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
             .observe(viewLifecycleOwner, { response ->
-                loadingBar.visibility = View.GONE
+                loadingBar.visibility = GONE
                 setScreenClickEvents(true)
                 when (response) {
                     is ShippingDetailsResponse -> {
@@ -865,7 +787,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             // Food Items Basket
             foodType == ONLY_FOOD -> {
                 if (!TextUtils.isEmpty(selectedFoodSlot?.slotId)) {
-                    txtSelectDeliveryTimeSlotFoodError?.visibility = View.GONE
+                    txtSelectDeliveryTimeSlotFoodError?.visibility = GONE
                     return false
                 }
                 // scroll to slot selection layout
@@ -873,7 +795,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     0,
                     checkoutTimeSlotSelectionLayout?.top ?: 0
                 )
-                txtSelectDeliveryTimeSlotFoodError?.visibility = View.VISIBLE
+                txtSelectDeliveryTimeSlotFoodError?.visibility = VISIBLE
             }
             // Other Items Basket
             otherType == ONLY_OTHER -> {
@@ -881,16 +803,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     (selectedOpedDayDeliverySlot.deliveryType != null
                             && selectedOpedDayDeliverySlot.deliveryType != DELIVERY_TYPE_TIMESLOT) -> {
                         if (!TextUtils.isEmpty(selectedOpedDayDeliverySlot?.deliverySlotId)) {
-                            txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
+                            txtSelectDeliveryTimeSlotOtherError?.visibility = GONE
                             return false
                         }
                     }
                     else -> {
                         if (!TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
-                            txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
+                            txtSelectDeliveryTimeSlotOtherError?.visibility = GONE
                             return false
                         }
-                        txtSelectDeliveryTimeSlotOtherError?.visibility = View.VISIBLE
+                        txtSelectDeliveryTimeSlotOtherError?.visibility = VISIBLE
                     }
                 }
                 // scroll to other slot selection layout
@@ -908,8 +830,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         (!TextUtils.isEmpty(selectedFoodSlot?.slotId)
                                 && !TextUtils.isEmpty(selectedOtherSlot?.slotId)
                                 ) -> {
-                            txtSelectDeliveryTimeSlotFoodError?.visibility = View.GONE
-                            txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
+                            txtSelectDeliveryTimeSlotFoodError?.visibility = GONE
+                            txtSelectDeliveryTimeSlotOtherError?.visibility = GONE
                             return false
                         }
                         (TextUtils.isEmpty(selectedFoodSlot?.slotId)) -> {
@@ -918,7 +840,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                                 0,
                                 checkoutTimeSlotSelectionLayout?.top ?: 0
                             )
-                            txtSelectDeliveryTimeSlotFoodError?.visibility = View.VISIBLE
+                            txtSelectDeliveryTimeSlotFoodError?.visibility = VISIBLE
                         }
                         else -> {
                             if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
@@ -927,7 +849,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                                     0,
                                     checkoutHowWouldYouDeliveredLayout?.top ?: 0
                                 )
-                                txtSelectDeliveryTimeSlotOtherError?.visibility = View.VISIBLE
+                                txtSelectDeliveryTimeSlotOtherError?.visibility = VISIBLE
                             }
                         }
                     }
@@ -943,7 +865,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                             0,
                             checkoutTimeSlotSelectionLayout?.top ?: 0
                         )
-                        txtSelectDeliveryTimeSlotFoodError?.visibility = View.VISIBLE
+                        txtSelectDeliveryTimeSlotFoodError?.visibility = VISIBLE
                     } else if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
                         // scroll to other slot selection layout
                         deliverySummaryScrollView?.smoothScrollTo(
@@ -1068,7 +990,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         )
         when (openDayDeliverySlot.deliveryType) {
             DELIVERY_TYPE_TIMESLOT -> {
-                gridLayoutDeliveryOptions.visibility = View.VISIBLE
+                gridLayoutDeliveryOptions.visibility = VISIBLE
                 otherType = type
                 expandableGrid.apply {
                     disablePreviousBtnOther()
@@ -1077,7 +999,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             }
             else -> {
-                gridLayoutDeliveryOptions.visibility = View.GONE
+                gridLayoutDeliveryOptions.visibility = GONE
                 expandableGrid.gridOnClickListner(
                     type,
                     DEFAULT_POSITION,
