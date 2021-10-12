@@ -8,7 +8,6 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -28,6 +27,7 @@ import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
+import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
@@ -459,13 +459,18 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         radioGroupFoodSubstitutionShimmerFrameLayout.startShimmer()
         radioGroupFoodSubstitution.visibility = View.INVISIBLE
 
-        txtNeedBagsShimmerFrameLayout.setShimmer(shimmer)
-        txtNeedBagsShimmerFrameLayout.startShimmer()
-        txtNeedBags.visibility = View.INVISIBLE
+        txtNeedBags.visibility = View.GONE
+        switchNeedBags.visibility = View.GONE
 
-        switchNeedBagsShimmerFrameLayout.setShimmer(shimmer)
-        switchNeedBagsShimmerFrameLayout.startShimmer()
-        switchNeedBags.visibility = View.INVISIBLE
+        newShoppingBagsTitleShimmerFrameLayout.visibility = View.VISIBLE
+        newShoppingBagsTitleShimmerFrameLayout.setShimmer(shimmer)
+        newShoppingBagsTitleShimmerFrameLayout.startShimmer()
+        newShoppingBagsTitle.visibility = View.INVISIBLE
+
+        newShoppingBagsDescShimmerFrameLayout.visibility = View.VISIBLE
+        newShoppingBagsDescShimmerFrameLayout.setShimmer(shimmer)
+        newShoppingBagsDescShimmerFrameLayout.startShimmer()
+        txtNewShoppingBagsDesc.visibility = View.INVISIBLE
 
         instructionTxtShimmerFrameLayout.setShimmer(shimmer)
         instructionTxtShimmerFrameLayout.startShimmer()
@@ -543,13 +548,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         radioGroupFoodSubstitutionShimmerFrameLayout.setShimmer(null)
         radioGroupFoodSubstitution.visibility = View.VISIBLE
 
-        txtNeedBagsShimmerFrameLayout.stopShimmer()
-        txtNeedBagsShimmerFrameLayout.setShimmer(null)
         txtNeedBags.visibility = View.VISIBLE
-
-        switchNeedBagsShimmerFrameLayout.stopShimmer()
-        switchNeedBagsShimmerFrameLayout.setShimmer(null)
         switchNeedBags.visibility = View.VISIBLE
+
+        newShoppingBagsTitleShimmerFrameLayout.visibility = View.GONE
+        newShoppingBagsTitleShimmerFrameLayout.stopShimmer()
+        newShoppingBagsTitleShimmerFrameLayout.setShimmer(null)
+
+        newShoppingBagsDescShimmerFrameLayout.visibility = View.GONE
+        newShoppingBagsDescShimmerFrameLayout.stopShimmer()
+        newShoppingBagsDescShimmerFrameLayout.setShimmer(null)
 
         instructionTxtShimmerFrameLayout.stopShimmer()
         instructionTxtShimmerFrameLayout.setShimmer(null)
