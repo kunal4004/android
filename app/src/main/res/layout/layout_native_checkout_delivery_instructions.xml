@@ -6,43 +6,27 @@
     android:background="@color/white"
     android:paddingBottom="@dimen/twenty_four_dp">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/txtNeedBagsShimmerFrameLayout"
+    <TextView
+        android:id="@+id/txtNeedBags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:background="@color/shimmer_view_background"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/native_checkout_delivery_instructions_need_bags"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/txtNeedBags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:fontFamily="@font/myriad_pro_regular"
-            android:text="@string/native_checkout_delivery_instructions_need_bags"
-            android:textColor="@color/black"
-            android:textSize="@dimen/fifteen_sp" />
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/switchNeedBagsShimmerFrameLayout"
+    <Switch
+        android:id="@+id/switchNeedBags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/twenty_four_dp"
-        android:background="@color/shimmer_view_background"
-        app:layout_constraintBottom_toBottomOf="@id/txtNeedBagsShimmerFrameLayout"
+        android:theme="@style/SwitchTheme"
+        app:layout_constraintBottom_toBottomOf="@id/txtNeedBags"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/txtNeedBagsShimmerFrameLayout">
-
-        <Switch
-            android:id="@+id/switchNeedBags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:theme="@style/SwitchTheme" />
-    </com.facebook.shimmer.ShimmerFrameLayout>
+        app:layout_constraintTop_toTopOf="@id/txtNeedBags" />
 
     <View
         android:id="@+id/viewHorizontalSeparator1"
@@ -50,7 +34,7 @@
         android:layout_height="@dimen/one_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
         android:background="@color/color_12000000"
-        app:layout_constraintTop_toBottomOf="@id/txtNeedBagsShimmerFrameLayout" />
+        app:layout_constraintTop_toBottomOf="@id/txtNeedBags" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/instructionTxtShimmerFrameLayout"
