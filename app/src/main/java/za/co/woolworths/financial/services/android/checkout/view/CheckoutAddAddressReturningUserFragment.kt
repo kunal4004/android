@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.text.*
@@ -9,6 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -45,6 +49,7 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
@@ -155,6 +160,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 getConfirmDeliveryAddressDetails()
             }
             else -> {
+                startShimmerView()
                 stopShimmerView()
                 showDeliverySlotSelectionView()
                 initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
@@ -226,13 +232,46 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             edtTxtGiftInstructions?.visibility =
                 if (isChecked) VISIBLE else GONE
         }
-        switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
-                    activity
-                )
+        if (WoolworthsApplication.getNativeCheckout()?.currentShoppingBag?.isEnabled == true) {
+            switchNeedBags.visibility = VISIBLE
+            txtNeedBags.visibility = VISIBLE
+            newShoppingBagsLayout.visibility = GONE
+            switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+                        activity
+                    )
+                }
             }
+        } else if (WoolworthsApplication.getNativeCheckout()?.newShoppingBag?.isEnabled == true) {
+            switchNeedBags.visibility = GONE
+            txtNeedBags.visibility = GONE
+            newShoppingBagsLayout.visibility = VISIBLE
+            addRadioButtons()
+        }
+    }
+
+    @SuppressLint("ResourceType")
+    private fun addRadioButtons() {
+
+        val radioGroup = activity?.findViewById<RadioGroup>(R.id.radioGroupShoppingBags)
+        val newShoppingBags = WoolworthsApplication.getNativeCheckout()?.newShoppingBag
+
+        txtNewShoppingBagsDesc.text =
+            newShoppingBags?.title.plus("/n").plus(newShoppingBags?.description)
+
+        newShoppingBags?.options?.forEachIndexed { index, shoppingBagsOptions ->
+            val radioButton = RadioButton(activity)
+            radioButton.layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            //val someLayout = RelativeLayout(ContextThemeWrapper(activity, R.style.FoodSubstRadioButtonStyle))
+
+            radioButton.setText(shoppingBagsOptions.title)
+            radioButton.id = index
+            radioGroup?.addView(radioButton)
         }
     }
 
@@ -502,12 +541,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 newShoppingBagsDescShimmerFrameLayout,
                 txtNewShoppingBagsDesc
             ),
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupShoppingBagsShimmerFrameLayout,
+                radioGroupShoppingBags
+            )
         )
 
         txtNeedBags.visibility = GONE
         switchNeedBags.visibility = GONE
-        newShoppingBagsTitleShimmerFrameLayout.visibility = VISIBLE
-        newShoppingBagsDescShimmerFrameLayout.visibility = VISIBLE
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {
@@ -530,8 +571,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
         txtNeedBags.visibility = VISIBLE
         switchNeedBags.visibility = VISIBLE
-        newShoppingBagsTitleShimmerFrameLayout.visibility = GONE
-        newShoppingBagsDescShimmerFrameLayout.visibility = GONE
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
