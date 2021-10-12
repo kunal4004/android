@@ -65,9 +65,8 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
         }
 
         private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
-            val url = KotlinUtils.productImageUrlPrefix + imgUrl;
             //TODO:: get domain name dynamically
-            image.setImageURI(if (TextUtils.isEmpty(imgUrl)) KotlinUtils.productImageUrlPrefix else url);
+            image.setImageURI(imgUrl);
         }
     }
 

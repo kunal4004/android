@@ -207,7 +207,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
         if (!TextUtils.isEmpty(imgUrl)) {
             image.setResizeImage(true)
-            image.setImageURI(Utils.getExternalImageRef() + imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 48 + "&q=" + 48 else "?w=" + 48 + "&q=" + 48)
+            image.setImageURI( imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 48 + "&q=" + 48 else "?w=" + 48 + "&q=" + 48)
         }
     }
 }

@@ -403,13 +403,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun getImageByWidth(imageUrl: String?, context: Context): String {
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).apply {
-            var imageLink = imageUrl
+            var imageLink:String? = imageUrl
             val deviceHeight = this.defaultDisplay
             val size = Point()
             deviceHeight.getSize(size)
             val width = size.x
-            if (imageLink.isNullOrEmpty()) imageLink = KotlinUtils.productImageUrlPrefix
-            return imageLink + "" + if (imageLink.contains("jpg")) "" else "?w=$width&q=85"
+            return imageLink + "" + if (imageLink!!.contains("jpg")) "" else "?w=$width&q=85"
         }
     }
 

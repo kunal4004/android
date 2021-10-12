@@ -661,9 +661,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
     private String productImageUrl(String imgUrl) {
         try {
-            String url = KotlinUtils.productImageUrlPrefix + imgUrl;
+            String url = imgUrl;
             //TODO:: get domain name dynamically
-            return TextUtils.isEmpty(imgUrl) ? KotlinUtils.productImageUrlPrefix : url;
+            return url;
         } catch (IllegalArgumentException ex) {
             return imgUrl;
         }

@@ -236,7 +236,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
         if (!isEmpty(imgUrl)) {
             image.setResizeImage(true)
-            image.setImageURI(Utils.getExternalImageRef() + imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
+            image.setImageURI( imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
         }
     }
 }
