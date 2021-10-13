@@ -1,10 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.vto.ui.gallery
 
 
-
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -13,10 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-
-
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -26,69 +19,60 @@ import com.perfectcorp.perfectlib.PhotoMakeup
 import com.perfectcorp.perfectlib.PhotoMakeup.DetectFaceCallback
 import com.perfectcorp.perfectlib.VtoApplier
 import com.perfectcorp.perfectlib.VtoApplier.ApplyCallback
+import kotlinx.android.synthetic.main.product_details_fragment.*
 import kotlinx.android.synthetic.main.vto_imageview_fragment.*
-import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
-import za.co.woolworths.financial.services.android.ui.vto.presentation.PermissionViewModel
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.vto.presentation.SetImageViewModel
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility
-import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import java.lang.Exception
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-private const val REQUEST_PERMISSION_MEDIA = 100
-private const val IMAGE_CHOOSE = 1000;
 
-class LibstickImageViewFragment : Fragment() {
+
+class MakeUpImageViewFragment : Fragment() {
 
     private lateinit var _binding: VtoImageviewFragmentBinding
     private val binding get() = _binding!!
     private var permissionDenied = false
-    private val viewModel: PermissionViewModel by viewModels()
     private var photoMakeup: PhotoMakeup? = null
     private var applier: VtoApplier? = null
+    private val setImageViewModel: SetImageViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)}
 
     override fun onCreateView(inflater: LayoutInflater, group: ViewGroup?, state: Bundle?): View? {
-        viewModel.actions.observe(viewLifecycleOwner, Observer { handleAction(it) })
+        setImageViewModel.userImage.observe(viewLifecycleOwner, Observer { imgVTOEffect.setPhotoUri(it) })
         _binding = VtoImageviewFragmentBinding.inflate(inflater)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         pfSDKInit()
-        // pfSDKTest()
-        checkGalleryPermission()
         binding.imgVTOEffect.setOnClickListener {
             clearEffect()
         }
     }
 
-    private fun pfSDKTest() {
-        SdkUtility.initSdk(requireContext(), object : PfSDKInitialCallback {
-             override fun onInitialized() {
-                 Toast.makeText(requireActivity(), "passs", Toast.LENGTH_SHORT).show()
-            }
+    private fun setUpViewModel() {
 
-            override fun onFailure(throwable: Throwable?) {
-                val message = "SDK init failed. throwable=$throwable"
-                Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
-
-            }
-
+        setImageViewModel.userImage.observe(viewLifecycleOwner, { uri->
+            loadPhoto(uri)
+            imgVTOEffect.setPhotoUri(uri)
 
         })
+
     }
 
     private fun clearEffect() {
 
         applier?.clearAllEffects(object : ApplyCallback {
             override fun onSuccess(bitmap: Bitmap) {
-                setImageBitmap(bitmap)
+              //  setImageBitmap(bitmap)
             }
 
             override fun onFailure(throwable: Throwable) {
@@ -101,28 +85,13 @@ class LibstickImageViewFragment : Fragment() {
         })
     }
 
-    private fun setImageBitmap(bitmap: Bitmap) {
-
-
-    }
-
-    private fun checkGalleryPermission() {
-        if (!PermissionUtil.hasStoragePermission(requireContext())) {
-            if (!permissionDenied) {
-                viewModel.requestStoragePermissions()
-            }
-        } else {
-            // open gallery
-            chooseImageGallery()
-        }
-    }
 
     private fun pfSDKInit() {
         SdkUtility.initSdk(requireContext(), object : PfSDKInitialCallback {
             override fun onInitialized() {
                 PhotoMakeup.create(object : PhotoMakeup.CreateCallback {
                     override fun onSuccess(photoMakeup: PhotoMakeup) {
-                        this@LibstickImageViewFragment.photoMakeup = photoMakeup
+                        this@MakeUpImageViewFragment.photoMakeup = photoMakeup
 
                         VtoApplier.create(photoMakeup, object : VtoApplier.CreateCallback {
                             override fun onSuccess(applierVTO: VtoApplier) {
@@ -150,15 +119,13 @@ class LibstickImageViewFragment : Fragment() {
 
             }
 
-
         })
 
     }
 
     override fun onResume() {
         super.onResume()
-
-
+        setUpViewModel()
     }
 
     override fun onPause() {
@@ -166,32 +133,7 @@ class LibstickImageViewFragment : Fragment() {
         super.onPause()
     }
 
-    private fun handleAction(action: PermissionAction) {
-        when (action) {
-            PermissionAction.StoragePermissionsRequested -> PermissionUtil.requestStoragePermission(
-                this,
-                REQUEST_PERMISSION_MEDIA
-            )
-            else -> null
-        }
-    }
 
-    private fun chooseImageGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, IMAGE_CHOOSE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        if (requestCode == IMAGE_CHOOSE && resultCode == Activity.RESULT_OK) {
-           // binding.imgVTOEffect.setImageURI(data?.data)
-
-            binding.imgVTOEffect.setPhotoUri(Uri.parse(data?.data.toString()))
-            loadPhoto(data?.data)
-        }
-
-    }
 
     private fun loadPhoto(imageUri: Uri?) {
 
@@ -217,7 +159,6 @@ class LibstickImageViewFragment : Fragment() {
         } catch (e: Exception) {
         }
 
-
     }
 
     private fun detectFace(selectedImage: Bitmap?) {
@@ -225,7 +166,6 @@ class LibstickImageViewFragment : Fragment() {
 
         photoMakeup?.detectFace(selectedImage, object : DetectFaceCallback {
             override fun onSuccess(faceList: List<FaceData>) {
-
                 if (faceList.isEmpty()) {
 
                     return
@@ -236,13 +176,12 @@ class LibstickImageViewFragment : Fragment() {
                 val faceData = faceList[faceIndex]
                 photoMakeup!!.setFace(faceData)
 
-                // debug code start
                 val faceRect = faceData.faceRect
                 val scale: Int =
                     if (selectedImage!!.getWidth() / selectedImage!!.getHeight() >= imgVTOEffect.getWidth() / imgVTOEffect.getHeight()) imgVTOEffect.getWidth() / selectedImage.getWidth()  else imgVTOEffect.getHeight() / selectedImage!!.getHeight()
                 val faceRectView = View(requireActivity())
                 //TODO: remove after test
-               // faceRectView.setBackgroundResource(R.drawable.selector_item_border)
+              //  faceRectView.setBackgroundResource(R.drawable.selector_item_border)
                 val params = ConstraintLayout.LayoutParams(
                     (scale * (faceRect.right - faceRect.left)).toInt(),
                     (scale * (faceRect.bottom - faceRect.top)).toInt()
@@ -269,39 +208,20 @@ class LibstickImageViewFragment : Fragment() {
 
     }
 
-    override fun onRequestPermissionsResult(
-        code: Int,
-        permission: Array<out String>,
-        res: IntArray
-    ) {
-        when (code) {
-            REQUEST_PERMISSION_MEDIA -> {
-                when {
-                    res.isEmpty() -> {
-                        //Do nothing
-                    }
-                    res[0] == PackageManager.PERMISSION_GRANTED -> {
-                        // open gallery
-                        chooseImageGallery()
-                    }
-                    else -> {
-                        permissionDenied = true
-                        viewModel.requestStoragePermissions()
-
-                    }
-                }
-            }
-        }
-    }
-
-
     companion object {
-        fun newInstance() = LibstickImageViewFragment()
+        fun newInstance(uri:Uri) = MakeUpImageViewFragment().withArgs{
+            putString("errorType", uri.toString())
+
+        }
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
        // _binding = null
     }
+
+
+
 
 }

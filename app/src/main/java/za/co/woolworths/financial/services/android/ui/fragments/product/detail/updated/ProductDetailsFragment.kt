@@ -85,6 +85,9 @@ import kotlinx.android.synthetic.main.vto_imageview_fragment.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
 import za.co.woolworths.financial.services.android.ui.vto.presentation.DataPrefViewModel
@@ -98,7 +101,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
-    VtoGotItListener, VtoSelectOptionListener {
+    VtoGotItListener, VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -157,7 +160,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val HTTP_CODE_502 = 502
         fun newInstance() = ProductDetailsFragment()
         const val REQUEST_PERMISSION_MEDIA = 100
-        const val IMAGE_CHOOSE = 1000;
 
     }
 
@@ -179,9 +181,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
+        dataPrefViewModel = ViewModelProvider(this).get(DataPrefViewModel::class.java)
         initViews()
         setUniqueIds()
-        dataPrefViewModel = ViewModelProvider(this).get(DataPrefViewModel::class.java)
+
     }
 
     private fun initViews() {
@@ -214,8 +217,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgVTOOpen?.setOnClickListener(this)
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
-    }
 
+        }
+
+    private fun showVTOTryItOn() {
+        imgVTOOpen.setImageResource(R.drawable.ic_camera_vto)
+        dataPrefViewModel.isTryItOn.observe(
+            viewLifecycleOwner,
+            Observer { isTryItOn ->
+                if (isTryItOn) {
+                    imgVTOOpen.setImageResource(R.drawable.ic_try_on_camera)
+                    dataPrefViewModel.disableTryItOn(false)
+                } else {
+                    imgVTOOpen.setImageResource(R.drawable.ic_camera_vto)
+
+                }
+            })
+    }
 
     override fun onClick(v: View?) {
         KotlinUtils.avoidDoubleClicks(v)
@@ -1190,21 +1208,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             reloadFragment()
                         }
                     }
-                    IMAGE_CHOOSE -> {
-//                         vtoLayout.visibility =View.VISIBLE
-//                         share.visibility =View.GONE
-//                         productImagesViewPagerIndicator.visibility =View.GONE
-//                         closePage.visibility =View.GONE
-//                         productImagesViewPager.visibility =View.GONE
-//                         dataPrefViewModel.isLightingTips.observe(requireActivity()) { lightingTips ->
-//                             if(lightingTips){
-//                                 showLighting()
-//                             }
-//                         }
-//
-//                         imgVTOEffect.setPhotoUri(Uri.parse(data?.data.toString()))
-
-                    }
 
                 }
             }
@@ -1250,18 +1253,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-
-    //    fun getPath(uri: Uri?): String? {
-//        val projection = arrayOf(MediaStore.Images.Media.DATA)
-//        val cursor: Cursor? = requireActivity().getContentResolver().query(uri!!, projection, null, null, null)
-//        val column_index: Int = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-//        cursor!!.moveToFirst()
-//        val columnIndex: Int = cursor.getColumnIndex(projection[0])
-//        val filePath: String = cursor.getString(columnIndex)
-//        cursor.close()
-//       // yourSelectedImage = BitmapFactory.decodeFile(filePath)
-//        return cursor.getString(column_index)
-//    }
     private fun findItemInStore() {
 
         if (getSelectedSku() == null) {
@@ -1446,7 +1437,44 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             viewsToHideOnProductLoading.visibility = View.VISIBLE
             updateAddToCartButtonForSelectedSKU()
         }
+
+        productDetails?.promotionImages?.virtualTryOn?.let {
+            showVTOTryItOn()
+            showVtoTryItOnHint() }
     }
+
+    private fun showVtoTryItOnHint() {
+        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.tryItOn)
+           return
+        (activity as? ProductDetailsActivity)?.apply {
+
+            walkThroughPromtView =
+                WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.VTO_TRY_IT)
+                    .setTarget(imgVTOOpen)
+                    .setTitle(R.string.try_on_intro_txt)
+                    .setDescription(R.string.try_on_intro_desc)
+                    .setActionText(R.string.got_it)
+                    .setShapePadding(48)
+                    .hideImage()
+                    .setAction(this@ProductDetailsFragment)
+                    .hideFeatureTutorialsText()
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                    .setMaskColour(ContextCompat.getColor(this, R.color.semi_transparent_black))
+                    .build()
+           walkThroughPromtView!!.show(this)
+        }
+
+    }
+
+    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
+        // Do Nothing
+    }
+
+    override fun onPromptDismiss() {
+        // Do Nothing
+
+    }
+
 
     override fun showProgressBar() {
         activity?.apply {
@@ -1937,7 +1965,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             closePage.visibility = View.GONE
             productImagesViewPager.visibility = View.GONE
             imgVTOEffect.setPhotoUri(it)
-            //dataPrefViewModel.userImage.value = it
+
         }
         lifecycleScope.launch {
             delay(1000L)

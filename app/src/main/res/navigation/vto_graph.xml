@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/LibstickImageViewFragment">
+    app:startDestination="@id/imageViewFragment">
 
     <fragment
-        android:id="@+id/LibstickImageViewFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.vto.ui.gallery.LibstickImageViewFragment"
+        android:id="@+id/imageViewFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.vto.ui.gallery.MakeUpImageViewFragment"
         android:label="vto_imageview_fragment"
         tools:layout="@layout/vto_imageview_fragment" >
 

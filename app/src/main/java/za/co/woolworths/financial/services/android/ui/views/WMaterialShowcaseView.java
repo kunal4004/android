@@ -425,6 +425,18 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         }
     }
 
+    private void hideImage() {
+        if (mWalkThroughIcon != null) {
+            mWalkThroughIcon.setVisibility(GONE);
+        }
+    }
+
+    private void hideFeatureTutorialsText() {
+        if (mWalkThroughIcon != null) {
+            mHideTutorialAction.setVisibility(GONE);
+        }
+    }
+
     private void setAsNewFeature() {
         if (mNewFeature != null) {
             mNewFeature.setVisibility(VISIBLE);
@@ -704,6 +716,23 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
             showcaseView.setImage(resId);
             return this;
         }
+
+
+        /**
+         * hide image
+         * @return
+         */
+        public WMaterialShowcaseView.Builder hideImage() {
+            showcaseView.hideImage();
+            return this;
+        }
+
+        public WMaterialShowcaseView.Builder hideFeatureTutorialsText() {
+            showcaseView.hideFeatureTutorialsText();
+            return this;
+        }
+
+
 
         /**
          * Set AsNewFeature on the ShowcaseView.
@@ -1091,7 +1120,8 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         SHOPPING_LIST(7),
         STATEMENTS(8),
         CART_REDEEM_VOUCHERS(9),
-        CREDIT_SCORE(9);
+        CREDIT_SCORE(9),
+        VTO_TRY_IT(10);
 
         private int value;
 
