@@ -80,6 +80,7 @@ import kotlin.collections.ArrayList
 import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.ReviewerInfoDetailsActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 
 
@@ -596,18 +597,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             if (it.isRnREnabled) {
                 ratingBarTop.rating = it.averageRating
-                if(it.reviewCount<2)
-                    tvTotalReviews.text = getString(R.string.no_review, it.reviewCount)
-                else
-                    tvTotalReviews.text = getString(R.string.no_reviews, it.reviewCount)
+                tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
                 tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
                 ratingBar.rating = it.averageRating
-                if(it.reviewCount<2)
-                    tvCustomerReviewCount.text = getString(R.string.customer_review, "("+it.reviewCount+")")
-                else
-                    tvCustomerReviewCount.text = getString(R.string.customer_reviews, "("+it.reviewCount+")")
+                tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, it.reviewCount, it.reviewCount)
                 tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
                 setReviewUI()
             }else{
@@ -699,6 +694,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             rootView.addView(ivCircle)
             rootView.addView(tv2)
             llAdditionalFields.addView(rootView)
+            tvCustomerReview.setOnClickListener {
+                val intent = Intent(context, ReviewerInfoDetailsActivity::class.java)
+                startActivity(intent)
+            }
         }
         setSecondaryRatingsUI()
     }

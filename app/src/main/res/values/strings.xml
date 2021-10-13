@@ -2158,20 +2158,25 @@
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
-    <string name="customer_reviews">Customer Reviews %s</string>
-    <string name="customer_review">Customer Review %s</string>
-    <string name="percent_recommend_to_friend">%s Would recommend this product to a friend</string>
+
 
     <!--  Rating and Review Feature -->
+    <string name="percent_recommend_to_friend">%s Would recommend this product to a friend</string>
     <string name="rating_details">Rating details</string>
-    <string name="no_reviews">%d Reviews</string>
-    <string name="no_review">%d Review</string>
+    <plurals name="no_review">
+        <item quantity="one">%d Review</item>
+        <item quantity="other">%d Reviews</item>
+    </plurals>
+    <plurals name="customer_review">
+        <item quantity="one">Customer Review (%d)</item>
+        <item quantity="other">Customer Reviews (%d)</item>
+    </plurals>
     <string name="verified_buyer">Verified Buyer</string>
     <string name="view_skin_profile">VIEW SKIN PROFILE</string>
     <string name="verified_staff_member">Verified Staff Member</string>
-    <string name="was_this_review_helpful">Was this Review Helpful?</string>
     <string name="report">REPORT</string>
     <string name="thumbnail">thumbnail</string>
+    <string name="was_this_review_helpful">Was this Review Helpful?</string>
     <string name="skin_shade">Skin Shade:</string>
     <string name="skin_type">Skin Type:</string>
     <string name="skin_concerns">Skin Concerns:</string>
