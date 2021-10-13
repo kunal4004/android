@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
@@ -168,6 +169,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         allergensInformation.setOnClickListener(this)
         moreColor.setOnClickListener(this)
         tvRatingDetails.setOnClickListener(this)
+        tvSkinProfile.setOnClickListener(this)
         closePage.setOnClickListener {
             activity?.apply {
                 setResult(RESULT_CANCELED)
@@ -199,10 +201,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.share -> shareProduct()
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
             R.id.tvRatingDetails -> showRatingDetailsDailog()
+            R.id.tvSkinProfile->viewSkinProfileDailog()
         }
     }
 
-    fun showRatingDetailsDailog() {
+    private fun showRatingDetailsDailog() {
         val dialog = RatingDetailDialog()
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
@@ -214,7 +217,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
         }
     }
-
+    private fun viewSkinProfileDailog() {
+        val dialog = SkinProfileDialog()
+        activity?.apply {
+            this@ProductDetailsFragment.childFragmentManager.beginTransaction()
+                .let { fragmentTransaction ->
+                    dialog.show(
+                        fragmentTransaction,
+                        SkinProfileDialog::class.java.simpleName
+                    )
+                }
+        }
+    }
 
     private fun onQuantitySelector() {
         activity?.supportFragmentManager?.apply {

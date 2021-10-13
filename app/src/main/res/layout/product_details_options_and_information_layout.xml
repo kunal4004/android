@@ -290,18 +290,19 @@
             android:isIndicator="true"
             android:numStars="5"
             android:rating="3.5" />
+
         <TextView
             android:id="@+id/tvRatingDetails"
             style="@style/pdp_no_of_review_text_style"
             android:layout_width="85dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="28dp"
             android:drawableBottom="@drawable/tv_underline"
             android:gravity="center_vertical"
             android:text="@string/rating_details"
             android:textAllCaps="true"
-            android:textSize="@dimen/text_size_12sp"
-            android:layout_alignParentEnd="true"/>
+            android:textSize="@dimen/text_size_12sp" />
 
         <TextView
             android:id="@+id/tvRecommend"
