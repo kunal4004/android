@@ -88,6 +88,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/myriad_pro_regular"
             android:paddingBottom="@dimen/sixteen_dp"
+            android:textSize="@dimen/fifteen_sp"
+            android:textColor="@color/account_amount_color"
             android:layout_marginStart="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:layout_marginEnd="@dimen/twenty_four_dp"
@@ -110,7 +112,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sixteen_dp"
             android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view_product_quality">
@@ -159,6 +160,29 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/view_one"
                 android:layout_marginTop="@dimen/twenty_four_dp"
+                app:layout_constraintStart_toStartOf="parent" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:background="@color/white"
+            android:padding="@dimen/sixteen_dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_two">
+
+            <include
+                android:id="@+id/layout_helpful_review"
+                layout="@layout/review_helpful_and_report_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/sixteen_dp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:layout_marginEnd="@dimen/sixteen_dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
         </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
