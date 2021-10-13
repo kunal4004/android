@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/layout_background_gray">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/reviewProductImagesViewPager"
+            android:layout_width="wrap_content"
+            android:layout_height="375dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+        </androidx.viewpager.widget.ViewPager>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabDots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/reviewProductImagesViewPager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/reviewProductImagesViewPager"
+            app:layout_constraintVertical_bias="0.9"
+            app:tabBackground="@drawable/tab_selector_pager"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp" />
+
+        <View
+            android:id="@+id/view_bg"
+            android:layout_width="@dimen/zero_dp"
+            android:layout_height="@dimen/zero_dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/skin_detail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reviewProductImagesViewPager"
+            app:layout_constraintTop_toTopOf="@+id/rating_bar" />
+
+        <RatingBar
+            android:id="@+id/rating_bar"
+            style="@style/pdpRatingBar"
+            android:rating="4.5"
+            android:paddingTop="@dimen/eight_dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reviewProductImagesViewPager"/>
+
+        <TextView
+            android:paddingTop="@dimen/eight_dp"
+            android:id="@+id/txt_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:textSize="@dimen/fifteen_sp"
+            android:fontFamily="@font/myriad_pro_regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reviewProductImagesViewPager" />
+
+
+        <TextView
+            android:fontFamily="@font/myriad_pro_semi_bold"
+            android:id="@+id/tv_skin_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:textSize="@dimen/fifteen_sp"
+            android:textColor="@color/account_amount_color"
+            android:text="@string/perfect_skin_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rating_bar" />
+
+        <TextView
+            android:id="@+id/skin_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:paddingBottom="@dimen/sixteen_dp"
+            android:layout_marginStart="@dimen/twenty_four_dp"
+            android:layout_marginTop="@dimen/twenty_four_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_skin_label" />
+
+        <include
+            android:id="@+id/view_product_quality"
+            layout="@layout/product_quality_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/skin_detail" />
+
+        <RelativeLayout
+            android:id="@+id/layout_two"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_product_quality">
+
+            <TextView
+                android:id="@+id/txt_reviewer_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:layout_marginEnd="@dimen/twenty_four_dp"
+                android:layout_marginBottom="@dimen/twenty_four_dp"
+                android:fontFamily="@font/futura_semi_bold"
+                android:textSize="@dimen/eighteen_sp" />
+
+            <TextView
+                android:id="@+id/txt_verified"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:layout_marginEnd="@dimen/twenty_four_dp"
+                android:layout_marginBottom="@dimen/twenty_four_dp"
+                android:drawablePadding="@dimen/eight_dp"
+                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:text="@string/verified_buyer_label"
+                android:textColor="@color/color_49BB77"
+                android:textSize="@dimen/fifteen_sp"
+                app:drawableEndCompat="@drawable/pdp_verified" />
+
+            <View
+                android:id="@+id/view_one"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/one_dp"
+                android:layout_below="@+id/txt_reviewer_name"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginEnd="@dimen/twenty_four_dp"
+                android:background="@color/light_gray" />
+
+            <include
+                android:visibility="gone"
+                android:id="@+id/skin_profile_layout"
+                layout="@layout/skin_profile_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/view_one"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                app:layout_constraintStart_toStartOf="parent" />
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
