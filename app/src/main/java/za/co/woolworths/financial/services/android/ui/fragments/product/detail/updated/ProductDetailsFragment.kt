@@ -583,12 +583,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             if (it.isRnREnabled) {
                 ratingBarTop.rating = it.averageRating
-                tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount)
+                tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
                 tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
                 ratingBar.rating = it.averageRating
-                tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, it.reviewCount)
+                tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, it.reviewCount, it.reviewCount)
                 tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
                 setReviewUI()
             }else{
