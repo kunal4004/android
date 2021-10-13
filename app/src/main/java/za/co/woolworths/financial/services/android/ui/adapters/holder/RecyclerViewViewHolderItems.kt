@@ -52,8 +52,8 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
 
     private fun setRatingAndReviewCount(productList: ProductList) = with(itemView) {
         if (productList.isRnREnabled) {
-            val ratings:Int = productList.averageRating.toInt()
-            if (ratings == 0) {
+            val ratings:Float = productList.averageRating.toFloat()
+            if (ratings == 0.0f) {
                 rating_bar.visibility = View.INVISIBLE
                 txt_rating_count.visibility = View.INVISIBLE
             } else {

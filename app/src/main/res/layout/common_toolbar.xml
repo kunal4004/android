@@ -13,7 +13,7 @@
             android:id="@+id/btn_back"
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
-            android:layout_marginStart="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/four_dp"
             android:src="@drawable/back24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

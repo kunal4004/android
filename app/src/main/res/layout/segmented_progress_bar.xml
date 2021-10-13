@@ -7,7 +7,7 @@
 
     <Button
         android:background="@drawable/bg_segmneted_progress_bar"
-        android:id="@+id/button2"
+        android:id="@+id/btn_first_section"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="@dimen/eight_dp"
         app:layout_constraintEnd_toStartOf="@+id/button3"
@@ -16,47 +16,47 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/btn_second_section"
         android:layout_width="0dp"
         android:layout_height="@dimen/eight_dp"
         android:layout_marginStart="@dimen/one_dp"
         android:background="@drawable/bg_segmneted_progress_bar_selected"
         app:layout_constraintEnd_toStartOf="@+id/button4"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button2"
+        app:layout_constraintStart_toEndOf="@+id/btn_first_section"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/btn_third_section"
         android:layout_width="0dp"
         android:layout_height="@dimen/eight_dp"
         android:layout_marginStart="@dimen/one_dp"
         android:background="@drawable/bg_segmneted_progress_bar"
         app:layout_constraintEnd_toStartOf="@+id/button5"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button3"
+        app:layout_constraintStart_toEndOf="@+id/btn_second_section"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/btn_fourth_section"
         android:layout_width="0dp"
         android:layout_height="@dimen/eight_dp"
         android:layout_marginStart="@dimen/one_dp"
         android:background="@drawable/bg_segmneted_progress_bar"
-        app:layout_constraintEnd_toStartOf="@+id/button6"
+        app:layout_constraintEnd_toStartOf="@+id/btn_fifth_section"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button4"
+        app:layout_constraintStart_toEndOf="@+id/btn_third_section"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/btn_fifth_section"
         android:layout_width="0dp"
         android:layout_height="@dimen/eight_dp"
         android:layout_marginStart="@dimen/one_dp"
         android:background="@drawable/bg_segmneted_progress_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button5"
+        app:layout_constraintStart_toEndOf="@+id/btn_fourth_section"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
