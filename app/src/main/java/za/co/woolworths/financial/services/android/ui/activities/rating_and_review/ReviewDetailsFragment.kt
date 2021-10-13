@@ -58,9 +58,9 @@ class ReviewDetailsFragment : Fragment() {
         skin_profile_layout.txt_layout_one.txt_value.text = "Aging, Dehydration"
         txt_reviewer_name.text = "Amelia"
         txt_product_quality_value.text = "4/5"
-        button2.setBackgroundColor(R.drawable.bg_segmneted_progress_bar_selected)
-        button3.setBackgroundColor(R.drawable.bg_segmneted_progress_bar_selected)
-        button4.setBackgroundColor(R.drawable.bg_segmneted_progress_bar_selected)
+        btn_first_section.setBackgroundColor(R.drawable.bg_segmneted_progress_bar_selected)
+        btn_second_section.setBackgroundColor(R.drawable.bg_segmneted_progress_bar_selected)
+        btn_third_section.setBackgroundColor(R.drawable.bg_segmneted_progress_bar_selected)
     }
 
     private fun setProductImageViewPager() {
