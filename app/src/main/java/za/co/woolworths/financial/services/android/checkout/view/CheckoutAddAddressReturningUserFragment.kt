@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
@@ -948,8 +949,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         when (requestCode) {
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
+                    // Comes from slot selection page.
+                    // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
                     RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
                         (activity as? CheckoutActivity)?.apply {
+                            setResult(RESULT_RELOAD_CART)
                             closeActivity()
                         }
                     }
