@@ -293,7 +293,7 @@ holder.price.setAlpha(1f);
 		productList.productName = shoppingListItem.displayName;
 		productList.fromPrice = Float.valueOf((TextUtils.isEmpty(shoppingListItem.price) ? "0.0" : shoppingListItem.price));
 		productList.sku = shoppingListItem.catalogRefId;
-		productList.externalImageRef = shoppingListItem.externalImageURL;
+		productList.externalImageRefV2 = shoppingListItem.externalImageURL;
 		OtherSkus otherSku = new OtherSkus();
 		otherSku.price = String.valueOf(shoppingListItem.price);
 		otherSku.size = "";
