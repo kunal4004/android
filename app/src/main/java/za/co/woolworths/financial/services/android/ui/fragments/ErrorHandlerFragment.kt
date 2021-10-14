@@ -144,7 +144,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 cancelButton.paintFlags = Paint.FAKE_BOLD_TEXT_FLAG
             }
             ErrorHandlerActivity.ERROR_TYPE_EMPTY_CART -> {
-                errorLogo.setImageResource(R.drawable.ic_error_icon)
+                errorLogo.setImageResource(R.drawable.icon_cart)
                 errorTitle.text = getString(R.string.empty_cart_title)
                 errorDescription?.text = getString(R.string.removed_items_empty_cart_desc)
                 actionButton.text = getString(R.string.submitted_order_error_continue_shopping)
