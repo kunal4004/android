@@ -5,8 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.*
+import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.subTitle
+import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.title
 import za.co.woolworths.financial.services.android.models.dto.ShoppingBagsOptions
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
 /**
  * Created by Kunal Uttarwar on 12/10/21.
@@ -62,6 +66,22 @@ class ShoppingBagsRadioGroupAdapter(
                     title.text = it?.title
                     subTitle.text = it?.description
                     radioSelector.isChecked = checkedItemPosition == position
+
+                    shoppingBagsSelectionLayout.setBackgroundColor(
+                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                            R.color.white
+                        )
+                    )
+                    title.setBackgroundColor(
+                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                            R.color.white
+                        )
+                    )
+                    subTitle.setBackgroundColor(
+                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                            R.color.white
+                        )
+                    )
                 }
                 setOnClickListener {
                     onItemClicked(position)
