@@ -617,7 +617,7 @@ object OneAppService : RetrofitConfig() {
                 surveyId = surveyDetails.id,
                 surveyReplies = SurveyRepliesBody(
                         surveyId = surveyDetails.id,
-                        appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().applicationContext),
+                        appInstanceId = Utils.getUniqueDeviceID(),
                         participantReplies = surveyAnswers.values.toList()
                 )
         )
@@ -629,7 +629,7 @@ object OneAppService : RetrofitConfig() {
                 userAgentVersion =  "",
                 sessionToken = getSessionToken(),
                 optOutBody = SurveyOptOutBody(
-                        appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().applicationContext)
+                        appInstanceId = Utils.getUniqueDeviceID()
                 )
         )
     }

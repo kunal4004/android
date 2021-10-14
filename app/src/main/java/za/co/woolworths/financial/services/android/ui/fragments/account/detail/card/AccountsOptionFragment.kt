@@ -63,9 +63,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
     private var cardWithPLCState: Card? = null
-    private val REQUEST_CREDIT_CARD_ACTIVATION = 1983
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+
+    companion object {
+        const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+        var SHOW_CLI_SCREEN = false
+        var CLI_DETAIL = false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -214,9 +219,18 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     navigateToTemporaryStoreCard()
                 }
                 R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
-                    activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
                     val applyNowState = mApplyNowAccountKeyPair?.first
-                    creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+
+                    if (applyNowState != null) {
+                        KotlinUtils.linkDeviceIfNecessary(activity, applyNowState,
+                            {
+                                CLI_DETAIL = true
+                            },
+                            {
+                                activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
+                                creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+                            })
+                    }
                 }
 
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
@@ -260,6 +274,18 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 mCardPresenterImpl?.getAccountStoreCardCards()
             } else {
                 ErrorHandlerView(this).showToast()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(SHOW_CLI_SCREEN){
+            SHOW_CLI_SCREEN = false
+            mCardPresenterImpl?.apply {
+                val applyNowState = mApplyNowAccountKeyPair?.first
+                activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
+                creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
             }
         }
     }
