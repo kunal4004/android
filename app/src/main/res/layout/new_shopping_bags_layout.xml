@@ -31,6 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginRight="@dimen/twenty_four_dp"
         android:background="@color/shimmer_view_background"
         app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,9 +41,10 @@
             android:id="@+id/txtNewShoppingBagsDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/delivery_instructions_shopping_bags_desc"
             android:background="@color/white"
             android:fontFamily="@font/myriad_pro_regular"
+            android:lineSpacingExtra="2sp"
+            android:text="@string/delivery_instructions_shopping_bags_desc"
             android:textColor="@color/color_444444" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -63,6 +65,13 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:layout_constrainedWidth="true">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/shoppingBagsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
 
         </RadioGroup>
     </com.facebook.shimmer.ShimmerFrameLayout>

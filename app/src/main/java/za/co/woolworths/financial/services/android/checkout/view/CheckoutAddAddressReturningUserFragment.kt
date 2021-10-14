@@ -46,11 +46,13 @@ import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
+import za.co.woolworths.financial.services.android.models.dto.ShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
@@ -62,7 +64,8 @@ import java.util.regex.Pattern
  */
 class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFragment(),
     View.OnClickListener,
-    CheckoutDeliveryTypeSelectionListAdapter.EventListner {
+    CheckoutDeliveryTypeSelectionListAdapter.EventListner,
+    ShoppingBagsRadioGroupAdapter.EventListner {
 
     companion object {
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
@@ -252,26 +255,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
     }
 
-    @SuppressLint("ResourceType")
     private fun addRadioButtons() {
-
-        val radioGroup = activity?.findViewById<RadioGroup>(R.id.radioGroupShoppingBags)
         val newShoppingBags = WoolworthsApplication.getNativeCheckout()?.newShoppingBag
-
         txtNewShoppingBagsDesc.text =
-            newShoppingBags?.title.plus("/n").plus(newShoppingBags?.description)
+            newShoppingBags?.title.plus("\n").plus(newShoppingBags?.description)
 
-        newShoppingBags?.options?.forEachIndexed { index, shoppingBagsOptions ->
-            val radioButton = RadioButton(activity)
-            radioButton.layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            //val someLayout = RelativeLayout(ContextThemeWrapper(activity, R.style.FoodSubstRadioButtonStyle))
-
-            radioButton.setText(shoppingBagsOptions.title)
-            radioButton.id = index
-            radioGroup?.addView(radioButton)
+        val shoppingBagsAdapter = ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this)
+        shoppingBagsRecyclerView.apply {
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            shoppingBagsAdapter?.let { adapter = it }
         }
     }
 
@@ -1048,5 +1040,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 selectedOtherSlot = Slot()
             }
         }
+    }
+
+    override fun selectedShoppingBagType(
+        shoppingBagsOptionsList: ShoppingBagsOptions,
+        position: Int
+    ) {
+
     }
 }
