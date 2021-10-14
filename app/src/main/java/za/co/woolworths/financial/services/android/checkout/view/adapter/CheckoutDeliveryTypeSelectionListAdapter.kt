@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_delivery_list.view.*
 import za.co.woolworths.financial.services.android.checkout.service.network.OpenDayDeliverySlot
+import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import java.util.*
@@ -18,13 +19,28 @@ import java.util.*
 class CheckoutDeliveryTypeSelectionListAdapter(
     private var openDayDeliverySlotsList: List<OpenDayDeliverySlot>?,
     private val listner: EventListner,
-    private val type: CheckoutAddAddressReturningUserFragment.DeliveryType
+    private val type: CheckoutAddAddressReturningUserFragment.DeliveryType,
+    selectedOpedDayDeliverySlot: OpenDayDeliverySlot
 ) :
     RecyclerView.Adapter<CheckoutDeliveryTypeSelectionListAdapter.CheckoutDeliveryTypeSelectionViewHolder>() {
     var checkedItemPosition = -1
 
     companion object {
         const val DELIVERY_TYPE_TIMESLOT = "Timeslot"
+    }
+
+    init {
+        // comming back on same screen should pre select the option.
+        if (!selectedOpedDayDeliverySlot.deliveryType.isNullOrEmpty()) {
+            openDayDeliverySlotsList?.forEach {
+                if (it.deliveryType == selectedOpedDayDeliverySlot.deliveryType) {
+                    checkedItemPosition = openDayDeliverySlotsList?.indexOf(it) ?: -1
+                    onItemClicked(checkedItemPosition)
+                    return@forEach
+                }
+            }
+
+        }
     }
 
     override fun onCreateViewHolder(
@@ -90,13 +106,29 @@ class CheckoutDeliveryTypeSelectionListAdapter(
                     }
                 }
                 setOnClickListener {
-                    openDayDeliverySlotsList?.get(position)?.let {
-                        listner.selectedDeliveryType(it, type, position)
-                    }
-                    checkedItemPosition = position
-                    notifyDataSetChanged()
+                    onItemClicked(position)
                 }
             }
+        }
+    }
+
+    private fun onItemClicked(position: Int) {
+        if (position < 0 || position >= itemCount) {
+            return
+        }
+        openDayDeliverySlotsList?.get(position)?.let {
+            listner.selectedDeliveryType(it, type, position)
+            notifyItemChanged(position, it)
+        }
+        // update last position as well
+        val previousPosition = checkedItemPosition
+        checkedItemPosition = position
+
+        if (previousPosition < 0 || previousPosition >= itemCount) {
+            return
+        }
+        openDayDeliverySlotsList?.get(previousPosition)?.let {
+            notifyItemChanged(previousPosition, it)
         }
     }
 

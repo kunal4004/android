@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.text.*
@@ -10,9 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -63,7 +59,7 @@ import java.util.regex.Pattern
  * Created by Kunal Uttarwar on 27/05/21.
  */
 class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFragment(),
-    View.OnClickListener,
+    OnClickListener,
     CheckoutDeliveryTypeSelectionListAdapter.EventListner,
     ShoppingBagsRadioGroupAdapter.EventListner {
 
@@ -75,6 +71,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var oddSelectedPosition: Int = -1
     private var suburbId: String = ""
+    private var selectedShoppingBagType: Double? = null
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -179,9 +176,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initializeVariables() {
-        selectedFoodSlot = Slot()
-        selectedOtherSlot = Slot()
-        selectedOpedDayDeliverySlot = OpenDayDeliverySlot()
+        if (selectedFoodSlot.slotId.isNullOrEmpty())
+            selectedFoodSlot = Slot()
+        if (selectedOtherSlot.slotId.isNullOrEmpty())
+            selectedOtherSlot = Slot()
+        if (selectedOpedDayDeliverySlot.deliveryType.isNullOrEmpty())
+            selectedOpedDayDeliverySlot = OpenDayDeliverySlot()
         foodType = DEFAULT
         otherType = DEFAULT
     }
@@ -398,7 +398,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             CheckoutDeliveryTypeSelectionListAdapter(
                 localOpenDayDeliverySlots,
                 this,
-                type
+                type,
+                selectedOpedDayDeliverySlot
             )
         deliveryTypeSelectionRecyclerView?.apply {
             addItemDecoration(object : RecyclerView.ItemDecoration() {})
@@ -691,10 +692,13 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     fun setSelectedFoodOrOtherSlot(selectedSlot: Slot, deliveryType: DeliveryType) {
-        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD))
+        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD)) {
             selectedFoodSlot = selectedSlot
-        else
+            txtSelectDeliveryTimeSlotFoodError.visibility = GONE
+        } else {
             selectedOtherSlot = selectedSlot
+            txtSelectDeliveryTimeSlotOtherError.visibility = GONE
+        }
     }
 
 
@@ -743,12 +747,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,
                     activity
                 )
-                onCheckoutPaymentClick(v)
+                onCheckoutPaymentClick()
             }
         }
     }
 
-    private fun onCheckoutPaymentClick(view: View) {
+    private fun onCheckoutPaymentClick() {
         if (isRequiredFieldsMissing() || isInstructionsMissing()) {
             return
         }
@@ -996,6 +1000,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             shipToAddressName = savedAddress?.defaultAddressNickname
             substituesAllowed = selectedFoodSubstitution.rgb
             plasticBags = switchNeedBags?.isChecked ?: false
+            shoppingBagType = selectedShoppingBagType
             giftNoteSelected = switchGiftInstructions?.isChecked ?: false
             deliverySpecialInstructions =
                 if (switchSpecialDeliveryInstruction?.isChecked == true) edtTxtSpecialDeliveryInstruction?.text.toString() else ""
@@ -1046,6 +1051,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         shoppingBagsOptionsList: ShoppingBagsOptions,
         position: Int
     ) {
-
+        selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
     }
 }
