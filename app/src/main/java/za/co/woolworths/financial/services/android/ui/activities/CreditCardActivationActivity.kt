@@ -26,7 +26,7 @@ class CreditCardActivationActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this)
         bundle = intent.getBundleExtra("bundle")
         applyNowState = intent.getSerializableExtra(
-            AccountSignedInPresenterImpl.APPLY_NOW_STATE) as ApplyNowState
+            AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
         actionBar()
         loadNavHostFragment()
     }
