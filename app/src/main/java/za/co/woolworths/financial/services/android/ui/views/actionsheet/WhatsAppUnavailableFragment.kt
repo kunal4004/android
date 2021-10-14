@@ -16,7 +16,7 @@ class WhatsAppUnavailableFragment : WBottomSheetDialogFragment(), View.OnClickLi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gotITButton?.apply {
+        gotItButton?.apply {
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@WhatsAppUnavailableFragment)
         }
@@ -24,7 +24,7 @@ class WhatsAppUnavailableFragment : WBottomSheetDialogFragment(), View.OnClickLi
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.gotITButton -> dismiss()
+            R.id.gotItButton -> dismiss()
         }
     }
 }
