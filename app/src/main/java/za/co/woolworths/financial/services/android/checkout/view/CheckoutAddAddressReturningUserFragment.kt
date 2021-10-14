@@ -9,8 +9,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
@@ -32,6 +31,7 @@ import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
+import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.DeliveryType.*
@@ -44,10 +44,13 @@ import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionShimmerAdapter
+import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
+import za.co.woolworths.financial.services.android.models.dto.ShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
@@ -61,8 +64,9 @@ import java.util.regex.Pattern
  * Created by Kunal Uttarwar on 27/05/21.
  */
 class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFragment(),
-    View.OnClickListener,
-    CheckoutDeliveryTypeSelectionListAdapter.EventListner {
+    OnClickListener,
+    CheckoutDeliveryTypeSelectionListAdapter.EventListner,
+    ShoppingBagsRadioGroupAdapter.EventListner {
 
     companion object {
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
@@ -72,6 +76,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var oddSelectedPosition: Int = -1
     private var suburbId: String = ""
+    private var selectedShoppingBagType: Double? = null
 
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -160,9 +165,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 getConfirmDeliveryAddressDetails()
             }
             else -> {
-                initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
+                startShimmerView()
                 stopShimmerView()
                 showDeliverySlotSelectionView()
+                initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
             }
         }
 
@@ -175,9 +181,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun initializeVariables() {
-        selectedFoodSlot = Slot()
-        selectedOtherSlot = Slot()
-        selectedOpenDayDeliverySlot = OpenDayDeliverySlot()
+        if (selectedFoodSlot.slotId.isNullOrEmpty())
+            selectedFoodSlot = Slot()
+        if (selectedOtherSlot.slotId.isNullOrEmpty())
+            selectedOtherSlot = Slot()
+        if (selectedOpenDayDeliverySlot.deliveryType.isNullOrEmpty())
+            selectedOpenDayDeliverySlot = OpenDayDeliverySlot()
         foodType = DEFAULT
         otherType = DEFAULT
     }
@@ -195,13 +204,13 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
-        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = GONE
         edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
-        edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
+        edtTxtInputLayoutGiftInstructions?.visibility = GONE
         edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
 
         switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
-            if (loadingBar.visibility == View.VISIBLE) {
+            if (loadingBar.visibility == VISIBLE) {
                 return@setOnCheckedChangeListener
             }
             if (isChecked)
@@ -210,14 +219,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     activity
                 )
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+                if (isChecked) VISIBLE else GONE
             edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
             edtTxtSpecialDeliveryInstruction?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+                if (isChecked) VISIBLE else GONE
         }
 
         switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
-            if (loadingBar.visibility == View.VISIBLE) {
+            if (loadingBar.visibility == VISIBLE) {
                 return@setOnCheckedChangeListener
             }
             if (isChecked)
@@ -226,24 +235,46 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     activity
                 )
             edtTxtInputLayoutGiftInstructions?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+                if (isChecked) VISIBLE else GONE
             edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
             edtTxtGiftInstructions?.visibility =
-                if (isChecked) View.VISIBLE else View.GONE
+                if (isChecked) VISIBLE else GONE
         }
-        switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
-                    activity
-                )
+        if (WoolworthsApplication.getNativeCheckout()?.currentShoppingBag?.isEnabled == true) {
+            switchNeedBags.visibility = VISIBLE
+            txtNeedBags.visibility = VISIBLE
+            newShoppingBagsLayout.visibility = GONE
+            switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+                        activity
+                    )
+                }
             }
+        } else if (WoolworthsApplication.getNativeCheckout()?.newShoppingBag?.isEnabled == true) {
+            switchNeedBags.visibility = GONE
+            txtNeedBags.visibility = GONE
+            newShoppingBagsLayout.visibility = VISIBLE
+            addRadioButtons()
+        }
+    }
+
+    private fun addRadioButtons() {
+        val newShoppingBags = WoolworthsApplication.getNativeCheckout()?.newShoppingBag
+        txtNewShoppingBagsDesc.text =
+            newShoppingBags?.title.plus("\n").plus(newShoppingBags?.description)
+
+        val shoppingBagsAdapter = ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this)
+        shoppingBagsRecyclerView.apply {
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            shoppingBagsAdapter?.let { adapter = it }
         }
     }
 
     private fun initializeDeliveringToView() {
         if (arguments == null) {
-            checkoutDeliveryDetailsLayout.visibility = View.GONE
+            checkoutDeliveryDetailsLayout.visibility = GONE
             return
         }
         context?.let { context ->
@@ -255,7 +286,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         ?: SavedAddressResponse()
 
             if (savedAddress?.addresses.isNullOrEmpty()) {
-                checkoutDeliveryDetailsLayout?.visibility = View.GONE
+                checkoutDeliveryDetailsLayout?.visibility = GONE
                 return
             }
             savedAddress.let { savedAddresses ->
@@ -297,7 +328,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         return@forEach
                     }
                     if (savedAddresses.defaultAddressNickname.isNullOrEmpty()) {
-                        checkoutDeliveryDetailsLayout.visibility = View.GONE
+                        checkoutDeliveryDetailsLayout.visibility = GONE
                     }
                 }
                 tvNativeCheckoutDeliveringValue?.text = deliveringToAddress
@@ -342,7 +373,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         type: DeliveryType
     ) {
         // To show How would you like it to delivered.
-        checkoutHowWouldYouDeliveredLayout.visibility = View.VISIBLE
+        checkoutHowWouldYouDeliveredLayout.visibility = VISIBLE
         val localOpenDayDeliverySlots = confirmDeliveryAddressResponse?.openDayDeliverySlots
         if (confirmDeliveryAddressResponse?.requiredToDisplayOnlyODD == false) {
             otherType = if (foodType == DEFAULT) ONLY_OTHER else MIXED_OTHER
@@ -372,7 +403,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             CheckoutDeliveryTypeSelectionListAdapter(
                 localOpenDayDeliverySlots,
                 this,
-                type
+                type,
+                selectedOpenDayDeliverySlot
             )
         deliveryTypeSelectionRecyclerView?.apply {
             addItemDecoration(object : RecyclerView.ItemDecoration() {})
@@ -398,15 +430,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
             it.discountDetails?.let { discountDetails ->
                 groupOrderSummaryDiscount?.visibility =
-                    if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.otherDiscount == 0.0) GONE else VISIBLE
                 groupPromoCodeDiscount?.visibility =
-                    if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.promoCodeDiscount == 0.0) GONE else VISIBLE
                 groupWRewardsDiscount?.visibility =
-                    if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.voucherDiscount == 0.0) GONE else VISIBLE
                 groupCompanyDiscount?.visibility =
-                    if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.companyDiscount == 0.0) GONE else VISIBLE
                 groupTotalDiscount?.visibility =
-                    if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
+                    if (discountDetails.totalDiscount == 0.0) GONE else VISIBLE
 
                 txtOrderSummaryDiscountValue?.text =
                     "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
@@ -498,8 +530,23 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             Pair<ShimmerFrameLayout, View>(
                 continuePaymentTxtShimmerFrameLayout,
                 txtContinueToPayment
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                newShoppingBagsTitleShimmerFrameLayout,
+                newShoppingBagsTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                newShoppingBagsDescShimmerFrameLayout,
+                txtNewShoppingBagsDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupShoppingBagsShimmerFrameLayout,
+                radioGroupShoppingBags
             )
         )
+
+        txtNeedBags.visibility = GONE
+        switchNeedBags.visibility = GONE
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {
@@ -513,10 +560,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         expandableGrid.hideDeliveryTypeShimmerView()
 
         shimmerComponentArray.forEach {
-            it.first.stopShimmer()
-            it.first.setShimmer(null)
-            it.second.visibility = VISIBLE
+            if (it.first.isShimmerStarted) {
+                it.first.stopShimmer()
+                it.first.setShimmer(null)
+                it.second.visibility = VISIBLE
+            }
         }
+
+        txtNeedBags.visibility = VISIBLE
+        switchNeedBags.visibility = VISIBLE
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
@@ -532,12 +584,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             return
         }
 
-        loadingBar.visibility = View.VISIBLE
         startShimmerView()
         val body = ConfirmDeliveryAddressBody(suburbId)
         checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails(body)
             .observe(viewLifecycleOwner, { response ->
-                loadingBar.visibility = View.GONE
                 stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
@@ -597,11 +647,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         if (FOOD.type == selectedSlotResponseFood?.fulfillmentTypes?.join) {
             //Only for Food
             foodType = ONLY_FOOD
-            checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+            checkoutTimeSlotSelectionLayout.visibility = VISIBLE
             selectDeliveryTimeSlotTitle.text =
                 getString(R.string.slot_delivery_title_when)
-            selectDeliveryTimeSlotSubTitleFood.visibility = View.GONE
-            txtSelectDeliveryTimeSlotFoodError?.visibility = View.GONE
+            selectDeliveryTimeSlotSubTitleFood.visibility = GONE
+            txtSelectDeliveryTimeSlotFoodError?.visibility = GONE
             expandableGrid.initialiseGridView(
                 selectedSlotResponseFood,
                 FIRST.week,
@@ -610,7 +660,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         } else if (OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.join && OTHER.type == selectedSlotResponseFood?.fulfillmentTypes?.other) {
             // For mix basket
             foodType = MIXED_FOOD
-            checkoutTimeSlotSelectionLayout.visibility = View.VISIBLE
+            checkoutTimeSlotSelectionLayout.visibility = VISIBLE
             expandableGrid.initialiseGridView(
                 selectedSlotResponseFood,
                 FIRST.week,
@@ -661,10 +711,13 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     fun setSelectedFoodOrOtherSlot(selectedSlot: Slot, deliveryType: DeliveryType) {
-        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD))
+        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD)) {
             selectedFoodSlot = selectedSlot
-        else
+            txtSelectDeliveryTimeSlotFoodError.visibility = GONE
+        } else {
             selectedOtherSlot = selectedSlot
+            txtSelectDeliveryTimeSlotOtherError.visibility = GONE
+        }
     }
 
 
@@ -699,28 +752,26 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             }
             R.id.checkoutDeliveryDetailsLayout -> {
-                if (loadingBar.visibility == View.GONE) {
-                    baseFragBundle?.putString(
-                        CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
-                        Utils.toJson(confirmDeliveryAddressResponse)
-                    )
-                    view?.findNavController()?.navigate(
-                        R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
-                        baseFragBundle
-                    )
-                }
+                baseFragBundle?.putString(
+                    CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
+                    Utils.toJson(confirmDeliveryAddressResponse)
+                )
+                view?.findNavController()?.navigate(
+                    R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
+                    baseFragBundle
+                )
             }
             R.id.txtContinueToPayment -> {
                 Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,
                     activity
                 )
-                onCheckoutPaymentClick(v)
+                onCheckoutPaymentClick()
             }
         }
     }
 
-    private fun onCheckoutPaymentClick(view: View) {
+    private fun onCheckoutPaymentClick() {
         if (isRequiredFieldsMissing() || isInstructionsMissing()) {
             return
         }
@@ -731,11 +782,11 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         ) {
             return
         }
-        loadingBar?.visibility = View.VISIBLE
+        loadingBar?.visibility = VISIBLE
         setScreenClickEvents(false)
         checkoutAddAddressNewUserViewModel.getShippingDetails(body)
             .observe(viewLifecycleOwner, { response ->
-                loadingBar.visibility = View.GONE
+                loadingBar.visibility = GONE
                 setScreenClickEvents(true)
                 when (response) {
                     is ShippingDetailsResponse -> {
@@ -790,7 +841,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             // Food Items Basket
             foodType == ONLY_FOOD -> {
                 if (!TextUtils.isEmpty(selectedFoodSlot?.slotId)) {
-                    txtSelectDeliveryTimeSlotFoodError?.visibility = View.GONE
+                    txtSelectDeliveryTimeSlotFoodError?.visibility = GONE
                     return false
                 }
                 // scroll to slot selection layout
@@ -798,7 +849,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     0,
                     checkoutTimeSlotSelectionLayout?.top ?: 0
                 )
-                txtSelectDeliveryTimeSlotFoodError?.visibility = View.VISIBLE
+                txtSelectDeliveryTimeSlotFoodError?.visibility = VISIBLE
             }
             // Other Items Basket
             otherType == ONLY_OTHER -> {
@@ -806,16 +857,16 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     (selectedOpenDayDeliverySlot.deliveryType != null
                             && selectedOpenDayDeliverySlot.deliveryType != DELIVERY_TYPE_TIMESLOT) -> {
                         if (!TextUtils.isEmpty(selectedOpenDayDeliverySlot?.deliverySlotId)) {
-                            txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
+                            txtSelectDeliveryTimeSlotOtherError?.visibility = GONE
                             return false
                         }
                     }
                     else -> {
                         if (!TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
-                            txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
+                            txtSelectDeliveryTimeSlotOtherError?.visibility = GONE
                             return false
                         }
-                        txtSelectDeliveryTimeSlotOtherError?.visibility = View.VISIBLE
+                        txtSelectDeliveryTimeSlotOtherError?.visibility = VISIBLE
                     }
                 }
                 // scroll to other slot selection layout
@@ -833,8 +884,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         (!TextUtils.isEmpty(selectedFoodSlot?.slotId)
                                 && !TextUtils.isEmpty(selectedOtherSlot?.slotId)
                                 ) -> {
-                            txtSelectDeliveryTimeSlotFoodError?.visibility = View.GONE
-                            txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
+                            txtSelectDeliveryTimeSlotFoodError?.visibility = GONE
+                            txtSelectDeliveryTimeSlotOtherError?.visibility = GONE
                             return false
                         }
                         (TextUtils.isEmpty(selectedFoodSlot?.slotId)) -> {
@@ -843,7 +894,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                                 0,
                                 checkoutTimeSlotSelectionLayout?.top ?: 0
                             )
-                            txtSelectDeliveryTimeSlotFoodError?.visibility = View.VISIBLE
+                            txtSelectDeliveryTimeSlotFoodError?.visibility = VISIBLE
                         }
                         else -> {
                             if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
@@ -852,7 +903,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                                     0,
                                     checkoutHowWouldYouDeliveredLayout?.top ?: 0
                                 )
-                                txtSelectDeliveryTimeSlotOtherError?.visibility = View.VISIBLE
+                                txtSelectDeliveryTimeSlotOtherError?.visibility = VISIBLE
                             }
                         }
                     }
@@ -868,7 +919,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                             0,
                             checkoutTimeSlotSelectionLayout?.top ?: 0
                         )
-                        txtSelectDeliveryTimeSlotFoodError?.visibility = View.VISIBLE
+                        txtSelectDeliveryTimeSlotFoodError?.visibility = VISIBLE
                     } else if (TextUtils.isEmpty(selectedOtherSlot?.slotId)) {
                         // scroll to other slot selection layout
                         deliverySummaryScrollView?.smoothScrollTo(
@@ -968,6 +1019,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             shipToAddressName = savedAddress?.defaultAddressNickname
             substituesAllowed = selectedFoodSubstitution.rgb
             plasticBags = switchNeedBags?.isChecked ?: false
+            shoppingBagType = selectedShoppingBagType
             giftNoteSelected = switchGiftInstructions?.isChecked ?: false
             deliverySpecialInstructions =
                 if (switchSpecialDeliveryInstruction?.isChecked == true) edtTxtSpecialDeliveryInstruction?.text.toString() else ""
@@ -993,7 +1045,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         )
         when (openDayDeliverySlot.deliveryType) {
             DELIVERY_TYPE_TIMESLOT -> {
-                gridLayoutDeliveryOptions.visibility = View.VISIBLE
+                gridLayoutDeliveryOptions.visibility = VISIBLE
                 otherType = type
                 expandableGrid.apply {
                     disablePreviousBtnOther()
@@ -1002,7 +1054,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             }
             else -> {
-                gridLayoutDeliveryOptions.visibility = View.GONE
+                gridLayoutDeliveryOptions.visibility = GONE
                 expandableGrid.gridOnClickListner(
                     type,
                     DEFAULT_POSITION,
@@ -1012,6 +1064,13 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 selectedOtherSlot = Slot()
             }
         }
+    }
+
+    override fun selectedShoppingBagType(
+        shoppingBagsOptionsList: ShoppingBagsOptions,
+        position: Int
+    ) {
+        selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

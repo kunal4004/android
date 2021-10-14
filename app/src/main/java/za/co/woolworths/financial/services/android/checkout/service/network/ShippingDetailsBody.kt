@@ -44,6 +44,9 @@ class ShippingDetailsBody : Serializable {
     @SerializedName("plasticBags")
     var plasticBags: Boolean = false
 
+    @SerializedName("shoppingBagType")
+    var shoppingBagType: Double? = null
+
     @SerializedName("giftNoteSelected")
     var giftNoteSelected: Boolean = false
 

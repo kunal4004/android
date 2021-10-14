@@ -145,7 +145,7 @@ class OrderConfirmationFragment : Fragment() {
                 foodDeliveryLinearLayout.visibility = View.GONE
                 otherDeliveryLinearLayout.visibility = View.GONE
                 deliveryDateTimeTextView.text =
-                    applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+                    response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
             }
         }
     }
@@ -240,7 +240,7 @@ class OrderConfirmationFragment : Fragment() {
             foodDeliveryBottomSheetLinearLayout.visibility = View.GONE
             otherDeliveryBottomSheetLinearLayout.visibility = View.GONE
             deliveryDateTimeBottomSheetTextView.text =
-                applyBoldBeforeComma(response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime)
+                response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
         }
 
         setNumberAndCostItemsBottomSheet(response?.items)
@@ -288,10 +288,10 @@ class OrderConfirmationFragment : Fragment() {
     }
 
     private fun initialiseItemsOrder(items: OrderItems?) {
-        if (items?.other != null && items?.other!!.isNotEmpty()) {
-            itemsOrder?.addAll(items?.other!!)
+        if (items?.other != null && items.other!!.isNotEmpty()) {
+            itemsOrder?.addAll(items.other!!)
         }
-        if (items?.food != null && items?.food!!.isNotEmpty()) {
+        if (items?.food != null && items.food!!.isNotEmpty()) {
             itemsOrder?.addAll(items.food!!)
         }
     }
