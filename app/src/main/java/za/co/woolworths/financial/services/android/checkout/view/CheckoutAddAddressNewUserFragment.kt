@@ -73,6 +73,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import java.net.HttpURLConnection.HTTP_OK
 import java.util.*
+import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 
@@ -99,6 +100,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         const val SUBURB_SELECTION_BACK_PRESSED = "5465"
         const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
         const val SCREEN_NAME_ADD_NEW_ADDRESS: String = "SCREEN_NAME_ADD_NEW_ADDRESS"
+        const val REGEX_NICK_NAME: String = "^$|^[a-zA-Z0-9\\s<!>@#$&().+,-/\"']+$"
     }
 
     enum class ProvinceSuburbType {
@@ -267,6 +269,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
         addressNicknameEditText?.apply {
             afterTextChanged {
+                val length = it.length
+                if (length > 0 && !Pattern.matches(REGEX_NICK_NAME, it)) {
+                    text?.delete(length - 1, length)
+                }
                 selectedAddress.savedAddress.nickname = it
                 if (it.isNotEmpty())
                     showErrorInputField(this, View.GONE)
