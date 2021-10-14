@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.app.Activity.RESULT_CANCELED
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.*
@@ -44,6 +47,8 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
@@ -451,6 +456,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
                         confirmDeliveryAddressResponse = response
+
+                        if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+                            showEmptyCart()
+                            return@observe
+                        }
+
                         // Keeping two diff response not to get merge while showing 2 diff slots.
                         selectedSlotResponseFood = response
                         selectedSlotResponseOther = response
@@ -465,6 +476,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             })
+    }
+
+    private fun showEmptyCart() {
+        activity?.let {
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, ERROR_TYPE_EMPTY_CART)
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
     }
 
     private fun presentErrorDialog(title: String, subTitle: String) {
@@ -919,6 +938,22 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     expandableGrid.deliverySlotsGridViewAdapter
                 )
                 selectedOtherSlot = Slot()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
+                when (resultCode) {
+                    RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
+                        (activity as? CheckoutActivity)?.apply {
+                            closeActivity()
+                        }
+                    }
+                }
             }
         }
     }

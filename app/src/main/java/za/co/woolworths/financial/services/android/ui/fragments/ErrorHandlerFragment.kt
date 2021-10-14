@@ -143,6 +143,13 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                 cancelButton.isAllCaps = false
                 cancelButton.paintFlags = Paint.FAKE_BOLD_TEXT_FLAG
             }
+            ErrorHandlerActivity.ERROR_TYPE_EMPTY_CART -> {
+                errorLogo.setImageResource(R.drawable.ic_error_icon)
+                errorTitle.text = getString(R.string.empty_cart_title)
+                errorDescription?.text = getString(R.string.removed_items_empty_cart_desc)
+                actionButton.text = getString(R.string.submitted_order_error_continue_shopping)
+                cancelButton.visibility = View.GONE
+            }
         }
     }
 
@@ -180,6 +187,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
                     }
                     ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT -> {
                         setResultBAck(Activity.RESULT_CANCELED)
+                    }
+                    ErrorHandlerActivity.ERROR_TYPE_EMPTY_CART -> {
+                        setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
                 }
             }
