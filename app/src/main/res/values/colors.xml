@@ -150,6 +150,7 @@
     <color name="color_app_info">#999999</color>
     <color name="color_666666">#666666</color>
     <color name="color_E5E5E5">#E5E5E5</color>
+
     <color name="color_444444">#444444</color>
     <color name="search_store_color">#999999</color>
     <color name="light_green">#D7F0E1</color>
@@ -157,4 +158,6 @@
     <color name="light_blue">#4284C3</color>
     <color name="grid_border_color">#C2C2C2</color>
     <color name="color_D0021B">#D0021B</color>
+    <color name="desc_color_code">#757575</color>
+
 </resources>
