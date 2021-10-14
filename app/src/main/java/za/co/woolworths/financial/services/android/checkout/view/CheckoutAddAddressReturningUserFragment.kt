@@ -185,7 +185,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             selectedFoodSlot = Slot()
         if (selectedOtherSlot.slotId.isNullOrEmpty())
             selectedOtherSlot = Slot()
-        if (selectedOpedDayDeliverySlot.deliveryType.isNullOrEmpty())
+        if (selectedOpenDayDeliverySlot.deliveryType.isNullOrEmpty())
             selectedOpenDayDeliverySlot = OpenDayDeliverySlot()
         foodType = DEFAULT
         otherType = DEFAULT
@@ -404,7 +404,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 localOpenDayDeliverySlots,
                 this,
                 type,
-                selectedOpedDayDeliverySlot
+                selectedOpenDayDeliverySlot
             )
         deliveryTypeSelectionRecyclerView?.apply {
             addItemDecoration(object : RecyclerView.ItemDecoration() {})
