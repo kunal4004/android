@@ -10,6 +10,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.CartActi
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
@@ -1266,8 +1267,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 default:
                     break;
             }
-        } else if (resultCode == REQUEST_CHECKOUT_ON_DESTROY && requestCode == REQUEST_PAYMENT_STATUS) {
-            finishActivityOnCheckoutSuccess();
+        } else if (requestCode == REQUEST_PAYMENT_STATUS) {
+            switch (resultCode){
+                case REQUEST_CHECKOUT_ON_DESTROY:
+                    finishActivityOnCheckoutSuccess();
+                    break;
+                case RESULT_RELOAD_CART:
+                    reloadFragment();
+                    break;
+            }
         }
 
         // Retry callback when saved address api fails

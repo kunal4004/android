@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.app.Activity.RESULT_CANCELED
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.*
@@ -47,6 +49,9 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
@@ -63,7 +68,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         const val REGEX_DELIVERY_INSTRUCTIONS = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
     }
 
-    private var selectedOpedDayDeliverySlot = OpenDayDeliverySlot()
+    private var selectedOpenDayDeliverySlot = OpenDayDeliverySlot()
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     private var oddSelectedPosition: Int = -1
     private var suburbId: String = ""
@@ -172,7 +177,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     private fun initializeVariables() {
         selectedFoodSlot = Slot()
         selectedOtherSlot = Slot()
-        selectedOpedDayDeliverySlot = OpenDayDeliverySlot()
+        selectedOpenDayDeliverySlot = OpenDayDeliverySlot()
         foodType = DEFAULT
         otherType = DEFAULT
     }
@@ -537,6 +542,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
                         confirmDeliveryAddressResponse = response
+
+                        if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+                            showEmptyCart()
+                            return@observe
+                        }
+
                         // Keeping two diff response not to get merge while showing 2 diff slots.
                         selectedSlotResponseFood = response
                         selectedSlotResponseOther = response
@@ -551,6 +562,14 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 }
             })
+    }
+
+    private fun showEmptyCart() {
+        activity?.let {
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, ERROR_TYPE_EMPTY_CART)
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
     }
 
     private fun presentErrorDialog(title: String, subTitle: String) {
@@ -784,9 +803,9 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             // Other Items Basket
             otherType == ONLY_OTHER -> {
                 when {
-                    (selectedOpedDayDeliverySlot.deliveryType != null
-                            && selectedOpedDayDeliverySlot.deliveryType != DELIVERY_TYPE_TIMESLOT) -> {
-                        if (!TextUtils.isEmpty(selectedOpedDayDeliverySlot?.deliverySlotId)) {
+                    (selectedOpenDayDeliverySlot.deliveryType != null
+                            && selectedOpenDayDeliverySlot.deliveryType != DELIVERY_TYPE_TIMESLOT) -> {
+                        if (!TextUtils.isEmpty(selectedOpenDayDeliverySlot?.deliverySlotId)) {
                             txtSelectDeliveryTimeSlotOtherError?.visibility = View.GONE
                             return false
                         }
@@ -807,8 +826,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             //Mixed Basket
             foodType == MIXED_FOOD || otherType == MIXED_OTHER -> {
-                if (selectedOpedDayDeliverySlot.deliveryType != null
-                    && selectedOpedDayDeliverySlot.deliveryType == DELIVERY_TYPE_TIMESLOT
+                if (selectedOpenDayDeliverySlot.deliveryType != null
+                    && selectedOpenDayDeliverySlot.deliveryType == DELIVERY_TYPE_TIMESLOT
                 ) {
                     when {
                         (!TextUtils.isEmpty(selectedFoodSlot?.slotId)
@@ -839,7 +858,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     }
                 } else {
                     if (!TextUtils.isEmpty(selectedFoodSlot?.slotId) &&
-                        !TextUtils.isEmpty(selectedOpedDayDeliverySlot?.deliverySlotId)
+                        !TextUtils.isEmpty(selectedOpenDayDeliverySlot?.deliverySlotId)
                     ) {
                         return false
                     }
@@ -904,8 +923,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     foodShipOnDate = ""
                     foodDeliverySlotId = ""
                     foodDeliveryStartHour = 0
-                    if (selectedOpedDayDeliverySlot.deliveryType != null && selectedOpedDayDeliverySlot.deliveryType != DELIVERY_TYPE_TIMESLOT) {
-                        oddDeliverySlotId = selectedOpedDayDeliverySlot?.deliverySlotId ?: ""
+                    if (selectedOpenDayDeliverySlot.deliveryType != null && selectedOpenDayDeliverySlot.deliveryType != DELIVERY_TYPE_TIMESLOT) {
+                        oddDeliverySlotId = selectedOpenDayDeliverySlot?.deliverySlotId ?: ""
                         otherShipOnDate = ""
                         otherDeliverySlotId = ""
                         otherDeliveryStartHour = 0
@@ -921,7 +940,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             foodType == MIXED_FOOD || otherType == MIXED_OTHER -> {
                 body.apply {
                     joinBasket = false
-                    if (selectedOpedDayDeliverySlot.deliveryType != null && selectedOpedDayDeliverySlot.deliveryType == DELIVERY_TYPE_TIMESLOT) {
+                    if (selectedOpenDayDeliverySlot.deliveryType != null && selectedOpenDayDeliverySlot.deliveryType == DELIVERY_TYPE_TIMESLOT) {
                         foodShipOnDate = selectedFoodSlot?.stringShipOnDate
                         otherShipOnDate = selectedOtherSlot?.stringShipOnDate
                         foodDeliverySlotId = selectedFoodSlot?.slotId
@@ -936,7 +955,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         otherDeliverySlotId = ""
                         foodDeliveryStartHour = selectedFoodSlot?.hourFrom?.toLong() ?: 0
                         otherDeliveryStartHour = 0
-                        oddDeliverySlotId = selectedOpedDayDeliverySlot?.deliverySlotId
+                        oddDeliverySlotId = selectedOpenDayDeliverySlot?.deliverySlotId
                     }
                 }
             }
@@ -967,7 +986,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         position: Int
     ) {
         oddSelectedPosition = position
-        selectedOpedDayDeliverySlot = openDayDeliverySlot
+        selectedOpenDayDeliverySlot = openDayDeliverySlot
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_.plus(openDayDeliverySlot.deliveryType),
             activity
@@ -991,6 +1010,25 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     expandableGrid.deliverySlotsGridViewAdapter
                 )
                 selectedOtherSlot = Slot()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
+                when (resultCode) {
+                    // Comes from slot selection page.
+                    // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
+                    RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
+                        (activity as? CheckoutActivity)?.apply {
+                            setResult(RESULT_RELOAD_CART)
+                            closeActivity()
+                        }
+                    }
+                }
             }
         }
     }
