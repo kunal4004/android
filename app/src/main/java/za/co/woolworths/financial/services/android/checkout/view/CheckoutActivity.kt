@@ -9,7 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.activity_cart_checkout.*
 import kotlinx.android.synthetic.main.activity_checkout.*
+import kotlinx.android.synthetic.main.activity_checkout.btnClose
+import kotlinx.android.synthetic.main.activity_checkout.toolbarText
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
@@ -67,6 +70,18 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             setDisplayShowTitleEnabled(false)
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.back24)
+        }
+    }
+
+    fun showTitleWithCrossButton(titleText: String) {
+        btnClose?.visibility = View.GONE
+        toolbar?.visibility = View.VISIBLE
+        toolbarText.text = titleText
+        setSupportActionBar(toolbar)
+        supportActionBar?.apply {
+            title = ""
+            setDisplayHomeAsUpEnabled(false)
+            show()
         }
     }
 

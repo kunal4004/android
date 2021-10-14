@@ -10,8 +10,9 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
@@ -20,6 +21,8 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.android.synthetic.main.checkout_add_address_new_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
@@ -100,6 +103,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         null
     private var checkoutDeliveryTypeSelectionShimmerAdapter: CheckoutDeliveryTypeSelectionShimmerAdapter? =
         null
+    private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
 
     enum class FoodSubstitution(val rgb: String) {
         PHONE_CONFIRM("YES_CALL_CONFIRM"),
@@ -146,8 +150,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         addFragmentListner()
         initializeDeliveringToView()
         initializeDeliveryFoodOtherItems()
-        initializeFoodSubstitution()
-        initializeDeliveryInstructions()
 
         expandableGrid.apply {
             disablePreviousBtnFood()
@@ -160,7 +162,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             }
             else -> {
                 initializeOrderSummary(confirmDeliveryAddressResponse?.orderSummary)
-                expandableGrid.hideDeliveryTypeShimmerView()
+                stopShimmerView()
                 showDeliverySlotSelectionView()
             }
         }
@@ -435,6 +437,92 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
+    private fun startShimmerView() {
+        expandableGrid.setUpShimmerView()
+        expandableGrid.showDeliveryTypeShimmerView()
+        showDeliverySubTypeShimmerView()
+
+        shimmerComponentArray = listOf(
+            Pair<ShimmerFrameLayout, View>(
+                deliveringTitleShimmerFrameLayout,
+                tvNativeCheckoutDeliveringTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                deliveringTitleValueShimmerFrameLayout,
+                tvNativeCheckoutDeliveringValue
+            ),
+            Pair<ShimmerFrameLayout, View>(forwardImgViewShimmerFrameLayout, imageViewCaretForward),
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionTitleShimmerFrameLayout,
+                txtFoodSubstitutionTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionDescShimmerFrameLayout,
+                txtFoodSubstitutionDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupFoodSubstitutionShimmerFrameLayout,
+                radioGroupFoodSubstitution
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                instructionTxtShimmerFrameLayout,
+                txtSpecialDeliveryInstruction
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                specialInstructionSwitchShimmerFrameLayout,
+                switchSpecialDeliveryInstruction
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                giftInstructionTxtShimmerFrameLayout,
+                txtGiftInstructions
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                giftInstructionSwitchShimmerFrameLayout,
+                switchGiftInstructions
+            ),
+            Pair<ShimmerFrameLayout, View>(txtYourCartShimmerFrameLayout, txtOrderSummaryYourCart),
+            Pair<ShimmerFrameLayout, View>(
+                yourCartValueShimmerFrameLayout,
+                txtOrderSummaryYourCartValue
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                deliveryFeeTxtShimmerFrameLayout,
+                txtOrderSummaryDeliveryFee
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                deliveryFeeValueShimmerFrameLayout,
+                txtOrderSummaryDeliveryFeeValue
+            ),
+            Pair<ShimmerFrameLayout, View>(summaryNoteShimmerFrameLayout, txtOrderSummaryNote),
+            Pair<ShimmerFrameLayout, View>(txtOrderTotalShimmerFrameLayout, txtOrderTotalTitle),
+            Pair<ShimmerFrameLayout, View>(orderTotalValueShimmerFrameLayout, txtOrderTotalValue),
+            Pair<ShimmerFrameLayout, View>(
+                continuePaymentTxtShimmerFrameLayout,
+                txtContinueToPayment
+            )
+        )
+
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        shimmerComponentArray.forEach {
+            it.first.setShimmer(shimmer)
+            it.first.startShimmer()
+            it.second.visibility = INVISIBLE
+        }
+    }
+
+    private fun stopShimmerView() {
+        expandableGrid.hideDeliveryTypeShimmerView()
+
+        shimmerComponentArray.forEach {
+            it.first.stopShimmer()
+            it.first.setShimmer(null)
+            it.second.visibility = VISIBLE
+        }
+
+        initializeFoodSubstitution()
+        initializeDeliveryInstructions()
+    }
+
     private fun getConfirmDeliveryAddressDetails() {
 
         if (TextUtils.isEmpty(suburbId)) {
@@ -446,14 +534,12 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
 
         loadingBar.visibility = View.VISIBLE
-        expandableGrid.setUpShimmerView()
-        expandableGrid.showDeliveryTypeShimmerView()
-        showDeliverySubTypeShimmerView()
+        startShimmerView()
         val body = ConfirmDeliveryAddressBody(suburbId)
         checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails(body)
             .observe(viewLifecycleOwner, { response ->
                 loadingBar.visibility = View.GONE
-                expandableGrid.hideDeliveryTypeShimmerView()
+                stopShimmerView()
                 when (response) {
                     is ConfirmDeliveryAddressResponse -> {
                         confirmDeliveryAddressResponse = response
@@ -893,20 +979,6 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         }
 
         return body
-    }
-
-    private fun disablePaymentButton() {
-        txtContinueToPayment?.isEnabled = false
-        txtContinueToPayment?.isClickable = false
-        txtContinueToPayment?.background =
-            context?.let { ContextCompat.getDrawable(it, R.drawable.button_disable_color) }
-    }
-
-    private fun enablePaymentButton() {
-        txtContinueToPayment?.isEnabled = true
-        txtContinueToPayment?.isClickable = true
-        txtContinueToPayment?.background =
-            context?.let { ContextCompat.getDrawable(it, R.drawable.button_selector) }
     }
 
     override fun selectedDeliveryType(
