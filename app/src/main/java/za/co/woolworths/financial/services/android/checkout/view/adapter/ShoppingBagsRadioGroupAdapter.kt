@@ -18,6 +18,17 @@ class ShoppingBagsRadioGroupAdapter(
     RecyclerView.Adapter<ShoppingBagsRadioGroupAdapter.ShoppingBagsRadioGroupAdapterViewHolder>() {
     var checkedItemPosition = -1
 
+    init {
+        // If there is a default shopping bags present set it selected
+        shoppingBagsOptionsList?.forEach { shoppingBagsOptions ->
+            if (shoppingBagsOptions.isDefault) {
+                checkedItemPosition = shoppingBagsOptionsList?.indexOf(shoppingBagsOptions) ?: -1
+                onItemClicked(checkedItemPosition)
+                return@forEach
+            }
+        }
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -53,13 +64,29 @@ class ShoppingBagsRadioGroupAdapter(
                     radioSelector.isChecked = checkedItemPosition == position
                 }
                 setOnClickListener {
-                    shoppingBagsOptionsList?.get(position)?.let {
-                        listner.selectedShoppingBagType(it, position)
-                    }
-                    checkedItemPosition = position
-                    notifyDataSetChanged()
+                    onItemClicked(position)
                 }
             }
+        }
+    }
+
+    private fun onItemClicked(position: Int) {
+        if (position < 0 || position >= itemCount) {
+            return
+        }
+        shoppingBagsOptionsList?.get(position)?.let {
+            listner.selectedShoppingBagType(it, position)
+            notifyItemChanged(position, it)
+        }
+        // update last position as well
+        val previousPosition = checkedItemPosition
+        checkedItemPosition = position
+
+        if (previousPosition < 0 || previousPosition >= itemCount) {
+            return
+        }
+        shoppingBagsOptionsList?.get(previousPosition)?.let {
+            notifyItemChanged(previousPosition, it)
         }
     }
 
