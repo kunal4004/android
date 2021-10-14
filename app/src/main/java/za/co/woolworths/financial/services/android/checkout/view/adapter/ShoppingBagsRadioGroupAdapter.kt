@@ -68,17 +68,17 @@ class ShoppingBagsRadioGroupAdapter(
                     radioSelector.isChecked = checkedItemPosition == position
 
                     shoppingBagsSelectionLayout.setBackgroundColor(
-                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                        if (radioSelector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
                             R.color.white
                         )
                     )
                     title.setBackgroundColor(
-                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                        if (radioSelector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
                             R.color.white
                         )
                     )
                     subTitle.setBackgroundColor(
-                        if (selector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
+                        if (radioSelector.isChecked) bindColor(R.color.selected_address_background_color) else bindColor(
                             R.color.white
                         )
                     )

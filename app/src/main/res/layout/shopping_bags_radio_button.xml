@@ -5,7 +5,6 @@
     android:id="@+id/shoppingBagsSelectionLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginRight="@dimen/ten_dp"
     android:background="@color/white"
     android:minHeight="@dimen/sixty_four_dp"
     app:layout_constraintTop_toTopOf="parent">
@@ -46,9 +45,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twelve_dp"
         android:layout_marginTop="@dimen/two_dp"
-        android:layout_marginEnd="@dimen/twenty_eight_dp"
         android:background="@color/white"
         android:orientation="vertical"
+        android:paddingEnd="@dimen/twenty_eight_dp"
         android:text="@string/subtitle_text"
         android:textColor="@color/checkout_delivering_title"
         android:textSize="@dimen/fourteen_sp"
