@@ -656,6 +656,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun setReviewUI(){
         tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
         tvSkinProfile.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+        tvRatingDetails.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
         for (i in 1..1){
             val rootView = LinearLayout(context)
             rootView.layoutParams =

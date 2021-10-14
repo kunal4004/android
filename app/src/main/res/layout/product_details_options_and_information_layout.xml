@@ -276,6 +276,7 @@
         app:layout_constraintTop_toBottomOf="@+id/headerCustomerReview">
 
         <View
+            android:id="@+id/view_seprator"
             android:layout_width="match_parent"
             android:layout_height="@dimen/one_dp"
             android:background="@color/layout_background_gray" />
@@ -293,12 +294,12 @@
         <TextView
             android:id="@+id/tvRatingDetails"
             style="@style/pdp_no_of_review_text_style"
-            android:layout_width="85dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/view_seprator"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginTop="28dp"
-            android:drawableBottom="@drawable/tv_underline"
-            android:gravity="center_vertical"
             android:text="@string/rating_details"
             android:textAllCaps="true"
             android:textSize="@dimen/text_size_12sp" />

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.review_detail_layout.*
+import kotlinx.android.synthetic.main.review_detail_layout_cell.*
 import kotlinx.android.synthetic.main.review_detail_layout_cell.view.*
 import kotlinx.android.synthetic.main.reviews_skin_profile.*
 import kotlinx.android.synthetic.main.reviews_skin_profile.skin_profile_layout
@@ -40,6 +41,7 @@ class SkinProfileDialog : WBottomSheetDialogFragment(), View.OnClickListener {
         skin_profile_layout.txt_layout_one.txt_value.text = "Pale Ivory"
         skin_profile_layout.txt_layout_two.txt_value.text = "Combination,Sensitive"
         skin_profile_layout.txt_layout_three.txt_value.text = "Aging, Dehydration"
+        img_view.visibility = View.VISIBLE
     }
 
     override fun onClick(view: View?) {
