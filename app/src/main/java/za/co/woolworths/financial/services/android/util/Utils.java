@@ -669,7 +669,7 @@ public class Utils {
         return new Gson().fromJson(jsonString, className);
     }
 
-    public static String getUniqueDeviceID(Context context) {
+    public static String getUniqueDeviceID() {
         String deviceID = null;
         if (deviceID == null) {
             deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);

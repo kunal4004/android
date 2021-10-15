@@ -94,11 +94,11 @@ open class OTPInputListener : MyCardExtension() {
     }
 
     private fun validateVerificationCode() {
-        when ((edtVerificationCode1.length() == 1)
-                && (edtVerificationCode2.length() == 1)
-                && (edtVerificationCode3.length() == 1)
-                && (edtVerificationCode4.length() == 1)
-                && (edtVerificationCode5.length() == 1)) {
+        when ((edtVerificationCode1?.length() == 1)
+                && (edtVerificationCode2?.length() == 1)
+                && (edtVerificationCode3?.length() == 1)
+                && (edtVerificationCode4?.length() == 1)
+                && (edtVerificationCode5?.length() == 1)) {
             true -> {
                 imNextProcessLinkCard?.isEnabled = true
                 imNextProcessLinkCard?.alpha = 1.0f
