@@ -1464,6 +1464,7 @@
     <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
     <string name="recent_transactions_title">Recent Transactions</string>
 
+    <string name="set_up_payment_plan_title">Set Up A Payment Plan</string>
     <string name="payment_option_title">Payment Options</string>
     <string name="store_card_payment_options_title">Store Card Payment Options</string>
 
