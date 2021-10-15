@@ -617,6 +617,19 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                             WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.personalLoan?.exitUrl)
                 }
             }
+            ApplyNowState.STORE_CARD -> {
+                when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
+                    AvailableFundFragment.NATIVE_BROWSER ->
+                        KotlinUtils.openUrlInPhoneBrowser(
+                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.storeCard?.collectionsUrl, activity)
+
+                    else ->
+                        KotlinUtils.openLinkInInternalWebView(activity,
+                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.storeCard?.collectionsUrl,
+                            true,
+                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.storeCard?.exitUrl)
+                }
+            }
             else -> {
                 //do nothing
             }

@@ -28,7 +28,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     private lateinit var dialogButtonType: ViewTreatmentPlanDialogButtonType
 
     companion object {
-        enum class ViewTreatmentPlanDialogButtonType { CC_ACTIVE, PL_ELIGIBLE, PL_SC_NORMAL }
+        enum class ViewTreatmentPlanDialogButtonType { CC_ACTIVE, PL_ELIGIBLE, SC_ELIGIBLE, PL_SC_NORMAL }
         const val VIEW_PAYMENT_PLAN_BUTTON = "viewPaymentPlanButton"
         const val MAKE_A_PAYMENT_BUTTON = "makeAPaymentButton"
         const val CANNOT_AFFORD_PAYMENT_BUTTON = "cannotAffordPaymentButton"
@@ -53,7 +53,8 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         dialogButtonType = arguments?.getSerializable(PLAN_BUTTON_TYPE) as ViewTreatmentPlanDialogButtonType
 
         mainButton?.apply {
-            text = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)
+            text = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE ||
+                dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_ELIGIBLE)
                 bindString(R.string.make_payment_now_button_label)
             else bindString(R.string.view_payment_plan_button_label)
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
@@ -80,20 +81,42 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
 
         cannotAffordPaymentButton?.apply {
-            visibility = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE) View.VISIBLE else View.GONE
+            visibility = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE ||
+                dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_ELIGIBLE)
+                    View.VISIBLE else View.GONE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
         viewTreatmentPlanDescriptionTextView?.apply {
-            text = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)
-
-                payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
-                    activity?.resources?.getString(R.string.treatment_plan_eligible_description_pl,
-                        Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)))
+            text =
+                when(dialogButtonType) {
+                    ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE -> {
+                        payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                            activity?.resources?.getString(
+                                R.string.treatment_plan_eligible_description_pl,
+                                Utils.removeNegativeSymbol(
+                                    CurrencyFormatter.formatAmountToRandAndCent(
+                                        totalAmountDue
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    ViewTreatmentPlanDialogButtonType.SC_ELIGIBLE -> {
+                        payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                            activity?.resources?.getString(
+                                R.string.treatment_plan_eligible_description_sc,
+                                Utils.removeNegativeSymbol(
+                                    CurrencyFormatter.formatAmountToRandAndCent(
+                                        totalAmountDue
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    else -> bindString(R.string.view_treatment_plan_description)
                 }
-
-            else bindString(R.string.view_treatment_plan_description)
         }
     }
 
@@ -102,7 +125,8 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
             R.id.mainButton -> {
                 dismiss()
-                if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)
+                if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE ||
+                    dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_ELIGIBLE)
                     setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
                 else setFragmentResult(mClassName, bundleOf(mClassName to VIEW_PAYMENT_PLAN_BUTTON))
             }

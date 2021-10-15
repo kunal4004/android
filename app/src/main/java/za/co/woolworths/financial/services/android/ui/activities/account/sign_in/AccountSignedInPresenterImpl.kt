@@ -132,17 +132,22 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                     productTakeUpPlan -> productTakeUpPlan.productGroupCode == ProductGroupCode.SC }
                         }
                         if(plan != null){
-                            if(state === ApplyNowState.PERSONAL_LOAN){
-                                if(!plan.hasPlan && plan.isEligible){
-                                    //For personal loan
-                                    mainView?.showSetUpPaymentPlanButton(state)
-                                    mainView?.showViewTreatmentPlan(
-                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)!!
+                            if(!plan.hasPlan && plan.isEligible){
+                                //For personal loan
+                                mainView?.showSetUpPaymentPlanButton(state)
+                                when (state){
+                                    ApplyNowState.PERSONAL_LOAN ->
+                                        mainView?.showViewTreatmentPlan(
+                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)!!
+
+                                    ApplyNowState.STORE_CARD ->
+                                        mainView?.showViewTreatmentPlan(
+                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_ELIGIBLE)!!
                                 }
-                                else if(plan.hasPlan){
-                                    mainView?.showViewTreatmentPlan(
-                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
-                                }
+                            }
+                            else if(plan.hasPlan){
+                                mainView?.showViewTreatmentPlan(
+                                    ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
                             }
                         }
                     }
@@ -199,7 +204,8 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             return when {
                 !productOfferingGoodStanding && supported &&
                         delinquencyCycle>=minimumDelinquencyCycle -> {
-                    if(state == ApplyNowState.PERSONAL_LOAN){
+                    if(state == ApplyNowState.PERSONAL_LOAN ||
+                        state == ApplyNowState.STORE_CARD){
                         checkEligibility(state)
                     }else{
                         if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
