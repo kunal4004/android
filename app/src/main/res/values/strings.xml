@@ -2170,4 +2170,8 @@
     <string name="pma_total_amount_due_popup_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
     <string name="pma_amount_overdue_popup_desc">The amount that is outstanding from the previous billing due date</string>
     <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
+
+    <!--  No browser dialog  -->
+    <string name="browser_not_found_title">Browser Not Found</string>
+    <string name="browser_not_found_msg">To continue, please install a web browser.</string>
 </resources>

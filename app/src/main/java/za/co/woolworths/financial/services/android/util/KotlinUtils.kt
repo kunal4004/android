@@ -26,6 +26,7 @@ import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import androidx.annotation.RawRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
@@ -641,6 +642,15 @@ class KotlinUtils {
             }
             catch (exception: ActivityNotFoundException){
                 FirebaseManager.logException("no browser found - $exception")
+                activity?.apply {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                    builder
+                        .setTitle(R.string.browser_not_found_title)
+                        .setMessage(R.string.browser_not_found_msg)
+                        .setCancelable(true)
+                    val dialog: AlertDialog = builder.create()
+                    dialog.show()
+                }
             }
         }
 
