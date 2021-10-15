@@ -23,6 +23,7 @@ interface IAccountSignedInContract {
         fun showViewTreatmentPlan(dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType)
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
+        fun showSetUpPaymentPlanButton(state: ApplyNowState)
     }
 
     interface MyAccountPresenter {
