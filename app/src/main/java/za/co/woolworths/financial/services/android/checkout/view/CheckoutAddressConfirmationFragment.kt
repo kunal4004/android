@@ -117,7 +117,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.deliveryTab -> {
-                if (loadingProgressBar.visibility == View.GONE) {
+                if (loadingProgressBar.visibility == View.GONE && isDeliverySelected == false) {
                     Utils.triggerFireBaseEvents(
                         FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY,
                         activity
@@ -128,7 +128,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 }
             }
             R.id.collectionTab -> {
-                if (loadingProgressBar.visibility == View.GONE) {
+                if (loadingProgressBar.visibility == View.GONE && isDeliverySelected == true) {
                     Utils.triggerFireBaseEvents(
                         FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_COLLECTION,
                         activity

@@ -88,6 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
         android:background="@color/color_12000000"
+        android:translationZ="@dimen/ninety_dp"
         app:layout_constraintTop_toTopOf="@id/continueToPaymentButtonBackgroundView" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
