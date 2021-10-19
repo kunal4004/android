@@ -39,8 +39,8 @@ class ReviewDetailsFragment : Fragment() {
 
     private fun setDefaultUi() {
 
-        skin_profile_layout.visibility = View.GONE
-        view_product_quality.visibility = View.VISIBLE
+        skin_profile_layout.visibility = View.VISIBLE
+        view_product_quality.visibility = View.GONE
 
         skin_profile_layout.txt_layout_one.txt_label.text = getString(R.string.skin_shade)
         skin_profile_layout.txt_layout_two.txt_label.text = getString(R.string.skin_type)
@@ -58,9 +58,9 @@ class ReviewDetailsFragment : Fragment() {
         skin_profile_layout.txt_layout_one.txt_value.text = "Aging, Dehydration"
         txt_reviewer_name.text = "Amelia"
         txt_product_quality_value.text = "4/5"
-        btn_first_section.setBackgroundColor(R.drawable.bg_segmneted_progress_bar_selected)
-        btn_second_section.setBackgroundColor(R.drawable.bg_segmneted_progress_bar_selected)
-        btn_third_section.setBackgroundColor(R.drawable.bg_segmneted_progress_bar_selected)
+        btn_first_section.setBackgroundResource(R.drawable.bg_segmneted_progress_bar_selected)
+        btn_second_section.setBackgroundResource(R.drawable.bg_segmneted_progress_bar_selected)
+        btn_third_section.setBackgroundResource(R.drawable.bg_segmneted_progress_bar_selected)
     }
 
     private fun setProductImageViewPager() {
