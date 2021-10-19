@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
-    @GET("user/accounts")
+    @GET("wfs/app/v4/user/accounts")
     fun getAccounts(
           
             @Header("userAgent") userAgent: String,
@@ -48,7 +48,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/account/{productOfferingId}/history")
+    @GET("wfs/app/v4/user/account/{productOfferingId}/history")
     fun getAccountTransactionHistory(
           
             @Header("userAgent") userAgent: String,
@@ -58,7 +58,7 @@ interface ApiInterface {
             @Path("productOfferingId") productOfferingId: String): Call<TransactionHistoryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/accounts")
+    @GET("wfs/app/v4/user/accounts")
     fun getAccountsByProductOfferingId(
           
             @Header("userAgent") userAgent: String,
@@ -68,7 +68,7 @@ interface ApiInterface {
             @Query("productOfferingId") productOfferingId: String): Call<AccountsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
-    @GET("user/vouchers")
+    @GET("wfs/app/v4/user/vouchers")
     fun getVouchers(
           
             @Header("userAgent") userAgent: String,
@@ -78,7 +78,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/vouchers/count")
+    @GET("wfs/app/v4/user/vouchers/count")
     fun getVouchersCount(
           
             @Header("userAgent") userAgent: String,
@@ -87,7 +87,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<VoucherCount>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/session")
+    @POST("wfs/app/v4/user/session")
     fun login(
           
             @Header("userAgent") userAgent: String,
@@ -99,7 +99,7 @@ interface ApiInterface {
 
     //TODO:: Delete this request method
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/loan/request")
+    @POST("wfs/app/v4/user/loan/request")
     fun issueLoan(
           
             @Header("userAgent") userAgent: String,
@@ -110,7 +110,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/loan/authorise")
+    @POST("wfs/app/v4/user/loan/authorise")
     fun authoriseLoan(
           
             @Header("userAgent") userAgent: String,
@@ -120,7 +120,7 @@ interface ApiInterface {
             @Body authoriseLoanRequest: AuthoriseLoanRequest): Call<AuthoriseLoanResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600")
-    @GET("mobileconfigs")
+    @GET("wfs/app/v4/mobileconfigs")
     suspend fun getConfig(
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
@@ -128,7 +128,7 @@ interface ApiInterface {
     ):ConfigResponse
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/locations")
+    @GET("wfs/app/v4/user/locations")
     fun queryServiceGetStore(
           
             @Header("userAgent") userAgent: String,
@@ -141,7 +141,7 @@ interface ApiInterface {
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/locations")
+    @GET("wfs/app/v4/user/locations")
     fun getStoresLocation(
           
             @Header("userAgent") userAgent: String,
@@ -156,7 +156,7 @@ interface ApiInterface {
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("locationItems/{sku}")
+    @GET("wfs/app/v4/locationItems/{sku}")
     fun getStoresLocationItem(
           
             @Header("userAgent") userAgent: String,
@@ -171,7 +171,7 @@ interface ApiInterface {
             @Query("getStatus") getStatus: Boolean): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/messages")
+    @GET("wfs/app/v4/user/messages")
     fun getMessages(
           
             @Header("userAgent") userAgent: String,
@@ -184,7 +184,7 @@ interface ApiInterface {
     ): Call<MessageResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("user/messages/{id}")
+    @DELETE("wfs/app/v4/user/messages/{id}")
     fun getDeleteresponse(
           
             @Header("userAgent") userAgent: String,
@@ -195,7 +195,7 @@ interface ApiInterface {
     ): Call<DeleteMessageResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @PUT("user/messages")
+    @PUT("wfs/app/v4/user/messages")
     fun setReadMessages(
           
             @Header("userAgent") userAgent: String,
@@ -206,7 +206,7 @@ interface ApiInterface {
     ): Call<ReadMessagesResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/devices")
+    @POST("wfs/app/v4/user/devices")
     fun createUpdateDevice(
           
             @Header("userAgent") userAgent: String,
@@ -217,7 +217,7 @@ interface ApiInterface {
     ): Call<CreateUpdateDeviceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/cli/DEABanks")
+    @GET("wfs/app/v4/user/cli/DEABanks")
     fun getDeaBanks(
           
             @Header("userAgent") userAgent: String,
@@ -229,7 +229,7 @@ interface ApiInterface {
     ): Call<DeaBanks>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/cli/DEABankAccountTypes")
+    @GET("wfs/app/v4/user/cli/DEABankAccountTypes")
     fun getBankAccountTypes(
           
             @Header("userAgent") userAgent: String,
@@ -241,7 +241,7 @@ interface ApiInterface {
     ): Call<BankAccountTypes>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/cli/application")
+    @POST("wfs/app/v4/user/cli/application")
     fun cliCreateApplication(
           
             @Header("userAgent") userAgent: String,
@@ -251,7 +251,7 @@ interface ApiInterface {
             @Body createOfferRequest: CreateOfferRequest): Call<OfferActive>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/cli/offer/{cliId}")
+    @POST("wfs/app/v4/user/cli/offer/{cliId}")
     fun cliUpdateApplication(
           
             @Header("userAgent") userAgent: String,
@@ -262,7 +262,7 @@ interface ApiInterface {
             @Body createOfferRequest: CreateOfferRequest): Call<OfferActive>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/cli/offer/{cliId}/decision")
+    @POST("wfs/app/v4/user/cli/offer/{cliId}/decision")
     fun createOfferDecision(
           
             @Header("userAgent") userAgent: String,
@@ -273,7 +273,7 @@ interface ApiInterface {
             @Body createOfferDecision: CLIOfferDecision): Call<OfferActive>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/cli/offer/{cliId}/POI")
+    @POST("wfs/app/v4/user/cli/offer/{cliId}/POI")
     fun cliSubmitPOI(
           
             @Header("userAgent") userAgent: String,
@@ -284,7 +284,7 @@ interface ApiInterface {
 
     //WOP-650 Set cacheTime to zero to allow correct status of CLI getOfferActive
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:0")
-    @GET("user/cli/offerActive")
+    @GET("wfs/app/v4/user/cli/offerActive")
     fun getActiveOfferRequest(
           
             @Header("userAgent") userAgent: String,
@@ -294,14 +294,14 @@ interface ApiInterface {
             @Query("productOfferingId") productOfferingId: String): Call<OfferActive>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/cli/offer/email")
+    @POST("wfs/app/v4/user/cli/offer/email")
     fun cliSendEmailRquest(
           
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CLIEmailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/cli/offer/bankingDetails")
+    @POST("wfs/app/v4/user/cli/offer/bankingDetails")
     fun cliUpdateBankRequest(
           
             @Header("userAgent") userAgent: String,
@@ -311,7 +311,7 @@ interface ApiInterface {
             @Body updateBankDetail: UpdateBankDetail): Call<UpdateBankDetailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:900")
-    @GET("content/promotions")
+    @GET("wfs/app/v4/content/promotions")
     fun getPromotions(
           
             @Header("userAgent") userAgent: String,
@@ -321,7 +321,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
-    @GET("categories")
+    @GET("wfs/app/v4/categories")
     fun getRootCategories(
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
@@ -334,7 +334,7 @@ interface ApiInterface {
     ): Call<RootCategories>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
-    @GET("categories/{cat}")
+    @GET("wfs/app/v4/categories/{cat}")
     fun getSubCategory(
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
@@ -348,7 +348,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30", "Accept-Encoding: gzip")
-    @GET("content/faq")
+    @GET("wfs/app/v4/content/faq")
     fun getFAQ(
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
@@ -357,7 +357,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("products/{productId}")
+    @GET("wfs/app/v4/products/{productId}")
     fun getProductDetail(
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
@@ -373,7 +373,7 @@ interface ApiInterface {
             @Query("sku") sku: String): Call<WProduct>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("products/{productId}")
+    @GET("wfs/app/v4/products/{productId}")
     fun getProductDetail(
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
@@ -390,7 +390,7 @@ interface ApiInterface {
             callback: Callback<String>)
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("products/{productId}")
+    @GET("wfs/app/v4/products/{productId}")
     fun getProductDetail(
             @Header("deviceModel") deviceModel: String,
             @Header("deviceVersion") deviceVersion: String,
@@ -409,14 +409,14 @@ interface ApiInterface {
             callback: Callback<String>)
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
-    @GET("reward/cardDetails")
+    @GET("wfs/app/v4/reward/cardDetails")
     fun getCardDetails(
           
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CardDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/statements")
+    @GET("wfs/app/v4/user/statements")
     fun getUserStatement(
           
             @Header("userAgent") userAgent: String,
@@ -429,7 +429,7 @@ interface ApiInterface {
             @Query("endDate") endDate: String): Call<StatementResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/statements/{docId}")
+    @GET("wfs/app/v4/user/statements/{docId}")
     @Streaming
     fun getStatement(
           
@@ -442,7 +442,7 @@ interface ApiInterface {
             @Query("docDesc") docDesc: String): Call<ResponseBody>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/statements")
+    @POST("wfs/app/v4/user/statements")
     fun sendUserStatement(
           
             @Header("userAgent") userAgent: String,
@@ -453,7 +453,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("location")
+    @GET("wfs/app/v4/location")
     fun getProvinces(
           
             @Header("userAgent") userAgent: String,
@@ -463,7 +463,7 @@ interface ApiInterface {
     ): Call<ProvincesResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("location/{locationId}")
+    @GET("wfs/app/v4/location/{locationId}")
     fun getSuburbs(
           
             @Header("userAgent") userAgent: String,
@@ -474,7 +474,7 @@ interface ApiInterface {
     ): Call<SuburbsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("cart/suburb")
+    @POST("wfs/app/v4/cart/suburb")
     fun setDeliveryLocationSuburb(
           
             @Header("sessionToken") sessionToken: String,
@@ -482,7 +482,7 @@ interface ApiInterface {
             @Body suburbRequest: SetDeliveryLocationSuburbRequest): Call<SetDeliveryLocationSuburbResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("cartV2")
+    @GET("wfs/app/v4/cartV2")
     fun getShoppingCart(
           
             @Header("sessionToken") sessionToken: String,
@@ -490,7 +490,7 @@ interface ApiInterface {
     ): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("cart/item")
+    @POST("wfs/app/v4/cart/item")
     fun addItemToCart(
           
             @Header("userAgent") userAgent: String,
@@ -500,7 +500,7 @@ interface ApiInterface {
             @Body addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("cartV2/item")
+    @DELETE("wfs/app/v4/cartV2/item")
     fun removeItemFromCart(
           
             @Header("sessionToken") sessionToken: String,
@@ -508,7 +508,7 @@ interface ApiInterface {
             @Query("commerceId") commerceId: String): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("cart/summary")
+    @GET("wfs/app/v4/cart/summary")
     fun getCartSummary(
           
             @Header("userAgent") userAgent: String,
@@ -517,7 +517,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<CartSummaryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("cartV2/item")
+    @DELETE("wfs/app/v4/cartV2/item")
     fun removeAllCartItems(
           
             @Header("sessionToken") sessionToken: String,
@@ -525,7 +525,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @PUT("cartV2/item/{commerceId}")
+    @PUT("wfs/app/v4/cartV2/item/{commerceId}")
     fun changeQuantityRequest(
           
             @Header("userAgent") userAgent: String,
@@ -537,7 +537,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("productsV2/{productId}")
+    @GET("wfs/app/v4/productsV2/{productId}")
     fun productDetail(
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
@@ -551,7 +551,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("productsV2/{productId}")
+    @GET("wfs/app/v4/productsV2/{productId}")
     fun productDetail(
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
@@ -566,14 +566,14 @@ interface ApiInterface {
     ): Call<ProductDetailResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("list")
+    @GET("wfs/app/v4/list")
     fun getShoppingLists(
           
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<ShoppingListsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("list")
+    @POST("wfs/app/v4/list")
     fun createList(
           
             @Header("sessionToken") sessionToken: String,
@@ -581,7 +581,7 @@ interface ApiInterface {
             @Body name: CreateList): Call<ShoppingListsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("list/{id}")
+    @GET("wfs/app/v4/list/{id}")
     fun getShoppingListItems(
           
             @Header("sessionToken") sessionToken: String,
@@ -589,7 +589,7 @@ interface ApiInterface {
             @Path("id") id: String): Call<ShoppingListItemsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("list/{productId}/item")
+    @POST("wfs/app/v4/list/{productId}/item")
     fun addToList(
           
             @Header("sessionToken") sessionToken: String,
@@ -598,7 +598,7 @@ interface ApiInterface {
             @Body addToListRequest: MutableList<AddToListRequest>): Call<ShoppingListItemsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("list/{id}")
+    @DELETE("wfs/app/v4/list/{id}")
     fun deleteShoppingList(
           
             @Header("sessionToken") sessionToken: String,
@@ -606,7 +606,7 @@ interface ApiInterface {
             @Path("id") id: String): Call<ShoppingListsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("list/{listId}/item/{id}")
+    @DELETE("wfs/app/v4/list/{listId}/item/{id}")
     fun deleteShoppingListItem(
           
             @Header("sessionToken") sessionToken: String,
@@ -617,7 +617,7 @@ interface ApiInterface {
             @Query("catalogRefId") catalogRefId: String): Call<ShoppingListItemsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("inventory/multiSku/{multipleSku}")
+    @GET("wfs/app/v4/inventory/multiSku/{multipleSku}")
     fun getInventorySKU(
           
             @Header("sessionToken") sessionToken: String,
@@ -625,7 +625,7 @@ interface ApiInterface {
             @Path("multipleSku") multipleSku: String): Call<SkuInventoryResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("inventory/store/{store_id}/multiSku/{multipleSku}")
+    @GET("wfs/app/v4/inventory/store/{store_id}/multiSku/{multipleSku}")
     fun getInventorySKUForStore(
           
             @Header("sessionToken") sessionToken: String,
@@ -634,7 +634,7 @@ interface ApiInterface {
             @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("searchSortAndFilterV2")
+    @GET("wfs/app/v4/searchSortAndFilterV2")
     fun getProducts(
 
             @Header("userAgent") userAgent: String,
@@ -654,7 +654,7 @@ interface ApiInterface {
             @Query("storeId") storeId: String?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("searchSortAndFilterV2")
+    @GET("wfs/app/v4/searchSortAndFilterV2")
     fun getProductsWithoutLocation(
 
             @Header("userAgent") userAgent: String,
@@ -674,7 +674,7 @@ interface ApiInterface {
             @Query("storeId") storeId: String?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("cart/checkoutComplete")
+    @POST("wfs/app/v4/cart/checkoutComplete")
     fun postCheckoutSuccess(
           
             @Header("sessionToken") sessionToken: String,
@@ -682,14 +682,14 @@ interface ApiInterface {
             @Body checkoutSuccess: CheckoutSuccess): Call<Void>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("order")
+    @GET("wfs/app/v4/order")
     fun getOrders(
           
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<OrdersResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("order/{id}")
+    @GET("wfs/app/v4/order/{id}")
     fun getOrderDetails(
           
             @Header("sessionToken") sessionToken: String,
@@ -697,7 +697,7 @@ interface ApiInterface {
             @Path("id") id: String): Call<OrderDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("order/{id}")
+    @POST("wfs/app/v4/order/{id}")
     fun addOrderToList(
           
             @Header("sessionToken") sessionToken: String,
@@ -706,7 +706,7 @@ interface ApiInterface {
             @Body requestBody: OrderToShoppingListRequestBody): Call<OrderToListReponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("order/taxInvoice/{taxNoteNumber}")
+    @GET("wfs/app/v4/order/taxInvoice/{taxNoteNumber}")
     fun getTaxInvoice(
           
             @Header("sessionToken") sessionToken: String,
@@ -714,7 +714,7 @@ interface ApiInterface {
             @Path("taxNoteNumber") taxNoteNumber: String): Call<OrderTaxInvoiceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/creditCardToken")
+    @GET("wfs/app/v4/user/creditCardToken")
     fun getCreditCardToken(
           
             @Header("userAgent") userAgent: String,
@@ -724,7 +724,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/storecard/blockStoreCard/{productOfferingId}")
+    @POST("wfs/app/v4/accounts/storecard/blockStoreCard/{productOfferingId}")
     fun blockStoreCard(
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
@@ -734,7 +734,7 @@ interface ApiInterface {
             @Body blockCardRequestBody: BlockCardRequestBody): Call<BlockMyCardResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("accounts/storecard/otp")
+    @GET("wfs/app/v4/accounts/storecard/otp")
     fun getLinkNewCardOTP(
           
             @Header("userAgent") userAgent: String,
@@ -744,7 +744,7 @@ interface ApiInterface {
             @Query("otpMethod") otpMethod: String): Call<LinkNewCardOTP>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/storecard/linkStoreCard")
+    @POST("wfs/app/v4/accounts/storecard/linkStoreCard")
     fun linkStoreCard(
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
@@ -753,7 +753,7 @@ interface ApiInterface {
             @Body linkStoreCard: LinkStoreCard): Call<LinkNewCardResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/storecard/cards")
+    @POST("wfs/app/v4/accounts/storecard/cards")
     fun getStoreCards(
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
@@ -764,7 +764,7 @@ interface ApiInterface {
             @Body getStoreCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/storecard/unblockStoreCard/{productOfferingId}")
+    @POST("wfs/app/v4/accounts/storecard/unblockStoreCard/{productOfferingId}")
     fun unblockStoreCard(
           
             @Header("userAgent") userAgent: String,
@@ -774,7 +774,7 @@ interface ApiInterface {
             @Path("productOfferingId") productOfferingId: String,
             @Body requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse>
 
-    @GET("user/locations/geofence")
+    @GET("wfs/app/v4/user/locations/geofence")
     fun getStoresForNPC(
           
             @Header("userAgent") userAgent: String,
@@ -788,7 +788,7 @@ interface ApiInterface {
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("order/cancelOrder")
+    @POST("wfs/app/v4/order/cancelOrder")
     fun queryServiceCancelOrder(
           
             @Header("userAgent") userAgent: String,
@@ -798,7 +798,7 @@ interface ApiInterface {
             @Query("orderId") orderId: String): Call<CancelOrderResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("absa/activateCardAccount")
+    @POST("wfs/app/v4/absa/activateCardAccount")
     fun activateCreditCard(
           
             @Header("userAgent") userAgent: String,
@@ -808,7 +808,7 @@ interface ApiInterface {
             @Body requestBody: CreditCardActivationRequestBody): Call<CreditCardActivationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("accounts/otp/retrieve")
+    @GET("wfs/app/v4/accounts/otp/retrieve")
     fun retrieveOTP(
           
             @Header("userAgent") userAgent: String,
@@ -819,7 +819,7 @@ interface ApiInterface {
             @Query("productOfferingId") productOfferingId: String): Call<RetrieveOTPResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/otp/validate/{productOfferingId}")
+    @POST("wfs/app/v4/accounts/otp/validate/{productOfferingId}")
     fun validateOTP(
           
             @Header("userAgent") userAgent: String,
@@ -830,7 +830,7 @@ interface ApiInterface {
             @Path("productOfferingId") productOfferingId: String): Call<ValidateOTPResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("event/{featureName}/{appScreen}")
+    @POST("wfs/app/v4/event/{featureName}/{appScreen}")
     fun postEvent(
           
             @Header("userAgent") userAgent: String,
@@ -841,7 +841,7 @@ interface ApiInterface {
             @Path("appScreen") appScreen: String): Call<Response>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("payments/payu/methods")
+    @GET("wfs/app/v4/payments/payu/methods")
     fun getPaymentPAYUMethod(
           
             @Header("userAgent") userAgent: String,
@@ -850,7 +850,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String): Call<PaymentMethodsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("payments/payu/pay")
+    @POST("wfs/app/v4/payments/payu/pay")
     fun postPayUpPay(
           
             @Header("userAgent") userAgent: String,
@@ -861,7 +861,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("payments/payu/result")
+    @GET("wfs/app/v4/payments/payu/result")
     fun getPaymentPayUResult(
           
             @Header("userAgent") userAgent: String,
@@ -876,7 +876,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("location/validateSelectedSuburb/{suburbId}")
+    @GET("wfs/app/v4/location/validateSelectedSuburb/{suburbId}")
     fun validateSelectedSuburb(
           
             @Header("userAgent") userAgent: String,
@@ -887,7 +887,7 @@ interface ApiInterface {
             @Query("isStore") isStore: Boolean): Call<ValidateSelectedSuburbResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("payments/payu/methods/{paymenToken}")
+    @DELETE("wfs/app/v4/payments/payu/methods/{paymenToken}")
     fun payURemovePaymentMethod(
           
             @Header("userAgent") userAgent: String,
@@ -898,7 +898,7 @@ interface ApiInterface {
     ): Call<DeleteResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("cartV2/applyVouchers")
+    @POST("wfs/app/v4/cartV2/applyVouchers")
     fun applyVouchers(
           
             @Header("userAgent") userAgent: String,
@@ -908,7 +908,7 @@ interface ApiInterface {
             @Body vouchersList: List<SelectedVoucher>): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("accounts/cardDelivery/status")
+    @GET("wfs/app/v4/accounts/cardDelivery/status")
     fun cardDeliveryStatus(
           
             @Header("userAgent") userAgent: String,
@@ -919,7 +919,7 @@ interface ApiInterface {
             @Query("productOfferingId") productOfferingId: String): Call<CreditCardDeliveryStatusResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("accounts/cardDelivery/possibleAddress")
+    @GET("wfs/app/v4/accounts/cardDelivery/possibleAddress")
     fun possibleAddress(
           
             @Header("userAgent") userAgent: String,
@@ -931,7 +931,7 @@ interface ApiInterface {
             @Query("productOfferingId") productOfferingId: String): Call<PossibleAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("accounts/cardDelivery/timeslots")
+    @GET("wfs/app/v4/accounts/cardDelivery/timeslots")
     fun availableTimeSlots(
           
             @Header("userAgent") userAgent: String,
@@ -945,7 +945,7 @@ interface ApiInterface {
             @Query("shipByDate") shipByDate: String): Call<AvailableTimeSlotsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @PUT("accounts/cardDelivery/scheduleDelivery")
+    @PUT("wfs/app/v4/accounts/cardDelivery/scheduleDelivery")
     fun scheduleDelivery(
           
             @Header("userAgent") userAgent: String,
@@ -959,7 +959,7 @@ interface ApiInterface {
             @Body requestBody: ScheduleDeliveryRequest): Call<CreditCardDeliveryStatusResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("cartV2/applyPromoCode")
+    @POST("wfs/app/v4/cartV2/applyPromoCode")
     fun applyPromoCode(
           
             @Header("userAgent") userAgent: String,
@@ -969,7 +969,7 @@ interface ApiInterface {
             @Body couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("cartV2/removePromoCode")
+    @POST("wfs/app/v4/cartV2/removePromoCode")
     fun removePromoCode(
           
             @Header("userAgent") userAgent: String,
@@ -979,7 +979,7 @@ interface ApiInterface {
             @Body couponClaimCode: CouponClaimCode): Call<ShoppingCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("productsV2/content/{contentId}")
+    @GET("wfs/app/v4/productsV2/content/{contentId}")
     fun getSizeGuideContent(
           
             @Header("userAgent") userAgent: String,
@@ -990,7 +990,7 @@ interface ApiInterface {
     ): Call<SizeGuideResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/otp/retrieve")
+    @GET("wfs/app/v4/user/otp/retrieve")
     fun getLinkDeviceOTP(
           
             @Header("userAgent") userAgent: String,
@@ -1001,7 +1001,7 @@ interface ApiInterface {
     ): Call<RetrieveOTPResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @PUT("user/device/{deviceIdentityId}")
+    @PUT("wfs/app/v4/user/device/{deviceIdentityId}")
     fun changePrimaryDeviceApi(
 
         @Header("userAgent") userAgent: String,
@@ -1014,7 +1014,7 @@ interface ApiInterface {
     ): Call<ViewAllLinkedDeviceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("user/device")
+    @POST("wfs/app/v4/user/device")
     fun linkDeviceApi(
           
             @Header("userAgent") userAgent: String,
@@ -1026,7 +1026,7 @@ interface ApiInterface {
             @Query("otpMethod") otpMethod: String?): Call<LinkedDeviceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
-    @GET("user/device")
+    @GET("wfs/app/v4/user/device")
     fun getAllLinkedDevices(
           
             @Header("userAgent") userAgent: String,
@@ -1036,7 +1036,7 @@ interface ApiInterface {
     ): Call<ViewAllLinkedDeviceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("user/device/{deviceIdentityId}")
+    @DELETE("wfs/app/v4/user/device/{deviceIdentityId}")
     fun deleteDevice(
           
             @Header("userAgent") userAgent: String,
@@ -1050,7 +1050,7 @@ interface ApiInterface {
     ): Call<ViewAllLinkedDeviceResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/storecard/email")
+    @POST("wfs/app/v4/accounts/storecard/email")
     fun confirmStoreCardEmail(
           
             @Header("userAgent") userAgent: String,
@@ -1060,7 +1060,7 @@ interface ApiInterface {
             @Body storeCardEmailConfirmBody: StoreCardEmailConfirmBody): Call<GenericResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("survey")
+    @GET("wfs/app/v4/survey")
     fun getVocSurvey(
           
             @Header("userAgent") userAgent: String,
@@ -1070,7 +1070,7 @@ interface ApiInterface {
     ): Call<SurveyDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("survey/{surveyId}/replies")
+    @POST("wfs/app/v4/survey/{surveyId}/replies")
     fun submitVocSurveyReplies(
           
             @Header("userAgent") userAgent: String,
@@ -1081,7 +1081,7 @@ interface ApiInterface {
     ): Call<Void>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("survey/optout")
+    @POST("wfs/app/v4/survey/optout")
     fun optOutVocSurvey(
           
             @Header("userAgent") userAgent: String,
