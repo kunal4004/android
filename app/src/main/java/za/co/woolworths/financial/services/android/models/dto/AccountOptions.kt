@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto
 
 data class AccountOptions(
-    val showTreatmentPlanJourney: TreatmentPlan
+    val showTreatmentPlanJourney: TreatmentPlan,
+    val deviceSecurity: DeviceSecurity
 )
