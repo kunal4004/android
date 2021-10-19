@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
+import java.net.URLEncoder
 
 object OneAppService : RetrofitConfig() {
 
@@ -228,7 +229,8 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun changeAddress(nickName: String): Call<ChangeAddressResponse> {
-        return mApiInterface.changeAddress(nickName, "", "", getSessionToken(),
+        val encodedNickName = URLEncoder.encode(nickName, "utf-8")
+        return mApiInterface.changeAddress(encodedNickName, "", "", getSessionToken(),
             getDeviceIdentityToken())
     }
 
