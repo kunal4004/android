@@ -48,7 +48,7 @@
         style="@style/myriad_pro_semi_bold_777777_15_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/verified_staff_member"
+        android:drawableLeft="@drawable/verified_icon"
         android:drawablePadding="@dimen/eight_dp"
         android:text="@string/verified_staff_member"
         app:layout_constraintStart_toStartOf="parent"

@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvHelpful"
         app:layout_constraintEnd_toStartOf="@+id/tvLikes"
-        android:src="@drawable/pdp_like_icon"
+        android:src="@drawable/iv_like"
         android:layout_width="@dimen/sixteen_dp"
         android:layout_height="@dimen/sixteen_dp"/>
 
