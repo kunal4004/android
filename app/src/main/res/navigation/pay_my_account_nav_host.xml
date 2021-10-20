@@ -81,6 +81,9 @@
         <action
             android:id="@+id/action_enterPaymentAmountFragment_to_saveCardAndPayNowFragment"
             app:destination="@id/saveCardAndPayNowFragment" />
+        <action
+            android:id="@+id/action_enterPaymentAmountFragment_to_infoDialogFragment"
+            app:destination="@id/infoDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/addNewPayUCardFragment"
@@ -217,4 +220,16 @@
         android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.PMADeleteCardAPIErrorFragment"
         android:label="PMADeleteCardAPIErrorFragment"
         tools:layout="@layout/error_dialog_fragment" />
+    <dialog
+        android:id="@+id/infoDialogFragment"
+        tools:layout="@layout/got_it_desc_info_dialog_fragment"
+        android:name="za.co.woolworths.financial.services.android.ui.views.actionsheet.InfoDialogFragment"
+        android:label="InfoDialogFragment" >
+        <argument
+            android:name="infoWindowTitle"
+            app:argType="integer" />
+        <argument
+            android:name="infoWindowDesc"
+            app:argType="integer" />
+    </dialog>
 </navigation>

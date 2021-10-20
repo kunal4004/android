@@ -227,6 +227,7 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
@@ -385,6 +386,11 @@
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/ErrorHandlerActivityStyle" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.account.GeneralErrorHandlerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/ErrorHandlerActivityStyle" />

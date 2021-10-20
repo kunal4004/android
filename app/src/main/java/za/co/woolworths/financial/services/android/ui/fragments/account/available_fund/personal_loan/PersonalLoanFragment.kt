@@ -9,7 +9,7 @@ import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
@@ -53,7 +53,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         navigateToDeepLinkView()
 
         setFragmentResultListener(AccountInArrearsDialogFragment::class.java.simpleName) { _, bundle ->
-            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
                 when (bundle.getString(
                     AccountInArrearsDialogFragment::class.java.simpleName,
                     "N/A"
@@ -77,7 +77,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         }
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
-            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
                     VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {
@@ -87,16 +87,16 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                                 FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
                                 arguments,
                                 this)
-                            when (WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.renderMode){
+                            when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
                                 NATIVE_BROWSER ->
                                     KotlinUtils.openUrlInPhoneBrowser(
-                                        WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl, this)
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl, this)
 
                                 else ->
                                     KotlinUtils.openLinkInInternalWebView(activity,
-                                        WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.collectionsUrl,
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl,
                                         true,
-                                        WoolworthsApplication.getAccountOptions().showTreatmentPlanJourney.personalLoan.exitUrl)
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.exitUrl)
                             }
                         }
                     }
