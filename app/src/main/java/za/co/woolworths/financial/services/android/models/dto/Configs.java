@@ -63,4 +63,6 @@ public class Configs {
     public CustomerFeedback customerFeedback;
     @Nullable
     public AccountOptions accountOptions;
+    @Nullable
+    public DeviceSecurity deviceSecurity;
 }

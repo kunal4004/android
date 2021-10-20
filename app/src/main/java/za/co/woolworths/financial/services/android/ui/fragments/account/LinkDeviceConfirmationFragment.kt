@@ -97,21 +97,21 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             when(mApplyNowState){
                 ApplyNowState.STORE_CARD ->{
                     linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.sc_asset)
-                    linkDeviceConfirmationTitle?.text = WoolworthsApplication.getAccountOptions()?.deviceSecurity?.storeCard?.primaryDeviceConfirmation?.title
-                    linkDeviceConfirmationDesc?.text = WoolworthsApplication.getAccountOptions()?.deviceSecurity?.storeCard?.primaryDeviceConfirmation?.description
+                    linkDeviceConfirmationTitle?.text = WoolworthsApplication.getDeviceSecurity()?.storeCard?.primaryDeviceConfirmation?.title
+                    linkDeviceConfirmationDesc?.text = WoolworthsApplication.getDeviceSecurity()?.storeCard?.primaryDeviceConfirmation?.description
                 }
                 ApplyNowState.PERSONAL_LOAN ->{
                     linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.pl_asset)
-                    linkDeviceConfirmationTitle?.text = WoolworthsApplication.getAccountOptions()?.deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.title
-                    linkDeviceConfirmationDesc?.text = WoolworthsApplication.getAccountOptions()?.deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.description
+                    linkDeviceConfirmationTitle?.text = WoolworthsApplication.getDeviceSecurity()?.personalLoan?.primaryDeviceConfirmation?.title
+                    linkDeviceConfirmationDesc?.text = WoolworthsApplication.getDeviceSecurity()?.personalLoan?.primaryDeviceConfirmation?.description
                 }
                 ApplyNowState.SILVER_CREDIT_CARD,
                 ApplyNowState.GOLD_CREDIT_CARD,
                 ApplyNowState.BLACK_CREDIT_CARD ->
                 {
                     linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.cc_asset)
-                    linkDeviceConfirmationTitle?.text = WoolworthsApplication.getAccountOptions()?.deviceSecurity?.creditCard?.primaryDeviceConfirmation?.title
-                    linkDeviceConfirmationDesc?.text = WoolworthsApplication.getAccountOptions()?.deviceSecurity?.creditCard?.primaryDeviceConfirmation?.description
+                    linkDeviceConfirmationTitle?.text = WoolworthsApplication.getDeviceSecurity()?.creditCard?.primaryDeviceConfirmation?.title
+                    linkDeviceConfirmationDesc?.text = WoolworthsApplication.getDeviceSecurity()?.creditCard?.primaryDeviceConfirmation?.description
                 }
 
                 else -> linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc)

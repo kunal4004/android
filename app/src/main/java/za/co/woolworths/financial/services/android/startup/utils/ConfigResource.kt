@@ -146,6 +146,10 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 accountOptions?.apply {
                     WoolworthsApplication.setAccountOptions(this)
                 }
+
+                deviceSecurity?.apply {
+                    WoolworthsApplication.setDeviceSecurity(this)
+                }
             }
         }
     }
