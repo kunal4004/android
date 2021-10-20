@@ -113,8 +113,6 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
                     linkDeviceConfirmationTitle?.text = WoolworthsApplication.getDeviceSecurity()?.creditCard?.primaryDeviceConfirmation?.title
                     linkDeviceConfirmationDesc?.text = WoolworthsApplication.getDeviceSecurity()?.creditCard?.primaryDeviceConfirmation?.description
                 }
-
-                else -> linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc)
             }
         }
     }
