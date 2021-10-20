@@ -24,14 +24,12 @@ import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddressConfirmationInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
-import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddressConfirmationViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
@@ -70,7 +68,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private var localSuburbId: String = DEFAULT_STORE_ID
     private var validatedSuburbProductResponse: ValidatedSuburbProducts? = null
     private var suburbListAdapter: SuburbListAdapter? = null
-    private lateinit var checkoutAddressConfirmationViewModel: CheckoutAddressConfirmationViewModel
     private var selectedSuburb = Suburb()
     private var selectedProvince = Province()
     private var isDeliverySelected: Boolean = true
@@ -216,7 +213,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     loadingProgressBar.visibility = View.GONE
                     activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
-                        is SetDeliveryLocationSuburbResponse -> {
+                        is ConfirmSelectionResponse -> {
                             when (response.httpCode) {
                                 HttpURLConnection.HTTP_OK, AppConstant.HTTP_OK_201 -> {
                                     val store = selectedSuburb.let { suburb ->
@@ -770,15 +767,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 )
             )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
-
-        checkoutAddressConfirmationViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddressConfirmationInteractor(
-                    CheckoutAddressConfirmationApiHelper()
-                )
-            )
-        ).get(CheckoutAddressConfirmationViewModel::class.java)
     }
 
     private fun navigateToUnsellableItemsFragment(
