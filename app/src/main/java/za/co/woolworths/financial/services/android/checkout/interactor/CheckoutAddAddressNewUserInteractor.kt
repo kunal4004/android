@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.checkout.interactor
 import androidx.lifecycle.LiveData
 import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmSelectionRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 
@@ -34,4 +35,7 @@ class CheckoutAddAddressNewUserInteractor(
 
     fun getShippingDetails(body: ShippingDetailsBody) =
         checkoutAddAddressNewUserApiHelper.getShippingDetails(body = body)
+
+    fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody) =
+        checkoutAddAddressNewUserApiHelper.setConfirmSelection(confirmSelectionRequestBody)
 }

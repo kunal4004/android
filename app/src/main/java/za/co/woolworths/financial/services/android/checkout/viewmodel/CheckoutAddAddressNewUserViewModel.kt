@@ -6,6 +6,7 @@ import androidx.lifecycle.liveData
 import kotlinx.coroutines.Dispatchers
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressRequestBody
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmSelectionRequestBody
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.checkout.utils.NativeCheckoutResource
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
@@ -72,5 +73,9 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
 
     fun getShippingDetails(body: ShippingDetailsBody): LiveData<Any> {
         return checkoutAddAddressNewUserInteractor.getShippingDetails(body)
+    }
+
+    fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): LiveData<Any>{
+        return checkoutAddAddressNewUserInteractor.setConfirmSelection(confirmSelectionRequestBody)
     }
 }

@@ -193,20 +193,25 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     DeliveryType.STORE_PICKUP
                 )
             } else {
-                // if it is store then call setSuburb API.
-                setSuburb()
+                // if it is store then call setConfirmSelection API (same as setSuburb API).
+                setConfirmSelection()
             }
         }
     }
 
-    private fun setSuburb() {
+    private fun setConfirmSelection() {
         selectedSuburb.storeAddress.suburbId?.let { storeId ->
             loadingProgressBar.visibility = View.VISIBLE
             activity?.getWindow()?.setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
-            checkoutAddressConfirmationViewModel.setSuburb(storeId)
+            checkoutAddAddressNewUserViewModel.setConfirmSelection(
+                ConfirmSelectionRequestBody(
+                    storeId,
+                    null
+                )
+            )
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
                     activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)

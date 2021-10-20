@@ -545,6 +545,16 @@ interface ApiInterface {
     ): Call<ShippingDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("location/confirmSelection")
+    fun setConfirmSelection(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body confirmSelectionRequestBody: ConfirmSelectionRequestBody
+    ): Call<ConfirmSelectionResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("location/{locationId}")
     fun getSuburbs(
             @Header("userAgent") userAgent: String,
