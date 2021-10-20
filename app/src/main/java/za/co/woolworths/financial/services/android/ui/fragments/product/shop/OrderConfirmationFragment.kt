@@ -41,11 +41,6 @@ class OrderConfirmationFragment : Fragment() {
     private var itemsOrder: ArrayList<OrderItem>? = ArrayList(0)
     private var itemsOrderListAdapter: ItemsOrderListAdapter? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
