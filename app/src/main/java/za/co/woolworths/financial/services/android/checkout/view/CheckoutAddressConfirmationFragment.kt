@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -180,6 +181,23 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
+                when (resultCode) {
+                    // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
+                    Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
+                        (activity as? CheckoutActivity)?.apply {
+                            setResult(CheckOutFragment.RESULT_RELOAD_CART)
+                            closeActivity()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun checkUnsellableItems() {
         if (validateStoreList != null && validateStoreList?.deliverable == true) {
             if (validateStoreList?.unSellableCommerceItems?.size!! > 0) {
@@ -193,6 +211,17 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 // if it is store then call setConfirmSelection API (same as setSuburb API).
                 setConfirmSelection()
             }
+        }
+    }
+
+    private fun showEmptyCart() {
+        activity?.let {
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra(
+                ErrorHandlerActivity.ERROR_TYPE,
+                ErrorHandlerActivity.ERROR_TYPE_EMPTY_CART
+            )
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
         }
     }
 
@@ -216,6 +245,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         is ConfirmSelectionResponse -> {
                             when (response.httpCode) {
                                 HttpURLConnection.HTTP_OK, AppConstant.HTTP_OK_201 -> {
+                                    if (response.productCountMap.totalProductCount <= 0) {
+                                        showEmptyCart()
+                                        return@observe
+                                    }
                                     val store = selectedSuburb.let { suburb ->
                                         Store(
                                             suburb.storeAddress.suburbId,
@@ -350,10 +383,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     baseFragBundle
                 )
             } else {
-                val suburbId = localSuburbId
                 localSuburbId =
                     DEFAULT_STORE_ID // setting to default so that it will again call validateSelectedSuburb.
-                showCollectionTab(suburbId)
+                setConfirmSelection()
             }
         }
 
