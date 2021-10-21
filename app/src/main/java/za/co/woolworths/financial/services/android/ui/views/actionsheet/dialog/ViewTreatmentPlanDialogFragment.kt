@@ -20,7 +20,8 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
     private var showChatBubbleInterface: IShowChatBubble? = null
     private val mClassName = ViewTreatmentPlanDialogFragment::class.java.simpleName
-    private lateinit var dialogButtonType: ViewTreatmentPlanDialogButtonType
+    private var dialogButtonType: ViewTreatmentPlanDialogButtonType? = null
+
     companion object {
         enum class ViewTreatmentPlanDialogButtonType { CC_ACTIVE, PL_ELIGIBLE, PL_SC_NORMAL }
         const val VIEW_PAYMENT_PLAN_BUTTON = "viewPaymentPlanButton"
@@ -43,7 +44,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dialogButtonType = arguments?.getSerializable(PLAN_BUTTON_TYPE) as ViewTreatmentPlanDialogButtonType
+        dialogButtonType = arguments?.getSerializable(PLAN_BUTTON_TYPE) as? ViewTreatmentPlanDialogButtonType
 
         mainButton?.apply {
             text = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)
