@@ -34,9 +34,9 @@ class SkinProfileDialog : WBottomSheetDialogFragment(), View.OnClickListener {
     }
 
     private fun setStaticValues() {
-        skin_profile_layout.txt_layout_one.txt_label.text = "Skin Shade"
-        skin_profile_layout.txt_layout_two.txt_label.text = "Skin Type "
-        skin_profile_layout.txt_layout_three.txt_label.text = "Skin Concern"
+        skin_profile_layout.txt_layout_one.txt_label.text = "Skin Shade:"
+        skin_profile_layout.txt_layout_two.txt_label.text = "Skin Type: "
+        skin_profile_layout.txt_layout_three.txt_label.text = "Skin Concern:"
 
         skin_profile_layout.txt_layout_one.txt_value.text = "Pale Ivory"
         skin_profile_layout.txt_layout_two.txt_value.text = "Combination,Sensitive"
