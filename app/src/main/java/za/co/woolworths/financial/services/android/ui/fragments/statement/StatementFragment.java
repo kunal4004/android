@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
+import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -95,6 +96,9 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private FloatingActionButton chatWithAgentFloatingButton;
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
+    private ApplyNowState applyNowState;
+    public static boolean SHOW_VIEW_STATEMENT_SCREEN = false;
+    public static boolean VIEW_STATEMENT_DETAIL = false;
 
     public StatementFragment() {
     }
@@ -213,6 +217,50 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         }
     }
 
+    private void viewPdfStatement(){
+        showViewProgress();
+        final FragmentActivity activity = getActivity();
+        if (activity == null || !isAdded()) return;
+        mGetPdfFile = OneAppService.INSTANCE.getPDFResponse(mGetStatementFile);
+        mGetPdfFile.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    if (getActivity() != null) {
+                        loadSuccess();
+                        hideViewProgress();
+                        if (response.code() == 200) {
+                            try {
+                                if (response.body() != null) {
+                                    String fileName = "statement_" + mSelectedStatement.docDesc;
+                                    Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
+                                    openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
+                                    openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());
+                                    openPdfIntent.putExtra(PAGE_TITLE, mSelectedStatement.docDesc);
+                                    activity.startActivity(openPdfIntent);
+                                }
+                            } catch (Exception ex) {
+                                FirebaseManager.Companion.logException(ex);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.runOnUiThread(() -> {
+                        mErrorHandlerView.showToast();
+                        loadFailure();
+                        hideViewProgress();
+                    });
+                }
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
         Activity activity = getActivity();
@@ -325,48 +373,19 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         showView(relNextButton);
     }
 
-    public void getPDFFile() {
-        showViewProgress();
-        final FragmentActivity activity = getActivity();
-        if (activity == null || !isAdded()) return;
-        mGetPdfFile = OneAppService.INSTANCE.getPDFResponse(mGetStatementFile);
-        mGetPdfFile.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    if (getActivity() != null) {
-                        loadSuccess();
-                        hideViewProgress();
-                        if (response.code() == 200) {
-                            try {
-                                if (response.body() != null) {
-                                    String fileName = "statement_" + mSelectedStatement.docDesc;
-                                    Intent openPdfIntent = new Intent(activity, WPdfViewerActivity.class);
-                                    openPdfIntent.putExtra(FILE_NAME, fileName.replaceAll(" ", "_").toLowerCase());
-                                    openPdfIntent.putExtra(FILE_VALUE, response.body().bytes());
-                                    openPdfIntent.putExtra(PAGE_TITLE, mSelectedStatement.docDesc);
-                                    activity.startActivity(openPdfIntent);
-                                }
-                            } catch (Exception ex) {
-                                FirebaseManager.Companion.logException(ex);
-                            }
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
-                Activity activity = getActivity();
-                if (activity != null) {
-                    activity.runOnUiThread(() -> {
-                        mErrorHandlerView.showToast();
-                        loadFailure();
-                        hideViewProgress();
-                    });
-                }
-            }
-        });
+    public void getPdfFile(ApplyNowState state) {
+        applyNowState = state;
+        if (applyNowState != null) {
+            KotlinUtils.Companion.linkDeviceIfNecessary(
+                    getActivity(),
+                    applyNowState,
+                    () -> { VIEW_STATEMENT_DETAIL = true; return null; },
+                    () -> { viewPdfStatement(); return null; }
+            );
+        }
+        else {
+            viewPdfStatement();
+        }
     }
 
     @Override
@@ -394,7 +413,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             activity.runOnUiThread(() -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
                     if (!loadState.onLoanCompleted()) {
-                        getPDFFile();
+                        getPdfFile(applyNowState);
                     }
                 }
             });
@@ -411,6 +430,10 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
                 ((StatementActivity) activity).setTitle(getString(R.string.statement));
             }
+        }
+        if(SHOW_VIEW_STATEMENT_SCREEN) {
+            SHOW_VIEW_STATEMENT_SCREEN = false;
+            viewPdfStatement();
         }
     }
 

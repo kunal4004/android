@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -192,6 +193,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         retryLinkDeviceLinearLayout?.visibility = View.GONE
                         val isDeviceIdentityIdPresent = verifyDeviceIdentityId(response?.userDevices)
                         deviceList = response?.userDevices
+                        MyAccountsFragment.deviceList = deviceList
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
                     }
                     else -> {
@@ -250,7 +252,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         var isPresent = false
         when {
             userDevices != null && userDevices.isNotEmpty() -> {
-                val appInstanceId = Utils.getUniqueDeviceID(context)
+                val appInstanceId = Utils.getUniqueDeviceID()
                 userDevices.forEach {
                     if (appInstanceId == it?.appInstanceId) {
                         isPresent = true

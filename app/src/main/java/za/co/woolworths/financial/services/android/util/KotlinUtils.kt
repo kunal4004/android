@@ -49,8 +49,11 @@ import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
@@ -810,6 +813,23 @@ class KotlinUtils {
                     openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
                 }
                 startActivity(openInternalWebView)
+            }
+        }
+
+        fun linkDeviceIfNecessary(activity: Activity?, state: ApplyNowState, doJob: () -> Unit, elseJob: () -> Unit){
+            if (!MyAccountsFragment.verifyAppInstanceId() &&
+                Utils.isGooglePlayServicesAvailable() &&
+                state == ApplyNowState.STORE_CARD) {
+                    doJob()
+                    activity?.let {
+                        val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
+                        intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, state)
+                        it.startActivity(intent)
+                        it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+                    }
+            }
+            else{
+                elseJob()
             }
         }
 
