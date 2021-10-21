@@ -13,18 +13,20 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
 
     private var showChatBubbleInterface: IShowChatBubble? = null
     private val mClassName = ViewTreatmentPlanDialogFragment::class.java.simpleName
-    private var viewPaymentOption: Boolean = false
+    private var dialogButtonType: ViewTreatmentPlanDialogButtonType? = null
 
     companion object {
+        enum class ViewTreatmentPlanDialogButtonType { CC_ACTIVE, PL_ELIGIBLE, PL_SC_NORMAL }
         const val VIEW_PAYMENT_PLAN_BUTTON = "viewPaymentPlanButton"
         const val MAKE_A_PAYMENT_BUTTON = "makeAPaymentButton"
-        const val VIEW_PAYMENT_OPTIONS_VISIBILITY = "viewPaymentOptionsVisibility"
+        const val PLAN_BUTTON_TYPE = "buttonType"
 
     }
 
@@ -42,16 +44,12 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewPaymentOption = arguments?.getBoolean(VIEW_PAYMENT_OPTIONS_VISIBILITY,false)?: false
+        dialogButtonType = arguments?.getSerializable(PLAN_BUTTON_TYPE) as? ViewTreatmentPlanDialogButtonType
 
-        viewTreatmentPlanButton?.apply {
-            setOnClickListener(this@ViewTreatmentPlanDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        makePaymentButton?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(viewPaymentOption) View.GONE else View.VISIBLE
+        mainButton?.apply {
+            text = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)
+                bindString(R.string.make_payment_now_button_label)
+            else bindString(R.string.view_payment_plan_button_label)
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -61,20 +59,41 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
-        viewPaymentOptionsButton?.apply {
+        makePaymentButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(viewPaymentOption) View.VISIBLE else View.GONE
+            visibility = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL) View.VISIBLE else View.GONE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
+        }
+
+        viewPaymentOptionsButton?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            visibility = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.CC_ACTIVE) View.VISIBLE else View.GONE
+            setOnClickListener(this@ViewTreatmentPlanDialogFragment)
+            AnimationUtilExtension.animateViewPushDown(this)
+        }
+
+        cannotAffordPaymentButton?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            visibility = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE) View.VISIBLE else View.GONE
+            setOnClickListener(this@ViewTreatmentPlanDialogFragment)
+            AnimationUtilExtension.animateViewPushDown(this)
+        }
+
+        viewTreatmentPlanDescriptionTextView?.apply {
+            text = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)
+                bindString(R.string.treatment_plan_eligible_description_pl) else bindString(R.string.view_treatment_plan_description)
         }
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
 
-            R.id.viewTreatmentPlanButton -> {
+            R.id.mainButton -> {
                 dismiss()
-                setFragmentResult(mClassName, bundleOf(mClassName to VIEW_PAYMENT_PLAN_BUTTON))
+                if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)
+                    setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
+                else setFragmentResult(mClassName, bundleOf(mClassName to VIEW_PAYMENT_PLAN_BUTTON))
             }
 
             R.id.makePaymentButton, R.id.viewPaymentOptionsButton -> {
