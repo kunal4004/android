@@ -2182,7 +2182,8 @@
     <!-- Native Checkout : delivery Instructions -->
     <string name="native_checkout_delivery_instructions_need_bags">Need shopping bags? 62c per bag</string>
     <string name="delivery_instructions_shopping_bags_title">Shopping Bags</string>
-    <string name="delivery_instructions_shopping_bags_desc">We’re going plastic bag free! \n To be part of the solution, please choose an option.</string>
+    <string name="delivery_instructions_shopping_bags_desc">We’re going plastic bag free!.</string>
+    <string name="delivery_instructions_shopping_bags_sub_desc">To be part of the solution, please choose an option</string>
     <string name="native_checkout_delivery_special_instructions">Special Delivery Instructions</string>
     <string name="native_checkout_delivery_special_instructions_hint">Please type delivery instructions here.</string>
     <string name="native_checkout_delivery_gift_instructions">Is this a Gift?</string>

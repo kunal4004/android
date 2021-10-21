@@ -73,6 +73,18 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    fun showBackArrowWithTitle(titleText: String) {
+        toolbar?.visibility = View.VISIBLE
+        setSupportActionBar(toolbar)
+        toolbarText.text = titleText
+        supportActionBar?.apply {
+            title = ""
+            setDisplayShowTitleEnabled(false)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.back24)
+        }
+    }
+
     fun showTitleWithCrossButton(titleText: String) {
         btnClose?.visibility = View.GONE
         toolbar?.visibility = View.VISIBLE

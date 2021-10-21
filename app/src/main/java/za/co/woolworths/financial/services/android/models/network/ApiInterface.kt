@@ -1181,7 +1181,7 @@ interface ApiInterface {
             @Body optOutBody: SurveyOptOutBody
     ): Call<Void>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("cart/checkout/submittedOrder")
     fun getSubmittedOrder(
         @Header("userAgent") userAgent: String,
