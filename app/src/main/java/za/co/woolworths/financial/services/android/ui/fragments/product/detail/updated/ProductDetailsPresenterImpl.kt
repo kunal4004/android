@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingAndReviewData
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResopnse
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 
@@ -129,14 +130,14 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
                         else -> mainView?.responseFailureHandler(this.response)
                     }
                 }
-                is RatingReviewResopnse -> {
+                is RatingAndReviewData -> {
                     (this).apply {
                         when (this.httpCode) {
                             200 -> mainView?.onGetRatingNReviewSuccess(this)
                             else -> this.response?.let {
                                 mainView?.apply {
-                                    onGetRatingNReviewFailed(it, httpCode)
-                                    hideProgressBar()
+                                    //onGetRatingNReviewFailed(it, httpCode)
+                                    //hideProgressBar()
                                 }
                             }
                         }

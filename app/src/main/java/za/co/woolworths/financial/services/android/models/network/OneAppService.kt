@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingAndReviewData
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResopnse
 import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
@@ -301,7 +302,7 @@ object OneAppService : RetrofitConfig() {
         }
     }
 
-    fun getRatingNReview(productId: String,limit: Int, offset: Int): Call<RatingReviewResopnse> {
+    fun getRatingNReview(productId: String,limit: Int, offset: Int): Call<RatingAndReviewData> {
         return mApiInterface.getRatingNReview(getSessionToken(), getDeviceIdentityToken(),productId, limit, offset)
     }
 

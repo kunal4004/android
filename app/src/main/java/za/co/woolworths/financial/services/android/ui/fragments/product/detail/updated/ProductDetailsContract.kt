@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 import android.content.Context
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingAndReviewData
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResopnse
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
@@ -42,7 +43,7 @@ interface ProductDetailsContract {
         fun showProductNotAvailableForCollection()
         fun clearStockAvailability()
         fun shareProduct()
-        fun onGetRatingNReviewSuccess(ratingNReview: RatingReviewResopnse)
+        fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData)
         fun onGetRatingNReviewFailed(response: za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Response, httpCode: Int)
     }
 
