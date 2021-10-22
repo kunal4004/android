@@ -124,7 +124,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
     public void setCookies() {
 
         //1. if Header's contain Cookie, check for JSESSION.
-        //1.1 If JSESSION is not found, use the JSESSION from Content Encryption Response (JSESSION Cookie) + whatever Cookies was included in #1 above
+        //1.1 If JSESSION is not found, use the JSESSION from Content Encryption za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Response (JSESSION Cookie) + whatever Cookies was included in #1 above
         //2. If Headers do not contain Cookies, set the Cookie header with the Content Encryption JSESSIONID
 
         if (headers.containsKey("Cookie")) {

@@ -14,7 +14,7 @@ public class UserStatement {
 	private String endDate;
 
 	/*
-		Response body params
+		za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Response body params
 	 */
 	@SerializedName("docType")
 	@Expose

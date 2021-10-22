@@ -17,11 +17,11 @@ class ReviewThumbnailAdapter(var context: Context, var thumbnailClickListener: T
     interface ThumbnailClickListener {
         fun thumbnailClicked()
     }
+    val defaultThumbnailDisplyed =3
     var dataList = emptyList<Thumbnail>()
 
     internal fun setDataList(dataList: List<Thumbnail>) {
         this.dataList = dataList
-        notifyDataSetChanged()
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -38,10 +38,10 @@ class ReviewThumbnailAdapter(var context: Context, var thumbnailClickListener: T
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = dataList[position]
         holder.image.setImageResource(data.url)
-        if (position == 2 && itemCount==3)
+        if (position == (defaultThumbnailDisplyed-1) && itemCount==defaultThumbnailDisplyed)
             holder.flShowMore.visibility = VISIBLE
         holder.image.setOnClickListener(View.OnClickListener {
-            if (position == 2) {
+            if (position == (defaultThumbnailDisplyed-1)) {
                 holder.flShowMore.visibility = GONE
                 thumbnailClickListener.thumbnailClicked()
             }

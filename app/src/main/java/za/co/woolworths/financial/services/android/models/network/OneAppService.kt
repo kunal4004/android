@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import RatingReviewResopnse
 import android.location.Location
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -298,6 +299,10 @@ object OneAppService : RetrofitConfig() {
                     getSessionToken(), getDeviceIdentityToken(),
                     productId, skuId, suburbId, storeId)
         }
+    }
+
+    fun getRatingNReview(productId: String,limit: Int, offset: Int): Call<RatingReviewResopnse> {
+        return mApiInterface.getRatingNReview(getSessionToken(), getDeviceIdentityToken(),productId, limit, offset)
     }
 
     fun getShoppingLists(): Call<ShoppingListsResponse> {

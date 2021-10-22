@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
+import RatingReviewResopnse
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -16,6 +17,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
@@ -404,6 +406,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         } else {
             showErrorWhileLoadingProductDetails()
         }
+
+        if (productDetails.isRnREnabled)
+            productDetailsPresenter?.loadRatingNReview(productDetails.productId,1,0)
     }
 
     override fun onProductDetailedFailed(response: Response, httpCode: Int) {
@@ -778,6 +783,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         thumbnailList.add(Thumbnail(4,R.drawable.header_image))
         thumbnailList.add(Thumbnail(5,R.drawable.header_image))
         reviewThumbnailAdapter.setDataList(thumbnailList)
+        reviewThumbnailAdapter.notifyDataSetChanged()
     }
 
     private fun setBrandText(it: ProductDetails) {
@@ -1836,6 +1842,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             startActivity(shareIntent)
         }
+    }
+
+    override fun onGetRatingNReviewSuccess(ratingNReview: RatingReviewResopnse) {
+        Log.d("ratingNReview",ratingNReview.toString())
+    }
+
+    override fun onGetRatingNReviewFailed(
+        response: za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Response,
+        httpCode: Int
+    ) {
+        TODO("Not yet implemented")
     }
 
     /**

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import RatingReviewResopnse
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -1089,4 +1090,14 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body optOutBody: SurveyOptOutBody
     ): Call<Void>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("/retail-ratings-reviews/app/v1")
+    fun getRatingNReview(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("productId") productId: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
+    ): Call<RatingReviewResopnse>
 }
