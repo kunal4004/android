@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
-import RatingReviewResopnse
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -82,6 +81,7 @@ import kotlin.collections.ArrayList
 import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResopnse
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.ReviewerInfoDetailsActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 

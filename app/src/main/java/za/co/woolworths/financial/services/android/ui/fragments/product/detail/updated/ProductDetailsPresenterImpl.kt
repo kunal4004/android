@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
 
-import RatingReviewResopnse
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResopnse
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 
 class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDetailsView?, var getInteractor: ProductDetailsContract.ProductDetailsInteractor) : ProductDetailsContract.ProductDetailsPresenter, ProductDetailsContract.ProductDetailsInteractor.OnFinishListener {

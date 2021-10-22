@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models.network
 
-import RatingReviewResopnse
 import android.location.Location
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -24,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResopnse
 import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
