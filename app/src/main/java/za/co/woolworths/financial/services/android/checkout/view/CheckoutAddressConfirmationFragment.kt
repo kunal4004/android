@@ -904,7 +904,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
                                     if (response.deliverable == null) {
                                         showErrorScreen(
-                                            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                            ErrorHandlerActivity.COMMON,
                                             getString(R.string.common_error_message_without_contact_info)
                                         )
                                         return@observe
