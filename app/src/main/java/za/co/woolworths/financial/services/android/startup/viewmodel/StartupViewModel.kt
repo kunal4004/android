@@ -71,10 +71,12 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     }
 
     fun getFirebaseInstance(context: Context): FirebaseAnalytics{
+        //////
         return FirebaseAnalytics.getInstance(context)
     }
 
     fun setUpFirebaseEvents() {
+        /////////
         setupFirebaseUserProperty()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             firebaseAnalytics?.apply {
@@ -93,6 +95,7 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     }
 
     fun setupFirebaseUserProperty() {
+        /////////////
         firebaseAnalytics?.apply {
             setUserProperty(APP_SERVER_ENVIRONMENT_KEY, if (environment?.isEmpty() == true) "prod" else environment?.toLowerCase(Locale.getDefault()))
             setUserProperty(APP_VERSION_KEY, appVersion)

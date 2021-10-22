@@ -32,15 +32,19 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.JsonElement;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -154,6 +158,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static InAppReview inAppReview;
     private static Liquor liquor;
     private static AccountOptions accountOptions;
+    private FirebaseRemoteConfig firebaseRemoteConfig;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -288,6 +293,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
         mInstance = this;
         WoolworthsApplication.context = this.getApplicationContext();
         this.registerActivityLifecycleCallbacks(this);
+        setUpForFirebaseConfig();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -324,6 +330,34 @@ public class WoolworthsApplication extends Application implements Application.Ac
         );
         getTracker();
         bus = new RxBus();
+    }
+
+    private void setUpForFirebaseConfig() {
+        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        JSONObject jsonObject =  createDefaultJSON( );
+
+        Map<String, Object> remoteConfigDefaults = new HashMap<>();
+
+        remoteConfigDefaults.put("QA Config", jsonObject);
+
+        //this are default values need to check
+
+//        remoteConfigDefaults.put(ForceUpdateChecker.KEY_UPDATE_REQUIRED, false);
+//        remoteConfigDefaults.put(ForceUpdateChecker.KEY_CURRENT_VERSION, "abc");
+//        remoteConfigDefaults.put(ForceUpdateChecker.KEY_UPDATE_URL, "play store url");
+
+        firebaseRemoteConfig.setDefaultsAsync(remoteConfigDefaults);
+        firebaseRemoteConfig.fetch(3600)
+                .addOnCompleteListener(task->{
+                    if (task.isSuccessful()) {
+                        Log.e(TAG, "firebase Remote config fetch successfull......");
+                    }
+                 });
+    }
+
+    private JSONObject createDefaultJSON() {
+        JSONObject jsonObject = new JSONObject();
+        return jsonObject;
     }
 
     //#region ShowServerMessage

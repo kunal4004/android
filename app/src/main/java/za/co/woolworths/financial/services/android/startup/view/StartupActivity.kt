@@ -66,6 +66,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         startupViewModel.setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
         startupViewModel.setUpEnvironment(this@StartupActivity)
         if (startupViewModel.isConnectedToInternet(this@StartupActivity)) {
+            ////
             startupViewModel.setUpFirebaseEvents()
         } else {
             showNonVideoViewWithErrorLayout()
