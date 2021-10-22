@@ -902,9 +902,17 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                             when (response.httpCode) {
                                 HttpURLConnection.HTTP_OK, AppConstant.HTTP_OK_201 -> {
 
+                                    if (response.deliverable == null) {
+                                        showErrorScreen(
+                                            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                            getString(R.string.common_error_message_without_contact_info)
+                                        )
+                                        return@observe
+                                    }
+
                                     // If deliverable false then show cant deliver popup
                                     // Don't allow user to navigate to Checkout page when deliverable : [false].
-                                    if (!response.deliverable) {
+                                    if (response.deliverable == false) {
                                         showSuburbNotDeliverableBottomSheetDialog(
                                             SuburbNotDeliverableBottomsheetDialogFragment.ERROR_CODE_SUBURB_NOT_DELIVERABLE
                                         )
@@ -923,7 +931,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         navigateToUnsellableItemsFragment(
                                             response.unSellableCommerceItems,
                                             selectedAddress!!,
-                                            response.deliverable,
+                                            response.deliverable ?: false,
                                             DeliveryType.DELIVERY
                                         )
                                         return@observe

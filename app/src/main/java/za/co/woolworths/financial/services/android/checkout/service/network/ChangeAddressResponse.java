@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem;
 
 public class ChangeAddressResponse {
@@ -16,6 +18,7 @@ public class ChangeAddressResponse {
     public List<Object> unDeliverableCommerceItems = null;
 
     @SerializedName("deliverable")
+    @Nullable
     public Boolean deliverable;
 
     @SerializedName("firstAvailableFoodDeliveryDate")
