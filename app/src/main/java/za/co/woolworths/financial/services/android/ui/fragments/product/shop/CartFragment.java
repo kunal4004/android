@@ -1270,6 +1270,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         } else if (requestCode == REQUEST_PAYMENT_STATUS) {
             switch (resultCode){
                 case REQUEST_CHECKOUT_ON_DESTROY:
+                    reloadFragment();
                     finishActivityOnCheckoutSuccess();
                     break;
                 case RESULT_RELOAD_CART:

@@ -171,7 +171,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 closeActivity()
             }
             is OrderConfirmationFragment -> {
-                setResult(RESULT_OK)
+                setResult(REQUEST_CHECKOUT_ON_DESTROY)
                 closeActivity()
             }
             else -> {
