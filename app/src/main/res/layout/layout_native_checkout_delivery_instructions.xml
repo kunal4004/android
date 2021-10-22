@@ -111,7 +111,7 @@
             android:minHeight="@dimen/hundred_and_twenty_dp"
             android:padding="@dimen/ten_dp"
             android:textColor="@color/black"
-            android:textColorHint="@color/color_666666"
+            android:textColorHint="@color/color_cccccc"
             android:textSize="@dimen/fifteen_sp"
             android:visibility="gone" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -188,7 +188,7 @@
             android:minHeight="@dimen/hundred_and_twenty_dp"
             android:padding="@dimen/ten_dp"
             android:textColor="@color/black"
-            android:textColorHint="@color/color_666666"
+            android:textColorHint="@color/color_cccccc"
             android:textSize="@dimen/fifteen_sp"
             android:visibility="gone"
             app:layout_constrainedWidth="true"

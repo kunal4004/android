@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -24,14 +25,12 @@ import kotlinx.android.synthetic.main.checkout_address_confirmation_delivery.*
 import kotlinx.android.synthetic.main.checkout_new_user_address_details.*
 import kotlinx.android.synthetic.main.suburb_selector_fragment.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddressConfirmationInteractor
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
-import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddressConfirmationViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
@@ -70,7 +69,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private var localSuburbId: String = DEFAULT_STORE_ID
     private var validatedSuburbProductResponse: ValidatedSuburbProducts? = null
     private var suburbListAdapter: SuburbListAdapter? = null
-    private lateinit var checkoutAddressConfirmationViewModel: CheckoutAddressConfirmationViewModel
     private var selectedSuburb = Suburb()
     private var selectedProvince = Province()
     private var isDeliverySelected: Boolean = true
@@ -183,6 +181,23 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
+                when (resultCode) {
+                    // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
+                    Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
+                        (activity as? CheckoutActivity)?.apply {
+                            setResult(CheckOutFragment.RESULT_RELOAD_CART)
+                            closeActivity()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun checkUnsellableItems() {
         if (validateStoreList != null && validateStoreList?.deliverable == true) {
             if (validateStoreList?.unSellableCommerceItems?.size!! > 0) {
@@ -193,27 +208,47 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     DeliveryType.STORE_PICKUP
                 )
             } else {
-                // if it is store then call setSuburb API.
-                setSuburb()
+                // if it is store then call setConfirmSelection API (same as setSuburb API).
+                setConfirmSelection()
             }
         }
     }
 
-    private fun setSuburb() {
+    private fun showEmptyCart() {
+        activity?.let {
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra(
+                ErrorHandlerActivity.ERROR_TYPE,
+                ErrorHandlerActivity.ERROR_TYPE_EMPTY_CART
+            )
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    private fun setConfirmSelection() {
         selectedSuburb.storeAddress.suburbId?.let { storeId ->
             loadingProgressBar.visibility = View.VISIBLE
             activity?.getWindow()?.setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
-            checkoutAddressConfirmationViewModel.setSuburb(storeId)
+            checkoutAddAddressNewUserViewModel.setConfirmSelection(
+                ConfirmSelectionRequestBody(
+                    storeId,
+                    null
+                )
+            )
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
                     activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
-                        is SetDeliveryLocationSuburbResponse -> {
+                        is ConfirmSelectionResponse -> {
                             when (response.httpCode) {
                                 HttpURLConnection.HTTP_OK, AppConstant.HTTP_OK_201 -> {
+                                    if (response.productCountMap.totalProductCount <= 0) {
+                                        showEmptyCart()
+                                        return@observe
+                                    }
                                     val store = selectedSuburb.let { suburb ->
                                         Store(
                                             suburb.storeAddress.suburbId,
@@ -348,10 +383,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                     baseFragBundle
                 )
             } else {
-                val suburbId = localSuburbId
                 localSuburbId =
                     DEFAULT_STORE_ID // setting to default so that it will again call validateSelectedSuburb.
-                showCollectionTab(suburbId)
+                setConfirmSelection()
             }
         }
 
@@ -765,15 +799,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 )
             )
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
-
-        checkoutAddressConfirmationViewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(
-                CheckoutAddressConfirmationInteractor(
-                    CheckoutAddressConfirmationApiHelper()
-                )
-            )
-        ).get(CheckoutAddressConfirmationViewModel::class.java)
     }
 
     private fun navigateToUnsellableItemsFragment(
@@ -877,9 +902,17 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                             when (response.httpCode) {
                                 HttpURLConnection.HTTP_OK, AppConstant.HTTP_OK_201 -> {
 
+                                    if (response.deliverable == null) {
+                                        showErrorScreen(
+                                            ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                            getString(R.string.common_error_message_without_contact_info)
+                                        )
+                                        return@observe
+                                    }
+
                                     // If deliverable false then show cant deliver popup
                                     // Don't allow user to navigate to Checkout page when deliverable : [false].
-                                    if (!response.deliverable) {
+                                    if (response.deliverable == false) {
                                         showSuburbNotDeliverableBottomSheetDialog(
                                             SuburbNotDeliverableBottomsheetDialogFragment.ERROR_CODE_SUBURB_NOT_DELIVERABLE
                                         )
@@ -898,7 +931,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         navigateToUnsellableItemsFragment(
                                             response.unSellableCommerceItems,
                                             selectedAddress!!,
-                                            response.deliverable,
+                                            response.deliverable ?: false,
                                             DeliveryType.DELIVERY
                                         )
                                         return@observe

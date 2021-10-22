@@ -1048,9 +1048,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 is ChangeAddressResponse -> {
                     when (response.httpCode) {
                         HTTP_OK, HTTP_OK_201 -> {
+
+                            if (response.deliverable == null) {
+                                showErrorScreen(
+                                    ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                    getString(R.string.common_error_message_without_contact_info)
+                                )
+                                return@observe
+                            }
+
                             // If deliverable false then show cant deliver popup
                             // Don't allow user to navigate to Checkout page when deliverable : [false].
-                            if (!response.deliverable) {
+                            if (response.deliverable == false) {
                                 showSuburbNotDeliverableBottomSheetDialog(
                                     ERROR_CODE_SUBURB_NOT_DELIVERABLE
                                 )
@@ -1061,7 +1070,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                             if (!response.unSellableCommerceItems.isNullOrEmpty()) {
                                 navigateToUnsellableItemsFragment(
                                     response.unSellableCommerceItems,
-                                    response.deliverable,
+                                    response.deliverable ?: false,
                                     SCREEN_NAME_ADD_NEW_ADDRESS
                                 )
                                 return@observe
@@ -1252,9 +1261,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                 is ChangeAddressResponse -> {
                     when (response.httpCode) {
                         HTTP_OK, HTTP_OK_201 -> {
+
+                            if (response.deliverable == null) {
+                                showErrorScreen(
+                                    ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON,
+                                    getString(R.string.common_error_message_without_contact_info)
+                                )
+                                return@observe
+                            }
+
                             // If deliverable false then show cant deliver popup
                             // Don't allow user to navigate to Checkout page when deliverable : [false].
-                            if (!response.deliverable) {
+                            if (response.deliverable == false) {
                                 showSuburbNotDeliverableBottomSheetDialog(
                                     ERROR_CODE_SUBURB_NOT_DELIVERABLE
                                 )
@@ -1265,7 +1283,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                             if (!response.unSellableCommerceItems.isNullOrEmpty()) {
                                 navigateToUnsellableItemsFragment(
                                     response.unSellableCommerceItems,
-                                    response.deliverable,
+                                    response.deliverable ?: false,
                                     SCREEN_NAME_EDIT_ADDRESS
                                 )
                                 return@observe

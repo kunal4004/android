@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingBagsOption
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
@@ -144,7 +145,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? CheckoutActivity)?.apply {
-            supportActionBar?.show()
+            showBackArrowWithTitle(bindString(R.string.checkout))
         }
         initViews()
     }
@@ -256,14 +257,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             switchNeedBags.visibility = GONE
             txtNeedBags.visibility = GONE
             newShoppingBagsLayout.visibility = VISIBLE
-            addRadioButtons()
+            addShoppingBagsRadioButtons()
         }
     }
 
-    private fun addRadioButtons() {
+    private fun addShoppingBagsRadioButtons() {
+        txtNewShoppingBagsSubDesc.visibility = VISIBLE
         val newShoppingBags = WoolworthsApplication.getNativeCheckout()?.newShoppingBag
-        txtNewShoppingBagsDesc.text =
-            newShoppingBags?.title.plus("\n").plus(newShoppingBags?.description)
+        txtNewShoppingBagsDesc.text = newShoppingBags?.title
+        txtNewShoppingBagsSubDesc.text = newShoppingBags?.description
 
         val shoppingBagsAdapter = ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this)
         shoppingBagsRecyclerView.apply {

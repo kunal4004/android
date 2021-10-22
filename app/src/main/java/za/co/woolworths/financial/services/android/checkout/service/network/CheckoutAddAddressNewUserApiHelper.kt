@@ -137,4 +137,22 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
         }, ShippingDetailsResponse::class.java))
         return shippingDetailsResp
     }
+
+    fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): LiveData<Any> {
+        val confirmSelectionData = MutableLiveData<Any>()
+        OneAppService.setConfirmSelection(confirmSelectionRequestBody)
+            .enqueue(CompletionHandler(object :
+                IResponseListener<ConfirmSelectionResponse> {
+                override fun onSuccess(confirmSelectionResponse: ConfirmSelectionResponse?) {
+                    confirmSelectionData.value = confirmSelectionResponse ?: null
+                }
+
+                override fun onFailure(error: Throwable?) {
+                    if (error != null) {
+                        confirmSelectionData.value = error!!
+                    }
+                }
+            }, ConfirmSelectionResponse::class.java))
+        return confirmSelectionData
+    }
 }

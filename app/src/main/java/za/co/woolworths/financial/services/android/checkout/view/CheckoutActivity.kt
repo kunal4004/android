@@ -73,8 +73,21 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    fun showBackArrowWithTitle(titleText: String) {
+        toolbar?.visibility = View.VISIBLE
+        setSupportActionBar(toolbar)
+        toolbarText.text = titleText
+        supportActionBar?.apply {
+            title = ""
+            setDisplayShowTitleEnabled(false)
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.back24)
+        }
+    }
+
     fun showTitleWithCrossButton(titleText: String) {
-        btnClose?.visibility = View.GONE
+        btnClose?.visibility = View.VISIBLE
+        btnClose?.setOnClickListener(this)
         toolbar?.visibility = View.VISIBLE
         toolbarText.text = titleText
         setSupportActionBar(toolbar)
@@ -158,7 +171,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 closeActivity()
             }
             is OrderConfirmationFragment -> {
-                setResult(RESULT_OK)
+                setResult(REQUEST_CHECKOUT_ON_DESTROY)
                 closeActivity()
             }
             else -> {
