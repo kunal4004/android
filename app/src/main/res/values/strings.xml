@@ -203,6 +203,7 @@
     <string name="no_vouchers">NO VOUCHERS</string>
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_item_found">items found</string>
+    <string name="product_item">item found</string>
     <string name="add_to_cart">add to cart</string>
     <string name="add_to_list">ADD TO LIST</string>
     <string name="edit">EDIT</string>
@@ -892,7 +893,7 @@
 
     <string name="get_temp_sc_title">Would you like a virtual temporary card to start shopping in store today?</string>
     <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies store card is being sent to you. Your card is valid for 30 days.</string>
-    <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
+    <string name="get_temp_sc_description1">Please remember to bring along your ID or Driver\'s License.</string>
     <string name="get_temp_sc_action">ACTIVATE VIRTUAL TEMP CARD</string>
 
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
@@ -1298,10 +1299,13 @@
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
     <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
+    <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
     <string name="view_payment_plan_button_label">View payment plan</string>
+    <string name="view_payment_plans_button_label">View payment plans</string>
     <string name="make_payment_now_button_label">Make a payment</string>
+    <string name="view_payment_options_button_label">View payment options</string>
 
     <!-- Unique Ids for Transactions-->
     <string name="transactions_title_layout">View Transaction Title Layout</string>
@@ -2001,11 +2005,17 @@
     <!--  Link Device Confirmation  -->
     <string name="link_device_confirm_title">Please confirm this is your primary device.</string>
     <string name="link_device_confirm_desc">Transactions, statements and balance messages will only be sent to this device and future transactions will be quicker and easier with less verification steps required.</string>
+    <string name="link_device_confirm_desc_cc">Please note, you won\'t be able to activate your card, schedule card deliveries or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
+    <string name="link_device_confirm_desc_sc">Please note, you won\'t be able to block, freeze, replace your card or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
+    <string name="link_device_confirm_desc_pl">Please note, you won\'t be able to do drawdowns, credit limit increases or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
     <string name="link_device_confirm_button">Yes, This is my device</string>
     <string name="link_device_security_msg">Security verification messages will still be sent to your registered primary cell number.</string>
     <string name="link_device_linking_processing">Linking Your Device</string>
     <string name="link_device_result_success">Your Device Has \nBeen Successfully Linked.</string>
+    <string name="not_linked_device_desc">Please note, you won\'t be able to access certain app features related to your account until you link your device. If you would link to change this, please go to your preferences.</string>
+    <string name="link_my_device">Link my device</string>
     <string name="ok_cool">Ok, cool!</string>
+    <string name="device_not_linked">Device Not Linked</string>
     <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your preferences.</string>
     <string name="link_device_this_is_linked">This device is linked</string>
 
@@ -2154,4 +2164,10 @@
     <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
     <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
     <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
+    <string name="absa_mobile_app_pin_blocked_title">Mobile App PIN Is Now\nBlocked</string>
+    <string name="absa_mobile_app_pin_blocked_desc_block_1">To release the hold on your PIN, please contact customer service on 086 150 2020 or email queries@wfs.co.za.</string>
+    <string name="absa_mobile_app_pin_blocked_desc_block_2">Please use the reference App PIN as this does not impact your card pin in stores or at ATMs.</string>
+    <string name="pma_total_amount_due_popup_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
+    <string name="pma_amount_overdue_popup_desc">The amount that is outstanding from the previous billing due date</string>
+    <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
 </resources>

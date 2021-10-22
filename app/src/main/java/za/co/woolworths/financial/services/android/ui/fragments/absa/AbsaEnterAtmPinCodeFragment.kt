@@ -26,14 +26,18 @@ import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDia
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.account.GeneralErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.AsteriskPasswordTransformationMethod
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
+    private lateinit var mActivityResultLaunch: ActivityResultLauncher<Intent>
     private var mCreditCardToken: String? = ""
 
     companion object {
@@ -63,6 +67,17 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         super.onViewCreated(view, savedInstanceState)
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
+
+        mActivityResultLaunch = registerForActivityResult(
+            StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == -1){ // finish activity when we  navigate back from blocked pin dialog
+                activity?.apply{
+                    finish()
+                    overridePendingTransition(0,0)
+                }
+            }
+        }
     }
 
 
@@ -200,7 +215,11 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
                 }
                 responseMessage.trim().contains("218-invalid card status.", true) -> {
                     FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
-                    showErrorScreen(ErrorHandlerActivity.ATM_PIN_LOCKED)
+                    activity?.apply {
+                        val intent = Intent(this, GeneralErrorHandlerActivity::class.java)
+                        mActivityResultLaunch.launch(intent)
+                        overridePendingTransition(0,0)
+                    }
                 }
                 else -> {
                     FirebaseEventDetailManager.undefined(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)

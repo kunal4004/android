@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -18,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -202,13 +204,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        try {
-            Activity activity = getActivity();
-            if (activity != null) {
-                mToggleItemRemoved = (ToggleRemoveItem) activity;
-            }
-        } catch (IllegalStateException ex) {
-        }
+
         mMapStoreId = new HashMap<>();
         mChangeQuantityList = new ArrayList<>();
         mChangeQuantity = new ChangeQuantity();
@@ -306,6 +302,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         }
                     }
                 }));
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+            Activity activity = (Activity) context;
+        if (activity != null) {
+            mToggleItemRemoved = (ToggleRemoveItem) activity;
+        }
+
     }
 
     /****
@@ -1079,10 +1085,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == CART_DEFAULT_ERROR_TAPPED || resultCode == DIALOG_REQUEST_CODE) {
             Activity activity = getActivity();
-            activity.setResult(CART_DEFAULT_ERROR_TAPPED);
-            activity.finish();
-            activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
-            return;
+            if (activity != null) {
+                activity.setResult(CART_DEFAULT_ERROR_TAPPED);
+                activity.finish();
+                activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+                return;
+            }
         }
         if (requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
             if (SessionUtilities.getInstance().isUserAuthenticated()) {

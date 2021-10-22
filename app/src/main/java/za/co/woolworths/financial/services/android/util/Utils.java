@@ -669,7 +669,7 @@ public class Utils {
         return new Gson().fromJson(jsonString, className);
     }
 
-    public static String getUniqueDeviceID(Context context) {
+    public static String getUniqueDeviceID() {
         String deviceID = null;
         if (deviceID == null) {
             deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
@@ -1432,15 +1432,15 @@ public class Utils {
         }
     }
 
-    public static int getMinimumSupportedAppBuildNumber(String minimumSupportedAppBuildNumber) {
-        return TextUtils.isEmpty(minimumSupportedAppBuildNumber) ? 0 : Integer.valueOf(minimumSupportedAppBuildNumber);
+    public static int getMinimumSupportedAppBuildNumber(Integer  minimumSupportedAppBuildNumber) {
+        return minimumSupportedAppBuildNumber;
     }
 
     public static Integer getAppBuildNumber() {
         return BuildConfig.VERSION_CODE;
     }
 
-    public static Boolean isFeatureEnabled(String minimumSupportedAppBuildNumber) {
+    public static Boolean isFeatureEnabled(Integer  minimumSupportedAppBuildNumber) {
         return (getAppBuildNumber() >= getMinimumSupportedAppBuildNumber(minimumSupportedAppBuildNumber));
     }
 
