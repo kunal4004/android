@@ -86,7 +86,8 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun showTitleWithCrossButton(titleText: String) {
-        btnClose?.visibility = View.GONE
+        btnClose?.visibility = View.VISIBLE
+        btnClose?.setOnClickListener(this)
         toolbar?.visibility = View.VISIBLE
         toolbarText.text = titleText
         setSupportActionBar(toolbar)
