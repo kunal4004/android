@@ -566,9 +566,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL -> {
                                                         showGetReplacementStoreCardScreen()
                                                     }
-                                                    AccountsOptionFragment.CLI_DETAIL -> {
-                                                        showCLIScreen()
-                                                    }
                                                     StatementFragment.VIEW_STATEMENT_DETAIL -> {
                                                         showSendStatementScreen()
                                                     }
@@ -634,12 +631,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun showGetReplacementStoreCardScreen(){
         StoreCardOptionsFragment.SHOW_GET_REPLACEMENT_CARD_SCREEN = true
         StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL = false
-        activity?.finish()
-    }
-
-    private fun showCLIScreen(){
-        AccountsOptionFragment.SHOW_CLI_SCREEN = true
-        AccountsOptionFragment.CLI_DETAIL = false
         activity?.finish()
     }
 
