@@ -151,9 +151,9 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         this.mAccountHelpInformation = informationModelAccount
     }
 
-    override fun showViewTreatmentPlan(viewPaymentOptions: Boolean){
+    override fun showViewTreatmentPlan(dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType){
         val bundle = Bundle()
-        bundle.putBoolean(ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_OPTIONS_VISIBILITY, viewPaymentOptions)
+        bundle.putSerializable(ViewTreatmentPlanDialogFragment.PLAN_BUTTON_TYPE, dialogButtonType)
         mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment, bundle)
     }
 

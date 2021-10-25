@@ -1091,7 +1091,7 @@ interface ApiInterface {
     ): Call<Void>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/takeUpPlan/eligibility")
+    @GET("accounts/collections/checkEligibility")
     fun getEligibilityForTakeUpPlan(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,

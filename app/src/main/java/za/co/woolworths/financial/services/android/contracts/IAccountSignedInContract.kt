@@ -8,6 +8,7 @@ import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import java.io.Serializable
 
 interface IAccountSignedInContract {
@@ -19,7 +20,7 @@ interface IAccountSignedInContract {
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
         fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean)
         fun removeBlocksOnCollectionCustomer()
-        fun showViewTreatmentPlan(viewPaymentOptions: Boolean)
+        fun showViewTreatmentPlan(dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType)
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
     }

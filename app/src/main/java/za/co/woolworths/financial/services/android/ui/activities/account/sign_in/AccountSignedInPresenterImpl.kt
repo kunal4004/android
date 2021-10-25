@@ -10,13 +10,17 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -110,6 +114,42 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
+    private fun makeEligibilityCall(state: ApplyNowState){
+        OneAppService.getEligibilityForTakeUpPlan()
+            .enqueue(CompletionHandler(object : IResponseListener<EligibilityTakeUpPlanResponse> {
+                override fun onSuccess(response: EligibilityTakeUpPlanResponse?) {
+                    if (response != null && response.httpCode == HTTP_OK) {
+                        val plan: ProductTakeUpPlan? = when (state) {
+                            ApplyNowState.BLACK_CREDIT_CARD,
+                            ApplyNowState.GOLD_CREDIT_CARD,
+                            ApplyNowState.SILVER_CREDIT_CARD ->
+                                response.eligibilityPlans.find {
+                                        productTakeUpPlan -> productTakeUpPlan.productGroupCode == ProductGroupCode.CC }
+
+                            ApplyNowState.PERSONAL_LOAN -> response.eligibilityPlans.find {
+                                    productTakeUpPlan -> productTakeUpPlan.productGroupCode == ProductGroupCode.PL }
+
+                            ApplyNowState.STORE_CARD -> response.eligibilityPlans.find {
+                                    productTakeUpPlan -> productTakeUpPlan.productGroupCode == ProductGroupCode.SC }
+                        }
+                        if(plan != null){
+                            if(!plan.hasPlan && plan.isEligible){
+                                //For personal loan
+                                    if(state === ApplyNowState.PERSONAL_LOAN){
+                                        mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)!!
+                                    }
+                                }
+                            else if(plan.hasPlan){
+                                mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
+                            }
+                        }
+                    }
+                }
+                override fun onFailure(error: Throwable?) {
+                    //Show nothing
+                } }, EligibilityTakeUpPlanResponse::class.java))
+    }
+
     override fun showProductOfferOutstanding(state: ApplyNowState) {
         val supported = when(state) {
             ApplyNowState.PERSONAL_LOAN -> {
@@ -157,18 +197,28 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             return when {
                 !productOfferingGoodStanding && supported &&
                         delinquencyCycle>=minimumDelinquencyCycle -> {
-                    if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
-                        if(!isCreditCard){
-                            mainView?.removeBlocksWhenChargedOff(supported)
-                            mainView?.showViewTreatmentPlan(false)!!
-                        } else{
-                            mainView?.removeBlocksWhenChargedOff(supported)!!
+                    if(state == ApplyNowState.PERSONAL_LOAN){
+                        makeEligibilityCall(state)
+                    }else{
+                        if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                            if(!isCreditCard){
+                                mainView?.removeBlocksWhenChargedOff(supported)
+                                mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
+                            } else{
+                                mainView?.removeBlocksWhenChargedOff(supported)!!
+                            }
+                        } else if(productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true)){
+                            if (isCreditCard){
+                                //display treatment plan popup with view payment options for CC
+                                mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.CC_ACTIVE)!!
+                            }
+                            else{
+                                //display treatment plan popup with make a payment for PL and SC
+                                mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
+                            }
+                        } else {
+                            mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
                         }
-                    } else if(productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true)){
-                            //display treatment plan popup with view payment options
-                            mainView?.showViewTreatmentPlan(isCreditCard)!!
-                    } else {
-                        mainView?.showViewTreatmentPlan(false)!!
                     }
                 }
                 else -> {
