@@ -443,15 +443,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     if (discountDetails.totalDiscount == 0.0) GONE else VISIBLE
 
                 txtOrderSummaryDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount))
                 txtOrderSummaryTotalDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount))
                 txtOrderSummaryWRewardsVouchersValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount))
                 txtOrderSummaryCompanyDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount))
                 txtOrderSummaryPromoCodeDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount))
 
                 txtOrderTotalValue.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
@@ -699,21 +699,21 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     fun getSelectedSlotResponse(deliveryType: DeliveryType): ConfirmDeliveryAddressResponse? {
-        return if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD)) selectedSlotResponseFood else selectedSlotResponseOther
+        return if (deliveryType == ONLY_FOOD || deliveryType == MIXED_FOOD) selectedSlotResponseFood else selectedSlotResponseOther
     }
 
     fun setSelectedSlotResponse(
         confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse?,
         deliveryType: DeliveryType
     ) {
-        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD))
+        if (deliveryType == ONLY_FOOD || deliveryType == MIXED_FOOD)
             selectedSlotResponseFood = confirmDeliveryAddressResponse
         else
             selectedSlotResponseOther = confirmDeliveryAddressResponse
     }
 
     fun setSelectedFoodOrOtherSlot(selectedSlot: Slot, deliveryType: DeliveryType) {
-        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD)) {
+        if (deliveryType == ONLY_FOOD || deliveryType == MIXED_FOOD) {
             selectedFoodSlot = selectedSlot
             txtSelectDeliveryTimeSlotFoodError.visibility = GONE
         } else {
