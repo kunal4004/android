@@ -86,7 +86,7 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
 
                 var absaBankingOpenApiServices: AbsaBankingOpenApiServices? = absaBankingOpenApiServices
                 if (absaBankingOpenApiServices == null) {
-                    absaBankingOpenApiServices = AbsaBankingOpenApiServices(false, "", "", "", "")
+                    absaBankingOpenApiServices = AbsaBankingOpenApiServices(false, "", "", "", 0)
                 } else {
                     absaBankingOpenApiServices.isEnabled = Utils.isFeatureEnabled(absaBankingOpenApiServices.minimumSupportedAppBuildNumber)
                 }
@@ -94,7 +94,7 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
 
                 var inAppChat: InAppChat? = inAppChat
                 if (inAppChat == null) {
-                    inAppChat = InAppChat("", "", "", "", Collections("", "", "", "", "", mutableListOf()), CustomerService("", "", "", "", "", mutableListOf()), null, mutableListOf())
+                    inAppChat = InAppChat(0, "", "", "", Collections("", "", "", "", "", mutableListOf()), CustomerService("", "", "", "", "", mutableListOf()), null, mutableListOf())
                 } else {
                     inAppChat.isEnabled = Utils.isFeatureEnabled(inAppChat.minimumSupportedAppBuildNumber)
                 }
@@ -133,6 +133,9 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 creditLimitIncrease?.apply {
                     WoolworthsApplication.getInstance().setCreditLimitsIncrease(this)
                 }
+                nativeCheckout.apply {
+                    WoolworthsApplication.setNativeCheckout(nativeCheckout)
+                }
 
                 inAppReview?.apply {
                     isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
@@ -141,6 +144,10 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
 
                 liquor?.apply {
                     WoolworthsApplication.setLiquor(this)
+                }
+
+                accountOptions?.apply {
+                    WoolworthsApplication.setAccountOptions(this)
                 }
             }
         }

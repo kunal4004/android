@@ -101,7 +101,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/twenty_dp"
-                android:layout_marginEnd="@dimen/thirty_one_dp"
                 android:layout_marginBottom="@dimen/twenty_four_dp"
                 android:fontFamily="@font/myriad_pro_regular_otf"
                 android:text="@string/increase_limit_desc"

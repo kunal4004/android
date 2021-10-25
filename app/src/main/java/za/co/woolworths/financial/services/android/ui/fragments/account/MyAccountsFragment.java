@@ -87,7 +87,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl;
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.account.apply_now.ViewApplicationStatusImpl;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView;
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountCardDetailModelImpl;
@@ -162,7 +161,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public static final int RESULT_CODE_DEVICE_LINKED = 5431;
 
     private final List<String> unavailableAccounts;
-    private AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
+    public static AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
 
     private NestedScrollView mScrollView;
     private ErrorHandlerView mErrorHandlerView;
@@ -209,7 +208,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private LinearLayout retryStoreCardLinearLayout;
     private LinearLayout retryCreditCardLinearLayout;
     private LinearLayout retryPersonalLoanLinearLayout;
-    private ArrayList<UserDevice> deviceList;
+    public static ArrayList<UserDevice> deviceList;
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
     private ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement;
@@ -218,6 +217,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     MyAccountsFragmentViewModel myAccountsFragmentViewModel;
     private MyAccountsPresenter myAccountsPresenter;
     private View applyNowSpacingView;
+    private TextView appVersionNameInfoTextView;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -311,7 +311,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             creditReportView = view.findViewById(R.id.creditReport);
             creditReportIcon = view.findViewById(R.id.creditReportIcon);
             applyNowSpacingView = view.findViewById(R.id.applyNowSpacingView);
-
+            appVersionNameInfoTextView = view.findViewById(R.id.appVersionNameInfoTextView);
+            appVersionNameInfoTextView.setText(myAccountsPresenter.appVersionInfo());
 
             retryStoreCardTextView = view.findViewById(R.id.retryStoreCardTextView);
             retryStoreCardImageView = view.findViewById(R.id.retryStoreCardImageView);
@@ -394,6 +395,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
 
         uniqueIdentifiersForAccount();
+
     }
 
     private void callLinkedDevicesAPI(Boolean isForced) {
@@ -828,6 +830,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(profileRelativeLayout);
             showView(updatePasswordRelativeLayout);
             showView(preferenceRelativeLayout);
+            showView(appVersionNameInfoTextView);
             showView(loginUserOptionsLayout);
             if (WoolworthsApplication.getCreditView() != null && WoolworthsApplication.getCreditView().isEnabled())
                 showView(creditReportView);
@@ -846,6 +849,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             viewApplicationStatusVisibility(params, View.VISIBLE, 1);
             mUpdateMyAccount.swipeToRefreshAccount(false);
             showView(loggedOutHeaderLayout);
+            showView(appVersionNameInfoTextView);
         }
         displayViewApplicationStatus();
     }
@@ -864,6 +868,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         hideView(preferenceRelativeLayout);
         hideView(creditReportView);
         hideView(viewApplicationStatusRelativeLayout);
+        hideView(appVersionNameInfoTextView);
     }
 
     private final OnClickListener btnSignin_onClick = new OnClickListener() {
@@ -1095,10 +1100,29 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
     }
 
-    private boolean verifyAppInstanceId() {
+    public static void updateLinkedDevices(){
+        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+            OneAppService.INSTANCE.getAllLinkedDevices(true).enqueue(
+                    new CompletionHandler(new IResponseListener<ViewAllLinkedDeviceResponse>() {
+                @Override
+                public void onFailure(@org.jetbrains.annotations.Nullable Throwable error) {
+                    //do nothing
+                }
+
+                @Override
+                public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
+                    if(response !=null && response.getUserDevices() != null ){
+                        deviceList = response.getUserDevices();
+                    }
+                }}, ViewAllLinkedDeviceResponse.class)
+            );
+        }
+    }
+
+    public static boolean verifyAppInstanceId() {
         boolean isLinked = false;
         for (UserDevice device : deviceList) {
-            if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID(getContext()))) {
+            if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
                 isLinked = true;
                 break;
             }
@@ -1441,10 +1465,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            Utils.clearCacheHistory(activity);
-                        }
+                        Utils.clearCacheHistory();
                     } catch (Exception pE) {
                         Log.d(TAG, pE.getMessage());
                     }
@@ -1566,6 +1587,8 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 case PERSONAL_LOAN:
                     navigateToLinkedPersonalLoan();
                     break;
+                case GOLD_CREDIT_CARD:
+                case BLACK_CREDIT_CARD:
                 case SILVER_CREDIT_CARD:
                     navigateToLinkedCreditCard();
                     break;

@@ -101,10 +101,10 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                 Handler().postDelayed({
                                     setupToolbar()
                                     context?.let { it ->
-                                        viewAllDeviceConstraintLayout.background = AppCompatResources.getDrawable(it, R.color.default_background)
+                                        viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.default_background)
                                     }
                                     unlinkDeviceConfirmationConstraintLayout?.visibility = View.GONE
-                                    viewAllLinkedDevicesRecyclerView.visibility = View.VISIBLE
+                                    viewAllLinkedDevicesRecyclerView?.visibility = View.VISIBLE
 
                                     setFragmentResult(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, bundleOf(
                                         IS_UPDATE to true
@@ -195,21 +195,21 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
             return
         }
         context?.let {
-            viewAllLinkedDevicesRecyclerView.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
+            viewAllLinkedDevicesRecyclerView?.layoutManager = LinearLayoutManager(it, RecyclerView.VERTICAL, false)
             viewAllDevicesAdapter = ViewAllLinkedDevicesAdapter(it, this)
             deviceList?.sortByDescending { userDevice -> userDevice.primarydDevice }
             viewAllDevicesAdapter?.setDeviceList(deviceList)
         }
-        viewAllLinkedDevicesRecyclerView.adapter = viewAllDevicesAdapter
+        viewAllLinkedDevicesRecyclerView?.adapter = viewAllDevicesAdapter
     }
 
     private fun showDeviceUnlinked() {
         clearToolbar()
-        viewAllLinkedDevicesRecyclerView.visibility = View.GONE
+        viewAllLinkedDevicesRecyclerView?.visibility = View.GONE
         unlinkDeviceConfirmationConstraintLayout?.visibility = View.VISIBLE
-        unlinkDeviceResultSubtitle.visibility = View.GONE
+        unlinkDeviceResultSubtitle?.visibility = View.GONE
         context?.let { it ->
-            viewAllDeviceConstraintLayout.background = AppCompatResources.getDrawable(it, R.color.white)
+            viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.white)
             unlinkDeviceResultTitle?.text = it.getString(R.string.unlink_device_result_success)
         }
     }

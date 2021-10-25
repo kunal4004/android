@@ -237,11 +237,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
+            
             mProductList = ArrayList()
         response.history?.apply {
-            if (categoryDimensions.isNotEmpty()) {
+            if (!categoryDimensions?.isNullOrEmpty()) {
                 mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
-            } else if (searchCrumbs.isNotEmpty()) {
+            } else if (!searchCrumbs?.isNullOrEmpty()) {
                 mSubCategoryName = searchCrumbs.get(searchCrumbs.size - 1).terms
             }
         }
@@ -255,12 +256,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 productLists.add(0, headerProduct)
             }
             bindRecyclerViewWithUI(productLists)
-        } else if (productLists.size == 1) {
-            (activity as? BottomNavigationActivity)?.apply {
-                popFragmentNoAnim()
-                isReloadNeeded = false
-                openProductDetailFragment(mSubCategoryName, productLists[0])
-            }
 
         } else {
             this.productView = null
@@ -285,9 +280,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showDeliveryOptionDialog()
                 }
 
-                if(WoolworthsApplication.isProductItemForLiquorInvetoryPending()){
+                if (WoolworthsApplication.isProductItemForLiquorInvetoryPending()) {
                     WoolworthsApplication.getProductItemForInventory()?.let { productList ->
-                            WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId?.let {
+                        WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId?.let {
                             dismissProgressBar()
                             queryInventoryForStore(
                                 it,
@@ -860,6 +855,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         this.mSelectedProductList = productList
         val activity = activity ?: return
 
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
+            return
+        }
+
         if(productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
@@ -867,10 +867,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             return
         }
 
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
-            return
-        }
 
         if (mStoreId.isEmpty()) {
             addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }

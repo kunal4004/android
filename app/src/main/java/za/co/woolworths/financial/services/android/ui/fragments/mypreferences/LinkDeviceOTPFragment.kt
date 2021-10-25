@@ -28,9 +28,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.iid.InstanceIdResult
+import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.fragment_enter_otp.buttonNext
 import kotlinx.android.synthetic.main.fragment_enter_otp.didNotReceiveOTPTextView
@@ -43,22 +41,35 @@ import kotlinx.android.synthetic.main.layout_sending_otp_request.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
+import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
+import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
+import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
+import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
@@ -72,6 +83,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var cardWithPLCState: Card? = null
     private val locationRequest = createLocationRequest()
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult?) {
@@ -84,7 +96,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
             }
         }
     }
-
     private val mKeyListener = View.OnKeyListener { v, keyCode, event ->
         if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             when {
@@ -242,6 +253,15 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         const val RETRY_GET_OTP: String = "GET_OTP"
         const val RETRY_VALIDATE: String = "VALIDATE_OTP"
         const val RETRY_LINK_DEVICE: String = "LINK_DEVICE"
+        const val GO_TO_PRODUCT: Int = 999
+        const val PLC = "PLC"
+        const val KEY_ENVELOPE_NUMBER = "envelopeNumber"
+        const val KEY_ABSA_CARD_TOKEN = "absaCardToken"
+        const val KEY_PRODUCT_OFFERING_ID = "productOfferingId"
+        const val KEY_ACCOUNT_BIN_NUMBER = "accountBinNumber"
+        const val KEY_STATUS_RESPONSE = "StatusResponse"
+        const val KEY_SETUP_DELIVERY_NOW_CLICKED = "setUpDeliveryNowClicked"
+        const val KEY_BUNDLE = "bundle"
     }
 
     override fun onClick(v: View?) {
@@ -471,9 +491,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun retrieveTokenAndCallLinkDevice() {
         if (TextUtils.isEmpty(Utils.getToken())) {
             if (Utils.isGooglePlayServicesAvailable()) {
-                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task: Task<InstanceIdResult?> ->
+
+                FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        task.result?.token?.let {
+                        task.result.token.let {
                             // Save fb token in DB.
                             Utils.setToken(it)
                             sendTokenToLinkDevice(it)
@@ -496,7 +517,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         linkDeviceOTPScreen?.visibility = View.GONE
         OneAppService.linkDeviceApi(
             KotlinUtils.getUserDefinedDeviceName(activity),
-            Utils.getUniqueDeviceID(context),
+            Utils.getUniqueDeviceID(),
             getLocationAddress(currentLocation?.latitude, currentLocation?.longitude),
             true,
             token,
@@ -525,11 +546,40 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             mApplyNowState?.let {
                                 activity?.apply {
                                     if (this is LinkDeviceConfirmationActivity) {
-                                        val intent = Intent()
-                                        intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                                        intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
-                                        setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
-                                        finish()
+                                        when (mApplyNowState) {
+                                            //TODO: WOP-12578, WOP-12589 // credit card will be done after personal loan
+                                            /**ApplyNowState.BLACK_CREDIT_CARD,
+                                            ApplyNowState.GOLD_CREDIT_CARD,
+                                            ApplyNowState.SILVER_CREDIT_CARD -> {
+                                                //check if should activate credit card or should schedule delivery
+                                                activateCreditCardOrScheduleCardDelivery()
+                                            }*/
+                                            ApplyNowState.STORE_CARD -> {
+                                                MyAccountsFragment.updateLinkedDevices()
+                                                when {
+                                                    MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
+                                                        showFreezeStoreCardDialog()
+                                                    }
+                                                    MyCardDetailFragment.BLOCK_CARD_DETAIL -> {
+                                                        showBlockStoreCardScreen()
+                                                    }
+                                                    StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL -> {
+                                                        showGetReplacementStoreCardScreen()
+                                                    }
+                                                    StatementFragment.VIEW_STATEMENT_DETAIL -> {
+                                                        showSendStatementScreen()
+                                                    }
+                                                    StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
+                                                        showActivateVirtualTempCardScreen()
+                                                    }
+                                                    else -> {
+                                                        goToProduct()
+                                                    }
+                                                }
+                                            }
+
+                                            else -> goToProduct()
+                                        }
                                     }
                                 }
                                 return@postDelayed
@@ -564,6 +614,170 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 showErrorScreen(ErrorHandlerActivity.LINK_DEVICE_FAILED)
             }
         }, LinkedDeviceResponse::class.java))
+    }
+
+    private fun showFreezeStoreCardDialog(){
+        MyCardDetailFragment.SHOW_TEMPORARY_FREEZE_DIALOG = true
+        MyCardDetailFragment.FREEZE_CARD_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showBlockStoreCardScreen(){
+        MyCardDetailFragment.SHOW_BLOCK_CARD_SCREEN = true
+        MyCardDetailFragment.BLOCK_CARD_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showGetReplacementStoreCardScreen(){
+        StoreCardOptionsFragment.SHOW_GET_REPLACEMENT_CARD_SCREEN = true
+        StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showSendStatementScreen(){
+        StatementFragment.SHOW_VIEW_STATEMENT_SCREEN = true
+        StatementFragment.VIEW_STATEMENT_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showActivateVirtualTempCardScreen(){
+        StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
+        StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+        activity?.finish()
+    }
+
+    private fun activateCreditCardOrScheduleCardDelivery() {
+        activity?.apply {
+            OneAppService.getCreditCardToken()
+                .enqueue(CompletionHandler(object : IResponseListener<CreditCardTokenResponse> {
+                    override fun onSuccess(response: CreditCardTokenResponse?) {
+                        response?.apply {
+                            if (!cards.isNullOrEmpty()) {
+                                cardWithPLCState = getCardWithPLCState(cards)
+                                cards?.get(0)?.apply {
+                                    when (envelopeNumber.isNullOrEmpty()) {
+                                        true -> {
+                                            when (cardStatus) {
+                                                PLC -> {
+                                                    when (isPLCInGoodStanding()) {
+                                                        true -> checkCreditCardDeliveryStatus()
+
+                                                        false -> goToCreditCardActivation()
+                                                    }
+                                                }
+                                                else -> goToProduct()
+                                            }
+                                        }
+                                        false -> checkCreditCardDeliveryStatus()
+                                    }
+                                }
+                            } else {
+                                goToProduct()
+                            }
+                        }
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+                        goToProduct()
+                    }
+                }, CreditCardTokenResponse::class.java))
+        }
+    }
+
+    private fun checkCreditCardDeliveryStatus() {
+        cardWithPLCState?.envelopeNumber?.let {
+            OneAppService.getCreditCardDeliveryStatus(
+                it,
+                getAccount()?.productOfferingId.toString())
+                .enqueue(CompletionHandler(object : IResponseListener<CreditCardDeliveryStatusResponse> {
+                    override fun onSuccess(response: CreditCardDeliveryStatusResponse?) {
+                        when (response?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(
+                            CreditCardDeliveryStatus.DEFAULT)) {
+                            CreditCardDeliveryStatus.CARD_RECEIVED ->
+                                goToScheduleDelivery(response)
+                            else -> goToProduct()
+                        }
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+                        goToProduct()
+                    }
+                }, CreditCardDeliveryStatusResponse::class.java))
+        }
+    }
+
+    private fun getAccount(): Account? {
+        return MyAccountsFragment.mAccountResponse.accountList?.filter { account ->
+            account?.productGroupCode == AccountSignedInPresenterImpl.getProductCode(mApplyNowState!!) }?.get(0)
+    }
+
+    private fun getCardWithPLCState(cards: ArrayList<Card>?): Card? {
+        var cardWithPLCState: Card? = null
+        cards?.apply {
+            if (this.isNotEmpty())
+                cardWithPLCState = this[0]
+        }
+        return cardWithPLCState
+    }
+
+    private fun isPLCInGoodStanding(): Boolean {
+        var isEnable = false
+        if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
+            val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
+            for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
+                if (binNumber.equals(getAccount()?.accountNumberBin, ignoreCase = true)
+                    && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
+                    isEnable = true
+                }
+            }
+        }
+        return isEnable
+    }
+
+    private fun goToProduct() {
+        val intent = Intent()
+        intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+        intent.putExtra(MyPreferencesFragment.RESULT_LISTENER_LINK_DEVICE, true)
+        activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+        activity?.finish()
+    }
+
+    private fun goToCreditCardActivation() {
+        activity?.apply {
+            if (Utils.isCreditCardActivationEndpointAvailable()){
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                    FirebaseManagerAnalyticsProperties.PropertyNames.activationInitiated
+                )), this)
+                val mIntent = Intent(this, CreditCardActivationActivity::class.java)
+                val mBundle = Bundle()
+                mBundle.putString(KEY_ABSA_CARD_TOKEN, cardWithPLCState?.absaCardToken)
+                mBundle.putString(KEY_PRODUCT_OFFERING_ID, getAccount()?.productOfferingId.toString())
+                mIntent.putExtra(KEY_BUNDLE, mBundle)
+                mIntent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                startActivityIfNeeded(mIntent,
+                    AccountsOptionFragment.REQUEST_CREDIT_CARD_ACTIVATION
+                )
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+            else {
+                goToProduct()
+            }
+        }
+    }
+
+    private fun goToScheduleDelivery(response: CreditCardDeliveryStatusResponse) {
+        val account = MyAccountsFragment.mAccountResponse.accountList[0]
+        val intent = Intent(context, CreditCardDeliveryActivity::class.java)
+        val mBundle = Bundle()
+        mBundle.putString(KEY_ENVELOPE_NUMBER, account.cards[0].envelopeNumber)
+        mBundle.putString(KEY_ACCOUNT_BIN_NUMBER, account.accountNumberBin)
+        mBundle.putString(KEY_STATUS_RESPONSE, Utils.toJson(response.statusResponse))
+        mBundle.putString(KEY_PRODUCT_OFFERING_ID, account.productOfferingId.toString())
+        mBundle.putBoolean(KEY_SETUP_DELIVERY_NOW_CLICKED, true)
+        mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+        intent.putExtra(KEY_BUNDLE, mBundle)
+        startActivity(intent)
     }
 
     private fun getLocationAddress(latitude: Double?, longitude: Double?): String? {
@@ -653,15 +867,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_CANCELED) {
-            Handler().postDelayed({
-                linkDeviceOTPEdtTxt5.requestFocus()
-                val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
-            }, AppConstant.DELAY_200_MS)
-            linkDeviceOTPScreen?.visibility = View.VISIBLE
-        }
-
         when (requestCode) {
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
@@ -677,6 +882,20 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     }
                 }
             }
+            else ->
+                when (resultCode) {
+                    Activity.RESULT_CANCELED -> {
+                        Handler().postDelayed({
+                            linkDeviceOTPEdtTxt5.requestFocus()
+                            val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                            imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
+                        }, AppConstant.DELAY_200_MS)
+                        linkDeviceOTPScreen?.visibility = View.VISIBLE
+                    }
+                    GO_TO_PRODUCT -> {
+                        goToProduct()
+                    }
+                }
         }
     }
 

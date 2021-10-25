@@ -43,10 +43,7 @@ import com.amplifyframework.core.Amplify
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -304,6 +301,13 @@ fun GlobalScope.doAfterDelay(time: Long, code: () -> Unit) {
     }
 }
 
+fun CoroutineScope.doAfterDelay(time: Long, code: () -> Unit) {
+    launch {
+        delay(time)
+        launch { code() }
+    }
+}
+
 fun Fragment.getNavigationResult(key: String = "result") =
     findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(key)
 
@@ -384,7 +388,7 @@ fun TextView.underline() {
     paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
 }
 
-fun Fragment.safeNavigateFromNavController(directions: NavDirections) {
+fun Fragment.navigateSafelyWithNavController(directions: NavDirections) {
     val navController = findNavController()
     val destination = navController.currentDestination as? FragmentNavigator.Destination
     if (javaClass.name == destination?.className) {

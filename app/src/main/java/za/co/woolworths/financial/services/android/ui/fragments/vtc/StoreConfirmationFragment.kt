@@ -12,9 +12,12 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_store_confirmation.*
 import kotlinx.android.synthetic.main.layout_confirmation.*
+import kotlinx.android.synthetic.main.layout_confirmation.titleTextView
 import kotlinx.android.synthetic.main.layout_store_card_confirmed.*
+import kotlinx.android.synthetic.main.layout_store_card_confirmed.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -52,6 +55,9 @@ class StoreConfirmationFragment : Fragment() {
         setHasOptionsMenu(true)
         setActionBar()
 
+        storeConfirmedLayout.titleTextView.text = WoolworthsApplication.getVirtualTempCard().replacementCardSuccessfullyOrderedTitle ?: getString(R.string.replacement_card_success_title)
+        storeConfirmedLayout.descTextView.text = WoolworthsApplication.getVirtualTempCard().replacementCardSuccessfullyOrderedDescription ?: getString(R.string.replacement_card_success_desc)
+
         if (!TextUtils.isEmpty(body?.storeAddress)) {
             isConfirmStore = true
             subTitleTextView?.text = body?.storeAddress
@@ -74,7 +80,11 @@ class StoreConfirmationFragment : Fragment() {
 
         context?.let {
             nextActionTextView.text =
-                if (isConfirmStore) it.getString(R.string.confirm_store) else it.getString(R.string.confirm_address)
+                    if (isConfirmStore) it.getString(R.string.confirm_store) else it.getString(R.string.confirm_address)
+            titleTextView.text =
+                    if (isConfirmStore) it.getString(R.string.please_confirm_your_nselected_store) else it.getString(R.string.please_confirm_your_address)
+            cancelActionTextView.text =
+                    if (isConfirmStore) it.getString(R.string.edit_store) else it.getString(R.string.edit_address)
         }
 
         nextActionTextView?.setOnClickListener {
@@ -151,6 +161,11 @@ class StoreConfirmationFragment : Fragment() {
                         }
                         storeConfirmedLayout?.visibility = View.VISIBLE
                     }
+                    AppConstant.HTTP_SESSION_TIMEOUT_400.toString() -> {
+                        showErrorScreen(
+                            ErrorHandlerActivity.ERROR_STORE_CARD_DUPLICATE_CARD_REPLACEMENT,
+                            response?.response?.desc?.toString() ?: "")
+                    }
                     else -> {
                         showErrorScreen(ErrorHandlerActivity.ERROR_STORE_CARD_EMAIL_CONFIRMATION)
                     }
@@ -188,8 +203,7 @@ class StoreConfirmationFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_CANCELED) {
-            processingViewGroup?.visibility = View.GONE
-            confirmStoreLayout?.visibility = View.VISIBLE
+            activity?.finish()
         }
 
         when (requestCode) {

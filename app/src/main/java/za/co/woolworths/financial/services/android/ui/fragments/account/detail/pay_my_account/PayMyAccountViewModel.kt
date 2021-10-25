@@ -82,8 +82,9 @@ class PayMyAccountViewModel : ViewModel() {
         paymentList?.forEach {
             it.isCardChecked = false
         }
-        if (paymentList?.size ?: 0 > 0)
+        if (paymentList?.size ?:0 >= selectedPosition) {
             paymentList?.get(selectedPosition)?.isCardChecked = true
+        }
         return paymentList
     }
 

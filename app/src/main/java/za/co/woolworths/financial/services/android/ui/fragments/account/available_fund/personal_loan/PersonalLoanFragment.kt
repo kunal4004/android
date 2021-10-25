@@ -8,18 +8,26 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.available_funds_fragment.*
-import kotlinx.coroutines.GlobalScope
+import kotlinx.android.synthetic.main.view_pay_my_account_button.*
+import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+
+import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.MAKE_A_PAYMENT_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.VIEW_PAYMENT_PLAN_BUTTON
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -47,6 +55,60 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         accountInArrearsResultListener {
             onPayMyAccountButtonTap()
         }
+
+        setFragmentResultListener(AccountInArrearsDialogFragment::class.java.simpleName) { _, bundle ->
+            CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
+                when (bundle.getString(
+                    AccountInArrearsDialogFragment::class.java.simpleName,
+                    "N/A"
+                )) {
+                    ARREARS_PAY_NOW_BUTTON -> onPayMyAccountButtonTap()
+                    ARREARS_CHAT_TO_US_BUTTON -> {
+                        val chatBubble = payMyAccountViewModel.getApplyNowState()?.let { applyNowState ->
+                            ChatFloatingActionButtonBubbleView(
+                                activity = activity as? AccountSignedInActivity,
+                                applyNowState = applyNowState,
+                                vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
+                            )
+                        }
+                        chatBubble?.navigateToChatActivity(
+                            activity,
+                            payMyAccountViewModel.getCardDetail()?.account?.second
+                        )
+                    }
+                }
+            }
+        }
+
+        setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
+            CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
+                when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
+                    VIEW_PAYMENT_PLAN_BUTTON -> {
+                        activity?.apply {
+                            val arguments = HashMap<String, String>()
+                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION
+                            Utils.triggerFireBaseEvents(
+                                FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
+                                arguments,
+                                this)
+                            when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
+                                NATIVE_BROWSER ->
+                                    KotlinUtils.openUrlInPhoneBrowser(
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl, this)
+
+                                else ->
+                                    KotlinUtils.openLinkInInternalWebView(activity,
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl,
+                                        true,
+                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.exitUrl)
+                            }
+                        }
+                    }
+                    MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()
+                }
+            }
+        }
+
     }
 
     override fun onClick(view: View?) {
@@ -70,6 +132,20 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
             FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL,
             PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment()
         )
+        if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+
+        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL, this) }
+
+        if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
+            navController.navigate(R.id.payMyAccountRetryErrorFragment)
+            return
+        }
+
+        payMyAccountViewModel.resetAmountEnteredToDefault()
+
+        navigateToPayMyAccount {
+            navigateSafelyWithNavController(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment())
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

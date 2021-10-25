@@ -14,11 +14,9 @@ import androidx.annotation.RequiresApi;
 import com.awfs.coordination.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApi;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
@@ -86,7 +84,7 @@ public class NotificationUtils {
 
     public void sendRegistrationToServer(){
         if (isGooglePlayServicesAvailable()){
-            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener(task -> {
                 if (task.isSuccessful())
                     sendRegistrationToServer(task.getResult().getToken());
             });
@@ -98,7 +96,7 @@ public class NotificationUtils {
         Log.d("FCM", token);
         // sending gcm token to server
         final CreateUpdateDevice device = new CreateUpdateDevice();
-        device.appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().getApplicationContext());
+        device.appInstanceId = Utils.getUniqueDeviceID();
         Utils.setToken(token);
         device.pushNotificationToken = token;
         device.deviceIdentityId = AppInstanceObject.get().getCurrentUserObject().linkedDeviceIdentityId;

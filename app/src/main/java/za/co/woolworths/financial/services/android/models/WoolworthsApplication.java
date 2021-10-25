@@ -49,6 +49,7 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.AccountOptions;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
 import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
@@ -66,6 +67,7 @@ import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
+import za.co.woolworths.financial.services.android.models.dto.ViewTreatmentPlan;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
@@ -146,11 +148,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static ProductDetailsPage productDetailsPage;
 
     private static CreditView creditView;
+    private static NativeCheckout nativeCheckout;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
     private static boolean isBadgesRequired;
     private static InAppReview inAppReview;
     private static Liquor liquor;
+    private static AccountOptions accountOptions;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -670,6 +674,15 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.creditView = creditView;
     }
 
+    @Nullable
+    public static NativeCheckout getNativeCheckout() {
+        return nativeCheckout;
+    }
+
+    public static void setNativeCheckout(NativeCheckout nativeCheckout) {
+        WoolworthsApplication.nativeCheckout = nativeCheckout;
+    }
+
     public void setDashConfig(DashConfig dashConfig) {
         this.dashConfig = dashConfig;
     }
@@ -756,4 +769,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return cartCheckoutLinkWithParams;
     }
 
+    public static void setAccountOptions(@Nullable AccountOptions accountOptions) {
+        WoolworthsApplication.accountOptions = accountOptions;
+    }
+
+    public static AccountOptions getAccountOptions() {
+        return accountOptions;
+    }
 }

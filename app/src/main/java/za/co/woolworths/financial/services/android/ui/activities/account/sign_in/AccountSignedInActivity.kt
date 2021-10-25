@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehavio
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
+import za.co.woolworths.financial.services.android.models.dto.ViewTreatmentPlan
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
@@ -38,6 +39,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_UPDATE_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountSixMonthArrearsFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -146,6 +149,33 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
     override fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>) {
         this.mAccountHelpInformation = informationModelAccount
+    }
+
+    override fun showViewTreatmentPlan(viewPaymentOptions: Boolean){
+        val bundle = Bundle()
+        bundle.putBoolean(ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_OPTIONS_VISIBILITY, viewPaymentOptions)
+        mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment, bundle)
+    }
+
+    override fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean) {
+        availableFundFragmentFrameLayout?.visibility = GONE
+        bottomSheetBehaviourLinearLayout?.visibility = GONE
+        removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
+        val removeBlockOnCollectionFragmentContainerView = supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
+        val navigationController: NavController? = removeBlockOnCollectionFragmentContainerView?.navController
+        mAccountSignedInPresenter?.apply {
+            when (getMyAccountCardInfo()?.first) {
+                ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
+                    navigationController?.navigate(R.id.removeBlockDCFragment)
+                }
+                else -> {
+                    val bundle = Bundle()
+                    bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(getSixMonthOutstandingTitleAndCardResource()))
+                    bundle.putBoolean(AccountSixMonthArrearsFragment.IS_VIEW_TREATMENT_PLAN, isViewTreatmentPlanActive)
+                    navigationController?.navigate(R.id.accountInDelinquencyFragment, bundle)
+                }
+            }
+        }
     }
 
     override fun removeBlocksOnCollectionCustomer() {

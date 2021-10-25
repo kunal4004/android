@@ -17,6 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
@@ -39,7 +40,6 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.ui.extension.safeNavigateFromNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
@@ -67,6 +67,11 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         super.onCreate(savedInstanceState)
         mAvailableFundPresenter = AvailableFundsPresenterImpl(this, AvailableFundsModelImpl())
         mAvailableFundPresenter.setBundle(arguments)
+    }
+
+    companion object {
+        const val WEBVIEW = "webview"
+        const val NATIVE_BROWSER = "nativeBrowser"
     }
 
     @Throws(RuntimeException::class)
@@ -155,7 +160,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 startProgress()
 
                 val cardInfo = payMyAccountViewModel.getCardDetail()
-                val account = mAvailableFundPresenter?.getAccountDetail()
+                val account = mAvailableFundPresenter.getAccountDetail()
                 val amountEntered = account?.second?.amountOverdue?.let { amountDue -> Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amountDue)) }
                 val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                 val paymentMethodList = cardInfo?.paymentMethodList
@@ -447,7 +452,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                         openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(activity)
                         {
                             try {
-                                directions?.let { safeNavigateFromNavController(it) }
+                                directions?.let { view?.findNavController()?.navigate(it) }
                             } catch (ex: IllegalStateException) {
                                 FirebaseManager.logException(ex)
                             }
