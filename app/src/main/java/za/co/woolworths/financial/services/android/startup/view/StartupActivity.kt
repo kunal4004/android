@@ -9,21 +9,24 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
+import com.amazonaws.auth.policy.Policy.fromJson
 import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_with_message.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -48,9 +51,20 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         super.onCreate(savedInstanceState)
         setupViewModel()
         setSupportActionBar(mToolbar)
+        setUpFirebaseconfig()
+
+        /*
+        * need to add condition here when we need to decide  UI.
+        *
+        * */
+
         if (true ){
             setContentView(R.layout.activity_splash_screen)
-            setFirebaseConfigData()
+            if(startupViewModel.isConnectedToInternet(this)) {
+                fetchFirebaseConfigData()
+            } else {
+                errorLayout.visibility = View.VISIBLE
+            }
         } else {
             setContentView(R.layout.activity_startup)
         }
@@ -68,21 +82,42 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         init()
     }
 
-    private fun setFirebaseConfigData() {
-        startupViewModel.getFirebaseRemoteConfigData().fetchAndActivate().addOnCompleteListener { task ->
+    private fun setUpFirebaseconfig() {
+        val firebaseRemoteConfig = FirebaseConfigUtils.getFirebaseRemoteConfigInstance();
+        val configBuilder = FirebaseRemoteConfigSettings.Builder()
+        val defaultJsonString = FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
+        val defaultValues = mutableMapOf( FirebaseConfigUtils.CONFIG_KEY to defaultJsonString)
+        firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build())
+        firebaseRemoteConfig.setDefaultsAsync(defaultValues as Map<String, Any>)
+    }
+
+    private fun fetchFirebaseConfigData() {
+        startupViewModel.getFirebaseRemoteConfigData()
+                .fetchAndActivate().addOnCompleteListener { task ->
             run {
                 if (task.isSuccessful) {
                     //set dynamic ui here .
+                    progress_bar?.visibility = View.GONE
                     setDataOnUI(startupViewModel.fetchFirebaseRemoteConifgData())
                 } else {
-                    //error response here
-                    Log.e("task_is", "unsuccessfull")
+                    //capture value from local json
+                    progress_bar?.visibility = View.GONE
+                    val jsonString = FirebaseConfigUtils.getJsonDataFromAsset(
+                            this, FirebaseConfigUtils.FILE_NAME)
+                    if(jsonString == null) {
+                        // show error response
+                    } else {
+                        val configData:ConfigData = Gson().fromJson(jsonString, ConfigData::class.java)
+                        setDataOnUI(configData)
+                    }
                 }
             }
         }
     }
 
     private fun setDataOnUI(configData: ConfigData) {
+        first_btn.visibility = View.VISIBLE
+        second_btn.visibility = View.VISIBLE
         if (configData.expiryTime > 0) {
             val actieConfiguration = configData.activeConfiguration
             actieConfiguration.run {

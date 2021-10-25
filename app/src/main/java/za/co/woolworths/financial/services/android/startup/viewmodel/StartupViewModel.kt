@@ -111,9 +111,7 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
 
     fun fetchFirebaseRemoteConifgData(): ConfigData {
         firebaseRemoteConfig = getFirebaseRemoteConfigData()
-
         val jsonString = firebaseRemoteConfig.getString(FirebaseConfigUtils.CONFIG_KEY);
-
         val gson = Gson()
         val configData = gson.fromJson(jsonString, ConfigData::class.java)
         return configData

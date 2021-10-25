@@ -296,7 +296,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         mInstance = this;
         WoolworthsApplication.context = this.getApplicationContext();
         this.registerActivityLifecycleCallbacks(this);
-        setUpForFirebaseConfig();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -333,33 +332,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         );
         getTracker();
         bus = new RxBus();
-    }
-
-    private void setUpForFirebaseConfig() {
-        firebaseRemoteConfig = FirebaseConfigUtils.getFirebaseRemoteConfigInstance();
-        FirebaseRemoteConfigSettings.Builder configBuilder = new FirebaseRemoteConfigSettings.Builder();
-        configBuilder.setMinimumFetchIntervalInSeconds(0);
-        HashMap<String, Object>defaultValues = new HashMap<>();
-        defaultValues.put(FirebaseConfigUtils.CONFIG_KEY, loadJSONFromAsset());
-        firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build());
-        firebaseRemoteConfig.setDefaultsAsync(defaultValues);
-    }
-
-
-    public String loadJSONFromAsset() {
-        String json = null;
-        try {
-            InputStream inputStream = getAssets().open("FirebaseDefaultConfig.json");
-            int size = inputStream.available();
-            byte[] buffer = new byte[size];
-            inputStream.read(buffer);
-            inputStream.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
     }
 
     //#region ShowServerMessage
