@@ -33,18 +33,21 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.JsonElement;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -52,6 +55,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.AccountOptions;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
@@ -71,7 +75,6 @@ import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
-import za.co.woolworths.financial.services.android.models.dto.ViewTreatmentPlan;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
@@ -333,31 +336,30 @@ public class WoolworthsApplication extends Application implements Application.Ac
     }
 
     private void setUpForFirebaseConfig() {
-        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        JSONObject jsonObject =  createDefaultJSON( );
-
-        Map<String, Object> remoteConfigDefaults = new HashMap<>();
-
-        remoteConfigDefaults.put("QA Config", jsonObject);
-
-        //this are default values need to check
-
-//        remoteConfigDefaults.put(ForceUpdateChecker.KEY_UPDATE_REQUIRED, false);
-//        remoteConfigDefaults.put(ForceUpdateChecker.KEY_CURRENT_VERSION, "abc");
-//        remoteConfigDefaults.put(ForceUpdateChecker.KEY_UPDATE_URL, "play store url");
-
-        firebaseRemoteConfig.setDefaultsAsync(remoteConfigDefaults);
-        firebaseRemoteConfig.fetch(3600)
-                .addOnCompleteListener(task->{
-                    if (task.isSuccessful()) {
-                        Log.e(TAG, "firebase Remote config fetch successfull......");
-                    }
-                 });
+        firebaseRemoteConfig = FirebaseConfigUtils.getFirebaseRemoteConfigInstance();
+        FirebaseRemoteConfigSettings.Builder configBuilder = new FirebaseRemoteConfigSettings.Builder();
+        configBuilder.setMinimumFetchIntervalInSeconds(0);
+        HashMap<String, Object>defaultValues = new HashMap<>();
+        defaultValues.put(FirebaseConfigUtils.CONFIG_KEY, loadJSONFromAsset());
+        firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build());
+        firebaseRemoteConfig.setDefaultsAsync(defaultValues);
     }
 
-    private JSONObject createDefaultJSON() {
-        JSONObject jsonObject = new JSONObject();
-        return jsonObject;
+
+    public String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream inputStream = getAssets().open("FirebaseDefaultConfig.json");
+            int size = inputStream.available();
+            byte[] buffer = new byte[size];
+            inputStream.read(buffer);
+            inputStream.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 
     //#region ShowServerMessage

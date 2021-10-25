@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
@@ -17,11 +18,13 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
+import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_with_message.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -43,9 +46,14 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_startup)
-        setSupportActionBar(mToolbar)
         setupViewModel()
+        setSupportActionBar(mToolbar)
+        if (true ){
+            setContentView(R.layout.activity_splash_screen)
+            setFirebaseConfigData()
+        } else {
+            setContentView(R.layout.activity_startup)
+        }
         window?.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -54,8 +62,81 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             supportActionBar?.hide()
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         retry?.setOnClickListener(this@StartupActivity)
+        first_btn?.setOnClickListener(this@StartupActivity)
+        second_btn?.setOnClickListener(this@StartupActivity)
         deeplinkIntent = intent
         init()
+    }
+
+    private fun setFirebaseConfigData() {
+        startupViewModel.getFirebaseRemoteConfigData().fetchAndActivate().addOnCompleteListener { task ->
+            run {
+                if (task.isSuccessful) {
+                    //set dynamic ui here .
+                    setDataOnUI(startupViewModel.fetchFirebaseRemoteConifgData())
+                } else {
+                    //error response here
+                    Log.e("task_is", "unsuccessfull")
+                }
+            }
+        }
+    }
+
+    private fun setDataOnUI(configData: ConfigData) {
+        if (configData.expiryTime > 0) {
+            val actieConfiguration = configData.activeConfiguration
+            actieConfiguration.run {
+                if (title.isEmpty())
+                    txt_title.visibility = View.GONE
+                else
+                    txt_title.text = actieConfiguration.title
+
+                if (description.isEmpty())
+                    txt_desc.visibility = View.GONE
+                else
+                    txt_desc.text = actieConfiguration.description
+
+                if (imageUrl.isEmpty())
+                    img_view.visibility = View.GONE
+                else
+                    ImageManager.setPicture(img_view, actieConfiguration.imageUrl)
+
+                if (firstButton.title.isEmpty())
+                    first_btn.visibility = View.GONE
+                else
+                    first_btn.text = firstButton.title
+
+                if (secondButton.title.isEmpty())
+                    second_btn.visibility = View.GONE
+                else
+                    second_btn.text = secondButton.title
+            }
+
+        } else {
+            //in active configuration
+            val inActiveConfiguration = configData.inactiveConfiguration
+            inActiveConfiguration.run {
+                if (title.isEmpty())
+                    txt_title.visibility = View.GONE
+                else
+                    txt_title.text = inActiveConfiguration.title
+
+                if (description.isEmpty())
+                    txt_desc.visibility = View.GONE
+                else
+                    txt_desc.text = inActiveConfiguration.description
+
+                if (imageUrl.isEmpty())
+                    img_view.visibility = View.GONE
+                else
+                    ImageManager.setPicture(img_view, inActiveConfiguration.imageUrl)
+
+                if (firstButton.title.isEmpty())
+                    first_btn.visibility = View.GONE
+                else
+                    first_btn.text = firstButton.title
+            }
+        }
     }
 
     fun init() {
@@ -134,8 +215,18 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         showNonVideoViewWithErrorLayout()
                     }
                 }
+                R.id.first_btn-> navigateToURL()
+                R.id.second_btn-> navigateWithNormalFlow()
             }
         }
+    }
+
+    private fun navigateWithNormalFlow() {
+       onStartInit()
+    }
+
+    private fun navigateToURL() {
+
     }
 
     fun getConfig() {
@@ -266,7 +357,12 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             )
             return
         }
-        onStartInit()
+
+        if (true) {
+
+        } else {
+            onStartInit()
+        }
     }
 
     fun onStartInit() {
