@@ -22,17 +22,31 @@ class PrefStoreImpl
 ) : PrefsStore {
 
     private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = PREF_NAME)
-    private val dataStore : DataStore<Preferences> = context._dataStore
+    private val dataStore: DataStore<Preferences> = context._dataStore
 
-    override fun isLightingTipsFirstTime() =
-        dataStore.getPrefData(LIGHTING_TIPS, true)
+    override fun isLightingTipsGallery() =
+        dataStore.getPrefData(LIGHTING_TIPS_GALLERY, true)
             .catch {
                 // handle error
             }
 
-    override suspend fun disableLightingTips(lighting: Boolean) {
-        dataStore.setValue(LIGHTING_TIPS, lighting)
-    }
+    override fun isLightingTipsFiles() =
+        dataStore.getPrefData(LIGHTING_TIPS_FILES, true)
+            .catch {
+                // handle error
+            }
+
+    override fun isLightingTipsTakePhoto() =
+        dataStore.getPrefData(LIGHTING_TIPS_TAKE_PHOTO, true)
+            .catch {
+                // handle error
+            }
+
+    override fun isLightingTipsLiveCamera() =
+        dataStore.getPrefData(LIGHTING_TIPS_CAMERA, true)
+            .catch {
+                // handle error
+            }
 
     override fun isTryItOnFirstTime() =
         dataStore.getPrefData(TRY_IT_ON, true)
@@ -40,14 +54,29 @@ class PrefStoreImpl
                 // handle error
             }
 
+    override suspend fun disableLightingTipsGallery(lighting: Boolean) =
+        dataStore.setValue(LIGHTING_TIPS_GALLERY, lighting)
 
-    override suspend fun disableTryItOnMode(tryItOn: Boolean) {
+    override suspend fun disableLightingFiles(isLighting: Boolean) =
+        dataStore.setValue(LIGHTING_TIPS_FILES, isLighting)
+
+
+    override suspend fun disableLightingTipsTakePhoto(isLighting: Boolean) =
+        dataStore.setValue(LIGHTING_TIPS_TAKE_PHOTO, isLighting)
+
+    override suspend fun disableLightingTipsLiveCamera(isLighting: Boolean) =
+        dataStore.setValue(LIGHTING_TIPS_CAMERA, isLighting)
+
+    override suspend fun disableTryItOnMode(tryItOn: Boolean) =
         dataStore.setValue(TRY_IT_ON, tryItOn)
-    }
+
 
     companion object {
         private val TRY_IT_ON = booleanPreferencesKey("try_it_on")
-        private val LIGHTING_TIPS = booleanPreferencesKey("lighting_tips")
+        private val LIGHTING_TIPS_GALLERY = booleanPreferencesKey("gallery")
+        private val LIGHTING_TIPS_CAMERA = booleanPreferencesKey("camera")
+        private val LIGHTING_TIPS_TAKE_PHOTO = booleanPreferencesKey("take_photo")
+        private val LIGHTING_TIPS_FILES = booleanPreferencesKey("files")
     }
 
 

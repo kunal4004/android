@@ -99,7 +99,7 @@ class ComparisonView : View {
     private fun setupDividerDrawingRect() {
         val viewW = width.toFloat()
         val viewH = height.toFloat()
-        val dividerDrawingW = 15f
+        val dividerDrawingW = 4f
         val dividerDrawingH = viewH
         val dividerDrawingLeft = viewW * dividerPosition - dividerDrawingW * 0.5f
         dividerDrawingRect[dividerDrawingLeft, 0f, dividerDrawingLeft + dividerDrawingW] =

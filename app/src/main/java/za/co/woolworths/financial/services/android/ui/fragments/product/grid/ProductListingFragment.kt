@@ -173,7 +173,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 vtoBottomSheetDialog.showBottomSheetDialog(this@ProductListingFragment,requireActivity(),true)
 
             }
-            showVTOBanner()
+
         }
     }
 
@@ -260,6 +260,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
+        showVTOBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
             mProductList = ArrayList()
@@ -573,7 +574,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         try {
             hideFooterView()
         } catch (ex: Exception) {
-            Log.e("containFooter", ex.message!!)
+
         }
 
         mProductAdapter?.notifyItemChanged(actualSize, sizeOfList)
@@ -1325,6 +1326,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         GetCartSummary().getCartSummary(object : IResponseListener<CartSummaryResponse> {
             override fun onSuccess(response: CartSummaryResponse?) {
                 dismissProgressBar()
+
                 when (response?.httpCode) {
                     HTTP_OK -> {
                         if (Utils.isCartSummarySuburbIDEmpty(response)) {

@@ -2167,5 +2167,19 @@
     <string name="vto_term_and_condition_desc">By using Virtual Try On, I consent to Woolworths processing my personal information, including but not limited to my image, as per the Woolworths privacy policy, and agree to the \n<u>Terms and Conditions</u></string>
     <string name="try_on_intro_txt">INTRODUCING VIRTUAL TRY ON</string>
     <string name="try_on_intro_desc">Use our new Try It On feature  to find out how our make-up shades will look on you.</string>
+    <string name="no_face_detected">NO FACE DETECTED. TRY AGAIN.</string>
+
+    <string name="vto_camera_access_error">Unfortunately, We Can’t Access Your Camera</string>
+    <string name="vto_error_description">Please ensure you have enabled Woolworths access to your camera from your device settings, and try again.</string>
+    <string name="vto_change_setting">CHANGE SETTINGS</string>
+    <string name="vto_dismiss"><u>DISMISS</u></string>
+    <string name="vto_photo_library_access_error"> Unfortunately, We Can’t Access Your Photo Library</string>
+    <string name="vto_photo_library_error_description">Please ensure you have enabled Woolworths to access your photos from your device settings, and try again.</string>
+    <string name="vto_file_access_error">Unfortunately, We Can’t Access Your Files</string>
+    <string name="vto_file_error_description">Please ensure you have enabled Woolworths to access your files from your device settings, and try again.</string>
+    <string name="vto_invalid_file_access_error">Unfortunately, We Can’t Use That File</string>
+    <string name="vto_invalid_file_type_error_description">Please upload only .jpg or .png images.</string>
+    <string name="vto_generic_error">Unfortunately, Something Went Wrong</string>
+    <string name="vto_generic_error_description">Please try again.</string>
 
 </resources>

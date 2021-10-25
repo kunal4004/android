@@ -6,9 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoBottomSheetDialog
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.TermAndLightingBottomDialog
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoOptionSelectBottomDialog
+import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.*
 
 
 @Module
@@ -22,5 +20,9 @@ abstract class BottomSheetModule {
     @OpenSelectOption
     @Binds
     abstract fun bindSelectOptionBottomSheet(vtoOptionSelectBottomDialog: VtoOptionSelectBottomDialog): VtoBottomSheetDialog
+
+    @Binds
+    abstract fun bindErrorBottomSheet(vTOErrorSettingBottomSheetDialog: VTOErrorSettingBottomSheetDialog): VtoErrorBottomSheetDialog
+
 
 }

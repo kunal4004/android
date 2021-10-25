@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.vto.presentation
 
 
-import android.net.Uri
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -17,13 +15,31 @@ class DataPrefViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    val isLightingTips = prefsStore.isLightingTipsFirstTime().asLiveData()
+    val isLightingTipsGallery = prefsStore.isLightingTipsGallery().asLiveData()
+    val isLightingTipsFiles = prefsStore.isLightingTipsFiles().asLiveData()
+    val isLightingTipsTakePhoto = prefsStore.isLightingTipsTakePhoto().asLiveData()
+    val isLightingTipsCamera = prefsStore.isLightingTipsLiveCamera().asLiveData()
     val isTryItOn = prefsStore.isTryItOnFirstTime().asLiveData()
-    val userImage = MutableLiveData<Uri>()
 
-    fun disableLightingTips(disable: Boolean) {
+
+    fun disableLightingGallery(disable: Boolean) {
         viewModelScope.launch {
-            prefsStore.disableLightingTips(disable)
+            prefsStore.disableLightingTipsGallery(disable)
+        }
+    }
+    fun disableLightingFiles(disable: Boolean) {
+        viewModelScope.launch {
+            prefsStore.disableLightingFiles(disable)
+        }
+    }
+    fun disableLightingTipsTakePhoto(disable: Boolean) {
+        viewModelScope.launch {
+            prefsStore.disableLightingTipsTakePhoto(disable)
+        }
+    }
+    fun disableLightingTipsLiveCamera(disable: Boolean) {
+        viewModelScope.launch {
+            prefsStore.disableLightingTipsLiveCamera(disable)
         }
     }
 

@@ -36,6 +36,17 @@ class VtoOptionSelectBottomDialog @Inject constructor(
             listener.openGallery()
             dialog.dismiss()
         }
+
+        view.openLiveCamera.setOnClickListener {
+            listener.openLiveCamera()
+            dialog.dismiss()
+        }
+
+        view.takePhoto.setOnClickListener {
+            listener.openCamera()
+            dialog.dismiss()
+        }
+
         dialog.setCancelable(false)
         dialog.setContentView(view)
         dialog.show()

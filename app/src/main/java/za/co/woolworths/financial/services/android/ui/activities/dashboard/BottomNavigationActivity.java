@@ -41,6 +41,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.perfectcorp.perfectlib.SkuHandler;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -97,6 +98,8 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
+import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -227,6 +230,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 .rootFragmentListener(this, 5)
                 .build();
         renderUI();
+        vtoSyncServer();
 
         /***
          * Update bottom navigation view counter
@@ -262,6 +266,50 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         queryBadgeCountOnStart();
         addDrawerFragment();
+    }
+
+    private void vtoSyncServer() {
+        SdkUtility.initSdk(this, new PfSDKInitialCallback() {
+            @Override
+            public void onInitialized() {
+                SkuHandler skuHandler = SkuHandler.getInstance();
+                if (skuHandler == null) {
+                    return;
+                }
+
+                skuHandler.checkNeedToUpdate(new SkuHandler.CheckNeedToUpdateCallback() {
+                    @Override
+                    public void onSuccess(boolean needUpdate) {
+                        if (needUpdate) {
+                            skuHandler.syncServer(new SkuHandler.SyncServerCallback() {
+                                @Override
+                                public void progress(double progress) {
+
+                                }
+
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                }
+                            });
+                        }
+                    }
+                    @Override
+                    public void onFailure(Throwable throwable) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
+        });
     }
 
     private void parseDeepLinkData() {
