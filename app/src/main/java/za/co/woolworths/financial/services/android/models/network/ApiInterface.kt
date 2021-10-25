@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingAndReviewData
 import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
@@ -1089,4 +1090,14 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Body optOutBody: SurveyOptOutBody
     ): Call<Void>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("/retail-ratings-reviews/app/v1")
+    fun getRatingNReview(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("productId") productId: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
+    ): Call<RatingAndReviewData>
 }
