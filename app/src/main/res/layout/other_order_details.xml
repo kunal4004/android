@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/orderTotalLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/five_dp"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="@string/order_total_semicolon"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twenty_sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/orderTotalTextView"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twenty_sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/separator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/orderTotalLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/yourCartLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/separator">
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="@string/your_cart"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <TextView
+            android:id="@+id/yourCartTextView"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/yourCartSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/yourCartLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/discountsLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/yourCartSeparator">
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="@string/discounts"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <TextView
+            android:id="@+id/discountsTextView"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/discountsSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/discountsLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/companyDiscountLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/discountsSeparator">
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="@string/company_discount"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <TextView
+            android:id="@+id/companyDiscountTextView"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/companyDiscountSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/companyDiscountLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/wRewardsVouchersLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/companyDiscountSeparator">
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="@string/your_wrewards_vouchers"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <TextView
+            android:id="@+id/wRewardsVouchersTextView"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/wRewardsVouchersSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/wRewardsVouchersLinearLayout" />
+
+
+    <LinearLayout
+        android:id="@+id/totalDiscountLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/wRewardsVouchersSeparator">
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="@string/total_discount"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <TextView
+            android:id="@+id/totalDiscountTextView"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/totalDiscountSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/totalDiscountLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/deliveryFeeLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/totalDiscountSeparator">
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:text="@string/delivery_fee"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <TextView
+            android:id="@+id/deliveryFeeTextView"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/deliveryFeeSeparator"
+        style="@style/bottom_line"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/deliveryFeeLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/missedRewardsLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/twenty_dp"
+        android:paddingBottom="@dimen/twenty_dp"
+        android:visibility="gone"
+        android:weightSum="1"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/deliveryFeeSeparator"
+        tools:visibility="visible">
+
+        <TextView
+            style="@style/myriad_pro_regular"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"
+            android:gravity="center_vertical"
+            android:text="@string/missed_wrewards_savings"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <TextView
+            android:id="@+id/missedRewardsTextView"
+            style="@style/futura_semi_bold_black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:drawablePadding="@dimen/ten_dp"
+            android:gravity="end"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fifteen_sp" />
+
+        <ImageView
+            android:id="@+id/wrewardsIconImageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:src="@drawable/icon_info" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
