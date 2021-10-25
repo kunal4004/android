@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -117,7 +118,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         OneAppService.getEligibilityForTakeUpPlan()
             .enqueue(CompletionHandler(object : IResponseListener<EligibilityTakeUpPlanResponse> {
                 override fun onSuccess(response: EligibilityTakeUpPlanResponse?) {
-                    if (response != null) {
+                    if (response != null && response.httpCode == HTTP_OK) {
                         val plan: ProductTakeUpPlan? = when (state) {
                             ApplyNowState.BLACK_CREDIT_CARD,
                             ApplyNowState.GOLD_CREDIT_CARD,
