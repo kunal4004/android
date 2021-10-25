@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdr
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 
@@ -68,8 +69,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     companion object {
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
-        var SHOW_CLI_SCREEN = false
-        var CLI_DETAIL = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -222,14 +221,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     val applyNowState = mApplyNowAccountKeyPair?.first
 
                     if (applyNowState != null) {
-                        KotlinUtils.linkDeviceIfNecessary(activity, applyNowState,
-                            {
-                                CLI_DETAIL = true
-                            },
-                            {
-                                activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
-                                creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
-                            })
+                        if (MyAccountsFragment.verifyAppInstanceId()) {
+                            activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
+                            creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+                        }
                     }
                 }
 
@@ -274,18 +269,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 mCardPresenterImpl?.getAccountStoreCardCards()
             } else {
                 ErrorHandlerView(this).showToast()
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if(SHOW_CLI_SCREEN){
-            SHOW_CLI_SCREEN = false
-            mCardPresenterImpl?.apply {
-                val applyNowState = mApplyNowAccountKeyPair?.first
-                activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
-                creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
             }
         }
     }
