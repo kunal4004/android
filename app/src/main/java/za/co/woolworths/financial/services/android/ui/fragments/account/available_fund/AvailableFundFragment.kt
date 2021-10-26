@@ -17,7 +17,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
@@ -40,6 +39,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+
+import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
@@ -452,7 +453,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                         openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(activity)
                         {
                             try {
-                                directions?.let { view?.findNavController()?.navigate(it) }
+                                directions?.let { navigateSafelyWithNavController(it) }
                             } catch (ex: IllegalStateException) {
                                 FirebaseManager.logException(ex)
                             }

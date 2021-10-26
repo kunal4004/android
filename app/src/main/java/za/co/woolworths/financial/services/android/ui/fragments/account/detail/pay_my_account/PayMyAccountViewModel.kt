@@ -49,7 +49,6 @@ class PayMyAccountViewModel : ViewModel() {
     var deleteCardList: MutableList<Pair<GetPaymentMethod?, Int>>? = mutableListOf()
     private var payUPayResultRequest: MutableLiveData<PayUPayResultRequest> = MutableLiveData()
 
-
    val payMyAccountPresenter : PayMyAccountPresenter =  PayMyAccountPresenter(BeginPayMyAccountJourneyActionImpl(this))
 
     var pma3dSecureRedirection: PMARedirection? = null
@@ -215,7 +214,8 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getProductLabelId() = when (getApplyNowState()) {
         ApplyNowState.STORE_CARD -> R.string.store_card_title
-        else -> R.string.personalLoanCard_title
+        ApplyNowState.PERSONAL_LOAN -> R.string.personal_loan_card_title
+        else ->  R.string.credit_card_title
     }
 
     fun getAccountWithApplyNowState() = getCardDetail()?.account
