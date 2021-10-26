@@ -38,7 +38,7 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
             itemView.llQuantity.visibility = View.INVISIBLE
             itemView.price.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.priceInfo.amount)
             itemView.rlDeleteButton.visibility = View.GONE
-            setProductImage(itemView.cartProductImage, commerceItem.commerceItemInfo.externalImageURL
+            setProductImage(itemView.cartProductImage, commerceItem.commerceItemInfo.externalImageRefV2
                     ?: "")
             if (commerceItem.priceInfo.discountedAmount > 0) {
                 itemView.promotionalText.text = " " + CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.priceInfo.discountedAmount)

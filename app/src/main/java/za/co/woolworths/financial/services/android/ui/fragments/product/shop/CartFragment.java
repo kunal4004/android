@@ -113,7 +113,6 @@ import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
-import static za.co.woolworths.financial.services.android.ui.activities.CartActivity.TAG;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
@@ -428,7 +427,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         CartActivity cartActivity = (CartActivity) getActivity();
         ProductDetails productList = new ProductDetails();
         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
-        productList.externalImageRef = commerceItemInfo.externalImageURL;
+        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2;
         productList.productName = commerceItemInfo.productDisplayName;
         productList.fromPrice = (float) commerceItem.priceInfo.getAmount();
         productList.productId = commerceItemInfo.productId;

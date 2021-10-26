@@ -216,7 +216,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
 
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
-            auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
+            auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRefV2, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
         }
 
@@ -788,7 +788,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val auxiliaryImagesForGroupKey = ArrayList<String>()
         val groupKey = getSelectedGroupKey() ?: defaultGroupKey
 
-        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRef?.let {
+        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRefV2?.let {
             if (productDetails?.otherSkus?.size!! > 0)
                 auxiliaryImagesForGroupKey.add(it)
         }
@@ -801,7 +801,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         getImageCodeForAuxiliaryImages(groupKey).forEach { imageCode ->
             allAuxImages.entries.forEach { entry ->
                 if (entry.key.contains(imageCode, true))
-                    auxiliaryImagesForGroupKey.add(entry.value.externalImageRef)
+                    auxiliaryImagesForGroupKey.add(entry.value.externalImageRefV2)
             }
         }
 

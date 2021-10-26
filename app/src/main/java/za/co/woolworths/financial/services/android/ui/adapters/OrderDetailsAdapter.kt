@@ -112,7 +112,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     inner class OrderItemViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as CommerceItem
-            setProductImage(itemView.imProductImage, item.commerceItemInfo.externalImageURL)
+            setProductImage(itemView.imProductImage, item.commerceItemInfo.externalImageRefV2)
             itemView.itemName.text = item.commerceItemInfo.quantity.toString()+" x "+item.commerceItemInfo.productDisplayName
             itemView.price.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo.amount)
             itemView.price.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
@@ -127,7 +127,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             val item = dataList[position].item as CommerceItem
             with(itemView){
                 with(item.commerceItemInfo) {
-                    setProductImage(freeGiftImageView, externalImageURL)
+                    setProductImage(freeGiftImageView, externalImageRefV2)
                     giftItemTextView?.text = "$quantity x $productDisplayName"
                 }
             }

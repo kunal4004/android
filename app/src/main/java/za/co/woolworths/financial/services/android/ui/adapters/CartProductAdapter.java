@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +46,6 @@ import za.co.woolworths.financial.services.android.util.CartUtils;
 
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ImageManager;
-import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -159,7 +157,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 Utils.truncateMaxLine(productHolder.tvTitle);
                 productHolder.quantity.setText((commerceItemInfo == null) ? "" : String.valueOf(commerceItemInfo.getQuantity()));
                 productHolder.price.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(commerceItem.getPriceInfo().getAmount()));
-                String productImageUrl = (productImageUrl((commerceItemInfo == null) ? "" : commerceItemInfo.externalImageURL));
+                String productImageUrl = (productImageUrl((commerceItemInfo == null) ? "" : commerceItemInfo.externalImageRefV2));
                 ImageManager.Companion.setPicture(productHolder.productImage, productImageUrl);
                 productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
                 productHolder.rlDeleteButton.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
@@ -256,7 +254,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 final CommerceItem giftCommerceItem = itemRow.commerceItem;
                 if (giftCommerceItem == null) return;
                 CommerceItemInfo giftCommerceItemInfo = giftCommerceItem.commerceItemInfo;
-                String imageUrl = productImageUrl((giftCommerceItemInfo == null) ? "" : giftCommerceItemInfo.externalImageURL);
+                String imageUrl = productImageUrl((giftCommerceItemInfo == null) ? "" : giftCommerceItemInfo.externalImageRefV2);
                 ImageManager.Companion.setPicture(giftProductHolder.giftItemImageView, imageUrl);
                 giftProductHolder.productNameTextView.setText(giftCommerceItemInfo.getProductDisplayName());
                 Utils.truncateMaxLine(giftProductHolder.productNameTextView);
