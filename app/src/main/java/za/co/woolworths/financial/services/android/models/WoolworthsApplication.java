@@ -155,6 +155,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static ProductDetailsPage productDetailsPage;
 
     private static CreditView creditView;
+    private static NativeCheckout nativeCheckout;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
     private static boolean isBadgesRequired;
@@ -679,6 +680,15 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setCreditView(CreditView creditView) {
         WoolworthsApplication.creditView = creditView;
+    }
+
+    @Nullable
+    public static NativeCheckout getNativeCheckout() {
+        return nativeCheckout;
+    }
+
+    public static void setNativeCheckout(NativeCheckout nativeCheckout) {
+        WoolworthsApplication.nativeCheckout = nativeCheckout;
     }
 
     public void setDashConfig(DashConfig dashConfig) {

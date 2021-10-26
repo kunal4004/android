@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/tools">
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+        android:id="@+id/itemImageView"
+        android:layout_width="@dimen/fourty_eight_dp"
+        android:layout_height="@dimen/fourty_eight_dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:contentDescription="@string/placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        fresco:fadeDuration="10"
+        fresco:failureImage="@drawable/woolworth_logo_icon" />
+
+    <TextView
+        android:id="@+id/itemDescription"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/hundred_dp"
+        android:gravity="center"
+        style="@style/futura_medium_black"
+        app:layout_constraintLeft_toRightOf="@id/itemImageView"
+        app:layout_constraintRight_toLeftOf="@id/itemPrice"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/itemPrice"
+        android:layout_width="@dimen/hundred_dp"
+        style="@style/futura_semi_bold_black"
+        android:layout_height="@dimen/hundred_dp"
+        android:gravity="center|end"
+        app:layout_constraintLeft_toRightOf="@id/itemDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
