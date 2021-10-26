@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
@@ -160,7 +161,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 startProgress()
 
                 val cardInfo = payMyAccountViewModel.getCardDetail()
-                val account = mAvailableFundPresenter?.getAccountDetail()
+                val account = mAvailableFundPresenter.getAccountDetail()
                 val amountEntered = account?.second?.amountOverdue?.let { amountDue -> Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amountDue)) }
                 val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                 val paymentMethodList = cardInfo?.paymentMethodList

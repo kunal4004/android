@@ -49,7 +49,8 @@ class PayMyAccountViewModel : ViewModel() {
     var deleteCardList: MutableList<Pair<GetPaymentMethod?, Int>>? = mutableListOf()
     private var payUPayResultRequest: MutableLiveData<PayUPayResultRequest> = MutableLiveData()
 
-    val payMyAccountPresenter : PayMyAccountPresenter =  PayMyAccountPresenter(BeginPayMyAccountJourneyActionImpl(this))
+   val payMyAccountPresenter : PayMyAccountPresenter =  PayMyAccountPresenter(BeginPayMyAccountJourneyActionImpl(this))
+
     var pma3dSecureRedirection: PMARedirection? = null
 
     enum class PAYUMethodType { CREATE_USER, CARD_UPDATE, ERROR }

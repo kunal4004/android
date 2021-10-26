@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/newShoppingBagsTitleShimmerFrameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/twenty_four_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/newShoppingBagsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/futura_semi_bold"
+            android:text="@string/delivery_instructions_shopping_bags_title"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twenty_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/newShoppingBagsDescShimmerFrameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:layout_marginRight="@dimen/twenty_four_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/newShoppingBagsTitleShimmerFrameLayout">
+
+        <TextView
+            android:id="@+id/txtNewShoppingBagsDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/myriad_pro_semi_bold"
+            android:text="@string/delivery_instructions_shopping_bags_desc"
+            android:textColor="@color/color_444444" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <TextView
+        android:id="@+id/txtNewShoppingBagsSubDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/twenty_four_dp"
+        android:layout_marginRight="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/two_dp"
+        android:background="@color/white"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/delivery_instructions_shopping_bags_sub_desc"
+        android:textColor="@color/color_444444"
+        android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/newShoppingBagsDescShimmerFrameLayout" />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/radioGroupShoppingBagsShimmerFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/eighteen_dp"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtNewShoppingBagsSubDesc">
+
+        <RadioGroup
+            android:id="@+id/radioGroupShoppingBags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constrainedWidth="true">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/shoppingBagsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </RadioGroup>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

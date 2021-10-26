@@ -1,18 +1,28 @@
 package za.co.woolworths.financial.services.android.util.spannable;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+
+import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.wenum.LinkType;
 
@@ -25,9 +35,25 @@ public class WSpannableStringBuilder extends SpannableStringBuilder {
     }
 
     public void makeStringUnderlined(String stringToUnderline){
-
         make(stringToUnderline, new UnderlineSpan());
     }
+
+    public void makeChangeToStringFont(String stringToUnderline, Integer fontId) {
+        Context context = WoolworthsApplication.getAppContext();
+        if (context == null) return;
+        Typeface typeface = ResourcesCompat.getFont(context, fontId);
+        Object typefaceObject = new CustomTypefaceSpan(stringToUnderline, typeface);
+        make(stringToUnderline, typefaceObject);
+    }
+
+    public void makeTextFontColor (String stringToUnderline) {
+        Context context = WoolworthsApplication.getAppContext();
+        if (context == null) return;
+        int color =ContextCompat.getColor(context,R.color.black60);
+        Object foregroundColorSpan = new ForegroundColorSpan(color);
+        make(stringToUnderline, foregroundColorSpan);
+    }
+
 
     public void makeStringInteractable(final String stringToMakeInteractable, LinkType linkType){
         ClickableSpan clickableSpan = new ClickableSpan() {
