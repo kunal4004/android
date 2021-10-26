@@ -15,7 +15,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
-import com.amazonaws.auth.policy.Policy.fromJson
 import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -56,18 +55,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         /*
         * need to add condition here when we need to decide  UI.
         *
-        * */
-
-        if (true ){
-            setContentView(R.layout.activity_splash_screen)
-            if(startupViewModel.isConnectedToInternet(this)) {
-                fetchFirebaseConfigData()
-            } else {
-                errorLayout.visibility = View.VISIBLE
-            }
+        *  */
+        if(startupViewModel.isConnectedToInternet(this)) {
+            fetchFirebaseConfigData()
         } else {
-            setContentView(R.layout.activity_startup)
+           onStartInit()
         }
+
         window?.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -76,15 +70,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             supportActionBar?.hide()
         progressBar?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         retry?.setOnClickListener(this@StartupActivity)
-        first_btn?.setOnClickListener(this@StartupActivity)
-        second_btn?.setOnClickListener(this@StartupActivity)
         deeplinkIntent = intent
         init()
     }
 
     private fun setUpFirebaseconfig() {
         val firebaseRemoteConfig = FirebaseConfigUtils.getFirebaseRemoteConfigInstance();
-        val configBuilder = FirebaseRemoteConfigSettings.Builder()
+        val configBuilder = FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(7200)
         val defaultJsonString = FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
         val defaultValues = mutableMapOf( FirebaseConfigUtils.CONFIG_KEY to defaultJsonString)
         firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build())
@@ -97,14 +89,19 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             run {
                 if (task.isSuccessful) {
                     //set dynamic ui here .
-                    progress_bar?.visibility = View.GONE
-                    setDataOnUI(startupViewModel.fetchFirebaseRemoteConifgData())
+                    val remoteConfigData = startupViewModel.fetchFirebaseRemoteConifgData()
+                    if (remoteConfigData.isEmpty()) {
+                        setContentView(R.layout.activity_startup)
+                    } else {
+                        setContentView(R.layout.activity_splash_screen)
+                        setDataOnUI(startupViewModel.parseRemoteconfigData(remoteConfigData))
+                    }
                 } else {
                     //capture value from local json
                     progress_bar?.visibility = View.GONE
                     val jsonString = FirebaseConfigUtils.getJsonDataFromAsset(
                             this, FirebaseConfigUtils.FILE_NAME)
-                    if(jsonString == null) {
+                    if (jsonString == null) {
                         // show error response
                     } else {
                         val configData:ConfigData = Gson().fromJson(jsonString, ConfigData::class.java)
@@ -116,53 +113,59 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun setDataOnUI(configData: ConfigData) {
+        progress_bar?.visibility = View.GONE
         first_btn.visibility = View.VISIBLE
         second_btn.visibility = View.VISIBLE
-        if (configData.expiryTime > 0) {
+        first_btn?.setOnClickListener(this)
+        second_btn?.setOnClickListener(this)
+
+        val timeIntervalSince1970 = Calendar.getInstance(TimeZone.getDefault()).timeInMillis
+
+        if (timeIntervalSince1970 < configData?.expiryTime) {
             val actieConfiguration = configData.activeConfiguration
             actieConfiguration.run {
                 if (title.isEmpty())
-                    txt_title.visibility = View.GONE
+                    txt_title?.visibility = View.GONE
                 else
-                    txt_title.text = actieConfiguration.title
+                    txt_title?.text = actieConfiguration.title
 
                 if (description.isEmpty())
-                    txt_desc.visibility = View.GONE
+                    txt_desc?.visibility = View.GONE
                 else
-                    txt_desc.text = actieConfiguration.description
+                    txt_desc?.text = actieConfiguration.description
 
                 if (imageUrl.isEmpty())
-                    img_view.visibility = View.GONE
+                    img_view?.visibility = View.GONE
                 else
                     ImageManager.setPicture(img_view, actieConfiguration.imageUrl)
 
                 if (firstButton.title.isEmpty())
-                    first_btn.visibility = View.GONE
+                    first_btn?.visibility = View.GONE
                 else
-                    first_btn.text = firstButton.title
+                    first_btn?.text = firstButton.title
 
                 if (secondButton.title.isEmpty())
-                    second_btn.visibility = View.GONE
+                    second_btn?.visibility = View.GONE
                 else
-                    second_btn.text = secondButton.title
+                    second_btn?.text = secondButton.title
             }
 
-        } else {
+        } else if (timeIntervalSince1970 >= configData.expiryTime){
             //in active configuration
             val inActiveConfiguration = configData.inactiveConfiguration
             inActiveConfiguration.run {
                 if (title.isEmpty())
-                    txt_title.visibility = View.GONE
+                    txt_title?.visibility = View.GONE
                 else
-                    txt_title.text = inActiveConfiguration.title
+                    txt_title?.text = inActiveConfiguration.title
 
                 if (description.isEmpty())
-                    txt_desc.visibility = View.GONE
+                    txt_desc?.visibility = View.GONE
                 else
-                    txt_desc.text = inActiveConfiguration.description
+                    txt_desc?.text = inActiveConfiguration.description
 
                 if (imageUrl.isEmpty())
-                    img_view.visibility = View.GONE
+                    img_view?.visibility = View.GONE
                 else
                     ImageManager.setPicture(img_view, inActiveConfiguration.imageUrl)
 
@@ -171,6 +174,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 else
                     first_btn.text = firstButton.title
             }
+        } else if (configData.expiryTime == -1) {
+            // if firebase config fails to fecth then navigate with normal flow
+            onStartInit()
         }
     }
 
@@ -392,10 +398,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             )
             return
         }
-
-        if (true) {
-
-        } else {
+        if (startupViewModel.fetchFirebaseRemoteConifgData().isEmpty()) {
             onStartInit()
         }
     }

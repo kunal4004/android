@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.startup.viewmodel
 
-import android.app.Service
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
@@ -17,7 +16,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
-import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
@@ -109,11 +107,15 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     }
 
 
-    fun fetchFirebaseRemoteConifgData(): ConfigData {
+    fun fetchFirebaseRemoteConifgData(): String {
         firebaseRemoteConfig = getFirebaseRemoteConfigData()
         val jsonString = firebaseRemoteConfig.getString(FirebaseConfigUtils.CONFIG_KEY);
+        return  jsonString
+    }
+
+    fun parseRemoteconfigData(remoteConfigData: String): ConfigData {
         val gson = Gson()
-        val configData = gson.fromJson(jsonString, ConfigData::class.java)
+        val configData = gson.fromJson(remoteConfigData, ConfigData::class.java)
         return configData
     }
 
