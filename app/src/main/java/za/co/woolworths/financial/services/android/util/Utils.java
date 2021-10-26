@@ -1236,7 +1236,7 @@ public class Utils {
                 appInstanceObject.featureWalkThrough.creditScore = true;
                 break;
             case VTO_TRY_IT:
-                appInstanceObject.featureWalkThrough.tryItOn = true;
+                appInstanceObject.featureWalkThrough.isTryItOn = true;
                 break;
             default:
                 break;

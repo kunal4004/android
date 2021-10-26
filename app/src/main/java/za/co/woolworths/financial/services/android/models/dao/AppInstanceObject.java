@@ -146,7 +146,7 @@ public class AppInstanceObject {
 		public boolean statements;
 		public boolean cartRedeemVoucher;
 		public boolean creditScore;
-        public boolean tryItOn;
+        public boolean isTryItOn;
 
     }
     /***
