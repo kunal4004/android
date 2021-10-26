@@ -8,9 +8,6 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,6 +26,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -193,7 +193,7 @@ public class SSOActivity extends WebViewActivity {
 
 	//override intent to return expected link that's to be used in the WebViewActivity
 	@Override
-	public Intent getIntent() {
+	public synchronized Intent getIntent() {
 		Intent intent = super.getIntent();
 		Bundle bundle = intent.getExtras();
 
@@ -216,7 +216,7 @@ public class SSOActivity extends WebViewActivity {
 		HTTP("http"),
 		HTTPS("https");
 
-		private String protocol;
+		private final String protocol;
 
 		Protocol(String protocol) {
 			this.protocol = protocol;
@@ -228,7 +228,10 @@ public class SSOActivity extends WebViewActivity {
 
 		public static Protocol getProtocolByRawValue(String rawValue) {
 			for (Protocol p : Protocol.values()) {
-				if (rawValue.equals(p.rawValue()))
+				if (p != null
+						&& p.rawValue() != null
+						&& !TextUtils.isEmpty(rawValue)
+						&& rawValue.equalsIgnoreCase(p.rawValue()))
 					return p;
 			}
 			return null;
@@ -238,7 +241,7 @@ public class SSOActivity extends WebViewActivity {
 	public enum Host implements SSORequiredParameter {
 		STS(WoolworthsApplication.getStsURI());
 
-		private String host;
+		private final String host;
 
 		Host(String protocol) {
 			this.host = protocol;
@@ -250,10 +253,11 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 		public static Host getHostByRawValue(String rawValue) {
-			if (rawValue == null) return null;
-			if (Host.values() == null) return null;
 			for (Host h : Host.values()) {
-				if (rawValue.equals(h.rawValue()))
+				if (h != null
+						&& h.rawValue() != null
+						&& !TextUtils.isEmpty(rawValue)
+						&& rawValue.equalsIgnoreCase(h.rawValue()))
 					return h;
 			}
 			return null;
@@ -267,7 +271,7 @@ public class SSOActivity extends WebViewActivity {
 		UPDATE_PASSWORD("customerid/userdetails/password"),
 		UPDATE_PROFILE("customerid/userdetails");
 
-		private String path;
+		private final String path;
 
 		Path(String protocol) {
 			this.path = protocol;
@@ -279,7 +283,10 @@ public class SSOActivity extends WebViewActivity {
 
 		public static Path getPathByRawValue(String rawValue) {
 			for (Path p : Path.values()) {
-				if (rawValue.equals(p.rawValue()))
+				if (p != null
+						&& p.rawValue() != null
+						&& !TextUtils.isEmpty(rawValue)
+						&& rawValue.equalsIgnoreCase(p.rawValue()))
 					return p;
 			}
 			return null;

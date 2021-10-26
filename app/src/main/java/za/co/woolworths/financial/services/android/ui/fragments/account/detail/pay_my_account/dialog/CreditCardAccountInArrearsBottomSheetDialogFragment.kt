@@ -42,7 +42,7 @@ class CreditCardAccountInArrearsBottomSheetDialogFragment : WBottomSheetDialogFr
             setOnClickListener(this@CreditCardAccountInArrearsBottomSheetDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
-        gotITButton?.apply {
+        gotItButton?.apply {
             setOnClickListener(this@CreditCardAccountInArrearsBottomSheetDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -55,7 +55,7 @@ class CreditCardAccountInArrearsBottomSheetDialogFragment : WBottomSheetDialogFr
                 ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, cardDetail)
                 dismiss()
             }
-            R.id.gotITButton -> dismiss()
+            R.id.gotItButton -> dismiss()
         }
     }
 

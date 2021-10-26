@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@color/white">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/deliveringTitleShimmerFrameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/twenty_four_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvNativeCheckoutDeliveringTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/futura_semi_bold"
+            android:text="@string/native_checkout_delivering_to_title"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twenty_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/deliveringTitleValueShimmerFrameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:background="@color/shimmer_view_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/deliveringTitleShimmerFrameLayout"
+        app:layout_constraintTop_toBottomOf="@id/deliveringTitleShimmerFrameLayout">
+
+        <TextView
+            android:id="@+id/tvNativeCheckoutDeliveringValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/myriad_pro_regular"
+            android:textColor="@color/color_444444"
+            android:textSize="@dimen/fifteen_sp" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/forwardImgViewShimmerFrameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/twenty_four_dp"
+        android:background="@color/shimmer_view_background"
+        android:minWidth="@dimen/twenty_four_dp"
+        android:minHeight="@dimen/twenty_four_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageViewCaretForward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:src="@drawable/ic_caret_black" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

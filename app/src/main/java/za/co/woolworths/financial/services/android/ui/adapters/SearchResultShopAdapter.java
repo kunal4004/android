@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import android.content.Context;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -29,15 +30,16 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeVie
 public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
 	private boolean value;
-
+    private Context context;
 	private List<ProductList> mProductList;
 
 	private SearchResultNavigator mSearchResultNavigator;
 
 	private static final String FOOD_PRODUCT = "foodProducts";
 
-	public SearchResultShopAdapter(List<ProductList> mProductList,
+	public SearchResultShopAdapter(Context context, List<ProductList> mProductList,
 								   SearchResultNavigator searchResultNavigator) {
+		this.context = context;
 		this.mProductList = mProductList;
 		this.mSearchResultNavigator = searchResultNavigator;
 	}
@@ -281,15 +283,20 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 
 	private class HeaderViewHolder extends RecyclerView.ViewHolder {
 		private TextView tvNumberOfItem;
+		private TextView tvFoundItem;
 
 		private HeaderViewHolder(View v) {
 			super(v);
 			tvNumberOfItem = v.findViewById(R.id.tvNumberOfItem);
+			tvFoundItem = v.findViewById(R.id.tvFoundItem);
 		}
 
 		private void setTotalItem(ProductList productList) {
-			if (productList.numberOfItems != null)
+			if (null != productList.numberOfItems)
 				tvNumberOfItem.setText(String.valueOf(productList.numberOfItems));
+			if (productList.numberOfItems == 1) {
+				tvFoundItem.setText(context.getString(R.string.product_item));
+			}
 		}
 	}
 

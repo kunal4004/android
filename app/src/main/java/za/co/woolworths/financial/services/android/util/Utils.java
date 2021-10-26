@@ -71,6 +71,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -669,7 +671,7 @@ public class Utils {
         return new Gson().fromJson(jsonString, className);
     }
 
-    public static String getUniqueDeviceID(Context context) {
+    public static String getUniqueDeviceID() {
         String deviceID = null;
         if (deviceID == null) {
             deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
@@ -1600,7 +1602,7 @@ public class Utils {
 
     public static void setToken(String value) {
         try {
-            if(TextUtils.isEmpty(value)){
+            if (TextUtils.isEmpty(value)) {
                 return;
             }
             String firstTime = Utils.getSessionDaoValue(FCM_TOKEN);
@@ -1634,5 +1636,21 @@ public class Utils {
 
     public static Boolean isGooglePlayServicesAvailable() {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
+    }
+
+    public static String getJsonDataFromAsset(Context context, String fileName) {
+        String jsonString = "";
+        try {
+            InputStream stream = context.getAssets().open(fileName);
+            int size = stream.available();
+            byte[] buffer = new byte[size];
+            stream.read(buffer);
+            stream.close();
+            jsonString = new String(buffer);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+            return null;
+        }
+        return jsonString;
     }
 }

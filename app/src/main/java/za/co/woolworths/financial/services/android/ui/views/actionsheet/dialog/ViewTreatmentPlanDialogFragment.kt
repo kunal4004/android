@@ -19,10 +19,12 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
     private var showChatBubbleInterface: IShowChatBubble? = null
     private val mClassName = ViewTreatmentPlanDialogFragment::class.java.simpleName
+    private var viewPaymentOption: Boolean = false
 
     companion object {
         const val VIEW_PAYMENT_PLAN_BUTTON = "viewPaymentPlanButton"
         const val MAKE_A_PAYMENT_BUTTON = "makeAPaymentButton"
+        const val VIEW_PAYMENT_OPTIONS_VISIBILITY = "viewPaymentOptionsVisibility"
 
     }
 
@@ -40,6 +42,8 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewPaymentOption = arguments?.getBoolean(VIEW_PAYMENT_OPTIONS_VISIBILITY,false)?: false
+
         viewTreatmentPlanButton?.apply {
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
@@ -47,6 +51,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         makePaymentButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            visibility = if(viewPaymentOption) View.GONE else View.VISIBLE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -56,8 +61,9 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
-        makePaymentButton?.apply {
+        viewPaymentOptionsButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            visibility = if(viewPaymentOption) View.VISIBLE else View.GONE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -71,7 +77,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
                 setFragmentResult(mClassName, bundleOf(mClassName to VIEW_PAYMENT_PLAN_BUTTON))
             }
 
-            R.id.makePaymentButton -> {
+            R.id.makePaymentButton, R.id.viewPaymentOptionsButton -> {
                 dismiss()
                 setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
             }
