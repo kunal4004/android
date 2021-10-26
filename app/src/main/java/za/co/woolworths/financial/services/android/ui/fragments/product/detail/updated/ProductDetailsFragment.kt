@@ -78,10 +78,7 @@ import kotlin.collections.ArrayList
 import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.AdditionalFields
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingAndReviewData
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResopnse
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.SecondaryRatings
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.ReviewerInfoDetailsActivity
 import za.co.woolworths.financial.services.android.ui.adapters.*
 
@@ -129,7 +126,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private lateinit var  reviewThumbnailAdapter: ReviewThumbnailAdapter
     private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
-    private var thumbnailList = mutableListOf<Thumbnail>()
+    private  var thumbnailFullList = listOf<Thumbnails>()
 
     companion object {
         const val INDEX_STORE_FINDER = 1
@@ -683,7 +680,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvDate.text = submissionTime
                 setReviewAdditionalFields(additionalFields)
                 setSecondaryRatingsUI1(secondaryRatings)
-                setReviewThumbnailUI()
+                setReviewThumbnailUI(photos.thumbnails)
             }
         }
 
@@ -781,7 +778,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             rootView.addView(tv3)
             rootView.addView(tv4)
-            llSecondaryRatings.addView(rootView)
+            //llSecondaryRatings.addView(rootView)
         }
     }
 
@@ -792,26 +789,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         secondaryRatingAdapter.setDataList(secondaryRatings)
     }
 
-    private fun setReviewThumbnailUI(){
+    private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>){
         rvThumbnail.layoutManager = GridLayoutManager(getApplicationContext(),3)
         reviewThumbnailAdapter = ReviewThumbnailAdapter(getApplicationContext(),this)
         rvThumbnail.adapter = reviewThumbnailAdapter
-
-        thumbnailList.clear()
-        thumbnailList.add(Thumbnail(1,R.drawable.header_image))
-        thumbnailList.add(Thumbnail(2,R.drawable.header_image))
-        thumbnailList.add(Thumbnail(3,R.drawable.header_image))
-        reviewThumbnailAdapter.setDataList(thumbnailList)
+        thumbnailFullList = thumbnails
+        if(thumbnails.size>2)
+        {
+            reviewThumbnailAdapter.setDataList(thumbnailFullList.subList(0,2))
+        }else
+            reviewThumbnailAdapter.setDataList(thumbnailFullList)
     }
 
     override fun thumbnailClicked() {
-        thumbnailList.clear()
-        thumbnailList.add(Thumbnail(1,R.drawable.header_image))
-        thumbnailList.add(Thumbnail(2,R.drawable.header_image))
-        thumbnailList.add(Thumbnail(3,R.drawable.header_image))
-        thumbnailList.add(Thumbnail(4,R.drawable.header_image))
-        thumbnailList.add(Thumbnail(5,R.drawable.header_image))
-        reviewThumbnailAdapter.setDataList(thumbnailList)
+        reviewThumbnailAdapter.setDataList(thumbnailFullList)
         reviewThumbnailAdapter.notifyDataSetChanged()
     }
 
