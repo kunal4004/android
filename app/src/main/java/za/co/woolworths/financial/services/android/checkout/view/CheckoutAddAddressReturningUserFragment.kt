@@ -1072,6 +1072,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         shoppingBagsOptionsList: ShoppingBagsOptions,
         position: Int
     ) {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+            activity
+        )
         selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
     }
 
