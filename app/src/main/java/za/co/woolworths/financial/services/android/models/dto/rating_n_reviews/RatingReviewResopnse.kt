@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto.rating_n_reviews
 import com.google.gson.annotations.SerializedName
 
-data class Data (
+data class RatingReviewResopnse (
 
 	@SerializedName("limit") val limit : Int,
 	@SerializedName("offset") val offset : Int,
@@ -11,6 +11,6 @@ data class Data (
 	@SerializedName("sortOptions") val sortOptions : List<SortOptions>,
 	@SerializedName("refinements") val refinements : List<Refinements>,
 	@SerializedName("reportReviewOptions") val reportReviewOptions : List<String>,
-	@SerializedName("response") val response : Response,
+	/*@SerializedName("response") val response : Response,*/
 	@SerializedName("httpCode") val httpCode : Int
 )

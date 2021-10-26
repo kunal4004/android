@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class SecondaryRatings (
 
-	@SerializedName("value") val value : Int,
+	@SerializedName("value") val value : String,
 	@SerializedName("id") val id : String,
 	@SerializedName("maxLabel") val maxLabel : String,
 	@SerializedName("minLabel") val minLabel : String,
