@@ -32,17 +32,11 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.JsonElement;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -162,7 +156,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static InAppReview inAppReview;
     private static Liquor liquor;
     private static AccountOptions accountOptions;
-    private FirebaseRemoteConfig firebaseRemoteConfig;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
