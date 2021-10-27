@@ -2189,6 +2189,16 @@
     <string name="native_checkout_delivery_gift_instructions">Is this a Gift?</string>
     <string name="native_checkout_delivery_gift_instructions_hint">Please type gifting message here.</string>
 
+    <!-- Native Checkout : Collection -->
+    <string name="who_is_collecting">Who is Collecting?</string>
+    <string name="vehicle_details_title">Vehicle Details</string>
+    <string name="my_vehicle_text">My Vehicle</string>
+    <string name="taxi_text">Taxi (Uber, Bolt etc.)</string>
+    <string name="vehicle_colour">Vehicle Colour:</string>
+    <string name="vehicle_model">Vehicle Model: *</string>
+    <string name="confirm_details">Confirm Details</string>
+    <string name="vehicle_registration">Vehicle Registration: *</string>
+
     <!-- Native Checkout : Food Substitution    -->
     <string name="native_checkout_delivery_food_substitution_title">Food Substitutions</string>
     <string name="native_checkout_delivery_food_substitution_desc">If an item is out of stock, how should we handle substitutes for you? If no substitutes are found the difference is not charged.</string>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/vehiclesDetailsTitle"
+        style="@style/futura_semi_bold_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/two_dp"
+        android:paddingBottom="@dimen/two_dp"
+        android:text="@string/vehicle_details_title"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <HorizontalScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/twenty_dp"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vehiclesDetailsTitle">
+
+        <LinearLayout
+            android:id="@+id/vehicleTypeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/twenty_dp"
+            android:paddingEnd="@dimen/twelve_dp">
+
+            <TextView
+                android:id="@+id/myVehicleText"
+                style="@style/myriad_pro_regular_black_with_rounded_corner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/eight_dp"
+                android:paddingStart="@dimen/sixteen_dp"
+                android:paddingTop="@dimen/six_dp"
+                android:paddingEnd="@dimen/sixteen_dp"
+                android:paddingBottom="@dimen/six_dp"
+                android:text="@string/my_vehicle_text"
+                android:textColor="@color/checkout_delivering_title"
+                android:textSize="@dimen/fourteen_sp" />
+
+            <TextView
+                android:id="@+id/taxiText"
+                style="@style/myriad_pro_regular_black_with_rounded_corner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/eight_dp"
+                android:paddingStart="@dimen/sixteen_dp"
+                android:paddingTop="@dimen/six_dp"
+                android:paddingEnd="@dimen/sixteen_dp"
+                android:paddingBottom="@dimen/six_dp"
+                android:text="@string/taxi_text"
+                android:textColor="@color/checkout_delivering_title"
+                android:textSize="@dimen/fourteen_sp" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/vehicleColourPlaceHolder"
+        style="@style/myriad_pro_regular_black"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:contentDescription="@string/cd_ccd_labelstreetaddress"
+        android:paddingTop="@dimen/two_dp"
+        android:paddingBottom="@dimen/two_dp"
+        android:text="@string/vehicle_colour"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toEndOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/scrollView" />
+
+    <EditText
+        android:id="@+id/vehicleColourEditText"
+        style="@style/checkout_edittext_style"
+        android:layout_width="0dp"
+        android:clickable="false"
+        android:enabled="false"
+        android:hint="@string/optional_hint"
+        android:maxLength="@integer/fifty"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/vehicleColourPlaceHolder" />
+
+    <TextView
+        android:id="@+id/vehicleModelPlaceHolder"
+        style="@style/myriad_pro_regular_black"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:contentDescription="@string/cd_ccd_labelstreetaddress"
+        android:paddingTop="@dimen/two_dp"
+        android:paddingBottom="@dimen/two_dp"
+        android:text="@string/vehicle_model"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toEndOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/vehicleColourEditText" />
+
+    <EditText
+        android:id="@+id/vehicleModelEditText"
+        style="@style/checkout_edittext_style"
+        android:layout_width="0dp"
+        android:clickable="false"
+        android:enabled="false"
+        android:maxLength="@integer/fifty"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/vehicleModelPlaceHolder" />
+
+    <TextView
+        android:id="@+id/vehicleModelErrorMsg"
+        style="@style/myriad_pro_regular"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/address_nickname_error_msg"
+        android:textColor="@color/input_error_color_code"
+        android:textSize="@dimen/fourteen_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/vehicleModelEditText" />
+
+    <TextView
+        android:id="@+id/vehicleRegistrationPlaceHolder"
+        style="@style/myriad_pro_regular_black"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:contentDescription="@string/cd_ccd_labelstreetaddress"
+        android:paddingTop="@dimen/two_dp"
+        android:paddingBottom="@dimen/two_dp"
+        android:text="@string/vehicle_registration"
+        android:textSize="@dimen/fourteen_sp"
+        app:layout_constraintStart_toEndOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/vehicleModelErrorMsg" />
+
+    <EditText
+        android:id="@+id/vehicleRegistrationEditText"
+        style="@style/checkout_edittext_style"
+        android:layout_width="0dp"
+        android:clickable="false"
+        android:enabled="false"
+        android:maxLength="@integer/fifty"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/vehicleRegistrationPlaceHolder" />
+
+    <TextView
+        android:id="@+id/vehicleRegistrationErrorMsg"
+        style="@style/myriad_pro_regular"
+        android:layout_marginTop="@dimen/fifteen_dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/address_nickname_error_msg"
+        android:textColor="@color/input_error_color_code"
+        android:textSize="@dimen/fourteen_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@id/vehicleRegistrationEditText" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
