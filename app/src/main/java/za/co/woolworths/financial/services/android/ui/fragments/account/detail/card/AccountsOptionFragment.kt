@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
@@ -49,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdr
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 
@@ -56,7 +58,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.credit_card_acti
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
+open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView{
 
 
     private var userOfferActiveCallWasCompleted = false
@@ -66,6 +68,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private val REQUEST_CREDIT_CARD_ACTIVATION = 1983
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+    private var state: ApplyNowState? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +91,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         llIncreaseLimitContainer?.setOnClickListener(this)
         withdrawCashView?.setOnClickListener(this)
         viewPaymentOptions?.setOnClickListener(this)
+        setUpPaymentPlanOptions?.setOnClickListener(this)
         activateCreditCard?.setOnClickListener(this)
         scheduleOrManageCreditCardDelivery?.setOnClickListener(this)
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
@@ -225,6 +229,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 }
                 R.id.viewPaymentOptions -> {
                     mCardPresenterImpl?.navigateToPaymentOptionActivity()
+                }
+                R.id.setUpPaymentPlanOptions -> {
+                    openSetupPaymentPlanPage()
                 }
                 R.id.activateCreditCard -> {
                     if (Utils.isCreditCardActivationEndpointAvailable())
@@ -588,6 +595,32 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         creditCardActivationView?.visibility = VISIBLE
         scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
         tvScheduleOrMangeDelivery?.text = bindString(R.string.schedule_your_delivery)
+    }
+
+    fun showSetUpPaymentPlanButton(state: ApplyNowState) {
+        setUpPaymentPlanGroup?.visibility = VISIBLE
+        this.state = state
+    }
+
+    private fun openSetupPaymentPlanPage() {
+        when(state){
+            ApplyNowState.PERSONAL_LOAN -> {
+                when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
+                    AvailableFundFragment.NATIVE_BROWSER ->
+                        KotlinUtils.openUrlInPhoneBrowser(
+                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.personalLoan?.collectionsUrl, activity)
+
+                    else ->
+                        KotlinUtils.openLinkInInternalWebView(activity,
+                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.personalLoan?.collectionsUrl,
+                            true,
+                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.personalLoan?.exitUrl)
+                }
+            }
+            else -> {
+                //do nothing
+            }
+        }
     }
 }
 

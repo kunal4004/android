@@ -114,7 +114,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-    private fun makeEligibilityCall(state: ApplyNowState){
+    private fun checkEligibility(state: ApplyNowState){
         OneAppService.getEligibilityForTakeUpPlan()
             .enqueue(CompletionHandler(object : IResponseListener<EligibilityTakeUpPlanResponse> {
                 override fun onSuccess(response: EligibilityTakeUpPlanResponse?) {
@@ -133,14 +133,17 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                     productTakeUpPlan -> productTakeUpPlan.productGroupCode == ProductGroupCode.SC }
                         }
                         if(plan != null){
-                            if(!plan.hasPlan && plan.isEligible){
-                                //For personal loan
-                                    if(state === ApplyNowState.PERSONAL_LOAN){
-                                        mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)!!
-                                    }
+                            if(state === ApplyNowState.PERSONAL_LOAN){
+                                if(!plan.hasPlan && plan.isEligible){
+                                    //For personal loan
+                                    mainView?.showSetUpPaymentPlanButton(state)
+                                    mainView?.showViewTreatmentPlan(
+                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)!!
                                 }
-                            else if(plan.hasPlan){
-                                mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
+                                else if(plan.hasPlan){
+                                    mainView?.showViewTreatmentPlan(
+                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
+                                }
                             }
                         }
                     }
@@ -198,7 +201,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 !productOfferingGoodStanding && supported &&
                         delinquencyCycle>=minimumDelinquencyCycle -> {
                     if(state == ApplyNowState.PERSONAL_LOAN){
-                        makeEligibilityCall(state)
+                        checkEligibility(state)
                     }else{
                         if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
                             if(!isCreditCard){
