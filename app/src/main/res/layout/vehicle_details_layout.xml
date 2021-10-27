@@ -58,7 +58,7 @@
                 android:paddingTop="@dimen/six_dp"
                 android:paddingEnd="@dimen/sixteen_dp"
                 android:paddingBottom="@dimen/six_dp"
-                android:text="@string/taxi_text"
+                android:text="@string/e_hailing_text"
                 android:textColor="@color/checkout_delivering_title"
                 android:textSize="@dimen/fourteen_sp" />
         </LinearLayout>

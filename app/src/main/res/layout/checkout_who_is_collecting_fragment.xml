@@ -31,6 +31,20 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/savedCollectionPersonsRecyclerView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/eighteen_dp"
+                android:background="@color/white"
+                android:scrollbars="vertical"
+                android:visibility="gone"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintBottom_toTopOf="@+id/collectingPartition"
+                app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+                app:layout_constraintStart_toEndOf="@+id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/whoIsCollectingDetailsLayout" />
+
             <View
                 android:id="@+id/collectingPartition"
                 android:layout_width="match_parent"
@@ -39,7 +53,7 @@
                 android:background="@color/color_D8D8D8"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/whoIsCollectingDetailsLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/savedCollectionPersonsRecyclerView" />
 
             <include
                 android:id="@+id/vehiclesDetailsLayout"

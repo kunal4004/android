@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import kotlinx.android.synthetic.main.vehicle_details_layout.*
@@ -40,10 +41,10 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment() 
             afterTextChanged {
                 val length = it.length
                 if (length > 0 && !Pattern.matches(REGEX_VEHICLE_TEXT, it)) {
-                    text?.delete(length - 1, length)
-                }
-                /*if (it.isNotEmpty())
-                    showErrorInputField(this, View.GONE)*/
+                    recipientNameErrorMsg.text = bindString(R.string.special_char_name_error_text)
+                    showErrorInputField(this, View.VISIBLE)
+                } else
+                    showErrorInputField(this, View.GONE)
             }
         }
 
@@ -78,6 +79,16 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment() 
                 /*if (it.isNotEmpty())
                     showErrorInputField(this, View.GONE)*/
             }
+        }
+    }
+
+    private fun showErrorInputField(editText: EditText, visible: Int) {
+        editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
+        when (editText.id) {
+            R.id.recipientNameEditText -> {
+                recipientNameErrorMsg.visibility = visible
+            }
+
         }
     }
 }
