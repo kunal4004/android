@@ -43,7 +43,7 @@ interface ProductDetailsContract {
         fun clearStockAvailability()
         fun shareProduct()
         fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData)
-        fun onGetRatingNReviewFailed(response: Response, httpCode: Int)
+        fun onGetRatingNReviewFailed(response: za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Response, httpCode: Int)
     }
 
     interface ProductDetailsPresenter {

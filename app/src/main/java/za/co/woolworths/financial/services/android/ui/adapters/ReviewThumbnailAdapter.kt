@@ -10,17 +10,17 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Thumbnails
-import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
+import kotlinx.android.synthetic.main.review_thumbnail_row_item.view.*
+import za.co.woolworths.financial.services.android.models.dto.Thumbnail
 
 class ReviewThumbnailAdapter(var context: Context, var thumbnailClickListener: ThumbnailClickListener) : RecyclerView.Adapter<ReviewThumbnailAdapter.ViewHolder>() {
     interface ThumbnailClickListener {
         fun thumbnailClicked()
     }
-    private val defaultThumbnailDisplayed =3
-    var dataList = emptyList<Thumbnails>()
+    val defaultThumbnailDisplyed =3
+    var dataList = emptyList<Thumbnail>()
 
-    internal fun setDataList(dataList: List<Thumbnails>) {
+    internal fun setDataList(dataList: List<Thumbnail>) {
         this.dataList = dataList
     }
 
@@ -37,11 +37,11 @@ class ReviewThumbnailAdapter(var context: Context, var thumbnailClickListener: T
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = dataList[position]
-        setPicture(holder.image,data.url)
-        if (position == (defaultThumbnailDisplayed-1) && itemCount==defaultThumbnailDisplayed)
+        holder.image.setImageResource(data.url)
+        if (position == (defaultThumbnailDisplyed-1) && itemCount==defaultThumbnailDisplyed)
             holder.flShowMore.visibility = VISIBLE
         holder.image.setOnClickListener(View.OnClickListener {
-            if (position == (defaultThumbnailDisplayed-1)) {
+            if (position == (defaultThumbnailDisplyed-1)) {
                 holder.flShowMore.visibility = GONE
                 thumbnailClickListener.thumbnailClicked()
             }
