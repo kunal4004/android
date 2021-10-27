@@ -53,9 +53,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         setSupportActionBar(mToolbar)
         setUpFirebaseconfig()
 
-        /*
-        * need to add condition here when we need to decide  UI.
-        *  */
         if(startupViewModel.isConnectedToInternet(this)) {
             fetchFirebaseConfigData()
         } else {

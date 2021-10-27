@@ -39,7 +39,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +48,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
-import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.AccountOptions;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
