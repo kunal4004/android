@@ -102,6 +102,7 @@ import androidx.core.content.FileProvider
 import za.co.woolworths.financial.services.android.ui.vto.presentation.VtoApplyEffectOnImageViewModel
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResultContract
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import java.io.File
 
 
@@ -1528,7 +1529,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetails?.promotionImages?.virtualTryOn?.let {
             showVTOTryItOn()
             showVtoTryItOnHint()
-           // vtoApplyEffectOnImageViewModel.setApplier()
         }
     }
 
@@ -2071,10 +2071,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private val requestSinglePermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-
                 if (liveCamera) {
-
-
+                     // open live camera
                 } else {
                     openDefaultCamera()
                 }
@@ -2164,7 +2162,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun takePhotoFirstTimeLightingTips() {
         viewLifecycleOwner.lifecycleScope.launch {
-            delay(1000L)
+            delay(DELAY_1000_MS)
             try {
                 dataPrefViewModel.isLightingTipsTakePhoto.observe(
                     viewLifecycleOwner,
@@ -2187,7 +2185,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun filesFirstTimeLightingTips() {
         viewLifecycleOwner.lifecycleScope.launch {
-            delay(1000L)
+            delay(DELAY_1000_MS)
             try {
                 dataPrefViewModel.isLightingTipsFiles.observe(
                     viewLifecycleOwner,
@@ -2209,7 +2207,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun galleryFirstTimeLightingTips() {
         viewLifecycleOwner.lifecycleScope.launch {
-            delay(1000L)
+            delay(DELAY_1000_MS)
             try {
                 if (observeFirstTime) {
                     dataPrefViewModel.isLightingTipsGallery.observe(

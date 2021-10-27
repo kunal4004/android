@@ -40,6 +40,8 @@
         android:clipToPadding="false"
         android:orientation="vertical">
 
+<!--        found duplicate here-->
+
 <!--        <include-->
 <!--            android:id="@+id/recentSearchLayout"-->
 <!--            layout="@layout/recent_serachs_layout"-->

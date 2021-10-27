@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
 
     var productDetailsFragmentNew: ProductDetailsFragment? = null
-     var walkThroughPromtView: WMaterialShowcaseView? = null
+    var walkThroughPromtView: WMaterialShowcaseView? = null
     var flContentFrame: FrameLayout? = null
 
     companion object {
@@ -56,9 +56,11 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
     }
 
     override fun onBackPressed() {
-        if (walkThroughPromtView != null && !walkThroughPromtView!!.isDismissed) {
-            walkThroughPromtView!!.hide()
-            return
+        walkThroughPromtView?.apply {
+            if (!isDismissed) {
+                hide()
+                return
+            }
         }
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

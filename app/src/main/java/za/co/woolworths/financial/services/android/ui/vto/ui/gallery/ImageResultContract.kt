@@ -26,7 +26,7 @@ class ImageResultContract : ActivityResultContract<Uri, Uri>() {
                         dataSize = fileInputStream.available()
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+
                 }
             } else if (scheme == ContentResolver.SCHEME_FILE) {
                 val path = uri.path
@@ -34,7 +34,7 @@ class ImageResultContract : ActivityResultContract<Uri, Uri>() {
                 try {
                     file = File(path)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+
                 }
                 if (file != null) {
                     dataSize = file.length().toInt()

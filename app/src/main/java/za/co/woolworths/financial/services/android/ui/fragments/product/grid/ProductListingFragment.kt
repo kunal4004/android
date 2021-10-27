@@ -8,7 +8,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -177,11 +176,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    private fun showVTOBanner() {
+    private fun showVtoBanner() {
         //TODO: need set vto banner with flag condition
-        if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals("Virtual Try On")
-            || mSubCategoryName.equals("Lips")
-        ) {
+        if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals("Virtual Try On")) {
             vtoTryItOnBanner.visibility = View.VISIBLE
         }
     }
@@ -260,7 +257,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
-        showVTOBanner()
+        showVtoBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
             

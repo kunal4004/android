@@ -54,15 +54,11 @@ class ComparisonView : View {
     }
 
     private fun enableComparisonMode(isEnabled: Boolean) {
-        if (makeupCam != null) {
-            makeupCam!!.enableComparison(isEnabled)
-        }
+        makeupCam?.enableComparison(isEnabled)
     }
 
     private fun setComparisonPosition(@FloatRange(from = 0.0, to = 1.0) position: Float) {
-        if (makeupCam != null) {
-            makeupCam!!.setComparisonPosition(position)
-        }
+        makeupCam?.enableComparison(isEnabled)
     }
 
     fun enterComparisonMode() {

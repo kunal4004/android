@@ -10,6 +10,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResult
 import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResultContract.Companion.SEND_URI
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import android.view.WindowManager
+import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -30,7 +31,7 @@ class BrowseFullScreenImageActivity : AppCompatActivity() {
         uri = intent.getParcelableExtra(SEND_URI)!!
         binding.pickedImage.setImageURI(uri)
         val size = ImageResultContract.getImageSizeFromUriInMegaByte(this,uri)
-        binding.txtSize.text = "Actual Size ($size MB)"
+        binding.txtSize.text = getString(R.string.actual_size) +"($size MB)"
         binding.chooseImage.setOnClickListener {
 
             if (size > 100) {
@@ -57,10 +58,9 @@ class BrowseFullScreenImageActivity : AppCompatActivity() {
             uri=result
             binding.pickedImage.setImageURI(result)
             val size = ImageResultContract.getImageSizeFromUriInMegaByte(this,uri)
-            binding.txtSize.text = "Actual Size ($size MB)"
+            binding.txtSize.text = getString(R.string.actual_size) +"($size MB)"
         }
 
     }
-
 
 }
