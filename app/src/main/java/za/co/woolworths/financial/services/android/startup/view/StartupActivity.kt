@@ -73,7 +73,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun setUpFirebaseconfig() {
         val firebaseRemoteConfig = FirebaseConfigUtils.getFirebaseRemoteConfigInstance();
-        val configBuilder = FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(7200)
+        val configBuilder = FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(AppConstant.TIME_INTERVAL)
         val defaultJsonString = FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
         val defaultValues = mutableMapOf( FirebaseConfigUtils.CONFIG_KEY to defaultJsonString)
         firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build())
@@ -164,10 +164,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 else
                     txt_desc?.text = inActiveConfiguration.description
 
-                if (imageUrl.isEmpty())
+                if (imageUrl.isNullOrEmpty())
                     img_view?.visibility = View.GONE
                 else
-                    ImageManager.setPicture(img_view, inActiveConfiguration.imageUrl)
+                    ImageManager.setPicture(img_view, imageUrl)
 
                 if (firstButton.title.isEmpty())
                     first_btn.visibility = View.GONE

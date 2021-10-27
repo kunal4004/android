@@ -46,6 +46,7 @@ class AppConstant {
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
 
         const val EMPTY_STRING = ""
+        const val TIME_INTERVAL:Long = 7200
 
     }
 
