@@ -99,7 +99,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     val jsonString = FirebaseConfigUtils.getJsonDataFromAsset(
                             this, FirebaseConfigUtils.FILE_NAME)
                     if (jsonString == null) {
-                        // show error response
+                        onStartInit()
                     } else {
                         val configData:ConfigData = Gson().fromJson(jsonString, ConfigData::class.java)
                         setDataOnUI(configData)
