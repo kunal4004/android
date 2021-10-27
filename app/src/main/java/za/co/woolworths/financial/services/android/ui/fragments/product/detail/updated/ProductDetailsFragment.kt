@@ -679,7 +679,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvReviewPostedOn.text = syndicatedSource
                 tvDate.text = submissionTime
                 setReviewAdditionalFields(additionalFields)
-                setSecondaryRatingsUI1(secondaryRatings)
+                setSecondaryRatingsUI(secondaryRatings)
                 setReviewThumbnailUI(photos.thumbnails)
             }
         }
@@ -697,92 +697,38 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             rootView.orientation = LinearLayout.HORIZONTAL
 
-            val tv1 = TextView(context)
-            tv1.alpha = 0.5F
-            val tv2 = TextView(context)
-            tv2.alpha = 0.5F
+            val tvAdditionalFieldLabel = TextView(context)
+            tvAdditionalFieldLabel.alpha = 0.5F
+            val tvAdditionalFieldValue = TextView(context)
+            tvAdditionalFieldValue.alpha = 0.5F
             val ivCircle = ImageView(context)
             val tvParam: LinearLayout.LayoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             tvParam.setMargins(25, 0, 0, 8)
-            tv2.layoutParams = tvParam
+            tvAdditionalFieldValue.layoutParams = tvParam
             val ivParam: LinearLayout.LayoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             ivParam.setMargins(25,15,0,0)
             ivCircle.layoutParams = ivParam
             if (Build.VERSION.SDK_INT < 23) {
-                tv1.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
-                tv2.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
+                tvAdditionalFieldLabel.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
+                tvAdditionalFieldValue.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
             } else{
-                tv1.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                tv2.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
+                tvAdditionalFieldLabel.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
+                tvAdditionalFieldValue.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
             }
-            tv1.text = additionalField.label
+            tvAdditionalFieldLabel.text = additionalField.label
             ivCircle.setImageResource(R.drawable.ic_circle)
-            tv2.text = additionalField.valueLabel
+            tvAdditionalFieldValue.text = additionalField.valueLabel
 
-            rootView.addView(tv1)
+            rootView.addView(tvAdditionalFieldLabel)
             rootView.addView(ivCircle)
-            rootView.addView(tv2)
+            rootView.addView(tvAdditionalFieldValue)
             llAdditionalFields.addView(rootView)
         }
     }
 
     private fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>){
-        for (secondaryRating in secondaryRatings){
-            val rootView = LinearLayout(context)
-            rootView.layoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            rootView.orientation = LinearLayout.HORIZONTAL
-
-            val tv1 = TextView(context)
-            val tv2 = TextView(context)
-
-            val tvParam: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            tvParam.setMargins(15, 0, 0, 8)
-            tv2.layoutParams = tvParam
-            if (Build.VERSION.SDK_INT < 23) {
-                tv1.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
-                tv2.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
-            } else{
-                tv1.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                tv2.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
-            }
-            tv1.text = "Product Quality:"
-            tv2.text = "4/5"
-
-            rootView.addView(tv1)
-            rootView.addView(tv2)
-
-            val tv3 = TextView(context)
-            val tv4 = TextView(context)
-
-            val tvParam2: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            tvParam2.setMargins(65, 0, 0, 8)
-            tv3.layoutParams = tvParam2
-            val tvParam3: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            tvParam3.setMargins(15, 0, 0, 8)
-            tv4.layoutParams = tvParam3
-            if (Build.VERSION.SDK_INT < 23) {
-                tv3.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
-                tv4.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
-            } else{
-                tv3.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                tv4.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
-            }
-            tv3.text = "Fit:"
-            tv4.text = "Runs Large"
-
-            rootView.addView(tv3)
-            rootView.addView(tv4)
-            //llSecondaryRatings.addView(rootView)
-        }
-    }
-
-    private fun setSecondaryRatingsUI1(secondaryRatings: List<SecondaryRatings>){
         rvSecondaryRatings.layoutManager = GridLayoutManager(getApplicationContext(),2)
         secondaryRatingAdapter = SecondaryRatingAdapter()
         rvSecondaryRatings.adapter = secondaryRatingAdapter
