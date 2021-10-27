@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 
 data class AdditionalFields (
 
-	@SerializedName("valueLabel") val valueLabel : String,
+	@SerializedName("valueLabel") val valueLabel : Int,
 	@SerializedName("label") val label : String
 )

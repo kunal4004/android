@@ -56,6 +56,9 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.TAG
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
+import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
+import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
+import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -78,9 +81,9 @@ import kotlin.collections.ArrayList
 import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.*
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingAndReviewData
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.ReviewerInfoDetailsActivity
-import za.co.woolworths.financial.services.android.ui.adapters.*
+import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 
 
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
@@ -125,8 +128,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var liquorDialog: Dialog? = null
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private lateinit var  reviewThumbnailAdapter: ReviewThumbnailAdapter
-    private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
-    private  var thumbnailFullList = listOf<Thumbnails>()
+    private var thumbnailList = mutableListOf<Thumbnail>()
 
     companion object {
         const val INDEX_STORE_FINDER = 1
@@ -604,6 +606,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
                 tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+                ratingBar.rating = it.averageRating
+                tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, it.reviewCount, it.reviewCount)
+                tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
+                setReviewUI()
             }else{
                 headerCustomerReview.visibility = View.GONE
                 reviewDetailsInformation.visibility = View.GONE
@@ -652,46 +658,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun setReviewUI(ratingNReviewResponse: RatingReviewResopnse){
-        ratingNReviewResponse.apply {
-            reviewStatistics.apply {
-                ratingBar.rating = averageRating
-                tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, reviewCount, reviewCount)
-                //tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
-                tvRecommend.text = recommendedPercentage
-            }
-            tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-            tvSkinProfile.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-            tvRatingDetails.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-            reviews[0].apply {
-                tvName.text = userNickname
-                if(isVerifiedBuyer)
-                    tvVerifiedBuyer.visibility = View.VISIBLE
-                else
-                    tvVerifiedBuyer.visibility = View.GONE
-                if(isStaffMember)
-                    tvVerifiedStaffMember.visibility = View.VISIBLE
-                else
-                    tvVerifiedStaffMember.visibility = View.GONE
-                ratingBar.rating = rating
-                tvReviewHeading.text = title
-                tvCustomerReview.text = reviewText
-                tvReviewPostedOn.text = syndicatedSource
-                tvDate.text = submissionTime
-                setReviewAdditionalFields(additionalFields)
-                setSecondaryRatingsUI1(secondaryRatings)
-                setReviewThumbnailUI(photos.thumbnails)
-            }
-        }
-
-        tvCustomerReview.setOnClickListener {
-            val intent = Intent(context, ReviewerInfoDetailsActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
-    private fun setReviewAdditionalFields(additionalFields: List<AdditionalFields>){
-        for (additionalField in additionalFields){
+    private fun setReviewUI(){
+        tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+        tvSkinProfile.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+        tvRatingDetails.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+        for (i in 1..1){
             val rootView = LinearLayout(context)
             rootView.layoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -702,6 +673,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val tv2 = TextView(context)
             tv2.alpha = 0.5F
             val ivCircle = ImageView(context)
+            /*val img = requireContext().resources.getDrawable(R.drawable.ic_circle)
+            img.setBounds(20,0,0,0)
+            tv2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle,0,0,0)*/
+
             val tvParam: LinearLayout.LayoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             tvParam.setMargins(25, 0, 0, 8)
@@ -717,19 +692,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tv1.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
                 tv2.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
             }
-            tv1.text = additionalField.label
+            tv1.text = "Size ordered"
             ivCircle.setImageResource(R.drawable.ic_circle)
-            tv2.text = additionalField.valueLabel
+            tv2.text = "Medium"
 
             rootView.addView(tv1)
             rootView.addView(ivCircle)
             rootView.addView(tv2)
             llAdditionalFields.addView(rootView)
+            tvCustomerReview.setOnClickListener {
+                val intent = Intent(context, ReviewerInfoDetailsActivity::class.java)
+                startActivity(intent)
+            }
         }
+        setSecondaryRatingsUI()
     }
 
-    private fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>){
-        for (secondaryRating in secondaryRatings){
+    private fun setSecondaryRatingsUI(){
+        for (i in 1..2 step 2){
             val rootView = LinearLayout(context)
             rootView.layoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -778,31 +758,31 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             rootView.addView(tv3)
             rootView.addView(tv4)
-            //llSecondaryRatings.addView(rootView)
+            llSecondaryRatings.addView(rootView)
         }
+        setReviewThumbnailUI()
     }
 
-    private fun setSecondaryRatingsUI1(secondaryRatings: List<SecondaryRatings>){
-        rvSecondaryRatings.layoutManager = GridLayoutManager(getApplicationContext(),2)
-        secondaryRatingAdapter = SecondaryRatingAdapter()
-        rvSecondaryRatings.adapter = secondaryRatingAdapter
-        secondaryRatingAdapter.setDataList(secondaryRatings)
-    }
-
-    private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>){
+    private fun setReviewThumbnailUI(){
         rvThumbnail.layoutManager = GridLayoutManager(getApplicationContext(),3)
         reviewThumbnailAdapter = ReviewThumbnailAdapter(getApplicationContext(),this)
         rvThumbnail.adapter = reviewThumbnailAdapter
-        thumbnailFullList = thumbnails
-        if(thumbnails.size>2)
-        {
-            reviewThumbnailAdapter.setDataList(thumbnailFullList.subList(0,2))
-        }else
-            reviewThumbnailAdapter.setDataList(thumbnailFullList)
+
+        thumbnailList.clear()
+        thumbnailList.add(Thumbnail(1,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(2,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(3,R.drawable.header_image))
+        reviewThumbnailAdapter.setDataList(thumbnailList)
     }
 
     override fun thumbnailClicked() {
-        reviewThumbnailAdapter.setDataList(thumbnailFullList)
+        thumbnailList.clear()
+        thumbnailList.add(Thumbnail(1,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(2,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(3,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(4,R.drawable.header_image))
+        thumbnailList.add(Thumbnail(5,R.drawable.header_image))
+        reviewThumbnailAdapter.setDataList(thumbnailList)
         reviewThumbnailAdapter.notifyDataSetChanged()
     }
 
@@ -1865,11 +1845,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData) {
-        setReviewUI(ratingNReview.data[0])
+        /*todo set response here */
     }
 
     override fun onGetRatingNReviewFailed(
-        response: Response,
+        response: za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Response,
         httpCode: Int
     ) {
         /*todo set error response here */

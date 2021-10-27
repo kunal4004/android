@@ -9,7 +9,7 @@ data class Reviews (
 	@SerializedName("id") val id : Int,
 	@SerializedName("productId") val productId : Int,
 	@SerializedName("syndicatedSource") val syndicatedSource : String,
-	@SerializedName("rating") val rating : Float,
+	@SerializedName("rating") val rating : Int,
 	@SerializedName("isRecommended") val isRecommended : Boolean,
 	@SerializedName("submissionTime") val submissionTime : String,
 	@SerializedName("reviewText") val reviewText : String,

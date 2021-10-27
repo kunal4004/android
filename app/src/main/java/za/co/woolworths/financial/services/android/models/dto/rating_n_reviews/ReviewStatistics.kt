@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ReviewStatistics (
 
-    @SerializedName("averageRating") val averageRating : Float,
+    @SerializedName("averageRating") val averageRating : Double,
     @SerializedName("helpfulVoteCount") val helpfulVoteCount : Int,
     @SerializedName("recommendedCount") val recommendedCount : Int,
     @SerializedName("ratingDistribution") val ratingDistribution : List<RatingDistribution>,
