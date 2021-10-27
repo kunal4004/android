@@ -13,6 +13,7 @@ import java.util.HashMap;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -22,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBo
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.ReviewerInfoDetailsActivity;
 
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
@@ -236,6 +238,22 @@ public class ScreenManager {
 
     public static void presentMain(Activity activity) {
         Intent intent = new Intent(activity, BottomNavigationActivity.class);
+        activity.startActivityForResult(intent, 0);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        activity.finish();
+    }
+
+    public static void presentReviewDetail(Activity activity, Reviews reviews) {
+        Gson gson = new Gson();
+        String reviewData = gson.toJson(reviews);
+        Bundle bundle = new Bundle();
+        bundle.putString(KotlinUtils.REVIEW_DATA, reviewData);
+        naviagteToReviewInfoDetailsActivity(activity, bundle);
+    }
+
+    private static void naviagteToReviewInfoDetailsActivity(Activity activity, Bundle bundle) {
+        Intent intent = new Intent(activity, ReviewerInfoDetailsActivity.class);
+        intent.putExtras(bundle);
         activity.startActivityForResult(intent, 0);
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         activity.finish();

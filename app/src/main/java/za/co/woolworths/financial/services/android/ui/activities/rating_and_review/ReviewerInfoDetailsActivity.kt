@@ -23,10 +23,12 @@ class ReviewerInfoDetailsActivity : AppCompatActivity() {
         toolbar.btn_back.setOnClickListener {
             super.onBackPressed()
         }
-        goToReviewDetailsFragment()
+        if (intent.extras != null)
+            goToReviewDetailsFragment(intent.extras)
     }
 
-    private fun goToReviewDetailsFragment() {
+    private fun goToReviewDetailsFragment(bundle: Bundle?) {
+        reviewDetailsFragment?.arguments = bundle
         val fragmentManager: FragmentManager = getSupportFragmentManager()
         fragmentManager.beginTransaction()
             .replace(R.id.content_main_frame, reviewDetailsFragment!!, TAG).commit()

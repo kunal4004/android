@@ -74,6 +74,7 @@ class KotlinUtils {
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
+        const val REVIEW_DATA = "reviewData"
 
         fun highlightTextInDesc(
                 context: Context?,

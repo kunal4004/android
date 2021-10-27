@@ -685,9 +685,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         tvCustomerReview.setOnClickListener {
-            val intent = Intent(context, ReviewerInfoDetailsActivity::class.java)
-            startActivity(intent)
+            sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
         }
+    }
+
+    private fun sendReviewDataToReviewDetailScreen(ratingNReviewResponse: RatingReviewResopnse) {
+        ScreenManager.presentReviewDetail(requireActivity(), ratingNReviewResponse.reviews[0])
     }
 
     private fun setReviewAdditionalFields(additionalFields: List<AdditionalFields>){

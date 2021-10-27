@@ -31,7 +31,7 @@ class SecondaryRatingAdapter() : RecyclerView.Adapter<SecondaryRatingAdapter.Vie
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = dataList[position]
         holder.tvSRHeader.text = data.label+":"
-        holder.tvSRValue.text = data.value+"/"+data.valueRange
+        holder.tvSRValue.text = data.value.toString()+"/"+data.valueRange
     }
 
     override fun getItemCount() = dataList.size
