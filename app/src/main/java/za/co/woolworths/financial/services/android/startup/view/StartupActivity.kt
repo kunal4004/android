@@ -55,7 +55,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
         /*
         * need to add condition here when we need to decide  UI.
-        *
         *  */
         if(startupViewModel.isConnectedToInternet(this)) {
             fetchFirebaseConfigData()
@@ -273,7 +272,11 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun navigateToURL() {
-        ScreenManager.presentToPlayStore(this, actionUrl)
+        if(actionUrl.isNullOrEmpty()) {
+           onStartInit()
+        } else {
+            ScreenManager.presentToPlayStore(this, actionUrl)
+        }
     }
 
     fun getConfig() {
