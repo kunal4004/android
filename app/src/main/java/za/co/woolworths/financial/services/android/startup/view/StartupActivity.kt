@@ -45,7 +45,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var deeplinkIntent: Intent
-    private lateinit var actionUrl: String
+    private var actionUrl: String = AppConstant.EMPTY_STRING
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,7 +121,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
         val timeIntervalSince1970 = Calendar.getInstance(TimeZone.getDefault()).timeInMillis
 
-        if (timeIntervalSince1970 < configData?.expiryTime) {
+        if (timeIntervalSince1970 < configData.expiryTime) {
             val actieConfiguration = configData.activeConfiguration
             actionUrl =  configData.activeConfiguration.firstButton.actionUrl
             actieConfiguration.run {
@@ -154,7 +154,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         } else if (timeIntervalSince1970 >= configData.expiryTime){
             //in active configuration
             val inActiveConfiguration = configData.inactiveConfiguration
-            actionUrl =  configData.activeConfiguration.firstButton.actionUrl
+            actionUrl =  configData.inactiveConfiguration.firstButton.actionUrl
 
             inActiveConfiguration.run {
                 if (title.isEmpty())

@@ -45,7 +45,7 @@ class AppConstant {
 
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
 
-        const val WOOLWORTH_URL ="https://play.google.com/store/apps/details?id=com.woolworths&hl=en&gl=US"
+        const val EMPTY_STRING = ""
 
     }
 
