@@ -242,18 +242,8 @@ public class ScreenManager {
         activity.finish();
     }
 
-    public static void presentToPlayStore(Activity activity, String appPackageName) {
-        //String url = AppConstant.PLAY_STORE_URL.concat(appPackageName);
-       // Log.e("URL_IS:", url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("tel://0835562146"));
+    public static void presentToPlayStore(Activity activity, String actionURL) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(actionURL));
         activity.startActivity(intent);
-
-      //  String woolWorthsURl = "https://play.google.com/store/apps/details?id=com.woolworths&hl=en&gl=US";
-
-//        try {
-//            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-//        } catch (android.content.ActivityNotFoundException anfe) {
-//            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-//        }
     }
 }

@@ -45,6 +45,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var deeplinkIntent: Intent
+    private lateinit var actionUrl: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,6 +124,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
         if (timeIntervalSince1970 < configData?.expiryTime) {
             val actieConfiguration = configData.activeConfiguration
+            actionUrl =  configData.activeConfiguration.firstButton.actionUrl
             actieConfiguration.run {
                 if (title.isEmpty())
                     txt_title?.visibility = View.GONE
@@ -153,6 +155,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         } else if (timeIntervalSince1970 >= configData.expiryTime){
             //in active configuration
             val inActiveConfiguration = configData.inactiveConfiguration
+            actionUrl =  configData.activeConfiguration.firstButton.actionUrl
+
             inActiveConfiguration.run {
                 if (title.isEmpty())
                     txt_title?.visibility = View.GONE
@@ -269,7 +273,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun navigateToURL() {
-        ScreenManager.presentToPlayStore(this, application.packageName)
+        ScreenManager.presentToPlayStore(this, actionUrl)
     }
 
     fun getConfig() {
