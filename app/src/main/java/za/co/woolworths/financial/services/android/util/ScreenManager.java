@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -239,5 +240,20 @@ public class ScreenManager {
         activity.startActivityForResult(intent, 0);
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         activity.finish();
+    }
+
+    public static void presentToPlayStore(Activity activity, String appPackageName) {
+        //String url = AppConstant.PLAY_STORE_URL.concat(appPackageName);
+       // Log.e("URL_IS:", url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("tel://0835562146"));
+        activity.startActivity(intent);
+
+      //  String woolWorthsURl = "https://play.google.com/store/apps/details?id=com.woolworths&hl=en&gl=US";
+
+//        try {
+//            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+//        } catch (android.content.ActivityNotFoundException anfe) {
+//            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+//        }
     }
 }

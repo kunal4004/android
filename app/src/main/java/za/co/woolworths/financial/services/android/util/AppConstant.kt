@@ -45,6 +45,8 @@ class AppConstant {
 
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
 
+        const val WOOLWORTH_URL ="https://play.google.com/store/apps/details?id=com.woolworths&hl=en&gl=US"
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }

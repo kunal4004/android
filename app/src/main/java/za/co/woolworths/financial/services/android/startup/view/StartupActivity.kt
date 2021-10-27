@@ -173,6 +173,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     first_btn.visibility = View.GONE
                 else
                     first_btn.text = firstButton.title
+
+                second_btn.visibility = View.GONE
             }
         } else if (configData.expiryTime == -1) {
             // if firebase config fails to fecth then navigate with normal flow
@@ -267,7 +269,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun navigateToURL() {
-
+        ScreenManager.presentToPlayStore(this, application.packageName)
     }
 
     fun getConfig() {
