@@ -46,7 +46,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var deeplinkIntent: Intent
-    private var actionUrl: String = AppConstant.EMPTY_STRING
+    private var actionUrlFirst: String = AppConstant.EMPTY_STRING
+    private var actionUrlSecond: String = AppConstant.EMPTY_STRING
     private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,8 +110,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun setDataOnUI(configData: ConfigData) {
         progress_bar?.visibility = View.GONE
-        first_btn.visibility = View.VISIBLE
-        second_btn.visibility = View.VISIBLE
+        first_btn?.visibility = View.VISIBLE
+        second_btn?.visibility = View.VISIBLE
         first_btn?.setOnClickListener(this)
         second_btn?.setOnClickListener(this)
 
@@ -118,7 +119,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
         if (timeIntervalSince1970 < configData.expiryTime) {
             val actieConfiguration = configData.activeConfiguration
-            actionUrl =  configData.activeConfiguration.firstButton.actionUrl
+            actionUrlFirst =  configData.activeConfiguration?.firstButton?.actionUrl
+            actionUrlSecond =  configData.activeConfiguration?.secondButton?.actionUrl
             actieConfiguration.run {
                 if (title.isEmpty())
                     txt_title?.visibility = View.GONE
@@ -146,10 +148,11 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     second_btn?.text = secondButton.title
             }
 
-        } else if (timeIntervalSince1970 >= configData.expiryTime){
+        } else if (timeIntervalSince1970 >= configData.expiryTime) {
             //in active configuration
             val inActiveConfiguration = configData.inactiveConfiguration
-            actionUrl =  configData.inactiveConfiguration.firstButton.actionUrl
+            actionUrlFirst =  configData.inactiveConfiguration?.firstButton?.actionUrl
+            actionUrlSecond =  configData.inactiveConfiguration?.secondButton?.actionUrl
 
             inActiveConfiguration.run {
                 if (title.isEmpty())
@@ -174,8 +177,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
                 second_btn.visibility = View.GONE
             }
-        } else if (configData.expiryTime == -1) {
-            // if firebase config fails to fecth then navigate with normal flow
+        } else if(configData.expiryTime == -1L){
             onStartInit()
         }
     }
@@ -255,17 +257,25 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         showNonVideoViewWithErrorLayout()
                     }
                 }
-                R.id.first_btn-> navigateToURLOrNonrmalFlow()
-                R.id.second_btn-> navigateToURLOrNonrmalFlow()
+                R.id.first_btn-> handleFirstbuttonClick()
+                R.id.second_btn-> handleSecondbuttClick()
             }
         }
     }
 
-    private fun navigateToURLOrNonrmalFlow(){
-        if(actionUrl.isNullOrEmpty()) {
-          presentNextScreen()
+    private fun handleSecondbuttClick() {
+        if (actionUrlSecond.isNullOrEmpty()) {
+            presentNextScreen()
         } else {
-            ScreenManager.presentToActionView(this, actionUrl)
+            ScreenManager.presentToActionView(this, actionUrlSecond)
+        }
+    }
+
+    private fun handleFirstbuttonClick() {
+        if (actionUrlFirst.isNullOrEmpty()) {
+            presentNextScreen()
+        }  else {
+            ScreenManager.presentToActionView(this, actionUrlFirst)
         }
     }
 
