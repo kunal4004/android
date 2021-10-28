@@ -242,7 +242,7 @@ public class ScreenManager {
         activity.finish();
     }
 
-    public static void presentToPlayStore(Activity activity, String actionURL) {
+    public static void presentToActionView(Activity activity, String actionURL) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(actionURL));
         activity.startActivity(intent);
     }

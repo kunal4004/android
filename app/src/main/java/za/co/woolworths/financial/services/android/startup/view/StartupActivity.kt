@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
@@ -46,19 +47,14 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var deeplinkIntent: Intent
     private var actionUrl: String = AppConstant.EMPTY_STRING
+    private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupViewModel()
         setSupportActionBar(mToolbar)
         setUpFirebaseconfig()
-
-        if(startupViewModel.isConnectedToInternet(this)) {
-            fetchFirebaseConfigData()
-        } else {
-           setContentView(R.layout.activity_startup)
-           onStartInit()
-        }
+        setContentView(R.layout.activity_startup)
 
         window?.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -87,14 +83,15 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             run {
                 if (task.isSuccessful) {
                     //set dynamic ui here
-                    val remoteConfigData = startupViewModel.fetchFirebaseRemoteConifgData()
-                    if (remoteConfigData.isEmpty()) {
-                        setContentView(R.layout.activity_startup)
+                    remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
+                    if (remoteConfigJsonString.isEmpty()) {
+                        //navigate with normal flow
+                        presentNextScreenOrServerMessage()
                     } else {
                         setContentView(R.layout.activity_splash_screen)
-                        setDataOnUI(startupViewModel.parseRemoteconfigData(remoteConfigData))
+                        setDataOnUI(startupViewModel.parseRemoteconfigData(remoteConfigJsonString))
                     }
-                } else {
+                }else {
                     //capture value from local json
                     progress_bar?.visibility = View.GONE
                     val jsonString = FirebaseConfigUtils.getJsonDataFromAsset(
@@ -136,7 +133,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 if (imageUrl.isEmpty())
                     img_view?.visibility = View.GONE
                 else
-                    ImageManager.setPicture(img_view, actieConfiguration.imageUrl)
+                    ImageManager.setPictureWithSplashPlaceHolder(img_view, actieConfiguration.imageUrl)
 
                 if (firstButton.title.isEmpty())
                     first_btn?.visibility = View.GONE
@@ -258,21 +255,17 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         showNonVideoViewWithErrorLayout()
                     }
                 }
-                R.id.first_btn-> navigateToURL()
-                R.id.second_btn-> navigateWithNormalFlow()
+                R.id.first_btn-> navigateToURLOrNonrmalFlow()
+                R.id.second_btn-> navigateToURLOrNonrmalFlow()
             }
         }
     }
 
-    private fun navigateWithNormalFlow() {
-       onStartInit()
-    }
-
-    private fun navigateToURL() {
+    private fun navigateToURLOrNonrmalFlow(){
         if(actionUrl.isNullOrEmpty()) {
-           onStartInit()
+          presentNextScreen()
         } else {
-            ScreenManager.presentToPlayStore(this, actionUrl)
+            ScreenManager.presentToActionView(this, actionUrl)
         }
     }
 
@@ -286,8 +279,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         showNonVideoViewWithErrorLayout()
                         return@observe
                     }
+
                     if (!startupViewModel.isVideoPlaying) {
-                        presentNextScreenOrServerMessage()
+                        if(startupViewModel.isConnectedToInternet(this)) {
+                            fetchFirebaseConfigData()
+                        } else {
+                            showNonVideoViewWithErrorLayout()
+                        }
                     }
                 }
                 ResponseStatus.LOADING -> {
@@ -302,9 +300,11 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     //video player on completion
     override fun onCompletion(mp: MediaPlayer?) {
+        Log.e("onCompletion :", "called")
         startupViewModel.apply {
             isVideoPlaying = false
             if (!videoPlayerShouldPlay) {
+                Log.e("onCompletion_if :", "called")
                 presentNextScreenOrServerMessage()
                 mp?.stop()
             } else {
@@ -404,9 +404,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             )
             return
         }
-        if (startupViewModel.fetchFirebaseRemoteConifgData().isEmpty()) {
-            onStartInit()
-        }
+        onStartInit()
     }
 
     fun onStartInit() {
