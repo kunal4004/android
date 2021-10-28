@@ -56,6 +56,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         if(startupViewModel.isConnectedToInternet(this)) {
             fetchFirebaseConfigData()
         } else {
+           setContentView(R.layout.activity_startup)
            onStartInit()
         }
 
@@ -85,7 +86,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 .fetchAndActivate().addOnCompleteListener { task ->
             run {
                 if (task.isSuccessful) {
-                    //set dynamic ui here .
+                    //set dynamic ui here
                     val remoteConfigData = startupViewModel.fetchFirebaseRemoteConifgData()
                     if (remoteConfigData.isEmpty()) {
                         setContentView(R.layout.activity_startup)
