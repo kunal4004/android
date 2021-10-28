@@ -70,7 +70,6 @@
                 app:layout_constraintStart_toStartOf="@+id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@+id/staffMessage2CheckBox" />
 
-
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/left_guideline"
                 android:layout_width="wrap_content"
