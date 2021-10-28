@@ -28,4 +28,9 @@ public class PromotionImages {
     @SerializedName("reduced")
     @Expose
     public String reduced;
+    @SerializedName("virtualTryOn")
+    @Expose
+    public String virtualTryOn;
+
+
 }

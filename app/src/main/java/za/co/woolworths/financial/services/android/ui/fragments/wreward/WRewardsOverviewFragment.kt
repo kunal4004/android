@@ -334,13 +334,13 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         mScreenBrightnessDelegate?.apply {
             if (!isSettingPermissionAllowedForOneApp()) {
                 requestWriteSettingsFromFragment.launch(
-                        Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
-                            data = Uri.parse("package:" + activity?.packageName)
-                        }
+                    Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+                        data = Uri.parse("package:" + activity?.packageName)
+                    }
                 )
-                return
+            }else {
+                controlBrightness()
             }
-            controlBrightness()
         }
     }
 

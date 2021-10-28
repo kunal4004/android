@@ -41,6 +41,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.perfectcorp.perfectlib.SkuHandler;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +52,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
@@ -68,8 +70,6 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-
-import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
@@ -96,6 +96,8 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
+import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -134,6 +136,7 @@ import static za.co.woolworths.financial.services.android.util.FuseLocationAPISi
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
+@AndroidEntryPoint
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
     public static final int INDEX_TODAY = FragNavController.TAB1;
@@ -225,6 +228,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 .rootFragmentListener(this, 5)
                 .build();
         renderUI();
+        vtoSyncServer();
 
         /***
          * Update bottom navigation view counter
@@ -262,6 +266,50 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         addDrawerFragment();
     }
 
+    private void vtoSyncServer() {
+        SdkUtility.initSdk(this, new PfSDKInitialCallback() {
+            @Override
+            public void onInitialized() {
+                SkuHandler skuHandler = SkuHandler.getInstance();
+                if (skuHandler == null) {
+                    return;
+                }
+
+                skuHandler.checkNeedToUpdate(new SkuHandler.CheckNeedToUpdateCallback() {
+                    @Override
+                    public void onSuccess(boolean needUpdate) {
+                        if (needUpdate) {
+                            skuHandler.syncServer(new SkuHandler.SyncServerCallback() {
+                                @Override
+                                public void progress(double progress) {
+
+                                }
+
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                }
+                            });
+                        }
+                    }
+                    @Override
+                    public void onFailure(Throwable throwable) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
+        });
+    }
+
     private void parseDeepLinkData() {
         if (mBundle == null) {
             return;
@@ -270,7 +318,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (deepLinkData == null) {
             return;
         }
-        appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
+        try
+            {
+                appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
+            }
+            catch(Exception e){
+                mOnNavigationItemSelectedListener.onNavigationItemSelected(
+                        getBottomNavigationById().getMenu().findItem(R.id.navigation_today));
+            }
+
     }
 
     private void queryBadgeCountOnStart() {

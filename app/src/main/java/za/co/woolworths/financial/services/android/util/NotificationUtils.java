@@ -96,7 +96,7 @@ public class NotificationUtils {
         Log.d("FCM", token);
         // sending gcm token to server
         final CreateUpdateDevice device = new CreateUpdateDevice();
-        device.appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().getApplicationContext());
+        device.appInstanceId = Utils.getUniqueDeviceID();
         Utils.setToken(token);
         device.pushNotificationToken = token;
         device.deviceIdentityId = AppInstanceObject.get().getCurrentUserObject().linkedDeviceIdentityId;

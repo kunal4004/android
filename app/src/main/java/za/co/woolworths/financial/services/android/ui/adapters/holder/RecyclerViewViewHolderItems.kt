@@ -125,6 +125,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             ImageManager.setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
+            ImageManager.setPictureWithoutPlaceHolder(imgTryItOn, imPromo?.virtualTryOn ?: "")
         }
     }
 

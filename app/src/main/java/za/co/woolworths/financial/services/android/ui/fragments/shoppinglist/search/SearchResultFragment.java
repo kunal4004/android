@@ -157,14 +157,11 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     @Override
     public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
         if (productLists != null) {
-            if (productLists.size() == 1) {
-                ScreenManager.presentProductDetails(getActivity(), mSearchText, productLists.get(0));
+
+            if (!loadMoreData) {
+                bindRecyclerViewWithUI(productLists);
             } else {
-                if (!loadMoreData) {
-                    bindRecyclerViewWithUI(productLists);
-                } else {
-                    loadMoreData(productLists);
-                }
+                loadMoreData(productLists);
             }
         }
     }
@@ -216,7 +213,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
             productList.add(0, headerProduct);
         }
 
-        mProductAdapter = new SearchResultShopAdapter(mProductList, this);
+        mProductAdapter = new SearchResultShopAdapter(getActivity(),mProductList, this);
         mRecyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         rclProductList.setLayoutManager(mRecyclerViewLayoutManager);
         rclProductList.setNestedScrollingEnabled(false);

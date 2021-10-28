@@ -17,6 +17,6 @@ class GiftWithPurchaseDialogDetailFragment : WBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        gotITButton?.setOnClickListener { dismiss() }
+        gotItButton?.setOnClickListener { dismiss() }
     }
 }

@@ -63,7 +63,7 @@ class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         tvTitle?.text = mTitle
         tvDescription?.text = mDescription
-        gotITButton?.setOnClickListener {
+        gotItButton?.setOnClickListener {
             dismiss()
         }
     }

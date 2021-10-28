@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import dagger.hilt.android.HiltAndroidApp;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
@@ -83,6 +84,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
 
+@HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
     private static Context context;
@@ -148,6 +150,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static ProductDetailsPage productDetailsPage;
 
     private static CreditView creditView;
+    private static NativeCheckout nativeCheckout;
     private DashConfig dashConfig;
     private CreditLimitIncrease creditLimitIncrease;
     private static boolean isBadgesRequired;
@@ -671,6 +674,15 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static void setCreditView(CreditView creditView) {
         WoolworthsApplication.creditView = creditView;
+    }
+
+    @Nullable
+    public static NativeCheckout getNativeCheckout() {
+        return nativeCheckout;
+    }
+
+    public static void setNativeCheckout(NativeCheckout nativeCheckout) {
+        WoolworthsApplication.nativeCheckout = nativeCheckout;
     }
 
     public void setDashConfig(DashConfig dashConfig) {
