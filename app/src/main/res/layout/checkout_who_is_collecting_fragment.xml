@@ -9,7 +9,7 @@
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/newUserNestedScrollView"
+        android:id="@+id/collectionDetailsNestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/ten_dp"

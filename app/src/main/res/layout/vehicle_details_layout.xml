@@ -18,11 +18,12 @@
 
     <HorizontalScrollView
         android:id="@+id/scrollView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginTop="@dimen/twenty_dp"
+        android:background="@color/white"
         android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vehiclesDetailsTitle">
 
@@ -30,9 +31,8 @@
             android:id="@+id/vehicleTypeLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/twenty_dp"
-            android:paddingEnd="@dimen/twelve_dp">
+            android:background="@color/white"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/myVehicleText"
@@ -81,8 +81,8 @@
         android:id="@+id/vehicleColourEditText"
         style="@style/checkout_edittext_style"
         android:layout_width="0dp"
-        android:maxLength="@integer/twenty"
         android:inputType="textEmailAddress"
+        android:maxLength="@integer/twenty"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/vehicleColourPlaceHolder" />
@@ -163,13 +163,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/right_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+        app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

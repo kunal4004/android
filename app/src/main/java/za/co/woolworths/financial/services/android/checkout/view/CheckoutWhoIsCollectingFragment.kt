@@ -1,12 +1,15 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
+import kotlinx.android.synthetic.main.checkout_who_is_collecting_fragment.*
 import kotlinx.android.synthetic.main.vehicle_details_layout.*
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -15,7 +18,10 @@ import java.util.regex.Pattern
 /**
  * Created by Kunal Uttarwar on 26/10/21.
  */
-class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment() {
+class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
+    View.OnClickListener {
+
+    private lateinit var listOfInputFields: List<View>
 
     companion object {
         const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
@@ -34,8 +40,39 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment() 
         initView()
     }
 
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.confirmDetails -> {
+                checkValidationsAndConfirm()
+            }
+        }
+    }
+
+    private fun checkValidationsAndConfirm() {
+        if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
+            && cellphoneNumberEditText?.text.toString().trim().length < 10
+        ) {
+            showErrorPhoneNumber()
+        }
+
+        if (recipientNameEditText?.text.toString().trim()
+                .isNotEmpty() && vehicleColourEditText?.text.toString().trim()
+                .isNotEmpty() && vehicleModelEditText?.text.toString().trim().isNotEmpty()
+        ) {
+
+        } else {
+            listOfInputFields.forEach {
+                if (it is EditText) {
+                    if (it.text.toString().trim().isEmpty())
+                        showErrorInputField(it, View.VISIBLE)
+                }
+            }
+        }
+    }
+
     private fun initView() {
         recipientDetailsTitle.text = bindString(R.string.who_is_collecting)
+        confirmDetails?.setOnClickListener(this)
 
         recipientNameEditText?.apply {
             afterTextChanged {
@@ -43,7 +80,17 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment() 
                 if (length > 0 && !Pattern.matches(REGEX_VEHICLE_TEXT, it)) {
                     recipientNameErrorMsg.text = bindString(R.string.special_char_name_error_text)
                     showErrorInputField(this, View.VISIBLE)
+                } else if (length == 0) {
+                    recipientNameErrorMsg.text = bindString(R.string.recipient_name_error_msg)
+                    showErrorInputField(this, View.VISIBLE)
                 } else
+                    showErrorInputField(this, View.GONE)
+            }
+        }
+
+        cellphoneNumberEditText?.apply {
+            afterTextChanged {
+                if (it.isNotEmpty())
                     showErrorInputField(this, View.GONE)
             }
         }
@@ -53,9 +100,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment() 
                 val length = it.length
                 if (length > 0 && !Pattern.matches(REGEX_VEHICLE_TEXT, it)) {
                     text?.delete(length - 1, length)
-                }
-                /*if (it.isNotEmpty())
-                    showErrorInputField(this, View.GONE)*/
+                } else
+                    showErrorInputField(this, View.GONE)
             }
         }
 
@@ -64,9 +110,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment() 
                 val length = it.length
                 if (length > 0 && !Pattern.matches(REGEX_VEHICLE_TEXT, it)) {
                     text?.delete(length - 1, length)
-                }
-                /*if (it.isNotEmpty())
-                    showErrorInputField(this, View.GONE)*/
+                } else
+                    showErrorInputField(this, View.GONE)
             }
         }
 
@@ -75,20 +120,61 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment() 
                 val length = it.length
                 if (length > 0 && !Pattern.matches(REGEX_VEHICLE_TEXT, it)) {
                     text?.delete(length - 1, length)
-                }
-                /*if (it.isNotEmpty())
-                    showErrorInputField(this, View.GONE)*/
+                } else
+                    showErrorInputField(this, View.GONE)
             }
         }
+
+        listOfInputFields = listOf(
+            recipientNameEditText,
+            cellphoneNumberEditText,
+            vehicleColourEditText,
+            vehicleModelEditText
+        )
     }
 
     private fun showErrorInputField(editText: EditText, visible: Int) {
         editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
         when (editText.id) {
             R.id.recipientNameEditText -> {
-                recipientNameErrorMsg.visibility = visible
+                showAnimationErrorMessage(recipientNameErrorMsg, visible, 0)
             }
+            R.id.cellphoneNumberEditText -> {
+                showAnimationErrorMessage(cellphoneNumberErrorMsg, visible, 0)
+            }
+            R.id.vehicleColourEditText -> {
+                showAnimationErrorMessage(vehicleColourErrorMsg, visible, 0)
+            }
+            R.id.vehicleModelEditText -> {
+                showAnimationErrorMessage(vehicleModelErrorMsg, visible, 0)
+            }
+        }
+    }
 
+    private fun showErrorPhoneNumber() {
+        cellphoneNumberEditText.setBackgroundResource(R.drawable.input_error_background)
+        cellphoneNumberErrorMsg?.visibility = View.VISIBLE
+        cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
+        showAnimationErrorMessage(
+            cellphoneNumberErrorMsg,
+            View.VISIBLE,
+            whoIsCollectingDetailsLayout.y.toInt()
+        )
+    }
+
+    private fun showAnimationErrorMessage(
+        textView: TextView,
+        visible: Int,
+        recipientLayoutValue: Int
+    ) {
+        textView?.visibility = visible
+        if (View.VISIBLE == visible) {
+            val anim = ObjectAnimator.ofInt(
+                collectionDetailsNestedScrollView,
+                "scrollY",
+                recipientLayoutValue + textView.y.toInt()
+            )
+            anim.setDuration(300).start()
         }
     }
 }
