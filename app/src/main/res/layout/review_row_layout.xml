@@ -8,14 +8,12 @@
     android:paddingLeft="@dimen/sixteen_dp"
     android:paddingRight="@dimen/sixteen_dp">
 
-
     <TextView
         android:id="@+id/tvName"
         style="@style/myriad_pro_semi_bold_black_15_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:text="Amelia"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,7 +22,7 @@
         style="@style/futura_medium_black_12_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
         android:alpha="0.5"
         android:text="@string/view_skin_profile"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,26 +33,26 @@
         style="@style/myriad_pro_semi_bold_49BB77_15_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
         android:drawableLeft="@drawable/ic_verified_buyer"
         android:drawablePadding="@dimen/eight_dp"
         android:text="@string/verified_buyer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvName"
-        tools:layout_editor_absoluteX="0dp" />
+        tools:layout_editor_absoluteX="@dimen/zero_dp" />
 
     <TextView
         android:id="@+id/tvVerifiedStaffMember"
         style="@style/myriad_pro_semi_bold_777777_15_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/nine_dp"
         android:drawableLeft="@drawable/verified_icon"
         android:drawablePadding="@dimen/eight_dp"
         android:text="@string/verified_staff_member"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvVerifiedBuyer"
-        tools:layout_editor_absoluteX="0dp"
-        android:layout_marginTop="@dimen/nine_dp"/>
+        tools:layout_editor_absoluteX="@dimen/zero_dp" />
 
     <View
         android:id="@+id/view1"
@@ -84,7 +82,6 @@
         android:layout_marginTop="@dimen/nineteen_dp"
         android:alpha="0.5"
         android:gravity="center_vertical"
-        android:text="18 Sep 2020"
         android:textAllCaps="true"
         android:textSize="@dimen/text_size_12sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -96,22 +93,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/ten_dp"
-        android:text="Perfect for my skin!"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+
     <TextView
         android:id="@+id/tvCustomerReview"
         style="@style/myriad_pro_regular_black_15_text_style"
-        android:alpha="0.5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/seven_dp"
-        android:text="My skin feels more hydrated and no longer itching. This product is gentle on my sensitive skin labore et dolore magna aliqua."
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvReviewHeading"
-        android:maxLines="3"
+        android:alpha="0.5"
         android:ellipsize="end"
-        />
+        android:maxLines="3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvReviewHeading" />
 
     <TextView
         android:id="@+id/tvReviewPostedOn"
@@ -119,12 +114,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:text="Review originally posted on brandsite.com"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCustomerReview"
-        android:maxLines="3"
         android:ellipsize="end"
-        />
+        android:maxLines="3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCustomerReview" />
+
     <View
         android:id="@+id/view2"
         android:layout_width="match_parent"
@@ -132,40 +126,43 @@
         android:layout_marginTop="@dimen/sixteen_dp"
         android:background="@color/layout_background_gray"
         app:layout_constraintTop_toBottomOf="@+id/tvReviewPostedOn" />
+
     <LinearLayout
         android:id="@+id/llAdditionalFields"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_marginTop="@dimen/sixteen_dp"
-        app:layout_constraintTop_toBottomOf="@+id/view2"
-        app:layout_constraintStart_toStartOf="parent"/>
-    <LinearLayout
-        android:id="@+id/llSecondaryRatings"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSecondaryRatings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/twelve_dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llAdditionalFields"
-        app:layout_constraintStart_toStartOf="parent"/>
+        tools:itemCount="1"
+        tools:listitem="@layout/review_secondary_rating_row_item_layout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvThumbnail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:itemCount="1"
         android:layout_marginTop="@dimen/twelve_dp"
-        tools:listitem="@layout/review_thumbnail_row_item"
-        app:layout_constraintTop_toBottomOf="@+id/llSecondaryRatings"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvSecondaryRatings"
+        tools:itemCount="1"
+        tools:listitem="@layout/review_thumbnail_row_item" />
 
     <include
         android:id="@+id/reviewHelpfulReport"
+        layout="@layout/review_helpful_and_report_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/review_helpful_and_report_layout"
-        app:layout_constraintTop_toBottomOf="@+id/rvThumbnail"
+        android:layout_marginTop="@dimen/twenty_two_dp"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="@dimen/twenty_two_dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/rvThumbnail" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
