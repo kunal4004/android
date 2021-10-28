@@ -157,7 +157,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 Utils.truncateMaxLine(productHolder.tvTitle);
                 productHolder.quantity.setText((commerceItemInfo == null) ? "" : String.valueOf(commerceItemInfo.getQuantity()));
                 productHolder.price.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(commerceItem.getPriceInfo().getAmount()));
-                String productImageUrl = (productImageUrl((commerceItemInfo == null) ? "" : commerceItemInfo.externalImageRefV2));
+                String productImageUrl = (commerceItemInfo == null) ? "" : commerceItemInfo.externalImageRefV2;
                 ImageManager.Companion.setPicture(productHolder.productImage, productImageUrl);
                 productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
                 productHolder.rlDeleteButton.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
@@ -254,7 +254,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 final CommerceItem giftCommerceItem = itemRow.commerceItem;
                 if (giftCommerceItem == null) return;
                 CommerceItemInfo giftCommerceItemInfo = giftCommerceItem.commerceItemInfo;
-                String imageUrl = productImageUrl((giftCommerceItemInfo == null) ? "" : giftCommerceItemInfo.externalImageRefV2);
+                String imageUrl = (giftCommerceItemInfo == null) ? "" : giftCommerceItemInfo.externalImageRefV2;
                 ImageManager.Companion.setPicture(giftProductHolder.giftItemImageView, imageUrl);
                 giftProductHolder.productNameTextView.setText(giftCommerceItemInfo.getProductDisplayName());
                 Utils.truncateMaxLine(giftProductHolder.productNameTextView);
@@ -657,15 +657,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         }
     }
 
-    private String productImageUrl(String imgUrl) {
-        try {
-            String url = imgUrl;
-            //TODO:: get domain name dynamically
-            return url;
-        } catch (IllegalArgumentException ex) {
-            return imgUrl;
-        }
-    }
 
     public void notifyAdapter(ArrayList<CartItemGroup> cartItems,
                               OrderSummary orderSummary, VoucherDetails voucherDetails) {

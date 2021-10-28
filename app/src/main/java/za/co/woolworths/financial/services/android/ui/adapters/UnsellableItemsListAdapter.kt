@@ -36,8 +36,7 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
             itemView.price.text = commerceItem.price.amount.let { CurrencyFormatter.formatAmountToRandAndCentWithSpace(it) }
             itemView.rlDeleteButton.visibility = View.GONE
             itemView.rlDelete.visibility = View.GONE
-            setProductImage(itemView.cartProductImage, commerceItem.externalImageRefV2
-                    ?: "")
+            itemView.cartProductImage.setImageURI(commerceItem.externalImageRefV2 ?: "")
             if (commerceItem.price.getDiscountedAmount() > 0) {
                 itemView.promotionalText.text = " ${CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.price.getDiscountedAmount())}"
                 itemView.promotionalTextLayout.visibility = View.VISIBLE
@@ -59,13 +58,6 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
                     itemView.tvSize.visibility = View.VISIBLE
                 }
             }
-
-        }
-
-        private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
-            //TODO:: get domain name dynamically
-            image.setImageURI(imgUrl);
         }
     }
-
 }
