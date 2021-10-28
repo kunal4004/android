@@ -663,24 +663,26 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
             tvSkinProfile.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
             tvRatingDetails.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-            reviews[0].apply {
-                tvName.text = userNickname
-                if(isVerifiedBuyer)
-                    tvVerifiedBuyer.visibility = View.VISIBLE
-                else
-                    tvVerifiedBuyer.visibility = View.GONE
-                if(isStaffMember)
-                    tvVerifiedStaffMember.visibility = View.VISIBLE
-                else
-                    tvVerifiedStaffMember.visibility = View.GONE
-                ratingBar.rating = rating
-                tvReviewHeading.text = title
-                tvCustomerReview.text = reviewText
-                tvReviewPostedOn.text = syndicatedSource
-                tvDate.text = submissionTime
-                setReviewAdditionalFields(additionalFields)
-                setSecondaryRatingsUI(secondaryRatings)
-                setReviewThumbnailUI(photos.thumbnails)
+            if(reviews.isNotEmpty()) {
+                reviews[0].apply {
+                    tvName.text = userNickname
+                    if (isVerifiedBuyer)
+                        tvVerifiedBuyer.visibility = View.VISIBLE
+                    else
+                        tvVerifiedBuyer.visibility = View.GONE
+                    if (isStaffMember)
+                        tvVerifiedStaffMember.visibility = View.VISIBLE
+                    else
+                        tvVerifiedStaffMember.visibility = View.GONE
+                    ratingBar.rating = rating
+                    tvReviewHeading.text = title
+                    tvCustomerReview.text = reviewText
+                    tvReviewPostedOn.text = syndicatedSource
+                    tvDate.text = submissionTime
+                    setReviewAdditionalFields(additionalFields)
+                    setSecondaryRatingsUI(secondaryRatings)
+                    setReviewThumbnailUI(photos.thumbnails)
+                }
             }
         }
 
