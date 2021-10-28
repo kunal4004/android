@@ -100,7 +100,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         const val SUBURB_SELECTION_BACK_PRESSED = "5465"
         const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
         const val SCREEN_NAME_ADD_NEW_ADDRESS: String = "SCREEN_NAME_ADD_NEW_ADDRESS"
-        const val REGEX_NICK_NAME: String = "^$|^[a-zA-Z0-9\\s<!>@#$&().+,-/\"']+$"
+        const val REGEX_NICK_NAME: String = "^$|^[a-zA-Z0-9\\s<!>@$&().+,-/\"']+$"
     }
 
     enum class ProvinceSuburbType {
