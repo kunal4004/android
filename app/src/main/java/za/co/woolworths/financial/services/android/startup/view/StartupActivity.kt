@@ -258,12 +258,12 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     }
                 }
                 R.id.first_btn-> handleFirstbuttonClick()
-                R.id.second_btn-> handleSecondbuttClick()
+                R.id.second_btn-> handleSecondbuttonClick()
             }
         }
     }
 
-    private fun handleSecondbuttClick() {
+    private fun handleSecondbuttonClick() {
         if (actionUrlSecond.isNullOrEmpty()) {
             presentNextScreen()
         } else {
@@ -310,11 +310,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     //video player on completion
     override fun onCompletion(mp: MediaPlayer?) {
-        Log.e("onCompletion :", "called")
         startupViewModel.apply {
             isVideoPlaying = false
             if (!videoPlayerShouldPlay) {
-                Log.e("onCompletion_if :", "called")
                 presentNextScreenOrServerMessage()
                 mp?.stop()
             } else {
