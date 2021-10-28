@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import kotlinx.android.synthetic.main.checkout_who_is_collecting_fragment.*
 import kotlinx.android.synthetic.main.vehicle_details_layout.*
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import java.util.regex.Pattern
 
@@ -45,6 +47,46 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             R.id.confirmDetails -> {
                 checkValidationsAndConfirm()
             }
+            R.id.taxiText -> {
+                onTaxiTypeSelected(taxiText)
+            }
+            R.id.myVehicleText -> {
+                onTaxiTypeSelected(myVehicleText)
+            }
+        }
+    }
+
+    private fun onTaxiTypeSelected(taxiType: TextView) {
+        taxiType.background =
+            bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+        taxiType.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.white
+            )
+        )
+        unselectOtherTaxiType(taxiType)
+    }
+
+    private fun onTaxiTypeUnSelected(taxiType: TextView) {
+        taxiType?.background =
+            bindDrawable(R.drawable.checkout_delivering_title_round_button)
+        taxiType?.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.black
+            )
+        )
+    }
+
+    private fun unselectOtherTaxiType(taxiType: TextView) {
+        when (taxiType) {
+            taxiText -> {
+                onTaxiTypeUnSelected(myVehicleText)
+            }
+            myVehicleText -> {
+                onTaxiTypeUnSelected(taxiText)
+            }
         }
     }
 
@@ -73,6 +115,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private fun initView() {
         recipientDetailsTitle.text = bindString(R.string.who_is_collecting)
         confirmDetails?.setOnClickListener(this)
+        myVehicleText?.setOnClickListener(this)
+        taxiText?.setOnClickListener(this)
 
         recipientNameEditText?.apply {
             afterTextChanged {

@@ -40,12 +40,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/eight_dp"
+                android:background="@drawable/checkout_delivering_title_round_button_pressed"
                 android:paddingStart="@dimen/sixteen_dp"
                 android:paddingTop="@dimen/six_dp"
                 android:paddingEnd="@dimen/sixteen_dp"
                 android:paddingBottom="@dimen/six_dp"
                 android:text="@string/my_vehicle_text"
-                android:textColor="@color/checkout_delivering_title"
+                android:textColor="@color/white"
                 android:textSize="@dimen/fourteen_sp" />
 
             <TextView
