@@ -323,7 +323,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
             storeCardData?.apply {
                 if(generateVirtualCard){
-                    if(virtualCardStaffMemberMessage != null){//show staff discount view
+                    if(isStaffMember && virtualCardStaffMemberMessage != null){//show staff discount view
                         flProgressIndicator.visibility = GONE
                         includeVirtualTempCardSuccessStaffMessage.visibility = VISIBLE
                         includeVirtualTempCardSuccessMessage?.visibility = GONE

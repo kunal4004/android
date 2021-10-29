@@ -381,6 +381,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                         mStoreCardsResponse?.apply {
                             if(isUserGotVirtualCard(storeCardsData) &&
                                 storeCardsData != null &&
+                                storeCardsData?.isStaffMember == true &&
                                 storeCardsData?.virtualCardStaffMemberMessage != null){
                                 it.putExtra(HowToUseTemporaryStoreCardActivity.STAFF_DISCOUNT_INFO, storeCardsData?.virtualCardStaffMemberMessage)
                             }
