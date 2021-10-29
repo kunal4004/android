@@ -95,7 +95,6 @@
 
     </androidx.core.widget.NestedScrollView>
 
-
     <Button
         android:id="@+id/okGotItStaffButton"
         style="?android:attr/borderlessButtonStyle"
