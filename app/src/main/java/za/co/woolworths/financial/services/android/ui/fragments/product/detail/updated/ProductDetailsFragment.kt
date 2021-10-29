@@ -685,6 +685,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     setReviewAdditionalFields(additionalFields)
                     setSecondaryRatingsUI(secondaryRatings)
                     setReviewThumbnailUI(photos.thumbnails)
+                    if(contextDataValue.isEmpty()){
+                        tvSkinProfile.visibility = View.GONE
+                    }
+                    reviewStatistics.apply {
+                        if(reviewCount>1)
+                            btViewMoreReview.text = resources.getQuantityString(R.plurals.more_review, (reviewCount-1), (reviewCount-1))
+                        else
+                            btViewMoreReview.visibility = View.GONE
+                    }
                 }
             }else{
                 customerReview.visibility = View.GONE
