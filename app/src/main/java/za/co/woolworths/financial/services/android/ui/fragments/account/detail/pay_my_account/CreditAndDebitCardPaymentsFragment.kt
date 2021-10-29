@@ -135,6 +135,8 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 // Hide debit and credit card payment item  when  ABSA cards is null or empty
                 if (payMyAccountViewModel.getAccount()?.cards?.isEmpty() == true) {
                     incDebitCardButton?.visibility = GONE
+                    easilyPayYourWooliesAccountTextView?.visibility = GONE
+                    payYourWooliesAccountTextView?.visibility = GONE
                     incCreditCardButton?.visibility = GONE
                 }
             }
