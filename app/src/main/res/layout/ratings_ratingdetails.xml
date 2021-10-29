@@ -3,7 +3,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_FFFFFF">
@@ -49,7 +48,6 @@
         android:layout_marginStart="@dimen/twenty_dp"
         android:layout_marginTop="@dimen/twenty_dp"
         android:fontFamily="@font/myriad_pro_regular"
-        android:text="96% Would recommend this product to a friend "
         android:textAlignment="center"
         android:textColor="@color/card_details_value_color"
         android:textSize="@dimen/fifteen_sp"
@@ -95,12 +93,12 @@
         android:max="100"
         android:progress="50"
         android:progressDrawable="@drawable/progress_bar"
-        app:layout_constraintEnd_toStartOf="@+id/star5_3"
+        app:layout_constraintEnd_toStartOf="@+id/tv_5_starRating_count"
         app:layout_constraintStart_toEndOf="@+id/star5"
         app:layout_constraintTop_toBottomOf="@+id/view_1" />
 
     <TextView
-        android:id="@+id/star5_3"
+        android:id="@+id/tv_5_starRating_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
@@ -132,7 +130,7 @@
         app:layout_constraintTop_toBottomOf="@+id/star5" />
 
     <ProgressBar
-        android:id="@+id/preogressbar_4"
+        android:id="@+id/progressbar_4"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="@dimen/five_dp"
@@ -141,12 +139,12 @@
         android:max="100"
         android:progress="20"
         android:progressDrawable="@drawable/progress_bar"
-        app:layout_constraintEnd_toStartOf="@+id/star4_3"
+        app:layout_constraintEnd_toStartOf="@+id/tv_4_starRating_count"
         app:layout_constraintStart_toEndOf="@+id/star4"
         app:layout_constraintTop_toBottomOf="@+id/star5" />
 
     <TextView
-        android:id="@+id/star4_3"
+        android:id="@+id/tv_4_starRating_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
@@ -157,7 +155,7 @@
         android:textColor="@color/no_active_card_title"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/preogressbar_4"
+        app:layout_constraintStart_toEndOf="@+id/progressbar_4"
         app:layout_constraintTop_toBottomOf="@+id/star5" />
 
     <TextView
@@ -186,12 +184,12 @@
         android:max="100"
         android:progress="10"
         android:progressDrawable="@drawable/progress_bar"
-        app:layout_constraintEnd_toStartOf="@+id/star3_3"
+        app:layout_constraintEnd_toStartOf="@+id/tv_3_starRating_count"
         app:layout_constraintStart_toEndOf="@+id/star3"
         app:layout_constraintTop_toBottomOf="@+id/star4" />
 
     <TextView
-        android:id="@+id/star3_3"
+        android:id="@+id/tv_3_starRating_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
@@ -222,7 +220,7 @@
         app:layout_constraintTop_toBottomOf="@+id/star3" />
 
     <ProgressBar
-        android:id="@+id/preogressbar_2"
+        android:id="@+id/progressbar_2"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="@dimen/five_dp"
@@ -231,12 +229,12 @@
         android:max="100"
         android:progress="15"
         android:progressDrawable="@drawable/progress_bar"
-        app:layout_constraintEnd_toStartOf="@+id/star2_3"
+        app:layout_constraintEnd_toStartOf="@+id/tv_2_starRating_count"
         app:layout_constraintStart_toEndOf="@+id/star2"
         app:layout_constraintTop_toBottomOf="@+id/star3" />
 
     <TextView
-        android:id="@+id/star2_3"
+        android:id="@+id/tv_2_starRating_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
@@ -247,7 +245,7 @@
         android:textColor="@color/no_active_card_title"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/preogressbar_2"
+        app:layout_constraintStart_toEndOf="@+id/progressbar_2"
         app:layout_constraintTop_toBottomOf="@+id/star3" />
 
     <TextView
@@ -276,12 +274,12 @@
         android:max="100"
         android:progress="5"
         android:progressDrawable="@drawable/progress_bar"
-        app:layout_constraintEnd_toStartOf="@+id/star1_3"
+        app:layout_constraintEnd_toStartOf="@+id/tv_1_starRating_count"
         app:layout_constraintStart_toEndOf="@+id/star1"
         app:layout_constraintTop_toBottomOf="@+id/star2" />
 
     <TextView
-        android:id="@+id/star1_3"
+        android:id="@+id/tv_1_starRating_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
@@ -303,7 +301,7 @@
         android:layout_marginRight="@dimen/twenty_dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/star1_3"
+        app:layout_constraintTop_toBottomOf="@+id/tv_1_starRating_count"
         android:layout_marginTop="@dimen/twenty_dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp">

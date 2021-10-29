@@ -16,7 +16,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
@@ -126,8 +125,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private lateinit var  reviewThumbnailAdapter: ReviewThumbnailAdapter
     private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
-    private  var thumbnailFullList = listOf<Thumbnails>()
-
+    private var thumbnailFullList = listOf<Thumbnails>()
+    private lateinit var ratingReviewResponse: RatingReviewResopnse
     companion object {
         const val INDEX_STORE_FINDER = 1
         const val INDEX_ADD_TO_CART = 2
@@ -202,12 +201,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.share -> shareProduct()
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
             R.id.tvRatingDetails -> showRatingDetailsDailog()
-            R.id.tvSkinProfile->viewSkinProfileDailog()
+            R.id.tvSkinProfile->viewSkinProfileDialog()
         }
     }
 
     private fun showRatingDetailsDailog() {
-        val dialog = RatingDetailDialog()
+        val dialog = RatingDetailDialog(ratingReviewResponse)
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
                 .let { fragmentTransaction ->
@@ -218,8 +217,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
         }
     }
-    private fun viewSkinProfileDailog() {
-        val dialog = SkinProfileDialog()
+    private fun viewSkinProfileDialog() {
+        val dialog = SkinProfileDialog(ratingReviewResponse.reviews[0])
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
                 .let { fragmentTransaction ->
@@ -603,10 +602,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
-                tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+                tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             }else{
-                headerCustomerReview.visibility = View.GONE
-                reviewDetailsInformation.visibility = View.GONE
+                hideRatingAndReview()
             }
 
             if (!it.freeGiftText.isNullOrEmpty()) {
@@ -652,17 +650,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
+    private fun hideRatingAndReview(){
+        headerCustomerReview.visibility = View.GONE
+        reviewDetailsInformation.visibility = View.GONE
+        customerReview.visibility = View.GONE
+    }
+
     private fun setReviewUI(ratingNReviewResponse: RatingReviewResopnse){
         ratingNReviewResponse.apply {
             reviewStatistics.apply {
                 ratingBar.rating = averageRating
                 tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, reviewCount, reviewCount)
-                //tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
                 tvRecommend.text = recommendedPercentage
             }
-            tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-            tvSkinProfile.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-            tvRatingDetails.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+            tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            tvSkinProfile.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            tvRatingDetails.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             if(reviews.isNotEmpty()) {
                 reviews[0].apply {
                     tvName.text = userNickname
@@ -683,6 +686,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     setSecondaryRatingsUI(secondaryRatings)
                     setReviewThumbnailUI(photos.thumbnails)
                 }
+            }else{
+                customerReview.visibility = View.GONE
             }
         }
 
@@ -1813,7 +1818,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData) {
-        setReviewUI(ratingNReview.data[0])
+        if(ratingNReview.data.isNotEmpty()) {
+            setReviewUI(ratingNReview.data[0])
+            ratingReviewResponse = ratingNReview.data[0]
+        }
+
     }
 
     override fun onGetRatingNReviewFailed(
