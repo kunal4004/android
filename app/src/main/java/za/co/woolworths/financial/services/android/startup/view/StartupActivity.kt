@@ -18,6 +18,7 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_splash_screen.*
@@ -44,6 +45,8 @@ import java.util.*
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {
 
+    private lateinit var configBuilder: FirebaseRemoteConfigSettings.Builder
+    private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var deeplinkIntent: Intent
     private var actionUrlFirst: String = AppConstant.EMPTY_STRING
@@ -70,8 +73,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun setUpFirebaseconfig() {
-        val firebaseRemoteConfig = FirebaseConfigUtils.getFirebaseRemoteConfigInstance();
-        val configBuilder = FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(AppConstant.TIME_INTERVAL)
+        firebaseRemoteConfig = startupViewModel.getFirebaseRemoteConfigData();
+         configBuilder = FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(AppConstant.TIME_INTERVAL)
+                .setFetchTimeoutInSeconds(AppConstant.TIME_OUT_INTERVAL)
         val defaultJsonString = FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
         val defaultValues = mutableMapOf( FirebaseConfigUtils.CONFIG_KEY to defaultJsonString)
         firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build())
@@ -79,7 +84,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun fetchFirebaseConfigData() {
-        startupViewModel.getFirebaseRemoteConfigData()
+        firebaseRemoteConfig
                 .fetchAndActivate().addOnCompleteListener { task ->
             run {
                 if (task.isSuccessful) {
@@ -132,10 +137,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 else
                     txt_desc?.text = actieConfiguration.description
 
-                if (imageUrl.isEmpty())
+                if (imageUrl.isNullOrEmpty())
                     img_view?.visibility = View.GONE
                 else
-                    ImageManager.setPictureWithSplashPlaceHolder(img_view, actieConfiguration.imageUrl)
+                    ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
 
                 if (firstButton.title.isEmpty())
                     first_btn?.visibility = View.GONE
@@ -168,14 +173,14 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 if (imageUrl.isNullOrEmpty())
                     img_view?.visibility = View.GONE
                 else
-                    ImageManager.setPicture(img_view, imageUrl)
+                    ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
 
                 if (firstButton.title.isEmpty())
-                    first_btn.visibility = View.GONE
+                    first_btn?.visibility = View.GONE
                 else
-                    first_btn.text = firstButton.title
+                    first_btn?.text = firstButton.title
 
-                second_btn.visibility = View.GONE
+                second_btn?.visibility = View.GONE
             }
         } else if(configData.expiryTime == -1L){
             onStartInit()

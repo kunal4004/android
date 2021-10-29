@@ -47,6 +47,7 @@ class AppConstant {
 
         const val EMPTY_STRING = ""
         const val TIME_INTERVAL:Long = 7200
+        const val TIME_OUT_INTERVAL:Long = 15
 
     }
 
