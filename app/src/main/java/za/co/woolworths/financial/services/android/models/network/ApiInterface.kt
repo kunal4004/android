@@ -517,11 +517,11 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("cart/checkout/changeAddress/{nickName}")
     fun changeAddress(
-        @Path("nickName") nickName: String,
+        @Path("nickName", encoded = true) nickName: String,
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
-        @Header("sessionToken") deviceIdentityToken: String
+        @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<ChangeAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
