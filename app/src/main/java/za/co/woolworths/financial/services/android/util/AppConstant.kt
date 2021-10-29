@@ -45,6 +45,10 @@ class AppConstant {
 
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
 
+        const val EMPTY_STRING = ""
+        const val TIME_INTERVAL:Long = 7200
+        const val TIME_OUT_INTERVAL:Long = 15
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }

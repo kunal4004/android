@@ -1,19 +1,21 @@
 package za.co.woolworths.financial.services.android.startup.viewmodel
 
-import android.app.Service
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.awfs.coordination.BuildConfig
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
+import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
-import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
@@ -35,6 +37,8 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
     var appVersion: String? = null
 
     var firebaseAnalytics: FirebaseAnalytics? = null
+    private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
+
 
     companion object {
         const val APP_SERVER_ENVIRONMENT_KEY = "app_server_environment"
@@ -98,4 +102,20 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
             setUserProperty(APP_VERSION_KEY, appVersion)
         }
     }
+
+
+    fun fetchFirebaseRemoteConifgData(): String {
+        firebaseRemoteConfig = getFirebaseRemoteConfigData()
+        val jsonString = firebaseRemoteConfig.getString(FirebaseConfigUtils.CONFIG_KEY);
+        return  jsonString
+    }
+
+    fun parseRemoteconfigData(remoteConfigData: String): ConfigData {
+        val gson = Gson()
+        val configData = gson.fromJson(remoteConfigData, ConfigData::class.java)
+        return configData
+    }
+
+    fun getFirebaseRemoteConfigData() = FirebaseConfigUtils.getFirebaseRemoteConfigInstance()
+
 }
