@@ -2349,10 +2349,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         return getSelectedSku()
     }
     private fun moveColorSelectionLayout() {
-//        if (isColorSelectionLayoutOnTop) {
-//            resetColorSelectionLayout()
-//            return
-//        }
 
         (sizeColorSelectorLayout.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.space
