@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
+import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
@@ -64,8 +65,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+        initializeCollectingFromView()
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
+    }
+
+    private fun initializeCollectingFromView() {
+        tvNativeCheckoutDeliveringTitle?.text = context?.getString(R.string.native_checkout_collecting_from)
+        tvNativeCheckoutDeliveringValue?.text = "Constantia Emporium"
     }
 
     private fun initializeDeliveryInstructions() {
