@@ -44,6 +44,10 @@ class AppConstant {
         const val DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT = "Pay My Account"
 
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
+        const val VTO_FACE_NOT_DETECT = "face_not_detect"
+        const val VTO_INVALID_IMAGE_PATH = "invalid_image_path"
+        const val VTO_FAIL_IMAGE_LOAD = "image_load_fail"
+        const val VTO_COLOR_NOT_MATCH = "color_not_match"
 
     }
 

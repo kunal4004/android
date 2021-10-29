@@ -79,6 +79,11 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
         selectedColor = null
         notifyDataSetChanged()
     }
+    fun setColorSelection(position : Int){
+        selectedColor = colorsList[position]
+        notifyDataSetChanged()
+        listener.onColorSelection(selectedColor)
+    }
 
 }
 

@@ -98,11 +98,16 @@ import javax.inject.Inject
 import android.graphics.*
 import com.perfectcorp.perfectlib.*
 import android.os.Environment
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import za.co.woolworths.financial.services.android.ui.vto.presentation.VtoApplyEffectOnImageViewModel
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
 import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResultContract
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_INVALID_IMAGE_PATH
 import java.io.File
 
 
@@ -157,6 +162,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var lightingTipsFiles: Boolean = false
     private var lightingTipsLiveCamera: Boolean = false
     private var lightingTipsTakePhoto: Boolean = false
+    private var saveVtoApplyImage : Bitmap? = null
+    private var isColorSelectionLayoutOnTop: Boolean = false
     private lateinit var vtoApplyEffectOnImageViewModel : VtoApplyEffectOnImageViewModel
 
 
@@ -237,7 +244,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         retakeCamera?.setOnClickListener(this)
         changeImage?.setOnClickListener(this)
         changeImageFiles?.setOnClickListener(this)
-
+        imgDownloadVTO?.setOnClickListener(this)
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
 
@@ -284,6 +291,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.retakeCamera -> openDefaultCamera()
             R.id.changeImage -> pickPhotoLauncher.launch("image/*")
             R.id.changeImageFiles -> pickPhotoFromFile.launch("image/*")
+            R.id.imgDownloadVTO -> saveVtoApplyImage?.let { ImageResultContract.saveImageToStorage(requireContext(),saveVtoApplyImage!!) }
 
         }
     }
@@ -292,6 +300,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             setResult(RESULT_CANCELED)
             onBackPressed()
+
         }
     }
 
@@ -836,28 +845,30 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun getApplyResultSelectColor( ) {
 
-        vtoApplyEffectOnImageViewModel.applyEffect(
-            productDetails?.productId,
-            getSelectedSku()?.sku
-        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(DELAY_1000_MS)
+            vtoApplyEffectOnImageViewModel.applyEffectImage.observe(
+                viewLifecycleOwner,
+                Observer { result ->
+                    when {
+                        result.equals(VTO_COLOR_NOT_MATCH) -> {
+                            colourUnavailableError.visibility = View.VISIBLE
+                            imgVTOEffect.setPhotoUri(selectedImageUri)
+                        }
+                        null != result -> {
+                            colourUnavailableError.visibility = View.GONE
+                            imgVTOEffect.setImageBitmap(result as Bitmap?)
+                            saveVtoApplyImage = result
+                        }
+                        else -> {
+                            colourUnavailableError.visibility = View.GONE
+                            imgVTOEffect.setPhotoUri(uri)
 
-        vtoApplyEffectOnImageViewModel.applyEffectImage.observe(
-            viewLifecycleOwner,
-            Observer { result ->
-                when {
-                    result.equals("IDMismatch") -> {
-
+                        }
                     }
-                    null != result -> {
-                        imgVTOEffect.setImageBitmap(result as Bitmap?)
-                    }
-                    else -> {
-                        imgVTOEffect.setPhotoUri(uri)
 
-                    }
-                }
-
-            })
+                })
+        }
 
     }
 
@@ -2043,15 +2054,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
     private val pickPhotoFromFile = registerForActivityResult(PickImageFileContract()) { uri ->
-
-        getPickedImageFile.launch(uri)
-
+        uri?.let {
+            getPickedImageFile.launch(uri)
+        }
     }
     private val getPickedImageFile = registerForActivityResult(ImageResultContract()) { uri ->
         setPickedImage(uri)
 
     }
-
 
     private val takePhoto =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { isPicked ->
@@ -2108,12 +2118,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun setPickedImage(uri: Uri?) {
 
         uri?.let {
-
-            setChangePickedImage()
-
-            selectedImageUri = uri
             vtoApplyEffectOnImageViewModel.setApplier(uri,productDetails?.productId,
                 getSelectedSku()?.sku)
+
+            when {
+                lightingTipsGallery -> galleryFirstTimeLightingTips()
+                lightingTipsFiles -> filesFirstTimeLightingTips()
+                lightingTipsTakePhoto -> takePhotoFirstTimeLightingTips()
+            }
+            setChangePickedImage()
+            selectedImageUri = uri
             vtoLayout.visibility = View.VISIBLE
             share.visibility = View.GONE
             productImagesViewPagerIndicator.visibility = View.GONE
@@ -2124,13 +2138,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             noFaceDetected.visibility = View.GONE
             imgVTOEffect.setPhotoUri(uri)
             isVtoImage = true
-
+            moveColorSelectionLayout()
             getApplyResult(uri)
-            when {
-                lightingTipsGallery -> galleryFirstTimeLightingTips()
-                lightingTipsFiles -> filesFirstTimeLightingTips()
-                lightingTipsTakePhoto -> takePhotoFirstTimeLightingTips()
-            }
 
         }
 
@@ -2226,39 +2235,52 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
                 }
             } catch (e: Exception) {
+
             }
         }
     }
 
     private fun getApplyResult(uri: Uri) {
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(2000L)
-
-            vtoApplyEffectOnImageViewModel.applyEffect(
-                productDetails?.productId,
-                getSelectedSku()?.sku
-            )
-
-            vtoApplyEffectOnImageViewModel.applyEffectImage.observe(
-                viewLifecycleOwner,
-                Observer { result ->
-                    when {
-                        result.equals("IDMismatch") -> {
-                            //show error below color selected
-                        }
-                        null != result -> {
-                            imgVTOEffect.setImageBitmap(result as Bitmap?)
-                        }
-                        else -> {
-                            imgVTOEffect.setPhotoUri(uri)
-                        }
+        vtoApplyEffectOnImageViewModel.applyEffectResult.observe(
+            viewLifecycleOwner,
+            Observer { result ->
+                when {
+                    result.equals(VTO_INVALID_IMAGE_PATH) -> {
+                        noFaceDetected.visibility = View.GONE
+                            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                                requireActivity(),
+                                resources.getString(R.string.vto_invalid_file_access_error),
+                                resources.getString(R.string.vto_invalid_file_type_error_description),
+                                resources.getString(R.string.try_again)
+                            )
+                    }
+                    result.equals(VTO_FACE_NOT_DETECT) -> {
+                        noFaceDetected.visibility = View.VISIBLE
+                        imgVTOEffect.setPhotoUri(uri)
                     }
 
-                })
-        }
+                    result.equals(VTO_FAIL_IMAGE_LOAD) -> {
+                        noFaceDetected.visibility = View.GONE
+                        colourUnavailableError.visibility = View.GONE
+                        vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(requireActivity(),resources.getString(R.string.vto_generic_error),
+                            resources.getString(R.string.vto_generic_error_description), resources.getString(R.string.try_again))
+                    }
 
+                    result.equals(VTO_COLOR_NOT_MATCH) -> {
+                        colourUnavailableError.visibility = View.VISIBLE
+                        imgVTOEffect.setPhotoUri(selectedImageUri)
+                    }
+
+                    else -> {
+                        colourUnavailableError.visibility = View.GONE
+                        noFaceDetected.visibility = View.GONE
+                        imgVTOEffect.setImageBitmap(result as Bitmap?)
+                    }
+                }
+            })
     }
+
 
     private fun clearEffect() {
         vtoApplyEffectOnImageViewModel.clearEffect()
@@ -2318,6 +2340,53 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun handlePermission() {
         permissionViewModel.actions.observe(viewLifecycleOwner, Observer { handlePermissionAction(it) })
     }
+
+
+
+    //this will select the first color from colors list
+    private fun selectDefaultColor(): OtherSkus? {
+        productColorSelectorAdapter?.setColorSelection(0)
+        return getSelectedSku()
+    }
+    private fun moveColorSelectionLayout() {
+//        if (isColorSelectionLayoutOnTop) {
+//            resetColorSelectionLayout()
+//            return
+//        }
+
+        (sizeColorSelectorLayout.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.space
+            sizeColorSelectorLayout?.layoutParams = it
+            divider1.visibility = View.GONE
+        }
+        (styleBy.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.sizeColorSelectorLayout
+            styleBy?.layoutParams = it
+        }
+        (deliveryLocationLayout.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.freeGiftWithPurchaseLayout
+            deliveryLocationLayout?.layoutParams = it
+        }
+        selectDefaultColor()
+        isColorSelectionLayoutOnTop = true
+    }
+    private fun resetColorSelectionLayout() {
+        (sizeColorSelectorLayout.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.freeGiftWithPurchaseLayout
+            sizeColorSelectorLayout?.layoutParams = it
+            divider1.visibility = View.VISIBLE
+        }
+        (styleBy.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.space
+            styleBy?.layoutParams = it
+        }
+        (deliveryLocationLayout.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.sizeColorSelectorLayout
+            deliveryLocationLayout?.layoutParams = it
+        }
+        isColorSelectionLayoutOnTop = false
+    }
+
 
 }
 

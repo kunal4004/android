@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.util.datastorepref.setValue
 import javax.inject.Inject
 
 private const val PREF_NAME = "wool-retail"
-
+private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = PREF_NAME)
 
 class PrefStoreImpl
 @Inject constructor(
@@ -21,7 +21,6 @@ class PrefStoreImpl
 
 ) : PrefsStore {
 
-    private val Context._dataStore: DataStore<Preferences> by preferencesDataStore(name = PREF_NAME)
     private val dataStore: DataStore<Preferences> = context._dataStore
 
     override fun isLightingTipsGallery() =
@@ -54,8 +53,8 @@ class PrefStoreImpl
                 // handle error
             }
 
-    override suspend fun disableLightingTipsGallery(lighting: Boolean) =
-        dataStore.setValue(LIGHTING_TIPS_GALLERY, lighting)
+    override suspend fun disableLightingTipsGallery(isLighting: Boolean) =
+        dataStore.setValue(LIGHTING_TIPS_GALLERY, isLighting)
 
     override suspend fun disableLightingFiles(isLighting: Boolean) =
         dataStore.setValue(LIGHTING_TIPS_FILES, isLighting)
@@ -67,8 +66,8 @@ class PrefStoreImpl
     override suspend fun disableLightingTipsLiveCamera(isLighting: Boolean) =
         dataStore.setValue(LIGHTING_TIPS_CAMERA, isLighting)
 
-    override suspend fun disableTryItOnMode(tryItOn: Boolean) =
-        dataStore.setValue(TRY_IT_ON, tryItOn)
+    override suspend fun disableTryItOnMode(isTryItOn: Boolean) =
+        dataStore.setValue(TRY_IT_ON, isTryItOn)
 
 
     companion object {

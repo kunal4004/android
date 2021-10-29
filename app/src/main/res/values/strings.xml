@@ -2328,5 +2328,6 @@
     <string name="empty_cart_title">Your Cart Is Empty</string>
     <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
     <string name="actual_size">Actual Size</string>
+    <string name="vto_color_selected_error">Oh no! That colour is unavailable to try on.</string>
 
 </resources>
