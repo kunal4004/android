@@ -17,7 +17,9 @@ class ReviewThumbnailAdapter(var context: Context, var thumbnailClickListener: T
     interface ThumbnailClickListener {
         fun thumbnailClicked()
     }
-    private val defaultThumbnailDisplayed =3
+    companion object{
+        const val DEFAULT_THUMBNAIL_DISPLAYED = 3
+    }
     var dataList = emptyList<Thumbnails>()
 
     internal fun setDataList(dataList: List<Thumbnails>) {
@@ -38,10 +40,10 @@ class ReviewThumbnailAdapter(var context: Context, var thumbnailClickListener: T
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = dataList[position]
         setPicture(holder.image,data.url)
-        if (position == (defaultThumbnailDisplayed-1) && itemCount==defaultThumbnailDisplayed)
+        if (position == (DEFAULT_THUMBNAIL_DISPLAYED-1) && itemCount== DEFAULT_THUMBNAIL_DISPLAYED)
             holder.flShowMore.visibility = VISIBLE
         holder.image.setOnClickListener(View.OnClickListener {
-            if (position == (defaultThumbnailDisplayed-1)) {
+            if (position == (DEFAULT_THUMBNAIL_DISPLAYED-1)) {
                 holder.flShowMore.visibility = GONE
                 thumbnailClickListener.thumbnailClicked()
             }

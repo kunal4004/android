@@ -1632,4 +1632,8 @@ public class Utils {
     public static Boolean isGooglePlayServicesAvailable() {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
+
+    public static int calculatePercentage(int count, int totalCount){
+        return (count*100)/totalCount;
+    }
 }

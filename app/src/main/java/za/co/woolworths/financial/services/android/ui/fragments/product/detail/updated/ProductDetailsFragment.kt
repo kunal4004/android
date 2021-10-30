@@ -16,7 +16,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
@@ -126,8 +125,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private lateinit var  reviewThumbnailAdapter: ReviewThumbnailAdapter
     private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
-    private  var thumbnailFullList = listOf<Thumbnails>()
-
+    private var thumbnailFullList = listOf<Thumbnails>()
+    private lateinit var ratingReviewResponse: RatingReviewResopnse
     companion object {
         const val INDEX_STORE_FINDER = 1
         const val INDEX_ADD_TO_CART = 2
@@ -202,12 +201,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.share -> shareProduct()
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
             R.id.tvRatingDetails -> showRatingDetailsDailog()
-            R.id.tvSkinProfile->viewSkinProfileDailog()
+            R.id.tvSkinProfile->viewSkinProfileDialog()
         }
     }
 
     private fun showRatingDetailsDailog() {
-        val dialog = RatingDetailDialog()
+        val dialog = RatingDetailDialog(ratingReviewResponse)
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
                 .let { fragmentTransaction ->
@@ -218,8 +217,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
         }
     }
-    private fun viewSkinProfileDailog() {
-        val dialog = SkinProfileDialog()
+    private fun viewSkinProfileDialog() {
+        val dialog = SkinProfileDialog(ratingReviewResponse.reviews[0])
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
                 .let { fragmentTransaction ->
@@ -603,10 +602,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
-                tvTotalReviews.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+                tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             }else{
-                headerCustomerReview.visibility = View.GONE
-                reviewDetailsInformation.visibility = View.GONE
+                hideRatingAndReview()
             }
 
             if (!it.freeGiftText.isNullOrEmpty()) {
@@ -652,35 +650,53 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
+    private fun hideRatingAndReview(){
+        headerCustomerReview.visibility = View.GONE
+        reviewDetailsInformation.visibility = View.GONE
+        customerReview.visibility = View.GONE
+    }
+
     private fun setReviewUI(ratingNReviewResponse: RatingReviewResopnse){
         ratingNReviewResponse.apply {
             reviewStatistics.apply {
                 ratingBar.rating = averageRating
                 tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, reviewCount, reviewCount)
-                //tvRecommend.text = getString(R.string.percent_recommend_to_friend,"96%")
                 tvRecommend.text = recommendedPercentage
             }
-            tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-            tvSkinProfile.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-            tvRatingDetails.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-            reviews[0].apply {
-                tvName.text = userNickname
-                if(isVerifiedBuyer)
-                    tvVerifiedBuyer.visibility = View.VISIBLE
-                else
-                    tvVerifiedBuyer.visibility = View.GONE
-                if(isStaffMember)
-                    tvVerifiedStaffMember.visibility = View.VISIBLE
-                else
-                    tvVerifiedStaffMember.visibility = View.GONE
-                ratingBar.rating = rating
-                tvReviewHeading.text = title
-                tvCustomerReview.text = reviewText
-                tvReviewPostedOn.text = syndicatedSource
-                tvDate.text = submissionTime
-                setReviewAdditionalFields(additionalFields)
-                setSecondaryRatingsUI1(secondaryRatings)
-                setReviewThumbnailUI(photos.thumbnails)
+            tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            tvSkinProfile.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            tvRatingDetails.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            if(reviews.isNotEmpty()) {
+                reviews[0].apply {
+                    tvName.text = userNickname
+                    if (isVerifiedBuyer)
+                        tvVerifiedBuyer.visibility = View.VISIBLE
+                    else
+                        tvVerifiedBuyer.visibility = View.GONE
+                    if (isStaffMember)
+                        tvVerifiedStaffMember.visibility = View.VISIBLE
+                    else
+                        tvVerifiedStaffMember.visibility = View.GONE
+                    ratingBar.rating = rating
+                    tvReviewHeading.text = title
+                    tvCustomerReview.text = reviewText
+                    tvReviewPostedOn.text = syndicatedSource
+                    tvDate.text = submissionTime
+                    setReviewAdditionalFields(additionalFields)
+                    setSecondaryRatingsUI(secondaryRatings)
+                    setReviewThumbnailUI(photos.thumbnails)
+                    if(contextDataValue.isEmpty()){
+                        tvSkinProfile.visibility = View.GONE
+                    }
+                    reviewStatistics.apply {
+                        if(reviewCount>1)
+                            btViewMoreReview.text = resources.getQuantityString(R.plurals.more_review, (reviewCount-1), (reviewCount-1))
+                        else
+                            btViewMoreReview.visibility = View.GONE
+                    }
+                }
+            }else{
+                customerReview.visibility = View.GONE
             }
         }
 
@@ -700,92 +716,38 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             rootView.orientation = LinearLayout.HORIZONTAL
 
-            val tv1 = TextView(context)
-            tv1.alpha = 0.5F
-            val tv2 = TextView(context)
-            tv2.alpha = 0.5F
+            val tvAdditionalFieldLabel = TextView(context)
+            tvAdditionalFieldLabel.alpha = 0.5F
+            val tvAdditionalFieldValue = TextView(context)
+            tvAdditionalFieldValue.alpha = 0.5F
             val ivCircle = ImageView(context)
             val tvParam: LinearLayout.LayoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             tvParam.setMargins(25, 0, 0, 8)
-            tv2.layoutParams = tvParam
+            tvAdditionalFieldValue.layoutParams = tvParam
             val ivParam: LinearLayout.LayoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             ivParam.setMargins(25,15,0,0)
             ivCircle.layoutParams = ivParam
             if (Build.VERSION.SDK_INT < 23) {
-                tv1.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
-                tv2.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
+                tvAdditionalFieldLabel.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
+                tvAdditionalFieldValue.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
             } else{
-                tv1.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                tv2.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
+                tvAdditionalFieldLabel.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
+                tvAdditionalFieldValue.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
             }
-            tv1.text = additionalField.label
+            tvAdditionalFieldLabel.text = additionalField.label
             ivCircle.setImageResource(R.drawable.ic_circle)
-            tv2.text = additionalField.valueLabel
+            tvAdditionalFieldValue.text = additionalField.valueLabel
 
-            rootView.addView(tv1)
+            rootView.addView(tvAdditionalFieldLabel)
             rootView.addView(ivCircle)
-            rootView.addView(tv2)
+            rootView.addView(tvAdditionalFieldValue)
             llAdditionalFields.addView(rootView)
         }
     }
 
     private fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>){
-        for (secondaryRating in secondaryRatings){
-            val rootView = LinearLayout(context)
-            rootView.layoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            rootView.orientation = LinearLayout.HORIZONTAL
-
-            val tv1 = TextView(context)
-            val tv2 = TextView(context)
-
-            val tvParam: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            tvParam.setMargins(15, 0, 0, 8)
-            tv2.layoutParams = tvParam
-            if (Build.VERSION.SDK_INT < 23) {
-                tv1.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
-                tv2.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
-            } else{
-                tv1.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                tv2.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
-            }
-            tv1.text = "Product Quality:"
-            tv2.text = "4/5"
-
-            rootView.addView(tv1)
-            rootView.addView(tv2)
-
-            val tv3 = TextView(context)
-            val tv4 = TextView(context)
-
-            val tvParam2: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            tvParam2.setMargins(65, 0, 0, 8)
-            tv3.layoutParams = tvParam2
-            val tvParam3: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            tvParam3.setMargins(15, 0, 0, 8)
-            tv4.layoutParams = tvParam3
-            if (Build.VERSION.SDK_INT < 23) {
-                tv3.setTextAppearance(getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
-                tv4.setTextAppearance(getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
-            } else{
-                tv3.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                tv4.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
-            }
-            tv3.text = "Fit:"
-            tv4.text = "Runs Large"
-
-            rootView.addView(tv3)
-            rootView.addView(tv4)
-            //llSecondaryRatings.addView(rootView)
-        }
-    }
-
-    private fun setSecondaryRatingsUI1(secondaryRatings: List<SecondaryRatings>){
         rvSecondaryRatings.layoutManager = GridLayoutManager(getApplicationContext(),2)
         secondaryRatingAdapter = SecondaryRatingAdapter()
         rvSecondaryRatings.adapter = secondaryRatingAdapter
@@ -1868,7 +1830,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData) {
-        setReviewUI(ratingNReview.data[0])
+        if(ratingNReview.data.isNotEmpty()) {
+            setReviewUI(ratingNReview.data[0])
+            ratingReviewResponse = ratingNReview.data[0]
+        }
+
     }
 
     override fun onGetRatingNReviewFailed(

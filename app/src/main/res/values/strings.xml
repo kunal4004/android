@@ -2177,6 +2177,10 @@
         <item quantity="one">Customer Review (%d)</item>
         <item quantity="other">Customer Reviews (%d)</item>
     </plurals>
+    <plurals name="more_review">
+        <item quantity="one">%d MORE REVIEW</item>
+        <item quantity="other">%d MORE REVIEWS</item>
+    </plurals>
     <string name="verified_buyer">Verified Buyer</string>
     <string name="view_skin_profile">VIEW SKIN PROFILE</string>
     <string name="verified_staff_member">Verified Staff Member</string>
