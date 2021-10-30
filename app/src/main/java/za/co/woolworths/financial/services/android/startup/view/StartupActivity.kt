@@ -48,8 +48,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var deeplinkIntent: Intent
-    private var actionUrlFirst: String = AppConstant.EMPTY_STRING
-    private var actionUrlSecond: String = AppConstant.EMPTY_STRING
+    private var actionUrlFirst: String? = AppConstant.EMPTY_STRING
+    private var actionUrlSecond: String? = AppConstant.EMPTY_STRING
     private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,21 +94,30 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         presentNextScreenOrServerMessage()
                     } else {
                         setContentView(R.layout.activity_splash_screen)
-                        setDataOnUI(startupViewModel.parseRemoteconfigData(remoteConfigJsonString))
+                        val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                        if (configData == null) {
+                           progress_bar?.visibility = View.GONE
+                           showLocalDefaultSpalshScreen()
+                        } else {
+                            setDataOnUI(configData)
+                        }
                     }
-                }else {
+                } else {
                     //capture value from local json
                     progress_bar?.visibility = View.GONE
-                    val jsonString = FirebaseConfigUtils.getJsonDataFromAsset(
-                            this, FirebaseConfigUtils.FILE_NAME)
-                    if (jsonString == null) {
-                        onStartInit()
-                    } else {
-                        val configData:ConfigData = Gson().fromJson(jsonString, ConfigData::class.java)
-                        setDataOnUI(configData)
-                    }
+                    showLocalDefaultSpalshScreen()
                 }
             }
+        }
+    }
+
+    private fun showLocalDefaultSpalshScreen() {
+        val jsonString = FirebaseConfigUtils.getJsonDataFromAsset(
+                this, FirebaseConfigUtils.FILE_NAME)
+        if (jsonString != null) {
+            val configData = startupViewModel.parseRemoteconfigData(jsonString)
+            if (configData != null)
+                setDataOnUI(configData)
         }
     }
 
@@ -119,67 +128,79 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         first_btn?.setOnClickListener(this)
         second_btn?.setOnClickListener(this)
 
-        val timeIntervalSince1970 = Calendar.getInstance(TimeZone.getDefault()).timeInMillis
+        val timeIntervalSince1970: Long = System.currentTimeMillis()
 
         if (timeIntervalSince1970 < configData.expiryTime) {
             val actieConfiguration = configData.activeConfiguration
-            actionUrlFirst =  configData.activeConfiguration?.firstButton?.actionUrl
-            actionUrlSecond =  configData.activeConfiguration?.secondButton?.actionUrl
-            actieConfiguration.run {
-                if (title.isEmpty())
+            actieConfiguration?.run {
+                if (title == null)
                     txt_title?.visibility = View.GONE
                 else
                     txt_title?.text = actieConfiguration.title
 
-                if (description.isEmpty())
+                if (description == null)
                     txt_desc?.visibility = View.GONE
                 else
                     txt_desc?.text = actieConfiguration.description
 
-                if (imageUrl.isNullOrEmpty())
+                if (imageUrl == null)
                     img_view?.visibility = View.GONE
-                else
-                    ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                else {
+                    if (imageUrl.isEmpty())
+                        img_view.setImageResource(R.drawable.link_icon)
+                    else
+                        ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                }
 
-                if (firstButton.title.isEmpty())
+                if (firstButton == null)
                     first_btn?.visibility = View.GONE
-                else
+                else {
                     first_btn?.text = firstButton.title
+                    actionUrlFirst = firstButton.actionUrl
+                }
 
-                if (secondButton.title.isEmpty())
+                if (secondButton == null)
                     second_btn?.visibility = View.GONE
-                else
+                else {
                     second_btn?.text = secondButton.title
+                    actionUrlSecond = secondButton.actionUrl
+                }
             }
-
         } else if (timeIntervalSince1970 >= configData.expiryTime) {
-            //in active configuration
-            val inActiveConfiguration = configData.inactiveConfiguration
-            actionUrlFirst =  configData.inactiveConfiguration?.firstButton?.actionUrl
-            actionUrlSecond =  configData.inactiveConfiguration?.secondButton?.actionUrl
-
-            inActiveConfiguration.run {
-                if (title.isEmpty())
+            val inActiveConfiguration = configData?.inactiveConfiguration
+            inActiveConfiguration?.run {
+                if (title == null)
                     txt_title?.visibility = View.GONE
                 else
                     txt_title?.text = inActiveConfiguration.title
 
-                if (description.isEmpty())
+                if (description == null)
                     txt_desc?.visibility = View.GONE
                 else
                     txt_desc?.text = inActiveConfiguration.description
 
-                if (imageUrl.isNullOrEmpty())
+                if (imageUrl == null)
                     img_view?.visibility = View.GONE
-                else
-                    ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                else {
+                    if(imageUrl.isEmpty())
+                        img_view.setImageResource(R.drawable.link_icon)
+                    else
+                        ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                }
 
-                if (firstButton.title.isEmpty())
+                if (firstButton == null)
                     first_btn?.visibility = View.GONE
-                else
+                else {
                     first_btn?.text = firstButton.title
+                    actionUrlFirst = firstButton.actionUrl
+                }
 
-                second_btn?.visibility = View.GONE
+                if (secondButton == null)
+                    second_btn?.visibility = View.GONE
+                else {
+                    second_btn?.text = secondButton.title
+                    actionUrlSecond = secondButton.actionUrl
+                }
             }
         } else if(configData.expiryTime == -1L){
             onStartInit()
