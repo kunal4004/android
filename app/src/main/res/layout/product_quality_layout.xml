@@ -24,8 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/sixteen_dp"
         android:fontFamily="@font/myriad_pro_regular"
-        android:text="4/5"
-        android:textColor="@color/black"
+        android:textColor="@color/card_details_value_color"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -38,6 +37,8 @@
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_fit_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_product_quality_label" />
@@ -49,9 +50,11 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="@dimen/sixteen_dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
         android:fontFamily="@font/myriad_pro_semi_bold"
         android:text="@string/fit"
         android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toTopOf="@+id/progress_fit_quality"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progress_product_quality" />
@@ -61,8 +64,8 @@
         layout="@layout/segmented_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/eight_dp"
         android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/eight_dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -77,24 +80,13 @@
         android:layout_marginTop="@dimen/eight_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:text="@string/runs_small"
+        android:textSize="@dimen/twelve_sp"
+        android:textColor="@color/card_details_value_color"
+        android:fontFamily="@font/myriad_pro_regular"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/txtValueLabel"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progress_fit_quality" />
-
-    <TextView
-        android:id="@+id/txtValueLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/eight_dp"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:text="@string/true_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/txtMaxLabel"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/txtMinLabel"
         app:layout_constraintTop_toBottomOf="@+id/progress_fit_quality" />
 
     <TextView
@@ -105,10 +97,11 @@
         android:layout_marginEnd="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:text="@string/run_large"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textSize="@dimen/twelve_sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/txtValueLabel"
         app:layout_constraintTop_toBottomOf="@+id/progress_fit_quality" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
