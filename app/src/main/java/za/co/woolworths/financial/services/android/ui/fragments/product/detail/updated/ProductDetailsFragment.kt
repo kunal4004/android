@@ -853,15 +853,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     when {
                         result.equals(VTO_COLOR_NOT_MATCH) -> {
                             colourUnavailableError.visibility = View.VISIBLE
+                            imgVTORefresh.visibility = View.GONE
+                            imgDownloadVTO.visibility = View.GONE
                             imgVTOEffect.setPhotoUri(selectedImageUri)
                         }
                         null != result -> {
                             colourUnavailableError.visibility = View.GONE
+                            imgVTORefresh.visibility = View.VISIBLE
+                            imgDownloadVTO.visibility = View.VISIBLE
                             imgVTOEffect.setImageBitmap(result as Bitmap?)
                             saveVtoApplyImage = result
                         }
                         else -> {
                             colourUnavailableError.visibility = View.GONE
+                            imgVTORefresh.visibility = View.GONE
+                            imgDownloadVTO.visibility = View.GONE
                             imgVTOEffect.setPhotoUri(uri)
 
                         }
@@ -2248,6 +2254,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 when {
                     result.equals(VTO_INVALID_IMAGE_PATH) -> {
                         noFaceDetected.visibility = View.GONE
+                        imgVTORefresh.visibility = View.GONE
+                        imgDownloadVTO.visibility = View.GONE
                             vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
                                 requireActivity(),
                                 resources.getString(R.string.vto_invalid_file_access_error),
@@ -2257,24 +2265,32 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     result.equals(VTO_FACE_NOT_DETECT) -> {
                         noFaceDetected.visibility = View.VISIBLE
+                        imgVTORefresh.visibility = View.GONE
+                        imgDownloadVTO.visibility = View.GONE
                         imgVTOEffect.setPhotoUri(uri)
                     }
 
                     result.equals(VTO_FAIL_IMAGE_LOAD) -> {
                         noFaceDetected.visibility = View.GONE
                         colourUnavailableError.visibility = View.GONE
+                        imgVTORefresh.visibility = View.GONE
+                        imgDownloadVTO.visibility = View.GONE
                         vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(requireActivity(),resources.getString(R.string.vto_generic_error),
                             resources.getString(R.string.vto_generic_error_description), resources.getString(R.string.try_again))
                     }
 
                     result.equals(VTO_COLOR_NOT_MATCH) -> {
                         colourUnavailableError.visibility = View.VISIBLE
+                        imgVTORefresh.visibility = View.GONE
+                        imgDownloadVTO.visibility = View.GONE
                         imgVTOEffect.setPhotoUri(selectedImageUri)
                     }
 
                     else -> {
                         colourUnavailableError.visibility = View.GONE
                         noFaceDetected.visibility = View.GONE
+                        imgVTORefresh.visibility = View.VISIBLE
+                        imgDownloadVTO.visibility = View.VISIBLE
                         imgVTOEffect.setImageBitmap(result as Bitmap?)
                     }
                 }
