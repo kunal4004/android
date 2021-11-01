@@ -71,7 +71,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private var suburbListAdapter: SuburbListAdapter? = null
     private var selectedSuburb = Suburb()
     private var selectedProvince = Province()
-    private var isDeliverySelected: Boolean = true
+    private var isDeliverySelected: Boolean? = null
     private var isConfirmDeliveryResponse: Boolean = false
     private var validateStoreList: ValidateStoreList? = null
 
@@ -143,7 +143,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             }
             R.id.btnAddressConfirmation -> {
                 if (loadingProgressBar.visibility == View.GONE) {
-                    if (isDeliverySelected) {
+                    if (isDeliverySelected == true) {
                         if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
                             addNewAddressErrorMsg.visibility = View.VISIBLE
                         else {
@@ -266,7 +266,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     Utils.savePreferredDeliveryLocation(
                                         shoppingDeliveryLocation
                                     )
-                                    if (!isDeliverySelected) {
+                                    if (isDeliverySelected == false) {
                                         val openCheckOutActivity =
                                             Intent(context, CartCheckoutActivity::class.java)
                                         openCheckOutActivity.putExtra(
@@ -377,7 +377,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
                 activity
             )
-            if (isDeliverySelected) {
+            if (isDeliverySelected == true) {
                 view?.findNavController()?.navigate(
                     R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
                     baseFragBundle
@@ -449,7 +449,11 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun initView() {
-        if (isDeliverySelected) {
+        selectedProvince = Utils.getPreferredDeliveryLocation().province
+        if (isDeliverySelected == null) {
+            isDeliverySelected = !Utils.getPreferredDeliveryLocation().storePickup
+        }
+        if (isDeliverySelected as Boolean) {
             if (baseFragBundle?.containsKey(CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY) == true) {
                 isConfirmDeliveryResponse = true
                 showEarliestDeliveryDates()
@@ -457,7 +461,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 isConfirmDeliveryResponse = false
                 hideEarliestDeliveryView()
             }
-            selectedProvince = Utils.getPreferredDeliveryLocation().province
             if (savedAddress?.addresses?.isNullOrEmpty() == true) {
                 //Show No Address view
                 hideDeliveryAddressListView()
