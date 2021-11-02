@@ -98,16 +98,10 @@ import javax.inject.Inject
 import android.graphics.*
 import com.perfectcorp.perfectlib.*
 import android.os.Environment
-import android.util.Log
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import za.co.woolworths.financial.services.android.ui.vto.presentation.VtoApplyEffectOnImageViewModel
-import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
-import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
-import za.co.woolworths.financial.services.android.ui.vto.ui.camera.PfCamera
-//import za.co.woolworths.financial.services.android.ui.vto.ui.camera.PfCamera.Companion.open
 import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResultContract
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
