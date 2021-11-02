@@ -10,11 +10,11 @@ import kotlinx.android.synthetic.main.ccs_end_session_dialog_fragment.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResopnse
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class RatingDetailDialog(private val ratingReviewData: RatingReviewResopnse) :
+class RatingDetailDialog(private val ratingReviewData: RatingReviewResponse) :
     WBottomSheetDialogFragment(), View.OnClickListener {
 
     override fun onCreateView(
