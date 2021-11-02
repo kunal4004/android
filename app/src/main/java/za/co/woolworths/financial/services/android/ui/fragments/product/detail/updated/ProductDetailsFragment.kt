@@ -98,10 +98,16 @@ import javax.inject.Inject
 import android.graphics.*
 import com.perfectcorp.perfectlib.*
 import android.os.Environment
+import android.util.Log
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import za.co.woolworths.financial.services.android.ui.vto.presentation.VtoApplyEffectOnImageViewModel
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
+import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoErrorBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.vto.ui.camera.PfCamera
+//import za.co.woolworths.financial.services.android.ui.vto.ui.camera.PfCamera.Companion.open
 import za.co.woolworths.financial.services.android.ui.vto.ui.gallery.ImageResultContract
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
@@ -165,7 +171,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var saveVtoApplyImage : Bitmap? = null
     private var isColorSelectionLayoutOnTop: Boolean = false
     private lateinit var vtoApplyEffectOnImageViewModel : VtoApplyEffectOnImageViewModel
-
 
     @OpenTermAndLighting
     @Inject
@@ -2089,6 +2094,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (isGranted) {
                 if (liveCamera) {
                      // open live camera
+                    vtoLayout.visibility = View.VISIBLE
+                    share.visibility = View.GONE
+                    productImagesViewPagerIndicator.visibility = View.GONE
+                    closePage.visibility = View.GONE
+                    productImagesViewPager.visibility = View.GONE
+
+                    openPfLiveCamera()
+
                 } else {
                     openDefaultCamera()
                 }
@@ -2103,6 +2116,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 )
             }
         }
+
+
+
+    private fun openPfLiveCamera() {
+
+     //
+    }
+
+    private fun startPfCamera() {
+        //set PF Camera
+    }
+
 
     private fun openDefaultCamera() {
 
@@ -2248,6 +2273,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun getApplyResult(uri: Uri) {
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(DELAY_1000_MS)
         vtoApplyEffectOnImageViewModel.applyEffectResult.observe(
             viewLifecycleOwner,
             Observer { result ->
@@ -2295,6 +2322,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                 }
             })
+        }
     }
 
 
