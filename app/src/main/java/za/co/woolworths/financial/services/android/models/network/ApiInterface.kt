@@ -470,7 +470,7 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json"
     )
-    @GET("cart/checkout/savedAddresses")
+    @GET("wfs/app/v4/cart/checkout/savedAddresses")
     fun getSavedAddresses(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
@@ -479,7 +479,7 @@ interface ApiInterface {
     ): Call<SavedAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("cart/checkout/addAddress")
+    @POST("wfs/app/v4/cart/checkout/addAddress")
     fun addAddress(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
@@ -492,7 +492,7 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json"
     )
-    @PUT("cart/checkout/address/{addressId}")
+    @PUT("wfs/app/v4/cart/checkout/address/{addressId}")
     fun editAddress(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
@@ -507,7 +507,7 @@ interface ApiInterface {
         "Accept: application/json",
         "Media-Type: application/json"
     )
-    @DELETE("cart/checkout/address/{addressId}")
+    @DELETE("wfs/app/v4/cart/checkout/address/{addressId}")
     fun deleteAddress(
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
@@ -515,7 +515,7 @@ interface ApiInterface {
     ): Call<DeleteAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("cart/checkout/changeAddress/{nickName}")
+    @GET("wfs/app/v4/cart/checkout/changeAddress/{nickName}")
     fun changeAddress(
         @Path("nickName", encoded = true) nickName: String,
         @Header("userAgent") userAgent: String,
@@ -525,7 +525,7 @@ interface ApiInterface {
     ): Call<ChangeAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("cart/checkout/confirmDeliveryAddress")
+    @POST("wfs/app/v4/cart/checkout/confirmDeliveryAddress")
     fun getConfirmDeliveryAddressDetails(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
@@ -535,7 +535,7 @@ interface ApiInterface {
     ): Call<ConfirmDeliveryAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("cart/checkout/shippingDetails")
+    @POST("wfs/app/v4/cart/checkout/shippingDetails")
     fun getShippingDetails(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
@@ -545,7 +545,7 @@ interface ApiInterface {
     ): Call<ShippingDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("location/confirmSelection")
+    @POST("wfs/app/v4/location/confirmSelection")
     fun setConfirmSelection(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
@@ -1182,7 +1182,7 @@ interface ApiInterface {
     ): Call<Void>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("cart/checkout/submittedOrder")
+    @GET("wfs/app/v4/cart/checkout/submittedOrder")
     fun getSubmittedOrder(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
