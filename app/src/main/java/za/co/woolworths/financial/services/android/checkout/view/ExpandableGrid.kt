@@ -57,12 +57,21 @@ class ExpandableGrid(val fragment: Fragment) {
         weekNumber: Int,
         deliveryType: DeliveryType
     ) {
+        if (weekNumber < 0) {
+            return
+        }
+
         when (deliveryType) {
             DeliveryType.MIXED_FOOD -> {
                 if (confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.size ?: -1 == SECOND.week) {
                     hidePreviousNextFoodBtn()
                 } else
                     showPreviousNextFoodBtn()
+                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.size
+                        ?: 0)
+                ) {
+                    return
+                }
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.get(weekNumber)
                 createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewFood)
@@ -80,6 +89,11 @@ class ExpandableGrid(val fragment: Fragment) {
                     hidePreviousNextOtherBtn()
                 } else
                     showPreviousNextOtherBtn()
+                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.size
+                        ?: 0)
+                ) {
+                    return
+                }
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.get(weekNumber)
                 createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
@@ -97,6 +111,12 @@ class ExpandableGrid(val fragment: Fragment) {
                     hidePreviousNextFoodBtn()
                 } else
                     showPreviousNextFoodBtn()
+
+                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size
+                        ?: 0)
+                ) {
+                    return
+                }
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
 
@@ -115,6 +135,12 @@ class ExpandableGrid(val fragment: Fragment) {
                     hidePreviousNextOtherBtn()
                 } else
                     showPreviousNextOtherBtn()
+
+                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size
+                        ?: 0)
+                ) {
+                    return
+                }
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
 
