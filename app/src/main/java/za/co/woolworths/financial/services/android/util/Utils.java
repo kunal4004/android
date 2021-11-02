@@ -1636,6 +1636,6 @@ public class Utils {
     }
 
    public static String formatString(String btnName){
-        return btnName.replace(" ", "_");
+        return btnName.replace(" ", "_").toLowerCase();
    }
 }

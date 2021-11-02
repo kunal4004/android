@@ -19,7 +19,6 @@ import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_with_message.*
@@ -131,17 +130,17 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val timeIntervalSince1970: Long = System.currentTimeMillis()
 
         if (timeIntervalSince1970 < configData.expiryTime) {
-            val actieConfiguration = configData.activeConfiguration
-            actieConfiguration?.run {
+            val activeConfiguration = configData.activeConfiguration
+            activeConfiguration?.run {
                 if (title == null)
                     txt_title?.visibility = View.GONE
                 else
-                    txt_title?.text = actieConfiguration.title
+                    txt_title?.text = activeConfiguration.title
 
                 if (description == null)
                     txt_desc?.visibility = View.GONE
                 else
-                    txt_desc?.text = actieConfiguration.description
+                    txt_desc?.text = activeConfiguration.description
 
                 if (imageUrl == null)
                     img_view?.visibility = View.GONE
