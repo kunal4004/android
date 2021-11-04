@@ -9,7 +9,7 @@ object FirebaseConfigUtils {
     @JvmStatic
     fun getFirebaseRemoteConfigInstance () = FirebaseRemoteConfig.getInstance()
 
-    const val CONFIG_KEY : String = "splashConfig"
+    const val CONFIG_KEY : String = "splash_config"
 
     const val FILE_NAME : String = "FirebaseDefaultConfig.json"
 

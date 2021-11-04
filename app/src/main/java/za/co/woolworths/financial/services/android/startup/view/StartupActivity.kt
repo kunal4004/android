@@ -73,8 +73,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     private fun setUpFirebaseconfig() {
         firebaseRemoteConfig = startupViewModel.getFirebaseRemoteConfigData();
          configBuilder = FirebaseRemoteConfigSettings.Builder()
-                .setMinimumFetchIntervalInSeconds(AppConstant.TIME_INTERVAL)
-                .setFetchTimeoutInSeconds(AppConstant.TIME_OUT_INTERVAL)
+                .setMinimumFetchIntervalInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
+                .setFetchTimeoutInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL)
         val defaultJsonString = FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
         val defaultValues = mutableMapOf( FirebaseConfigUtils.CONFIG_KEY to defaultJsonString)
         firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build())

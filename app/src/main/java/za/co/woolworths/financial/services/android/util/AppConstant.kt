@@ -46,8 +46,8 @@ class AppConstant {
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
 
         const val EMPTY_STRING = ""
-        const val TIME_INTERVAL:Long = 7200
-        const val TIME_OUT_INTERVAL:Long = 15
+        const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
+        const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15
 
     }
 
