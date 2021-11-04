@@ -169,7 +169,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
     override fun onOpenProductDetail(commerceItem: CommerceItem) {
         val productList = ProductDetails()
         val commerceItemInfo = commerceItem.commerceItemInfo
-        productList.externalImageRef = commerceItemInfo.externalImageURL
+        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2
         productList.productName = commerceItemInfo.productDisplayName
         productList.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
         productList.productId = commerceItemInfo.productId

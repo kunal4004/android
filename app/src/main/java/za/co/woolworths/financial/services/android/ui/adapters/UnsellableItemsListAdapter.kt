@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import kotlinx.android.synthetic.main.cart_product_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.UnSellableCommerceItem
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerceItem>) : RecyclerView.Adapter<UnsellableItemsListAdapter.ViewHolder>() {
@@ -38,8 +36,7 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
             itemView.price.text = commerceItem.price.amount.let { CurrencyFormatter.formatAmountToRandAndCentWithSpace(it) }
             itemView.rlDeleteButton.visibility = View.GONE
             itemView.rlDelete.visibility = View.GONE
-            setProductImage(itemView.cartProductImage, commerceItem.externalImageURL
-                    ?: "")
+            itemView.cartProductImage.setImageURI(commerceItem.externalImageRefV2 ?: "")
             if (commerceItem.price.getDiscountedAmount() > 0) {
                 itemView.promotionalText.text = " ${CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.price.getDiscountedAmount())}"
                 itemView.promotionalTextLayout.visibility = View.VISIBLE
@@ -61,14 +58,6 @@ class UnsellableItemsListAdapter(var commerceItems: ArrayList<UnSellableCommerce
                     itemView.tvSize.visibility = View.VISIBLE
                 }
             }
-
-        }
-
-        private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
-            val url = KotlinUtils.productImageUrlPrefix + imgUrl;
-            //TODO:: get domain name dynamically
-            image.setImageURI(if (TextUtils.isEmpty(imgUrl)) KotlinUtils.productImageUrlPrefix else url);
         }
     }
-
 }
