@@ -68,7 +68,6 @@ import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
-import za.co.woolworths.financial.services.android.models.dto.ViewTreatmentPlan;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;

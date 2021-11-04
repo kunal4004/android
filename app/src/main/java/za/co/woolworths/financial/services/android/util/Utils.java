@@ -1633,19 +1633,7 @@ public class Utils {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 
-    public static String getJsonDataFromAsset(Context context, String fileName) {
-        String jsonString = "";
-        try {
-            InputStream stream = context.getAssets().open(fileName);
-            int size = stream.available();
-            byte[] buffer = new byte[size];
-            stream.read(buffer);
-            stream.close();
-            jsonString = new String(buffer);
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-            return null;
-        }
-        return jsonString;
-    }
+   public static String formatString(String btnName){
+        return btnName.replace(" ", "_").toLowerCase();
+   }
 }
