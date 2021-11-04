@@ -330,6 +330,9 @@ open class FirebaseManagerAnalyticsProperties {
         const val VOC_SKIP = "voc_skip"
         const val VOC_SUBMIT = "voc_submit"
         const val VOC_OPTOUT = "voc_optout"
+
+        //Sunsetting and Splash screen
+        const val SPLASH_BTN = "splash_{%s}"
     }
 
     class PropertyNames {
