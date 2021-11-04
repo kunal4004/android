@@ -1024,9 +1024,7 @@ public class Utils {
         return new Gson().toJson(jsonObject);
     }
 
-    public static String getExternalImageRef() {
-        return KotlinUtils.productImageUrlPrefix;
-    }
+
 
 
     public static Object jsonStringToObject(String value, Class cl) {
