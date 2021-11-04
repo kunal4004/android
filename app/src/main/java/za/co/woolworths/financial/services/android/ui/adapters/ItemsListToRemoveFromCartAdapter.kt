@@ -38,7 +38,7 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
             itemView.llQuantity.visibility = View.INVISIBLE
             itemView.price.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.priceInfo.amount)
             itemView.rlDeleteButton.visibility = View.GONE
-            setProductImage(itemView.cartProductImage, commerceItem.commerceItemInfo.externalImageURL
+            itemView.cartProductImage.setImageURI(commerceItem.commerceItemInfo.externalImageRefV2
                     ?: "")
             if (commerceItem.priceInfo.discountedAmount > 0) {
                 itemView.promotionalText.text = " " + CurrencyFormatter.formatAmountToRandAndCentWithSpace(commerceItem.priceInfo.discountedAmount)
@@ -61,14 +61,6 @@ class ItemsListToRemoveFromCartAdapter(var commerceItems: ArrayList<CommerceItem
                     itemView.tvSize.visibility = View.VISIBLE
                 }
             }
-
-        }
-
-        private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
-            val url = KotlinUtils.productImageUrlPrefix + imgUrl
-            //TODO:: get domain name dynamically
-            image.setImageURI(if (TextUtils.isEmpty(imgUrl)) KotlinUtils.productImageUrlPrefix else url)
         }
     }
-
 }
