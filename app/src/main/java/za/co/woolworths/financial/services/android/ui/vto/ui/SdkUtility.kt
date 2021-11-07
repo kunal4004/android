@@ -49,6 +49,7 @@ object SdkUtility {
                 availableFunctionalities: Set<Functionality>,
                 preloadError: Map<String, Throwable>
             ) {
+                PerfectLib.setMaxCacheSize(500)
                 PerfectLib.setCountryCode("ZA")
                 PerfectLib.setLocaleCode("en_ZA")
                 callback.onInitialized()

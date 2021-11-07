@@ -14,7 +14,11 @@ class PickImageGalleryContract() : ActivityResultContract<String, Uri?>() {
         Intent(
             Intent.ACTION_PICK,
             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        ).apply { type = input }
+        ).apply {
+            val mimeTypes = arrayOf("image/png", "image/jpg")
+            type = "image/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            type = input }
 
     override fun parseResult(resultCode: Int, intent: Intent?) =
         intent?.data?.takeIf { resultCode == Activity.RESULT_OK }

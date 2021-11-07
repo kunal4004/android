@@ -27,9 +27,9 @@ class VtoApplyEffectOnImageViewModel @Inject constructor(
     val clearEffectImage: LiveData<Bitmap> get() = _clearEffectImage
 
 
-    fun setApplier(uri: Uri?, productId: String?, sku: String?) {
+    fun setApplier(uri: Uri?, productId: String?, sku: String?, isFromLiveCamera: Boolean) {
 
-        _applyEffectResult =  applyVtoImageRepository.setVtoApplier(uri, productId, sku)
+        _applyEffectResult =  applyVtoImageRepository.setVtoApplier(uri, productId, sku,isFromLiveCamera)
     }
 
     fun applyEffect(productId: String?, sku: String?)

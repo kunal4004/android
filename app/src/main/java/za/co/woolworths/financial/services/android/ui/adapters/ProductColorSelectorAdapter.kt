@@ -57,7 +57,7 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
         fun bind(color: String?) {
             itemView.setOnClickListener {
                 selectedColor = color
-                listener.onColorSelection(selectedColor)
+                listener.onColorSelection(selectedColor,false)
                 notifyDataSetChanged()
             }
 
@@ -82,7 +82,7 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
     fun setColorSelection(position : Int){
         selectedColor = colorsList[position]
         notifyDataSetChanged()
-        listener.onColorSelection(selectedColor)
+        listener.onColorSelection(selectedColor,true)
     }
 
 }
