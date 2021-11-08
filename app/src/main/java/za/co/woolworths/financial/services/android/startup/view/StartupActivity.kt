@@ -87,7 +87,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             run {
                 if (task.isSuccessful) {
                     //set dynamic ui here
-                    firebaseRemoteConfig.fetchAndActivate()
+                    firebaseRemoteConfig.activate()
                     remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
                     if (remoteConfigJsonString.isEmpty()) {
                         //navigate with normal flow
