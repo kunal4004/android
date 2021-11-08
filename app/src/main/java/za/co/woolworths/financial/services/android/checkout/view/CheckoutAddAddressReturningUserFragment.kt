@@ -758,6 +758,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
                     Utils.toJson(confirmDeliveryAddressResponse)
                 )
+                baseFragBundle?.putBoolean(IS_DELIVERY, (tvNativeCheckoutDeliveringTitle.text == getString(R.string.native_checkout_delivering_to_title)))
                 view?.findNavController()?.navigate(
                     R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
                     baseFragBundle
