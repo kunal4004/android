@@ -269,7 +269,10 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
                 R.id.ibBack -> onBackPressed()
                 R.id.okGotItButton -> {
-                    mStoreCardsResponse?.let { handleStoreCardResponse(it) }
+                    mStoreCardsResponse?.let {
+                        Handler().postDelayed({
+                            goToMyCardDetailActivity(it) }, AppConstant.DELAY_3000_MS)
+                    }
                 }
                 R.id.closeIconImageView -> {
                     finish()
@@ -277,18 +280,22 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                 }
                 R.id.okGotItStaffButton -> {
                     mStoreCardsResponse?.let {
-                        activity?.apply {
-                            val displayStoreCardDetail = Intent(activity, MyCardDetailActivity::class.java)
-                            displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Gson().toJson(it))
-                            this.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
-                            this.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-                            this.setResult(MyCardDetailActivity.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE)
-                            this.finish()
-                            this.overridePendingTransition(0, 0)
-                        }
+                        goToMyCardDetailActivity(it)
                     }
                 }
             }
+        }
+    }
+
+    private fun goToMyCardDetailActivity(storeCardsResponse: StoreCardsResponse) {
+        activity?.apply {
+            val displayStoreCardDetail = Intent(activity, MyCardDetailActivity::class.java)
+            displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
+            this.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
+            this.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+            this.setResult(MyCardDetailActivity.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE)
+            this.finish()
+            this.overridePendingTransition(0, 0)
         }
     }
 
@@ -308,9 +315,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     }
 
     private fun handleStoreCardResponse(storeCardsResponse: StoreCardsResponse) {
-        if (!isAdded) return
         activity?.let { activity ->
-
             val storeCardData = storeCardsResponse.storeCardsData
 
             val tempStoreCardData =
@@ -323,38 +328,34 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
             storeCardData?.apply {
                 if(generateVirtualCard){
-                    if(isStaffMember && virtualCardStaffMemberMessage != null){//show staff discount view
+                    Handler().postDelayed({
+                        val intent = Intent(activity, GetTemporaryStoreCardPopupActivity::class.java)
+                        intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
+                        activity.startActivity(intent)
+                        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                        activity.finish()
+                        activity.overridePendingTransition(0, 0)
+                    }, AppConstant.DELAY_3000_MS)
+                }
+                else {
+                    if(isStaffMember
+                        && virtualCardStaffMemberMessage?.title != null
+                        && virtualCardStaffMemberMessage.paragraphs.isNotEmpty()
+                    ){//show staff discount congratulations view
                         flProgressIndicator.visibility = GONE
-                        includeVirtualTempCardSuccessStaffMessage.visibility = VISIBLE
                         includeVirtualTempCardSuccessMessage?.visibility = GONE
+                        includeVirtualTempCardSuccessStaffMessage?.visibility = VISIBLE
                         titleStaffTextView?.text = virtualCardStaffMemberMessage.title
-                        if(!virtualCardStaffMemberMessage.paragraphs.isNullOrEmpty() && virtualCardStaffMemberMessage.paragraphs.size == 3){
+                        if(virtualCardStaffMemberMessage.paragraphs.size >= 3){
                             staffMessage1CheckBox.text = virtualCardStaffMemberMessage.paragraphs[0]
                             staffMessage2CheckBox.text = virtualCardStaffMemberMessage.paragraphs[1]
                             staffMessage3CheckBox.text = virtualCardStaffMemberMessage.paragraphs[2]
                         }
                     }
-                    else{ // no staff discount view
+                    else{
                         Handler().postDelayed({
-                            val intent = Intent(activity, GetTemporaryStoreCardPopupActivity::class.java)
-                            intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
-                            activity.startActivity(intent)
-                            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-                            activity.finish()
-                            activity.overridePendingTransition(0, 0)
-                        }, AppConstant.DELAY_3000_MS)
+                            goToMyCardDetailActivity(storeCardsResponse) }, AppConstant.DELAY_3000_MS)
                     }
-                }
-                else {
-                    Handler().postDelayed({
-                        val displayStoreCardDetail = Intent(activity, MyCardDetailActivity::class.java)
-                        displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
-                        activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD)
-                        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-                        activity.setResult(MyCardDetailActivity.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE)
-                        activity.finish()
-                        activity.overridePendingTransition(0, 0)
-                    }, AppConstant.DELAY_3000_MS)
                 }
             }
         }
