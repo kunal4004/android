@@ -498,7 +498,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         CartActivity cartActivity = (CartActivity) getActivity();
         ProductDetails productList = new ProductDetails();
         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
-        productList.externalImageRef = commerceItemInfo.externalImageURL;
+        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2;
         productList.productName = commerceItemInfo.productDisplayName;
         productList.fromPrice = (float) commerceItem.priceInfo.getAmount();
         productList.productId = commerceItemInfo.productId;
