@@ -82,9 +82,13 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private fun unselectOtherTaxiType(taxiType: TextView) {
         when (taxiType) {
             taxiText -> {
+                taxiDescription.visibility = View.VISIBLE
+                vehicleDetailsLayout.visibility = View.GONE
                 onTaxiTypeUnSelected(myVehicleText)
             }
             myVehicleText -> {
+                taxiDescription.visibility = View.GONE
+                vehicleDetailsLayout.visibility = View.VISIBLE
                 onTaxiTypeUnSelected(taxiText)
             }
         }
@@ -106,7 +110,11 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             listOfInputFields.forEach {
                 if (it is EditText) {
                     if (it.text.toString().trim().isEmpty())
-                        showErrorInputField(it, View.VISIBLE)
+                        if (it.id == R.id.recipientNameEditText) {
+                            recipientNameErrorMsg.text =
+                                bindString(R.string.recipient_name_error_msg)
+                        }
+                    showErrorInputField(it, View.VISIBLE)
                 }
             }
         }
@@ -123,9 +131,6 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
                 val length = it.length
                 if (length > 0 && !Pattern.matches(REGEX_VEHICLE_TEXT, it)) {
                     recipientNameErrorMsg.text = bindString(R.string.special_char_name_error_text)
-                    showErrorInputField(this, View.VISIBLE)
-                } else if (length == 0) {
-                    recipientNameErrorMsg.text = bindString(R.string.recipient_name_error_msg)
                     showErrorInputField(this, View.VISIBLE)
                 } else
                     showErrorInputField(this, View.GONE)
@@ -211,8 +216,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         visible: Int,
         recipientLayoutValue: Int
     ) {
-        textView?.visibility = visible
-        if (View.VISIBLE == visible) {
+        if (View.VISIBLE == visible && textView.visibility == View.GONE) {
             val anim = ObjectAnimator.ofInt(
                 collectionDetailsNestedScrollView,
                 "scrollY",
@@ -220,5 +224,6 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             )
             anim.setDuration(300).start()
         }
+        textView?.visibility = visible
     }
 }

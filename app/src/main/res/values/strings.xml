@@ -2193,6 +2193,7 @@
     <string name="vehicle_details_title">Vehicle Details</string>
     <string name="my_vehicle_text">My Vehicle</string>
     <string name="e_hailing_text">E-Hailing</string>
+    <string name="e_hailing_description">Select this option if you will be arriving to collect your order in an e-hailing vehicle (e.g. Uber, Bolt, Lyft).</string>
     <string name="vehicle_colour">Vehicle Colour: *</string>
     <string name="vehicle_model">Vehicle Model: *</string>
     <string name="confirm_details">Confirm Details</string>
