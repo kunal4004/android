@@ -17,8 +17,8 @@ import kotlinx.android.synthetic.main.reviews_skin_profile.*
 import kotlinx.android.synthetic.main.reviews_skin_profile.skin_profile_layout
 import kotlinx.android.synthetic.main.skin_profile_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.SkinProfile
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.SkinProfileAdapter
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.SkinProfile
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.SkinProfileAdapter
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class SkinProfileDialog(private val reviews: Reviews) : WBottomSheetDialogFragment(), View.OnClickListener {

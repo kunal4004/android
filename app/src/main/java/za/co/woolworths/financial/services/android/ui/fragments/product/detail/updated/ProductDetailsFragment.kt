@@ -78,7 +78,7 @@ import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.*
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.ReviewerInfoDetailsActivity
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity
 import za.co.woolworths.financial.services.android.ui.adapters.*
 
 
@@ -170,6 +170,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         moreColor.setOnClickListener(this)
         tvRatingDetails.setOnClickListener(this)
         tvSkinProfile.setOnClickListener(this)
+        btViewMoreReview.setOnClickListener(this)
         closePage.setOnClickListener {
             activity?.apply {
                 setResult(RESULT_CANCELED)
@@ -202,7 +203,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
             R.id.tvRatingDetails -> showRatingDetailsDailog()
             R.id.tvSkinProfile->viewSkinProfileDialog()
+            R.id.btViewMoreReview->viewMoreReviewScreen()
         }
+    }
+
+    private fun viewMoreReviewScreen() {
+        val intent = Intent(requireContext(), MoreReviewActivity::class.java)
+        startActivity(intent)
     }
 
     private fun showRatingDetailsDailog() {

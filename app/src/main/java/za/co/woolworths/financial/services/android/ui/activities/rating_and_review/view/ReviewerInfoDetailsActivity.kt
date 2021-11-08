@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.rating_and_review
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

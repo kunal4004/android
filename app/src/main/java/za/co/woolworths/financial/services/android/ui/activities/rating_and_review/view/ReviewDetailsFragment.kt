@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.rating_and_review
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 
 import android.graphics.Paint
 import android.os.Bundle
@@ -17,7 +17,8 @@ import kotlinx.android.synthetic.main.skin_profile_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Normal
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.SecondaryRatings
-import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ProductReviewViewPagerAdapter
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.SkinProfileAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 

@@ -1100,4 +1100,15 @@ interface ApiInterface {
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
     ): Call<RatingAndReviewData>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("/retail-ratings-reviews/app/v1")
+    suspend fun getMoreReviews(
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Query("productId") productId: String,
+            @Query("limit") limit: Int,
+            @Query("offset") offset: Int
+    ): retrofit2.Response<RatingAndReviewData>
 }

@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.rating_and_review
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.skin_profile_layout_cell.view.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.SkinProfile
 
 class SkinProfileAdapter(private var skinProfileList: List<SkinProfile>):RecyclerView.Adapter<SkinProfileAdapter.ViewHolder>() {
      class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
