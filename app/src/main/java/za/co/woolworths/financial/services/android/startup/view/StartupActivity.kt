@@ -291,7 +291,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val text: String = second_btn?.text.toString()
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
-                    String.format(FirebaseManagerAnalyticsProperties?.SPLASH_BTN, Utils.formatString(text)),
+                    String.format(FirebaseManagerAnalyticsProperties?.SPLASH_BTN, Utils.formatAnalyticsButtonText(text)),
                     this
             )
         }
@@ -306,7 +306,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val text: String = first_btn?.text.toString()
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
-                    String.format(FirebaseManagerAnalyticsProperties?.SPLASH_BTN, Utils.formatString(text)),
+                    String.format(FirebaseManagerAnalyticsProperties?.SPLASH_BTN, Utils.formatAnalyticsButtonText(text)),
                     this
             )
         }
