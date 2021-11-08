@@ -83,10 +83,11 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun fetchFirebaseConfigData() {
         firebaseRemoteConfig
-                .fetchAndActivate().addOnCompleteListener { task ->
+                .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL).addOnCompleteListener { task ->
             run {
                 if (task.isSuccessful) {
                     //set dynamic ui here
+                    firebaseRemoteConfig.fetchAndActivate()
                     remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
                     if (remoteConfigJsonString.isEmpty()) {
                         //navigate with normal flow
@@ -165,7 +166,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     actionUrlSecond = secondButton.actionUrl
                 }
             }
-        } else if (timeIntervalSince1970 >= configData.expiryTime) {
+        } else if (timeIntervalSince1970 >= configData.expiryTime && timeIntervalSince1970 != -1L) {
             val inActiveConfiguration = configData?.inactiveConfiguration
             inActiveConfiguration?.run {
                 if (title == null)
