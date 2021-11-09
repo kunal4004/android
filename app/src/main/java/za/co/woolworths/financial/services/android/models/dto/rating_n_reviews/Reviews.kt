@@ -7,7 +7,7 @@ data class Reviews (
 	@SerializedName("isVerifiedBuyer") val isVerifiedBuyer : Boolean,
 	@SerializedName("isStaffMember") val isStaffMember : Boolean,
 	@SerializedName("id") val id : Int,
-	@SerializedName("productId") val productId : Int,
+	@SerializedName("productId") val productId : String,
 	@SerializedName("syndicatedSource") val syndicatedSource : String,
 	@SerializedName("rating") val rating : Float,
 	@SerializedName("isRecommended") val isRecommended : Boolean,

@@ -336,6 +336,7 @@
         app:layout_constraintTop_toBottomOf="@id/reviewDetailsInformation"
         />
     <RelativeLayout
+        android:id="@+id/rlViewMoreReview"
         style="@style/card_items_header_layout_style"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -347,9 +348,8 @@
         style="@style/whiteWButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="30 More Reviews"
         android:fontFamily="@font/futura_semi_bold"
         android:layout_marginBottom="@dimen/twenty_five_dp"
-        android:layout_marginTop="@dimen/twenty_five_dp"/>
+        android:layout_marginTop="@dimen/ten_dp" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

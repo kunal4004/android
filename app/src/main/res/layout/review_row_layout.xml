@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:paddingLeft="@dimen/sixteen_dp"
-    android:paddingRight="@dimen/sixteen_dp">
+    android:paddingRight="@dimen/sixteen_dp"
+    android:paddingBottom="@dimen/sixteen_dp">
 
     <TextView
         android:id="@+id/tvName"
