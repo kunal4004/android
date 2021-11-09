@@ -71,7 +71,6 @@ class KotlinUtils {
     companion object {
 
         const val DELAY: Long = 900
-        const val productImageUrlPrefix = "https://images.woolworthsstatic.co.za/"
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"

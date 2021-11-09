@@ -133,6 +133,9 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 creditLimitIncrease?.apply {
                     WoolworthsApplication.getInstance().setCreditLimitsIncrease(this)
                 }
+                nativeCheckout.apply {
+                    WoolworthsApplication.setNativeCheckout(nativeCheckout)
+                }
 
                 inAppReview?.apply {
                     isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
@@ -145,6 +148,10 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
 
                 accountOptions?.apply {
                     WoolworthsApplication.setAccountOptions(this)
+                }
+
+                deviceSecurity?.apply {
+                    WoolworthsApplication.setDeviceSecurity(this)
                 }
             }
         }
