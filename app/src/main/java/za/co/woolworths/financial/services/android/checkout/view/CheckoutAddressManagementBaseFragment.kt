@@ -14,6 +14,7 @@ open class CheckoutAddressManagementBaseFragment : Fragment() {
     companion object {
         var baseFragBundle: Bundle? = Bundle()
         var baseFragSavedAddressResponse: SavedAddressResponse? = null
+        const val IS_DELIVERY = "isDelivery"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

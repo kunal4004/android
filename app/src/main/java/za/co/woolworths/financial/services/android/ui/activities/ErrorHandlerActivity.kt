@@ -43,6 +43,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
 
         //REQUEST_CODES
         const val ERROR_PAGE_REQUEST_CODE: Int = 190
+        const val ERROR_EMPTY_REQUEST_CODE: Int = 191
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
