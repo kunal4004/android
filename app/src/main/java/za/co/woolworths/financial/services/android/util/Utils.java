@@ -1634,6 +1634,7 @@ public class Utils {
     }
 
    public static String formatString(String btnName){
-        return btnName.replace(" ", "_").toLowerCase();
+       String  btnText =  btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
+       return btnText.replace(" ", "_").toLowerCase();
    }
 }
