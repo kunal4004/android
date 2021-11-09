@@ -290,7 +290,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun handleSecondbuttonClick() {
         val text: String = second_btn?.text.toString()
-        val updatedText: String = Utils.formatString(text)
+        val updatedText: String = Utils.formatAnalyticsButtonText(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText),
@@ -306,7 +306,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun handleFirstbuttonClick() {
         val text: String = first_btn?.text.toString()
-        val updatedText: String = Utils.formatString(text)
+        val updatedText: String = Utils.formatAnalyticsButtonText(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText) ,
