@@ -14,7 +14,7 @@ class ExpandableGridViewScrollable @JvmOverloads constructor(
 ) : GridView(context, attrs, defStyleAttr) {
     var expanded = false
 
-    fun isExpanded(): Boolean {
+    private fun isExpanded(): Boolean {
         return expanded
     }
 

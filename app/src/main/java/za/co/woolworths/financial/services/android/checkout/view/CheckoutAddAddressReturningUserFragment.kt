@@ -55,8 +55,10 @@ import za.co.woolworths.financial.services.android.models.network.ConfirmDeliver
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_EMPTY_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
 
@@ -139,6 +141,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Hide keyboard in case it was visible from a previous screen
+        KeyboardUtils.hideKeyboardIfVisible(activity)
         return inflater.inflate(R.layout.checkout_add_address_retuning_user, container, false)
     }
 
@@ -396,8 +400,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         isTimeSlotAvailable = true
                 }
             }
-            if (!isTimeSlotAvailable)
-                localOpenDayDeliverySlots?.add(timeSlotListItem)
+            if (!isTimeSlotAvailable) {
+                if ((type == MIXED_OTHER && confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.isNotEmpty() == true) || (type == ONLY_OTHER && confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.isNotEmpty() == true))
+                    localOpenDayDeliverySlots?.add(timeSlotListItem)
+            }
         }
         checkoutDeliveryTypeSelectionShimmerAdapter = null
         deliveryTypeSelectionRecyclerView.adapter = null
@@ -443,15 +449,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     if (discountDetails.totalDiscount == 0.0) GONE else VISIBLE
 
                 txtOrderSummaryDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount))
                 txtOrderSummaryTotalDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount))
                 txtOrderSummaryWRewardsVouchersValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount))
                 txtOrderSummaryCompanyDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount))
                 txtOrderSummaryPromoCodeDiscountValue?.text =
-                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
+                    "-".plus(CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount))
 
                 txtOrderTotalValue.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
@@ -585,7 +591,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             )
             return
         }
-
+        deliverySummaryScrollView?.scrollTo(0, checkoutDeliveryDetailsLayout?.top ?: 0)
         startShimmerView()
         val body = ConfirmDeliveryAddressBody(suburbId)
         checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails(body)
@@ -620,7 +626,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         activity?.let {
             val intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra(ErrorHandlerActivity.ERROR_TYPE, ERROR_TYPE_EMPTY_CART)
-            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_EMPTY_REQUEST_CODE)
         }
     }
 
@@ -699,21 +705,21 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     fun getSelectedSlotResponse(deliveryType: DeliveryType): ConfirmDeliveryAddressResponse? {
-        return if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD)) selectedSlotResponseFood else selectedSlotResponseOther
+        return if (deliveryType == ONLY_FOOD || deliveryType == MIXED_FOOD) selectedSlotResponseFood else selectedSlotResponseOther
     }
 
     fun setSelectedSlotResponse(
         confirmDeliveryAddressResponse: ConfirmDeliveryAddressResponse?,
         deliveryType: DeliveryType
     ) {
-        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD))
+        if (deliveryType == ONLY_FOOD || deliveryType == MIXED_FOOD)
             selectedSlotResponseFood = confirmDeliveryAddressResponse
         else
             selectedSlotResponseOther = confirmDeliveryAddressResponse
     }
 
     fun setSelectedFoodOrOtherSlot(selectedSlot: Slot, deliveryType: DeliveryType) {
-        if (deliveryType.equals(ONLY_FOOD) || deliveryType.equals(MIXED_FOOD)) {
+        if (deliveryType == ONLY_FOOD || deliveryType == MIXED_FOOD) {
             selectedFoodSlot = selectedSlot
             txtSelectDeliveryTimeSlotFoodError.visibility = GONE
         } else {
@@ -757,6 +763,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 baseFragBundle?.putString(
                     CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
                     Utils.toJson(confirmDeliveryAddressResponse)
+                )
+                baseFragBundle?.putBoolean(
+                    IS_DELIVERY,
+                    (tvNativeCheckoutDeliveringTitle.text == getString(R.string.native_checkout_delivering_to_title))
                 )
                 view?.findNavController()?.navigate(
                     R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,
@@ -1072,6 +1082,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         shoppingBagsOptionsList: ShoppingBagsOptions,
         position: Int
     ) {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+            activity
+        )
         selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
     }
 
@@ -1079,6 +1093,18 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
+            ErrorHandlerActivity.ERROR_EMPTY_REQUEST_CODE -> {
+                when (resultCode) {
+                    // Comes from slot selection page.
+                    // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
+                    RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
+                        (activity as? CheckoutActivity)?.apply {
+                            setResult(RESULT_EMPTY_CART)
+                            closeActivity()
+                        }
+                    }
+                }
+            }
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
                     // Comes from slot selection page.

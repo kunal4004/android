@@ -71,7 +71,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private var suburbListAdapter: SuburbListAdapter? = null
     private var selectedSuburb = Suburb()
     private var selectedProvince = Province()
-    private var isDeliverySelected: Boolean = true
+    private var isDeliverySelected: Boolean? = null
     private var isConfirmDeliveryResponse: Boolean = false
     private var validateStoreList: ValidateStoreList? = null
 
@@ -110,6 +110,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         updateSavedAddress(baseFragBundle)
+        // Hide keyboard in case it was visible from a previous screen
+        KeyboardUtils.hideKeyboardIfVisible(activity)
     }
 
     override fun onClick(v: View?) {
@@ -143,7 +145,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             }
             R.id.btnAddressConfirmation -> {
                 if (loadingProgressBar.visibility == View.GONE) {
-                    if (isDeliverySelected) {
+                    if (isDeliverySelected == true) {
                         if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
                             addNewAddressErrorMsg.visibility = View.VISIBLE
                         else {
@@ -184,6 +186,17 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
+            ErrorHandlerActivity.ERROR_EMPTY_REQUEST_CODE -> {
+                when (resultCode) {
+                    // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
+                    Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
+                        (activity as? CheckoutActivity)?.apply {
+                            setResult(CheckOutFragment.RESULT_EMPTY_CART)
+                            closeActivity()
+                        }
+                    }
+                }
+            }
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
                     // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
@@ -221,7 +234,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 ErrorHandlerActivity.ERROR_TYPE,
                 ErrorHandlerActivity.ERROR_TYPE_EMPTY_CART
             )
-            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_EMPTY_REQUEST_CODE)
         }
     }
 
@@ -266,7 +279,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     Utils.savePreferredDeliveryLocation(
                                         shoppingDeliveryLocation
                                     )
-                                    if (!isDeliverySelected) {
+                                    if (isDeliverySelected == false) {
                                         val openCheckOutActivity =
                                             Intent(context, CartCheckoutActivity::class.java)
                                         openCheckOutActivity.putExtra(
@@ -377,7 +390,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
                 activity
             )
-            if (isDeliverySelected) {
+            if (isDeliverySelected == true) {
                 view?.findNavController()?.navigate(
                     R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
                     baseFragBundle
@@ -449,7 +462,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun initView() {
-        if (isDeliverySelected) {
+        selectedProvince = Utils.getPreferredDeliveryLocation().province
+        if (isDeliverySelected == null) {
+            if(baseFragBundle?.containsKey(IS_DELIVERY) == true)
+            isDeliverySelected = baseFragBundle?.getBoolean(IS_DELIVERY)
+        }
+        if (isDeliverySelected != null && isDeliverySelected as Boolean) {
             if (baseFragBundle?.containsKey(CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY) == true) {
                 isConfirmDeliveryResponse = true
                 showEarliestDeliveryDates()
@@ -457,7 +475,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 isConfirmDeliveryResponse = false
                 hideEarliestDeliveryView()
             }
-            selectedProvince = Utils.getPreferredDeliveryLocation().province
             if (savedAddress?.addresses?.isNullOrEmpty() == true) {
                 //Show No Address view
                 hideDeliveryAddressListView()

@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
@@ -93,24 +94,26 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         }
 
         context?.let {
+            val deviceSecurity = WoolworthsApplication.getDeviceSecurity()
             when(mApplyNowState){
                 ApplyNowState.STORE_CARD ->{
                     linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.sc_asset)
-                    linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_sc)
+                    linkDeviceConfirmationTitle?.text = deviceSecurity?.storeCard?.primaryDeviceConfirmation?.title
+                    linkDeviceConfirmationDesc?.text = deviceSecurity?.storeCard?.primaryDeviceConfirmation?.description
                 }
                 ApplyNowState.PERSONAL_LOAN ->{
                     linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.pl_asset)
-                    linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_pl)
+                    linkDeviceConfirmationTitle?.text = deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.title
+                    linkDeviceConfirmationDesc?.text = deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.description
                 }
                 ApplyNowState.SILVER_CREDIT_CARD,
                 ApplyNowState.GOLD_CREDIT_CARD,
                 ApplyNowState.BLACK_CREDIT_CARD ->
                 {
                     linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.cc_asset)
-                    linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc_cc)
+                    linkDeviceConfirmationTitle?.text = deviceSecurity?.creditCard?.primaryDeviceConfirmation?.title
+                    linkDeviceConfirmationDesc?.text = deviceSecurity?.creditCard?.primaryDeviceConfirmation?.description
                 }
-
-                else -> linkDeviceConfirmationDesc?.text = it.getString(R.string.link_device_confirm_desc)
             }
         }
     }
