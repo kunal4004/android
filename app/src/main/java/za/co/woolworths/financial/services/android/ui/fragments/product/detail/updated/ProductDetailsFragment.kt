@@ -126,7 +126,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private lateinit var  reviewThumbnailAdapter: ReviewThumbnailAdapter
     private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
     private var thumbnailFullList = listOf<Thumbnails>()
-    private lateinit var ratingReviewResponse: RatingReviewResopnse
+    private lateinit var ratingReviewResponse: RatingReviewResponse
     companion object {
         const val INDEX_STORE_FINDER = 1
         const val INDEX_ADD_TO_CART = 2
@@ -663,7 +663,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         customerReview.visibility = View.GONE
     }
 
-    private fun setReviewUI(ratingNReviewResponse: RatingReviewResopnse){
+    private fun setReviewUI(ratingNReviewResponse: RatingReviewResponse){
         ratingNReviewResponse.apply {
             reviewStatistics.apply {
                 ratingBar.rating = averageRating
