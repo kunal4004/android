@@ -2309,4 +2309,5 @@
     <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
     <string name="empty_cart_title">Your Cart Is Empty</string>
     <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
+    <string name="native_checkout_collecting_from">Collecting From</string>
 </resources>
