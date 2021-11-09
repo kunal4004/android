@@ -23,7 +23,9 @@ import java.util.regex.Pattern
 class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     View.OnClickListener {
 
-    private lateinit var listOfInputFields: List<View>
+    private lateinit var listOfVehicleInputFields: List<View>
+    private lateinit var listOfTaxiInputFields: List<View>
+    private var isMyVehicle = true
 
     companion object {
         const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
@@ -48,9 +50,15 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
                 checkValidationsAndConfirm()
             }
             R.id.taxiText -> {
+                isMyVehicle = false
+                taxiDescription.visibility = View.VISIBLE
+                vehicleDetailsLayout.visibility = View.GONE
                 onTaxiTypeSelected(taxiText)
             }
             R.id.myVehicleText -> {
+                isMyVehicle = true
+                taxiDescription.visibility = View.GONE
+                vehicleDetailsLayout.visibility = View.VISIBLE
                 onTaxiTypeSelected(myVehicleText)
             }
         }
@@ -82,42 +90,48 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private fun unselectOtherTaxiType(taxiType: TextView) {
         when (taxiType) {
             taxiText -> {
-                taxiDescription.visibility = View.VISIBLE
-                vehicleDetailsLayout.visibility = View.GONE
                 onTaxiTypeUnSelected(myVehicleText)
             }
             myVehicleText -> {
-                taxiDescription.visibility = View.GONE
-                vehicleDetailsLayout.visibility = View.VISIBLE
                 onTaxiTypeUnSelected(taxiText)
             }
         }
     }
 
     private fun checkValidationsAndConfirm() {
-        if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
-            && cellphoneNumberEditText?.text.toString().trim().length < 10
-        ) {
-            showErrorPhoneNumber()
-        }
-
-        if (recipientNameEditText?.text.toString().trim()
-                .isNotEmpty() && vehicleColourEditText?.text.toString().trim()
-                .isNotEmpty() && vehicleModelEditText?.text.toString().trim().isNotEmpty()
-        ) {
-
+        if (isMyVehicle) {
+            if (!isErrorInputFields(listOfVehicleInputFields)) {
+                //Todo : confirm details button click
+            }
         } else {
-            listOfInputFields.forEach {
-                if (it is EditText) {
-                    if (it.text.toString().trim().isEmpty())
-                        if (it.id == R.id.recipientNameEditText) {
-                            recipientNameErrorMsg.text =
-                                bindString(R.string.recipient_name_error_msg)
-                        }
+            if (!isErrorInputFields(listOfTaxiInputFields)) {
+                //Todo : confirm details button click
+            }
+        }
+    }
+
+    private fun isErrorInputFields(listOfInputFields: List<View>): Boolean {
+        var isEmptyError = false
+        if (cellphoneNumberEditText?.text.toString().trim()
+                .isNotEmpty() && cellphoneNumberEditText?.text.toString().trim().length < 10
+        ) {
+            isEmptyError = true
+            showErrorPhoneNumber()
+        } else
+            cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
+
+        listOfInputFields.forEach {
+            if (it is EditText) {
+                if (it.text.toString().trim().isEmpty()) {
+                    isEmptyError = true
+                    if (it.id == R.id.recipientNameEditText) {
+                        recipientNameErrorMsg.text = bindString(R.string.recipient_name_error_msg)
+                    }
                     showErrorInputField(it, View.VISIBLE)
                 }
             }
         }
+        return isEmptyError
     }
 
     private fun initView() {
@@ -174,12 +188,13 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             }
         }
 
-        listOfInputFields = listOf(
+        listOfVehicleInputFields = listOf(
             recipientNameEditText,
             cellphoneNumberEditText,
             vehicleColourEditText,
             vehicleModelEditText
         )
+        listOfTaxiInputFields = listOf(recipientNameEditText, cellphoneNumberEditText)
     }
 
     private fun showErrorInputField(editText: EditText, visible: Int) {
