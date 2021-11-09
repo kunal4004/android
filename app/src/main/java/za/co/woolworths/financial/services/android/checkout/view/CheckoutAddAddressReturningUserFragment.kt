@@ -400,8 +400,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         isTimeSlotAvailable = true
                 }
             }
-            if (!isTimeSlotAvailable)
-                localOpenDayDeliverySlots?.add(timeSlotListItem)
+            if (!isTimeSlotAvailable) {
+                if ((type == MIXED_OTHER && confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.isNotEmpty() == true) || (type == ONLY_OTHER && confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.isNotEmpty() == true))
+                    localOpenDayDeliverySlots?.add(timeSlotListItem)
+            }
         }
         checkoutDeliveryTypeSelectionShimmerAdapter = null
         deliveryTypeSelectionRecyclerView.adapter = null
@@ -761,6 +763,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 baseFragBundle?.putString(
                     CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY,
                     Utils.toJson(confirmDeliveryAddressResponse)
+                )
+                baseFragBundle?.putBoolean(
+                    IS_DELIVERY,
+                    (tvNativeCheckoutDeliveringTitle.text == getString(R.string.native_checkout_delivering_to_title))
                 )
                 view?.findNavController()?.navigate(
                     R.id.action_CheckoutAddAddressReturningUserFragment_to_checkoutAddressConfirmationFragment,

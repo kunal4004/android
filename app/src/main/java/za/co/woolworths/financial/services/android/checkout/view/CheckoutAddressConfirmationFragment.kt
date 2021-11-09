@@ -464,9 +464,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun initView() {
         selectedProvince = Utils.getPreferredDeliveryLocation().province
         if (isDeliverySelected == null) {
-            isDeliverySelected = !Utils.getPreferredDeliveryLocation().storePickup
+            if(baseFragBundle?.containsKey(IS_DELIVERY) == true)
+            isDeliverySelected = baseFragBundle?.getBoolean(IS_DELIVERY)
         }
-        if (isDeliverySelected as Boolean) {
+        if (isDeliverySelected != null && isDeliverySelected as Boolean) {
             if (baseFragBundle?.containsKey(CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY) == true) {
                 isConfirmDeliveryResponse = true
                 showEarliestDeliveryDates()
