@@ -83,10 +83,11 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun fetchFirebaseConfigData() {
         firebaseRemoteConfig
-                .fetchAndActivate().addOnCompleteListener { task ->
+                .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL).addOnCompleteListener { task ->
             run {
                 if (task.isSuccessful) {
                     //set dynamic ui here
+                    firebaseRemoteConfig.activate()
                     remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
                     if (remoteConfigJsonString.isEmpty()) {
                         //navigate with normal flow
@@ -165,7 +166,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     actionUrlSecond = secondButton.actionUrl
                 }
             }
-        } else if (timeIntervalSince1970 >= configData.expiryTime) {
+        } else if (timeIntervalSince1970 >= configData.expiryTime && timeIntervalSince1970 != -1L) {
             val inActiveConfiguration = configData?.inactiveConfiguration
             inActiveConfiguration?.run {
                 if (title == null)
@@ -289,9 +290,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun handleSecondbuttonClick() {
         val text: String = second_btn?.text.toString()
+        val updatedText: String = Utils.formatString(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
-                    String.format(FirebaseManagerAnalyticsProperties?.SPLASH_BTN, Utils.formatAnalyticsButtonText(text)),
+                    FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText),
                     this
             )
         }
@@ -304,9 +306,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun handleFirstbuttonClick() {
         val text: String = first_btn?.text.toString()
+        val updatedText: String = Utils.formatString(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
-                    String.format(FirebaseManagerAnalyticsProperties?.SPLASH_BTN, Utils.formatAnalyticsButtonText(text)),
+                    FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText) ,
                     this
             )
         }
