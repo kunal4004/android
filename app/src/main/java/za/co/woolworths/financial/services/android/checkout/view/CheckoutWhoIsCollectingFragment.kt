@@ -8,13 +8,19 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import kotlinx.android.synthetic.main.checkout_who_is_collecting_fragment.*
 import kotlinx.android.synthetic.main.vehicle_details_layout.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
+import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
 
 /**
@@ -26,6 +32,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private lateinit var listOfVehicleInputFields: List<View>
     private lateinit var listOfTaxiInputFields: List<View>
     private var isMyVehicle = true
+    private var navController: NavController? = null
 
     companion object {
         const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
@@ -41,6 +48,8 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (navController == null)
+            navController = Navigation.findNavController(view)
         initView()
     }
 
@@ -101,13 +110,36 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private fun checkValidationsAndConfirm() {
         if (isMyVehicle) {
             if (!isErrorInputFields(listOfVehicleInputFields)) {
-                //Todo : confirm details button click
+                onConfirmButtonClick()
             }
         } else {
             if (!isErrorInputFields(listOfTaxiInputFields)) {
-                //Todo : confirm details button click
+                onConfirmButtonClick()
             }
         }
+    }
+
+    private fun onConfirmButtonClick() {
+        val whoIsCollectingDetails = WhoIsCollectingDetails(
+            recipientNameEditText.text.toString(),
+            cellphoneNumberEditText.text.toString(),
+            vehicleColourEditText.text.toString(),
+            vehicleModelEditText.text.toString(),
+            vehicleRegistrationEditText.text.toString(),
+            isMyVehicle
+        )
+
+        val bundle = Bundle()
+        bundle.apply {
+            putString(
+                KEY_COLLECTING_DETAILS,
+                Utils.toJson(whoIsCollectingDetails)
+            )
+        }
+        navController?.navigate(
+            R.id.checkoutReturningUserCollectionFragment,
+            bundleOf("bundle" to bundle)
+        )
     }
 
     private fun isErrorInputFields(listOfInputFields: List<View>): Boolean {
