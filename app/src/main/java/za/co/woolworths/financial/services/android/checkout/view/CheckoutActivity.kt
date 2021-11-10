@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -189,7 +190,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun closeActivity() {
-        setResult(CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED)
+        setResult(RESULT_RELOAD_CART)
         finish()
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
