@@ -180,8 +180,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             }
             is OrderConfirmationFragment -> {
                 setResult(REQUEST_CHECKOUT_ON_DESTROY)
-                finish()
-                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+                closeActivity()
             }
             else -> {
                 super.onBackPressed()
@@ -190,7 +189,6 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun closeActivity() {
-        setResult(RESULT_RELOAD_CART)
         finish()
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
