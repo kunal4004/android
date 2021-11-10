@@ -2205,7 +2205,7 @@
     <string name="star_4">4</string>
     <string name="star_5">5</string>
     <string name="slash">/</string>
-
+    <string name="skin_profile">skin profile</string>
     <string name="absa_mobile_app_pin_blocked_title">Mobile App PIN Is Now\nBlocked</string>
     <string name="absa_mobile_app_pin_blocked_desc_block_1">To release the hold on your PIN, please contact customer service on 086 150 2020 or email queries@wfs.co.za.</string>
     <string name="absa_mobile_app_pin_blocked_desc_block_2">Please use the reference App PIN as this does not impact your card pin in stores or at ATMs.</string>
