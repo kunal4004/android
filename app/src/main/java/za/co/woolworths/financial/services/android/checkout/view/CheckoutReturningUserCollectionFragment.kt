@@ -6,7 +6,10 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -38,6 +41,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     var whoIsCollectingDetails: WhoIsCollectingDetails? = null
+    private var navController: NavController? = null
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
@@ -74,6 +78,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (navController == null)
+            navController = Navigation.findNavController(view)
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
@@ -252,9 +258,19 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     override fun onClick(v: View?) {
-        when(v?.id){
-            R.id.imageViewCaretForwardCollection ->{
-
+        when (v?.id) {
+            R.id.imageViewCaretForwardCollection -> {
+                val bundle = Bundle()
+                bundle.apply {
+                    putString(
+                        KEY_COLLECTING_DETAILS,
+                        Utils.toJson(whoIsCollectingDetails)
+                    )
+                }
+                navController?.navigate(
+                    R.id.action_checkoutReturningUserCollectionFragment_checkoutWhoIsCollectingFragment,
+                    bundleOf("bundle" to bundle)
+                )
             }
         }
     }
