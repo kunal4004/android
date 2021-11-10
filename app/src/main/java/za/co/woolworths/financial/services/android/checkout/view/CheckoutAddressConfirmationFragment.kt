@@ -110,6 +110,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         updateSavedAddress(baseFragBundle)
+        // Hide keyboard in case it was visible from a previous screen
+        KeyboardUtils.hideKeyboardIfVisible(activity)
     }
 
     override fun onClick(v: View?) {
@@ -184,6 +186,17 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
+            ErrorHandlerActivity.ERROR_EMPTY_REQUEST_CODE -> {
+                when (resultCode) {
+                    // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
+                    Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
+                        (activity as? CheckoutActivity)?.apply {
+                            setResult(CheckOutFragment.RESULT_EMPTY_CART)
+                            closeActivity()
+                        }
+                    }
+                }
+            }
             ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE -> {
                 when (resultCode) {
                     // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
@@ -221,7 +234,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 ErrorHandlerActivity.ERROR_TYPE,
                 ErrorHandlerActivity.ERROR_TYPE_EMPTY_CART
             )
-            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_EMPTY_REQUEST_CODE)
         }
     }
 
@@ -451,9 +464,10 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun initView() {
         selectedProvince = Utils.getPreferredDeliveryLocation().province
         if (isDeliverySelected == null) {
-            isDeliverySelected = !Utils.getPreferredDeliveryLocation().storePickup
+            if(baseFragBundle?.containsKey(IS_DELIVERY) == true)
+            isDeliverySelected = baseFragBundle?.getBoolean(IS_DELIVERY)
         }
-        if (isDeliverySelected as Boolean) {
+        if (isDeliverySelected != null && isDeliverySelected as Boolean) {
             if (baseFragBundle?.containsKey(CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY) == true) {
                 isConfirmDeliveryResponse = true
                 showEarliestDeliveryDates()

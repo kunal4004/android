@@ -1182,7 +1182,7 @@ interface ApiInterface {
     ): Call<Void>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("cart/checkout/submittedOrder")
+    @GET("wfs/app/v4/cart/checkout/submittedOrder")
     fun getSubmittedOrder(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,

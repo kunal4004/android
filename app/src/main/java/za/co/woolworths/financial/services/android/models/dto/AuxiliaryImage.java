@@ -6,6 +6,6 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 public class AuxiliaryImage {
 	public String mimeType;
-	public String externalImageRef;
+	public String externalImageRefV2;
 	public String imagePath;
 }

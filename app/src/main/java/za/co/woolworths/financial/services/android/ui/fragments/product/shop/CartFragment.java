@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.IS_DELIVERY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
@@ -449,6 +450,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
+            checkoutActivityIntent.putExtra(IS_DELIVERY, !Utils.getPreferredDeliveryLocation().storePickup);
             activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
             activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
         }
@@ -496,7 +498,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         CartActivity cartActivity = (CartActivity) getActivity();
         ProductDetails productList = new ProductDetails();
         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
-        productList.externalImageRef = commerceItemInfo.externalImageURL;
+        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2;
         productList.productName = commerceItemInfo.productDisplayName;
         productList.fromPrice = (float) commerceItem.priceInfo.getAmount();
         productList.productId = commerceItemInfo.productId;

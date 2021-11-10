@@ -54,9 +54,9 @@ public class ProductDetails {
 	@SerializedName("sku")
 	@Expose
 	public String sku;
-	@SerializedName("externalImageRef")
+	@SerializedName("externalImageRefV2")
 	@Expose
-	public String externalImageRef;
+	public String externalImageRefV2;
 	@SerializedName("fulfillmentType")
 	@Expose
 	public String fulfillmentType;

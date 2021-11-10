@@ -63,6 +63,11 @@ class ExpandableGrid(val fragment: Fragment) {
 
         when (deliveryType) {
             DeliveryType.MIXED_FOOD -> {
+                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.size
+                        ?: 0)
+                ) {
+                    return
+                }
                 if (confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.size ?: -1 == SECOND.week) {
                     hidePreviousNextFoodBtn()
                 } else
@@ -85,6 +90,11 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.MIXED_OTHER -> {
+                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.size
+                        ?: 0)
+                ) {
+                    return
+                }
                 if (confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.size ?: -1 == SECOND.week) {
                     hidePreviousNextOtherBtn()
                 } else
@@ -107,6 +117,11 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.ONLY_FOOD -> {
+                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size
+                        ?: 0)
+                ) {
+                    return
+                }
                 if (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size ?: -1 == SECOND.week) {
                     hidePreviousNextFoodBtn()
                 } else
