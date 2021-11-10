@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
@@ -178,7 +179,8 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             }
             is OrderConfirmationFragment -> {
                 setResult(REQUEST_CHECKOUT_ON_DESTROY)
-                closeActivity()
+                finish()
+                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
             }
             else -> {
                 super.onBackPressed()
@@ -187,6 +189,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun closeActivity() {
+        setResult(CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED)
         finish()
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
