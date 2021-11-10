@@ -712,7 +712,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun sendReviewDataToReviewDetailScreen(ratingNReviewResponse: RatingReviewResopnse) {
+    private fun sendReviewDataToReviewDetailScreen(ratingNReviewResponse: RatingReviewResponse) {
         ScreenManager.presentReviewDetail(requireActivity(), ratingNReviewResponse.reviews[0])
     }
 
