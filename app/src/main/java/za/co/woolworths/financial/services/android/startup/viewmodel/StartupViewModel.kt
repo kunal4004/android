@@ -23,8 +23,6 @@ import java.util.*
  * Created by Kunal Uttarwar on 23/2/21.
  */
 class StartupViewModel(private val startUpRepository: StartUpRepository, private val startupApiHelper: StartupApiHelper) : ViewModel() {
-    var isSplashScreenPersist: Boolean = false
-    var isSplashScreenDisplay: Boolean = false
     var isServerMessageShown: Boolean = false
     var isAppMinimized: Boolean = false
     var isVideoPlaying: Boolean = false
@@ -32,7 +30,6 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
 
     //var pushNotificationUpdate: String?
     val randomVideoPath: String = ""
-    var splashScreenText: String = ""
     var environment: String? = null
     var appVersion: String? = null
 

@@ -95,9 +95,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     } else {
                         setContentView(R.layout.activity_splash_screen)
                         val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
-                        if (configData == null) {
+                        if (configData?.expiryTime == -1L) {
+                           // in case of firebase use local json then naviagte to next screen
                            progress_bar?.visibility = View.GONE
-                           showLocalDefaultSpalshScreen()
+                           presentNextScreenOrServerMessage()
                         } else {
                             setDataOnUI(configData)
                         }
@@ -105,23 +106,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 } else {
                     //capture value from local json
                     progress_bar?.visibility = View.GONE
-                    showLocalDefaultSpalshScreen()
+                    presentNextScreenOrServerMessage()
                 }
             }
         }
     }
 
-    private fun showLocalDefaultSpalshScreen() {
-        val jsonString = FirebaseConfigUtils.getJsonDataFromAsset(
-                this, FirebaseConfigUtils.FILE_NAME)
-        if (jsonString != null) {
-            val configData = startupViewModel.parseRemoteconfigData(jsonString)
-            if (configData != null)
-                setDataOnUI(configData)
-        }
-    }
-
-    private fun setDataOnUI(configData: ConfigData) {
+    private fun setDataOnUI(configData: ConfigData?) {
         progress_bar?.visibility = View.GONE
         first_btn?.visibility = View.VISIBLE
         second_btn?.visibility = View.VISIBLE
@@ -130,80 +121,82 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
         val timeIntervalSince1970: Long = System.currentTimeMillis()
 
-        if (timeIntervalSince1970 < configData.expiryTime) {
-            val activeConfiguration = configData.activeConfiguration
-            activeConfiguration?.run {
-                if (title == null)
-                    txt_title?.visibility = View.GONE
-                else
-                    txt_title?.text = activeConfiguration.title
-
-                if (description == null)
-                    txt_desc?.visibility = View.GONE
-                else
-                    txt_desc?.text = activeConfiguration.description
-
-                if (imageUrl == null)
-                    img_view?.visibility = View.GONE
-                else {
-                    if (imageUrl.isEmpty())
-                        img_view.setImageResource(R.drawable.link_icon)
+        if (configData != null) {
+            if (timeIntervalSince1970 < configData.expiryTime) {
+                val activeConfiguration = configData.activeConfiguration
+                activeConfiguration?.run {
+                    if (title == null)
+                        txt_title?.visibility = View.GONE
                     else
-                        ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
-                }
+                        txt_title?.text = activeConfiguration.title
 
-                if (firstButton == null)
-                    first_btn?.visibility = View.GONE
-                else {
-                    first_btn?.text = firstButton.title
-                    actionUrlFirst = firstButton.actionUrl
-                }
-
-                if (secondButton == null)
-                    second_btn?.visibility = View.GONE
-                else {
-                    second_btn?.text = secondButton.title
-                    actionUrlSecond = secondButton.actionUrl
-                }
-            }
-        } else if (timeIntervalSince1970 >= configData.expiryTime && timeIntervalSince1970 != -1L) {
-            val inActiveConfiguration = configData?.inactiveConfiguration
-            inActiveConfiguration?.run {
-                if (title == null)
-                    txt_title?.visibility = View.GONE
-                else
-                    txt_title?.text = inActiveConfiguration.title
-
-                if (description == null)
-                    txt_desc?.visibility = View.GONE
-                else
-                    txt_desc?.text = inActiveConfiguration.description
-
-                if (imageUrl == null)
-                    img_view?.visibility = View.GONE
-                else {
-                    if(imageUrl.isEmpty())
-                        img_view.setImageResource(R.drawable.link_icon)
+                    if (description == null)
+                        txt_desc?.visibility = View.GONE
                     else
-                        ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
-                }
+                        txt_desc?.text = activeConfiguration.description
 
-                if (firstButton == null)
-                    first_btn?.visibility = View.GONE
-                else {
-                    first_btn?.text = firstButton.title
-                    actionUrlFirst = firstButton.actionUrl
-                }
+                    if (imageUrl == null)
+                        img_view?.visibility = View.GONE
+                    else {
+                        if (imageUrl.isEmpty())
+                            img_view.setImageResource(R.drawable.link_icon)
+                        else
+                            ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                    }
 
-                if (secondButton == null)
-                    second_btn?.visibility = View.GONE
-                else {
-                    second_btn?.text = secondButton.title
-                    actionUrlSecond = secondButton.actionUrl
+                    if (firstButton == null)
+                        first_btn?.visibility = View.GONE
+                    else {
+                        first_btn?.text = firstButton.title
+                        actionUrlFirst = firstButton.actionUrl
+                    }
+
+                    if (secondButton == null)
+                        second_btn?.visibility = View.GONE
+                    else {
+                        second_btn?.text = secondButton.title
+                        actionUrlSecond = secondButton.actionUrl
+                    }
                 }
+            } else if (timeIntervalSince1970 >= configData.expiryTime && timeIntervalSince1970 != -1L) {
+                val inActiveConfiguration = configData?.inactiveConfiguration
+                inActiveConfiguration?.run {
+                    if (title == null)
+                        txt_title?.visibility = View.GONE
+                    else
+                        txt_title?.text = inActiveConfiguration.title
+
+                    if (description == null)
+                        txt_desc?.visibility = View.GONE
+                    else
+                        txt_desc?.text = inActiveConfiguration.description
+
+                    if (imageUrl == null)
+                        img_view?.visibility = View.GONE
+                    else {
+                        if(imageUrl.isEmpty())
+                            img_view.setImageResource(R.drawable.link_icon)
+                        else
+                            ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                    }
+
+                    if (firstButton == null)
+                        first_btn?.visibility = View.GONE
+                    else {
+                        first_btn?.text = firstButton.title
+                        actionUrlFirst = firstButton.actionUrl
+                    }
+
+                    if (secondButton == null)
+                        second_btn?.visibility = View.GONE
+                    else {
+                        second_btn?.text = secondButton.title
+                        actionUrlSecond = secondButton.actionUrl
+                    }
+                }
+            } else if(configData.expiryTime == -1L){
+                presentNextScreenOrServerMessage()
             }
-        } else if(configData.expiryTime == -1L){
-            onStartInit()
         }
     }
 
@@ -290,7 +283,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun handleSecondbuttonClick() {
         val text: String = second_btn?.text.toString()
-        val updatedText: String = Utils.formatString(text)
+        val updatedText: String = Utils.formatAnalyticsButtonText(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText),
@@ -306,7 +299,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     private fun handleFirstbuttonClick() {
         val text: String = first_btn?.text.toString()
-        val updatedText: String = Utils.formatString(text)
+        val updatedText: String = Utils.formatAnalyticsButtonText(text)
         if (!text.isEmpty()) {
             Utils.triggerFireBaseEvents(
                     FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText) ,
@@ -363,31 +356,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun presentNextScreenOrServerMessage() {
-        if (startupViewModel.isSplashScreenDisplay) {
-            showServerMessage()
-        } else {
-            showNonVideoViewWithoutErrorLayout()
-            presentNextScreen()
-        }
-    }
-
-    fun showServerMessage() {
-        progressBar?.visibility = View.GONE
-        videoViewLayout?.visibility = View.GONE
-        errorLayout?.visibility = View.GONE
-        splashNoVideoView?.visibility = View.GONE
-        messageLabel?.setText(startupViewModel.splashScreenText)
-        if (startupViewModel.isSplashScreenPersist) {
-            proceedButton?.visibility = View.GONE
-        } else {
-            proceedButton?.visibility = View.VISIBLE
-            proceedButton?.setOnClickListener { _: View? ->
-                showNonVideoViewWithoutErrorLayout()
-                presentNextScreen()
-            }
-        }
-        splashServerMessageView?.visibility = View.VISIBLE
-        startupViewModel.isServerMessageShown = true
+        showNonVideoViewWithoutErrorLayout()
+        presentNextScreen()
     }
 
     private fun setupViewModel() {
