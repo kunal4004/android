@@ -108,7 +108,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static String cartCheckoutLink;
     private static String cartCheckoutLinkWithParams;
     private static JsonElement storeCardBlockReasons;
-    private static String authenticVersionReleaseNote;
     private Set<Class<Activity>> visibleActivities = new HashSet<>();
 
     private WGlobalState mWGlobalState;
@@ -341,7 +340,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         if (!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(getString(R.string.update_title));
-            builder.setMessage(TextUtils.isEmpty(getAuthenticVersionReleaseNote()) ? getString(R.string.update_desc) : getAuthenticVersionReleaseNote());
             builder.setCancelable(false);
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
@@ -521,13 +519,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         WoolworthsApplication.absaBankingOpenApiServices = absaBankingOpenApiServices;
     }
 
-    public static void setAuthenticVersionReleaseNote(String authenticVersionReleaseNote) {
-        WoolworthsApplication.authenticVersionReleaseNote = authenticVersionReleaseNote;
-    }
-
-    public static String getAuthenticVersionReleaseNote() {
-        return authenticVersionReleaseNote;
-    }
 
     public static void setQuickShopDefaultValues(QuickShopDefaultValues quickShopDefaultValues) {
         WoolworthsApplication.quickShopDefaultValues = quickShopDefaultValues;

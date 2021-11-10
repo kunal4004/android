@@ -363,31 +363,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun presentNextScreenOrServerMessage() {
-        if (startupViewModel.isSplashScreenDisplay) {
-            showServerMessage()
-        } else {
-            showNonVideoViewWithoutErrorLayout()
-            presentNextScreen()
-        }
-    }
-
-    fun showServerMessage() {
-        progressBar?.visibility = View.GONE
-        videoViewLayout?.visibility = View.GONE
-        errorLayout?.visibility = View.GONE
-        splashNoVideoView?.visibility = View.GONE
-        messageLabel?.setText(startupViewModel.splashScreenText)
-        if (startupViewModel.isSplashScreenPersist) {
-            proceedButton?.visibility = View.GONE
-        } else {
-            proceedButton?.visibility = View.VISIBLE
-            proceedButton?.setOnClickListener { _: View? ->
-                showNonVideoViewWithoutErrorLayout()
-                presentNextScreen()
-            }
-        }
-        splashServerMessageView?.visibility = View.VISIBLE
-        startupViewModel.isServerMessageShown = true
+        showNonVideoViewWithoutErrorLayout()
+        presentNextScreen()
     }
 
     private fun setupViewModel() {
