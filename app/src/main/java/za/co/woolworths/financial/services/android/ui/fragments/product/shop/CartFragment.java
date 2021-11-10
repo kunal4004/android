@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.IS_DELIVERY;
@@ -19,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,6 +40,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -126,7 +129,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
-    public static final int REQUEST_PAYMENT_STATUS = 4775;
+    private static final int REQUEST_PAYMENT_STATUS = 4775;
     private String mSuburbName, mProvinceName;
     private int mQuantity;
 
@@ -317,6 +320,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         if (activity != null) {
             mToggleItemRemoved = (ToggleRemoveItem) activity;
         }
+
     }
 
     /****
@@ -1259,11 +1263,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     if (requestCode == APPLY_PROMO_CODE_REQUEST_CODE)
                         showVouchersOrPromoCodeAppliedToast(getString(R.string.promo_code_applied_toast_message));
                     break;
+                case REQUEST_PAYMENT_STATUS:
+                    if (getActivity() != null) getActivity().onBackPressed();
+                    break;
                 default:
                     break;
             }
-        }
-        if (requestCode == REQUEST_PAYMENT_STATUS) {
+        } else if (requestCode == REQUEST_PAYMENT_STATUS) {
             switch (resultCode){
                 case REQUEST_CHECKOUT_ON_DESTROY:
                     reloadFragment();
@@ -1271,9 +1277,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     break;
                 case RESULT_RELOAD_CART:
                     reloadFragment();
-                    break;
-                case RESULT_OK:
-                    if (getActivity() != null) getActivity().onBackPressed();
                     break;
             }
         }
@@ -1330,9 +1333,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void reloadFragment() {
-        //Reload screen
-        loadShoppingCart(false);
-        loadShoppingCartAndSetDeliveryLocation();
+        Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentByTag(CartActivity.TAG);
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        if (fragmentTransaction != null && currentFragment != null) {
+            getActivity().getSupportFragmentManager().beginTransaction().detach(this).commit();
+            getActivity().getSupportFragmentManager().beginTransaction().attach(this).commit();
+        }
     }
 
     @Override
