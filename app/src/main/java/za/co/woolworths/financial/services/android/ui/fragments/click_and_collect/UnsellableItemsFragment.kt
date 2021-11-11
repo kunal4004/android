@@ -60,6 +60,9 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
             commerceItems = Gson().fromJson(getString(KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS), object : TypeToken<List<UnSellableCommerceItem>>() {}.type)
             fromScreenName = getString(KEY_ARGS_SCREEN_NAME)
         }
+        (activity as? CheckoutActivity)?.apply {
+            showBackArrowWithoutTitle()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
