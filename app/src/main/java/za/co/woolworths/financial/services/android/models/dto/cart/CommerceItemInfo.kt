@@ -12,6 +12,6 @@ class CommerceItemInfo {
     var catalogRefId: String = ""
     var size: String = ""
     var productDisplayName: String = ""
-    var externalImageURL: String = ""
+    var externalImageURLV2: String = ""
     var id: String = ""
 }

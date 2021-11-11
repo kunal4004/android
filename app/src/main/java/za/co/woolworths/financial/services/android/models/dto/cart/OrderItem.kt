@@ -18,7 +18,6 @@ class OrderItem {
     var priceInfo: PriceInfo? = null
     var size: String = ""
     var productseoURL: String = ""
-    var externalImageURL: String = ""
     var productDisplayName: String = ""
     var siteId: String = ""
     var fulfillerType: String = ""
