@@ -1270,7 +1270,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     finishActivityOnCheckoutSuccess();
                     break;
                 case RESULT_RELOAD_CART:
-                    reloadFragment();
+                    checkLocationChangeAndReload();
                     break;
                 case RESULT_OK:
                     if (getActivity() != null) getActivity().onBackPressed();
@@ -1332,7 +1332,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private void reloadFragment() {
         //Reload screen
         loadShoppingCart(false);
-        loadShoppingCartAndSetDeliveryLocation();
     }
 
     @Override
