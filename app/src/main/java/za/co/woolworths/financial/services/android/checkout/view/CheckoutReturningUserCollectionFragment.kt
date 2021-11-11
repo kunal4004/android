@@ -105,7 +105,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
         if (whoIsCollectingDetails != null) {
             tvCollectionUserName.text = whoIsCollectingDetails?.recipientName
-            tvCollectionUserPhoneNumber.text = whoIsCollectingDetails?.phoneNumber
+            val star = "***"
+            val phoneNo = whoIsCollectingDetails?.phoneNumber
+            val beforeStar =
+                phoneNo?.substring(0, if (phoneNo.length > 3) 3 else phoneNo.length) ?: ""
+            val afterStar = phoneNo?.substring(
+                if (beforeStar.length + star.length < phoneNo.length) beforeStar.length + star.length else beforeStar.length,
+                phoneNo.length
+            )
+            tvCollectionUserPhoneNumber.text = beforeStar.plus(star).plus(afterStar)
         } else {
             checkoutCollectingUserInfoLayout.visibility = View.GONE
         }

@@ -12,6 +12,8 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_new_user_recipient_details.*
 import kotlinx.android.synthetic.main.checkout_who_is_collecting_fragment.*
 import kotlinx.android.synthetic.main.vehicle_details_layout.*
@@ -59,21 +61,30 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
                 checkValidationsAndConfirm()
             }
             R.id.taxiText -> {
-                isMyVehicle = false
-                taxiDescription.visibility = View.VISIBLE
-                vehicleDetailsLayout.visibility = View.GONE
-                onTaxiTypeSelected(taxiText)
+                onTaxiSelected()
             }
             R.id.myVehicleText -> {
-                isMyVehicle = true
-                taxiDescription.visibility = View.GONE
-                vehicleDetailsLayout.visibility = View.VISIBLE
-                onTaxiTypeSelected(myVehicleText)
+                onVehicleSelected()
             }
         }
     }
 
-    private fun onTaxiTypeSelected(taxiType: TextView) {
+    private fun onVehicleSelected() {
+        isMyVehicle = true
+        taxiDescription.visibility = View.GONE
+        vehicleDetailsLayout.visibility = View.VISIBLE
+        changeToggleTextLayout(myVehicleText)
+    }
+
+    private fun onTaxiSelected() {
+        isMyVehicle = false
+        taxiDescription.visibility = View.VISIBLE
+        vehicleDetailsLayout.visibility = View.GONE
+        changeToggleTextLayout(taxiText)
+    }
+
+
+    private fun changeToggleTextLayout(taxiType: TextView) {
         taxiType.background =
             bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
         taxiType.setTextColor(
@@ -123,9 +134,9 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         val whoIsCollectingDetails = WhoIsCollectingDetails(
             recipientNameEditText.text.toString(),
             cellphoneNumberEditText.text.toString(),
-            vehicleColourEditText.text.toString(),
-            vehicleModelEditText.text.toString(),
-            vehicleRegistrationEditText.text.toString(),
+            if (isMyVehicle) vehicleColourEditText.text.toString() else "",
+            if (isMyVehicle) vehicleModelEditText.text.toString() else "",
+            if (isMyVehicle) vehicleRegistrationEditText.text.toString() else "",
             isMyVehicle
         )
 
@@ -167,6 +178,17 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     }
 
     private fun initView() {
+        val bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+            if (containsKey(KEY_COLLECTING_DETAILS)) {
+                getString(KEY_COLLECTING_DETAILS)?.let {
+                    val whoIsCollectingDetails: WhoIsCollectingDetails =
+                        Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
+                    setEditText(whoIsCollectingDetails)
+                }
+            }
+        }
+
         recipientDetailsTitle.text = bindString(R.string.who_is_collecting)
         confirmDetails?.setOnClickListener(this)
         myVehicleText?.setOnClickListener(this)
@@ -227,6 +249,21 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             vehicleModelEditText
         )
         listOfTaxiInputFields = listOf(recipientNameEditText, cellphoneNumberEditText)
+    }
+
+    private fun setEditText(whoIsCollectingDetails: WhoIsCollectingDetails) {
+        if (whoIsCollectingDetails != null) {
+            if (whoIsCollectingDetails.isMyVehicle) {
+                onVehicleSelected()
+                vehicleColourEditText.setText(whoIsCollectingDetails.vehicleColor)
+                vehicleModelEditText.setText(whoIsCollectingDetails.vehicleModel)
+                vehicleRegistrationEditText.setText(whoIsCollectingDetails.vehicleRegistration)
+            } else {
+                onTaxiSelected()
+            }
+            recipientNameEditText?.setText(whoIsCollectingDetails.recipientName)
+            cellphoneNumberEditText.setText(whoIsCollectingDetails.phoneNumber)
+        }
     }
 
     private fun showErrorInputField(editText: EditText, visible: Int) {
