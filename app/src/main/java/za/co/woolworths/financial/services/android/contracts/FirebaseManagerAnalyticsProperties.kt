@@ -79,7 +79,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val ABSA_CC_LOGIN_WITH_NEW_PASSCODE: String = "cc_login_with_new_passcode"
         const val ABSA_CC_VIEW_STATEMENTS: String = "absa_cc_view_statements"
         const val ABSA_CC_SHARE_STATEMENT: String = "absa_cc_share_statement"
-        const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "absa_cc_view_ind_statements"
+        const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "absa_cc_view_ind_statement"
 
         const val SHOPQS_ADD_TO_CART = "shopqs_add_to_cart"
         const val SHOP_SCAN_CODE = "shop_scan_code"
@@ -211,6 +211,29 @@ open class FirebaseManagerAnalyticsProperties {
         const val SHOP_PDP_NATIVE_SHARE_DP_LNK = "shop_pdp_nat_shar_dp_lnk"
         const val CART_CLCK_CLLCT_CNFRM_LMT = "cart_clck_cllct_cnfrm_lmt"
 
+        //Native Checkout
+        const val CHANGE_FULFILLMENT_DELIVERY = "chckout_dlvry"
+        const val CHANGE_FULFILLMENT_COLLECTION = "chckout_cllct"
+        const val CHECKOUT_COLECTION_CHANGE_BTN = "chckout_cllct_chnge"
+        const val CHECKOUT_CONFIRM_NEW_STORE = "chckout_cllct_cnfrm_str"
+        const val CHANGE_FULFILLMENT_ADD_NEW_ADDRESS = "chckout_dlvry_ad_adrs"
+        const val CHANGE_FULFILLMENT_EDIT_ADDRESS = "chckout_dlvry_edt_adrs"
+        const val CHANGE_FULFILLMENT_DELETE_ADDRESS = "chckout_dlvry_dlte_adrs"
+        const val CHANGE_FULFILLMENT_DELIVERY_CONFIRM_BTN = "chckout_dlvry_cnfrm_adrs"
+        const val CHECKOUT_SAVE_ADDRESS = "chckout_dlvry_sve_adrs"
+        const val CHECKOUT_DELIVERY_OPTION_ = "chckout_dlvry_"
+        const val CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME = "chckout_phne_sub"
+        const val CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS = "chckout_nothnks_sub"
+        const val CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION = "chckout_ad_spcl_instr"
+        const val CHECKOUT_IS_THIS_GIFT = "chckout_is_ths_a_gft"
+        const val CHECKOUT_MISSED_WREWARD_SAVINGS = "cnfrm_msd_wrwrds_svgs"
+        const val CHECKOUT_WREWARD_SIGN_UP = "cnfrm_wrwrds_sgn_up"
+        const val CHECKOUT_ALREADY_HAVE_WREWARD = "cnfrm_alrdy_wrwrds_crd"
+        const val CHECKOUT_SHOPPING_BAGS_INFO = "chckout_bgs_info"
+        const val CHECKOUT_REMOVE_UNSELLABLE_ITEMS = "chckout_rmve_itms"
+        const val CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS = "chckout_cncl_rmve_itms"
+        const val CHECKOUT_CONTINUE_TO_PAYMENT = "chckout_cnt_to_pmnt"
+
         //PLDD
         const val personalLoanDrawdownStart = "pldd_start"
         const val personalLoanDrawdownComplete = "pldd_complete"
@@ -307,6 +330,9 @@ open class FirebaseManagerAnalyticsProperties {
         const val VOC_SKIP = "voc_skip"
         const val VOC_SUBMIT = "voc_submit"
         const val VOC_OPTOUT = "voc_optout"
+
+        //Sunsetting and Splash screen
+        const val SPLASH_BTN = "splash_"
     }
 
     class PropertyNames {

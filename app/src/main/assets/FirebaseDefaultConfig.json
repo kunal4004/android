@@ -1,0 +1,24 @@
+{
+  "expiryTime": -1,
+  "activeConfiguration": {
+    "title": "Update Available",
+    "description": "We've released a new version of the App and you're missing out!",
+    "imageUrl": "https://images.woolworthsstatic.co.za/nc5T785EcyNDXpXABG8NO4bTTCUj.jpg?q=85&amp;w=1640",
+    "firstButton": {
+      "title": "UPDATE NOW",
+      "actionUrl": "https://play.google.com/store/apps/details?id=com.awfs.coordination"
+    },
+    "secondButton": {
+      "title": "UPDATE LATER"
+    }
+  },
+  "inactiveConfiguration": {
+    "title": "Unsupported Version",
+    "description": "This version of the App is no longer supported. Please update to continue.",
+    "imageUrl": "https://appsgeyser.com/blog/wp-content/uploads/2020/12/update-concept-illustration_114360-1742-1024x534.jpg",
+    "firstButton": {
+      "title": "UPDATE NOW ",
+      "actionUrl": "https://play.google.com/store/apps/details?id=com.awfs.coordination"
+    }
+  }
+}

@@ -71,6 +71,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -1022,9 +1024,7 @@ public class Utils {
         return new Gson().toJson(jsonObject);
     }
 
-    public static String getExternalImageRef() {
-        return KotlinUtils.productImageUrlPrefix;
-    }
+
 
 
     public static Object jsonStringToObject(String value, Class cl) {
@@ -1597,7 +1597,7 @@ public class Utils {
 
     public static void setToken(String value) {
         try {
-            if(TextUtils.isEmpty(value)){
+            if (TextUtils.isEmpty(value)) {
                 return;
             }
             String firstTime = Utils.getSessionDaoValue(FCM_TOKEN);
@@ -1632,6 +1632,11 @@ public class Utils {
     public static Boolean isGooglePlayServicesAvailable() {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
+
+   public static String formatAnalyticsButtonText(String btnName){
+       String  btnText =  btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
+       return btnText.replace(" ", "_").toLowerCase();
+   }
 
     public static int calculatePercentage(int count, int totalCount){
         return (count*100)/totalCount;
