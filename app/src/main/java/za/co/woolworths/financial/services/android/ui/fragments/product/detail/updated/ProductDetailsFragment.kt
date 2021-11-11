@@ -653,6 +653,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         headerCustomerReview.visibility = View.GONE
         reviewDetailsInformation.visibility = View.GONE
         customerReview.visibility = View.GONE
+        rlViewMoreReview.visibility = View.GONE
     }
 
     private fun setReviewUI(ratingNReviewResponse: RatingReviewResponse){
@@ -661,6 +662,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ratingBar.rating = averageRating
                 tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, reviewCount, reviewCount)
                 tvRecommend.text = recommendedPercentage
+                if(reviewCount>1)
+                    btViewMoreReview.text = resources.getQuantityString(R.plurals.more_review, (reviewCount-1), (reviewCount-1))
+                else {
+                    btViewMoreReview.visibility = View.GONE
+                }
             }
             tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             tvSkinProfile.paintFlags = Paint.UNDERLINE_TEXT_FLAG
@@ -687,15 +693,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     if(contextDataValue.isEmpty()){
                         tvSkinProfile.visibility = View.GONE
                     }
-                    reviewStatistics.apply {
-                        if(reviewCount>1)
-                            btViewMoreReview.text = resources.getQuantityString(R.plurals.more_review, (reviewCount-1), (reviewCount-1))
-                        else
-                            btViewMoreReview.visibility = View.GONE
-                    }
                 }
             }else{
                 customerReview.visibility = View.GONE
+                tvRatingDetails.visibility = View.GONE
             }
         }
 
@@ -1832,15 +1833,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if(ratingNReview.data.isNotEmpty()) {
             setReviewUI(ratingNReview.data[0])
             ratingReviewResponse = ratingNReview.data[0]
-        }
-
+        }else
+            hideRatingAndReview()
     }
 
     override fun onGetRatingNReviewFailed(
         response: Response,
         httpCode: Int
     ) {
-        /*todo set error response here */
+        hideRatingAndReview()
     }
 
     /**
