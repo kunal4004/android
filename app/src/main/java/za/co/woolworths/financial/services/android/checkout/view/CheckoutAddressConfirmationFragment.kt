@@ -665,17 +665,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                             btnAddressConfirmation.text =
                                                 getString(R.string.confirm)
                                         }
-                                        if (validatedSuburbProductResponse?.unSellableCommerceItems?.size!! > 0) {
-                                            val address = Address()
-                                            address.suburbId = localSuburbId
-                                            navigateToUnsellableItemsFragment(
-                                                validatedSuburbProductResponse?.unSellableCommerceItems as List<UnSellableCommerceItem>,
-                                                address,
-                                                validatedSuburbProductResponse?.unDeliverableProducts == false,
-                                                DeliveryType.STORE_PICKUP
-                                            )
-                                        } else
-                                            showStoreList()
+                                        showStoreList()
                                     }
                                 }
                             }
