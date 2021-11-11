@@ -46,7 +46,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                     override fun onSuccess(response: ValidateCardAndPinResponse?, cookies: MutableList<HttpCookie>?) {
                         response?.apply {
 
-                            result?.toLowerCase().apply {
+                            result?.lowercase().apply {
                                 if (this in acceptedResultMessages) { // in == contains
                                     userCellNumber = response.cellNumber
                                     validateSureCheck(if (response.securityNotificationType == null) SecurityNotificationType.SureCheck else response.securityNotificationType)
@@ -69,7 +69,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     }
 
     private fun fatalErrorHandler(error: VolleyError?) {
-        mValidatePinCodeDialogInterface?.onFatalError(error)
+        //mValidatePinCodeDialogInterface?.onFatalError(error)
     }
 
     private fun failureHandler(responseMessage: String?, shouldDismissActivity: Boolean) {
@@ -92,7 +92,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                             val continuePollingProcessResultMessage = mutableListOf("processing")
                             val presentOTPScreenResultMessage = mutableListOf("revertback")
 
-                            response?.result?.toLowerCase().apply {
+                            response?.result?.lowercase().apply {
                                 when (this) {
                                     in acceptedResultMessages -> {
                                         //SureCheck was accepted, continue with registration process
