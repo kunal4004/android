@@ -1,19 +1,21 @@
 package za.co.woolworths.financial.services.android.startup.viewmodel
 
-import android.app.Service
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.awfs.coordination.BuildConfig
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
+import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.startup.service.network.StartupApiHelper
 import za.co.woolworths.financial.services.android.startup.service.repository.StartUpRepository
 import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
-import za.co.woolworths.financial.services.android.util.ServiceTools
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
@@ -21,8 +23,6 @@ import java.util.*
  * Created by Kunal Uttarwar on 23/2/21.
  */
 class StartupViewModel(private val startUpRepository: StartUpRepository, private val startupApiHelper: StartupApiHelper) : ViewModel() {
-    var isSplashScreenPersist: Boolean = false
-    var isSplashScreenDisplay: Boolean = false
     var isServerMessageShown: Boolean = false
     var isAppMinimized: Boolean = false
     var isVideoPlaying: Boolean = false
@@ -30,11 +30,12 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
 
     //var pushNotificationUpdate: String?
     val randomVideoPath: String = ""
-    var splashScreenText: String = ""
     var environment: String? = null
     var appVersion: String? = null
 
     var firebaseAnalytics: FirebaseAnalytics? = null
+    private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
+
 
     companion object {
         const val APP_SERVER_ENVIRONMENT_KEY = "app_server_environment"
@@ -98,4 +99,23 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
             setUserProperty(APP_VERSION_KEY, appVersion)
         }
     }
+
+
+    fun fetchFirebaseRemoteConifgData(): String {
+        firebaseRemoteConfig = getFirebaseRemoteConfigData()
+        val jsonString = firebaseRemoteConfig.getString(FirebaseConfigUtils.CONFIG_KEY);
+        return  jsonString
+    }
+
+    fun parseRemoteconfigData(remoteConfigData: String): ConfigData? {
+        val gson = Gson()
+        try {
+            return gson.fromJson(remoteConfigData, ConfigData::class.java)
+        } catch (exception:Exception) {
+            return  null
+        }
+    }
+
+    fun getFirebaseRemoteConfigData() = FirebaseConfigUtils.getFirebaseRemoteConfigInstance()
+
 }

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        app:layout_constraintBottom_toTopOf="@+id/wrewardsLogoImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/wrewardsLogoImageView"
+        layout="@layout/wrewards_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        app:layout_constraintBottom_toTopOf="@+id/couldSavedTextView"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+    <TextView
+        android:id="@+id/couldSavedTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ten_dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:gravity="center"
+        android:lineSpacingExtra="@dimen/eight_dp"
+        android:paddingStart="@dimen/twenty_dp"
+        android:paddingEnd="@dimen/twenty_dp"
+        android:text="@string/you_could_have_saved"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@+id/savedAmountTextView"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+    <TextView
+        android:id="@+id/savedAmountTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        android:fontFamily="@font/futura_bold_ttf"
+        android:gravity="center"
+        android:lineSpacingExtra="@dimen/eight_dp"
+        android:paddingStart="@dimen/twenty_dp"
+        android:paddingEnd="@dimen/twenty_dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/thirty_sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@+id/signUpButton"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+    <Button
+        android:id="@+id/signUpButton"
+        style="@style/add_card_button_style.black__background"
+        android:layout_marginBottom="@dimen/two_dp"
+        android:background="@color/black"
+        android:enabled="true"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/sign_up"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toTopOf="@+id/addItNowButton"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+    <Button
+        android:id="@+id/addItNowButton"
+        style="@style/add_card_button_style"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:background="@color/white"
+        android:enabled="true"
+        android:fontFamily="@font/futura_medium"
+        android:textColor="@color/color_7f7f7f"
+        android:textSize="@dimen/eleven_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/end_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/start_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

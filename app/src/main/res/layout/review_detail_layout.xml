@@ -12,7 +12,7 @@
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/reviewProductImagesViewPager"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="375dp"
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +66,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/reviewProductImagesViewPager" />
 
-
         <TextView
             android:fontFamily="@font/myriad_pro_semi_bold"
             android:id="@+id/tv_skin_label"
@@ -89,7 +88,6 @@
             android:fontFamily="@font/myriad_pro_regular"
             android:paddingBottom="@dimen/sixteen_dp"
             android:textSize="@dimen/fifteen_sp"
-            android:text="My skin feels more hydrated and no longer itching. This product is gentle on my sensitive skin labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis g"
             android:textColor="@color/account_amount_color"
             android:layout_marginStart="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/twenty_four_dp"
@@ -98,14 +96,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_skin_label" />
 
-        <include
-            android:id="@+id/view_product_quality"
-            layout="@layout/product_quality_layout"
+        <RelativeLayout
+            app:layout_constraintTop_toBottomOf="@+id/skin_detail"
+            android:layout_marginTop="@dimen/twelve_dp"
+            android:background="@color/white"
+            android:id="@+id/layout_additionfield"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/skin_detail" />
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/lladdiionField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginTop="@dimen/twelve_dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSecondaryRatings"
+                android:layout_below="@+id/lladdiionField"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginBottom="@dimen/twelve_dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/twelve_dp"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:itemCount="1"
+                tools:listitem="@layout/review_secondary_rating_row_item_layout" />
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/layout_two"
@@ -115,7 +134,7 @@
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_product_quality">
+            app:layout_constraintTop_toBottomOf="@+id/layout_additionfield">
 
             <TextView
                 android:id="@+id/txt_reviewer_name"
@@ -124,9 +143,20 @@
                 android:layout_marginStart="@dimen/twenty_four_dp"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:layout_marginEnd="@dimen/twenty_four_dp"
-                android:layout_marginBottom="@dimen/twenty_four_dp"
                 android:fontFamily="@font/futura_semi_bold"
                 android:textSize="@dimen/eighteen_sp" />
+
+            <TextView
+                android:id="@+id/txt_place"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fifteen_sp"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/eight_dp"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:fontFamily="@font/myriad_pro_regular"
+                android:layout_below="@+id/txt_reviewer_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/txt_verified"
@@ -144,23 +174,12 @@
                 android:textSize="@dimen/fifteen_sp"
                 app:drawableEndCompat="@drawable/pdp_verified" />
 
-            <View
-                android:id="@+id/view_one"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/one_dp"
-                android:layout_below="@+id/txt_reviewer_name"
-                android:layout_marginStart="@dimen/twenty_four_dp"
-                android:layout_marginEnd="@dimen/twenty_four_dp"
-                android:background="@color/light_gray" />
-
             <include
-                android:visibility="gone"
                 android:id="@+id/skin_profile_layout"
                 layout="@layout/skin_profile_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/view_one"
-                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:layout_below="@+id/txt_place"
                 app:layout_constraintStart_toStartOf="parent" />
         </RelativeLayout>
 
@@ -170,11 +189,11 @@
             android:layout_marginTop="@dimen/sixteen_dp"
             android:background="@color/white"
             android:padding="@dimen/sixteen_dp"
+            android:gravity="bottom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layout_two">
-
             <include
                 android:id="@+id/layout_helpful_review"
                 layout="@layout/review_helpful_and_report_layout"

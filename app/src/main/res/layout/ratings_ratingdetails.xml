@@ -303,7 +303,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_dp"
         android:fontFamily="@font/futura_medium"
-        android:text="@string/RnR_Close"
+        android:text="@string/close_btn"
         android:paddingBottom="@dimen/sixteen_dp"
         android:textSize="@dimen/twelve_sp"
         android:textColor="@color/no_active_card_title"

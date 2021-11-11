@@ -89,9 +89,13 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="label,android:name">
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.ReviewerInfoDetailsActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
 
         <meta-data
             android:name="android.webkit.WebView.EnableSafeBrowsing"
@@ -300,6 +304,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/Cart" />
         <activity
+            android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/Cart" />
+
+        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"
@@ -342,7 +352,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/DebitOrder" />
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageActivity"
             android:launchMode="singleTask"
@@ -470,6 +479,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize" />
+
         <service
             android:name="za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService"
             android:enabled="true"
@@ -513,7 +523,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BalanceProtectionInsuranceStyle" />
         <activity
