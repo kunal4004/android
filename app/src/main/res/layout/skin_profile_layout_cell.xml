@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:lineSpacingExtra="2dp"
+        android:lineSpacingExtra="@dimen/two_dp"
         android:layout_marginBottom="@dimen/eight_dp"
         android:ellipsize="end"
         android:fontFamily="@font/myriad_pro_semi_bold"

@@ -270,9 +270,6 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.4.0-alpha04'
 
 
-    //pagination
-    implementation("androidx.paging:paging-runtime:$Paging_version")
-
     //UI testing with Espresso
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0-alpha04'
 }
