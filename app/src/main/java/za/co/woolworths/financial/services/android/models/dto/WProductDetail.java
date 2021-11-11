@@ -8,7 +8,7 @@ import java.util.List;
 public class WProductDetail {
 	public String productId;
 	public String productName;
-	public String externalImageRef;
+	public String externalImageRefV2;
 	public String categoryName;
 	public String categoryId;
 	public boolean isnAvailable;
