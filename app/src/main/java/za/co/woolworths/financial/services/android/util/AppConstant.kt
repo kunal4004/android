@@ -49,6 +49,7 @@ class AppConstant {
         const val VTO_FAIL_IMAGE_LOAD = "image_load_fail"
         const val VTO_COLOR_NOT_MATCH = "color_not_match"
         const val VTO_COLOR_LIVE_CAMERA = "color_match"
+        const val VTO =  "Virtual Try On"
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }

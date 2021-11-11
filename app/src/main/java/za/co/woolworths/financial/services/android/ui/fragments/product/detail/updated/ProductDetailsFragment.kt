@@ -178,6 +178,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false
     private var isDividerVtoEffect: Boolean = false
+    private var isLiveCameraResumeState: Boolean = false
+    private var isLiveCameraOpened: Boolean = false
 
     @OpenTermAndLighting
     @Inject
@@ -312,28 +314,27 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun captureImageFromVtoLiveCamera() {
-        txtCountCameraCaptureImage.visibility = View.VISIBLE
         liveCameraViewModel.takenPicture()
-        liveCameraViewModel.takenPicture.observe(
-            viewLifecycleOwner,
-            Observer { result ->
-                saveVtoApplyImage = result as Bitmap
-                setPickedImage(getImageUri(result as Bitmap),true)
-
-                val cameraMonitor =
-                    CameraMonitor(requireActivity(), makeupCamera, lifecycle)
-                cameraMonitor.stopLiveCamera()
-            })
-
         viewLifecycleOwner.lifecycleScope.launch {
             var countText = 3
-            while (countText >= 1) {
+            while (countText >= 0) {
                 delay(DELAY_1000_MS)
-                txtCountCameraCaptureImage.text = countText.toString()
+                    txtCountCameraCaptureImage.visibility = View.VISIBLE
+                    txtCountCameraCaptureImage.text = countText.toString()
                 countText--
             }
-            delay(DELAY_1000_MS)
             txtCountCameraCaptureImage.visibility = View.GONE
+            liveCameraViewModel.takenPicture.observe(
+                viewLifecycleOwner,
+                Observer { result ->
+                    saveVtoApplyImage = result as Bitmap
+                    setPickedImage(getImageUri(result as Bitmap),true)
+                    isLiveCameraResumeState = false
+//                    val cameraMonitor =
+//                        CameraMonitor(requireActivity(), makeupCamera, lifecycle)
+//                    cameraMonitor.stopLiveCamera()
+                })
+
             retakeCamera.visibility = View.VISIBLE
             imgVTOSplit.visibility = View.GONE
             captureImage.visibility = View.GONE
@@ -366,6 +367,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             colourUnavailableError.visibility = View.GONE
             isColorApplyFromLiveCamera = true
             isRefreshImageEffectLiveCamera = true
+            isLiveCameraOpened = true
             isVtoImage = false
         } else {
             openDefaultCamera()
@@ -1893,8 +1895,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        isLiveCameraResumeState = true
+    }
+
     override fun onResume() {
         super.onResume()
+        if (isLiveCameraResumeState && isLiveCameraOpened && (null != makeupCamera)) {
+            val cameraMonitor =
+                CameraMonitor(requireActivity(), makeupCamera, lifecycle)
+            cameraMonitor.startCamera()
+
+        }
         activity?.apply {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
         }
@@ -2295,7 +2308,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val cameraMonitor =
             CameraMonitor(requireActivity(), makeupCamera, lifecycle)
         lifecycle.addObserver(cameraMonitor)
-
+        isLiveCameraOpened = true
+        cameraSurfaceView.scaleType = CameraView.ScaleType.CENTER_CROP
     }
 
     private fun applyColorVtoMappedResult(result: Any?) {
@@ -2345,7 +2359,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if(!isFromLiveCamera){
             moveColorSelectionLayout()
         }
-
+        isLiveCameraOpened = false
         uri?.let {
             vtoApplyEffectOnImageViewModel.setApplier(uri,productDetails?.productId,
                 getSelectedSku()?.sku,isFromLiveCamera)

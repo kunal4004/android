@@ -74,6 +74,7 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_417
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO
 import java.net.ConnectException
 import java.net.UnknownHostException
 import java.util.*
@@ -178,7 +179,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     private fun showVtoBanner() {
         //TODO: need set vto banner with flag condition
-        if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals("Virtual Try On")) {
+        if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals(VTO)) {
             vtoTryItOnBanner.visibility = View.VISIBLE
         }
     }
