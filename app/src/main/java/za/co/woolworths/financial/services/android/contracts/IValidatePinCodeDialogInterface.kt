@@ -6,6 +6,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 interface IValidatePinCodeDialogInterface {
     fun onSuccessHandler(aliasID: String)
     fun onFailureHandler(responseMessage: String, dismissActivity: Boolean)
-    fun onFatalError(error: VolleyError?)
+    fun onFatalError()
     fun onSuccessOFOTPSureCheck(userCellNumber: String?)
 }
