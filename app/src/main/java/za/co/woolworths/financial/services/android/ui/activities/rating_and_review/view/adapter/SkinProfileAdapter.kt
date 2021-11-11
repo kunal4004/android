@@ -31,21 +31,6 @@ class SkinProfileAdapter(private var skinProfileList: List<SkinProfile>):Recycle
         }
     }
 
-    /*fun TextView.leftDrawable(@DrawableRes id: Int = 0, @DimenRes sizeRes: Int = 0, @ColorInt color: Int = 0, @ColorRes colorRes: Int = 0) {
-        val drawable = (id)
-        if (sizeRes != 0) {
-            val size = resources.getDimensionPixelSize(sizeRes)
-            drawable?.setBounds(0, 0, size, size)
-        }
-        if (color != 0) {
-            drawable?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-        } else if (colorRes != 0) {
-            val colorInt = ContextCompat.getColor(context, colorRes)
-            drawable?.setColorFilter(colorInt, PorterDuff.Mode.SRC_ATOP)
-        }
-        this.setCompoundDrawables(drawable, null, null, null)
-    }
-*/
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
                 .inflate(R.layout.skin_profile_layout_cell, parent, false)
