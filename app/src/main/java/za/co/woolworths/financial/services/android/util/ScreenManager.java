@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -241,6 +242,11 @@ public class ScreenManager {
         activity.startActivityForResult(intent, 0);
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         activity.finish();
+    }
+
+    public static void presentToActionView(Activity activity, String actionURL) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(actionURL));
+        activity.startActivity(intent);
     }
 
     public static void presentReviewDetail(Activity activity, Reviews reviews) {
