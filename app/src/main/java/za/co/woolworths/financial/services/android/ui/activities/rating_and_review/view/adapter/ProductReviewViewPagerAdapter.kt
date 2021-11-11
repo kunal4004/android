@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.rating_and_review
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Normal
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 
-class ProductReviewViewPagerAdapter(var context: Context?, var imagesList: MutableList<String>)
+class ProductReviewViewPagerAdapter(var context: Context?, var imagesList: List<Normal>)
     : PagerAdapter() {
 
     override fun getCount(): Int {
@@ -19,7 +20,7 @@ class ProductReviewViewPagerAdapter(var context: Context?, var imagesList: Mutab
     override fun instantiateItem(collection: ViewGroup, position: Int): Any {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.product_review, collection, false) as ViewGroup
-        val image: String = imagesList.get(position)
+        val image: String = imagesList.get(position).url
         val mProductImage = view.findViewById<ImageView>(R.id.imReviewProductView)
         setPicture(mProductImage, image)
         collection.addView(view, 0)

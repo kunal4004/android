@@ -13,4 +13,5 @@ data class RatingReviewResponse (
 	@SerializedName("reportReviewOptions") val reportReviewOptions : List<String>,
 	/*@SerializedName("response") val response : Response,*/
 	@SerializedName("httpCode") val httpCode : Int
+
 )
