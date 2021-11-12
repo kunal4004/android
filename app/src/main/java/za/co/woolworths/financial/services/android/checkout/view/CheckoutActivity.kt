@@ -122,6 +122,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
         graph.startDestination = when {
+
+            baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {
+                R.id.checkoutWhoIsCollectingFragment
+            }
+
             savedAddressResponse?.addresses.isNullOrEmpty() -> {
                 R.id.CheckoutAddAddressNewUserFragment
             }
@@ -175,7 +180,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 )
                 setReloadResultAndFinish()
             }
-            is CheckoutAddAddressReturningUserFragment -> {
+            is CheckoutAddAddressReturningUserFragment, is CheckoutReturningUserCollectionFragment -> {
                 setReloadResultAndFinish()
             }
             is OrderConfirmationFragment -> {
