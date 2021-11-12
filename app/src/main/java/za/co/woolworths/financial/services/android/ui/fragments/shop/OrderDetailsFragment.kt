@@ -29,7 +29,7 @@ import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsAct
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.util.ProductType
+import za.co.woolworths.financial.services.android.util.ProductTypeDetails
 import java.lang.IllegalStateException
 
 class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, CancelOrderConfirmationDialogFragment.ICancelOrderConfirmation, OrderHistoryErrorDialogFragment.IOrderHistoryErrorDialogDismiss {
@@ -130,12 +130,12 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
             val productsArray = itemsObject.getJSONArray(key)
             val orderItemLength = productsArray.length()
             val orderDetailsItem = when {
-                key.contains(ProductType.DEFAULT.value) -> OrderDetailsItem(ProductType.DEFAULT.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains(ProductType.HOME_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.HOME_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains(ProductType.FOOD_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.FOOD_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains(ProductType.CLOTHING_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.CLOTHING_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                key.contains(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductType.PREMIUM_BRAND_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
-                else -> OrderDetailsItem(ProductType.OTHER_ITEMS.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductTypeDetails.DEFAULT.value) -> OrderDetailsItem(ProductTypeDetails.DEFAULT.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductTypeDetails.HOME_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductTypeDetails.HOME_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductTypeDetails.FOOD_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductTypeDetails.FOOD_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductTypeDetails.CLOTHING_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductTypeDetails.CLOTHING_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                key.contains(ProductTypeDetails.PREMIUM_BRAND_COMMERCE_ITEM.value) -> OrderDetailsItem(ProductTypeDetails.PREMIUM_BRAND_COMMERCE_ITEM.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
+                else -> OrderDetailsItem(ProductTypeDetails.OTHER_ITEMS.longHeader, OrderDetailsItem.ViewType.HEADER, orderItemLength)
             }
 
             dataList.add(orderDetailsItem)
@@ -169,7 +169,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
     override fun onOpenProductDetail(commerceItem: CommerceItem) {
         val productList = ProductDetails()
         val commerceItemInfo = commerceItem.commerceItemInfo
-        productList.externalImageRef = commerceItemInfo.externalImageURL
+        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2
         productList.productName = commerceItemInfo.productDisplayName
         productList.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
         productList.productId = commerceItemInfo.productId

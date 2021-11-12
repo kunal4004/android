@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/enterPaymentAmountRootLayoutStyle">
 
     <TextView
@@ -64,10 +65,14 @@
     <TextView
         android:id="@+id/totalAmountDueLabelTextView"
         style="@style/amountDescriptionStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="@dimen/zero_dp"
         android:text="@string/total_amount_due"
         app:layout_constraintBottom_toBottomOf="@+id/totalAmountDueValueTextView"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/totalAmountDueValueTextView"
+        app:layout_constraintStart_toEndOf="@+id/totalAmountDueInfoDescImageButton"
         app:layout_constraintTop_toTopOf="@+id/totalAmountDueValueTextView" />
 
     <View
@@ -80,9 +85,12 @@
     <TextView
         android:id="@+id/amountOverdueLabelTextView"
         style="@style/enterPaymentAmountOverdueStyle"
+        android:layout_width="0dp"
+        android:layout_marginStart="16dp"
         android:text="@string/overdue_amount_label"
         app:layout_constraintBottom_toBottomOf="@+id/amountOutstandingValueTextView"
-        app:layout_constraintStart_toStartOf="@+id/startGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/amountOutstandingValueTextView"
+        app:layout_constraintStart_toEndOf="@+id/currentBalanceDescImageButton"
         app:layout_constraintTop_toTopOf="@+id/amountOutstandingValueTextView" />
 
     <TextView
@@ -92,5 +100,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endGuideline"
         app:layout_constraintTop_toBottomOf="@+id/totalAmountDueHorizontalDividerView" />
+
+    <ImageButton
+        android:id="@+id/totalAmountDueInfoDescImageButton"
+        style="@style/iconInfoRoundedStyle"
+        android:alpha="0.4"
+        app:layout_constraintBottom_toTopOf="@+id/totalAmountDueHorizontalDividerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amountDividerView"
+        app:srcCompat="@drawable/icon_info"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
+        android:id="@+id/currentBalanceDescImageButton"
+        style="@style/iconInfoRoundedStyle"
+        android:alpha="0.4"
+        app:srcCompat="@drawable/icon_info"
+        app:layout_constraintBottom_toBottomOf="@+id/amountOverdueLabelTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/amountOverdueLabelTextView"
+        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -356,8 +356,8 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     override fun isTemporaryCardEnabled(): Boolean {
         val response = getStoreCardResponse()
         if (response?.storeCardsData?.virtualCard != null
-                && response?.storeCardsData?.virtualCard?.number != null
-                && (TemporaryFreezeStoreCard.TEMPORARY.equals(response?.storeCardsData?.virtualCard?.blockType, ignoreCase = true))) {
+                && response.storeCardsData?.virtualCard?.number != null
+                && (!TemporaryFreezeStoreCard.PERMANENT.equals(response.storeCardsData?.virtualCard?.blockType, ignoreCase = true))) {
             return true
         }
         return false

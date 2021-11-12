@@ -108,7 +108,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				final ShoppingListItem shoppingListItem = getItem(position);
 				if (shoppingListItem == null) return;
 				if (shoppingListItem.displayName == null) return;
-				holder.cartProductImage.setImageURI(Utils.getExternalImageRef() + shoppingListItem.externalImageURL + "?w=" + 85 + "&q=" + 85);
+				holder.cartProductImage.setImageURI(shoppingListItem.externalImageRefV2 + "?w=" + 85 + "&q=" + 85);
 				holder.productName.setText(shoppingListItem.displayName);
 				holder.tvQuantity.setText(String.valueOf(shoppingListItem.userQuantity));
 				holder.price.setText(CurrencyFormatter.Companion.formatAmountToRandAndCentWithSpace(shoppingListItem.price));
@@ -293,7 +293,7 @@ holder.price.setAlpha(1f);
 		productList.productName = shoppingListItem.displayName;
 		productList.fromPrice = Float.valueOf((TextUtils.isEmpty(shoppingListItem.price) ? "0.0" : shoppingListItem.price));
 		productList.sku = shoppingListItem.catalogRefId;
-		productList.externalImageRef = Utils.getExternalImageRef() + shoppingListItem.externalImageURL;
+		productList.externalImageRefV2 = shoppingListItem.externalImageRefV2;
 		OtherSkus otherSku = new OtherSkus();
 		otherSku.price = String.valueOf(shoppingListItem.price);
 		otherSku.size = "";

@@ -68,8 +68,6 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-
-import za.co.woolworths.financial.services.android.startup.view.StartupActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
@@ -261,7 +259,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         queryBadgeCountOnStart();
         addDrawerFragment();
     }
-
     private void parseDeepLinkData() {
         if (mBundle == null) {
             return;
@@ -270,7 +267,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (deepLinkData == null) {
             return;
         }
-        appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
+        try
+            {
+                appLinkData = (JsonObject) Utils.strToJson(deepLinkData, JsonObject.class);
+            }
+            catch(Exception e){
+                mOnNavigationItemSelectedListener.onNavigationItemSelected(
+                        getBottomNavigationById().getMenu().findItem(R.id.navigation_today));
+            }
+
     }
 
     private void queryBadgeCountOnStart() {
