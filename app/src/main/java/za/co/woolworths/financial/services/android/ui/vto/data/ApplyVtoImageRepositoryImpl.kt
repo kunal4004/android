@@ -8,8 +8,11 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.perfectcorp.perfectlib.*
 import dagger.hilt.android.qualifiers.ApplicationContext
-import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_INVALID_IMAGE_PATH
 import java.util.*
 import javax.inject.Inject
 
@@ -22,103 +25,138 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
     private val _context = context
     private var photoMakeup: PhotoMakeup? = null
     private var applier: VtoApplier? = null
+    private val getApplyResult = MutableLiveData<Any>()
 
-    override fun setVtoApplier(uri: Uri?, productId: String?, sku: String?) {
-        SdkUtility.initSdk(
-            _context,
-            object : PfSDKInitialCallback {
-                override fun onInitialized() {
+    override fun setVtoApplier(
+        uri: Uri?, productId: String?,
+        sku: String?,
+        isFromLiveCamera: Boolean
+    ): MutableLiveData<Any> {
 
-                    PhotoMakeup.create(object : PhotoMakeup.CreateCallback {
-                        override fun onSuccess(makeup: PhotoMakeup) {
-                            photoMakeup = makeup
 
-                            VtoApplier.create(photoMakeup, object : VtoApplier.CreateCallback {
-                                override fun onSuccess(applierVTO: VtoApplier) {
-                                    applier = applierVTO
+        PhotoMakeup.create(object : PhotoMakeup.CreateCallback {
+            override fun onSuccess(makeup: PhotoMakeup) {
+                photoMakeup = makeup
 
-                                    loadPhoto(uri, productId, sku)
-
-                                }
-
-                                override fun onFailure(throwable: Throwable) {
-
-                                }
-                            })
-                        }
-
-                        override fun onFailure(throwable: Throwable) {
-
-                        }
-                    })
-
-                }
-                override fun onFailure(
-                    throwable: Throwable?
-                ) {
-
-                }
-            })
-
-    }
-
-    override fun loadPhoto(uri: Uri?, productId: String?, sku: String?): MutableLiveData<Boolean> {
-        val data = MutableLiveData<Boolean>()
-        if (uri == null) {
-            data.value = true
-            val message = "No valid photo path."
-            return data
-        }
-        try {
-
-            _context!!.contentResolver.openInputStream(uri).use { imageStream ->
-                val bitmap = BitmapFactory.decodeStream(imageStream)
-                val matrix: Matrix =
-                    SdkUtility.getRotationMatrixByExif(
-                        _context!!.contentResolver,
-                        uri
-                    )
-                val selectedImage =
-                    Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-                if (bitmap != selectedImage) {
-                    bitmap.recycle()
-                }
-                data.value = false
-
-                detectFace(selectedImage, productId, sku)
-
+                VtoApplier.create(photoMakeup, object : VtoApplier.CreateCallback {
+                    override fun onSuccess(applierVTO: VtoApplier) {
+                        applier = applierVTO
+                        loadPhoto(uri, productId, sku)
+                    }
+                    override fun onFailure(throwable: Throwable) {
+                        getApplyResult.value = VTO_FAIL_IMAGE_LOAD
+                    }
+                })
             }
-        } catch (e: Exception) {
-            val message = "Decode photo failed."
-            data.value = true
-        }
-        return data
-    }
 
-    override fun detectFace(image: Bitmap?, productId: String?, sku: String?) : MutableLiveData<Boolean>{
-        val data = MutableLiveData<Boolean>()
-        photoMakeup?.detectFace(image, object : PhotoMakeup.DetectFaceCallback {
+            fun loadPhoto(
+                uri: Uri?,
+                productId: String?,
+                sku: String?
+            ) {
 
-            override fun onSuccess(faceList: List<FaceData>) {
-
-                if (faceList.isEmpty()) {
-                    data.value = true
-                       return
+                if (uri == null) {
+                    getApplyResult.value = VTO_INVALID_IMAGE_PATH
 
                 }
-                // Select a face for applying effects.
-                val faceIndex = Random().nextInt(faceList.size)
-                val faceData = faceList[faceIndex]
-                photoMakeup!!.setFace(faceData)
+                try {
+                    _context!!.contentResolver.openInputStream(uri!!).use { imageStream ->
+                        val bitmap = BitmapFactory.decodeStream(imageStream)
+                        val matrix: Matrix =
+                            SdkUtility.getRotationMatrixByExif(
+                                _context!!.contentResolver,
+                                uri
+                            )
+                        val selectedImage =
+                            Bitmap.createBitmap(
+                                bitmap,
+                                0,
+                                0,
+                                bitmap.width,
+                                bitmap.height,
+                                matrix,
+                                true
+                            )
+                        if (bitmap != selectedImage) {
+                            bitmap.recycle()
+                        }
+
+                        detectFace(selectedImage, productId, sku)
+                    }
+                } catch (e: Exception) {
+                    getApplyResult.value = VTO_INVALID_IMAGE_PATH
+                }
+            }
+
+            fun detectFace(
+                image: Bitmap?,
+                productId: String?,
+                sku: String?
+            ) {
+
+                photoMakeup?.detectFace(image, object : PhotoMakeup.DetectFaceCallback {
+
+                    override fun onSuccess(faceList: List<FaceData>) {
+
+                        if (faceList.isEmpty()) {
+                            getApplyResult.value = VTO_FACE_NOT_DETECT
+                            return
+
+                        }
+                        // Select a face for applying effects.
+                        val faceIndex = Random().nextInt(faceList.size)
+                        val faceData = faceList[faceIndex]
+                        photoMakeup!!.setFace(faceData)
+                        if (!isFromLiveCamera) {
+                            applyEffectFirstTime(productId, sku, getApplyResult)
+                        }
+                    }
+
+                    override fun onFailure(throwable: Throwable) {
+                        getApplyResult.value = VTO_FAIL_IMAGE_LOAD
+                    }
+                })
 
             }
 
             override fun onFailure(throwable: Throwable) {
-
-
+                getApplyResult.value = VTO_FAIL_IMAGE_LOAD
             }
         })
-     return data
+        return getApplyResult
+    }
+
+    private fun applyEffectFirstTime(
+        productId: String?,
+        sku: String?,
+        getApplyResult: MutableLiveData<Any>
+    ) {
+
+        val vtoSetting = VtoSetting.builder()
+            .setProductGuid(productId)
+            .setSkuGuid(sku)
+            .build()
+
+        PerfectLib.setDownloadCacheStrategy(DownloadCacheStrategy.CACHE_ONLY)
+        applier?.apply(
+            listOf(vtoSetting),
+            EffectConfig.DEFAULT,
+            object : VtoApplier.ApplyCallback {
+                override fun onSuccess(bitmap: Bitmap) {
+
+                    getApplyResult.value = bitmap
+
+                }
+
+                override fun onFailure(throwable: Throwable) {
+                    getApplyResult.value = VTO_COLOR_NOT_MATCH
+                }
+
+                override fun applyProgress(progress: Double) {
+                    // Do Nothing
+                }
+            })
+
     }
 
     override fun applyEffect(productId: String?, sku: String?): MutableLiveData<Any> {
@@ -140,12 +178,12 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
 
                 override fun onFailure(throwable: Throwable) {
                     //can not get mapped id for productId
-                    data.value = "IDMismatch"
+                    data.value = VTO_COLOR_NOT_MATCH
 
                 }
 
                 override fun applyProgress(progress: Double) {
-
+                    // Do Nothing
                 }
             })
         return data
@@ -161,9 +199,11 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
             }
 
             override fun onFailure(throwable: Throwable) {
+                //Do Nothing
             }
 
             override fun applyProgress(progress: Double) {
+                // Do Nothing
             }
         })
         return data

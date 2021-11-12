@@ -71,7 +71,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             showNonVideoViewWithErrorLayout()
         }
         //Remove old usage of SharedPreferences data.
-        startupViewModel.clearSharedPreference(this@StartupActivity)
+        //TODO: Just for VTO Testing need to work on for VTO
+       // startupViewModel.clearSharedPreference(this@StartupActivity)
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
     }
 

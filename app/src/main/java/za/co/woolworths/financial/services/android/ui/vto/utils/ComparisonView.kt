@@ -10,7 +10,6 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import androidx.annotation.FloatRange
 import androidx.annotation.RequiresApi
 import com.perfectcorp.perfectlib.MakeupCam
@@ -47,10 +46,11 @@ class ComparisonView : View {
     private var inCompareMode = false
     private var dividerPosition = 0f
     private var makeupCam: MakeupCam? = null
+
     fun init(makeupCam: MakeupCam?) {
         this.makeupCam = makeupCam
         setupTouchEventListener()
-        dividerPaint.color = Color.RED
+        dividerPaint.color = Color.BLACK
     }
 
     private fun enableComparisonMode(isEnabled: Boolean) {
@@ -60,6 +60,8 @@ class ComparisonView : View {
     private fun setComparisonPosition(@FloatRange(from = 0.0, to = 1.0) position: Float) {
         makeupCam?.enableComparison(isEnabled)
     }
+
+    fun isCompareModeEnable() : Boolean = inCompareMode
 
     fun enterComparisonMode() {
         enableComparisonMode(true)

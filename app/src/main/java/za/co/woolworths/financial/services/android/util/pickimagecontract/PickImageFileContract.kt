@@ -12,7 +12,7 @@ class PickImageFileContract : ActivityResultContract<String, Uri?>() {
 
         Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            val mimeTypes = arrayOf("image/png", "image/jpg", "image/jpeg")
+            val mimeTypes = arrayOf("image/png", "image/jpg")
             type = "image/*"
             putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
             type = input

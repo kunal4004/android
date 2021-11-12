@@ -6,10 +6,8 @@ import androidx.lifecycle.MutableLiveData
 
 interface ApplyVtoImageRepository {
 
-    fun setVtoApplier(uri: Uri?, productId: String?, sku: String?)
-    fun loadPhoto(uri: Uri?, productId: String?, sku: String?): MutableLiveData<Boolean>
-    fun detectFace(image: Bitmap?, productId: String?, sku: String?): MutableLiveData<Boolean>
+    fun setVtoApplier(uri: Uri?, productId: String?, sku: String?, isFromLiveCamera: Boolean): MutableLiveData<Any>
     fun applyEffect(productId: String?, sku: String?): MutableLiveData<Any>
-    fun clearEffect() : MutableLiveData<Bitmap>
+    fun clearEffect(): MutableLiveData<Bitmap>
 
 }
