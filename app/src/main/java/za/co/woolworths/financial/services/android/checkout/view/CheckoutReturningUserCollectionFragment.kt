@@ -3,10 +3,10 @@ package za.co.woolworths.financial.services.android.checkout.view
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_subst
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -33,15 +34,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {
-            val text = s.toString()
+            val text = s?.toString() ?: ""
             val length = text.length
 
             if (length > 0 && !Pattern.matches(
-                    CheckoutAddAddressReturningUserFragment.REGEX_DELIVERY_INSTRUCTIONS,
+                    REGEX_DELIVERY_INSTRUCTIONS,
                     text
                 )
             ) {
-                s!!.delete(length - 1, length)
+                s?.delete(length - 1, length)
             }
         }
 
