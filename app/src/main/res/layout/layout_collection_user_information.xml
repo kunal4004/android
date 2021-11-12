@@ -23,7 +23,7 @@
                 android:id="@+id/imgUserProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/F3F3F3"
+                android:background="@color/color_F3F3F3"
                 android:fontFamily="@font/futura_semi_bold"
                 android:minWidth="@dimen/fourty_dp"
                 android:minHeight="@dimen/fourty_dp"
