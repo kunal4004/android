@@ -57,26 +57,29 @@ class ExpandableGrid(val fragment: Fragment) {
         weekNumber: Int,
         deliveryType: DeliveryType
     ) {
-        if (weekNumber < 0) {
+
+        val sortedDeliverySlots = when(deliveryType) {
+            DeliveryType.MIXED_FOOD -> confirmDeliveryAddressResponse?.sortedFoodDeliverySlots
+            DeliveryType.MIXED_OTHER -> confirmDeliveryAddressResponse?.sortedOtherDeliverySlots
+            DeliveryType.ONLY_FOOD -> confirmDeliveryAddressResponse?.sortedJoinDeliverySlots
+            DeliveryType.ONLY_OTHER -> confirmDeliveryAddressResponse?.sortedJoinDeliverySlots
+
+            else -> null
+        }
+
+        if (sortedDeliverySlots.isNullOrEmpty() || weekNumber < 0 || weekNumber >= sortedDeliverySlots.size) {
             return
+        }
+
+
+        if (sortedDeliverySlots.size == SECOND.week) {
+            hidePreviousNextFoodBtn()
+        } else {
+            showPreviousNextFoodBtn()
         }
 
         when (deliveryType) {
             DeliveryType.MIXED_FOOD -> {
-                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.size
-                        ?: 0)
-                ) {
-                    return
-                }
-                if (confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.size ?: -1 == SECOND.week) {
-                    hidePreviousNextFoodBtn()
-                } else
-                    showPreviousNextFoodBtn()
-                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.size
-                        ?: 0)
-                ) {
-                    return
-                }
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedFoodDeliverySlots?.get(weekNumber)
                 createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewFood)
@@ -90,20 +93,6 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.MIXED_OTHER -> {
-                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.size
-                        ?: 0)
-                ) {
-                    return
-                }
-                if (confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.size ?: -1 == SECOND.week) {
-                    hidePreviousNextOtherBtn()
-                } else
-                    showPreviousNextOtherBtn()
-                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.size
-                        ?: 0)
-                ) {
-                    return
-                }
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.get(weekNumber)
                 createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
@@ -117,21 +106,6 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.ONLY_FOOD -> {
-                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size
-                        ?: 0)
-                ) {
-                    return
-                }
-                if (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size ?: -1 == SECOND.week) {
-                    hidePreviousNextFoodBtn()
-                } else
-                    showPreviousNextFoodBtn()
-
-                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size
-                        ?: 0)
-                ) {
-                    return
-                }
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
 
@@ -146,19 +120,8 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.ONLY_OTHER -> {
-                if (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size ?: -1 == SECOND.week) {
-                    hidePreviousNextOtherBtn()
-                } else
-                    showPreviousNextOtherBtn()
-
-                if (weekNumber >= (confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.size
-                        ?: 0)
-                ) {
-                    return
-                }
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
-
                 createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
                 createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewOther)
                 createTimeSlotGridView(
