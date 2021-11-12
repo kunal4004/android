@@ -78,7 +78,6 @@ import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.*
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity
 import za.co.woolworths.financial.services.android.ui.adapters.*
 
 
@@ -203,13 +202,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
             R.id.tvRatingDetails -> showRatingDetailsDailog()
             R.id.tvSkinProfile->viewSkinProfileDialog()
-            R.id.btViewMoreReview->viewMoreReviewScreen()
         }
-    }
-
-    private fun viewMoreReviewScreen() {
-        val intent = Intent(requireContext(), MoreReviewActivity::class.java)
-        startActivity(intent)
     }
 
     private fun showRatingDetailsDailog() {
@@ -270,7 +263,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
 
             BaseProductUtils.displayPrice(fromPricePlaceHolder, textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
-            auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
+            auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRefV2, it1) }.toString())
             updateAuxiliaryImages(auxiliaryImages)
         }
 
@@ -460,13 +453,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun getImageByWidth(imageUrl: String?, context: Context): String {
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).apply {
-            var imageLink = imageUrl
+            var imageLink:String? = imageUrl
             val deviceHeight = this.defaultDisplay
             val size = Point()
             deviceHeight.getSize(size)
             val width = size.x
-            if (imageLink.isNullOrEmpty()) imageLink = KotlinUtils.productImageUrlPrefix
-            return imageLink + "" + if (imageLink.contains("jpg")) "" else "?w=$width&q=85"
+            return imageLink + "" + if (imageLink!!.contains("jpg")) "" else "?w=$width&q=85"
         }
     }
 
@@ -661,6 +653,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         headerCustomerReview.visibility = View.GONE
         reviewDetailsInformation.visibility = View.GONE
         customerReview.visibility = View.GONE
+        rlViewMoreReview.visibility = View.GONE
     }
 
     private fun setReviewUI(ratingNReviewResponse: RatingReviewResponse){
@@ -669,6 +662,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ratingBar.rating = averageRating
                 tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, reviewCount, reviewCount)
                 tvRecommend.text = recommendedPercentage
+                if(reviewCount>1)
+                    btViewMoreReview.text = resources.getQuantityString(R.plurals.more_review, (reviewCount-1), (reviewCount-1))
+                else {
+                    btViewMoreReview.visibility = View.GONE
+                }
             }
             tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             tvSkinProfile.paintFlags = Paint.UNDERLINE_TEXT_FLAG
@@ -695,15 +693,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     if(contextDataValue.isEmpty()){
                         tvSkinProfile.visibility = View.GONE
                     }
-                    reviewStatistics.apply {
-                        if(reviewCount>1)
-                            btViewMoreReview.text = resources.getQuantityString(R.plurals.more_review, (reviewCount-1), (reviewCount-1))
-                        else
-                            btViewMoreReview.visibility = View.GONE
-                    }
                 }
             }else{
                 customerReview.visibility = View.GONE
+                tvRatingDetails.visibility = View.GONE
             }
         }
 
@@ -978,7 +971,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val auxiliaryImagesForGroupKey = ArrayList<String>()
         val groupKey = getSelectedGroupKey() ?: defaultGroupKey
 
-        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRef?.let {
+        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRefV2?.let {
             if (productDetails?.otherSkus?.size!! > 0)
                 auxiliaryImagesForGroupKey.add(it)
         }
@@ -991,7 +984,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         getImageCodeForAuxiliaryImages(groupKey).forEach { imageCode ->
             allAuxImages.entries.forEach { entry ->
                 if (entry.key.contains(imageCode, true))
-                    auxiliaryImagesForGroupKey.add(entry.value.externalImageRef)
+                    auxiliaryImagesForGroupKey.add(entry.value.externalImageRefV2)
             }
         }
 
@@ -1840,15 +1833,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if(ratingNReview.data.isNotEmpty()) {
             setReviewUI(ratingNReview.data[0])
             ratingReviewResponse = ratingNReview.data[0]
-        }
-
+        }else
+            hideRatingAndReview()
     }
 
     override fun onGetRatingNReviewFailed(
         response: Response,
         httpCode: Int
     ) {
-        /*todo set error response here */
+        hideRatingAndReview()
     }
 
     /**

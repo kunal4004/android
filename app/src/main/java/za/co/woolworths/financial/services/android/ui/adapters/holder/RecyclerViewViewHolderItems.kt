@@ -147,7 +147,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     }
 
     private fun setProductImage(productList: ProductList) {
-        val productImageUrl = productList.externalImageRef ?: ""
+        val productImageUrl = productList.externalImageRefV2 ?: ""
         ImageManager.setPicture(itemView.imProductImage, productImageUrl + if (productImageUrl.indexOf("?") > 0) "w=300&q=85" else "?w=300&q=85")
     }
 

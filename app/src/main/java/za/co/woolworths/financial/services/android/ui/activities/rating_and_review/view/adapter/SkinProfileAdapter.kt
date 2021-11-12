@@ -1,12 +1,21 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.skin_profile_layout_cell.view.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.SkinProfile
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
 class SkinProfileAdapter(private var skinProfileList: List<SkinProfile>):RecyclerView.Adapter<SkinProfileAdapter.ViewHolder>() {
      class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -14,10 +23,11 @@ class SkinProfileAdapter(private var skinProfileList: List<SkinProfile>):Recycle
         fun bindItems(skinProfile: SkinProfile) {
             itemView.txt_label.text = skinProfile.label + ":"
             itemView.txt_value.text = skinProfile.valueLabel
-            if (skinProfile.colorCode != null)
-                itemView.txt_value.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.selected_dot, 0);
-            else
-                itemView.txt_value.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            if (skinProfile.colorCode != null) {
+                itemView.cvSkinColor.setCardBackgroundColor(Color.parseColor(skinProfile.colorCode))
+                itemView.cvSkinColor.visibility = View.VISIBLE
+            }else
+                itemView.cvSkinColor.visibility = View.GONE
         }
     }
 

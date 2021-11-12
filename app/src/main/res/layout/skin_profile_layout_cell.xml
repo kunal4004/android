@@ -4,15 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/thirty_two_dp"
+    android:layout_marginStart="@dimen/thirty_two_dp">
 
     <View
         android:id="@+id/view_divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp"
-        android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/thirty_two_dp"
         android:background="@color/light_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +22,6 @@
         android:id="@+id/txt_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/sixteen_dp"
         android:layout_marginBottom="@dimen/eight_dp"
@@ -41,16 +40,26 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/sixteen_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:lineSpacingExtra="2dp"
+        android:lineSpacingExtra="@dimen/two_dp"
         android:layout_marginBottom="@dimen/eight_dp"
         android:ellipsize="end"
         android:fontFamily="@font/myriad_pro_semi_bold"
         android:maxLines="10"
-        android:paddingRight="@dimen/eight_dp"
-        app:drawableEndCompat="@drawable/selected_dot"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/txt_label"
+        app:layout_constraintTop_toBottomOf="@+id/view_divider"
+        app:layout_constraintEnd_toStartOf="@+id/cvSkinColor"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvSkinColor"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/txt_label"
-        app:layout_constraintTop_toBottomOf="@+id/view_divider" />
+        app:layout_constraintStart_toEndOf="@+id/txt_value"
+        app:layout_constraintTop_toBottomOf="@+id/view_divider"
+        app:cardCornerRadius="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/eighteen_dp"
+        app:cardBackgroundColor="@color/black"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
