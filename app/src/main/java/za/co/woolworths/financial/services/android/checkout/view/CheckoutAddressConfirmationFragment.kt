@@ -464,8 +464,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun initView() {
         selectedProvince = Utils.getPreferredDeliveryLocation().province
         if (isDeliverySelected == null) {
-            if(baseFragBundle?.containsKey(IS_DELIVERY) == true)
-            isDeliverySelected = baseFragBundle?.getBoolean(IS_DELIVERY)
+            if (baseFragBundle?.containsKey(IS_DELIVERY) == true)
+                isDeliverySelected = baseFragBundle?.getBoolean(IS_DELIVERY)
         }
         if (isDeliverySelected != null && isDeliverySelected as Boolean) {
             if (baseFragBundle?.containsKey(CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY) == true) {
@@ -508,7 +508,6 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         ) as? ConfirmDeliveryAddressResponse
             ?: baseFragBundle?.getSerializable(CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY) as? ConfirmDeliveryAddressResponse
 
-        showEarliestDeliveryView()
         val fulfillmentsType = confirmDeliveryAddressResponse?.fulfillmentTypes
         if (fulfillmentsType?.join == FOOD.type) {
             //Food Basket
@@ -517,18 +516,25 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             if (foodItemDate.isNullOrEmpty()) {
                 hideEarliestDeliveryView()
             } else {
+                showEarliestDeliveryView()
                 foodItemsDeliveryDateLayout.visibility = View.GONE
                 otherItemsDeliveryDateLayout.visibility = View.GONE
                 earliestDateValue.text = foodItemDate
             }
         } else if (fulfillmentsType?.join == OTHER.type && fulfillmentsType.other == OTHER.type) {
             //Mixed Basket
+            showEarliestDeliveryView()
             val foodItemDate =
                 confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.food
             val otherItemDate =
                 confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.other
             if (foodItemDate.isNullOrEmpty() && otherItemDate.isNullOrEmpty()) {
                 hideEarliestDeliveryView()
+            } else if (foodItemDate.isNullOrEmpty() || otherItemDate.isNullOrEmpty()) {
+                foodItemsDeliveryDateLayout.visibility = View.GONE
+                otherItemsDeliveryDateLayout.visibility = View.GONE
+                earliestDateValue.text =
+                    if (foodItemDate?.isEmpty() == true) otherItemDate else foodItemDate
             } else {
                 foodItemsDeliveryDateLayout.visibility =
                     if (foodItemDate.isNullOrEmpty()) View.GONE else View.VISIBLE
@@ -542,19 +548,21 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                 }
             }
 
-        } else {
+        } else if (fulfillmentsType?.join == OTHER.type) {
             //Other Basket
             val otherItemDate =
                 confirmDeliveryAddressResponse?.timedDeliveryFirstAvailableDates?.join
             if (otherItemDate.isNullOrEmpty()) {
                 hideEarliestDeliveryView()
             } else {
+                showEarliestDeliveryView()
                 foodItemsDeliveryDateLayout.visibility = View.GONE
                 otherItemsDeliveryDateLayout.visibility = View.GONE
                 earliestDateValue.text = otherItemDate
             }
+        } else {
+            hideEarliestDeliveryView()
         }
-
     }
 
     private fun showEarliestDeliveryView() {
@@ -657,17 +665,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                             btnAddressConfirmation.text =
                                                 getString(R.string.confirm)
                                         }
-                                        if (validatedSuburbProductResponse?.unSellableCommerceItems?.size!! > 0) {
-                                            val address = Address()
-                                            address.suburbId = localSuburbId
-                                            navigateToUnsellableItemsFragment(
-                                                validatedSuburbProductResponse?.unSellableCommerceItems as List<UnSellableCommerceItem>,
-                                                address,
-                                                validatedSuburbProductResponse?.unDeliverableProducts == false,
-                                                DeliveryType.STORE_PICKUP
-                                            )
-                                        } else
-                                            showStoreList()
+                                        showStoreList()
                                     }
                                 }
                             }
@@ -900,7 +898,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         if (!isConfirmDeliveryResponse || savedAddress?.defaultAddressNickname != address.nickname) {
             deliveryDateLayout.visibility = View.GONE
         } else
-            deliveryDateLayout.visibility = View.VISIBLE
+            showEarliestDeliveryDates()
     }
 
     private fun callChangeAddressApi() {
@@ -953,6 +951,21 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         )
                                         return@observe
                                     }
+                                    // Update location in cache/shared prefs when Confirmed a delivery address
+                                    Utils.savePreferredDeliveryLocation(
+                                        ShoppingDeliveryLocation(
+                                            Province().apply {
+                                                id = selectedAddress?.region ?: ""
+                                                name =
+                                                    getProvinceName(selectedAddress?.region ?: "")
+                                            }, Suburb().apply {
+                                                id = selectedAddress?.suburbId ?: ""
+                                                name = selectedAddress?.suburb ?: ""
+                                                postalCode = selectedAddress?.postalCode ?: ""
+                                                suburbDeliverable = response.deliverable ?: false
+                                            }, null
+                                        )
+                                    )
                                     navigateToReturningUser()
                                 }
                                 else -> {

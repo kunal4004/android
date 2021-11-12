@@ -1633,7 +1633,7 @@ public class Utils {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 
-   public static String formatString(String btnName){
+   public static String formatAnalyticsButtonText(String btnName){
        String  btnText =  btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
        return btnText.replace(" ", "_").toLowerCase();
    }

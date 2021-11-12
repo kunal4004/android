@@ -18,10 +18,12 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -155,7 +157,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         //in Navigation component if Back stack entry count is 0 means it has last fragment presented.
         // if > 0 means others are in backstack but fragment list size will always be 1
         if (fragmentList.isNullOrEmpty() || navHostFrag.childFragmentManager.backStackEntryCount == 0) {
-            closeActivity()
+            setReloadResultAndFinish()
             return
         }
 
@@ -171,10 +173,10 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                     FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS,
                     this
                 )
-                closeActivity()
+                setReloadResultAndFinish()
             }
             is CheckoutAddAddressReturningUserFragment -> {
-                closeActivity()
+                setReloadResultAndFinish()
             }
             is OrderConfirmationFragment -> {
                 setResult(REQUEST_CHECKOUT_ON_DESTROY)
@@ -184,6 +186,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 super.onBackPressed()
             }
         }
+    }
+
+    private fun setReloadResultAndFinish() {
+        setResult(RESULT_RELOAD_CART)
+        closeActivity()
     }
 
     fun closeActivity() {
