@@ -86,7 +86,7 @@
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
+            app:popExitAnim="@anim/slide_to_right" />
     </fragment>
 
     <fragment
@@ -145,6 +145,11 @@
             android:id="@+id/action_checkoutAddressConfirmationFragment_to_suburbNotDeliverableBottomsheetDialogFragment"
             app:destination="@id/suburbNotDeliverableBottomsheetDialogFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/checkoutWhoIsCollectingFragment"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutWhoIsCollectingFragment"
+        android:label="Checkout Who is Collecting"
+        tools:layout="@layout/checkout_who_is_collecting_fragment"></fragment>
 
     <fragment
         android:id="@+id/unsellableItemsFragment"
