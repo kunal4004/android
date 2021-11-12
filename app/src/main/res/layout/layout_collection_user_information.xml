@@ -6,18 +6,24 @@
     android:background="@color/white"
     android:padding="@dimen/twenty_four_dp">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/collectionShimmerFrameLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/shimmer_view_background"
+        android:background="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/imgUserProfileShimmerFrameLayout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:background="@color/shimmer_view_background"
+            android:minWidth="@dimen/fourty_dp"
+            android:minHeight="@dimen/fourty_dp"
+            android:padding="@dimen/ten_dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/imgUserProfile"
@@ -25,29 +31,38 @@
                 android:layout_height="wrap_content"
                 android:background="@color/F3F3F3"
                 android:fontFamily="@font/futura_semi_bold"
-                android:minWidth="@dimen/fourty_dp"
-                android:minHeight="@dimen/fourty_dp"
-                android:padding="@dimen/ten_dp"
                 android:src="@drawable/profile_icon"
-                android:text="@string/native_checkout_delivering_to_title"
                 android:textColor="@color/black"
-                android:textSize="@dimen/twenty_sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textSize="@dimen/twenty_sp" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/tvCollectionUserNameShimmerFrameLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ten_dp"
+            android:background="@color/shimmer_view_background"
+            app:layout_constraintStart_toEndOf="@id/imgUserProfileShimmerFrameLayout"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tvCollectionUserName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/ten_dp"
                 android:background="@color/white"
                 android:fontFamily="@font/myriad_pro_semi_bold"
-                android:text="@string/native_checkout_delivering_to_title"
+                android:text="@string/native_checkout_collecting_from"
                 android:textColor="@color/black"
-                android:textSize="@dimen/fifteen_sp"
-                app:layout_constraintStart_toEndOf="@id/imgUserProfile"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textSize="@dimen/fifteen_sp" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/tvCollectionUserPhoneNumberShimmerFrameLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/shimmer_view_background"
+            app:layout_constraintStart_toStartOf="@id/tvCollectionUserNameShimmerFrameLayout"
+            app:layout_constraintTop_toBottomOf="@id/tvCollectionUserNameShimmerFrameLayout">
 
             <TextView
                 android:id="@+id/tvCollectionUserPhoneNumber"
@@ -56,21 +71,25 @@
                 android:background="@color/white"
                 android:fontFamily="@font/myriad_pro_regular"
                 android:textColor="@color/color_444444"
-                android:textSize="@dimen/fifteen_sp"
-                app:layout_constraintStart_toStartOf="@id/tvCollectionUserName"
-                app:layout_constraintTop_toBottomOf="@id/tvCollectionUserName" />
+                android:textSize="@dimen/fifteen_sp" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/imageViewCaretForwardCollectionShimmerFrameLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/shimmer_view_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/imageViewCaretForwardCollection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:src="@drawable/ic_caret_black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
+                android:src="@drawable/ic_caret_black" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
 

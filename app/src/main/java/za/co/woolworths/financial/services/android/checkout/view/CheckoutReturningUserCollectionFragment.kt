@@ -12,6 +12,8 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
@@ -41,6 +43,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     var whoIsCollectingDetails: WhoIsCollectingDetails? = null
+    private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -85,6 +88,129 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
         initializeCollectingFromView()
         initializeCollectingDetailsView()
+        startShimmerView()
+        stopShimmerView()
+    }
+
+    private fun startShimmerView() {
+
+        shimmerComponentArray = listOf(
+            Pair<ShimmerFrameLayout, View>(
+                deliveringTitleShimmerFrameLayout,
+                tvNativeCheckoutDeliveringTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                deliveringTitleValueShimmerFrameLayout,
+                tvNativeCheckoutDeliveringValue
+            ),
+            Pair<ShimmerFrameLayout, View>(forwardImgViewShimmerFrameLayout, imageViewCaretForward),
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionTitleShimmerFrameLayout,
+                txtFoodSubstitutionTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                foodSubstitutionDescShimmerFrameLayout,
+                txtFoodSubstitutionDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupFoodSubstitutionShimmerFrameLayout,
+                radioGroupFoodSubstitution
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                instructionTxtShimmerFrameLayout,
+                txtSpecialDeliveryInstruction
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                specialInstructionSwitchShimmerFrameLayout,
+                switchSpecialDeliveryInstruction
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                giftInstructionTxtShimmerFrameLayout,
+                txtGiftInstructions
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                giftInstructionSwitchShimmerFrameLayout,
+                switchGiftInstructions
+            ),
+            Pair<ShimmerFrameLayout, View>(txtYourCartShimmerFrameLayout, txtOrderSummaryYourCart),
+            Pair<ShimmerFrameLayout, View>(
+                yourCartValueShimmerFrameLayout,
+                txtOrderSummaryYourCartValue
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                deliveryFeeTxtShimmerFrameLayout,
+                txtOrderSummaryDeliveryFee
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                deliveryFeeValueShimmerFrameLayout,
+                txtOrderSummaryDeliveryFeeValue
+            ),
+            Pair<ShimmerFrameLayout, View>(summaryNoteShimmerFrameLayout, txtOrderSummaryNote),
+            Pair<ShimmerFrameLayout, View>(
+                txtOrderTotalCollectionShimmerFrameLayout,
+                txtOrderTotalTitleCollection
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                orderTotalValueCollectionShimmerFrameLayout,
+                txtOrderTotalValueCollection
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                continuePaymentTxtCollectionShimmerFrameLayout,
+                txtContinueToPaymentCollection
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                newShoppingBagsTitleShimmerFrameLayout,
+                newShoppingBagsTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                newShoppingBagsDescShimmerFrameLayout,
+                txtNewShoppingBagsDesc
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                radioGroupShoppingBagsShimmerFrameLayout,
+                radioGroupShoppingBags
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                imgUserProfileShimmerFrameLayout,
+                imgUserProfile
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                tvCollectionUserNameShimmerFrameLayout,
+                tvCollectionUserName
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                tvCollectionUserPhoneNumberShimmerFrameLayout,
+                tvCollectionUserPhoneNumber
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                imageViewCaretForwardCollectionShimmerFrameLayout,
+                imageViewCaretForwardCollection
+            )
+        )
+
+        txtNeedBags.visibility = View.GONE
+        switchNeedBags.visibility = View.GONE
+
+        val shimmer = Shimmer.AlphaHighlightBuilder().build()
+        shimmerComponentArray.forEach {
+            it.first.setShimmer(shimmer)
+            it.first.startShimmer()
+            it.second.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun stopShimmerView() {
+        shimmerComponentArray.forEach {
+            if (it.first.isShimmerStarted) {
+                it.first.stopShimmer()
+                it.first.setShimmer(null)
+                it.second.visibility = View.VISIBLE
+            }
+        }
+
+        txtNeedBags.visibility = View.VISIBLE
+        switchNeedBags.visibility = View.VISIBLE
+
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
     }
