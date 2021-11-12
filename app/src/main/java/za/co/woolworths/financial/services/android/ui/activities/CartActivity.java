@@ -4,6 +4,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.AddToSho
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.REQUEST_PAYMENT_STATUS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_EMPTY_CART;
 
 import android.content.Intent;
@@ -226,9 +227,12 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
             return;
         }
 
-        if (resultCode == RESULT_EMPTY_CART) {
-            finishActivityOnCheckoutSuccess();
-            return;
+        if (requestCode == CartFragment.REQUEST_PAYMENT_STATUS) {
+            switch (resultCode) {
+                case RESULT_EMPTY_CART:
+                finishActivityOnCheckoutSuccess();
+                break;
+            }
         }
 
         FragmentManager fm = getSupportFragmentManager();
