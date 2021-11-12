@@ -58,12 +58,11 @@ class ExpandableGrid(val fragment: Fragment) {
         deliveryType: DeliveryType
     ) {
 
-        val sortedDeliverySlots = when(deliveryType) {
+        val sortedDeliverySlots = when (deliveryType) {
             DeliveryType.MIXED_FOOD -> confirmDeliveryAddressResponse?.sortedFoodDeliverySlots
             DeliveryType.MIXED_OTHER -> confirmDeliveryAddressResponse?.sortedOtherDeliverySlots
             DeliveryType.ONLY_FOOD -> confirmDeliveryAddressResponse?.sortedJoinDeliverySlots
             DeliveryType.ONLY_OTHER -> confirmDeliveryAddressResponse?.sortedJoinDeliverySlots
-
             else -> null
         }
 
@@ -71,13 +70,19 @@ class ExpandableGrid(val fragment: Fragment) {
             return
         }
 
-
         if (sortedDeliverySlots.size == SECOND.week) {
-            hidePreviousNextFoodBtn()
+            if (DeliveryType.MIXED_OTHER == deliveryType || DeliveryType.ONLY_OTHER == deliveryType) {
+                hidePreviousNextOtherBtn()
+            } else
+                hidePreviousNextFoodBtn()
         } else {
-            showPreviousNextFoodBtn()
+            if (DeliveryType.MIXED_OTHER == deliveryType || DeliveryType.ONLY_OTHER == deliveryType) {
+                showPreviousNextOtherBtn()
+            } else
+                showPreviousNextFoodBtn()
         }
 
+        val deliverySlots = sortedDeliverySlots[weekNumber]
         when (deliveryType) {
             DeliveryType.MIXED_FOOD -> {
                 val deliverySlots =
@@ -93,6 +98,7 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.MIXED_OTHER -> {
+
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedOtherDeliverySlots?.get(weekNumber)
                 createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
@@ -106,6 +112,7 @@ class ExpandableGrid(val fragment: Fragment) {
                 )
             }
             DeliveryType.ONLY_FOOD -> {
+
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
 
@@ -122,6 +129,7 @@ class ExpandableGrid(val fragment: Fragment) {
             DeliveryType.ONLY_OTHER -> {
                 val deliverySlots =
                     confirmDeliveryAddressResponse?.sortedJoinDeliverySlots?.get(weekNumber)
+
                 createTimingsGrid(deliverySlots?.hourSlots, fragment.timingsGridViewOther)
                 createDatesGrid(deliverySlots?.headerDates, fragment.dateGridViewOther)
                 createTimeSlotGridView(
