@@ -5,6 +5,7 @@ import za.co.absa.openbankingapi.Cryptography
 import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.KeyGenerationFailureException
 import za.co.absa.openbankingapi.SymmetricCipher
+import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.woolworths.financial.services.android.ui.extension.json
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.AbsaRemoteApi
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.common.SessionKeyGenerator
@@ -21,7 +22,10 @@ class AbsaLoginImpl(private val sessionKeyGenerator: SessionKeyGenerator) : IAbs
 
     override fun getAbsaUniqueDeviceId(): String?  = Utils.getAbsaUniqueDeviceID()
 
-    override fun requestBody(passcode: String, aliasId: String): String? {
+    override fun requestBody(passcode: String): String? {
+
+        val absaSecureCredentials = AbsaSecureCredentials()
+        val aliasId = absaSecureCredentials.aliasId
 
         val deviceId = getAbsaUniqueDeviceId() ?: ""
         val sessionKey = sessionKeyGenerator.generateSessionKey()
@@ -52,8 +56,8 @@ class AbsaLoginImpl(private val sessionKeyGenerator: SessionKeyGenerator) : IAbs
         }
     }
 
-    override suspend fun fetchAbsaLogin(passcode: String, aliasId: String): NetworkState<AbsaProxyResponseProperty> {
-        val loginRequestBody = requestBody(aliasId, passcode)?.json()
+    override suspend fun fetchAbsaLogin(passcode: String): NetworkState<AbsaProxyResponseProperty> {
+        val loginRequestBody = requestBody(passcode)
         loginRequestBody?.contentLength()
         val withEncryptedBody = loginRequestBody?.toAes256Encrypt()
         return resultOf(AbsaRemoteApi.service.queryAbsaServiceLogin(withEncryptedBody))
