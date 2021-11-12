@@ -93,6 +93,7 @@
             android:id="@+id/cellphoneNumberEditText"
             style="@style/credi_card_delivery_edittext_style"
             android:contentDescription="@string/cd_ccd_txtcellphonenumber"
+            android:imeOptions="actionDone"
             android:inputType="number"
             android:maxLength="10"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"

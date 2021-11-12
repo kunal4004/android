@@ -591,7 +591,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             )
             return
         }
-        deliverySummaryScrollView?.scrollTo(0, checkoutDeliveryDetailsLayout?.top ?: 0)
+        deliverySummaryScrollView?.fullScroll(FOCUS_UP)
         startShimmerView()
         val body = ConfirmDeliveryAddressBody(suburbId)
         checkoutAddAddressNewUserViewModel.getConfirmDeliveryAddressDetails(body)
