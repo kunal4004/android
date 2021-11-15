@@ -24,9 +24,7 @@ class AbsaLoginImpl(private val sessionKeyGenerator: SessionKeyGenerator) : IAbs
 
     override fun requestBody(passcode: String): String? {
 
-        val absaSecureCredentials = AbsaSecureCredentials()
-        val aliasId = absaSecureCredentials.aliasId
-
+        val aliasId = AbsaSecureCredentials().aliasId
         val deviceId = getAbsaUniqueDeviceId() ?: ""
         val sessionKey = sessionKeyGenerator.generateSessionKey()
         val gatewaySymmetricKey: String = sessionKeyGenerator.getGatewaySymmetricKey(sessionKey) ?: ""
