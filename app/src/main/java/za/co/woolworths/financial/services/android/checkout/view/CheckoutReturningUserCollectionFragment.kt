@@ -243,7 +243,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         } else {
             checkoutCollectingUserInfoLayout.visibility = View.GONE
         }
-        imageViewCaretForwardCollection.setOnClickListener(this)
+        checkoutCollectingUserInfoLayout.setOnClickListener(this)
     }
 
     private fun initializeDeliveryInstructions() {
@@ -393,7 +393,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.imageViewCaretForwardCollection -> {
+            R.id.checkoutCollectingUserInfoLayout -> {
                 val bundle = Bundle()
                 bundle.apply {
                     putString(

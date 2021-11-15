@@ -36,10 +36,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.Store
-import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
-import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
@@ -241,7 +238,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun setConfirmSelection() {
         selectedSuburb.storeAddress.suburbId?.let { storeId ->
             loadingProgressBar.visibility = View.VISIBLE
-            activity?.getWindow()?.setFlags(
+            activity?.window?.setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
@@ -253,7 +250,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             )
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
-                    activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
                         is ConfirmSelectionResponse -> {
                             when (response.httpCode) {
@@ -279,18 +276,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     Utils.savePreferredDeliveryLocation(
                                         shoppingDeliveryLocation
                                     )
-                                    if (isDeliverySelected == false) {
-                                        val openCheckOutActivity =
-                                            Intent(context, CartCheckoutActivity::class.java)
-                                        openCheckOutActivity.putExtra(
-                                            CheckOutFragment.IS_NATIVE_CHECKOUT,
-                                            true
-                                        )
-                                        activity?.startActivityForResult(
-                                            openCheckOutActivity,
-                                            CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
-                                        )
-                                        activity?.overridePendingTransition(0, 0)
+                                    if (isDeliverySelected != null && !isDeliverySelected!!) {
+                                        navController?.navigate(R.id.checkoutWhoIsCollectingFragment)
                                     }
                                 }
                                 else -> {
@@ -645,7 +632,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             clickNCollectTitleLayout.visibility = View.VISIBLE
             addressConfirmationClicknCollect.visibility = View.VISIBLE
             showStoreList()
-        } else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
+        } else if (localSuburbId != suburbId) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
             localSuburbId.let { it ->
                 checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
@@ -879,7 +866,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>
         if (!provinceId.isNullOrEmpty()) {
             for (provinces in provinceList) {
-                if (provinceId.equals(provinces.id)) {
+                if (provinceId == provinces.id) {
                     // province id is matching with the province list from config.
                     return provinces.name
                 }
@@ -904,14 +891,14 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun callChangeAddressApi() {
         selectedAddress?.nickname?.let { nickname ->
             loadingProgressBar.visibility = View.VISIBLE
-            activity?.getWindow()?.setFlags(
+            activity?.window?.setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
             checkoutAddAddressNewUserViewModel.changeAddress(nickname)
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
-                    activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
                         is ChangeAddressResponse -> {
                             when (response.httpCode) {
