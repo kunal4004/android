@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey_background_color"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <include
-        android:id="@+id/review_rating_details"
+        android:id="@+id/layout_rating_details"
         layout="@layout/ratings_ratingdetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,15 +15,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-
     <androidx.recyclerview.widget.RecyclerView
-        tools:listitem=""
         android:id="@+id/rv_more_reviews"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/review_rating_details"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_rating_details"
+        tools:listitem="@layout/review_row_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
