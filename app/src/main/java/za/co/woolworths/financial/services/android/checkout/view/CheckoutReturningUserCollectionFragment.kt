@@ -1,0 +1,223 @@
+package za.co.woolworths.financial.services.android.checkout.view
+
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
+import kotlinx.android.synthetic.main.layout_delivering_to_details.*
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
+import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
+import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
+import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary
+import za.co.woolworths.financial.services.android.models.dto.ShoppingBagsOptions
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.Utils
+import java.util.regex.Pattern
+
+class CheckoutReturningUserCollectionFragment : Fragment(),
+    ShoppingBagsRadioGroupAdapter.EventListner {
+
+    private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
+    private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun afterTextChanged(s: Editable?) {
+            val text = s?.toString() ?: ""
+            val length = text.length
+
+            if (length > 0 && !Pattern.matches(
+                    REGEX_DELIVERY_INSTRUCTIONS,
+                    text
+                )
+            ) {
+                s?.delete(length - 1, length)
+            }
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(
+            R.layout.fragment_checkout_returning_user_collection,
+            container,
+            false
+        )
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as? CheckoutActivity)?.apply {
+            showBackArrowWithTitle(bindString(R.string.checkout))
+        }
+        initializeCollectingFromView()
+        initializeFoodSubstitution()
+        initializeDeliveryInstructions()
+    }
+
+    private fun initializeCollectingFromView() {
+        tvNativeCheckoutDeliveringTitle?.text = context?.getString(R.string.native_checkout_collecting_from)
+        tvNativeCheckoutDeliveringValue?.text = "Constantia Emporium"
+    }
+
+    private fun initializeDeliveryInstructions() {
+        edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
+        edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
+        edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
+        edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = false
+        edtTxtInputLayoutGiftInstructions?.visibility = View.GONE
+        edtTxtInputLayoutGiftInstructions?.isCounterEnabled = false
+
+        switchSpecialDeliveryInstruction?.setOnCheckedChangeListener { _, isChecked ->
+            if (loadingBar.visibility == View.VISIBLE) {
+                return@setOnCheckedChangeListener
+            }
+            if (isChecked)
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
+                    activity
+                )
+            edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+            edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
+            edtTxtSpecialDeliveryInstruction?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+        }
+
+        switchGiftInstructions?.setOnCheckedChangeListener { _, isChecked ->
+            if (loadingBar?.visibility == View.VISIBLE) {
+                return@setOnCheckedChangeListener
+            }
+            if (isChecked)
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
+                    activity
+                )
+            edtTxtInputLayoutGiftInstructions?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+            edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
+            edtTxtGiftInstructions?.visibility =
+                if (isChecked) View.VISIBLE else View.GONE
+        }
+        if (WoolworthsApplication.getNativeCheckout()?.currentShoppingBag?.isEnabled == true) {
+            switchNeedBags?.visibility = View.VISIBLE
+            txtNeedBags?.visibility = View.VISIBLE
+            newShoppingBagsLayout?.visibility = View.GONE
+            switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
+                        activity
+                    )
+                }
+            }
+        } else if (WoolworthsApplication.getNativeCheckout()?.newShoppingBag?.isEnabled == true) {
+            switchNeedBags?.visibility = View.GONE
+            txtNeedBags?.visibility = View.GONE
+            newShoppingBagsLayout?.visibility = View.VISIBLE
+            addShoppingBagsRadioButtons()
+        }
+    }
+
+    private fun addShoppingBagsRadioButtons() {
+        txtNewShoppingBagsSubDesc?.visibility = View.VISIBLE
+        val newShoppingBags = WoolworthsApplication.getNativeCheckout()?.newShoppingBag
+        txtNewShoppingBagsDesc?.text = newShoppingBags?.title
+        txtNewShoppingBagsSubDesc?.text = newShoppingBags?.description
+
+        val shoppingBagsAdapter = ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this)
+        shoppingBagsRecyclerView.apply {
+            layoutManager = activity?.let { LinearLayoutManager(it) }
+            shoppingBagsAdapter?.let { adapter = it }
+        }
+    }
+
+    /**
+     * Initializes food substitution view and Set by default selection to [FoodSubstitution.SIMILAR_SUBSTITUTION]
+     *
+     * @see [FoodSubstitution]
+     */
+    private fun initializeFoodSubstitution() {
+        selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
+        radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.radioBtnPhoneConfirmation -> {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME,
+                        activity
+                    )
+                    selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
+                }
+                R.id.radioBtnSimilarSubst -> {
+                    selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
+                }
+                R.id.radioBtnNoThanks -> {
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
+                        activity
+                    )
+                    selectedFoodSubstitution = FoodSubstitution.NO_THANKS
+                }
+            }
+        }
+    }
+
+    /**
+     * Initializes Order Summary data from confirmDeliveryAddress or storePickUp API .
+     */
+    private fun initializeOrderSummary(orderSummary: OrderSummary?) {
+        orderSummary?.let { it ->
+            txtOrderSummaryYourCartValue?.text =
+                CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.basketTotal)
+            it.discountDetails?.let { discountDetails ->
+                groupOrderSummaryDiscount?.visibility =
+                    if (discountDetails.otherDiscount == 0.0) View.GONE else View.VISIBLE
+                groupPromoCodeDiscount?.visibility =
+                    if (discountDetails.promoCodeDiscount == 0.0) View.GONE else View.VISIBLE
+                groupWRewardsDiscount?.visibility =
+                    if (discountDetails.voucherDiscount == 0.0) View.GONE else View.VISIBLE
+                groupCompanyDiscount?.visibility =
+                    if (discountDetails.companyDiscount == 0.0) View.GONE else View.VISIBLE
+                groupTotalDiscount?.visibility =
+                    if (discountDetails.totalDiscount == 0.0) View.GONE else View.VISIBLE
+
+                txtOrderSummaryDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.otherDiscount)
+                txtOrderSummaryTotalDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.totalDiscount)
+                txtOrderSummaryWRewardsVouchersValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.voucherDiscount)
+                txtOrderSummaryCompanyDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.companyDiscount)
+                txtOrderSummaryPromoCodeDiscountValue?.text =
+                    "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
+
+                txtOrderTotalValue.text =
+                    CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
+            }
+        }
+    }
+
+    override fun selectedShoppingBagType(
+        shoppingBagsOptionsList: ShoppingBagsOptions,
+        position: Int
+    ) {
+//        selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
+    }
+}
