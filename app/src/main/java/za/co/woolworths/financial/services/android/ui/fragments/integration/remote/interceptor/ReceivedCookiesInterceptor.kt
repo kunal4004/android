@@ -2,7 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.rem
 
 import okhttp3.Interceptor
 import okhttp3.Response
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_COOKIE_WFPT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_COOKIE_XFPT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_WFPT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_XFPT
 import java.io.IOException
 
 class ReceivedCookiesInterceptor : Interceptor {
@@ -16,6 +21,14 @@ class ReceivedCookiesInterceptor : Interceptor {
             }
 
             if (cookies.size > 0){
+
+                for (cookie in cookies){
+                    when (cookie.lowercase()){
+                        ABSA_COOKIE_XFPT -> AbsaTemporaryDataSourceSingleton.wfpt = cookie
+                        ABSA_COOKIE_WFPT -> AbsaTemporaryDataSourceSingleton.xfpt = cookie
+                    }
+                }
+
                 val cookie = cookies[0]
                 AbsaTemporaryDataSourceSingleton.cookie = cookie
                 AbsaTemporaryDataSourceSingleton.jsessionId = cookie.replace("JSESSIONID=", "")
