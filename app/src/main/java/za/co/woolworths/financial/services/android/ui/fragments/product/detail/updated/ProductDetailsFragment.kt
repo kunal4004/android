@@ -81,8 +81,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
 import kotlinx.android.synthetic.main.vto_imageview_fragment.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -114,6 +112,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import java.io.ByteArrayOutputStream
 import android.provider.MediaStore
 import android.graphics.Bitmap
+import kotlinx.coroutines.*
 
 
 
@@ -180,6 +179,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isDividerVtoEffect: Boolean = false
     private var isLiveCameraResumeState: Boolean = false
     private var isLiveCameraOpened: Boolean = false
+    private lateinit var job: Job
+    private lateinit var coroutineScope: CoroutineScope
+    private var isFaceNotDetect: Boolean = false
+    private var isFaceDetect: Boolean = false
+    private var isColorNotMatch: Boolean = false
+
 
     @OpenTermAndLighting
     @Inject
@@ -262,6 +267,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         captureImage?.setOnClickListener(this)
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
+        cameraSurfaceView.setOnTouchListener { _, event ->
+            pinchZoomOnVtoLiveCamera(event)
+            true
+        }
+
+    }
+
+    private fun pinchZoomOnVtoLiveCamera(event: MotionEvent?) {
+        scrollView.requestDisallowInterceptTouchEvent(true)
+        val cameraMonitor =
+            CameraMonitor(requireActivity(), makeupCamera, lifecycle)
+        cameraMonitor.pinchZoom(requireActivity(),event!!)
 
     }
 
@@ -315,6 +332,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun captureImageFromVtoLiveCamera() {
         liveCameraViewModel.takenPicture()
+        job?.cancel()
         viewLifecycleOwner.lifecycleScope.launch {
             var countText = 3
             while (countText >= 0) {
@@ -330,9 +348,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     saveVtoApplyImage = result as Bitmap
                     setPickedImage(getImageUri(result as Bitmap),true)
                     isLiveCameraResumeState = false
-//                    val cameraMonitor =
-//                        CameraMonitor(requireActivity(), makeupCamera, lifecycle)
-//                    cameraMonitor.stopLiveCamera()
+
                 })
 
             retakeCamera.visibility = View.VISIBLE
@@ -381,6 +397,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             imgVTOSplit.setImageResource(R.drawable.ic_vto_split_screen)
             vtoDividerLayout.visibility = View.GONE
             imgDownloadVTO.visibility = View.GONE
+            imgVTORefresh.visibility = View.VISIBLE
             comparisonView.leaveComparisonMode()
             isDividerVtoEffect = false
         } else {
@@ -388,6 +405,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             imgVTOSplit.setImageResource(R.drawable.ic_vto_icon_compare)
             comparisonView.enterComparisonMode()
             imgDownloadVTO.visibility = View.GONE
+            imgVTORefresh.visibility = View.GONE
             vtoDividerLayout.visibility = View.VISIBLE
             isDividerVtoEffect = true
         }
@@ -1897,6 +1915,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onPause() {
         super.onPause()
+        if (null != makeupCamera){
+            job?.cancel()
+        }
         isLiveCameraResumeState = true
     }
 
@@ -1906,7 +1927,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val cameraMonitor =
                 CameraMonitor(requireActivity(), makeupCamera, lifecycle)
             cameraMonitor.startCamera()
-
+            job = detectFaceLiveCamera()
         }
         activity?.apply {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
@@ -2310,6 +2331,63 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         lifecycle.addObserver(cameraMonitor)
         isLiveCameraOpened = true
         cameraSurfaceView.scaleType = CameraView.ScaleType.CENTER_CROP
+        initCoroutine()
+        job = detectFaceLiveCamera()
+
+    }
+
+    private fun detectFaceLiveCamera(): Job {
+        return coroutineScope.launch {
+            while (isActive) {
+                delay(2000)
+                var getFaceCount =
+                    makeupCamera?.getCurrentFrameInfo(MakeupCam.FrameInfo.OPTION_FACE_RECT)
+
+                if (getFaceCount?.faceRect!!.isEmpty() && (!isFaceNotDetect)) {
+                    showFaceNotDetectLiveCamera(true)
+                    isFaceNotDetect = true
+                } else
+                    showFaceNotDetectLiveCamera(false)
+                isFaceNotDetect = false
+                isFaceDetect = true
+
+            }
+        }
+    }
+
+    private fun showFaceNotDetectLiveCamera(isFaceNotDetect: Boolean) {
+        if (isFaceNotDetect) {
+            noFaceDetected.visibility = View.VISIBLE
+            retakeCamera.visibility = View.GONE
+            imgVTOSplit.visibility = View.GONE
+            captureImage.visibility = View.GONE
+            imgVTORefresh.visibility = View.GONE
+            if (comparisonView.isCompareModeEnable()) {
+                vtoDividerLayout.visibility = View.GONE
+                isDividerVtoEffect = false
+                comparisonView.leaveComparisonMode()
+            }
+
+        } else {
+            noFaceDetected.visibility = View.GONE
+            if (!isColorNotMatch) {
+                imgVTOSplit.visibility = View.VISIBLE
+                if (!isDividerVtoEffect) {
+                    captureImage.visibility = View.VISIBLE
+
+                }
+            }
+            if (!comparisonView.isCompareModeEnable() && !isColorNotMatch) {
+                captureImage.visibility = View.VISIBLE
+                imgVTORefresh.visibility = View.VISIBLE
+                imgVTOSplit.setImageResource(R.drawable.ic_vto_split_screen)
+            }
+        }
+    }
+
+    private fun initCoroutine() {
+        job = Job()
+        coroutineScope = CoroutineScope(Dispatchers.Main + job)
     }
 
     private fun applyColorVtoMappedResult(result: Any?) {
@@ -2321,6 +2399,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 captureImage.visibility = View.GONE
                 imgDownloadVTO.visibility = View.GONE
                 liveCameraViewModel.clearLiveCameraEffect()
+                isColorNotMatch = true
             }
             result!! == VTO_COLOR_LIVE_CAMERA -> {
                 colourUnavailableError.visibility = View.GONE
@@ -2332,6 +2411,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 } else {
                     captureImage.visibility = View.VISIBLE
                 }
+                isColorNotMatch = false
             }
         }
 
