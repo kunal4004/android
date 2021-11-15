@@ -4,6 +4,10 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_COOKIE_WFPT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_COOKIE_XFPT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_WFPT
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_XFPT
 import java.io.IOException
 
 class ReceivedCookiesInterceptor : Interceptor {
@@ -20,8 +24,8 @@ class ReceivedCookiesInterceptor : Interceptor {
 
                 for (cookie in cookies){
                     when (cookie.lowercase()){
-                        "wfpt" -> AbsaTemporaryDataSourceSingleton.wfpt = cookie
-                        "xfpt" -> AbsaTemporaryDataSourceSingleton.xfpt = cookie
+                        ABSA_COOKIE_XFPT -> AbsaTemporaryDataSourceSingleton.wfpt = cookie
+                        ABSA_COOKIE_WFPT -> AbsaTemporaryDataSourceSingleton.xfpt = cookie
                     }
                 }
 

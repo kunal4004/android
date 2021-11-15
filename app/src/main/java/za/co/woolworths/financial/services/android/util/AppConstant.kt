@@ -45,6 +45,10 @@ class AppConstant {
 
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
 
+        //Absa cookie content
+        const val ABSA_COOKIE_WFPT = "wfpt"
+        const val ABSA_COOKIE_XFPT = "xfpt"
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
