@@ -2299,4 +2299,7 @@
     <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
     <string name="empty_cart_title">Your Cart Is Empty</string>
     <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
+    <string name="absa_technical_error_occurred">Technical error occurred</string>
+    <string name="absa_technical_error_occurred_try_again_later">An error has occurred. Please try again later.</string>
+    <string name="absa_maximum_polling_rate_reached">Maximum polling rate reached</string>
 </resources>
