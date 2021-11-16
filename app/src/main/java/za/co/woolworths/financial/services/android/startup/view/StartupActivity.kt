@@ -102,7 +102,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                             // api successfull and  firebase also configured so display sunsetting ui
                             setContentView(R.layout.activity_splash_screen)
                             val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
-                            if (configData?.expiryTime == -1L) {
+                            if (configData?.expiryTime == -1L || configData == null) {
                                 // in case we get json exception while parsing then we navigate with normal flow
                                 Log.e("API_SUCCESSFULL :", "called")
                                 Log.e("Firebase_JSON_FAILED :", "called")
@@ -123,9 +123,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                             showNonVideoViewWithErrorLayout()
                         } else {
                              // api is failed and sunsetting is cofigured then show sunsetting ui
-                            setContentView(R.layout.activity_splash_screen)
+
                             val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
-                            if (configData?.expiryTime == -1L) {
+                            if (configData?.expiryTime == -1L || configData == null) {
                                 // in case we get json exception while parsing then show error screen of api
                                 Log.e("API_FAILURE :", "called")
                                 Log.e("Firebase_FETCH_FAILED :", "called")
@@ -135,6 +135,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                             } else {
                                 Log.e("API_FAILURE :", "called")
                                 Log.e("Firebase_Configured :", "called")
+                                setContentView(R.layout.activity_splash_screen)
                                 setDataOnUI(configData, false)
                             }
                         }
