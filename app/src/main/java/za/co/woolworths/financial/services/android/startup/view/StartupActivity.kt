@@ -95,8 +95,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                          //success of api
                         if (remoteConfigJsonString.isEmpty()) {
                             // api successfull but firebase not configured so navigate with normal flow
-                            Log.e("API_SUCCESSFULL :", "called")
-                            Log.e("Firebase_Configured:", "called")
                             presentNextScreenOrServerMessage()
                         } else {
                             // api successfull and  firebase also configured so display sunsetting ui
@@ -104,13 +102,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                             val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
                             if (configData?.expiryTime == -1L || configData == null) {
                                 // in case we get json exception while parsing then we navigate with normal flow
-                                Log.e("API_SUCCESSFULL :", "called")
-                                Log.e("Firebase_JSON_FAILED :", "called")
                                 progress_bar?.visibility = View.GONE
                                 presentNextScreenOrServerMessage()
                             } else {
-                                Log.e("API_SUCCESSFULL :", "called")
-                                Log.e("Firebase_Configured :", "called")
                                 setDataOnUI(configData, true)
                             }
                         }
@@ -118,8 +112,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         // error  of api
                         if (remoteConfigJsonString.isEmpty()) {
                             //api is  failed and firebase not configured so show error screen of api reposne
-                            Log.e("API_FAILURE :", "called")
-                            Log.e("Firebase_JSON_FAILED :", "called")
                             showNonVideoViewWithErrorLayout()
                         } else {
                              // api is failed and sunsetting is cofigured then show sunsetting ui
@@ -127,14 +119,9 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                             val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
                             if (configData?.expiryTime == -1L || configData == null) {
                                 // in case we get json exception while parsing then show error screen of api
-                                Log.e("API_FAILURE :", "called")
-                                Log.e("Firebase_FETCH_FAILED :", "called")
-                                Log.e("Firebase_LOCAL_JSON :", "called")
                                 progress_bar?.visibility = View.GONE
                                 showNonVideoViewWithErrorLayout()
                             } else {
-                                Log.e("API_FAILURE :", "called")
-                                Log.e("Firebase_Configured :", "called")
                                 setContentView(R.layout.activity_splash_screen)
                                 setDataOnUI(configData, false)
                             }
@@ -144,14 +131,11 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     // firebase fail
                     if (isComingFromSuccess) {
                         // api is success and firebase  is failed so navigate to next screen
-                        Log.e("API_SUCCESS :", "called")
-                        Log.e("Firebase_FAIL :", "called")
                         progress_bar?.visibility = View.GONE
                         presentNextScreenOrServerMessage()
                     } else  {
                         // api is failed and firebase  is failed so display error layout
-                        Log.e("API_FAILURE :", "called")
-                        Log.e("Firebase_FAIL :", "called")
+
                         progress_bar?.visibility = View.GONE
                         showNonVideoViewWithErrorLayout()
                     }
@@ -243,10 +227,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     }
                 }
             } else if(configData.expiryTime == -1L && isComingFromSuccess) {
-                Log.e("NEXT_SCREEN :", "CALLED")
                 presentNextScreenOrServerMessage()
             } else if (configData.expiryTime == -1L && !isComingFromSuccess) {
-                Log.e("ERROR_LAYOUT :", "CALLED")
                 showNonVideoViewWithErrorLayout()
             }
         }
