@@ -40,7 +40,7 @@ class LiveCameraRepositoryImpl @Inject constructor(
             override fun onFailure(
                 throwable: Throwable
             ) {
-
+                // Do Nothing
             }
         })
 
@@ -63,15 +63,17 @@ class LiveCameraRepositoryImpl @Inject constructor(
             listOf(vtoSetting),
             EffectConfig.DEFAULT,
             object : VtoApplier.ApplyCallback {
-                override fun onSuccess(ignored: Bitmap) {
-
+                override fun onSuccess(ignored: Bitmap?) {
+                   //Do Nothing
                 }
 
                 override fun onFailure(throwable: Throwable) {
                     getApplyResult.value = VTO_COLOR_NOT_MATCH
                 }
 
-                override fun applyProgress(progress: Double) {}
+                override fun applyProgress(progress: Double) {
+                    // Do Nothing
+                }
             })
 
     }
@@ -85,22 +87,23 @@ class LiveCameraRepositoryImpl @Inject constructor(
             .setProductGuid(productId)
             .setSkuGuid(sku)
             .build()
-        selectedColorResult.value = VTO_COLOR_LIVE_CAMERA
-        PerfectLib.setDownloadCacheStrategy(DownloadCacheStrategy.CACHE_ONLY)
+
+       PerfectLib.setDownloadCacheStrategy(DownloadCacheStrategy.CACHE_ONLY)
         vtoApplier?.apply(
             listOf(vtoSetting),
             EffectConfig.DEFAULT,
             object : VtoApplier.ApplyCallback {
-                override fun onSuccess(ignored: Bitmap) {
-
+                override fun onSuccess(ignored: Bitmap?) {
+                    selectedColorResult.value = VTO_COLOR_LIVE_CAMERA
                 }
 
                 override fun onFailure(throwable: Throwable) {
                     selectedColorResult.value = VTO_COLOR_NOT_MATCH
-
                 }
 
-                override fun applyProgress(progress: Double) {}
+                override fun applyProgress(progress: Double) {
+                      //Do Nothing
+                }
             })
 
        return selectedColorResult
@@ -115,13 +118,13 @@ class LiveCameraRepositoryImpl @Inject constructor(
             false,
             true,
             object : MakeupCam.PictureCallback {
-                override fun onPictureTaken(originalPicture: Bitmap?, resultPicture: Bitmap) {
+                override fun onPictureTaken(originalPicture: Bitmap?, resultPicture: Bitmap?) {
 
                     takenPicture.value = resultPicture!!
                 }
 
                 override fun onFailure(t: Throwable) {
-
+                    // Do Nothing
                 }
             })
         return takenPicture
@@ -130,9 +133,15 @@ class LiveCameraRepositoryImpl @Inject constructor(
     override fun clearEffect() {
         vtoApplier!!.clearAllEffects(
             object : VtoApplier.ApplyCallback {
-                override fun onSuccess(ignored: Bitmap) {}
-                override fun onFailure(throwable: Throwable) {}
-                override fun applyProgress(progress: Double) {}
+                override fun onSuccess(ignored: Bitmap?) {
+                    //Do Nothing
+                }
+                override fun onFailure(throwable: Throwable) {
+                    //Do Nothing
+                }
+                override fun applyProgress(progress: Double) {
+                    //Do Nothing
+                }
             })
     }
 
