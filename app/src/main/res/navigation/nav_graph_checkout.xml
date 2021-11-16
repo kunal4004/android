@@ -210,6 +210,16 @@
         android:id="@+id/checkoutReturningUserCollectionFragment"
         android:name="za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment"
         android:label="CheckoutReturningUserCollectionFragment"
-        tools:layout="@layout/fragment_checkout_returning_user_collection" />
+        tools:layout="@layout/fragment_checkout_returning_user_collection">
+
+        <action
+            android:id="@+id/action_checkoutReturningUserCollectionFragment_checkoutWhoIsCollectingFragment"
+            app:destination="@id/checkoutWhoIsCollectingFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
+
+    </fragment>
 
 </navigation>
