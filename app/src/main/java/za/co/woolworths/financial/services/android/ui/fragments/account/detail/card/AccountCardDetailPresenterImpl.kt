@@ -249,16 +249,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun navigateToBalanceProtectionInsurance() {
         val bpiInsuranceApplication : BpiInsuranceApplication? = getBpiInsuranceApplication()
-        when(bpiInsuranceApplication?.status){
-            BpiInsuranceApplicationStatusType.OPTED_IN -> {
-                mainView?.navigateToBalanceProtectionInsuranceApplicationStatusCovered(convertAccountObjectToJsonString())
-            }
-            BpiInsuranceApplicationStatusType.NOT_OPTED_IN -> {
-            }
-            BpiInsuranceApplicationStatusType.COVERED -> {
-                mainView?.navigateToBalanceProtectionInsuranceApplicationStatusCovered(convertAccountObjectToJsonString())
-            }
-        }
+        mainView?.navigateToBalanceProtectionInsuranceApplication(convertAccountObjectToJsonString(), bpiInsuranceApplication?.status)
     }
 
     override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding

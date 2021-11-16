@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication;
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.account.Products;
@@ -1911,12 +1912,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-    public void navigateToBalanceProtectionInsuranceApplicationStatusCovered(@org.jetbrains.annotations.Nullable String accountInfo) {
-
-    }
-
-
-    @Override
     public void displayCardHolderName(@org.jetbrains.annotations.Nullable String name) {
 
     }
@@ -2069,6 +2064,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     @Override
     public void showBalanceProtectionInsurance(@Nullable Boolean insuranceCovered) {
+
+    }
+
+    @Override
+    public void navigateToBalanceProtectionInsuranceApplication(@Nullable String accountInfo, @Nullable BpiInsuranceApplicationStatusType bpiInsuranceStatus) {
 
     }
 }

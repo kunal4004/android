@@ -21,8 +21,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BP
 
 class BalanceProtectionInsuranceActivity : AppCompatActivity() {
 
+    private var bpiOptIn: Boolean = false
     private var bpiPresenter: BPIOverviewPresenter? = null
     private val bpiViewModel: BPIViewModel? by viewModels()
+
+    companion object {
+        const val BPI_OPT_IN = "bpi_opt_in"
+    }
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,14 +38,26 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
         /*
         * Implementation of room db will eliminate bundle argument requirement by fetching account data directly from db
         */
-            intent?.extras?.let { args -> bpiPresenter = bpiViewModel?.overviewPresenter(args) }
+            intent?.extras?.let { args ->
+                bpiPresenter = bpiViewModel?.overviewPresenter(args)
+                bpiOptIn = args.getBoolean(BPI_OPT_IN, false)
+            }
+        if(bpiOptIn){
+            bpiPresenter?.createNavigationGraph(
+                fragmentContainerView = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as? NavHostFragment,
+                navHostFragmentId = R.navigation.my_account_bpi_navhost,
+                startDestination =  R.id.BPIOptInCarouselFragment,
+                extras = null)
+        }
+        else{
             val overviewPair = bpiPresenter?.navigateToOverviewDetail()
             val hasOnlyOneInsuranceTypeItem = overviewPair?.second ?: false
-        bpiPresenter?.createNavigationGraph(
+            bpiPresenter?.createNavigationGraph(
                 fragmentContainerView = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as? NavHostFragment,
                 navHostFragmentId = R.navigation.my_account_bpi_navhost,
                 startDestination =  if(hasOnlyOneInsuranceTypeItem) R.id.OverViewDetail else R.id.Overview,
                 extras =  if(hasOnlyOneInsuranceTypeItem) BPIOverviewDetailFragmentArgs.Builder(overviewPair?.first).build().toBundle() else  intent.extras)
+        }
     }
 
     fun actionBar() {
@@ -50,6 +67,9 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
             setHomeAsUpIndicator(R.drawable.back24)
+        }
+        bpiToolbar.setNavigationOnClickListener {
+            onBackPressed()
         }
     }
 
@@ -78,6 +98,17 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
                 setHomeAsUpIndicator(R.drawable.back_white)
                 setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
+        }
+        supportActionBar?.elevation = 0f
+    }
+
+    fun changeActionBarUIForCarousel() {
+        appbar?.setBackgroundColor(Color.TRANSPARENT)
+        horizontalDivider?.visibility = GONE
+        toolbarTitleTextView?.visibility = GONE
+        supportActionBar?.apply {
+            setHomeAsUpIndicator(R.drawable.back24)
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
         supportActionBar?.elevation = 0f
     }
