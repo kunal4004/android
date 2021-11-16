@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.vto.ui.camera
 
 import android.content.Context
 import android.graphics.SurfaceTexture
+import android.view.MotionEvent
 import androidx.annotation.StringDef
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
@@ -18,7 +19,7 @@ abstract class PfCamera internal constructor() {
     abstract fun stopPreview()
     abstract fun autoFocus(callback: AutoFocusCallback)
     abstract fun release()
-
+    abstract fun zoom(context: Context, event: MotionEvent)
     class CameraInfo(facing: CameraFacing, orientation: Int) {
         val facing: CameraFacing
 
@@ -54,7 +55,6 @@ abstract class PfCamera internal constructor() {
         val previewSize: Size?
         fun setPreviewSize(width: Int, height: Int)
         val supportedFocusModes: List<String?>?
-         //var focusMode: String?
         fun getFocusMode(): String?
         fun setFocusMode(@FocusMode value: String?)
 
@@ -80,10 +80,8 @@ abstract class PfCamera internal constructor() {
     }
 
     companion object {
-        private const val TAG = "PfCamera"
         fun open(context: Context, facing: CameraFacing): PfCamera {
             return PfCameraImpl.open(context, facing)
-
         }
     }
 }

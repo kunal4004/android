@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.vto.ui.camera
 
 import android.content.Context
 import android.graphics.SurfaceTexture
+import android.view.MotionEvent
 import androidx.lifecycle.*
 import com.perfectcorp.perfectlib.CameraFrame
 import com.perfectcorp.perfectlib.MakeupCam
@@ -11,13 +12,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
+private var camera: PfCamera? = null
+
 class CameraMonitor constructor(
     private val context: Context,
     private val makeupCamera: MakeupCam?,
     private val lifecycle: Lifecycle
 ) : LifecycleObserver {
 
-    private var camera: PfCamera? = null
     private lateinit var job: Job
     private lateinit var coroutineScope: CoroutineScope
     private var surfaceTexture: SurfaceTexture? = null
@@ -29,7 +31,7 @@ class CameraMonitor constructor(
     }
     
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun startCamera() {
+    internal fun startCamera() {
         if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
             if (!started) {
                 started = true
@@ -40,19 +42,16 @@ class CameraMonitor constructor(
                 startPreview()
             }
         } else if (lifecycle.currentState.isAtLeast(Lifecycle.State.DESTROYED)) {
-
             stopLiveCamera()
-
         }
     }
 
-
-    fun stopLiveCamera() {
+   private fun stopLiveCamera() {
         makeupCamera?.onPaused()
         makeupCamera?.onStopped()
         makeupCamera?.onDestroyed()
         stopCamera()
-        job.cancel()
+        job?.cancel()
         lifecycle.removeObserver(this)
     }
 
@@ -68,9 +67,7 @@ class CameraMonitor constructor(
         var previewHeight = 0
 
         try {
-
             camera = PfCamera.open(context, CameraFacing.FRONT)
-
             if (camera != null) {
                 tryToSetPreviewSize(
                     camera!!,
@@ -87,7 +84,6 @@ class CameraMonitor constructor(
                 val previewSize: PfCamera.Size = camera!!.getParameters()!!.previewSize!!
                 previewWidth = previewSize.width
                 previewHeight = previewSize.height
-
                 val cameraInfo: PfCamera.CameraInfo = camera!!.cameraInfo!!
 
                 coroutineScope.launch {
@@ -108,11 +104,9 @@ class CameraMonitor constructor(
         } catch (t: Throwable) {
              //Do Nothing
         }
-
     }
 
     private fun tryToSetAutoFocus(camera: PfCamera) {
-
         val cameraParameters = camera.getParameters()
         val cameraFocusModes: List<String> =
             (cameraParameters!!.supportedFocusModes as List<String>?)!!
@@ -122,13 +116,10 @@ class CameraMonitor constructor(
             cameraParameters.setFocusMode(PfCamera.Parameters.FOCUS_MODE_AUTO)
         }
         camera.setParameters(cameraParameters)
-
     }
 
     private val autoFocusCallback =
-        PfCamera.AutoFocusCallback { _, _ ->
-
-        }
+        PfCamera.AutoFocusCallback { _, _ -> }
 
     private fun startPreview() {
 
@@ -140,7 +131,6 @@ class CameraMonitor constructor(
             } catch (t: Throwable) {
                   //Do Nothing
             }
-
         }
     }
 
@@ -174,7 +164,6 @@ class CameraMonitor constructor(
             if (data == null) {
                 return
             }
-
             // [PF] feed camera buffer into SDK
             val cameraFrame = CameraFrame(data, previewWidth, previewHeight, isFirstFrame)
             val cameraFrameOrientation: Int = -1
@@ -206,7 +195,14 @@ class CameraMonitor constructor(
             camera!!.release()
             camera = null
         }
+    }
 
+    internal fun pinchZoom(context: Context, event: MotionEvent) {
+        try {
+            camera!!.zoom(context, event)
+        } catch (e: Exception) {
+            // Do Nothing
+        }
     }
 
 }

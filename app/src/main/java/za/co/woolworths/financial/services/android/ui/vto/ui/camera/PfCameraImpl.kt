@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.ImageFormat
+import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.*
 import android.hardware.camera2.CameraCaptureSession.CaptureCallback
@@ -13,6 +14,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.text.TextUtils
+import android.view.MotionEvent
 import androidx.annotation.GuardedBy
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
@@ -70,6 +72,8 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
     private val lock = Any()
     private val backgroundThread: HandlerThread?
     private val backgroundHandler: Handler
+    private var fingerSpacing = 0f
+    private var zoomLevel = 1
 
     @GuardedBy("lock")
     private var cameraDevice: CameraDevice? = null
@@ -432,6 +436,8 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
         stopBackgroundThread()
     }
 
+
+
     private fun closeCameraDevice() {
         synchronized(lock) {
             previewCallback = null
@@ -453,64 +459,6 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
         }
     }
 
-    companion object {
-        private const val TAG = "PfCamera2"
-        private const val PREVIEW_IMAGE_FORMAT = ImageFormat.YUV_420_888
-        fun open(context: Context, facing: CameraFacing): PfCameraImpl {
-            check(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { "camera2 requires at least API level 21" }
-            return createBuilder(context, facing).build()
-        }
-
-        private val CAMERA_FACING_MAPPING_TABLE: Map<Int?, CameraFacing> =
-            ImmutableMap.builder<Int?, CameraFacing>()
-                .put(CameraCharacteristics.LENS_FACING_FRONT, CameraFacing.FRONT)
-                .put(CameraCharacteristics.LENS_FACING_BACK, CameraFacing.BACK)
-                .build()
-
-
-        private fun createBuilder(context: Context, facing: CameraFacing): Builder {
-            try {
-                val cameraManager =
-                    context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-                for (cameraId in cameraManager.cameraIdList) {
-                    val cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
-                    val cameraFacing = cameraCharacteristics.get(CameraCharacteristics.LENS_FACING)
-                    val mappedCameraFacing = CAMERA_FACING_MAPPING_TABLE[cameraFacing]
-                    if (mappedCameraFacing == null || mappedCameraFacing !== facing) {
-                        continue
-                    }
-                    val map =
-                        cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                            ?: continue
-                    val defaultPreviewSize = Collections.max(
-                        Arrays.asList(*map.getOutputSizes(PREVIEW_IMAGE_FORMAT)),
-                        CompareSizesByArea()
-                    )
-                    return Builder(context)
-                        .setCameraManager(cameraManager)
-                        .setCameraId(cameraId)
-                        .setDefaultPreviewSize(
-                            Size(
-                                defaultPreviewSize.width,
-                                defaultPreviewSize.height
-                            )
-                        )
-                }
-                throw IllegalStateException("Can't find available camera for facing $facing")
-            } catch (t: Throwable) {
-                throw IllegalStateException("Can't find available camera for facing $facing")
-            }
-
-        }
-
-        private fun getPfCameraFacing(cameraFacing: Int): CameraFacing {
-            return when (cameraFacing) {
-                CameraCharacteristics.LENS_FACING_FRONT -> CameraFacing.FRONT
-                CameraCharacteristics.LENS_FACING_BACK -> CameraFacing.BACK
-                else -> throw IllegalArgumentException("Only supports front and back camera.")
-            }
-        }
-    }
 
     init {
         context = Objects.requireNonNull(builder.context)
@@ -548,5 +496,119 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
         } catch (t: Throwable) {
 
         }
+
+    }
+
+    companion object {
+        private const val PREVIEW_IMAGE_FORMAT = ImageFormat.YUV_420_888
+        fun open(context: Context, facing: CameraFacing): PfCameraImpl {
+            check(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { "camera2 requires at least API level 21" }
+            return createBuilder(context, facing).build()
+        }
+
+        private val CAMERA_FACING_MAPPING_TABLE: Map<Int?, CameraFacing> =
+            ImmutableMap.builder<Int?, CameraFacing>()
+                .put(CameraCharacteristics.LENS_FACING_FRONT, CameraFacing.FRONT)
+                .put(CameraCharacteristics.LENS_FACING_BACK, CameraFacing.BACK)
+                .build()
+
+        private fun createBuilder(context: Context, facing: CameraFacing): Builder {
+            try {
+                val cameraManager =
+                    context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+                for (cameraId in cameraManager.cameraIdList) {
+                    val cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
+                    val cameraFacing = cameraCharacteristics.get(CameraCharacteristics.LENS_FACING)
+                    val mappedCameraFacing = CAMERA_FACING_MAPPING_TABLE[cameraFacing]
+                    if (mappedCameraFacing == null || mappedCameraFacing !== facing) {
+                        continue
+                    }
+                    val map =
+                        cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                            ?: continue
+                    val defaultPreviewSize = Collections.max(
+                        Arrays.asList(*map.getOutputSizes(PREVIEW_IMAGE_FORMAT)),
+                        CompareSizesByArea()
+                    )
+                    return Builder(context)
+                        .setCameraManager(cameraManager)
+                        .setCameraId(cameraId)
+                        .setDefaultPreviewSize(
+                            Size(
+                                defaultPreviewSize.width,
+                                defaultPreviewSize.height
+                            )
+                        )
+                }
+                throw IllegalStateException("Can't find available camera for facing $facing")
+            } catch (t: Throwable) {
+                throw IllegalStateException("Can't find available camera for facing $facing")
+            }
+        }
+
+        private fun getPfCameraFacing(cameraFacing: Int): CameraFacing {
+            return when (cameraFacing) {
+                CameraCharacteristics.LENS_FACING_FRONT -> CameraFacing.FRONT
+                CameraCharacteristics.LENS_FACING_BACK -> CameraFacing.BACK
+                else -> throw IllegalArgumentException("Only supports front and back camera.")
+            }
+        }
+    }
+
+    override fun zoom(context: Context, event: MotionEvent) {
+
+        try {
+            val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+            val characteristics = manager.getCameraCharacteristics(cameraId)
+            val maxzoom =
+                characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM)!! * 4
+            val m = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
+            val action = event.action
+            val current_finger_spacing: Float
+            if (event.pointerCount == 2) {
+                // Multi touch
+                current_finger_spacing = getFingerSpacing(event)
+                if (fingerSpacing != 0f) {
+                    if (current_finger_spacing > fingerSpacing && maxzoom > zoomLevel) {
+                        zoomLevel++
+                    } else if (current_finger_spacing < fingerSpacing && zoomLevel > 1) {
+                        zoomLevel--
+                    }
+                    val minW = (m!!.width() / maxzoom).toInt()
+                    val minH = (m.height() / maxzoom).toInt()
+                    val difW = m.width() - minW
+                    val difH = m.height() - minH
+                    var cropW = difW / 100 * zoomLevel
+                    var cropH = difH / 100 * zoomLevel
+                    cropW -= cropW and 3
+                    cropH -= cropH and 3
+                    val zoom = Rect(cropW, cropH, m.width() - cropW, m.height() - cropH)
+                    previewRequestBuilder!!.set(CaptureRequest.SCALER_CROP_REGION, zoom)
+                }
+                fingerSpacing = current_finger_spacing
+            } else {
+                if (action == MotionEvent.ACTION_UP) {
+                    //single touch
+                }
+            }
+            try {
+                captureSession
+                    ?.setRepeatingRequest(previewRequestBuilder!!.build(),null, null)
+
+            } catch (e: CameraAccessException) {
+               //Do Nothing
+            } catch (ex: java.lang.NullPointerException) {
+                //Do Nothing
+            }
+        } catch (e: CameraAccessException) {
+            //Do Nothing
+        }
+
+    }
+
+    private fun getFingerSpacing(event: MotionEvent): Float {
+        val x = event.getX(0) - event.getX(1)
+        val y = event.getY(0) - event.getY(1)
+        return Math.sqrt((x * x + y * y).toDouble()).toFloat()
     }
 }
