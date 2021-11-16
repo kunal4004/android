@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -43,7 +44,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener {
 
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
-    var whoIsCollectingDetails: WhoIsCollectingDetails? = null
+    private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
@@ -217,9 +218,24 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun initializeCollectingFromView() {
-        tvNativeCheckoutDeliveringTitle?.text =
-            context?.getString(R.string.native_checkout_collecting_from)
-        tvNativeCheckoutDeliveringValue?.text = "Constantia Emporium"
+        val location = Utils.getPreferredDeliveryLocation()
+        checkoutCollectingFromLayout.setOnClickListener(this)
+        if (location != null) {
+            val selectedStore = if (location.storePickup) location.store.name else ""
+            if (!selectedStore.isNullOrEmpty()) {
+                tvNativeCheckoutDeliveringTitle?.text =
+                    context?.getString(R.string.native_checkout_collecting_from)
+                tvNativeCheckoutDeliveringValue.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                tvNativeCheckoutDeliveringValue?.text = selectedStore
+            } else
+                checkoutCollectingFromLayout.visibility = View.GONE
+        } else
+            checkoutCollectingFromLayout.visibility = View.GONE
     }
 
     private fun initializeCollectingDetailsView() {
@@ -394,6 +410,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     override fun onClick(v: View?) {
         when (v?.id) {
+            R.id.checkoutCollectingFromLayout -> {
+                navController?.navigate(R.id.action_checkoutReturningUserCollectionFragment_to_checkoutAddressConfirmationFragment)
+            }
             R.id.checkoutCollectingUserInfoLayout -> {
                 val bundle = Bundle()
                 bundle.apply {

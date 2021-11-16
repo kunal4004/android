@@ -277,6 +277,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         shoppingDeliveryLocation
                                     )
                                     if (isDeliverySelected != null && !isDeliverySelected!!) {
+                                        // check if it's from collection Change Fullfilments or delivery Change Fullfilments. if collection then nav up else who is collecting.
                                         navController?.navigate(R.id.checkoutWhoIsCollectingFragment)
                                     }
                                 }
