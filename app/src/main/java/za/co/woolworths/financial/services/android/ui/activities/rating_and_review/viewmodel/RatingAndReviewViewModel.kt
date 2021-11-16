@@ -10,10 +10,13 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 
 class RatingAndReviewViewModel(
         private val reviewApiHelper: RatingAndReviewApiHelper,
-        private val prodId: String
 ) : ViewModel() {
 
-    val reviewDataSource = Pager(PagingConfig(pageSize = 10)) {
+    companion object {
+        const val PAGE_SIZE =  10
+    }
+
+    fun getReviewDataSource(prodId: String) = Pager(PagingConfig(PAGE_SIZE)) {
         ReviewsDataSource(reviewApiHelper, prodId)
     }.flow.cachedIn(viewModelScope)
 

@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,6 +35,8 @@ class MoreReviewsFragment : Fragment() {
 
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
 
+    private var productId: String = "-1"
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -45,11 +45,12 @@ class MoreReviewsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViewModel()
         arguments?.apply {
             val ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_STATISTICS),
                     RatingReviewResponse::class.java) as RatingReviewResponse
+            productId = ratingAndResponse.reviews.get(0).productId
             setRatingDetailsUI(ratingAndResponse.reviewStatistics)
+            setupViewModel()
         }
     }
 
@@ -61,7 +62,7 @@ class MoreReviewsFragment : Fragment() {
     private fun setupViewModel() {
         moreReviewViewModel =  ViewModelProvider(
                 this,
-                RatingAndReviewViewModelFactory(RatingAndReviewApiHelper(), "503780804")
+                RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
         ).get(RatingAndReviewViewModel::class.java)
     }
 
@@ -80,7 +81,7 @@ class MoreReviewsFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            moreReviewViewModel.reviewDataSource.collectLatest { pagedData ->
+            moreReviewViewModel.getReviewDataSource(productId).collectLatest { pagedData ->
                 moreReviewsAdapter.submitData(pagedData)
             }
         }
