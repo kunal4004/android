@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_more_reviews.*
@@ -50,6 +51,10 @@ class MoreReviewsFragment : Fragment() {
                     RatingReviewResponse::class.java) as RatingReviewResponse
             setRatingDetailsUI(ratingAndResponse.reviewStatistics)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
         setReviewsList()
     }
 
@@ -65,17 +70,19 @@ class MoreReviewsFragment : Fragment() {
         rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
         rv_more_reviews.setHasFixedSize(true)
         rv_more_reviews.adapter = moreReviewsAdapter
-        progress_bar?.visibility = View.VISIBLE
+
+        moreReviewsAdapter.addLoadStateListener {
+            if (it.refresh == LoadState.Loading) {
+                progress_bar?.visibility = View.VISIBLE
+            } else {
+                progress_bar?.visibility = View.GONE
+            }
+        }
+
         lifecycleScope.launch {
             moreReviewViewModel.reviewDataSource.collectLatest { pagedData ->
-                progress_bar?.visibility = View.GONE
-                rv_more_reviews.visibility = View.VISIBLE
                 moreReviewsAdapter.submitData(pagedData)
             }
-//            moreReviewsAdapter.withLoadStateHeaderAndFooter(
-//                    header = MoreReviewLoadStateAdapter(),
-//                    footer = MoreReviewLoadStateAdapter()
-//            )
         }
     }
 
