@@ -32,11 +32,10 @@ import za.co.woolworths.financial.services.android.ui.adapters.SecondaryRatingAd
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ReviewDetailsFragment : Fragment() {
+class ReviewDetailsFragment : Fragment(){
 
     private lateinit var productViewPagerAdapter: ProductReviewViewPagerAdapter
     private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
-
 
     companion object {
         fun newInstance() = ReviewDetailsFragment()
@@ -157,7 +156,7 @@ class ReviewDetailsFragment : Fragment() {
                             pager.adapter = this
                             tabDots.setupWithViewPager(pager, true)
                         }
-                    }
+           }
         }
     }
 }
