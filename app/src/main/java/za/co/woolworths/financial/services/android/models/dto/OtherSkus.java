@@ -29,9 +29,9 @@ public class OtherSkus {
 	@SerializedName("imagePath")
 	@Expose
 	public String imagePath;
-	@SerializedName("externalImageRef")
+	@SerializedName("externalImageRefV2")
 	@Expose
-	public String externalImageRef;
+	public String externalImageRefV2;
 
 	@SerializedName("wasPrice")
 	@Expose

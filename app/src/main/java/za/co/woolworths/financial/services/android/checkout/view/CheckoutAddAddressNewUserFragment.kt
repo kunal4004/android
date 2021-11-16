@@ -100,7 +100,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         const val SUBURB_SELECTION_BACK_PRESSED = "5465"
         const val SCREEN_NAME_EDIT_ADDRESS: String = "SCREEN_NAME_EDIT_ADDRESS"
         const val SCREEN_NAME_ADD_NEW_ADDRESS: String = "SCREEN_NAME_ADD_NEW_ADDRESS"
-        const val REGEX_NICK_NAME: String = "^$|^[a-zA-Z0-9\\s<!>@#$&().+,-/\"']+$"
+        const val REGEX_NICK_NAME: String = "^$|^[a-zA-Z0-9\\s<!>@$&().+,-/\"']+$"
     }
 
     enum class ProvinceSuburbType {
@@ -222,7 +222,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             isErrorScreen = false
         )
         if (selectedAddress.savedAddress.placesId.isNullOrEmpty())
-            autoCompleteTextView.text.clear() // This condition will only occure when address is added from web and is now opted for edit from app.
+            autoCompleteTextView.text.clear() // This condition will only occur when address is added from web and is now opted for edit from app.
         else
             autoCompleteTextView?.setText(selectedAddress.savedAddress.address1)
         addressNicknameEditText.setText(selectedAddress.savedAddress.nickname)
@@ -934,21 +934,19 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         is AddAddressResponse -> {
                             when (response.httpCode) {
                                 HTTP_OK, HTTP_OK_201 -> {
-                                    if (response != null) {
-                                        if (savedAddressResponse?.addresses != null) {
-                                            savedAddressResponse?.addresses?.add(response.address)
-                                        } else {
-                                            if (savedAddressResponse == null)
-                                                savedAddressResponse = SavedAddressResponse()
-                                            val addressList: ArrayList<Address> = ArrayList()
-                                            addressList.add(response.address)
-                                            savedAddressResponse?.addresses = addressList
-                                        }
-                                        baseFragBundle?.putString(
-                                            SAVED_ADDRESS_KEY,
-                                            Utils.toJson(savedAddressResponse)
-                                        )
+                                    if (savedAddressResponse?.addresses != null) {
+                                        savedAddressResponse?.addresses?.add(response.address)
+                                    } else {
+                                        if (savedAddressResponse == null)
+                                            savedAddressResponse = SavedAddressResponse()
+                                        val addressList: ArrayList<Address> = ArrayList()
+                                        addressList.add(response.address)
+                                        savedAddressResponse?.addresses = addressList
                                     }
+                                    baseFragBundle?.putString(
+                                        SAVED_ADDRESS_KEY,
+                                        Utils.toJson(savedAddressResponse)
+                                    )
                                     response.address.nickname?.let { nickName ->
                                         onAddNewAddress(
                                             nickName
@@ -984,6 +982,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             isNickNameExist()
             if (selectedDeliveryAddressType == null) {
                 deliveringAddressTypesErrorMsg.visibility = View.VISIBLE
+                showAnimationErrorMessage(deliveringAddressTypesErrorMsg, View.VISIBLE, 0)
             }
             listOfInputFields.forEach {
                 if (it is RelativeLayout) {
@@ -1187,7 +1186,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             "",
             selectedAddress.savedAddress.region ?: "",
             selectedAddress.savedAddress.suburbId ?: "",
-            selectedAddress.provinceName ?: "",
+            selectedAddress.provinceName,
             suburbEditText?.text.toString(),
             "",
             false,
@@ -1448,15 +1447,5 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             )
             anim.setDuration(300).start()
         }
-    }
-
-    @VisibleForTesting
-    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
-        checkoutAddAddressNewUserViewModel = viewModel
-    }
-
-    @VisibleForTesting
-    fun testSetBundleArguments(bundle: Bundle) {
-        arguments?.putBundle("bundle", bundle)
     }
 }

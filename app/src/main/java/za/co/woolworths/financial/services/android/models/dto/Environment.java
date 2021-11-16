@@ -14,20 +14,12 @@ public class Environment {
 	public String ssoUpdateDetailsRedirectUri;
 	public String wwTodayURI;
 	public String authenticVersionStamp = "";
-	public String authenticVersionReleaseNote;
 	public int storeStockLocatorConfigStartRadius;
 	public int storeStockLocatorConfigEndRadius;
 	public boolean storeStockLocatorConfigFoodProducts;
 	public boolean storeStockLocatorConfigClothingProducts;
 	public JsonElement storeCardBlockReasons;
 	public long emailSizeKB;
-
-	@SerializedName("splashScreen.display")
-	public boolean splashScreenDisplay;
-	@SerializedName("splashScreen.persist")
-	public boolean splashScreenPersist;
-	@SerializedName("splashScreen.text")
-	public String splashScreenText;
 
 	public String getBase_url() {
 		return base_url;
@@ -113,17 +105,6 @@ public class Environment {
 		this.emailSizeKB = emailSizeKB;
 	}
 
-	public boolean isSplashScreenDisplay() {
-		return splashScreenDisplay;
-	}
-
-	public boolean isSplashScreenPersist() {
-		return splashScreenPersist;
-	}
-
-	public String getSplashScreenText() {
-		return splashScreenText;
-	}
 
 	public String getAuthenticVersionStamp() {
 		return authenticVersionStamp;
@@ -133,7 +114,4 @@ public class Environment {
 		this.authenticVersionStamp = authenticVersionStamp;
 	}
 
-	public String getAuthenticVersionReleaseNote() {
-		return authenticVersionReleaseNote;
-	}
 }

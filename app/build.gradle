@@ -10,9 +10,8 @@ apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 android {
 
     def major = "8"
-    def minor = "5"
+    def minor = "6"
     def fix = "0"
-
     def jobNumber = 13711
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
@@ -89,7 +88,7 @@ android {
             jobNumber = 1
         } else {
             //assume prod
-            jobNumber = 168
+            jobNumber = 170
         }
 
         defaultConfig {

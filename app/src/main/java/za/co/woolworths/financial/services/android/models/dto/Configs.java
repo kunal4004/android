@@ -15,7 +15,6 @@ import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
 public class Configs {
     @Nullable
     public Environment enviroment;
-    public int checkInterval;
     public Expiry expiry;
     @Nullable
     public Defaults defaults;
@@ -66,4 +65,6 @@ public class Configs {
     public CustomerFeedback customerFeedback;
     @Nullable
     public AccountOptions accountOptions;
+    @Nullable
+    public DeviceSecurity deviceSecurity;
 }

@@ -45,6 +45,10 @@ class AppConstant {
 
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
 
+        const val EMPTY_STRING = ""
+        const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
+        const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
