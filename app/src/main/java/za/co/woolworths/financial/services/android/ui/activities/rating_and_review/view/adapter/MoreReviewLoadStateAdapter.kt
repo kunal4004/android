@@ -19,6 +19,8 @@ class MoreReviewLoadStateAdapter(
         fun bindView(loadState: LoadState) {
             if (loadState is LoadState.Loading) {
                 itemView.pbFooterProgress.visibility = View.VISIBLE
+            } else {
+                itemView.pbFooterProgress.visibility = View.GONE
             }
         }
     }

@@ -84,6 +84,11 @@ class MoreReviewsFragment : Fragment() {
                 moreReviewsAdapter.submitData(pagedData)
             }
         }
+
+        moreReviewsAdapter.withLoadStateHeaderAndFooter(
+                header = MoreReviewLoadStateAdapter(),
+                footer = MoreReviewLoadStateAdapter()
+        )
     }
 
     private fun setRatingDetailsUI(reviewStaticsData: ReviewStatistics) {
