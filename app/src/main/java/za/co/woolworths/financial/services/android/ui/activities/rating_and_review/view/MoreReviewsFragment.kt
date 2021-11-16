@@ -5,14 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_more_reviews.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.view.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.ReviewStatistics
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.newtwork.apihelper.RatingAndReviewApiHelper
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewLoadStateAdapter
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewsAdapter
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -22,17 +34,48 @@ class MoreReviewsFragment : Fragment() {
         fun newInstance() = MoreReviewsFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+    private lateinit var moreReviewViewModel: RatingAndReviewViewModel
+
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_more_reviews, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupViewModel()
         arguments?.apply {
             val ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_STATISTICS),
                     RatingReviewResponse::class.java) as RatingReviewResponse
             setRatingDetailsUI(ratingAndResponse.reviewStatistics)
+        }
+        setReviewsList()
+    }
+
+    private fun setupViewModel() {
+        moreReviewViewModel =  ViewModelProvider(
+                this,
+                RatingAndReviewViewModelFactory(RatingAndReviewApiHelper(), "503780804")
+        ).get(RatingAndReviewViewModel::class.java)
+    }
+
+    private fun setReviewsList() {
+        val  moreReviewsAdapter = MoreReviewsAdapter(requireContext())
+        rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
+        rv_more_reviews.setHasFixedSize(true)
+        rv_more_reviews.adapter = moreReviewsAdapter
+        progress_bar?.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            moreReviewViewModel.reviewDataSource.collectLatest { pagedData ->
+                progress_bar?.visibility = View.GONE
+                rv_more_reviews.visibility = View.VISIBLE
+                moreReviewsAdapter.submitData(pagedData)
+            }
+//            moreReviewsAdapter.withLoadStateHeaderAndFooter(
+//                    header = MoreReviewLoadStateAdapter(),
+//                    footer = MoreReviewLoadStateAdapter()
+//            )
         }
     }
 
@@ -53,7 +96,8 @@ class MoreReviewsFragment : Fragment() {
         }
     }
 
-    private fun setRatingDistributionUI(ratingDistribution: List<RatingDistribution>, reviewCount: Int) {
+    private fun setRatingDistributionUI(ratingDistribution: List<RatingDistribution>,
+                                        reviewCount: Int) {
         for (rating in ratingDistribution) {
             when (rating.ratingValue) {
                 1 -> {

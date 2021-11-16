@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
+    android:layout_marginTop="@dimen/eight_dp"
+    android:id="@+id/review_row_layout"
     android:paddingLeft="@dimen/sixteen_dp"
     android:paddingRight="@dimen/sixteen_dp"
     android:paddingBottom="@dimen/sixteen_dp">
