@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.integration
+package za.co.woolworths.financial.services.android.ui.fragments.integration.remote
 
 import retrofit2.http.Body
 import retrofit2.http.Headers
@@ -40,7 +40,7 @@ interface AbsaApi {
     @POST("absa/archivedStatement")
     suspend fun queryAbsaServiceGetArchivedStatement(@Body body: String?): AbsaProxyResponseProperty
 
-    @Headers("Content-Type: text/plain")
+    @Headers("Content-Type: application/x-www-form-urlencoded")
     @POST("absa/getIndividualStatement")
     suspend fun queryAbsaServiceGetIndividualStatement(@Body body: String?): AbsaProxyResponseProperty
 
