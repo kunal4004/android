@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutA
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_IS_WHO_IS_COLLECTING
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
@@ -278,7 +279,13 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     )
                                     if (isDeliverySelected != null && !isDeliverySelected!!) {
                                         // check if it's from collection Change Fullfilments or delivery Change Fullfilments. if collection then nav up else who is collecting.
-                                        navController?.navigate(R.id.checkoutWhoIsCollectingFragment)
+                                        if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
+                                                KEY_IS_WHO_IS_COLLECTING
+                                            ) == true
+                                        ) {
+                                            navController?.navigateUp()
+                                        } else
+                                            navController?.navigate(R.id.checkoutWhoIsCollectingFragment)
                                     }
                                 }
                                 else -> {
@@ -451,7 +458,13 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun initView() {
         selectedProvince = Utils.getPreferredDeliveryLocation().province
-        if (isDeliverySelected == null) {
+        if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
+                KEY_IS_WHO_IS_COLLECTING
+            ) == true
+        ){
+            isDeliverySelected = false
+        }
+        else if (isDeliverySelected == null) {
             if (baseFragBundle?.containsKey(IS_DELIVERY) == true)
                 isDeliverySelected = baseFragBundle?.getBoolean(IS_DELIVERY)
         }

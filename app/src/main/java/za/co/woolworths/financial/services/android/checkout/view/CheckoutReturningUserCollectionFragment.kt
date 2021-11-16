@@ -7,10 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
@@ -19,7 +18,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.txtOrderTotalValue
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
@@ -67,6 +65,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     companion object {
         const val KEY_COLLECTING_DETAILS = "key_collecting_details"
+        const val KEY_IS_WHO_IS_COLLECTING = "key_is_WhoIsCollecting"
     }
 
     override fun onCreateView(
@@ -239,8 +238,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun initializeCollectingDetailsView() {
-        val bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
+        arguments?.apply {
             getString(KEY_COLLECTING_DETAILS)?.let {
                 whoIsCollectingDetails =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
@@ -411,7 +409,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
-                navController?.navigate(R.id.action_checkoutReturningUserCollectionFragment_to_checkoutAddressConfirmationFragment)
+                val bundle = Bundle()
+                bundle.putBoolean(KEY_IS_WHO_IS_COLLECTING, true)
+                navController?.navigate(
+                    R.id.action_checkoutReturningUserCollectionFragment_to_checkoutAddressConfirmationFragment,
+                    bundle
+                )
             }
             R.id.checkoutCollectingUserInfoLayout -> {
                 val bundle = Bundle()
@@ -423,7 +426,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
                 navController?.navigate(
                     R.id.action_checkoutReturningUserCollectionFragment_checkoutWhoIsCollectingFragment,
-                    bundleOf("bundle" to bundle)
+                    bundle
                 )
             }
         }
