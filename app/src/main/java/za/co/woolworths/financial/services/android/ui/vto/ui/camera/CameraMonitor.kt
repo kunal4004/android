@@ -22,7 +22,6 @@ class CameraMonitor constructor(
     private lateinit var coroutineScope: CoroutineScope
     private var surfaceTexture: SurfaceTexture? = null
     private var started = false
-    private lateinit var  lifecycleRegistry: LifecycleRegistry
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun init() {
@@ -92,7 +91,7 @@ class CameraMonitor constructor(
                 val cameraInfo: PfCamera.CameraInfo = camera!!.cameraInfo!!
 
                 coroutineScope.launch {
-                    makeupCamera!!.onCameraOpened(
+                    makeupCamera?.onCameraOpened(
                         (cameraInfo.facing === CameraFacing.FRONT).also {
                             isFrontCamera = it
                         },
@@ -107,7 +106,7 @@ class CameraMonitor constructor(
                 tryToSetAutoFocus(camera!!)
             }
         } catch (t: Throwable) {
-
+             //Do Nothing
         }
 
     }
@@ -124,11 +123,10 @@ class CameraMonitor constructor(
         }
         camera.setParameters(cameraParameters)
 
-
     }
 
     private val autoFocusCallback =
-        PfCamera.AutoFocusCallback { success, camera ->
+        PfCamera.AutoFocusCallback { _, _ ->
 
         }
 
@@ -140,7 +138,7 @@ class CameraMonitor constructor(
                 camera!!.autoFocus(autoFocusCallback)
 
             } catch (t: Throwable) {
-
+                  //Do Nothing
             }
 
         }
@@ -160,10 +158,7 @@ class CameraMonitor constructor(
 
                 return
             }
-        val previewSize: PfCamera.Size = cameraParameters!!.previewSize!!
-
     }
-
 
     private class CameraPreviewCallback(
         camera: PfCamera,
@@ -205,7 +200,7 @@ class CameraMonitor constructor(
             try {
                 camera!!.setPreviewTexture(null)
             } catch (e: Exception) {
-
+              //Do Nothing
             }
             camera!!.setPreviewCallback(null)
             camera!!.release()

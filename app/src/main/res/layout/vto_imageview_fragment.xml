@@ -18,15 +18,6 @@
         android:scaleType="centerCrop"
         fresco:placeholderImage="@drawable/woolworth_logo_icon" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imgCloseVTO"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/acc_fifteen_dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_vto_back" />
-
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineEnd"
@@ -75,6 +66,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgCloseVTO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/acc_fifteen_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_vto_back" />
+
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgDownloadVTO"
