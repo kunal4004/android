@@ -118,7 +118,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         // error  of api
                         if (remoteConfigJsonString.isEmpty()) {
                             //api is  failed and firebase not configured so show error screen of api reposne
-                            Log.e("API_ERROR :", "called")
+                            Log.e("API_FAILURE :", "called")
                             Log.e("Firebase_JSON_FAILED :", "called")
                             showNonVideoViewWithErrorLayout()
                         } else {
@@ -127,10 +127,13 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                             val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
                             if (configData?.expiryTime == -1L) {
                                 // in case we get json exception while parsing then show error screen of api
+                                Log.e("API_FAILURE :", "called")
+                                Log.e("Firebase_FETCH_FAILED :", "called")
+                                Log.e("Firebase_LOCAL_JSON :", "called")
                                 progress_bar?.visibility = View.GONE
                                 showNonVideoViewWithErrorLayout()
                             } else {
-                                Log.e("API_ERROR :", "called")
+                                Log.e("API_FAILURE :", "called")
                                 Log.e("Firebase_Configured :", "called")
                                 setDataOnUI(configData, false)
                             }
@@ -140,10 +143,14 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     // firebase fail
                     if (isComingFromSuccess) {
                         // api is success and firebase  is failed so navigate to next screen
+                        Log.e("API_SUCCESS :", "called")
+                        Log.e("Firebase_FAIL :", "called")
                         progress_bar?.visibility = View.GONE
                         presentNextScreenOrServerMessage()
                     } else  {
                         // api is failed and firebase  is failed so display error layout
+                        Log.e("API_FAILURE :", "called")
+                        Log.e("Firebase_FAIL :", "called")
                         progress_bar?.visibility = View.GONE
                         showNonVideoViewWithErrorLayout()
                     }
