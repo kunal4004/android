@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.startup.utils
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
+import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews
 import za.co.woolworths.financial.services.android.models.dto.chat.Collections
 import za.co.woolworths.financial.services.android.models.dto.chat.CustomerService
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat
@@ -145,10 +146,14 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 accountOptions?.apply {
                     WoolworthsApplication.setAccountOptions(this)
                 }
-
                 deviceSecurity?.apply {
                     WoolworthsApplication.setDeviceSecurity(this)
                 }
+                ratingsAndReviews?.apply {
+                    WoolworthsApplication.getInstance().ratingsAndReviews=this;
+                }
+
+
             }
         }
     }

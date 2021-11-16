@@ -126,6 +126,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
     private var thumbnailFullList = listOf<Thumbnails>()
     private lateinit var ratingReviewResponse: RatingReviewResponse
+    private var isRatingsAndReviewsFeatureEnabled = false
     companion object {
         const val INDEX_STORE_FINDER = 1
         const val INDEX_ADD_TO_CART = 2
@@ -134,6 +135,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL = 4002
         const val HTTP_CODE_502 = 502
         fun newInstance() = ProductDetailsFragment()
+    }
+    init {
+        isRatingsAndReviewsFeatureEnabled =
+            Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.ratingsAndReviews?.minimumSupportedAppBuildNumber ?: 0)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -404,7 +409,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showErrorWhileLoadingProductDetails()
         }
 
-        if (productDetails.isRnREnabled)
+        if (productDetails.isRnREnabled && isRatingsAndReviewsFeatureEnabled)
             productDetailsPresenter?.loadRatingNReview(productDetails.productId,1,0)
     }
 
@@ -596,7 +601,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
-            if (it.isRnREnabled) {
+
+            if (it.isRnREnabled && isRatingsAndReviewsFeatureEnabled ) {
                 ratingBarTop.rating = it.averageRating
                 tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
