@@ -10,7 +10,7 @@ public class CommerceItemInfo {
 	public int quantity;
 	public String productId;
 	public String internalImageURL;
-	public String externalImageURL;
+	public String externalImageRefV2;
 	public String catalogRefId;
 	public String productDisplayName;
 	public boolean isGWP;
@@ -44,12 +44,12 @@ public class CommerceItemInfo {
 		this.internalImageURL = internalImageURL;
 	}
 
-	public String getExternalImageURL() {
-		return externalImageURL;
+	public String getExternalImageRefV2() {
+		return externalImageRefV2;
 	}
 
-	public void setExternalImageURL(String externalImageURL) {
-		this.externalImageURL = externalImageURL;
+	public void setExternalImageRefV2(String externalImageRefV2) {
+		this.externalImageRefV2 = externalImageRefV2;
 	}
 
 	public String getCatalogRefId() {

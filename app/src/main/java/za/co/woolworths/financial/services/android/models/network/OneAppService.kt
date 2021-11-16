@@ -229,8 +229,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun changeAddress(nickName: String): Call<ChangeAddressResponse> {
-        val encodedNickName = URLEncoder.encode(nickName, "utf-8")
-        return mApiInterface.changeAddress(encodedNickName, "", "", getSessionToken(),
+        return mApiInterface.changeAddress(nickName, "", "", getSessionToken(),
             getDeviceIdentityToken())
     }
 
