@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.startup.viewmodel
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.awfs.coordination.BuildConfig
@@ -82,6 +83,7 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
                 val token = SessionUtilities.getInstance().jwt
                 token.AtgId?.apply {
                     val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
+                    Log.e("AtgId :" , atgId)
                     setUserId(atgId)
                     setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId)
                 }
