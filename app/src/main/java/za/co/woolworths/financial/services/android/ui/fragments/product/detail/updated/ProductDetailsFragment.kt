@@ -207,7 +207,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
             R.id.tvRatingDetails -> showRatingDetailsDailog()
             R.id.tvSkinProfile->viewSkinProfileDialog()
+            R.id.btViewMoreReview->navigateToMoreReviewsScreen()
         }
+    }
+
+    private fun navigateToMoreReviewsScreen() {
+        ScreenManager.presentRatingAndReviewDetail(activity, ratingReviewResponse)
     }
 
     private fun showRatingDetailsDailog() {
