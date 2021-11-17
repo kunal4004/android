@@ -153,6 +153,11 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 deviceSecurity?.apply {
                     WoolworthsApplication.setDeviceSecurity(this)
                 }
+
+                virtualTryOn?.apply {
+                    minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                    WoolworthsApplication.getInstance().virtualTryOn = this
+                }
             }
         }
     }
