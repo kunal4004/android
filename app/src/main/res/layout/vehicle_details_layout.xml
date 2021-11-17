@@ -166,6 +166,7 @@
             style="@style/checkout_edittext_style"
             android:layout_width="match_parent"
             android:hint="@string/optional_hint"
+            android:imeOptions="actionDone"
             android:maxLength="@integer/twenty" />
 
     </LinearLayout>
