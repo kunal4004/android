@@ -14,13 +14,14 @@ open class CheckoutAddressManagementBaseFragment : Fragment() {
     companion object {
         var baseFragBundle: Bundle? = Bundle()
         var baseFragSavedAddressResponse: SavedAddressResponse? = null
+        const val IS_DELIVERY = "isDelivery"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-/*
-*  To Share the value of savedAddress within diff fragments
-* */
+        /*
+        *  To Share the value of savedAddress within diff fragments
+        * */
         arguments?.apply {
             if (containsKey(SAVED_ADDRESS_KEY)) {
                 baseFragSavedAddressResponse = Utils.jsonStringToObject(

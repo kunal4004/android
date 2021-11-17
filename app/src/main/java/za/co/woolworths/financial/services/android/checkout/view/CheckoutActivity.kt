@@ -15,13 +15,17 @@ import kotlinx.android.synthetic.main.activity_checkout.btnClose
 import kotlinx.android.synthetic.main.activity_checkout.toolbarText
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
+import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -45,6 +49,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 SAVED_ADDRESS_KEY,
                 Utils.toJson(savedAddressResponse)
             )
+            baseFragBundle?.putBoolean(IS_DELIVERY, if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
         }
         loadNavHostFragment()
     }
@@ -143,13 +148,16 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onBackPressed() {
+        // Hide keyboard in case it was visible from a previous screen
+        KeyboardUtils.hideKeyboardIfVisible(this)
+
         val fragmentList: MutableList<androidx.fragment.app.Fragment> =
             navHostFrag.childFragmentManager.fragments
 
         //in Navigation component if Back stack entry count is 0 means it has last fragment presented.
         // if > 0 means others are in backstack but fragment list size will always be 1
         if (fragmentList.isNullOrEmpty() || navHostFrag.childFragmentManager.backStackEntryCount == 0) {
-            closeActivity()
+            setReloadResultAndFinish()
             return
         }
 
@@ -165,10 +173,10 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                     FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS,
                     this
                 )
-                closeActivity()
+                setReloadResultAndFinish()
             }
             is CheckoutAddAddressReturningUserFragment -> {
-                closeActivity()
+                setReloadResultAndFinish()
             }
             is OrderConfirmationFragment -> {
                 setResult(REQUEST_CHECKOUT_ON_DESTROY)
@@ -180,6 +188,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun setReloadResultAndFinish() {
+        setResult(RESULT_RELOAD_CART)
+        closeActivity()
+    }
+
     fun closeActivity() {
         finish()
         overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
@@ -188,6 +201,8 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.btnClose -> {
+                // Hide keyboard in case it was visible from a previous screen
+                KeyboardUtils.hideKeyboardIfVisible(this)
                 onBackPressed()
             }
         }
