@@ -78,6 +78,7 @@ import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.adapters.*
 
 
@@ -409,7 +410,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showErrorWhileLoadingProductDetails()
         }
 
-        if (productDetails.isRnREnabled)
+        if (productDetails.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
             productDetailsPresenter?.loadRatingNReview(productDetails.productId,1,0)
     }
 
@@ -601,7 +602,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
-            if (it.isRnREnabled) {
+
+            if (it.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel() ) {
                 ratingBarTop.rating = it.averageRating
                 tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE

@@ -74,6 +74,7 @@ import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InApp
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
+import za.co.woolworths.financial.services.android.models.dto.RatingsAndReviews;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
@@ -155,6 +156,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Liquor liquor;
     private static AccountOptions accountOptions;
     private static DeviceSecurity deviceSecurity;
+    private RatingsAndReviews ratingsAndReviews;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -776,4 +778,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
     public static DeviceSecurity getDeviceSecurity() {
         return deviceSecurity;
     }
+
+    public void setRatingsAndReviews(RatingsAndReviews ratingsAndReviews) {
+        this.ratingsAndReviews = ratingsAndReviews;
+    }
+
+    public RatingsAndReviews getRatingsAndReviews() {
+        return ratingsAndReviews;
+    }
 }
+
