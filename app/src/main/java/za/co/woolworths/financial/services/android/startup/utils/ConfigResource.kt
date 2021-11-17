@@ -149,6 +149,10 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 deviceSecurity?.apply {
                     WoolworthsApplication.setDeviceSecurity(this)
                 }
+
+                balanceProtectionInsurance?.apply {
+                    WoolworthsApplication.setBalanceProtectionInsuranceObject(this)
+                }
             }
         }
     }
