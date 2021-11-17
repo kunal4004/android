@@ -18,9 +18,7 @@ class ReviewsDataSource(val reviewApiHelper: RatingAndReviewApiHelper,
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Reviews> {
         return try {
-            Log.e("params_key :", params.key.toString())
             val nextPageNumber = params.key ?: 1
-            Log.e("nextPageNumber :", nextPageNumber.toString())
             val response = reviewApiHelper.getMoreReviews(prodId, nextPageNumber)
             LoadResult.Page (
                     data = response.data.get(0).reviews,
