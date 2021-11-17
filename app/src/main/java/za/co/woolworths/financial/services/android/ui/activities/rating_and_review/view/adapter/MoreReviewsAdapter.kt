@@ -1,24 +1,30 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter
 
 import android.content.Context
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.facebook.FacebookSdk
 import kotlinx.android.synthetic.main.review_row_layout.view.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.AdditionalFields
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Thumbnails
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtils
+import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 
-class MoreReviewsAdapter(val context: Context) : PagingDataAdapter<Reviews,
-        MoreReviewsAdapter.ReviewsViewHolder>(MoreReviewsComparator) {
+class MoreReviewsAdapter(val context: Context, val skinProfileDialogListener: SkinProfileDialogOpenListener) : PagingDataAdapter<Reviews,
+        MoreReviewsAdapter.ReviewsViewHolder>(MoreReviewsComparator) , ReviewThumbnailAdapter.ThumbnailClickListener {
+
+    private lateinit var reviewThumbnailAdapter: ReviewThumbnailAdapter
+    private var thumbnailFullList = listOf<Thumbnails>()
+
+    interface SkinProfileDialogOpenListener {
+        fun openSkinProfileDialog(reviews: Reviews)
+    }
 
     inner class ReviewsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
 
@@ -39,56 +45,25 @@ class MoreReviewsAdapter(val context: Context) : PagingDataAdapter<Reviews,
                     tvCustomerReview.text = reviewText
                     tvReviewPostedOn.text = syndicatedSource
                     tvDate.text = submissionTime
-                    setReviewAdditionalFields(additionalFields, llAdditionalFields)
-//                    setSecondaryRatingsUI(secondaryRatings)
-//                    setReviewThumbnailUI(photos.thumbnails, rvThumbnail)
-                    if(contextDataValue.isEmpty()){
+                    RatingAndReviewUtils.setReviewAdditionalFields(additionalFields, llAdditionalFields, context)
+                    RatingAndReviewUtils.setSecondaryRatingsUI(secondaryRatings, rvSecondaryRatings, context)
+                    setReviewThumbnailUI(photos.thumbnails, rvThumbnail)
+                    thumbnailFullList = photos.thumbnails
+                    if(contextDataValue.isEmpty() && tagDimensions.isEmpty()){
                         tvSkinProfile.visibility = View.GONE
+                    }
+                    tvSkinProfile.setOnClickListener {
+                        skinProfileDialogListener.openSkinProfileDialog(review)
                     }
                 }
             }
         }
     }
 
-    private fun setReviewAdditionalFields(additionalFields: List<AdditionalFields>,
-                                          llAdditionalFields: LinearLayout){
-
-        for (additionalField in additionalFields) {
-            val rootView = LinearLayout(context)
-            rootView.layoutParams =
-                    LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            rootView.orientation = LinearLayout.HORIZONTAL
-
-            val tvAdditionalFieldLabel = TextView(context)
-            tvAdditionalFieldLabel.alpha = 0.5F
-            val tvAdditionalFieldValue = TextView(context)
-            tvAdditionalFieldValue.alpha = 0.5F
-            val ivCircle = ImageView(context)
-            val tvParam: LinearLayout.LayoutParams =
-                    LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            tvParam.setMargins(25, 0, 0, 8)
-            tvAdditionalFieldValue.layoutParams = tvParam
-            val ivParam: LinearLayout.LayoutParams =
-                    LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            ivParam.setMargins(25,15,0,0)
-            ivCircle.layoutParams = ivParam
-
-            if (Build.VERSION.SDK_INT < 23) {
-                tvAdditionalFieldLabel.setTextAppearance(FacebookSdk.getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
-                tvAdditionalFieldValue.setTextAppearance(FacebookSdk.getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
-            } else{
-                tvAdditionalFieldLabel.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
-                tvAdditionalFieldValue.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
-            }
-            tvAdditionalFieldLabel.text = additionalField.label
-            ivCircle.setImageResource(R.drawable.ic_circle)
-            tvAdditionalFieldValue.text = additionalField.valueLabel
-
-            rootView.addView(tvAdditionalFieldLabel)
-            rootView.addView(ivCircle)
-            rootView.addView(tvAdditionalFieldValue)
-            llAdditionalFields.addView(rootView)
-        }
+    fun setReviewThumbnailUI(thumbnails: List<Thumbnails>,
+                             rvThumbnail: RecyclerView) {
+        reviewThumbnailAdapter = ReviewThumbnailAdapter(context, this)
+        RatingAndReviewUtils.setReviewThumbnailUI(thumbnails, rvThumbnail, reviewThumbnailAdapter, context)
     }
 
     override fun onBindViewHolder(holder: MoreReviewsAdapter.ReviewsViewHolder, position: Int) {
@@ -113,5 +88,10 @@ class MoreReviewsAdapter(val context: Context) : PagingDataAdapter<Reviews,
         override fun areContentsTheSame(oldReview: Reviews, newReview: Reviews): Boolean {
             return oldReview == newReview
         }
+    }
+
+    override fun thumbnailClicked() {
+        reviewThumbnailAdapter.setDataList(thumbnailFullList)
+        reviewThumbnailAdapter.notifyDataSetChanged()
     }
 }

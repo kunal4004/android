@@ -14,20 +14,23 @@ import kotlinx.android.synthetic.main.fragment_more_reviews.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.view.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.ReviewStatistics
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.newtwork.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewLoadStateAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewsAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class MoreReviewsFragment : Fragment() {
+class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpenListener {
 
     companion object {
         fun newInstance() = MoreReviewsFragment()
@@ -51,27 +54,19 @@ class MoreReviewsFragment : Fragment() {
             productId = ratingAndResponse.reviews.get(0).productId
             setRatingDetailsUI(ratingAndResponse.reviewStatistics)
             setupViewModel()
+            setReviewsList()
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        setReviewsList()
-    }
-
     private fun setupViewModel() {
-        moreReviewViewModel =  ViewModelProvider(
+        moreReviewViewModel = ViewModelProvider(
                 this,
                 RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
         ).get(RatingAndReviewViewModel::class.java)
     }
 
     private fun setReviewsList() {
-        val  moreReviewsAdapter = MoreReviewsAdapter(requireContext())
-        rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
-        rv_more_reviews.setHasFixedSize(true)
-        rv_more_reviews.adapter = moreReviewsAdapter
-
+        val moreReviewsAdapter = MoreReviewsAdapter(requireContext(), this)
         moreReviewsAdapter.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
@@ -90,6 +85,8 @@ class MoreReviewsFragment : Fragment() {
                 header = MoreReviewLoadStateAdapter(),
                 footer = MoreReviewLoadStateAdapter()
         )
+        rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
+        rv_more_reviews.adapter = moreReviewsAdapter
     }
 
     private fun setRatingDetailsUI(reviewStaticsData: ReviewStatistics) {
@@ -100,7 +97,7 @@ class MoreReviewsFragment : Fragment() {
             layout_rating_details.recommend.text = recommendedPercentage
             layout_rating_details.rating_details.pdpratings.apply {
                 ratingBarTop.rating = averageRating
-                tvTotalReviews.text = "Customer Reviews"
+                tvTotalReviews.text = getString(R.string.customer_reviews)
             }
             recommend.text = recommendedPercentage
             view_2.visibility = View.GONE
@@ -140,6 +137,23 @@ class MoreReviewsFragment : Fragment() {
                     tv_5_starRating_count.text = rating.count.toString()
                 }
             }
+        }
+    }
+
+    override fun openSkinProfileDialog(reviews: Reviews) {
+        viewSkinProfileDialog(reviews)
+    }
+
+    private fun viewSkinProfileDialog(reviews: Reviews) {
+        val dialog = SkinProfileDialog(reviews)
+        activity?.apply {
+            childFragmentManager.beginTransaction()
+                    .let { fragmentTransaction ->
+                        dialog.show(
+                                fragmentTransaction,
+                                SkinProfileDialog::class.java.simpleName
+                        )
+                    }
         }
     }
 }
