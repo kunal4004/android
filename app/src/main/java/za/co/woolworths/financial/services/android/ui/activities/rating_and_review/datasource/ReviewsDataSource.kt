@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.datasource
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
@@ -18,9 +17,7 @@ class ReviewsDataSource(val reviewApiHelper: RatingAndReviewApiHelper,
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Reviews> {
         return try {
-            Log.e("params_key :", params.key.toString())
             val nextPageNumber = params.key ?: 1
-            Log.e("nextPageNumber :", nextPageNumber.toString())
             val response = reviewApiHelper.getMoreReviews(prodId, nextPageNumber)
             LoadResult.Page (
                     data = response.data.get(0).reviews,
