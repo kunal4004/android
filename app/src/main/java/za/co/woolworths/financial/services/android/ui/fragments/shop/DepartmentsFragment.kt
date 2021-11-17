@@ -102,8 +102,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
         isDashEnabled = WoolworthsApplication.getInstance()?.dashConfig?.isEnabled ?: false
 
-
-
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
