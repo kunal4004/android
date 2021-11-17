@@ -46,7 +46,7 @@ class MoreReviewsAdapter(val context: Context, val skinProfileDialogListener: Sk
                     tvReviewPostedOn.text = syndicatedSource
                     tvDate.text = submissionTime
                     RatingAndReviewUtils.setReviewAdditionalFields(additionalFields, llAdditionalFields, context)
-                    RatingAndReviewUtils.setSecondaryRatingsUI(secondaryRatings, rvSecondaryRatings)
+                    RatingAndReviewUtils.setSecondaryRatingsUI(secondaryRatings, rvSecondaryRatings, context)
                     setReviewThumbnailUI(photos.thumbnails, rvThumbnail)
                     thumbnailFullList = photos.thumbnails
                     if(contextDataValue.isEmpty() && tagDimensions.isEmpty()){
@@ -63,7 +63,7 @@ class MoreReviewsAdapter(val context: Context, val skinProfileDialogListener: Sk
     fun setReviewThumbnailUI(thumbnails: List<Thumbnails>,
                              rvThumbnail: RecyclerView) {
         reviewThumbnailAdapter = ReviewThumbnailAdapter(context, this)
-        RatingAndReviewUtils.setReviewThumbnailUI(thumbnails, rvThumbnail, reviewThumbnailAdapter)
+        RatingAndReviewUtils.setReviewThumbnailUI(thumbnails, rvThumbnail, reviewThumbnailAdapter, context)
     }
 
     override fun onBindViewHolder(holder: MoreReviewsAdapter.ReviewsViewHolder, position: Int) {

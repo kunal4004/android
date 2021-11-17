@@ -63,7 +63,7 @@ class ReviewDetailsFragment : Fragment(){
             setVerifiedBuyers(isVerifiedBuyer)
             setSkinProfielLayout(contextDataValue , tagDimensions)
             RatingAndReviewUtils.setReviewAdditionalFields(additionalFields, lladdiionField, requireContext())
-            RatingAndReviewUtils.setSecondaryRatingsUI(secondaryRatings, rvSecondaryRatings)
+            RatingAndReviewUtils.setSecondaryRatingsUI(secondaryRatings, rvSecondaryRatings, requireContext())
         }
     }
 

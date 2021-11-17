@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.facebook.FacebookSdk
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.AdditionalFields
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.SecondaryRatings
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Thumbnails
@@ -20,8 +19,8 @@ class RatingAndReviewUtils {
 
     companion object {
 
-        fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>, rvSecondaryRatings: RecyclerView) {
-            rvSecondaryRatings.layoutManager = GridLayoutManager(FacebookSdk.getApplicationContext(), 2)
+        fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>, rvSecondaryRatings: RecyclerView, context: Context) {
+            rvSecondaryRatings.layoutManager = GridLayoutManager(context, 2)
             val secondaryRatingAdapter = SecondaryRatingAdapter()
             rvSecondaryRatings.adapter = secondaryRatingAdapter
             secondaryRatingAdapter.setDataList(secondaryRatings)
@@ -52,8 +51,8 @@ class RatingAndReviewUtils {
                 ivCircle.layoutParams = ivParam
 
                 if (Build.VERSION.SDK_INT < 23) {
-                    tvAdditionalFieldLabel.setTextAppearance(FacebookSdk.getApplicationContext(), R.style.myriad_pro_regular_black_15_text_style);
-                    tvAdditionalFieldValue.setTextAppearance(FacebookSdk.getApplicationContext(), R.style.myriad_pro_semi_bold_black_15_text_style);
+                    tvAdditionalFieldLabel.setTextAppearance(context, R.style.myriad_pro_regular_black_15_text_style);
+                    tvAdditionalFieldValue.setTextAppearance(context, R.style.myriad_pro_semi_bold_black_15_text_style);
                 } else {
                     tvAdditionalFieldLabel.setTextAppearance(R.style.myriad_pro_regular_black_15_text_style);
                     tvAdditionalFieldValue.setTextAppearance(R.style.myriad_pro_semi_bold_black_15_text_style);
@@ -71,9 +70,10 @@ class RatingAndReviewUtils {
 
         fun setReviewThumbnailUI(thumbnails: List<Thumbnails>,
                                  rvThumbnail: RecyclerView,
-                                reviewThumbnailAdapter:ReviewThumbnailAdapter) {
+                                reviewThumbnailAdapter:ReviewThumbnailAdapter,
+                                context: Context) {
 
-            rvThumbnail.layoutManager = GridLayoutManager(FacebookSdk.getApplicationContext(), 3)
+            rvThumbnail.layoutManager = GridLayoutManager(context, 3)
             rvThumbnail.adapter = reviewThumbnailAdapter
             if (thumbnails.size > 2) {
                 reviewThumbnailAdapter.setDataList(thumbnails.subList(0, 2))
