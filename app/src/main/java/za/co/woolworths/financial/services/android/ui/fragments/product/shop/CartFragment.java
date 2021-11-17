@@ -1264,13 +1264,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
         }
         if (requestCode == REQUEST_PAYMENT_STATUS) {
-            switch (resultCode){
+            switch (resultCode) {
                 case REQUEST_CHECKOUT_ON_DESTROY:
                     reloadFragment();
                     finishActivityOnCheckoutSuccess();
                     break;
                 case RESULT_RELOAD_CART:
-                    reloadFragment();
+                    checkLocationChangeAndReload();
                     break;
                 case RESULT_OK:
                     if (getActivity() != null) getActivity().onBackPressed();
@@ -1306,13 +1306,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }
         if (currentStoreId == null && currentSuburbId == null) {
             //Fresh install with no location selection.
-        } else if (currentSuburbId == null && !(currentStoreId.equals(localStoreId))) {
+        } else if (currentSuburbId == null && !(currentStoreId == localStoreId)) {
             localStoreId = currentStoreId;
             localSuburbId = null;
             reloadFragment();
             return;
 
-        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
+        } else if (currentStoreId == null && !(localSuburbId == currentSuburbId)) {
             localSuburbId = currentSuburbId;
             localStoreId = null;
             reloadFragment();
@@ -1332,7 +1332,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private void reloadFragment() {
         //Reload screen
         loadShoppingCart(false);
-        loadShoppingCartAndSetDeliveryLocation();
     }
 
     @Override
