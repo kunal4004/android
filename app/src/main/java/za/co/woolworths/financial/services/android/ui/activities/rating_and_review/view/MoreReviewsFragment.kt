@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.fragment_more_reviews.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.view.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
@@ -51,12 +52,8 @@ class MoreReviewsFragment : Fragment() {
             productId = ratingAndResponse.reviews.get(0).productId
             setRatingDetailsUI(ratingAndResponse.reviewStatistics)
             setupViewModel()
+            setReviewsList()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        setReviewsList()
     }
 
     private fun setupViewModel() {
@@ -68,10 +65,6 @@ class MoreReviewsFragment : Fragment() {
 
     private fun setReviewsList() {
         val  moreReviewsAdapter = MoreReviewsAdapter(requireContext())
-        rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
-        rv_more_reviews.setHasFixedSize(true)
-        rv_more_reviews.adapter = moreReviewsAdapter
-
         moreReviewsAdapter.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
@@ -81,7 +74,7 @@ class MoreReviewsFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            moreReviewViewModel.getReviewDataSource(productId).collectLatest { pagedData ->
+            moreReviewViewModel.getReviewDataSource(productId).collectLatest{ pagedData ->
                 moreReviewsAdapter.submitData(pagedData)
             }
         }
@@ -90,6 +83,8 @@ class MoreReviewsFragment : Fragment() {
                 header = MoreReviewLoadStateAdapter(),
                 footer = MoreReviewLoadStateAdapter()
         )
+        rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
+        rv_more_reviews.adapter = moreReviewsAdapter
     }
 
     private fun setRatingDetailsUI(reviewStaticsData: ReviewStatistics) {
@@ -100,7 +95,7 @@ class MoreReviewsFragment : Fragment() {
             layout_rating_details.recommend.text = recommendedPercentage
             layout_rating_details.rating_details.pdpratings.apply {
                 ratingBarTop.rating = averageRating
-                tvTotalReviews.text = "Customer Reviews"
+                tvTotalReviews.text = getString(R.string.customer_reviews)
             }
             recommend.text = recommendedPercentage
             view_2.visibility = View.GONE
