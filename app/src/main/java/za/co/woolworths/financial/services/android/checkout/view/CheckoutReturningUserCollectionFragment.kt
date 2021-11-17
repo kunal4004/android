@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,40 +9,49 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import com.facebook.shimmer.Shimmer
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
-import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
-import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.txtOrderTotalValue
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
+import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
+import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
+import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
+import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
+import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
 import za.co.woolworths.financial.services.android.models.dto.ShoppingBagsOptions
+import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.regex.Pattern
@@ -48,6 +59,8 @@ import java.util.regex.Pattern
 class CheckoutReturningUserCollectionFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener {
 
+    private var storePickupInfoResponse: ConfirmDeliveryAddressResponse? = null
+    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
     var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
@@ -93,10 +106,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         (activity as? CheckoutActivity)?.apply {
             showBackArrowWithTitle(bindString(R.string.checkout))
         }
+        setupViewModel()
         initializeCollectingFromView()
         initializeCollectingDetailsView()
-        startShimmerView()
-        stopShimmerView()
+
+        callStorePickupInfoAPI()
     }
 
     private fun startShimmerView() {
@@ -114,6 +128,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             Pair<ShimmerFrameLayout, View>(
                 foodSubstitutionTitleShimmerFrameLayout,
                 txtFoodSubstitutionTitle
+            ),
+            Pair<ShimmerFrameLayout, View>(
+                collectionTimeDetailsShimmerLayout,
+                collectionTimeDetailsConstraintLayout
             ),
             Pair<ShimmerFrameLayout, View>(
                 foodSubstitutionDescShimmerFrameLayout,
@@ -221,6 +239,87 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
         initializeCollectionTimeSlots()
+    }
+
+    private fun setupViewModel() {
+        checkoutAddAddressNewUserViewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory(
+                CheckoutAddAddressNewUserInteractor(
+                    CheckoutAddAddressNewUserApiHelper()
+                )
+            )
+        ).get(CheckoutAddAddressNewUserViewModel::class.java)
+    }
+
+    private fun callStorePickupInfoAPI() {
+        startShimmerView()
+
+        checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
+            .observe(viewLifecycleOwner, { response ->
+                stopShimmerView()
+                when (response) {
+                    is ConfirmDeliveryAddressResponse -> {
+                        when (response.httpCode ?: 400) {
+                            AppConstant.HTTP_OK -> {
+                                storePickupInfoResponse = response
+                                if (!isAdded) {
+                                    return@observe
+                                }
+
+                                if (response.orderSummary == null) {
+                                    /*presentErrorDialog(
+                                getString(R.string.common_error_unfortunately_something_went_wrong),
+                                getString(R.string.no_internet_subtitle)
+                                )*/
+                                    return@observe
+                                }
+
+                                if (response.orderSummary?.totalItemsCount ?: 0 <= 0) {
+                                    showEmptyCart()
+                                    return@observe
+                                }
+
+                                initializeOrderSummary(response.orderSummary)
+
+                            }
+                            else -> {
+                                /*presentErrorDialog(
+                            getString(R.string.common_error_unfortunately_something_went_wrong),
+                            getString(R.string.no_internet_subtitle)
+                        )*/
+                            }
+                        }
+                    }
+                    is Throwable -> {
+                        /*presentErrorDialog(
+                            getString(R.string.common_error_unfortunately_something_went_wrong),
+                            getString(R.string.no_internet_subtitle)
+                        )*/
+                    }
+                }
+            })
+    }
+
+    private fun getStorePickupInfoBody() = StorePickupInfoBody().apply {
+        firstName = whoIsCollectingDetails?.recipientName
+        primaryContactNo = whoIsCollectingDetails?.phoneNumber
+        storeId = "st" + Utils.getPreferredDeliveryLocation()?.store?.id
+        vehicleModel = whoIsCollectingDetails?.vehicleModel ?: ""
+        vehicleColour = whoIsCollectingDetails?.vehicleColor ?: ""
+        vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
+        taxiOpted = whoIsCollectingDetails?.isMyVehicle ?: false
+    }
+
+    private fun showEmptyCart() {
+        activity?.let {
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra(
+                ErrorHandlerActivity.ERROR_TYPE,
+                ErrorHandlerActivity.ERROR_TYPE_EMPTY_CART
+            )
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_EMPTY_REQUEST_CODE)
+        }
     }
 
     private fun initializeCollectionTimeSlots() {
@@ -401,7 +500,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 txtOrderSummaryPromoCodeDiscountValue?.text =
                     "-" + CurrencyFormatter.formatAmountToRandAndCentWithSpace(discountDetails.promoCodeDiscount)
 
-                txtOrderTotalValue.text =
+                txtOrderTotalValueCollection?.text =
                     CurrencyFormatter.formatAmountToRandAndCentWithSpace(it.total)
             }
         }
@@ -428,6 +527,25 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     R.id.action_checkoutReturningUserCollectionFragment_checkoutWhoIsCollectingFragment,
                     bundleOf("bundle" to bundle)
                 )
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            ErrorHandlerActivity.ERROR_EMPTY_REQUEST_CODE -> {
+                when (resultCode) {
+                    // Comes from slot selection page.
+                    // Cart is empty when removed unsellable items. go to cart and refresh cart screen.
+                    Activity.RESULT_CANCELED, ErrorHandlerActivity.RESULT_RETRY -> {
+                        (activity as? CheckoutActivity)?.apply {
+                            setResult(CheckOutFragment.RESULT_EMPTY_CART)
+                            closeActivity()
+                        }
+                    }
+                }
             }
         }
     }
