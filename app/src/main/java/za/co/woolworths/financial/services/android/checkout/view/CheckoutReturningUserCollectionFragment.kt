@@ -9,7 +9,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
+import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_delivering_to_details.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_substitution.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
@@ -17,6 +22,7 @@ import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summ
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -69,11 +75,28 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         initializeCollectingFromView()
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
+        initializeCollectionTimeSlots()
+    }
+
+    private fun initializeCollectionTimeSlots() {
+        recyclerViewCollectionTimeSlots?.apply {
+            layoutManager = FlexboxLayoutManager(context).apply {
+                justifyContent = JustifyContent.SPACE_AROUND
+                flexDirection = FlexDirection.ROW
+                flexWrap = FlexWrap.NOWRAP
+            }
+            val collectionTimeSlotsAdapter = CollectionTimeSlotsAdapter()
+            adapter = collectionTimeSlotsAdapter
+            collectionTimeSlotsAdapter.setCollectionTimeSlotData(null)
+        }
     }
 
     private fun initializeCollectingFromView() {
-        tvNativeCheckoutDeliveringTitle?.text = context?.getString(R.string.native_checkout_collecting_from)
-        tvNativeCheckoutDeliveringValue?.text = "Constantia Emporium"
+        tvNativeCheckoutDeliveringTitle?.text =
+            context?.getString(R.string.native_checkout_collecting_from)
+        Utils.getPreferredDeliveryLocation()?.apply {
+            tvNativeCheckoutDeliveringValue?.text = this.store?.name ?: ""
+        }
     }
 
     private fun initializeDeliveryInstructions() {
@@ -144,7 +167,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         val shoppingBagsAdapter = ShoppingBagsRadioGroupAdapter(newShoppingBags?.options, this)
         shoppingBagsRecyclerView.apply {
             layoutManager = activity?.let { LinearLayoutManager(it) }
-            shoppingBagsAdapter?.let { adapter = it }
+            shoppingBagsAdapter.let { adapter = it }
         }
     }
 
