@@ -8,9 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
@@ -55,7 +53,6 @@ import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
-import java.lang.Exception
 import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
@@ -65,7 +62,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private var storePickupInfoResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
-    var whoIsCollectingDetails: WhoIsCollectingDetails? = null
+    private var whoIsCollectingDetails: WhoIsCollectingDetails? = null
     private var shimmerComponentArray: List<Pair<ShimmerFrameLayout, View>> = ArrayList()
     private var navController: NavController? = null
     private val deliveryInstructionsTextWatcher: TextWatcher = object : TextWatcher {
@@ -88,6 +85,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     companion object {
         const val KEY_COLLECTING_DETAILS = "key_collecting_details"
+        const val KEY_IS_WHO_IS_COLLECTING = "key_is_WhoIsCollecting"
     }
 
     override fun onCreateView(
@@ -393,16 +391,28 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun initializeCollectingFromView() {
-        tvNativeCheckoutDeliveringTitle?.text =
-            context?.getString(R.string.native_checkout_collecting_from)
-        Utils.getPreferredDeliveryLocation()?.apply {
-            tvNativeCheckoutDeliveringValue?.text = this.store?.name ?: ""
-        }
+        val location = Utils.getPreferredDeliveryLocation()
+        checkoutCollectingFromLayout.setOnClickListener(this)
+        if (location != null) {
+            val selectedStore = if (location.storePickup) location.store.name else ""
+            if (!selectedStore.isNullOrEmpty()) {
+                tvNativeCheckoutDeliveringTitle?.text =
+                    context?.getString(R.string.native_checkout_collecting_from)
+                tvNativeCheckoutDeliveringValue.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                tvNativeCheckoutDeliveringValue?.text = selectedStore
+            } else
+                checkoutCollectingFromLayout.visibility = View.GONE
+        } else
+            checkoutCollectingFromLayout.visibility = View.GONE
     }
 
     private fun initializeCollectingDetailsView() {
-        val bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
+        arguments?.apply {
             getString(KEY_COLLECTING_DETAILS)?.let {
                 whoIsCollectingDetails =
                     Gson().fromJson(it, object : TypeToken<WhoIsCollectingDetails>() {}.type)
@@ -572,6 +582,14 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     override fun onClick(v: View?) {
         when (v?.id) {
+            R.id.checkoutCollectingFromLayout -> {
+                val bundle = Bundle()
+                bundle.putBoolean(KEY_IS_WHO_IS_COLLECTING, true)
+                navController?.navigate(
+                    R.id.action_checkoutReturningUserCollectionFragment_to_checkoutAddressConfirmationFragment,
+                    bundle
+                )
+            }
             R.id.checkoutCollectingUserInfoLayout -> {
                 val bundle = Bundle()
                 bundle.apply {
@@ -582,7 +600,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
                 navController?.navigate(
                     R.id.action_checkoutReturningUserCollectionFragment_checkoutWhoIsCollectingFragment,
-                    bundleOf("bundle" to bundle)
+                    bundle
                 )
             }
         }
