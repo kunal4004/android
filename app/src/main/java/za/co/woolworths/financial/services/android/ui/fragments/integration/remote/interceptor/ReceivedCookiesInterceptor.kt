@@ -2,12 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.rem
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_COOKIE_WFPT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_COOKIE_XFPT
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_WFPT
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ABSA_XFPT
 import java.io.IOException
 
 class ReceivedCookiesInterceptor : Interceptor {

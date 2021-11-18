@@ -6,7 +6,6 @@ import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.KeyGenerationFailureException
 import za.co.absa.openbankingapi.SymmetricCipher
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
-import za.co.woolworths.financial.services.android.ui.extension.json
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.AbsaRemoteApi
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.common.SessionKeyGenerator
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.AbsaProxyResponseProperty

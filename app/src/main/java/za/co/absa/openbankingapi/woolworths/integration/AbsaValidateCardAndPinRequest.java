@@ -51,37 +51,28 @@ public class AbsaValidateCardAndPinRequest {
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
 		final String body = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getJson();
 
-		new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
-
-			@Override
-			public void onResponse(ValidateCardAndPinResponse response, List<HttpCookie> cookies) {
-				if (response == null || response.getHeader() == null) return;
-				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
-				String statusCode = "0";
-				try {
-					statusCode = response.getHeader().getStatusCode();
-				} catch (Exception e) {
-					FirebaseManager.Companion.logException(e);
-				}
-				if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0")) {
-					responseDelegate.onSuccess(response, cookies);
-				} else {
-					responseDelegate.onFailure(resultMessages[0].getResponseMessage());
-				}
-
-				//Clearing up sensitive info
-				sessionKey = null;
+		new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, true, (response, cookies) -> {
+			if (response == null || response.getHeader() == null) return;
+			Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
+			String statusCode = "0";
+			try {
+				statusCode = response.getHeader().getStatusCode();
+			} catch (Exception e) {
+				FirebaseManager.Companion.logException(e);
 			}
-		}, new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				responseDelegate.onFatalError(error);
-
-				//Clearing up sensitive info
-				sessionKey = null;
+			if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0")) {
+				responseDelegate.onSuccess(response, cookies);
+			} else {
+				responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 			}
+
+			//Clearing up sensitive info
+			sessionKey = null;
+		}, error -> {
+			responseDelegate.onFatalError(error);
+
+			//Clearing up sensitive info
+			sessionKey = null;
 		});
-
-
 	}
 }
