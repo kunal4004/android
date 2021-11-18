@@ -344,7 +344,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 switch (deepLinkType) {
                     case AppConstant.DP_LINKING_PRODUCT_LISTING:
-                        if (appLinkData == null) {
+                        if (appLinkData == null ) {
                             return;
                         }
                        if (appLinkData.get("url") == null) {
