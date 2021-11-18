@@ -1,39 +1,47 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_more_reviews.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.view.*
+import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.dto.SortOption
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.ReviewStatistics
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.SortOptions
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.newtwork.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewLoadStateAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewsAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
+import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class MoreReviewsFragment : Fragment() {
+class MoreReviewsFragment : Fragment(), View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected {
+    private var sortOptionDialog: Dialog? = null
 
     companion object {
         fun newInstance() = MoreReviewsFragment()
     }
 
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
+    private var ratingAndResponse: RatingReviewResponse? = null
 
     private var productId: String = "-1"
 
@@ -51,6 +59,8 @@ class MoreReviewsFragment : Fragment() {
             productId = ratingAndResponse.reviews.get(0).productId
             setRatingDetailsUI(ratingAndResponse.reviewStatistics)
             setupViewModel()
+            refineProducts?.setOnClickListener(this@MoreReviewsFragment)
+            sortProducts?.setOnClickListener(this@MoreReviewsFragment)
         }
     }
 
@@ -141,5 +151,75 @@ class MoreReviewsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onClick(view: View) {
+        KotlinUtils.avoidDoubleClicks(view)
+        activity?.let { activity ->
+            when (view.id) {
+                R.id.refineProducts -> {
+                    //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED, activity)
+                    (activity as MoreReviewActivity).let {
+                        //it.setUpDrawerFragment(productView, productRequestBody)
+                        //it.openDrawerFragment()
+                    }
+                }
+                R.id.sortProducts -> {
+                    //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED, activity)
+                    ratingAndResponse?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
+                }
+                else -> return
+            }
+        }
+    }
+
+    override fun onSortOptionSelected(sortOption: SortOption) {
+        if (sortOptionDialog != null && sortOptionDialog?.isShowing == true) {
+            sortOptionDialog?.dismiss()
+            val arguments = HashMap<String, String>()
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] = sortOption.label
+            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments, this) }
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] =
+                sortOption.label
+            activity?.apply {  Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED,
+                arguments,this
+            )}
+            //updateProductRequestBodyForSort(sortOption.sortOption)
+            //reloadProductsWithSortAndFilter()
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showShortOptions(sortOptions: ArrayList<SortOption>) {
+        sortOptionDialog = activity?.let { activity -> Dialog(activity) }
+        sortOptionDialog?.apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val view = layoutInflater.inflate(R.layout.sort_options_view, null)
+            val rcvSortOptions = view.findViewById<RecyclerView>(R.id.sortOptionsList)
+            rcvSortOptions?.layoutManager =
+                activity?.let { activity -> LinearLayoutManager(activity) }
+            rcvSortOptions?.adapter = activity?.let { activity ->
+                SortOptionsAdapter(
+                    activity,
+                    sortOptions,
+                    this@MoreReviewsFragment
+                )
+            }
+            setContentView(view)
+            window?.apply {
+                setLayout(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT
+                )
+                setBackgroundDrawableResource(R.color.transparent)
+                setGravity(Gravity.TOP)
+            }
+
+            setTitle(null)
+            setCancelable(true)
+            show()
+        }
+
     }
 }
