@@ -647,4 +647,13 @@ object OneAppService : RetrofitConfig() {
             getSessionToken(),
             getDeviceIdentityToken())
     }
+
+    fun getBPITermsAndConditionsInfo(productGroupCode: String): Call<BPITermsConditionsResponse>{
+        return mApiInterface.getBPITermsAndConditionsInfo(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            productGroupCode)
+    }
 }

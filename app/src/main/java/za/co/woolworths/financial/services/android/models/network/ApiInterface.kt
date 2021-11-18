@@ -1190,4 +1190,15 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<SubmittedOrderResponse>
 
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/accounts/termsAndConditions/BPI")
+    fun getBPITermsAndConditionsInfo(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("productGroupCode") productGroupCode: String
+    ): Call<BPITermsConditionsResponse>
+
 }
