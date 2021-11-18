@@ -268,6 +268,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 }
 
                                 if (response.orderSummary == null) {
+                                //TODO: Handle Error screen
                                     /*presentErrorDialog(
                                 getString(R.string.common_error_unfortunately_something_went_wrong),
                                 getString(R.string.no_internet_subtitle)
@@ -284,6 +285,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 initializeDatesAndTimeSlots()
                             }
                             else -> {
+                                //TODO: Handle Error screen
+
                                 /*presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
                             getString(R.string.no_internet_subtitle)
@@ -292,6 +295,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                         }
                     }
                     is Throwable -> {
+                        //TODO: Handle Error screen
+
                         /*presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
                             getString(R.string.no_internet_subtitle)
