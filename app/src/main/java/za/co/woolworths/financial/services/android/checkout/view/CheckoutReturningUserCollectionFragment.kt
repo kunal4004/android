@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -35,6 +37,8 @@ import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutA
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
+import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_COLLECTION_DATES
+import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_SELECTED_POSITION
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
@@ -58,6 +62,7 @@ import java.util.regex.Pattern
 class CheckoutReturningUserCollectionFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener {
 
+    private var selectedPosition: Int = 0
     private lateinit var collectionTimeSlotsAdapter: CollectionTimeSlotsAdapter
     private var storePickupInfoResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
@@ -86,6 +91,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     companion object {
         const val KEY_COLLECTING_DETAILS = "key_collecting_details"
         const val KEY_IS_WHO_IS_COLLECTING = "key_is_WhoIsCollecting"
+        const val REQUEST_KEY_SELECTED_COLLECTION_DATE: String = "SELECTED_COLLECTION_DATE"
     }
 
     override fun onCreateView(
@@ -268,7 +274,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 }
 
                                 if (response.orderSummary == null) {
-                                //TODO: Handle Error screen
+                                    //TODO: Handle Error screen
                                     /*presentErrorDialog(
                                 getString(R.string.common_error_unfortunately_something_went_wrong),
                                 getString(R.string.no_internet_subtitle)
@@ -281,8 +287,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     return@observe
                                 }
 
-                                initializeOrderSummary(response.orderSummary)
-                                initializeDatesAndTimeSlots()
+                                initializeOrderSummary(response?.orderSummary)
+                                response?.sortedJoinDeliverySlots?.apply {
+                                    val firstAvailableDateSlot = getFirstAvailableSlot(this)
+                                    initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                                }
                             }
                             else -> {
                                 //TODO: Handle Error screen
@@ -306,44 +315,40 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             })
     }
 
-    private fun initializeDatesAndTimeSlots() {
-        storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
-
-            val firstAvailableDateSlot = getFirstAvailableSlot(this)
-            firstAvailableDateSlot?.let {
-                firstAvailableDateLayout?.titleTv?.text =  it.date ?: try {
-                    WFormatter.convertDateToFormat(
-                        it.slots?.get(0)?.stringShipOnDate,
-                        DATE_FORMAT_EEEE_COMMA_dd_MMMM
-                    )
-                } catch (e: Exception) {
-                    ""
-                }
-                context?.let { context ->
-                    firstAvailableDateLayout?.titleTv?.setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.white
-                        )
-                    )
-                    firstAvailableDateLayout?.titleTv?.background =
-                        ContextCompat.getDrawable(
-                            context,
-                            R.drawable.checkout_delivering_title_round_button_pressed
-                        )
-                    chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
-                }
-
-                setSelectedDateTimeSlots(it.slots)
-                chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
-                firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+    private fun initializeDatesAndTimeSlots(selectedWeekSlot: Week?) {
+        selectedWeekSlot?.apply {
+            firstAvailableDateLayout?.titleTv?.text = date ?: try {
+                WFormatter.convertDateToFormat(
+                    slots?.get(0)?.stringShipOnDate,
+                    DATE_FORMAT_EEEE_COMMA_dd_MMMM
+                )
+            } catch (e: Exception) {
+                ""
             }
+            context?.let { context ->
+                firstAvailableDateLayout?.titleTv?.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.white
+                    )
+                )
+                firstAvailableDateLayout?.titleTv?.background =
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.checkout_delivering_title_round_button_pressed
+                    )
+                chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
+            }
+
+            setSelectedDateTimeSlots(slots)
+            chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+            firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
         }
     }
 
     private fun setSelectedDateTimeSlots(slots: List<Slot>?) {
         // No Timeslots available
-        if(slots.isNullOrEmpty()){
+        if (slots.isNullOrEmpty()) {
             return
         }
         collectionTimeSlotsAdapter.setCollectionTimeSlotData(ArrayList(slots))
@@ -353,7 +358,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         if (list.isNullOrEmpty()) {
             return null
         }
-        list.forEach {sortedJoinDeliverySlot ->
+        list.forEach { sortedJoinDeliverySlot ->
             if (!sortedJoinDeliverySlot.week.isNullOrEmpty()) {
                 sortedJoinDeliverySlot.week?.forEach { weekDay ->
                     if (!weekDay.slots.isNullOrEmpty()) {
@@ -392,6 +397,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             collectionTimeSlotsAdapter = CollectionTimeSlotsAdapter()
             adapter = collectionTimeSlotsAdapter
             collectionTimeSlotsAdapter.setCollectionTimeSlotData(null)
+        }
+
+        /**
+         * Returned value from Collection Date Bottom sheet dialog
+         */
+        setFragmentResultListener(REQUEST_KEY_SELECTED_COLLECTION_DATE) { _, bundle ->
+            bundle.getSerializable(REQUEST_KEY_SELECTED_COLLECTION_DATE)?.apply {
+                (this as? Week)?.let { selectedWeek ->
+                    selectedPosition = bundle.getInt(ARGS_KEY_SELECTED_POSITION, 0)
+                    initializeDatesAndTimeSlots(selectedWeek)
+                }
+            }
         }
     }
 
@@ -608,6 +625,34 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     bundle
                 )
             }
+            R.id.chooseDateLayout -> {
+                onChooseDateClicked()
+            }
+        }
+    }
+
+    private fun onChooseDateClicked() {
+        storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
+            // No available dates to select
+            if (this.isNullOrEmpty()) {
+                return
+            }
+            val weekDaysList = ArrayList<Week>(0)
+            this.forEach { sortedJoinDeliverySlot ->
+                if (sortedJoinDeliverySlot == null || sortedJoinDeliverySlot.week.isNullOrEmpty()) {
+                    return
+                }
+                sortedJoinDeliverySlot.week?.let {
+                    weekDaysList.addAll(it)
+                }
+            }
+            navController?.navigate(
+                R.id.action_checkoutReturningUserCollectionFragment_to_collectionDatesBottomSheetDialog,
+                bundleOf(
+                    ARGS_KEY_COLLECTION_DATES to weekDaysList,
+                    ARGS_KEY_SELECTED_POSITION to selectedPosition
+                )
+            )
         }
     }
 

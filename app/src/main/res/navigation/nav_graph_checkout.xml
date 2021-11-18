@@ -228,6 +228,15 @@
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right" />
 
+        <action
+            android:id="@+id/action_checkoutReturningUserCollectionFragment_to_collectionDatesBottomSheetDialog"
+            app:destination="@id/collectionDatesBottomSheetDialog" />
+
     </fragment>
+    <dialog
+        android:id="@+id/collectionDatesBottomSheetDialog"
+        android:name="za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog"
+        android:label="fragment_collection_dates_bottom_sheet_dialog"
+        tools:layout="@layout/fragment_collection_dates_bottom_sheet_dialog" />
 
 </navigation>
