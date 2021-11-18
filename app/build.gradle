@@ -193,7 +193,6 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:5.1.1'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
-    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
     implementation(name: 'utils-1.1.8', ext: 'aar')
     implementation(name: 'Logger-1', ext: 'aar')

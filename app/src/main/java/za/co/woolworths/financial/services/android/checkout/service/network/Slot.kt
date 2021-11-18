@@ -30,4 +30,7 @@ class Slot {
 
     @SerializedName("hourFrom")
     var hourFrom: String? = null
+
+    @SerializedName("hourSlot")
+    var hourSlot: String? = null
 }

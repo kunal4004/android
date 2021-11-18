@@ -44,17 +44,36 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvCollectionTimeDetailsTitle" />
 
+            <include
+                android:id="@+id/firstAvailableDateLayout"
+                layout="@layout/where_are_we_delivering_items"
+                android:layout_marginTop="@dimen/fifteen_dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/tvCollectionTimeDetailsDate"
+                app:layout_constraintTop_toBottomOf="@id/tvCollectionTimeDetailsDate" />
+
+            <include
+                android:id="@+id/chooseDateLayout"
+                layout="@layout/where_are_we_delivering_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/firstAvailableDateLayout"
+                android:layout_marginStart="@dimen/ten_dp"
+                app:layout_constraintStart_toEndOf="@id/firstAvailableDateLayout"
+                app:layout_constraintTop_toBottomOf="@id/tvCollectionTimeDetailsDate" />
+
             <TextView
                 android:id="@+id/tvCollectionTimeDetailsTimeSlot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/twenty_dp"
+                android:layout_marginTop="@dimen/fifteen_dp"
                 android:fontFamily="@font/myriad_pro_semi_bold"
                 android:text="@string/native_checkout_collection_timeslot"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fifteen_sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvCollectionTimeDetailsDate" />
+                app:layout_constraintTop_toBottomOf="@id/firstAvailableDateLayout" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewCollectionTimeSlots"

@@ -8,19 +8,18 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexWrap
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
@@ -33,9 +32,9 @@ import kotlinx.android.synthetic.main.layout_native_checkout_delivery_food_subst
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_instructions.*
 import kotlinx.android.synthetic.main.layout_native_checkout_delivery_order_summary.*
 import kotlinx.android.synthetic.main.new_shopping_bags_layout.*
+import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
-import za.co.woolworths.financial.services.android.checkout.service.network.ConfirmDeliveryAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.Companion.REGEX_DELIVERY_INSTRUCTIONS
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
@@ -54,11 +53,15 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Che
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
+import java.lang.Exception
 import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
     ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener {
 
+    private lateinit var collectionTimeSlotsAdapter: CollectionTimeSlotsAdapter
     private var storePickupInfoResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
@@ -109,7 +112,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         setupViewModel()
         initializeCollectingFromView()
         initializeCollectingDetailsView()
-
+        initializeCollectionTimeSlots()
         callStorePickupInfoAPI()
     }
 
@@ -238,7 +241,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
-        initializeCollectionTimeSlots()
     }
 
     private fun setupViewModel() {
@@ -281,7 +283,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 }
 
                                 initializeOrderSummary(response.orderSummary)
-
+                                initializeDatesAndTimeSlots()
                             }
                             else -> {
                                 /*presentErrorDialog(
@@ -301,14 +303,73 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             })
     }
 
+    private fun initializeDatesAndTimeSlots() {
+        storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
+
+            val firstAvailableDateSlot = getFirstAvailableSlot(this)
+            firstAvailableDateSlot?.let {
+                firstAvailableDateLayout?.titleTv?.text =  it.date ?: try {
+                    WFormatter.convertDateToFormat(
+                        it.slots?.get(0)?.stringShipOnDate,
+                        DATE_FORMAT_EEEE_COMMA_dd_MMMM
+                    )
+                } catch (e: Exception) {
+                    ""
+                }
+                context?.let { context ->
+                    firstAvailableDateLayout?.titleTv?.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.white
+                        )
+                    )
+                    firstAvailableDateLayout?.titleTv?.background =
+                        ContextCompat.getDrawable(
+                            context,
+                            R.drawable.checkout_delivering_title_round_button_pressed
+                        )
+                    chooseDateLayout?.titleTv?.text = context.getString(R.string.choose_date)
+                }
+
+                setSelectedDateTimeSlots(it.slots)
+                chooseDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+                firstAvailableDateLayout?.setOnClickListener(this@CheckoutReturningUserCollectionFragment)
+            }
+        }
+    }
+
+    private fun setSelectedDateTimeSlots(slots: List<Slot>?) {
+        // No Timeslots available
+        if(slots.isNullOrEmpty()){
+            return
+        }
+        collectionTimeSlotsAdapter.setCollectionTimeSlotData(ArrayList(slots))
+    }
+
+    private fun getFirstAvailableSlot(list: List<SortedJoinDeliverySlot>): Week? {
+        if (list.isNullOrEmpty()) {
+            return null
+        }
+        list.forEach {sortedJoinDeliverySlot ->
+            if (!sortedJoinDeliverySlot.week.isNullOrEmpty()) {
+                sortedJoinDeliverySlot.week?.forEach { weekDay ->
+                    if (!weekDay.slots.isNullOrEmpty()) {
+                        return weekDay
+                    }
+                }
+            }
+        }
+        return null
+    }
+
     private fun getStorePickupInfoBody() = StorePickupInfoBody().apply {
         firstName = whoIsCollectingDetails?.recipientName
         primaryContactNo = whoIsCollectingDetails?.phoneNumber
-        storeId = "st" + Utils.getPreferredDeliveryLocation()?.store?.id
+        storeId = Utils.getPreferredDeliveryLocation()?.store?.id ?: ""
         vehicleModel = whoIsCollectingDetails?.vehicleModel ?: ""
         vehicleColour = whoIsCollectingDetails?.vehicleColor ?: ""
         vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
-        taxiOpted = whoIsCollectingDetails?.isMyVehicle ?: false
+        taxiOpted = whoIsCollectingDetails?.isMyVehicle != true
     }
 
     private fun showEmptyCart() {
@@ -324,12 +385,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     private fun initializeCollectionTimeSlots() {
         recyclerViewCollectionTimeSlots?.apply {
-            layoutManager = FlexboxLayoutManager(context).apply {
-                justifyContent = JustifyContent.SPACE_AROUND
-                flexDirection = FlexDirection.ROW
-                flexWrap = FlexWrap.NOWRAP
-            }
-            val collectionTimeSlotsAdapter = CollectionTimeSlotsAdapter()
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            collectionTimeSlotsAdapter = CollectionTimeSlotsAdapter()
             adapter = collectionTimeSlotsAdapter
             collectionTimeSlotsAdapter.setCollectionTimeSlotData(null)
         }

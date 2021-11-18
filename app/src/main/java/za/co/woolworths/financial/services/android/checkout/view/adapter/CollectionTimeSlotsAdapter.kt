@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.where_are_we_delivering_items.view.*
+import za.co.woolworths.financial.services.android.checkout.service.network.Slot
 
 class CollectionTimeSlotsAdapter :
     RecyclerView.Adapter<CollectionTimeSlotsAdapter.CollectionTimeSlotViewHolder>() {
-    private var list: ArrayList<Any> = ArrayList(0)
+    private var list: ArrayList<Slot> = ArrayList(0)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -22,20 +23,23 @@ class CollectionTimeSlotsAdapter :
     }
 
     override fun onBindViewHolder(holder: CollectionTimeSlotViewHolder, position: Int) {
-        holder.bindItemView()
+        if(list.size <= 0 || holder.adapterPosition >= list.size ){
+            return
+        }
+        holder.bindItemView(holder.adapterPosition, list[holder.adapterPosition])
     }
 
-    override fun getItemCount(): Int = 3
+    override fun getItemCount(): Int = list.size
 
     class CollectionTimeSlotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItemView() {
+        fun bindItemView(adapterPosition: Int, slot: Slot?) {
             itemView.apply {
-                titleTv?.text = "10AM-11AM"
+                titleTv?.text = slot?.hourSlot
             }
         }
     }
 
-    fun setCollectionTimeSlotData(list: ArrayList<Any>?) {
+    fun setCollectionTimeSlotData(list: ArrayList<Slot>?) {
         this.list = list ?: ArrayList(0)
         notifyDataSetChanged()
     }

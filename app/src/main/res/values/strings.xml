@@ -2313,4 +2313,5 @@
     <string name="collection_time_detail_title">When Would You Like To Collect?</string>
     <string name="native_checkout_collection_date">Collection Date</string>
     <string name="native_checkout_collection_timeslot">Collection Timeslot</string>
+    <string name="choose_date">Choose Date</string>
 </resources>
