@@ -147,10 +147,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
                 Utils.toJson(whoIsCollectingDetails)
             )
         }
-        navController?.navigate(
-            R.id.checkoutReturningUserCollectionFragment,
-            bundleOf("bundle" to bundle)
-        )
+        navController?.navigate(R.id.checkoutReturningUserCollectionFragment, bundle)
     }
 
     private fun isErrorInputFields(listOfInputFields: List<View>): Boolean {
@@ -178,8 +175,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     }
 
     private fun initView() {
-        val bundle = arguments?.getBundle("bundle")
-        bundle?.apply {
+        arguments?.apply {
             if (containsKey(KEY_COLLECTING_DETAILS)) {
                 getString(KEY_COLLECTING_DETAILS)?.let {
                     val whoIsCollectingDetails: WhoIsCollectingDetails =
