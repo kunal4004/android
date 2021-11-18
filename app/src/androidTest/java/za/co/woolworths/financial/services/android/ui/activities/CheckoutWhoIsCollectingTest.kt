@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import org.hamcrest.Matchers.allOf
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,8 +29,8 @@ class CheckoutWhoIsCollectingTest {
     @JvmField
     var mActivityTestRule = ActivityTestRule(CheckoutActivity::class.java, true, false)
 
-    @Test
-    fun whoIsCollectingTest() {
+    @Before
+    fun initialiseClassData() {
         var intent = Intent()
 
         val jsonFileString = "{\n" +
@@ -69,7 +70,10 @@ class CheckoutWhoIsCollectingTest {
         )
         intent.putExtra(CheckoutAddressManagementBaseFragment.IS_DELIVERY, false)
         mActivityTestRule.launchActivity(intent)
+    }
 
+    @Test
+    fun whoIsCollectingTest() {
         val button = onView(
             allOf(
                 withId(R.id.confirmDetails), withText("CONFIRM DETAILS"),
