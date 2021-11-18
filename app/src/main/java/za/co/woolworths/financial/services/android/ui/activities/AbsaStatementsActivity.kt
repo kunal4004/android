@@ -5,24 +5,17 @@ import android.os.Bundle
 import android.util.Pair
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.volley.NetworkResponse
-import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_statements_activity.*
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
 import kotlinx.android.synthetic.main.empty_state_template.*
 import kotlinx.android.synthetic.main.payment_options_activity.*
-import za.co.absa.openbankingapi.woolworths.integration.AbsaBalanceEnquiryFacadeGetAllBalances
-import za.co.absa.openbankingapi.woolworths.integration.AbsaGetArchivedStatementListRequest
-import za.co.absa.openbankingapi.woolworths.integration.AbsaGetIndividualStatementRequest
-import za.co.absa.openbankingapi.woolworths.integration.dto.AbsaBalanceEnquiryResponse
 import za.co.absa.openbankingapi.woolworths.integration.dto.ArchivedStatement
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header
-import za.co.absa.openbankingapi.woolworths.integration.dto.StatementListResponse
-import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Card
@@ -34,11 +27,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
+import za.co.woolworths.financial.services.android.ui.fragments.integration.viewmodel.AbsaIntegrationViewModel
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
-import java.net.HttpCookie
 import java.util.*
-
 
 class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.ActionListners {
 
@@ -47,6 +40,8 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     private var nonce: String? = null
     private var eSessionId: String? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
+
+    private val mViewModel: AbsaIntegrationViewModel by viewModels()
 
     companion object {
         const val NONCE = "NONCE"
@@ -62,6 +57,40 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             getBundleArgument()
         initViews()
         showChatBubble()
+        absaResultObserver()
+    }
+
+    private fun absaResultObserver() {
+        with(mViewModel){
+            isLoading.observe(this@AbsaStatementsActivity, { isLoading ->
+                when(isLoading){
+                    true ->  showProgress()
+                    else -> hideProgress()
+                }
+            })
+
+            absaBalanceEnquiryResponseProperty.observe(this@AbsaStatementsActivity,{ response ->
+                val header = response?.header
+                val number = response?.accountList?.first()?.number
+                executeGetArchivedStatement(header, number)
+            })
+
+            archivedStatementResponse.observe(this@AbsaStatementsActivity, { response ->
+                when(response?.archivedStatementList?.isNotEmpty()){
+                    true -> showStatementsList(response.archivedStatementList)
+                    else -> showErrorView()
+                }
+            })
+
+
+            failureHandler.observe(this@AbsaStatementsActivity, { failure ->
+                when(failure){
+                    is AbsaApiFailureHandler.ListStatement.FacadeStatusCodeInvalid,
+                    is AbsaApiFailureHandler.ListStatement.ArchiveStatusCodeInvalid -> showErrorView()
+                    else -> showErrorView()
+                }
+            })
+        }
     }
 
     private fun actionBar() {
@@ -94,47 +123,14 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         nonce?.let { eSessionId?.let { it1 -> executeGetAllBalances() } }
     }
 
-    fun executeGetArchivedStatement(header: Header, accountNumber: String) {
+    fun executeGetArchivedStatement(header: Header?, accountNumber: String?) {
         KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_GET_ALL_STATEMENTS, OneAppEvents.FeatureName.ABSA)
-        AbsaGetArchivedStatementListRequest().make(header, accountNumber, object : AbsaBankingOpenApiResponse.ResponseDelegate<StatementListResponse> {
-            override fun onSuccess(response: StatementListResponse?, cookies: MutableList<HttpCookie>?) {
-                if (response?.archivedStatementList != null)
-                    showStatementsList(response.archivedStatementList)
-                else
-                    showErrorView()
-            }
-
-            override fun onFailure(errorMessage: String?) {
-               FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this@AbsaStatementsActivity)
-                showErrorView()
-            }
-
-            override fun onFatalError(error: VolleyError?) {
-                showErrorView()
-            }
-
-        })
+        mViewModel.fetchArchivedStatement(header, accountNumber)
     }
 
     private fun executeGetAllBalances() {
-        showProgress()
         val timestampAsString = Utils.getDate(0);
-        AbsaBalanceEnquiryFacadeGetAllBalances().make(nonce, eSessionId, timestampAsString, object : AbsaBankingOpenApiResponse.ResponseDelegate<AbsaBalanceEnquiryResponse> {
-            override fun onSuccess(response: AbsaBalanceEnquiryResponse?, cookies: MutableList<HttpCookie>?) {
-                response?.apply {
-                    executeGetArchivedStatement(this.header, this.accountList[0].number!!)
-                }
-            }
-
-            override fun onFailure(errorMessage: String?) {
-                showErrorView()
-            }
-
-            override fun onFatalError(error: VolleyError?) {
-                showErrorView()
-            }
-
-        })
+        mViewModel.fetchBalanceEnquiryFacadeGetAllBalances(nonce,eSessionId,timestampAsString)
     }
 
     fun showStatementsList(archivedStatementList: ArrayList<ArchivedStatement>?) {
@@ -211,33 +207,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     private fun getIndividualStatement(archivedStatement: ArchivedStatement) {
-        showProgress()
-        AbsaGetIndividualStatementRequest().make(archivedStatement, object : AbsaBankingOpenApiResponse.ResponseDelegate<NetworkResponse> {
-            override fun onSuccess(response: NetworkResponse?, cookies: MutableList<HttpCookie>?) {
-                if (!this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) return
-                hideProgress()
-                response?.apply {
-                    allHeaders?.apply {
-                        forEach {
-                            //activity is at least partially visible
-                            if (it.value.equals("application/pdf", true)) {
-                                showTAxInvoice(data, archivedStatement.documentWorkingDate)
-                                return
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(errorMessage: String?) {
-                hideProgress()
-            }
-
-            override fun onFatalError(error: VolleyError?) {
-                hideProgress()
-            }
-
-        })
+        mViewModel.fetchIndividualStatement(archivedStatement)
     }
 
     private fun showTAxInvoice(data: ByteArray?, fileName: String) {
@@ -305,7 +275,6 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             scrollableView = paymentOptionScrollView,
             notificationBadge = badge,
             onlineChatImageViewIndicator = onlineIndicatorImageView
-        )
-            .build()
+        ).build()
     }
 }

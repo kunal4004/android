@@ -58,7 +58,7 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
                     is Response -> { data.let { response -> outputResult(AbsaResultWrapper.Failure(AbsaApiFailureHandler.AppServerFailure.GeneralFailure(response.message, response.code?.toInt())))} } }
             }
 
-            is NetworkState.Error ->   outputResult(AbsaResultWrapper.Failure(resultFromNetwork.error))
+            is NetworkState.Error -> outputResult(AbsaResultWrapper.Failure(resultFromNetwork.error))
             is NetworkState.Loading -> outputResult(AbsaResultWrapper.Loading)
         }
     }
@@ -78,60 +78,60 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
     }
 
     override fun saveJSessionId(payloadJSONObject: JSONObject) {
-        AbsaTemporaryDataSourceSingleton.jsessionId = when (payloadJSONObject.has("jsessionId")) {
-            true -> payloadJSONObject.getString("jsessionId")
-            false -> AbsaTemporaryDataSourceSingleton.jsessionId
+        val header = payloadJSONObject.get("header") as? JSONObject
+        AbsaTemporaryDataSourceSingleton.jsessionId = when (header?.has("jsessionid")) {
+            true -> header.getString("jsessionid")
+            else ->  AbsaTemporaryDataSourceSingleton.jsessionId
         }
     }
 
     override fun handleAbsaStatusCode(payload: String?): AbsaResultWrapper? {
         val response = Gson().fromJson(payload,typeParameterClass.java)
        with(response) {
-           val technicalErrorMessage = bindString(R.string.absa_technical_error_occurred)
             return when(this){
                 is CekdResponseProperty -> AbsaResultWrapper.Section.Cekd.StatusCodeValid(this)
 
-                is ValidateCardAndPinResponseProperty -> when(isStatusCodeValid(header) && result?.lowercase() in mutableListOf("success", "processing")) { // in == contains
+                is ValidateCardAndPinResponseProperty -> {
+                    when(isStatusCodeValid(header) && result?.lowercase() in mutableListOf("success", "processing")) { // in == contains
                     true -> AbsaResultWrapper.Section.ValidateCardAndPin.ValidateCardAndPinStatusCodeValid(this)
-                    false -> AbsaResultWrapper.Section.ValidateCardAndPin.StatusCodeInvalid(AbsaApiFailureHandler.FeatureValidateCardAndPin.ValidateCardAndPinStatusCodeInvalid(header?.resultMessages?.first()?.responseMessage ?:technicalErrorMessage, false))
-                }
+                    false -> AbsaResultWrapper.Section.ValidateCardAndPin.StatusCodeInvalid(AbsaApiFailureHandler.FeatureValidateCardAndPin.ValidateCardAndPinStatusCodeInvalid(setErrorMessage(header), false))
+                }}
 
                 is ValidateSureCheckResponseProperty ->  when(isStatusCodeValid(header)) {
                     true -> AbsaResultWrapper.Section.ValidateSureCheck.StatusCodeValid(this)
-                    false -> AbsaResultWrapper.Section.ValidateSureCheck.StatusCodeInvalid(AbsaApiFailureHandler.FeatureValidateCardAndPin.ValidateSureCheckStatusCodeInvalid(header.resultMessages?.first()?.responseMessage ?:technicalErrorMessage))
+                    false -> AbsaResultWrapper.Section.ValidateSureCheck.StatusCodeInvalid(AbsaApiFailureHandler.FeatureValidateCardAndPin.ValidateSureCheckStatusCodeInvalid(setErrorMessage(header)))
                 }
 
                 is CreateAliasResponseProperty ->  when(isStatusCodeValid(header) &&  aliasId?.isNotEmpty() == true){
                     true -> AbsaResultWrapper.Section.CreateAlias.StatusCodeValid(this)
-                    false -> AbsaResultWrapper.Section.CreateAlias.StatusCodeInValid(AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAliasIdStatusCode(header?.resultMessages?.first()?.responseMessage?:technicalErrorMessage))
+                    false -> AbsaResultWrapper.Section.CreateAlias.StatusCodeInValid(AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAliasIdStatusCode(setErrorMessage(header)))
                 }
 
                 is AbsaRegisterCredentialResponseProperty ->when(isStatusCodeValid(header)){
                     true -> AbsaResultWrapper.Section.RegisterCredentials.StatusCodeValid(this)
-                    false -> AbsaResultWrapper.Section.RegisterCredentials.StatusCodeInValid(AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaRegisterCredentialStatusCode(header?.resultMessages?.first()?.responseMessage?: technicalErrorMessage))
+                    false -> AbsaResultWrapper.Section.RegisterCredentials.StatusCodeInValid(AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaRegisterCredentialStatusCode(setErrorMessage(header)))
                 }
 
                 is LoginResponseProperty -> {
-                    val isResultSuccess = result?.lowercase() == "success"
-                    when (nonce != null && nonce.isNotEmpty() && isResultSuccess && isStatusCodeValid(header)) {
+                    when (nonce != null && nonce.isNotEmpty() && result?.lowercase() == "success" && isStatusCodeValid(header)) {
                         true -> AbsaResultWrapper.Section.Login.StatusCodeValid(this)
-                        false -> AbsaResultWrapper.Section.Login.StatusCodeInValid(AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaRegisterCredentialStatusCode(this.header?.resultMessages?.first()?.responseMessage ?:technicalErrorMessage))
+                        false -> AbsaResultWrapper.Section.Login.StatusCodeInValid(AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaRegisterCredentialStatusCode(setErrorMessage(header)))
                     }
                 }
 
                 is AbsaBalanceEnquiryResponseProperty ->when(isStatusCodeValid(header)){
                     true -> AbsaResultWrapper.Section.ListStatement.FacadeStatusCodeValid(this)
-                    false -> AbsaResultWrapper.Section.ListStatement.StatusCodeInValid(AbsaApiFailureHandler.ListStatement.FacadeStatusCodeInvalid(this.header?.resultMessages?.first()?.responseMessage?:technicalErrorMessage))
+                    false -> AbsaResultWrapper.Section.ListStatement.StatusCodeInValid(AbsaApiFailureHandler.ListStatement.FacadeStatusCodeInvalid(setErrorMessage(header)))
                 }
 
                 is ArchivedStatementListResponseProperty -> when(isStatusCodeValid(header)){
                     true -> AbsaResultWrapper.Section.ListStatement.ArchivedStatusCodeValid(this)
-                    false -> AbsaResultWrapper.Section.ListStatement.StatusCodeInValid(AbsaApiFailureHandler.ListStatement.FacadeStatusCodeInvalid(this.header?.resultMessages?.first()?.responseMessage?: technicalErrorMessage))
+                    false -> AbsaResultWrapper.Section.ListStatement.StatusCodeInValid(AbsaApiFailureHandler.ListStatement.FacadeStatusCodeInvalid(setErrorMessage(header)))
                 }
 
                 is IndividualStatementResponseProperty -> when(isStatusCodeValid(header)){
                     true -> AbsaResultWrapper.Section.ListStatement.IndividualStatusCodeValid(this)
-                    false -> AbsaResultWrapper.Section.ListStatement.StatusCodeInValid(AbsaApiFailureHandler.ListStatement.FacadeStatusCodeInvalid(this.header?.resultMessages?.first()?.responseMessage?:technicalErrorMessage))
+                    false -> AbsaResultWrapper.Section.ListStatement.StatusCodeInValid(AbsaApiFailureHandler.ListStatement.FacadeStatusCodeInvalid(setErrorMessage(header)))
                 }
 
                 else -> null
@@ -139,5 +139,7 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
        }
     }
 
-     override fun isStatusCodeValid(header: Header?) : Boolean = header?.resultMessages?.first()?.responseMessage?.isEmpty() == true && header.statusCode?.equals("0", ignoreCase = true) == true
+    private fun setErrorMessage(header: Header?) = header?.resultMessages?.first()?.responseMessage ?: bindString(R.string.absa_technical_error_occurred)
+
+    override fun isStatusCodeValid(header: Header?) : Boolean = header?.resultMessages?.size == 0 && header.statusCode?.equals("0", ignoreCase = true) == true
 }

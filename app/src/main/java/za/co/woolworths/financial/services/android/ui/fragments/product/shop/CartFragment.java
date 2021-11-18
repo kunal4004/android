@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
-import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
@@ -420,7 +419,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     default:
                         pBar.setVisibility(View.GONE);
                         if (response.getResponse() != null) {
-                            showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, response.getResponse().getMessage());
+                            showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, response.getResponse().message);
                         }
                         break;
                 }

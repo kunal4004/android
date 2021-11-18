@@ -23,9 +23,9 @@ class AbsaRegisterCredentialsImpl(private val sessionKeyGenerator: SessionKeyGen
 
     override fun getAbsaUniqueDeviceId(): String? = Utils.getAbsaUniqueDeviceID()
 
-    override fun getCredentialsVOs(encryptedAlias: String?, base64EncodedEncryptedDerivedKey: String): Array<CredentialVO> {
-        val credentialVOs = arrayOf<CredentialVO>()
-        credentialVOs[0] = CredentialVO(encryptedAlias, mobileApp5DigitPin, base64EncodedEncryptedDerivedKey)
+    override fun getCredentialsVOs(encryptedAlias: String?, base64EncodedEncryptedDerivedKey: String): MutableList<CredentialVO> {
+        val credentialVOs = mutableListOf<CredentialVO>()
+        credentialVOs.add(0, CredentialVO(encryptedAlias, mobileApp5DigitPin, base64EncodedEncryptedDerivedKey))
         return credentialVOs
     }
 
@@ -45,7 +45,7 @@ class AbsaRegisterCredentialsImpl(private val sessionKeyGenerator: SessionKeyGen
 
             val credentialVOs = getCredentialsVOs(encryptedAlias, base64EncodedEncryptedDerivedKey)
 
-            return AbsaRegisterCredentialRequestProperty(Header(), encryptedAlias, deviceId, credentialVOs, sessionKeyGenerator.getGatewaySymmetricKey(sessionKey), sessionKeyGenerator.getEncryptedIVBase64Encoded(sessionKey))
+            return AbsaRegisterCredentialRequestProperty(Header(), encryptedAlias, deviceId, credentialVOs.toTypedArray(), sessionKeyGenerator.getGatewaySymmetricKey(sessionKey), sessionKeyGenerator.getEncryptedIVBase64Encoded(sessionKey))
 
         } catch (e: DecryptionFailureException) {
             FirebaseManager.logException(e)

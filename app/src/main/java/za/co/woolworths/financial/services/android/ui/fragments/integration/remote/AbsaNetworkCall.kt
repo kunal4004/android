@@ -9,11 +9,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.network.ApiInterface
 import za.co.woolworths.financial.services.android.models.network.CommonHeaderInterceptor
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig.Companion.READ_CONNECT_TIMEOUT_UNIT
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig.Companion.READ_CONNECT_TIMEOUT_UNIT_QA
-import za.co.woolworths.financial.services.android.ui.fragments.integration.AbsaApi
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.interceptor.CommonAbsaHeadersInterceptor
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.interceptor.ReceivedCookiesInterceptor
 import java.util.concurrent.TimeUnit

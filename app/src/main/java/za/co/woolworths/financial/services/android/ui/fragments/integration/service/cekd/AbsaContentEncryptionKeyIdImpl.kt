@@ -43,7 +43,7 @@ class AbsaContentEncryptionKeyIdImpl : IAbsaContentEncryptionKeyId {
             val deviceId = absaUniqueDeviceID()
             val seed = SessionKey.generateKey(SessionKey.OUTPUT_KEY_LENGTH).encoded
             val contentEncryptionSeed = AsymmetricCryptoHelper().encryptSymmetricKey(seed, getContentEncryptionPublicKey())
-            val  derivedSeeds = Cryptography.PasswordBasedKeyDerivationFunction2(deviceId, seed, 1000, 256);
+            val  derivedSeeds = Cryptography.PasswordBasedKeyDerivationFunction2(deviceId, seed, 1000, 256)
             derivedSeed(derivedSeeds)
             return deviceId?.let { CekdRequestProperty(deviceId = it, contentEncryptionSeed = Base64.encodeToString(contentEncryptionSeed, Base64.NO_WRAP)) }
         } catch (e: UnsupportedEncodingException) {
@@ -53,8 +53,6 @@ class AbsaContentEncryptionKeyIdImpl : IAbsaContentEncryptionKeyId {
         } catch (e: AsymmetricCryptoHelper.AsymmetricEncryptionFailureException) {
             logException(e)
         } catch (e: AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException) {
-            logException(e)
-        }catch (e: Exception) {
             logException(e)
         }
         return null

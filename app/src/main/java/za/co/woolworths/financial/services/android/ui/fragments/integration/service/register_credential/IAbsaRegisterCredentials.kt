@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 interface IAbsaRegisterCredentials {
     val mobileApp5DigitPin: String
     fun getAbsaUniqueDeviceId(): String?
-    fun getCredentialsVOs(encryptedAlias: String?,base64EncodedEncryptedDerivedKey: String):Array<CredentialVO>
+    fun getCredentialsVOs(encryptedAlias: String?,base64EncodedEncryptedDerivedKey: String): MutableList<CredentialVO>
     fun createRegisterCredentialsRequestBody(aliasId: String?, passcode: String?): AbsaRegisterCredentialRequestProperty?
     suspend fun fetchAbsaRegisterCredentials(aliasId: String?, passcode: String?): NetworkState<AbsaProxyResponseProperty>
 }
