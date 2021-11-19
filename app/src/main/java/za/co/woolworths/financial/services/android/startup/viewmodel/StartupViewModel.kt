@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.startup.viewmodel
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.awfs.coordination.BuildConfig
