@@ -83,7 +83,6 @@ class StartupViewModel(private val startUpRepository: StartUpRepository, private
                 val token = SessionUtilities.getInstance().jwt
                 token.AtgId?.apply {
                     val atgId = if (this.isJsonArray) this.asJsonArray.first().asString else this.asString
-                    Log.e("AtgId :" , atgId)
                     setUserId(atgId)
                     setUserProperty(FirebaseManagerAnalyticsProperties.PropertyNames.ATGId, atgId)
                 }
