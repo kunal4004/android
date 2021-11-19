@@ -100,7 +100,9 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
             appbar?.setBackgroundColor(bindColor(colorId))
             horizontalDivider?.visibility = VISIBLE
             toolbarTitleTextView?.visibility = VISIBLE
+            btnClose?.visibility = GONE
             supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
                 setBackgroundDrawable(ColorDrawable(Color.WHITE))
                 setHomeAsUpIndicator(R.drawable.back24)
             }
@@ -108,7 +110,9 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
             appbar?.setBackgroundColor(Color.TRANSPARENT)
             horizontalDivider?.visibility = GONE
             toolbarTitleTextView?.visibility = GONE
+            btnClose?.visibility = GONE
             supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
                 setHomeAsUpIndicator(R.drawable.back_white)
                 setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
@@ -120,9 +124,25 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
         appbar?.setBackgroundColor(Color.TRANSPARENT)
         horizontalDivider?.visibility = GONE
         toolbarTitleTextView?.visibility = GONE
+        btnClose?.visibility = GONE
         supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.back24)
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+        supportActionBar?.elevation = 0f
+    }
+
+    fun changeActionBarUIForBPITermsConditions() {
+        appbar?.setBackgroundColor(Color.WHITE)
+        horizontalDivider?.visibility = GONE
+        toolbarTitleTextView?.visibility = VISIBLE
+        btnClose?.visibility = VISIBLE
+        btnClose?.setOnClickListener{
+            bpiPresenter?.navigateToPreviousFragment()
+        }
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
         }
         supportActionBar?.elevation = 0f
     }
