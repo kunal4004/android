@@ -20,9 +20,9 @@ class ReceivedCookiesInterceptor : Interceptor {
             if (cookies.size > 0){
 
                 for (cookie in cookies){
-                    when (cookie.lowercase()){
-                        ABSA_COOKIE_XFPT -> AbsaTemporaryDataSourceSingleton.wfpt = cookie
-                        ABSA_COOKIE_WFPT -> AbsaTemporaryDataSourceSingleton.xfpt = cookie
+                    when {
+                        cookie.lowercase().startsWith(ABSA_COOKIE_XFPT) -> AbsaTemporaryDataSourceSingleton.wfpt = cookie
+                        cookie.lowercase().startsWith(ABSA_COOKIE_WFPT) -> AbsaTemporaryDataSourceSingleton.xfpt = cookie
                     }
                 }
 

@@ -7,6 +7,7 @@ import za.co.absa.openbankingapi.KeyGenerationFailureException
 import za.co.absa.openbankingapi.SymmetricCipher
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.woolworths.financial.services.android.ui.extension.json
+import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.AbsaRemoteApi
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.common.SessionKeyGenerator
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.AbsaProxyResponseProperty
@@ -23,9 +24,10 @@ class AbsaRegisterCredentialsImpl(private val sessionKeyGenerator: SessionKeyGen
 
     override fun getAbsaUniqueDeviceId(): String? = Utils.getAbsaUniqueDeviceID()
 
-    override fun getCredentialsVOs(encryptedAlias: String?, base64EncodedEncryptedDerivedKey: String): MutableList<CredentialVO> {
-        val credentialVOs = mutableListOf<CredentialVO>()
-        credentialVOs.add(0, CredentialVO(encryptedAlias, mobileApp5DigitPin, base64EncodedEncryptedDerivedKey))
+    override fun getCredentialsVOs(encryptedAlias: String?, base64EncodedEncryptedDerivedKey: String): Array<CredentialVO?> {
+        val credentialVOs = arrayOfNulls<CredentialVO?>(1)
+
+        credentialVOs[0] =  CredentialVO(encryptedAlias, mobileApp5DigitPin, base64EncodedEncryptedDerivedKey)
         return credentialVOs
     }
 
@@ -45,7 +47,7 @@ class AbsaRegisterCredentialsImpl(private val sessionKeyGenerator: SessionKeyGen
 
             val credentialVOs = getCredentialsVOs(encryptedAlias, base64EncodedEncryptedDerivedKey)
 
-            return AbsaRegisterCredentialRequestProperty(Header(), encryptedAlias, deviceId, credentialVOs.toTypedArray(), sessionKeyGenerator.getGatewaySymmetricKey(sessionKey), sessionKeyGenerator.getEncryptedIVBase64Encoded(sessionKey))
+            return AbsaRegisterCredentialRequestProperty(Header(), encryptedAlias, deviceId, credentialVOs, sessionKeyGenerator.getGatewaySymmetricKey(sessionKey), sessionKeyGenerator.getEncryptedIVBase64Encoded(sessionKey))
 
         } catch (e: DecryptionFailureException) {
             FirebaseManager.logException(e)
@@ -62,6 +64,6 @@ class AbsaRegisterCredentialsImpl(private val sessionKeyGenerator: SessionKeyGen
         val registerCredentialsRequest = createRegisterCredentialsRequestBody(aliasId, passcode)?.json()
         registerCredentialsRequest?.contentLength()
         val withEncryptedBody = registerCredentialsRequest?.toAes256Encrypt()
-        return resultOf(AbsaRemoteApi.service.queryAbsaServiceRegisterCredentials(withEncryptedBody))
+        return resultOf(AbsaRemoteApi.service.queryAbsaServiceRegisterCredentials( AbsaTemporaryDataSourceSingleton.cookie,withEncryptedBody))
     }
 }

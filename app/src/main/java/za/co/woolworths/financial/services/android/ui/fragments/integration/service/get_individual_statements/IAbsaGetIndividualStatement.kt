@@ -6,5 +6,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 
 interface IAbsaGetIndividualStatement {
     fun requestBody(archivedStatement: ArchivedStatement?):String?
-    suspend fun fetchAbsaIndividualStatement(archivedStatement: ArchivedStatement?): NetworkState<AbsaProxyResponseProperty>
+    suspend fun fetchAbsaIndividualStatement(
+        cookie: String,
+        archivedStatement: ArchivedStatement?
+    ): NetworkState<AbsaProxyResponseProperty>
 }

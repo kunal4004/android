@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.service.validate_card_and_pin
 
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.http.HEAD
 import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.SessionKey
 import za.co.absa.openbankingapi.SymmetricCipher
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.woolworths.financial.services.android.ui.extension.json
+import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.AbsaRemoteApi
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.common.ISessionKeyGenerator
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.AbsaProxyResponseProperty
@@ -49,6 +47,7 @@ class ValidateCardAndPinImpl(private val sessionKeyGenerator: ISessionKeyGenerat
         val validateCardAndPinRequestProperty = createCardAndPinRequestProperty(cardPin, cardToken).json()
         validateCardAndPinRequestProperty.contentLength()
         val withEncryptedBody = validateCardAndPinRequestProperty.toAes256Encrypt()
-        return resultOf(AbsaRemoteApi.service.queryAbsaServiceValidateCardAndPin(withEncryptedBody))
+        return resultOf(AbsaRemoteApi.service.queryAbsaServiceValidateCardAndPin(
+            AbsaTemporaryDataSourceSingleton.cookie,withEncryptedBody))
     }
 }

@@ -76,9 +76,25 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             })
 
             archivedStatementResponse.observe(this@AbsaStatementsActivity, { response ->
+                FirebaseEventDetailManager.success(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this@AbsaStatementsActivity)
                 when(response?.archivedStatementList?.isNotEmpty()){
-                    true -> showStatementsList(response.archivedStatementList)
-                    else -> showErrorView()
+                    true -> {
+                        response.archivedStatementList.let { archivedStatementResponse ->
+                            rcvStatements?.apply {
+                                layoutManager = LinearLayoutManager(
+                                    this@AbsaStatementsActivity,
+                                    LinearLayoutManager.VERTICAL,
+                                    false
+                                )
+                                adapter = AbsaStatementsAdapter(archivedStatementResponse, this@AbsaStatementsActivity)
+                                visibility = View.VISIBLE
+                            }
+                        }
+                    }
+                    else -> {
+                        rcvStatements?.visibility = View.GONE
+                        mErrorHandlerView?.setEmptyStateWithAction(9, R.string.call_now, ErrorHandlerView.ACTION_TYPE.CALL_NOW)
+                    }
                 }
             })
 
@@ -90,7 +106,15 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                     else -> showErrorView()
                 }
             })
+
+            individualStatementResponseProperty.observe(this@AbsaStatementsActivity,{
+                when(it){
+                    is ByteArray ->  showTAxInvoice(it, "abc")
+                }
+                inProgress(false)
+            })
         }
+
     }
 
     private fun actionBar() {
@@ -123,7 +147,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         nonce?.let { eSessionId?.let { it1 -> executeGetAllBalances() } }
     }
 
-    fun executeGetArchivedStatement(header: Header?, accountNumber: String?) {
+    private fun executeGetArchivedStatement(header: Header?, accountNumber: String?) {
         KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_GET_ALL_STATEMENTS, OneAppEvents.FeatureName.ABSA)
         mViewModel.fetchArchivedStatement(header, accountNumber)
     }
@@ -131,22 +155,6 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     private fun executeGetAllBalances() {
         val timestampAsString = Utils.getDate(0);
         mViewModel.fetchBalanceEnquiryFacadeGetAllBalances(nonce,eSessionId,timestampAsString)
-    }
-
-    fun showStatementsList(archivedStatementList: ArrayList<ArchivedStatement>?) {
-        FirebaseEventDetailManager.success(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this)
-        archivedStatementList?.let {
-            if (it.size > 0) {
-                hideProgress()
-                rcvStatements.apply {
-                    layoutManager = LinearLayoutManager(this@AbsaStatementsActivity, LinearLayoutManager.VERTICAL, false)
-                    adapter = AbsaStatementsAdapter(it, this@AbsaStatementsActivity)
-                    rcvStatements.visibility = View.VISIBLE
-                }
-            } else {
-                showEmptyView()
-            }
-        }
     }
 
     override fun onBackPressed() {
@@ -174,16 +182,10 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             pbCircular.visibility = View.GONE
     }
 
-    fun showErrorView() {
-        rcvStatements.visibility = View.GONE
+    private fun showErrorView() {
+        rcvStatements?.visibility = View.GONE
         hideProgress()
         mErrorHandlerView?.setEmptyStateWithAction(8, R.string.retry, ErrorHandlerView.ACTION_TYPE.RETRY)
-    }
-
-    private fun showEmptyView() {
-        rcvStatements.visibility = View.GONE
-        hideProgress()
-        mErrorHandlerView?.setEmptyStateWithAction(9, R.string.call_now, ErrorHandlerView.ACTION_TYPE.CALL_NOW)
     }
 
     private fun onActionClick() {
@@ -215,7 +217,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         Intent(this, WPdfViewerActivity::class.java).apply {
             putExtra(WPdfViewerActivity.FILE_NAME, fileName)
             putExtra(WPdfViewerActivity.FILE_VALUE, data)
-            putExtra(WPdfViewerActivity.PAGE_TITLE, WFormatter.formatStatementsDate(fileName))
+            putExtra(WPdfViewerActivity.PAGE_TITLE,"WFormatter.formatStatementsDate(fileName)")
             putExtra(WPdfViewerActivity.GTM_TAG, FirebaseManagerAnalyticsProperties.ABSA_CC_SHARE_STATEMENT)
             startActivity(this)
         }

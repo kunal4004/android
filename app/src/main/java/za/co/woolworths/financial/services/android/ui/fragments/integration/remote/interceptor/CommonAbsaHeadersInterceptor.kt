@@ -12,7 +12,6 @@ class CommonAbsaHeadersInterceptor : Interceptor, RetrofitConfig() {
         with(requestBuilder) {
             header("sessionToken",getSessionToken())
             val  keyId = AbsaTemporaryDataSourceSingleton.keyId
-            AbsaTemporaryDataSourceSingleton.cookie?.let { addHeader("Cookie", it) }
             AbsaTemporaryDataSourceSingleton.jsessionId?.let { addHeader("JSESSIONID", it) }
 
             val contentLength = AbsaTemporaryDataSourceSingleton.contentLength

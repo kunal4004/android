@@ -12,6 +12,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.absa.openbankingapi.woolworths.integration.dto.SecurityNotificationType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaResultWrapper
+import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.cekd.AbsaContentEncryptionKeyIdImpl
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.cekd.CekdResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.common.SessionKeyGenerator
@@ -22,7 +23,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.serv
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.get_archive_statements.AbsaGetArchivedStatementListRequestImpl
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.get_archive_statements.ArchivedStatementListResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.get_individual_statements.AbsaGetIndividualStatementImpl
-import za.co.woolworths.financial.services.android.ui.fragments.integration.service.get_individual_statements.IndividualStatementResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.login.AbsaLoginImpl
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.login.LoginResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.register_credential.AbsaRegisterCredentialResponseProperty
@@ -33,11 +33,12 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.serv
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.validate_sure_checks.ValidateSureCheckResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiResponse
+import java.io.ByteArrayInputStream
 import java.util.concurrent.ScheduledFuture
 
 class AbsaIntegrationViewModel : ViewModel() {
 
-    private var acceptedResultMessages = mutableListOf("success", "processing", "processed")
+    private var acceptedResultMessages = mutableListOf("success", "processed")
     private val failedResultMessages = mutableListOf("failed", "rejected")
     private val continuePollingProcessResultMessage = mutableListOf("processing")
     private val presentOTPScreenResultMessage = mutableListOf("revertback")
@@ -80,8 +81,8 @@ class AbsaIntegrationViewModel : ViewModel() {
     val archivedStatementResponse: LiveData<ArchivedStatementListResponseProperty?>
         get() = _archivedStatementResponse
 
-    private val _individualStatementResponseProperty = MutableLiveData<IndividualStatementResponseProperty?>()
-    val individualStatementResponseProperty: LiveData<IndividualStatementResponseProperty?>
+    private val _individualStatementResponseProperty = MutableLiveData<Any?>()
+    val individualStatementResponseProperty: LiveData<Any?>
         get() = _individualStatementResponseProperty
 
     private val absaValidateCardAndPinDelegate = AbsaRegisterCardAndPinDelegateImpl(
@@ -91,9 +92,7 @@ class AbsaIntegrationViewModel : ViewModel() {
         ValidateSureCheckImpl(),
         AbsaCreateAliasImpl(SessionKeyGenerator()))
 
-    private val absaRegisterCredentialDelegate = AbsaRegisterCredentialDelegateImpl(
-        AbsaContentEncryptionKeyIdImpl(),
-        AbsaRegisterCredentialsImpl(SessionKeyGenerator()))
+    private val absaRegisterCredentialDelegate = AbsaRegisterCredentialDelegateImpl(AbsaRegisterCredentialsImpl(SessionKeyGenerator()))
 
     private val absaLoginDelegate = AbsaLoginDelegateImpl(
         AbsaContentEncryptionKeyIdImpl(),
@@ -226,9 +225,16 @@ class AbsaIntegrationViewModel : ViewModel() {
                             stopPolling()
                         }
                         is AbsaResultWrapper.Section.ValidateSureCheck.StatusCodeValid -> {
-                                mCellNumber = result.validateCardAndPinResponseProperty.cellNumber
-                                _cellNumber.postValue(mCellNumber)
-                                _validateSureCheckResponseProperty.postValue(result.validateCardAndPinResponseProperty)
+                            when(otpToBeVerified == null){
+                                true -> {
+                                    mCellNumber = result.validateCardAndPinResponseProperty.cellNumber
+                                    _cellNumber.postValue(mCellNumber)
+                                }
+                                false -> {
+                                    _validateSureCheckResponseProperty.postValue(result.validateCardAndPinResponseProperty)
+                                }
+                            }
+
                         }
                     }
                 }
@@ -259,25 +265,23 @@ class AbsaIntegrationViewModel : ViewModel() {
     fun fetchRegisterCredentials(aliasId: String?, passcode: String?) {
         with(absaRegisterCredentialDelegate) {
             viewModelScope.launch(Dispatchers.IO) {
-                val fetchAbsaContentEncryptionKeyId = fetchAbsaContentEncryptionKeyId()
+                val fetchRegisterCredentialResponse =
+                    fetchAbsaRegisterCredentials(aliasId, passcode)
                 AbsaApiResponse(
-                    false,
-                    fetchAbsaContentEncryptionKeyId,
-                    CekdResponseProperty::class) { result ->
-                    when(result){
-                        AbsaResultWrapper.Loading -> inProgress(true)
-                        is AbsaResultWrapper.Failure -> failureHandler(result.failure)
-                        is AbsaResultWrapper.Section.Cekd.StatusCodeValid->  viewModelScope.launch(Dispatchers.IO) {
-                            val fetchRegisterCredentialResponse =  fetchAbsaRegisterCredentials(aliasId, passcode)
-                            AbsaApiResponse(true, fetchRegisterCredentialResponse, AbsaRegisterCredentialResponseProperty::class) { registerCredentials ->
-                                when(registerCredentials){
-                                    is AbsaResultWrapper.Loading -> inProgress(true)
-                                    is AbsaResultWrapper.Failure -> failureHandler(registerCredentials.failure)
-                                    is AbsaResultWrapper.Section.RegisterCredentials.StatusCodeValid -> { _registerCredentialResponse.postValue(registerCredentials.response)}
-                                    is AbsaResultWrapper.Section.RegisterCredentials.StatusCodeInValid -> { failureHandler(registerCredentials.failure)}
-                                }
-                            }
+                    true,
+                    fetchRegisterCredentialResponse,
+                    AbsaRegisterCredentialResponseProperty::class
+                ) { registerCredentials ->
+                    when (registerCredentials) {
+                        is AbsaResultWrapper.Loading -> inProgress(true)
+                        is AbsaResultWrapper.Failure -> failureHandler(registerCredentials.failure)
+                        is AbsaResultWrapper.Section.RegisterCredentials.StatusCodeValid -> {
+                            _registerCredentialResponse.postValue(registerCredentials.response)
                         }
+                        is AbsaResultWrapper.Section.RegisterCredentials.StatusCodeInValid -> {
+                            failureHandler(registerCredentials.failure)
+                        }
+
                     }
                 }
             }
@@ -287,6 +291,7 @@ class AbsaIntegrationViewModel : ViewModel() {
     fun fetchLogin(passcode: String){
         with(absaLoginDelegate){
         viewModelScope.launch(Dispatchers.IO) {
+            inProgress(true)
             val fetchAbsaContentEncryptionKeyId = fetchAbsaContentEncryptionKeyId()
             AbsaApiResponse(
                 false,
@@ -297,13 +302,14 @@ class AbsaIntegrationViewModel : ViewModel() {
                     is AbsaResultWrapper.Failure -> failureHandler(result.failure)
                     is AbsaResultWrapper.Section.Cekd.StatusCodeValid->  viewModelScope.launch(Dispatchers.IO) {
                         val fetchRegisterCredentialResponse =  fetchAbsaLogin(passcode)
-                        AbsaApiResponse(true, fetchRegisterCredentialResponse, AbsaRegisterCredentialResponseProperty::class) { login ->
+                        AbsaApiResponse(true, fetchRegisterCredentialResponse, LoginResponseProperty::class) { login ->
                             when(login){
                                 is AbsaResultWrapper.Loading -> inProgress(true)
                                 is AbsaResultWrapper.Failure -> failureHandler(login.failure)
                                 is AbsaResultWrapper.Section.Login.StatusCodeValid -> { _loginResponseProperty.postValue(login.response)}
                                 is AbsaResultWrapper.Section.Login.StatusCodeInValid -> { failureHandler(login.failure)}
                             }
+                            inProgress(false)
                         }
                     }
                 }
@@ -314,9 +320,10 @@ class AbsaIntegrationViewModel : ViewModel() {
 
     fun fetchBalanceEnquiryFacadeGetAllBalances(eSessionId: String?, nonce: String?, timestampAsString: String?) {
         viewModelScope.launch(Dispatchers.IO) {
-          val  fetchAbsaBalanceEnquiryFacadeGetAllBalance =  absaShowStatementDelegate.fetchAbsaBalanceEnquiryFacadeGetAllBalance(eSessionId, nonce, timestampAsString)
+            inProgress(true)
+            val  fetchAbsaBalanceEnquiryFacadeGetAllBalance =  absaShowStatementDelegate.fetchAbsaBalanceEnquiryFacadeGetAllBalance(eSessionId, nonce, timestampAsString)
             AbsaApiResponse(
-                false,
+                true,
                 fetchAbsaBalanceEnquiryFacadeGetAllBalance,
                 AbsaBalanceEnquiryResponseProperty::class){ resultWrapper ->
                 when(resultWrapper){
@@ -325,13 +332,15 @@ class AbsaIntegrationViewModel : ViewModel() {
                     is AbsaResultWrapper.Section.ListStatement.StatusCodeInValid -> _failureHandler.postValue(resultWrapper.failure)
                     is AbsaResultWrapper.Section.ListStatement.FacadeStatusCodeValid ->_absaBalanceEnquiryResponseProperty.postValue(resultWrapper.response)
                 }
+                inProgress(false)
             }
         }
     }
 
     fun fetchArchivedStatement(header: Header?, number: String?) {
+        inProgress(true)
         viewModelScope.launch(Dispatchers.IO) {
-            val fetchArchivedStatement = absaShowStatementDelegate.fetchAbsaArchivedStatement(header, number)
+            val fetchArchivedStatement = absaShowStatementDelegate.fetchAbsaArchivedStatement(header,getCookieWithXFPTAndWFPT(), number)
             AbsaApiResponse(
                 true,
                 fetchArchivedStatement,
@@ -342,31 +351,39 @@ class AbsaIntegrationViewModel : ViewModel() {
                     is AbsaResultWrapper.Section.ListStatement.StatusCodeInValid -> _failureHandler.postValue(resultWrapper.failure)
                     is AbsaResultWrapper.Section.ListStatement.ArchivedStatusCodeValid ->_archivedStatementResponse.postValue(resultWrapper.response)
                 }
+                inProgress(false)
             }
         }
     }
 
     fun fetchIndividualStatement(archivedStatement: ArchivedStatement) {
         viewModelScope.launch(Dispatchers.IO) {
-            val fetchIndividualStatement =
-                absaShowStatementDelegate.fetchAbsaIndividualStatement(archivedStatement)
+            inProgress(true)
+            val fetchIndividualStatement = absaShowStatementDelegate.fetchAbsaIndividualStatement(getCookieWithXFPTAndWFPT(), archivedStatement)
             AbsaApiResponse(
                 true,
                 fetchIndividualStatement,
-                IndividualStatementResponseProperty::class
+                ByteArrayInputStream::class
             ) { resultWrapper ->
                 when (resultWrapper) {
                     is AbsaResultWrapper.Loading -> inProgress(true)
                     is AbsaResultWrapper.Failure -> _failureHandler.postValue(resultWrapper.failure)
                     is AbsaResultWrapper.Section.ListStatement.StatusCodeInValid -> _failureHandler.postValue(resultWrapper.failure)
                     is AbsaResultWrapper.Section.ListStatement.IndividualStatusCodeValid -> _individualStatementResponseProperty.postValue(resultWrapper.response)
+                    is ByteArray -> _individualStatementResponseProperty.postValue(this)
                 }
+                inProgress(false)
             }
         }
     }
 
+    private fun getCookieWithXFPTAndWFPT() = "${AbsaTemporaryDataSourceSingleton.cookie};${AbsaTemporaryDataSourceSingleton.xfpt};${AbsaTemporaryDataSourceSingleton.wfpt}"
+
     private fun stopPolling() {
-        absaValidateCardAndPinDelegate.stopPolling(mScheduleValidateSureCheck)
+        absaValidateCardAndPinDelegate.apply {
+            pollingCount = 0
+            stopPolling(mScheduleValidateSureCheck)
+        }
     }
 
     fun inProgress(state: Boolean) {

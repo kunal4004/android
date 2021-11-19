@@ -32,7 +32,7 @@ class AbsaCreateAliasImpl(private val sessionKeyGenerator: ISessionKeyGenerator)
         val createAliasRespRequestProperty = createAliasRespRequestProperty().json()
         createAliasRespRequestProperty.contentLength()
         val withEncryptedBody = createAliasRespRequestProperty.toAes256Encrypt()
-        return resultOf(AbsaRemoteApi.service.queryAbsaServiceCreateAlias(withEncryptedBody))
+        return resultOf(AbsaRemoteApi.service.queryAbsaServiceCreateAlias(AbsaTemporaryDataSourceSingleton.cookie,withEncryptedBody))
     }
 
     override fun handleCreateAliasResult(createAliasResponseProperty: CreateAliasResponseProperty?): String? {
