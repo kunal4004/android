@@ -35,6 +35,7 @@ import java.util.*
 
 class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.ActionListners {
 
+    private lateinit var mViewArchivedStatement: ArchivedStatement
     private var mCreditCardToken: String? = null
     private var chatAccountProductLandingPage: Pair<ApplyNowState, Account>? = null
     private var nonce: String? = null
@@ -107,9 +108,9 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                 }
             })
 
-            individualStatementResponseProperty.observe(this@AbsaStatementsActivity,{
-                when(it){
-                    is ByteArray ->  showTAxInvoice(it, "abc")
+            individualStatementResponseProperty.observe(this@AbsaStatementsActivity,{ result ->
+                when(result){
+                    is ByteArray ->  showTAxInvoice(result, mViewArchivedStatement.documentWorkingDate)
                 }
                 inProgress(false)
             })
@@ -209,6 +210,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     private fun getIndividualStatement(archivedStatement: ArchivedStatement) {
+        mViewArchivedStatement = archivedStatement
         mViewModel.fetchIndividualStatement(archivedStatement)
     }
 
@@ -217,7 +219,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         Intent(this, WPdfViewerActivity::class.java).apply {
             putExtra(WPdfViewerActivity.FILE_NAME, fileName)
             putExtra(WPdfViewerActivity.FILE_VALUE, data)
-            putExtra(WPdfViewerActivity.PAGE_TITLE,"WFormatter.formatStatementsDate(fileName)")
+            putExtra(WPdfViewerActivity.PAGE_TITLE,WFormatter.formatStatementsDate(fileName))
             putExtra(WPdfViewerActivity.GTM_TAG, FirebaseManagerAnalyticsProperties.ABSA_CC_SHARE_STATEMENT)
             startActivity(this)
         }
