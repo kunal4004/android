@@ -94,7 +94,8 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
 
             validateSureCheckResponseProperty.observe(viewLifecycleOwner,{ validateSureCheckResponseProperty ->
                 when(validateSureCheckResponseProperty?.result?.lowercase()){
-                    "rejected" -> { validateSureCheckResponseProperty ?.let { if (it.otpRetriesLeft > 0) showWrongOTPMessage() else showCommonError() } }
+                    "rejected" -> { validateSureCheckResponseProperty.let { if (it.otpRetriesLeft > 0) showWrongOTPMessage() else showCommonError() }
+                    }
                     "processed" -> {fetchCreateAlias()}
                     else -> showCommonError()
                 }

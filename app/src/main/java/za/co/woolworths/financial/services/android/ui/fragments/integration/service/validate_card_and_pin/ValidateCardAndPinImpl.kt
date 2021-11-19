@@ -3,7 +3,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.ser
 import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.SessionKey
 import za.co.absa.openbankingapi.SymmetricCipher
+import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.woolworths.financial.services.android.ui.extension.json
+import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.AbsaRemoteApi
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.common.ISessionKeyGenerator
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.AbsaProxyResponseProperty
@@ -21,10 +23,11 @@ class ValidateCardAndPinImpl(private val sessionKeyGenerator: ISessionKeyGenerat
         val encryptedIVBase64Encoded = sessionKeyGenerator.getEncryptedIVBase64Encoded(sessionKey)
         val encryptedCardPin = encryptCardPin(cardPin, sessionKey)
         return ValidateCardAndPinRequestProperty(
-            cardToken,
-            encryptedCardPin,
-            gatewaySymmetricKey,
-            encryptedIVBase64Encoded
+                Header(),
+                cardToken,
+                encryptedCardPin,
+                gatewaySymmetricKey,
+                encryptedIVBase64Encoded
         )
     }
 
@@ -44,6 +47,7 @@ class ValidateCardAndPinImpl(private val sessionKeyGenerator: ISessionKeyGenerat
         val validateCardAndPinRequestProperty = createCardAndPinRequestProperty(cardPin, cardToken).json()
         validateCardAndPinRequestProperty.contentLength()
         val withEncryptedBody = validateCardAndPinRequestProperty.toAes256Encrypt()
-        return resultOf(AbsaRemoteApi.service.queryAbsaServiceValidateCardAndPin(withEncryptedBody))
+        return resultOf(AbsaRemoteApi.service.queryAbsaServiceValidateCardAndPin(
+            AbsaTemporaryDataSourceSingleton.cookie,withEncryptedBody))
     }
 }

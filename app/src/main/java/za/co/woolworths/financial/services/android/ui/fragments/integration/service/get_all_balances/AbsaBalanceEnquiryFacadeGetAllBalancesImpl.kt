@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.integration.ser
 
 import za.co.absa.openbankingapi.woolworths.integration.dto.AbsaBalanceEnquiryRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header
+import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.AbsaRemoteApi
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.AbsaProxyResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.NetworkState
@@ -29,6 +30,6 @@ class AbsaBalanceEnquiryFacadeGetAllBalancesImpl  : IAbsaBalanceEnquiryFacadeGet
         val requestBody  = requestBody(eSessionId, nonce, timestampString)
         requestBody?.contentLength()
         val withEncryptedBody = requestBody?.toAes256Encrypt()
-        return  resultOf(AbsaRemoteApi.service.queryAbsaServiceGetAllBalances(withEncryptedBody))
+        return  resultOf(AbsaRemoteApi.service.queryAbsaServiceGetAllBalances(AbsaTemporaryDataSourceSingleton.cookie,withEncryptedBody))
     }
 }

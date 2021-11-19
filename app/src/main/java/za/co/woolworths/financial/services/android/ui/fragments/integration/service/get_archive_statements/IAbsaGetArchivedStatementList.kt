@@ -6,5 +6,5 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 
 interface IAbsaGetArchivedStatementList{
     fun requestBody(header: Header?, accountNumber: String?): String?
-    suspend fun fetchAbsaArchivedStatement(header: Header?, accountNumber: String?): NetworkState<AbsaProxyResponseProperty>
+    suspend fun fetchAbsaArchivedStatement(header: Header?,cookie:String, accountNumber: String?): NetworkState<AbsaProxyResponseProperty>
 }

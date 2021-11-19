@@ -6,7 +6,7 @@ data class AbsaRegisterCredentialRequestProperty(
     val header: Header = Header(),
     val aliasId: String?,
     val deviceId: String?,
-    val credentialVOs: Array<CredentialVO>,
+    val credentialVOs: Array<CredentialVO?>,
     val symmetricKey: String?,
     val symmetricKeyIV: String?
 ) {

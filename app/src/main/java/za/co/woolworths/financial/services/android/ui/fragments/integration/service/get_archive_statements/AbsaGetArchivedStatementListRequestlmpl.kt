@@ -16,10 +16,10 @@ class AbsaGetArchivedStatementListRequestImpl : IAbsaGetArchivedStatementList {
         return  StatementListRequest(header, accountNumber).json
     }
 
-    override suspend fun fetchAbsaArchivedStatement(header: Header?, accountNumber: String?): NetworkState<AbsaProxyResponseProperty> {
+    override suspend fun fetchAbsaArchivedStatement(header: Header?,cookie : String,  accountNumber: String?): NetworkState<AbsaProxyResponseProperty> {
         val requestBody = requestBody(header, accountNumber)
         requestBody?.contentLength()
         val withEncryptedBody = requestBody?.toAes256Encrypt()
-        return resultOf(AbsaRemoteApi.service.queryAbsaServiceGetArchivedStatement(withEncryptedBody))
+        return resultOf(AbsaRemoteApi.service.queryAbsaServiceGetArchivedStatement(cookie , withEncryptedBody))
     }
 }

@@ -14,11 +14,11 @@ class AbsaGetIndividualStatementImpl : IAbsaGetIndividualStatement {
       return archivedStatement?.let { IndividualStatementRequestProperty(it).urlEncodedFormData }
     }
 
-    override suspend fun fetchAbsaIndividualStatement(archivedStatement: ArchivedStatement?): NetworkState<AbsaProxyResponseProperty> {
+    override suspend fun fetchAbsaIndividualStatement(cookie: String,archivedStatement: ArchivedStatement?): NetworkState<AbsaProxyResponseProperty> {
         val requestBody = requestBody(archivedStatement)
         requestBody?.contentLength()
         val withEncryptedBody = requestBody?.toAes256Encrypt()
-        return resultOf(AbsaRemoteApi.service.queryAbsaServiceGetIndividualStatement(withEncryptedBody))
+        return resultOf(AbsaRemoteApi.service.queryAbsaServiceGetIndividualStatement(cookie, withEncryptedBody))
     }
 }
 

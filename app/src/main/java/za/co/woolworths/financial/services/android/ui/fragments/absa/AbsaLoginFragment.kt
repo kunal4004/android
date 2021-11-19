@@ -37,7 +37,6 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
-        private const val technical_error_occurred = "Technical error occurred."
         fun newInstance(creditAccountInfo: String?) = AbsaLoginFragment().apply {
             arguments = Bundle(1).apply {
                 putString("creditCardToken", creditAccountInfo)
@@ -52,7 +51,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

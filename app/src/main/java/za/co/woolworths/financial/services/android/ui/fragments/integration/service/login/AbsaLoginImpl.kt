@@ -6,6 +6,7 @@ import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.KeyGenerationFailureException
 import za.co.absa.openbankingapi.SymmetricCipher
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
+import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.AbsaRemoteApi
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.common.SessionKeyGenerator
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.AbsaProxyResponseProperty
@@ -57,7 +58,7 @@ class AbsaLoginImpl(private val sessionKeyGenerator: SessionKeyGenerator) : IAbs
         val loginRequestBody = requestBody(passcode)
         loginRequestBody?.contentLength()
         val withEncryptedBody = loginRequestBody?.toAes256Encrypt()
-        return resultOf(AbsaRemoteApi.service.queryAbsaServiceLogin(withEncryptedBody))
+        return resultOf(AbsaRemoteApi.service.queryAbsaServiceLogin(AbsaTemporaryDataSourceSingleton.cookie,withEncryptedBody))
     }
 
 }

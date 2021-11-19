@@ -24,9 +24,7 @@ class AbsaRegisterCardAndPinDelegateImpl(
     ICreateAlias by createAlias
 
 class AbsaRegisterCredentialDelegateImpl(
-    private val cekd: IAbsaContentEncryptionKeyId,
     private val registerCredential: IAbsaRegisterCredentials) :
-    IAbsaContentEncryptionKeyId by cekd,
     IAbsaRegisterCredentials by registerCredential
 
 class AbsaLoginDelegateImpl(

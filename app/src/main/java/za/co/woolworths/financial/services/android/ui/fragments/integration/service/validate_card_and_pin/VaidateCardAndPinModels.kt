@@ -4,10 +4,11 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.absa.openbankingapi.woolworths.integration.dto.SecurityNotificationType
 
 data class ValidateCardAndPinRequestProperty(
-    val cardToken: String?,
-    val cardPIN: String?,
-    val symmetricKey: String?,
-    val symmetricKeyIV: String?
+        val header: Header? = Header(),
+        val cardToken: String?,
+        val cardPIN: String?,
+        val symmetricKey: String?,
+        val symmetricKeyIV: String?
 )
 
 data class ValidateCardAndPinResponseProperty(

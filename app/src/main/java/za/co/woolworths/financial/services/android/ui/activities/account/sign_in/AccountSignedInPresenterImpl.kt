@@ -135,7 +135,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
             ApplyNowState.SILVER_CREDIT_CARD-> {
-                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle ?: 999
             }
         }
 
