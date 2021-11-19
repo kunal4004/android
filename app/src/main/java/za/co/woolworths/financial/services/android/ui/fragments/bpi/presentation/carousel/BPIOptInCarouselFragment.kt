@@ -74,6 +74,9 @@ class BPIOptInCarouselFragment : Fragment() {
                 findOutCarouselViewPager?.let { viewPager ->
                     when(nextButton?.text){
                         bindString(R.string.continueLabel) -> {
+                            if(moreInfoHTMLContent == "" && termsConditionsHTMLContent == ""){
+                                getOptInHTMLContent()
+                            }
                             view.findNavController().navigate(R.id.action_BPIOptInCarouselFragment_to_BPIMoreInfoFragment,
                                 bundleOf(
                                     BPI_MORE_INFO_HTML to moreInfoHTMLContent,

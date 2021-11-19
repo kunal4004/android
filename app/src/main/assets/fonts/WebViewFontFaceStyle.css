@@ -1,0 +1,30 @@
+@font-face
+{
+    font-family: 'WFutura';
+    font-weight: 600;
+    src: url('WFutura-SemiBold.otf') format('opentype');
+}
+
+@font-face
+{
+    font-family: 'Myriad Pro';
+    src: url('MyriadPro-Regular.otf') format('opentype');
+}
+
+body.bpi-notes {
+    margin-top: 24px;
+    margin-right: 32px;
+    margin-left: 32px;
+    margin-bottom: 0px;
+}
+
+body.bpi-terms-conditions {
+    margin-top: 24px;
+    margin-right: 24px;
+    margin-left: 24px;
+    margin-bottom: 32px;
+}
+
+body.bpi-terms-conditions a {
+    color: grey;
+}

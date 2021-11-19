@@ -26,7 +26,7 @@
                 android:layout_width="@dimen/hundred_dp"
                 android:layout_height="@dimen/hundred_dp"
                 android:layout_marginTop="@dimen/sixty_dp"
-                android:src="@drawable/insurance"
+                android:src="@drawable/icon_opt_in"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toStartOf="@id/left_guideline"
                 app:layout_constraintTop_toTopOf="parent" />
