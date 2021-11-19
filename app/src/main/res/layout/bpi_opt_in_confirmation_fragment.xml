@@ -55,7 +55,7 @@
                 android:gravity="center"
                 android:lineSpacingExtra="@dimen/five_dp"
                 android:textColor="@color/description_color"
-                android:textSize="@dimen/fifteen_sp"
+                android:textSize="@dimen/eighteen_sp"
                 android:layout_marginTop="@dimen/sixteen_dp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toEndOf="@id/left_guideline"
@@ -70,7 +70,7 @@
                 android:gravity="center"
                 android:lineSpacingExtra="@dimen/five_dp"
                 android:textColor="@color/description_color"
-                android:textSize="@dimen/fifteen_sp"
+                android:textSize="@dimen/eighteen_sp"
                 android:layout_marginTop="@dimen/sixteen_dp"
                 app:layout_constraintEnd_toEndOf="@id/right_guideline"
                 app:layout_constraintStart_toEndOf="@id/left_guideline"
@@ -81,14 +81,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_begin="@dimen/sixteen_dp" />
+                app:layout_constraintGuide_begin="@dimen/twenty_dp" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@id/right_guideline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_end="@dimen/sixteen_dp" />
+                app:layout_constraintGuide_end="@dimen/twenty_dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
