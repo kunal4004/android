@@ -2313,4 +2313,7 @@
     <string name="blackCreditCard_title">Black Credit Card</string>
     <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
 
+    <!--  No browser dialog  -->
+    <string name="browser_not_found_title">Browser Not Found</string>
+    <string name="browser_not_found_msg">To continue, please install a web browser.</string>
 </resources>
