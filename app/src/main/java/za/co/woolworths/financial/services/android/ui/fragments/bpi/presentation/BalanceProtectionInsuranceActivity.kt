@@ -75,11 +75,15 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.back24)
         }
         bpiToolbar.setNavigationOnClickListener {
-            val backPressedFragment = bpiPresenter?.navigateToPreviousFragment()
-            if (backPressedFragment == false) {
-                super.onBackPressed()
-                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-            }
+            onBackPressed()
+        }
+    }
+
+    override fun onBackPressed() {
+        val backPressedFragment = bpiPresenter?.navigateToPreviousFragment()
+        if (backPressedFragment == false) {
+            super.onBackPressed()
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
         }
     }
 

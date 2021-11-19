@@ -11,7 +11,7 @@
             android:layout_height="0dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/optInBpiButton"
-            android:layout_marginTop="@dimen/sixteen_dp"
+            android:layout_marginTop="@dimen/thirty_two_dp"
             android:layout_marginBottom="@dimen/thirty_two_dp"
             android:background="@color/white">
 
@@ -87,10 +87,10 @@
             android:background="@drawable/black_button_drawable_state"
             android:fontFamily="@font/futura_semi_bold"
             android:letterSpacing="0.13"
+            android:textSize="@dimen/sixteen_sp"
             android:text="@string/bpi_opt_in_text"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="@dimen/twelve_sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
