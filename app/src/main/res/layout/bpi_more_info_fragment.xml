@@ -87,7 +87,7 @@
             android:background="@drawable/black_button_drawable_state"
             android:fontFamily="@font/futura_semi_bold"
             android:letterSpacing="0.13"
-            android:textSize="@dimen/sixteen_sp"
+            android:textSize="@dimen/thirteen_sp"
             android:text="@string/bpi_opt_in_text"
             android:textAllCaps="true"
             android:textColor="@color/white"
