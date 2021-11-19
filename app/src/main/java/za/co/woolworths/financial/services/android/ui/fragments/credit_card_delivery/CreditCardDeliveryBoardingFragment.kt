@@ -50,26 +50,26 @@ class CreditCardDeliveryBoardingFragment : Fragment() {
     }
 
     private fun init() {
-        var creditCardName: String = bindString(R.string.blackCreditCard_title)
+        var creditCardName: String = bindString(R.string.black_credit_card_title)
         val formattedCardDeliveryFee: String = WoolworthsApplication.getCreditCardDelivery()?.formattedCardDeliveryFee
                 ?: ""
         when {
             accountBinNumber.equals(Utils.GOLD_CARD, true) -> {
                 imgCreditCard?.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
-                creditCardName = bindString(R.string.goldCreditCard_title)
+                creditCardName = bindString(R.string.gold_credit_card_title)
                 descriptionNoteTextView?.visibility = View.VISIBLE
                 descriptionNoteTextView?.text = KotlinUtils.highlightText(bindString(R.string.setup_credit_card_delivery_desc_please_note, bindString(R.string.goldCreditCard_title_small), formattedCardDeliveryFee), mutableListOf("Please note:", "R${formattedCardDeliveryFee}"))
             }
             accountBinNumber.equals(Utils.SILVER_CARD, true) -> {
                 imgCreditCard?.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
-                creditCardName = bindString(R.string.silverCreditCard_title)
+                creditCardName = bindString(R.string.silver_credit_card_title)
 
                 descriptionNoteTextView?.visibility = View.VISIBLE
                 descriptionNoteTextView?.text = KotlinUtils.highlightText(bindString(R.string.setup_credit_card_delivery_desc_please_note, bindString(R.string.silver_credit_card), formattedCardDeliveryFee), mutableListOf("Please note:", "R${formattedCardDeliveryFee}"))
             }
             accountBinNumber.equals(Utils.BLACK_CARD, true) -> {
                 imgCreditCard?.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
-                creditCardName = bindString(R.string.blackCreditCard_title)
+                creditCardName = bindString(R.string.black_credit_card_title)
             }
         }
         titleTextView?.text = bindString(R.string.setup_credit_card_delivery_title, creditCardName)
