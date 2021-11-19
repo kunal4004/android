@@ -70,6 +70,10 @@
         tools:layout="@layout/bpi_opt_in_carousel_fragment" >
         <action
             android:id="@+id/action_BPIOptInCarouselFragment_to_BPIMoreInfoFragment"
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right"
             app:destination="@id/BPIMoreInfoFragment" />
     </fragment>
 
@@ -80,7 +84,18 @@
         tools:layout="@layout/bpi_more_info_fragment" >
         <action
             android:id="@+id/action_BPIMoreInfoFragment_to_BPIOptInConfirmationFragment"
+            app:enterAnim="@anim/navigation_slide_in_from_right"
+            app:exitAnim="@anim/navigation_slide_to_left"
+            app:popEnterAnim="@anim/navigation_slide_from_left"
+            app:popExitAnim="@anim/navigation_slide_to_right"
             app:destination="@id/BPIOptInConfirmationFragment" />
+        <action
+            android:id="@+id/action_BPIMoreInfoFragment_to_BPITermsAndConditionFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/slide_down_anim"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_down_anim"
+            app:destination="@id/BPITermsAndConditionFragment" />
     </fragment>
 
     <fragment
@@ -88,5 +103,13 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.BPIOptInConfirmationFragment"
         android:label="BPIOptInConfirmationFragment"
         tools:layout="@layout/bpi_opt_in_confirmation_fragment" >
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/BPITermsAndConditionFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.BPITermsAndConditionFragment"
+        android:label="BPITermsAndConditionFragment"
+        tools:layout="@layout/bpi_terms_conditions_fragment" >
     </fragment>
 </navigation>

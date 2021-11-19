@@ -45,7 +45,6 @@ class BPIOptInCarouselFragment : Fragment() {
         getOptInHTMLContent()
 
         activity?.let { Utils.updateStatusBarBackground(it, R.color.white) }
-        (activity as? BalanceProtectionInsuranceActivity)?.changeActionBarUIForBPIOptIn()
 
         val carouselList = bpiViewModel?.insuranceLeadGenCarouselList()
         val carouselSize = carouselList?.size ?: 0
@@ -90,6 +89,11 @@ class BPIOptInCarouselFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        (activity as? BalanceProtectionInsuranceActivity)?.changeActionBarUIForBPIOptIn()
+        super.onResume()
     }
 
     private fun getOptInHTMLContent() {
