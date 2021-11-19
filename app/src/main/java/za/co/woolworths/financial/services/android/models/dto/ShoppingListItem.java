@@ -11,7 +11,7 @@ public class ShoppingListItem {
 
 	public String internalImageURL;
 
-	public String externalImageURL;
+	public String externalImageRefV2;
 
 	public String Id;
 
