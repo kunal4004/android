@@ -2310,4 +2310,9 @@
     <string name="empty_cart_title">Your Cart Is Empty</string>
     <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
     <string name="native_checkout_collecting_from">Collecting From</string>
+    <string name="collection_time_detail_title">When Would You Like To Collect?</string>
+    <string name="native_checkout_collection_date">Collection Date</string>
+    <string name="native_checkout_collection_timeslot">Collection Timeslot</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="confirm_date">CONFIRM DATE</string>
 </resources>
