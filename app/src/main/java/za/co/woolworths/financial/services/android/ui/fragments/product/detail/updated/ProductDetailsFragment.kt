@@ -109,12 +109,12 @@ import za.co.woolworths.financial.services.android.ui.vto.presentation.*
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonitor
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
-import java.io.ByteArrayOutputStream
 import android.provider.MediaStore
 import android.graphics.Bitmap
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
-import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility
+import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
+import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility.rotate
 
 
 @AndroidEntryPoint
@@ -169,6 +169,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var lightingTipsLiveCamera: Boolean = false
     private var lightingTipsTakePhoto: Boolean = false
     private var saveVtoApplyImage : Bitmap? = null
+    private var captureImgLiveCamera : Bitmap? = null
     private var isColorSelectionLayoutOnTop: Boolean = false
     private var isLiveCamera: Boolean = false
     private var isColorApplyFromLiveCamera: Boolean = false
@@ -332,43 +333,42 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun captureImageFromVtoLiveCamera() {
-        liveCameraViewModel.takenPicture()
-        job?.cancel()
-        viewLifecycleOwner.lifecycleScope.launch {
-            var countText = 3
-            while (countText >= 0) {
-                delay(DELAY_1000_MS)
+        try {
+            liveCameraViewModel.takenPicture()
+            job?.cancel()
+            viewLifecycleOwner.lifecycleScope.launch {
+                var countText = 3
+                while (countText >= 0) {
+                    delay(DELAY_1000_MS)
                     txtCountCameraCaptureImage.visibility = View.VISIBLE
                     txtCountCameraCaptureImage.text = countText.toString()
-                countText--
+                    countText--
+                }
+                liveCameraViewModel.takenPicture.observe(
+                    viewLifecycleOwner,
+                    Observer { result ->
+                        saveVtoApplyImage = result as Bitmap
+                        captureImgLiveCamera = result
+                        txtCountCameraCaptureImage.visibility = View.GONE
+                        setPickedImage(null, result, true)
+                        isLiveCameraResumeState = false
+                    })
+
+                retakeCamera.visibility = View.VISIBLE
+                imgVTOSplit.visibility = View.GONE
+                captureImage.visibility = View.GONE
+                imgDownloadVTO.visibility = View.VISIBLE
+                imgVTOEffect.setImageBitmap(saveVtoApplyImage)
+                cameraSurfaceView.visibility = View.GONE
+                isColorApplyFromLiveCamera = false
+                isRefreshImageEffectLiveCamera = false
+
             }
-            txtCountCameraCaptureImage.visibility = View.GONE
-            liveCameraViewModel.takenPicture.observe(
-                viewLifecycleOwner,
-                Observer { result ->
-                    saveVtoApplyImage = result as Bitmap
-                    setPickedImage(getImageUri(result as Bitmap),true)
-                    isLiveCameraResumeState = false
-
-                })
-
-            retakeCamera.visibility = View.VISIBLE
-            imgVTOSplit.visibility = View.GONE
-            captureImage.visibility = View.GONE
-            imgDownloadVTO.visibility = View.VISIBLE
-            cameraSurfaceView.visibility = View.GONE
-            isColorApplyFromLiveCamera = false
-            isRefreshImageEffectLiveCamera = false
+        } catch (e: Exception) {
+            // Do Nothing
         }
+    }
 
-    }
-   private fun getImageUri(inImage: Bitmap): Uri? {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.PNG, 100, bytes)
-        val path =
-            MediaStore.Images.Media.insertImage(requireActivity().contentResolver, inImage, "wool", null)
-        return Uri.parse(path)
-    }
 
     private fun reOpenCamera() {
         if (isLiveCamera) {
@@ -975,7 +975,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productDetails?.productId,
             getSelectedSku()?.sku
         )
-        selectedImageUri?.let { getApplyResultSelectColor() }
+         getApplyResultSelectColor()
 
     }
 
@@ -989,7 +989,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             colourUnavailableError.visibility = View.VISIBLE
                             imgVTORefresh.visibility = View.GONE
                             imgDownloadVTO.visibility = View.GONE
-                            imgVTOEffect.setPhotoUri(selectedImageUri)
+                            if (null != captureImgLiveCamera) {
+                                imgVTOEffect.setImageBitmap(captureImgLiveCamera)
+                            } else {
+                                setBitmapFromUri(selectedImageUri)
+                            }
                         }
                         null != result -> {
                             colourUnavailableError.visibility = View.GONE
@@ -1002,11 +1006,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             colourUnavailableError.visibility = View.GONE
                             imgVTORefresh.visibility = View.GONE
                             imgDownloadVTO.visibility = View.GONE
-                            imgVTOEffect.setPhotoUri(uri)
-
+                            if (null != captureImgLiveCamera) {
+                                imgVTOEffect.setImageBitmap(captureImgLiveCamera)
+                            } else {
+                                setBitmapFromUri(uri)
+                            }
                         }
                     }
-
                 })
 
     }
@@ -1709,12 +1715,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature) {
-        // Do Nothing
+           //Do Nothing
     }
-
     override fun onPromptDismiss() {
-        // Do Nothing
-
+        imgVTOOpen.setImageResource(R.drawable.ic_camera_vto)
     }
 
 
@@ -2226,7 +2230,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val mime = MimeTypeMap.getSingleton()
         val type = mime.getExtensionFromMimeType(cR.getType(uri!!))
         if (type.equals("jpg") || type.equals("png")) {
-            setPickedImage(uri,false)
+            setPickedImage(uri, null,false)
         } else {
             vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
                 this@ProductDetailsFragment,
@@ -2244,7 +2248,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private val takePhoto =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { isPicked ->
             if (isPicked) {
-                setPickedImage(uri,false)
+                setPickedImage(uri, null,false)
             } else {
                 vtoLayout.visibility = View.GONE
                 share.visibility = View.VISIBLE
@@ -2446,41 +2450,44 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
 
-    private fun setPickedImage(uri: Uri?, isFromLiveCamera: Boolean) {
-        if(!isFromLiveCamera){
+    private fun setPickedImage(
+        uri: Uri?,
+        captureLiveCameraImg: Bitmap?,
+        isFromLiveCamera: Boolean
+    ) {
+        if (!isFromLiveCamera) {
             moveColorSelectionLayout()
         }
         isLiveCameraOpened = false
-        uri?.let {
-            vtoApplyEffectOnImageViewModel.setApplier(uri,productDetails?.productId,
-                getSelectedSku()?.sku,isFromLiveCamera)
-
-            when {
-                lightingTipsGallery -> galleryFirstTimeLightingTips()
-                lightingTipsFiles -> filesFirstTimeLightingTips()
-                lightingTipsTakePhoto -> takePhotoFirstTimeLightingTips()
-
-            }
-            setChangePickedImage()
-            selectedImageUri = uri
-            vtoLayout.visibility = View.VISIBLE
-            share.visibility = View.GONE
-            productImagesViewPagerIndicator.visibility = View.GONE
-            closePage.visibility = View.GONE
-            productImagesViewPager.visibility = View.GONE
-            captureImage.visibility = View.GONE
-            imgVTOSplit.visibility = View.GONE
-            noFaceDetected.visibility = View.GONE
-            imgVTOEffect.setPhotoUri(uri)
-            isVtoImage = true
-
-            if(!isObserveImageData){
-                isObserveImageData = true
-                getApplyResult(uri)
-           }
+        vtoApplyEffectOnImageViewModel.setApplier(
+            uri, productDetails?.productId,
+            getSelectedSku()?.sku, captureLiveCameraImg, isFromLiveCamera
+        )
+        when {
+            lightingTipsGallery -> galleryFirstTimeLightingTips()
+            lightingTipsFiles -> filesFirstTimeLightingTips()
+            lightingTipsTakePhoto -> takePhotoFirstTimeLightingTips()
 
         }
+        setChangePickedImage()
+        vtoLayout.visibility = View.VISIBLE
+        share.visibility = View.GONE
+        productImagesViewPagerIndicator.visibility = View.GONE
+        closePage.visibility = View.GONE
+        productImagesViewPager.visibility = View.GONE
+        captureImage.visibility = View.GONE
+        imgVTOSplit.visibility = View.GONE
+        noFaceDetected.visibility = View.GONE
+        isVtoImage = true
+        uri?.let {
+            selectedImageUri = it
+            imgVTOEffect.setPhotoUri(uri)
+        }
+        if (!isObserveImageData) {
+            isObserveImageData = true
+            getApplyResult()
 
+        }
     }
 
     private fun setChangePickedImage() {
@@ -2600,7 +2607,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun getApplyResult(uri: Uri) {
+    private fun getApplyResult() {
             vtoApplyEffectOnImageViewModel.applyEffectResult.observe(
                 viewLifecycleOwner,
                 Observer { result ->
@@ -2610,13 +2617,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             imgVTORefresh.visibility = View.GONE
                             imgDownloadVTO.visibility = View.GONE
                             colourUnavailableError.visibility = View.GONE
-                            imgVTOEffect.setPhotoUri(selectedImageUri)
+                            setBitmapFromUri(selectedImageUri)
                         }
                         result.equals(VTO_COLOR_NOT_MATCH) -> {
                             colourUnavailableError.visibility = View.VISIBLE
                             imgVTORefresh.visibility = View.GONE
                             imgDownloadVTO.visibility = View.GONE
-                            imgVTOEffect.setPhotoUri(selectedImageUri)
+                            setBitmapFromUri(selectedImageUri)
                         }
                         result.equals(result as Bitmap)-> {
                             colourUnavailableError.visibility = View.GONE
@@ -2625,7 +2632,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             imgDownloadVTO.visibility = View.VISIBLE
                             imgVTOEffect.setImageBitmap(result as Bitmap?)
                             saveVtoApplyImage = result
-
                         }
                         result.equals(VTO_FAIL_IMAGE_LOAD) -> {
                             noFaceDetected.visibility = View.GONE
@@ -2639,10 +2645,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 resources.getString(R.string.vto_generic_error_description),
                                 resources.getString(R.string.try_again)
                             )
+
                         }
                     }
                 })
        }
+
+    private fun setBitmapFromUri(uri: Uri?) {
+        uri?.let {
+            val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
+            val rotatedBitmap = bitmap.rotate(90f)
+            imgVTOEffect.setImageBitmap(rotatedBitmap)
+        }
+    }
 
     private fun clearEffect() {
         if (isRefreshImageEffectLiveCamera) {
@@ -2660,7 +2675,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 if (null != bitmap) {
                     imgVTOEffect.setImageBitmap(bitmap)
                 } else {
-                    imgVTOEffect.setPhotoUri(selectedImageUri)
+                   // imgVTOEffect.setPhotoUri(selectedImageUri)
+                    setBitmapFromUri(selectedImageUri)
                 }
             })
         productColorSelectorAdapter?.clearSelection()

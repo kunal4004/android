@@ -1,15 +1,17 @@
-package za.co.woolworths.financial.services.android.ui.vto.ui
+package za.co.woolworths.financial.services.android.ui.vto.utils
 
 import android.annotation.SuppressLint
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
 import android.net.http.HttpResponseCache
 import android.os.Handler
 import androidx.exifinterface.media.ExifInterface
 import com.perfectcorp.perfectlib.*
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import java.io.File
 import java.io.IOException
 
@@ -93,5 +95,11 @@ object SdkUtility {
         }
         return matrix
     }
+
+    fun Bitmap.rotate(degrees: Float): Bitmap {
+        val matrix = Matrix().apply { postRotate(degrees) }
+        return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+    }
+
 
 }
