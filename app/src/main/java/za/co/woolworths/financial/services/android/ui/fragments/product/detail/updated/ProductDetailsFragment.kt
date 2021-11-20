@@ -109,13 +109,10 @@ import za.co.woolworths.financial.services.android.ui.vto.presentation.*
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listener.VtoTryAgainListener
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonitor
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
-import android.provider.MediaStore
 import android.graphics.Bitmap
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
-import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility.rotate
-
 
 @AndroidEntryPoint
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
@@ -2653,9 +2650,34 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun setBitmapFromUri(uri: Uri?) {
         uri?.let {
-            val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
-            val rotatedBitmap = bitmap.rotate(90f)
-            imgVTOEffect.setImageBitmap(rotatedBitmap)
+            try {
+                requireActivity().contentResolver.openInputStream(it)
+                    .use { imageStream ->
+                        val bitmap = BitmapFactory.decodeStream(imageStream)
+                        val matrix: Matrix =
+                            SdkUtility.getRotationMatrixByExif(
+                                requireActivity().contentResolver,
+                                it
+                            )
+                        val selectedImage =
+                            Bitmap.createBitmap(
+                                bitmap,
+                                0,
+                                0,
+                                bitmap.width,
+                                bitmap.height,
+                                matrix,
+                                true
+                            )
+                        if (bitmap != selectedImage) {
+                            bitmap.recycle()
+                        }
+                        imgVTOEffect.setImageBitmap(selectedImage)
+
+                    }
+            } catch (e: Exception) {
+                //Do Nothing
+            }
         }
     }
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 
 import android.content.ContentResolver
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
 import android.net.http.HttpResponseCache
@@ -95,11 +94,5 @@ object SdkUtility {
         }
         return matrix
     }
-
-    fun Bitmap.rotate(degrees: Float): Bitmap {
-        val matrix = Matrix().apply { postRotate(degrees) }
-        return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
-    }
-
 
 }
