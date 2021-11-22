@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_MORE_INFO_HTML
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_TERMS_CONDITIONS_HTML
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.InsuranceLeadCarousel
@@ -34,6 +35,7 @@ class BPIOptInCarouselFragment : Fragment() {
     private val bpiViewModel: BPIViewModel? by activityViewModels()
     private var moreInfoHTMLContent = ""
     private var termsConditionsHTMLContent = ""
+    private var productGroupCode: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bpi_opt_in_carousel_fragment, container, false)
@@ -42,6 +44,7 @@ class BPIOptInCarouselFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        productGroupCode = arguments?.getString(BPI_PRODUCT_GROUP_CODE)
         getOptInHTMLContent()
 
         activity?.let { Utils.updateStatusBarBackground(it, R.color.white) }
@@ -79,7 +82,8 @@ class BPIOptInCarouselFragment : Fragment() {
                             view.findNavController().navigate(R.id.action_BPIOptInCarouselFragment_to_BPIMoreInfoFragment,
                                 bundleOf(
                                     BPI_MORE_INFO_HTML to moreInfoHTMLContent,
-                                    BPI_TERMS_CONDITIONS_HTML to termsConditionsHTMLContent))
+                                    BPI_TERMS_CONDITIONS_HTML to termsConditionsHTMLContent,
+                                    BPI_PRODUCT_GROUP_CODE to productGroupCode))
                         }
                         else -> {
                             viewPager.currentItem = tabLayout.selectedTabPosition + 1
@@ -97,7 +101,7 @@ class BPIOptInCarouselFragment : Fragment() {
     }
 
     private fun getOptInHTMLContent() {
-        arguments?.getString(BalanceProtectionInsuranceActivity.BPI_PRODUCT_GROUP_CODE)?.let { productGroupCode ->
+        productGroupCode?.let { productGroupCode ->
             OneAppService.getBPITermsAndConditionsInfo(productGroupCode).enqueue(CompletionHandler(object : IResponseListener<BPITermsConditionsResponse> {
                 override fun onSuccess(response: BPITermsConditionsResponse?) {
                     when(response?.httpCode){
