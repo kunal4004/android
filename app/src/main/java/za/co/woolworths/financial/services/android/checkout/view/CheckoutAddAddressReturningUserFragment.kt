@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.CONFIRM_DELIVERY_ADDRESS_RESPONSE_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment.Companion.KEY_ARGS_WEB_TOKEN
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutPaymentWebFragment.Companion.REQUEST_KEY_PAYMENT_STATUS
 import za.co.woolworths.financial.services.android.checkout.view.ExpandableGrid.Companion.DEFAULT_POSITION
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter.Companion.DELIVERY_TYPE_TIMESLOT
@@ -201,6 +202,24 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             when (bundle.getInt("bundle")) {
                 ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS -> {
                     getConfirmDeliveryAddressDetails()
+                }
+                ErrorHandlerBottomSheetDialog.ERROR_TYPE_PAYMENT_STATUS -> {
+                    onCheckoutPaymentClick()
+                }
+            }
+        }
+        setFragmentResultListener(REQUEST_KEY_PAYMENT_STATUS) { _, bundle ->
+            when (bundle?.get(CheckoutPaymentWebFragment.KEY_STATUS)) {
+                CheckoutPaymentWebFragment.PaymentStatus.PAYMENT_ERROR -> {
+                    view?.findNavController()?.navigate(
+                        R.id.action_CheckoutAddAddressReturningUserFragment_to_ErrorHandlerBottomSheetDialog,
+                        bundleOf(
+                            ErrorHandlerBottomSheetDialog.ERROR_TITLE to context?.getString(R.string.common_error_unfortunately_something_went_wrong),
+                            ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION to context?.getString(R.string.please_try_again),
+                            ErrorHandlerBottomSheetDialog.ERROR_TYPE to
+                                    ErrorHandlerBottomSheetDialog.ERROR_TYPE_PAYMENT_STATUS
+                        )
+                    )
                 }
             }
         }
