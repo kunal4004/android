@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -120,7 +121,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         callStorePickupInfoAPI()
     }
 
-    private fun startShimmerView() {
+    private fun initShimmerView() {
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
@@ -219,9 +220,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 imageViewCaretForwardCollection
             )
         )
+        startShimmerView()
+    }
 
-        txtNeedBags.visibility = View.GONE
-        switchNeedBags.visibility = View.GONE
+    fun startShimmerView() {
+        txtNeedBags?.visibility = View.GONE
+        switchNeedBags?.visibility = View.GONE
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {
@@ -231,7 +235,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
     }
 
-    private fun stopShimmerView() {
+    fun stopShimmerView() {
         shimmerComponentArray.forEach {
             if (it.first.isShimmerStarted) {
                 it.first.stopShimmer()
@@ -240,8 +244,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             }
         }
 
-        txtNeedBags.visibility = View.VISIBLE
-        switchNeedBags.visibility = View.VISIBLE
+        txtNeedBags?.visibility = View.VISIBLE
+        switchNeedBags?.visibility = View.VISIBLE
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
@@ -259,7 +263,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     private fun callStorePickupInfoAPI() {
-        startShimmerView()
+        initShimmerView()
 
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
             .observe(viewLifecycleOwner, { response ->
@@ -457,7 +461,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         checkoutCollectingUserInfoLayout.setOnClickListener(this)
     }
 
-    private fun initializeDeliveryInstructions() {
+    fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
@@ -534,7 +538,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
      *
      * @see [FoodSubstitution]
      */
-    private fun initializeFoodSubstitution() {
+    fun initializeFoodSubstitution() {
         selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
         radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
@@ -673,5 +677,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
             }
         }
+    }
+
+    @VisibleForTesting
+    fun testSetShimmerArray(mockedArray: List<Pair<ShimmerFrameLayout, View>>) {
+        shimmerComponentArray = mockedArray
+    }
+
+    @VisibleForTesting
+    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
+        checkoutAddAddressNewUserViewModel = viewModel
     }
 }
