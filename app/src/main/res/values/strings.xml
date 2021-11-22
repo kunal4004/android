@@ -2300,6 +2300,7 @@
     <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
     <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
     <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
+    <string name="select_your_preferred_collection_time_error">Please select a collection timeslot.</string>
 
     <string name="absa_mobile_app_pin_blocked_title">Mobile App PIN Is Now\nBlocked</string>
     <string name="absa_mobile_app_pin_blocked_desc_block_1">To release the hold on your PIN, please contact customer service on 086 150 2020 or email queries@wfs.co.za.</string>

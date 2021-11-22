@@ -59,7 +59,7 @@
                 app:layout_constraintTop_toBottomOf="@id/checkoutCollectingTimeDetailsLayout" />
 
             <include
-                android:id="@+id/layoutDeliveryInstructions"
+                android:id="@+id/layoutCollectionInstructions"
                 layout="@layout/layout_native_checkout_delivery_instructions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,7 +72,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/ten_dp"
-                app:layout_constraintTop_toBottomOf="@+id/layoutDeliveryInstructions" />
+                app:layout_constraintTop_toBottomOf="@+id/layoutCollectionInstructions" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
