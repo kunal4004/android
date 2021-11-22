@@ -1699,7 +1699,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     .setTitle(R.string.try_on_intro_txt)
                     .setDescription(R.string.try_on_intro_desc)
                     .setActionText(R.string.got_it)
-                    .setShapePadding(48)
                     .hideImage()
                     .setAction(this@ProductDetailsFragment)
                     .hideFeatureTutorialsText()
