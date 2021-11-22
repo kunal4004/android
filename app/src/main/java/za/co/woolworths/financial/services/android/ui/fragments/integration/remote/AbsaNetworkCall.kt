@@ -66,16 +66,12 @@ class AbsaNetworkCall : IAbsaNetworkCall {
             interceptors().add(logging)
         }
     }
-
-    companion object {
-        const val ABSA_BASE_URL = "https://wfs-appserver-qa.wigroup.co/creditcard-service/app/v4/"
-    }
 }
 
 /** Globally access the Retrofit method(s) */
 object AbsaRemoteApi {
     val service: AbsaApi by lazy {
-        AbsaNetworkCall().build(AbsaApi::class.java, AbsaNetworkCall.ABSA_BASE_URL)
+        AbsaNetworkCall().build(AbsaApi::class.java, "${BuildConfig.HOST}/creditcard-service/app/v4/" )
     }
 }
 

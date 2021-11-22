@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 import za.co.woolworths.financial.services.android.util.FirebaseManager.Companion.logException
 import za.co.woolworths.financial.services.android.util.Utils
 import java.io.UnsupportedEncodingException
-import java.lang.Exception
 
 class AbsaContentEncryptionKeyIdImpl : IAbsaContentEncryptionKeyId {
 
@@ -61,6 +60,7 @@ class AbsaContentEncryptionKeyIdImpl : IAbsaContentEncryptionKeyId {
     override suspend fun fetchAbsaContentEncryptionKeyId(): NetworkState<AbsaProxyResponseProperty> {
         val cekdRequestProperty = createCekdRequestProperty { derivedSeeds ->
             AbsaTemporaryDataSourceSingleton.deriveSeeds = derivedSeeds
+            AbsaTemporaryDataSourceSingleton.xEncryptionKey = derivedSeeds
         }
         return resultOf(AbsaRemoteApi.service.queryAbsaContentEncryptionKeyID(cekdRequestProperty))
     }

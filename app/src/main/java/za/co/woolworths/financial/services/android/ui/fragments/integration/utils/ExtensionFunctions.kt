@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.utils
 
 import retrofit2.HttpException
+import za.co.absa.openbankingapi.AsymmetricCryptoHelper
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.Aes256DecryptSymmetricCipherDelegate
@@ -24,9 +25,17 @@ fun resultOf(absaProxyResponseProperty: AbsaProxyResponseProperty): NetworkState
     }
 }
 
+
+fun ByteArray.toHex(separator: String = " "): String = joinToString(separator = separator) { eachByte -> "%02x".format(eachByte) }
+
+fun ByteArray.toEncryptedHex(): String? {
+   val logPublicKey =  WoolworthsApplication.getLogPublicKey()
+   return if (logPublicKey!=null) AsymmetricCryptoHelper().encryptToString(this.toHex(), WoolworthsApplication.getLogPublicKey()) else null
+}
+
 fun String.contentLength(): Int? {
     AbsaTemporaryDataSourceSingleton.contentLength = length
-    return  AbsaTemporaryDataSourceSingleton.contentLength
+    return AbsaTemporaryDataSourceSingleton.contentLength
 }
 
 fun String.toAes256Encrypt(): String {

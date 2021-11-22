@@ -156,6 +156,16 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static AccountOptions accountOptions;
     private static DeviceSecurity deviceSecurity;
 
+    private static String logPublicKey;
+
+    public static String getLogPublicKey(){
+    return logPublicKey;
+    }
+
+    public static void setLogPublicKey(String logPublicKey) {
+        WoolworthsApplication.logPublicKey = logPublicKey;
+    }
+
     public static String getApiId() {
         PackageInfo packageInfo = null;
         try {

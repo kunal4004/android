@@ -55,6 +55,7 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 defaults?.apply {
                     WoolworthsApplication.setRegistrationTCLink(registerTCLink)
                     WoolworthsApplication.setFaqLink(faqLink)
+                    WoolworthsApplication.setLogPublicKey(logPublicKey)
                     WoolworthsApplication.setWrewardsLink(wrewardsLink)
                     WoolworthsApplication.setRewardingLink(rewardingLink)
                     WoolworthsApplication.setHowToSaveLink(howtosaveLink)
