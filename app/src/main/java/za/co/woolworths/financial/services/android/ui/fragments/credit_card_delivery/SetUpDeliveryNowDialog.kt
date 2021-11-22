@@ -46,19 +46,19 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
         mApplyNowState = applyNowState()
         mFirebaseCreditCardDeliveryEvent = activity?.let { FirebaseCreditCardDeliveryEvent(mApplyNowState, it) }
         deliveredToName = SessionUtilities.getInstance()?.jwt?.name?.get(0)
-        var creditCardName: String = bindString(R.string.blackCreditCard_title)
+        var creditCardName: String = bindString(R.string.black_credit_card_title)
         when {
             accountBinNumber.equals(Utils.GOLD_CARD, true) -> {
                 cardImage?.setImageDrawable(bindDrawable(R.drawable.w_gold_credit_card))
-                creditCardName = bindString(R.string.goldCreditCard_title)
+                creditCardName = bindString(R.string.gold_credit_card_title)
             }
             accountBinNumber.equals(Utils.SILVER_CARD, true) -> {
                 cardImage?.setImageDrawable(bindDrawable(R.drawable.w_silver_credit_card))
-                creditCardName = bindString(R.string.silverCreditCard_title)
+                creditCardName = bindString(R.string.silver_credit_card_title)
             }
             accountBinNumber.equals(Utils.BLACK_CARD, true) -> {
                 cardImage?.setImageDrawable(bindDrawable(R.drawable.w_black_credit_card))
-                creditCardName = bindString(R.string.blackCreditCard_title)
+                creditCardName = bindString(R.string.black_credit_card_title)
             }
         }
 
