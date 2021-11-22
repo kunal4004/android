@@ -85,17 +85,7 @@ class StartupActivityUnitTest : Activity() {
     }
 
     @Test
-    fun testPresentServerMessage() {
-        `when`(startupViewModel.isSplashScreenDisplay).thenReturn(true)
-        doNothing().`when`(startupActivity).showServerMessage()
-        startupActivity.presentNextScreenOrServerMessage()
-        verify(startupActivity, times(1)).showServerMessage()
-        Assert.assertTrue(startupViewModel.isSplashScreenDisplay)
-    }
-
-    @Test
     fun testPresentNextScreen() {
-        `when`(startupViewModel.isSplashScreenDisplay).thenReturn(false)
         doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
         val intent: Intent = mock()
         val bundle: Bundle = mock()
@@ -110,7 +100,6 @@ class StartupActivityUnitTest : Activity() {
         verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
         verify(startupActivity, times(1)).presentNextScreen()
         verify(startupActivity, times(1)).handleAppLink(any())
-        Assert.assertFalse(startupViewModel.isSplashScreenDisplay)
     }
 
     @Test
