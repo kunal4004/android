@@ -43,7 +43,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_COLLECTION_DATES
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_SELECTED_POSITION
-import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutDeliveryTypeSelectionListAdapter
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
@@ -131,6 +132,21 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         initializeCollectionTimeSlots()
         callStorePickupInfoAPI()
         txtContinueToPaymentCollection?.setOnClickListener(this)
+        setFragmentResults()
+    }
+
+    private fun setFragmentResults() {
+
+        setFragmentResultListener(ErrorHandlerBottomSheetDialog.RESULT_ERROR_CODE_RETRY) { _, args ->
+            when (args?.get("bundle")) {
+                ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS -> {
+                    callStorePickupInfoAPI()
+                }
+                ERROR_TYPE_SHIPPING_DETAILS_COLLECTION -> {
+                    onCheckoutPaymentClick()
+                }
+            }
+        }
     }
 
     private fun startShimmerView() {
@@ -289,7 +305,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 if (response.orderSummary == null) {
                                     presentErrorDialog(
                                         getString(R.string.common_error_unfortunately_something_went_wrong),
-                                        getString(R.string.no_internet_subtitle)
+                                        getString(R.string.no_internet_subtitle),
+                                        ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
                                     )
                                     return@observe
                                 }
@@ -308,7 +325,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                             else -> {
                                 presentErrorDialog(
                                     getString(R.string.common_error_unfortunately_something_went_wrong),
-                                    getString(R.string.no_internet_subtitle)
+                                    getString(R.string.no_internet_subtitle),
+                                    ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
                                 )
                             }
                         }
@@ -316,7 +334,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     is Throwable -> {
                         presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
-                            getString(R.string.no_internet_subtitle)
+                            getString(R.string.no_internet_subtitle),
+                            ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
                         )
                     }
                 }
@@ -708,11 +727,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 setScreenClickEvents(true)
                 when (response) {
                     is ShippingDetailsResponse -> {
-
                         if (TextUtils.isEmpty(response.jsessionId) || TextUtils.isEmpty(response.auth)) {
                             presentErrorDialog(
                                 getString(R.string.common_error_unfortunately_something_went_wrong),
-                                getString(R.string.common_error_message_without_contact_info)
+                                getString(R.string.common_error_message_without_contact_info),
+                                ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
                             )
                             return@observe
                         }
@@ -721,14 +740,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     is Throwable -> {
                         presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
-                            getString(R.string.common_error_message_without_contact_info)
+                            getString(R.string.common_error_message_without_contact_info),
+                            ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
                         )
                     }
                 }
             })
     }
 
-    private fun presentErrorDialog(title: String, subTitle: String) {
+    private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
         val bundle = Bundle()
         bundle.putString(
             ErrorHandlerBottomSheetDialog.ERROR_TITLE,
@@ -740,7 +760,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         )
         bundle.putInt(
             ErrorHandlerBottomSheetDialog.ERROR_TYPE,
-            ErrorHandlerBottomSheetDialog.ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS
+            errorType
         )
         view?.findNavController()?.navigate(
             R.id.action_checkoutReturningUserCollectionFragment_to_errorHandlerBottomSheetDialog,
