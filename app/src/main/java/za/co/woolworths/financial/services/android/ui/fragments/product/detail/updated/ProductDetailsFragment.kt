@@ -114,6 +114,8 @@ import android.provider.MediaStore
 import android.graphics.Bitmap
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
+import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility
 
 
 @AndroidEntryPoint
@@ -2298,34 +2300,44 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun openPfLiveCamera() {
         cameraSurfaceView.visibility = View.VISIBLE
         liveCameraFirstTimeLightingTips()
+        SdkUtility.initSdk(
+            requireActivity(),
+            object : PfSDKInitialCallback {
+                override fun onInitialized() {
+                    MakeupCam.create(
+                        cameraSurfaceView,
+                        object : MakeupCam.CreateCallback {
+                            override fun onSuccess(
+                                makeupCam: MakeupCam
+                            ) {
+                                makeupCamera = makeupCam
+                                comparisonView.init(makeupCamera)
+                                liveCameraViewModel.liveCameraVtoApplier(
+                                    makeupCamera, productDetails?.productId,
+                                    getSelectedSku()?.sku
+                                )
+                                liveCameraViewModel.colorMappedResult.observe(
+                                    viewLifecycleOwner,
+                                    Observer { result ->
+                                        applyColorVtoMappedResult(result)
+                                    })
+                                handleLiveCamera()
+                            }
 
-                MakeupCam.create(
-                    cameraSurfaceView,
-                    object : MakeupCam.CreateCallback {
-                    override fun onSuccess(
-                        makeupCam: MakeupCam
+                            override fun onFailure(
+                                throwable: Throwable
+                            ) {
 
-                    ) {
-                        makeupCamera = makeupCam
-                        comparisonView.init(makeupCamera)
-                        liveCameraViewModel.liveCameraVtoApplier(
-                            makeupCamera, productDetails?.productId,
-                            getSelectedSku()?.sku
-                        )
-                        liveCameraViewModel.colorMappedResult.observe(
-                            viewLifecycleOwner,
-                            Observer { result ->
-                                applyColorVtoMappedResult(result)
-                            })
-                        handleLiveCamera()
-                    }
-                    override fun onFailure(
-                        throwable: Throwable
-                    ) {
+                            }
+                        })
+                }
+                override fun onFailure(
+                    throwable: Throwable?
+                ) {
 
-                    }
-                })
-            }
+                }
+            })
+    }
 
     private fun handleLiveCamera() {
         val cameraMonitor =
