@@ -111,6 +111,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonito
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import android.graphics.Bitmap
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 
@@ -1681,9 +1682,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             updateAddToCartButtonForSelectedSKU()
         }
 
-        productDetails?.virtualTryOn?.let {
-            showVTOTryItOn()
-            showVtoTryItOnHint()
+        if (VirtualTryOnUtil.isVtoConfigAvailable()) {
+            productDetails?.virtualTryOn?.let {
+                showVTOTryItOn()
+                showVtoTryItOnHint()
+            }
         }
 
     }

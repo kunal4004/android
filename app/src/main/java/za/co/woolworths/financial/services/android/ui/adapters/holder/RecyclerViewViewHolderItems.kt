@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
+import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -125,7 +126,9 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             ImageManager.setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(imgTryItOn, virtualTryOn?: "")
+            if (VirtualTryOnUtil.isVtoConfigAvailable()) {
+                ImageManager.setPictureWithoutPlaceHolder(imgTryItOn, virtualTryOn ?: "")
+            }
         }
     }
 
