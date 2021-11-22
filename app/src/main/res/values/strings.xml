@@ -203,7 +203,6 @@
     <string name="no_vouchers">NO VOUCHERS</string>
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_item_found">items found</string>
-    <string name="product_item">item found</string>
     <string name="add_to_cart">add to cart</string>
     <string name="add_to_list">ADD TO LIST</string>
     <string name="edit">EDIT</string>
@@ -893,7 +892,7 @@
 
     <string name="get_temp_sc_title">Would you like a virtual temporary card to start shopping in store today?</string>
     <string name="get_temp_sc_description">You will be able to shop with your temporary store card at selected Woolies stores while your physical Woolies store card is being sent to you. Your card is valid for 30 days.</string>
-    <string name="get_temp_sc_description1">Please remember to bring along your ID or Driver\'s License.</string>
+    <string name="get_temp_sc_description1">Please remember to bring along your ID.</string>
     <string name="get_temp_sc_action">ACTIVATE VIRTUAL TEMP CARD</string>
 
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
@@ -1179,9 +1178,9 @@
     <string name="storeCardCardCollection_row_1">Valid South African ID</string>
     <string name="storeCardCardCollection_row_2">Latest payslip or bank statement</string>
 
-    <string name="goldCreditCard_title">Gold Credit Card</string>
+    <string name="gold_credit_card_title">Gold Credit Card</string>
     <string name="goldCreditCard_title_small">gold credit card</string>
-    <string name="silverCreditCard_title">Silver Credit Card</string>
+    <string name="silver_credit_card_title">Silver Credit Card</string>
     <string name="goldCreditCard_desc">Get 2% back on all Woolies purchases when you pay with your card</string>
 
     <string name="goldCreditCardQualify_row_1">Be 18 years of age, or older</string>
@@ -1192,7 +1191,7 @@
     <string name="goldCreditCardCollection_row_2">Latest payslip or bank statement</string>
     <string name="goldCreditCardCollection_row_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
 
-    <string name="blackCreditCard_title">Black Credit Card</string>
+    <string name="black_credit_card_title">Black Credit Card</string>
     <string name="blackCreditCard_desc">The most rewarding way to shop at Woolies.</string>
 
     <string name="blackCreditCardQualify_row_1">Be 18 years of age, or older</string>
@@ -1203,7 +1202,7 @@
     <string name="blackCreditCardCollection_row_2">Latest payslip or bank statement</string>
     <string name="blackCreditCardCollection_row_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
 
-    <string name="personalLoanCard_title">Personal Loan</string>
+    <string name="personal_loan_card_title">Personal Loan</string>
     <string name="personalLoanCard_desc">Access funds again and again</string>
 
     <string name="personalLoanQualifyingCriteria_row_1">Be 18 years of age, or older</string>
@@ -1299,13 +1298,10 @@
     <string name="payment_options_title">Your Account Is In Arrears</string>
 
     <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
-    <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
     <string name="view_payment_plan_button_label">View payment plan</string>
-    <string name="view_payment_plans_button_label">View payment plans</string>
     <string name="make_payment_now_button_label">Make a payment</string>
-    <string name="view_payment_options_button_label">View payment options</string>
 
     <!-- Unique Ids for Transactions-->
     <string name="transactions_title_layout">View Transaction Title Layout</string>
@@ -1816,7 +1812,6 @@
     <string name="set_up_by_debit_order_button_label">"Setup my debit order "</string>
     <string name="easily_pay_your_woolies_account_in_the_app">Easily Pay Your Woolies\nAccount In The App:</string>
     <string name="you_can_also_pay_your_woolies_account_at_desc"> You Can Also Pay Your\nWoolies Account At:</string>
-    <string name="credit_card_title">Credit Card</string>
     <string name="pay_by_credit_card_desc">Pay your account now using a different credit card. Note: Woolies Credit Cards cannot be used to pay your account.</string>
     <string name="pay_by_credit_card_button_label">Pay By Credit Card Now</string>
     <string name="debit_order_desc">Debit order is the most convenient way to pay your Woolies account.</string>
@@ -1840,7 +1835,6 @@
     <string name="chat_to_us_label">CHAT TO US</string>
 
     <string name="earliest_delivery_date">Earliest Delivery date:</string>
-    <string name="earliest_delivery_date_text">Earliest Delivery date \u0020</string>
     <string name="food_items">Food Items</string>
     <string name="fashion_beauty_home">Fashion, Beauty &amp; Home</string>
     <string name="get_your_free_credit_report">View Free Credit Report &amp; More</string>
@@ -2010,10 +2004,7 @@
     <string name="link_device_security_msg">Security verification messages will still be sent to your registered primary cell number.</string>
     <string name="link_device_linking_processing">Linking Your Device</string>
     <string name="link_device_result_success">Your Device Has \nBeen Successfully Linked.</string>
-    <string name="not_linked_device_desc">Please note, you won\'t be able to access certain app features related to your account until you link your device. If you would link to change this, please go to your preferences.</string>
-    <string name="link_my_device">Link my device</string>
     <string name="ok_cool">Ok, cool!</string>
-    <string name="device_not_linked">Device Not Linked</string>
     <string name="link_device_result_skip_desc">No communication will be sent to this device. If you would like to change this please go to your preferences.</string>
     <string name="link_device_this_is_linked">This device is linked</string>
 
@@ -2077,36 +2068,6 @@
     <string name="select_suburb">Select Suburb</string>
     <string name="delivery_liquor_description"><![CDATA[Liquor is not available for Click & Collect.]]></string>
 
-    <!--Native Checkout-->
-    <string name="name_colon_text_view">Name: *</string>
-    <string name="mobile_number_text_view">Mobile Number: *</string>
-    <string name="my_address_details">My Address Details</string>
-    <string name="address_nickname_text_view">Address Nickname: *</string>
-    <string name="unit_complex_floor_text_view">Unit No/Complex/Floor/Building:</string>
-    <string name="suburb_colon_text_view">Suburb: *</string>
-    <string name="province_colon_text_view">Province: *</string>
-    <string name="postal_code_colon_text_view">Postal Code: *</string>
-    <string name="optional_hint">Optional</string>
-    <string name="places_autocomplete_tv_hint">Enter a new address</string>
-    <string name="where_are_we_delivering">Where Are We Delivering?</string>
-    <string name="where_should_we_deliver">Where Should We Deliver?</string>
-    <string name="save_address">SAVE ADDRESS</string>
-    <string name="change_details">change details</string>
-    <string name="delete_address">delete address</string>
-    <string name="places_address_error_msg">Please enter a valid Address</string>
-    <string name="address_nickname_error_msg">This field is required.</string>
-    <string name="add_new_address_error_msg">Please select or add a delivery address.</string>
-    <string name="delivering_address_types_error_msg">Please select an address type.</string>
-    <string name="suburb_name_error_msg">Please select a suburb.</string>
-    <string name="province_name_error_msg">Please select a province.</string>
-    <string name="postal_code_error_msg">Please enter a Postal Code</string>
-    <string name="mobile_number_error_msg">Please enter a 10-digit South African mobile number.</string>
-    <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
-    <string name="add_a_new_address">Add A New Address</string>
-    <string name="add_address">Add Address</string>
-    <string name="change_suburb">change suburb</string>
-    <string name="change_province"><u>change province</u></string>
-    <string name="no_saved_addresses">No Saved Addresses</string>
     <string name="balance_protection_insurance_claim_form">Balance Protection Insurance Claim Form</string>
 
     <string name="death_cover_title">Death Cover</string>
@@ -2172,6 +2133,113 @@
     <string name="app_version_info">App Version %s (%s)</string>
     <string name="product_details_out_of_stock">Unfortunately this item is out of stock in %s. Try changing your delivery location and try again.</string>
 
+    <!--  Voice of Customer  -->
+    <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
+    <string name="voc_question_freetext_hint_optional">Describe your experience in detail (optional)</string>
+    <string name="voc_question_freetext_hint_required">Describe your experience in detail</string>
+    <string name="voc_survey_submit">SUBMIT</string>
+    <string name="voc_survey_opt_out">DON\'T ASK AGAIN</string>
+    <string name="voc_survey_skip">NOT NOW</string>
+    <string name="voc_opt_out_dialog_title">Are You Sure You Don’t Want To Take This Survey?</string>
+    <string name="voc_opt_out_dialog_desc">If you proceed, we won’t ask you to take this survey again.</string>
+    <string name="voc_opt_out_dialog_action">YES, PROCEED</string>
+    <string name="voc_opt_out_dialog_cancel">CANCEL</string>
+    <string name="voc_skip_dialog_title">Are You Sure You Want To Skip This Survey?</string>
+    <string name="voc_skip_dialog_desc">You can skip for now, and we\'ll ask you again later.</string>
+    <string name="voc_skip_dialog_action">YES</string>
+    <string name="voc_skip_dialog_cancel">CANCEL</string>
+    <string name="voc_processing_request_title">Processing Request</string>
+    <string name="voc_processing_request_desc">This may take a few seconds</string>
+    <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
+    <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
+    <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
+    <string name="credit_card_title">Credit Card</string>
+
+    <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
+    <string name="add_it_now">Add it now</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="wrewards_logo_rewards">REWARDS</string>
+    <string name="wrewards_logo_w">W</string>
+    <string name="payment_order_confirmed">Order Confirmed</string>
+    <string name="submitted_order_error_something_went_wrong">Your order was successful,  but we’re having trouble displaying the details here.</string>
+    <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
+    <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
+    <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
+
+    <string name="absa_mobile_app_pin_blocked_title">Mobile App PIN Is Now\nBlocked</string>
+    <string name="absa_mobile_app_pin_blocked_desc_block_1">To release the hold on your PIN, please contact customer service on 086 150 2020 or email queries@wfs.co.za.</string>
+    <string name="absa_mobile_app_pin_blocked_desc_block_2">Please use the reference App PIN as this does not impact your card pin in stores or at ATMs.</string>
+    <string name="pma_total_amount_due_popup_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
+    <string name="pma_amount_overdue_popup_desc">The amount that is outstanding from the previous billing due date</string>
+    <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
+    <string name="empty_cart_title">Your Cart Is Empty</string>
+    <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
+
+
+    <!--order details-->
+    <string name="order_details_toolbar_title">ORDER #%1$s</string>
+    <string name="order_details">Order Details</string>
+    <string name="collection_from">Collection from</string>
+    <string name="delivery_semicolon">Delivery:</string>
+    <string name="collection_semicolon">Collection:</string>
+    <string name="food_items_semicolon">Food Items:</string>
+    <string name="other_items_semicolon">Other Items:</string>
+    <string name="order_total_semicolon">Order Total:</string>
+    <string name="missed_wrewards_savings">Missed WRewards Savings</string>
+    <string name="delivery_location_semicolon">Delivery location:</string>
+    <string name="collection_location_semicolon">Collection location:</string>
+    <string name="number_items">%1$s Items</string>
+    <string name="number_item">%1$s Item</string>
+    <string name="order_again">ORDER AGAIN</string>
+    <string name="you_could_have_saved">You could have saved</string>
+
+    <string name="common_error_unfortunately_something_went_wrong">Unfortunately, something went wrong.</string>
+    <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
+    <string name="suburb_not_found">We Can’t Seem To Find This Suburb</string>
+
+    <string name="view_payment_plans_button_label">View payment plans</string>
+    <string name="view_payment_options_button_label">View payment options</string>
+
+    <string name="delivering_address_types_error_msg">Please select an address type.</string>
+    <string name="suburb_name_error_msg">Please select a suburb.</string>
+    <string name="province_name_error_msg">Please select a province.</string>
+    <string name="postal_code_error_msg">Please enter a Postal Code</string>
+    <string name="mobile_number_error_msg">Please enter a 10-digit South African mobile number.</string>
+    <string name="nick_name_exist_error_msg">This nickname already exists. Please choose another.</string>
+
+    <string name="where_are_we_delivering">Where Are We Delivering?</string>
+    <string name="where_should_we_deliver">Where Should We Deliver?</string>
+    <string name="save_address">SAVE ADDRESS</string>
+    <string name="change_details">change details</string>
+    <string name="delete_address">delete address</string>
+    <string name="places_address_error_msg">Please enter a valid Address</string>
+    <string name="address_nickname_error_msg">This field is required.</string>
+    <string name="add_new_address_error_msg">Please select or add a delivery address.</string>
+
+
+    <!-- Native Checkout : Order Summary   -->
+    <string name="native_checkout_delivery_order_summary_note">* Items are not reserved until you checkout. \n* Delivery cost to be confirmed before payment</string>
+    <string name="native_checkout_delivery_order_summary_fee_value">TBC</string>
+    <string name="native_checkout_delivery_order_summary_fee">Delivery Fee</string>
+    <string name="native_checkout_delivery_order_summary_total_discount">Total Discount</string>
+    <string name="native_checkout_delivery_order_summary_discounts">Discounts</string>
+    <string name="native_checkout_delivery_order_summary_your_cart">Your Cart</string>
+    <string name="native_checkout_delivery_order_summary_company_discounts">Company Discount</string>
+    <string name="native_checkout_delivery_order_summary_wrewards_vouchers">Your WRewards Vouchers</string>
+    <string name="native_checkout_delivery_order_summary_promo_code">Promo Code Applied</string>
+    <string name="default_discount_value">- R 0.00</string>
+
+    <!-- Native Checkout : Suburb not deliverable  -->
+    <string name="dismiss">Dismiss</string>
+    <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
+    <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
+    <string name="native_checkout_delivering_to_title">Delivering to</string>
+
+    <!-- Native Checkout : Error Screens  -->
+    <string name="save_address_error">We can’t save your address right now. Please try again.</string>
+    <string name="delete_address_error">We can’t delete your address right now. Please try again.</string>
+    <string name="update_address_error">We can’t seem to save the changes to your address. Please try again.</string>
+
     <!-- Native Checkout -->
     <string name="native_checkout_continue_to_payment">Continue To Payment</string>
     <string name="native_checkout_order_total_title">Order Total *</string>
@@ -2224,90 +2292,42 @@
         <item quantity="one">%d Store near me</item>
         <item quantity="other">%d Stores near me</item>
     </plurals>
+
+    <!--Native Checkout-->
+    <string name="name_colon_text_view">Name: *</string>
+    <string name="mobile_number_text_view">Mobile Number: *</string>
+    <string name="my_address_details">My Address Details</string>
+    <string name="address_nickname_text_view">Address Nickname: *</string>
+    <string name="unit_complex_floor_text_view">Unit No/Complex/Floor/Building:</string>
+    <string name="suburb_colon_text_view">Suburb: *</string>
+    <string name="province_colon_text_view">Province: *</string>
+    <string name="postal_code_colon_text_view">Postal Code: *</string>
+    <string name="optional_hint">Optional</string>
+    <string name="places_autocomplete_tv_hint">Enter a new address</string>
+    <string name="add_a_new_address">Add A New Address</string>
+    <string name="add_address">Add Address</string>
+    <string name="change_suburb">change suburb</string>
+    <string name="change_province"><u>change province</u></string>
+    <string name="no_saved_addresses">No Saved Addresses</string>
+    <string name="link_my_device">Link my device</string>
     <string name="suburb_selection_subtitle">This will show all collection stores near you.</string>
+    <string name="earliest_delivery_date_text">Earliest Delivery date \u0020</string>
 
-    <!-- Native Checkout : Order Summary   -->
-    <string name="native_checkout_delivery_order_summary_note">* Items are not reserved until you checkout. \n* Delivery cost to be confirmed before payment</string>
-    <string name="native_checkout_delivery_order_summary_fee_value">TBC</string>
-    <string name="native_checkout_delivery_order_summary_fee">Delivery Fee</string>
-    <string name="native_checkout_delivery_order_summary_total_discount">Total Discount</string>
-    <string name="native_checkout_delivery_order_summary_discounts">Discounts</string>
-    <string name="native_checkout_delivery_order_summary_your_cart">Your Cart</string>
-    <string name="native_checkout_delivery_order_summary_company_discounts">Company Discount</string>
-    <string name="native_checkout_delivery_order_summary_wrewards_vouchers">Your WRewards Vouchers</string>
-    <string name="native_checkout_delivery_order_summary_promo_code">Promo Code Applied</string>
-    <string name="default_discount_value">- R 0.00</string>
+    <!--  Link Device Confirmation  -->
+    <string name="link_device_confirm_desc_cc">Please note, you won\'t be able to activate your card, schedule card deliveries or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
+    <string name="link_device_confirm_desc_sc">Please note, you won\'t be able to block, freeze, replace your card or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
+    <string name="link_device_confirm_desc_pl">Please note, you won\'t be able to do drawdowns, credit limit increases or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
+    <string name="not_linked_device_desc">Please note, you won\'t be able to access certain app features related to your account until you link your device. If you would link to change this, please go to your preferences.</string>
+    <string name="device_not_linked">Device Not Linked</string>
+    <string name="product_item">item found</string>
+    <string name="goldCreditCard_title">Gold Credit Card</string>
+    <string name="silverCreditCard_title">Silver Credit Card</string>
 
-    <!-- Native Checkout : Suburb not deliverable  -->
-    <string name="dismiss">Dismiss</string>
-    <string name="suburb_not_deliverable_msg">We Can’t Deliver To This Suburb Yet</string>
-    <string name="suburb_not_deliverable_description">However, we’re growing quickly, so please check back soon.</string>
-    <string name="native_checkout_delivering_to_title">Delivering to</string>
+    <string name="blackCreditCard_title">Black Credit Card</string>
+    <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
 
-    <!-- Native Checkout : Error Screens  -->
-    <string name="save_address_error">We can’t save your address right now. Please try again.</string>
-    <string name="delete_address_error">We can’t delete your address right now. Please try again.</string>
-    <string name="update_address_error">We can’t seem to save the changes to your address. Please try again.</string>
-
-    <!--  Voice of Customer  -->
-    <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
-    <string name="voc_question_freetext_hint_optional">Describe your experience in detail (optional)</string>
-    <string name="voc_question_freetext_hint_required">Describe your experience in detail</string>
-    <string name="voc_survey_submit">SUBMIT</string>
-    <string name="voc_survey_opt_out">DON\'T ASK AGAIN</string>
-    <string name="voc_survey_skip">NOT NOW</string>
-    <string name="voc_opt_out_dialog_title">Are You Sure You Don’t Want To Take This Survey?</string>
-    <string name="voc_opt_out_dialog_desc">If you proceed, we won’t ask you to take this survey again.</string>
-    <string name="voc_opt_out_dialog_action">YES, PROCEED</string>
-    <string name="voc_opt_out_dialog_cancel">CANCEL</string>
-    <string name="voc_skip_dialog_title">Are You Sure You Want To Skip This Survey?</string>
-    <string name="voc_skip_dialog_desc">You can skip for now, and we\'ll ask you again later.</string>
-    <string name="voc_skip_dialog_action">YES</string>
-    <string name="voc_skip_dialog_cancel">CANCEL</string>
-    <string name="voc_processing_request_title">Processing Request</string>
-    <string name="voc_processing_request_desc">This may take a few seconds</string>
-    <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
-    <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
-    <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
-
-    <string name="common_error_unfortunately_something_went_wrong">Unfortunately, something went wrong.</string>
-    <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
-    <string name="suburb_not_found">We Can’t Seem To Find This Suburb</string>
-
-    <!--order details-->
-    <string name="order_details_toolbar_title">ORDER #%1$s</string>
-    <string name="order_details">Order Details</string>
-    <string name="collection_from">Collection from</string>
-    <string name="delivery_semicolon">Delivery:</string>
-    <string name="collection_semicolon">Collection:</string>
-    <string name="food_items_semicolon">Food Items:</string>
-    <string name="other_items_semicolon">Other Items:</string>
-    <string name="order_total_semicolon">Order Total:</string>
-    <string name="missed_wrewards_savings">Missed WRewards Savings</string>
-    <string name="delivery_location_semicolon">Delivery location:</string>
-    <string name="collection_location_semicolon">Collection location:</string>
-    <string name="number_items">%1$s Items</string>
-    <string name="number_item">%1$s Item</string>
-    <string name="order_again">ORDER AGAIN</string>
-    <string name="you_could_have_saved">You could have saved</string>
-    <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
-    <string name="add_it_now">Add it now</string>
-    <string name="sign_up">SIGN UP</string>
-    <string name="wrewards_logo_rewards">REWARDS</string>
-    <string name="wrewards_logo_w">W</string>
-    <string name="payment_order_confirmed">Order Confirmed</string>
-    <string name="submitted_order_error_something_went_wrong">Your order was successful,  but we’re having trouble displaying the details here.</string>
-    <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
-    <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
-    <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
-
-    <string name="absa_mobile_app_pin_blocked_title">Mobile App PIN Is Now\nBlocked</string>
-    <string name="absa_mobile_app_pin_blocked_desc_block_1">To release the hold on your PIN, please contact customer service on 086 150 2020 or email queries@wfs.co.za.</string>
-    <string name="absa_mobile_app_pin_blocked_desc_block_2">Please use the reference App PIN as this does not impact your card pin in stores or at ATMs.</string>
-    <string name="pma_total_amount_due_popup_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
-    <string name="pma_amount_overdue_popup_desc">The amount that is outstanding from the previous billing due date</string>
-    <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
-    <string name="empty_cart_title">Your Cart Is Empty</string>
-    <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
+    <!--  No browser dialog  -->
+    <string name="browser_not_found_title">Browser Not Found</string>
+    <string name="browser_not_found_msg">To continue, please install a web browser.</string>
     <string name="native_checkout_collecting_from">Collecting From</string>
 </resources>
