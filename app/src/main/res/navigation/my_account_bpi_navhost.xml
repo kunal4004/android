@@ -92,8 +92,8 @@
         <action
             android:id="@+id/action_BPIMoreInfoFragment_to_BPITermsAndConditionFragment"
             app:enterAnim="@anim/slide_in_up"
-            app:exitAnim="@anim/slide_down_anim"
-            app:popEnterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
             app:popExitAnim="@anim/slide_down_anim"
             app:destination="@id/BPITermsAndConditionFragment" />
     </fragment>
