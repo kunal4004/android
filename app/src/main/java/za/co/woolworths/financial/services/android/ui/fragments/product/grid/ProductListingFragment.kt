@@ -70,6 +70,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYo
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoBottomSheetDialog
+import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_EXPECTATION_FAILED_417
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
@@ -179,7 +180,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     private fun showVtoBanner() {
         //TODO: need set vto banner with flag condition
-        if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals(VTO)) {
+        if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals(VTO) && VirtualTryOnUtil.isVtoConfigAvailable()) {
             vtoTryItOnBanner.visibility = View.VISIBLE
         }
     }

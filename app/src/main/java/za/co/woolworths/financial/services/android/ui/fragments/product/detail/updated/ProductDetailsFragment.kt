@@ -113,6 +113,7 @@ import java.io.ByteArrayOutputStream
 import android.provider.MediaStore
 import android.graphics.Bitmap
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility
 
@@ -1678,9 +1679,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             updateAddToCartButtonForSelectedSKU()
         }
 
-        productDetails?.virtualTryOn?.let {
-            showVTOTryItOn()
-            showVtoTryItOnHint()
+        if (VirtualTryOnUtil.isVtoConfigAvailable()) {
+            productDetails?.virtualTryOn?.let {
+                showVTOTryItOn()
+                showVtoTryItOnHint()
+            }
         }
 
     }

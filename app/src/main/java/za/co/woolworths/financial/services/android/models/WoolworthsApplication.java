@@ -71,6 +71,7 @@ import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForD
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.ViewTreatmentPlan;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
+import za.co.woolworths.financial.services.android.models.dto.VirtualTryOn;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
@@ -159,6 +160,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Liquor liquor;
     private static AccountOptions accountOptions;
     private static DeviceSecurity deviceSecurity;
+    private static VirtualTryOn virtualTryOn;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -787,5 +789,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static DeviceSecurity getDeviceSecurity() {
         return deviceSecurity;
+    }
+
+    public void setVirtualTryOn(VirtualTryOn virtualTryOn) {
+        this.virtualTryOn = virtualTryOn;
+    }
+
+    public VirtualTryOn getVirtualTryOn() {
+        return virtualTryOn;
     }
 }
