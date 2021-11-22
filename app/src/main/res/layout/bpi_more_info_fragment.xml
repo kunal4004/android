@@ -48,7 +48,7 @@
                     android:background="@android:color/transparent"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/fifteen_sp"
+                    android:textSize="@dimen/sixteen_sp"
                     android:paddingBottom="@dimen/ten_dp"
                     android:text="@string/bpi_checkbox_text"
                     android:layout_marginStart="@dimen/fifteen_sp"

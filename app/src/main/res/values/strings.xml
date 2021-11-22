@@ -2309,4 +2309,6 @@
     <string name="bpi_confirm_opt_in_desc2">Should you require more information; need to <br/> submit a claim; log a complaint; wish to cancel or <br/> have not received your policy wording within 30 <br/> days please contact Woolworth Financial Services <br/> on <u>0861502020</u></string>
     <string name="bpi_email_me_a_copy">Email me a copy</string>
     <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>
+    <string name="bpi_sent_email_success">Balance Protection Insurance Terms and Conditions have been sent to %1$s</string>
+    <string name="bpi_sent_email_failure">Balance Protection Insurance Terms and Conditions failed to send to %1$s</string>
 </resources>

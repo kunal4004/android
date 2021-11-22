@@ -7,10 +7,11 @@
     android:background="@color/white">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/bpiScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/emailCopyBpiButton"
+        app:layout_constraintBottom_toTopOf="@id/bpiEmailCopyButton"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:background="@color/white">
 
@@ -27,7 +28,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <Button
-        android:id="@+id/emailCopyBpiButton"
+        android:id="@+id/bpiEmailCopyButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
@@ -44,4 +45,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/bpiEmailProcessingInclude"
+        layout="@layout/bpi_processing_request_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
+
+    <include
+        android:id="@+id/bpiEmailSuccessInclude"
+        layout="@layout/bpi_email_sent_success_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
+
+    <include
+        android:id="@+id/bpiEmailFailureInclude"
+        layout="@layout/bpi_email_sent_failure_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

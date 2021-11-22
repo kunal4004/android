@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
@@ -655,5 +656,15 @@ object OneAppService : RetrofitConfig() {
             getSessionToken(),
             getDeviceIdentityToken(),
             productGroupCode)
+    }
+
+    fun emailBPITermsAndConditions(productGroupCode: String): Call<GenericResponse>{
+        return mApiInterface.emailBPITermsAndConditions(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            BPIBody(productGroupCode)
+        )
     }
 }
