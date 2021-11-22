@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
+
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -34,6 +35,10 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         incPayMyAccountButton?.setOnClickListener(this)
 
         navigateToDeepLinkView()
+
+        accountInArrearsResultListener {
+            onPayMyAccountButtonTap()
+        }
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
@@ -75,11 +80,15 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                     }
                 }
             }
-            R.id.incPayMyAccountButton -> {
-                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC, this) }
-                navigateToPayMyAccountActivity()
-            }
+            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap()
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
+    }
+
+    private fun onPayMyAccountButtonTap() {
+        onPayMyAccountButtonTap(
+            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
+            BlackCreditCardFragmentDirections.actionBlackCreditCardFragmentToEnterPaymentAmountDetailFragment()
+        )
     }
 }
