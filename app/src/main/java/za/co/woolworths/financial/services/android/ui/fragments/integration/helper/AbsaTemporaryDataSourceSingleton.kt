@@ -7,10 +7,11 @@ object AbsaTemporaryDataSourceSingleton {
     var deriveSeeds: ByteArray? = null
     var keyId: String? = null
     var contentLength: Int? = 0
-    var xEncrypted: String? = null
     var deviceId: String? = null
     var jsessionId: String? = null
     var sessionKey: SessionKey? = null
     var wfpt: String? = null
     var xfpt:String? = null
+    var xEncryptedIv : ByteArray? = null
+    var xEncryptionKey: ByteArray? = null
 }

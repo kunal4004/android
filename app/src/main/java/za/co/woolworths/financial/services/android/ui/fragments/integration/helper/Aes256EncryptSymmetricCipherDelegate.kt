@@ -28,6 +28,7 @@ class Aes256EncryptSymmetricCipherDelegate : ReadWriteProperty<Any?, String?> {
     var iv: ByteArray? = null
     try {
         iv = SessionKey.generateKey(SessionKey.OUTPUT_KEY_LENGTH_IV).encoded
+        AbsaTemporaryDataSourceSingleton.xEncryptedIv = iv
     } catch (e: KeyGenerationFailureException) {
         FirebaseManager.logException(e)
     }
