@@ -121,7 +121,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         callStorePickupInfoAPI()
     }
 
-    private fun initShimmerView() {
+    fun initShimmerView() {
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
@@ -262,7 +262,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
-    private fun callStorePickupInfoAPI() {
+    fun callStorePickupInfoAPI() {
         initShimmerView()
 
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
