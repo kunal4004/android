@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.perfectcorp.perfectlib.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
-import za.co.woolworths.financial.services.android.ui.vto.ui.SdkUtility
+import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
@@ -31,6 +31,7 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
     override fun setVtoApplier(
         uri: Uri?, productId: String?,
         sku: String?,
+        captureLiveCameraImg: Bitmap?,
         isFromLiveCamera: Boolean
     ): MutableLiveData<Any> {
 
@@ -45,7 +46,7 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
                             VtoApplier.create(photoMakeup, object : VtoApplier.CreateCallback {
                                 override fun onSuccess(applierVTO: VtoApplier) {
                                     applier = applierVTO
-                                    loadPhoto(uri, productId, sku)
+                                    loadPhoto(uri, captureLiveCameraImg, productId, sku)
                                 }
 
                                 override fun onFailure(throwable: Throwable) {
@@ -56,41 +57,44 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
 
                         fun loadPhoto(
                             uri: Uri?,
+                            captureLiveCameraImg: Bitmap?,
                             productId: String?,
                             sku: String?
                         ) {
+                            if (captureLiveCameraImg != null) {
+                                detectFace(captureLiveCameraImg, productId, sku)
+                            } else {
+                                if (uri == null) {
+                                    getApplyResult.value = VTO_INVALID_IMAGE_PATH
+                                }
+                                try {
+                                    _context!!.contentResolver.openInputStream(uri!!)
+                                        .use { imageStream ->
+                                            val bitmap = BitmapFactory.decodeStream(imageStream)
+                                            val matrix: Matrix =
+                                                SdkUtility.getRotationMatrixByExif(
+                                                    _context!!.contentResolver,
+                                                    uri
+                                                )
+                                            val selectedImage =
+                                                Bitmap.createBitmap(
+                                                    bitmap,
+                                                    0,
+                                                    0,
+                                                    bitmap.width,
+                                                    bitmap.height,
+                                                    matrix,
+                                                    true
+                                                )
+                                            if (bitmap != selectedImage) {
+                                                bitmap.recycle()
+                                            }
+                                            detectFace(selectedImage, productId, sku)
 
-                            if (uri == null) {
-                                getApplyResult.value = VTO_INVALID_IMAGE_PATH
-
-                            }
-                            try {
-                                _context!!.contentResolver.openInputStream(uri!!)
-                                    .use { imageStream ->
-                                        val bitmap = BitmapFactory.decodeStream(imageStream)
-                                        val matrix: Matrix =
-                                            SdkUtility.getRotationMatrixByExif(
-                                                _context!!.contentResolver,
-                                                uri
-                                            )
-                                        val selectedImage =
-                                            Bitmap.createBitmap(
-                                                bitmap,
-                                                0,
-                                                0,
-                                                bitmap.width,
-                                                bitmap.height,
-                                                matrix,
-                                                true
-                                            )
-                                        if (bitmap != selectedImage) {
-                                            bitmap.recycle()
                                         }
-
-                                        detectFace(selectedImage, productId, sku)
-                                    }
-                            } catch (e: Exception) {
-                                getApplyResult.value = VTO_INVALID_IMAGE_PATH
+                                } catch (e: Exception) {
+                                    getApplyResult.value = VTO_INVALID_IMAGE_PATH
+                                }
                             }
                         }
 
@@ -99,11 +103,9 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
                             productId: String?,
                             sku: String?
                         ) {
-
                             photoMakeup?.detectFace(image, object : PhotoMakeup.DetectFaceCallback {
 
                                 override fun onSuccess(faceList: List<FaceData>) {
-
                                     if (faceList.isEmpty()) {
                                         getApplyResult.value = VTO_FACE_NOT_DETECT
                                         return

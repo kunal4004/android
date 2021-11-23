@@ -116,11 +116,12 @@ class LiveCameraRepositoryImpl @Inject constructor(
             true,
             true,
             false,
-            true,
+            false,
             object : MakeupCam.PictureCallback {
                 override fun onPictureTaken(originalPicture: Bitmap?, resultPicture: Bitmap?) {
-
-                    takenPicture.value = resultPicture!!
+                    resultPicture?.let {
+                        takenPicture.value = it
+                    }
                 }
 
                 override fun onFailure(t: Throwable) {
