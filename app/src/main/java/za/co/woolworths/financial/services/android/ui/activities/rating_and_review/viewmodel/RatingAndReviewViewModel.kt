@@ -16,7 +16,8 @@ class RatingAndReviewViewModel(
         const val PAGE_SIZE =  10
     }
 
-    fun getReviewDataSource(prodId: String) = Pager(PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false)) {
+    fun getReviewDataSource(prodId: String) = Pager(PagingConfig(pageSize = PAGE_SIZE,
+            enablePlaceholders = false)) {
         ReviewsDataSource(reviewApiHelper, prodId)
     }.flow.cachedIn(viewModelScope)
 
