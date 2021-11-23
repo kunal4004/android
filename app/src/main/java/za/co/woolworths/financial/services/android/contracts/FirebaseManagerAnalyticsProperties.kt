@@ -333,6 +333,20 @@ open class FirebaseManagerAnalyticsProperties {
 
         //Sunsetting and Splash screen
         const val SPLASH_BTN = "splash_"
+
+
+        //Bpi insurance lead generation
+        const val SC_BPI_OPT_IN_START: String = "sc_bpi_optin_start"
+        const val SC_BPI_OPT_IN_CONFIRM: String = "sc_bpi_optin_confirm"
+        const val SC_BPI_OPT_IN_SEND_EMAIL: String = "sc_bpi_send_email"
+
+        const val PL_BPI_OPT_IN_START: String = "pl_bpi_optin_start"
+        const val PL_BPI_OPT_IN_CONFIRM: String = "pl_bpi_optin_confirm"
+        const val PL_BPI_OPT_IN_SEND_EMAIL: String = "pl_bpi_send_email"
+
+        const val CC_BPI_OPT_IN_START: String = "cc_bpi_optin_start"
+        const val CC_BPI_OPT_IN_CONFIRM: String = "cc_bpi_optin_confirm"
+        const val CC_BPI_OPT_IN_SEND_EMAIL: String = "cc_bpi_send_email"
     }
 
     class PropertyNames {

@@ -13,7 +13,9 @@ import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
 import kotlinx.android.synthetic.main.bpi_email_sent_failure_layout.*
 import kotlinx.android.synthetic.main.bpi_email_sent_success_layout.*
 import kotlinx.android.synthetic.main.bpi_terms_conditions_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -89,6 +91,14 @@ class BPITermsAndConditionFragment : Fragment()  {
 
     private fun emailTermsAndConditions() {
         productGroupCode?.let { productGroupCode ->
+            val bpiTaggingEventCode = when (productGroupCode) {
+                AccountsProductGroupCode.CREDIT_CARD.groupCode -> FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_SEND_EMAIL
+                AccountsProductGroupCode.STORE_CARD.groupCode -> FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_SEND_EMAIL
+                AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_SEND_EMAIL
+                else -> null
+            }
+            bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, activity) }
+
             showEmailProcessingView()
             OneAppService.emailBPITermsAndConditions(productGroupCode).enqueue(
                 CompletionHandler(object : IResponseListener<GenericResponse> {

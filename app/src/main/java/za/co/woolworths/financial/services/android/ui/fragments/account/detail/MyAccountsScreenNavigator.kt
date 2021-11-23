@@ -74,8 +74,16 @@ class MyAccountsScreenNavigator {
 
                 productGroupCode?.let { Utils.triggerFireBaseEvents(it, this) }
                 val navigateToBalanceProtectionInsurance = Intent(this, BalanceProtectionInsuranceActivity::class.java)
-                bpiInsuranceStatus?.let {
-                    if(it == BpiInsuranceApplicationStatusType.NOT_OPTED_IN){
+                bpiInsuranceStatus?.let { status ->
+                    if(status == BpiInsuranceApplicationStatusType.NOT_OPTED_IN){
+                        val bpiTaggingEventCode = when (accounts?.productGroupCode) {
+                            AccountsProductGroupCode.CREDIT_CARD.groupCode -> FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_START
+                            AccountsProductGroupCode.STORE_CARD.groupCode -> FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_START
+                            AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_START
+                            else -> null
+                        }
+                        bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, this) }
+
                         navigateToBalanceProtectionInsurance.putExtra(BPI_OPT_IN, true)
                         navigateToBalanceProtectionInsurance.putExtra(BPI_PRODUCT_GROUP_CODE, accounts?.productGroupCode)
                     }

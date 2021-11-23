@@ -41,7 +41,8 @@ class BPIMoreInfoFragment : Fragment()  {
         }
 
         optInBpiButton?.setOnClickListener{
-            view.findNavController().navigate(R.id.action_BPIMoreInfoFragment_to_BPIOptInConfirmationFragment)
+            view.findNavController().navigate(R.id.action_BPIMoreInfoFragment_to_BPIOptInConfirmationFragment,
+                bundleOf(BPI_PRODUCT_GROUP_CODE to arguments?.getString(BPI_PRODUCT_GROUP_CODE)))
         }
 
         bpiCheckBoxDescriptionTextView?.setOnClickListener{
