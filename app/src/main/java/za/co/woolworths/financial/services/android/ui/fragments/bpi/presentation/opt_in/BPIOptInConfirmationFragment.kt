@@ -11,6 +11,15 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.util.Utils
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+
+import android.text.style.ClickableSpan
+import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+
 
 class BPIOptInConfirmationFragment : Fragment() {
 
@@ -20,6 +29,8 @@ class BPIOptInConfirmationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setClickableDescriptionText()
 
         confirmBpiButton?.setOnClickListener {
             arguments?.getString(BalanceProtectionInsuranceActivity.BPI_PRODUCT_GROUP_CODE).let { productGroupCode ->
@@ -31,6 +42,42 @@ class BPIOptInConfirmationFragment : Fragment() {
                 }
                 bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, activity) }
             }
+        }
+    }
+
+    private fun setClickableDescriptionText() {
+        val clickableSpanText = SpannableString(bindString(R.string.bpi_confirm_opt_in_desc_call_services))
+        clickableSpanText.setSpan(
+            object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    Utils.makeCall(bindString(R.string.bpi_confirm_opt_in_desc_call_services))
+                }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    super.updateDrawState(ds)
+                    ds.isUnderlineText = true
+                    ds.color = bindColor(R.color.description_color)
+                }
+            }, 0, clickableSpanText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        val numberText = bindString(R.string.bpi_confirm_opt_in_desc_call_services)
+        val descriptionText = SpannableString(bindString(R.string.bpi_confirm_opt_in_desc2))
+        descriptionText.setSpan(
+            object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    Utils.makeCall(numberText)
+                }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    super.updateDrawState(ds)
+                    ds.isUnderlineText = true
+                    ds.color = bindColor(R.color.description_color)
+                }
+            }, descriptionText.indexOf(numberText), descriptionText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        optInDescription2TextView?.apply {
+            text = descriptionText
+            movementMethod = LinkMovementMethod.getInstance()
         }
     }
 }
