@@ -13,17 +13,14 @@ import androidx.lifecycle.LiveData
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.powermock.modules.junit4.PowerMockRunner
 import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutAddAddressNewUserInteractor
-import za.co.woolworths.financial.services.android.checkout.service.network.CheckoutAddAddressNewUserApiHelper
+import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.network.ApiInterface
@@ -132,12 +129,93 @@ class CheckoutReturningUserCollectionFragmentTest : Fragment() {
         `when`(checkoutAddAddressNewUserInteractor.getStorePickupInfo(body)).thenReturn(mockData)
         doNothing().`when`(checkoutReturningUserCollectionFragment).initShimmerView()
         checkoutAddAddressNewUserViewModel.getStorePickupInfo(body).observeOnce {
-            it
+            Assert.assertEquals(200, (it as ConfirmDeliveryAddressResponse).httpCode)
         }
     }
 
     fun <T> LiveData<T>.observeOnce(onChangeHandler: (T) -> Unit) {
         val observer = OneTimeObserver(handler = onChangeHandler)
         observe(observer, observer)
+    }
+
+    @Test
+    fun getFirstAvailableSlot_as_null() {
+        Assert.assertEquals(
+            null,
+            checkoutReturningUserCollectionFragment.getFirstAvailableSlot(ArrayList())
+        )
+        var sortedSlotList: List<SortedJoinDeliverySlot> = listOf(mock())
+        Assert.assertEquals(
+            null,
+            checkoutReturningUserCollectionFragment.getFirstAvailableSlot(sortedSlotList)
+        )
+    }
+
+    @Test
+    fun getFirstAvailableSlot_as_weekDay() {
+        var sortedSlotList: List<SortedJoinDeliverySlot>
+        var sortedDeliverySlot = SortedJoinDeliverySlot()
+        var date = HeaderDate()
+        date.date = "1"
+        date.dayInitial = "Mon"
+
+        var hour = HourSlots()
+        hour.slot = "1"
+        hour.slotNum = 1
+
+        var slot = Slot()
+        slot.available = true
+        var week = Week()
+        week.date = "1"
+        week.slots = listOf(slot)
+
+        sortedDeliverySlot.headerDates = listOf(date)
+        sortedDeliverySlot.hourSlots = listOf(hour)
+        sortedDeliverySlot.week = listOf(week)
+        sortedSlotList = listOf(sortedDeliverySlot)
+        Assert.assertEquals(
+            week.date,
+            checkoutReturningUserCollectionFragment.getFirstAvailableSlot(sortedSlotList)?.date
+        )
+    }
+
+    @Test
+    fun onChooseDateClicked_returns_success() {
+        var confirmDeliveryAddressResponse = ConfirmDeliveryAddressResponse()
+        var sortedJoinDeliverySlot = SortedJoinDeliverySlot()
+        var slot = Slot()
+        slot.available = true
+        var week = Week()
+        week.date = "1"
+        week.slots = listOf(slot)
+        sortedJoinDeliverySlot.week = listOf(week)
+        confirmDeliveryAddressResponse.sortedJoinDeliverySlots = listOf(sortedJoinDeliverySlot)
+        checkoutReturningUserCollectionFragment.testSetStorePickupInfoResponse(
+            confirmDeliveryAddressResponse
+        )
+        checkoutReturningUserCollectionFragment.onChooseDateClicked()
+        val weekDaysList = ArrayList<Week>(0)
+        weekDaysList.addAll(listOf(week))
+        verify(checkoutReturningUserCollectionFragment, times(1)).navigateToCollectionDateDialog(
+            weekDaysList
+        )
+    }
+
+    @Test
+    fun onChooseDateClicked_returns_null() {
+        var confirmDeliveryAddressResponse = ConfirmDeliveryAddressResponse()
+        var sortedJoinDeliverySlot = SortedJoinDeliverySlot()
+
+        sortedJoinDeliverySlot.week = listOf(mock())
+        confirmDeliveryAddressResponse.sortedJoinDeliverySlots = listOf(sortedJoinDeliverySlot)
+        checkoutReturningUserCollectionFragment.testSetStorePickupInfoResponse(
+            confirmDeliveryAddressResponse
+        )
+        checkoutReturningUserCollectionFragment.onChooseDateClicked()
+        val weekDaysList = ArrayList<Week>(0)
+        weekDaysList.addAll(listOf(mock()))
+        verify(checkoutReturningUserCollectionFragment, times(0)).navigateToCollectionDateDialog(
+            weekDaysList
+        )
     }
 }

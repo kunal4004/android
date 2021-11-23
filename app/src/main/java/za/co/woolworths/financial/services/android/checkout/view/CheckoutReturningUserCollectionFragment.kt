@@ -358,7 +358,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         collectionTimeSlotsAdapter.setCollectionTimeSlotData(ArrayList(slots))
     }
 
-    private fun getFirstAvailableSlot(list: List<SortedJoinDeliverySlot>): Week? {
+    fun getFirstAvailableSlot(list: List<SortedJoinDeliverySlot>): Week? {
         if (list.isNullOrEmpty()) {
             return null
         }
@@ -635,7 +635,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
     }
 
-    private fun onChooseDateClicked() {
+    fun onChooseDateClicked() {
         storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
             // No available dates to select
             if (this.isNullOrEmpty()) {
@@ -650,14 +650,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     weekDaysList.addAll(it)
                 }
             }
-            navController?.navigate(
-                R.id.action_checkoutReturningUserCollectionFragment_to_collectionDatesBottomSheetDialog,
-                bundleOf(
-                    ARGS_KEY_COLLECTION_DATES to weekDaysList,
-                    ARGS_KEY_SELECTED_POSITION to selectedPosition
-                )
-            )
+            navigateToCollectionDateDialog(weekDaysList)
         }
+    }
+
+    fun navigateToCollectionDateDialog(weekDaysList: ArrayList<Week>) {
+        navController?.navigate(
+            R.id.action_checkoutReturningUserCollectionFragment_to_collectionDatesBottomSheetDialog,
+            bundleOf(
+                ARGS_KEY_COLLECTION_DATES to weekDaysList,
+                ARGS_KEY_SELECTED_POSITION to selectedPosition
+            )
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -687,5 +691,10 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     @VisibleForTesting
     fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
         checkoutAddAddressNewUserViewModel = viewModel
+    }
+
+    @VisibleForTesting
+    fun testSetStorePickupInfoResponse(mockStorePickupInfoResponse: ConfirmDeliveryAddressResponse) {
+        storePickupInfoResponse = mockStorePickupInfoResponse
     }
 }
