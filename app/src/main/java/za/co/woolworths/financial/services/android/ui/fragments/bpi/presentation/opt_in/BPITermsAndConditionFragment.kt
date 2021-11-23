@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentatio
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -37,14 +38,16 @@ class BPITermsAndConditionFragment : Fragment()  {
         super.onViewCreated(view, savedInstanceState)
         activity?.let { Utils.updateStatusBarBackground(it, R.color.white) }
 
+        hideAllViews()
+        showProcessingView()
+
         productGroupCode = arguments?.getString(BPI_PRODUCT_GROUP_CODE)
 
         setUpWebView()
 
-        val htmlContent = arguments?.getString(BPI_TERMS_CONDITIONS_HTML)
-        if(htmlContent != null){
-            bpiTermsConditionsWebView?.loadData(htmlContent, "text/html; charset=utf-8", null)
-        }
+        Handler().postDelayed({
+            showTermsAndConditionView()
+        }, AppConstant.DELAY_3000_MS)
 
         bpiEmailCopyButton?.setOnClickListener{
             emailTermsAndConditions()
@@ -63,15 +66,22 @@ class BPITermsAndConditionFragment : Fragment()  {
     private fun hideAllViews() {
         bpiScrollView?.visibility = GONE
         bpiEmailCopyButton?.visibility = GONE
-        bpiEmailProcessingInclude?.visibility = GONE
+        bpiProcessingInclude?.visibility = GONE
         bpiEmailSuccessInclude?.visibility = GONE
         bpiEmailFailureInclude?.visibility = GONE
     }
 
-    private fun showEmailProcessingView() {
+    private fun showProcessingView() {
         (activity as? BalanceProtectionInsuranceActivity)?.setToolbarTitle("")
         hideAllViews()
-        bpiEmailProcessingInclude?.visibility = VISIBLE
+        bpiProcessingInclude?.visibility = VISIBLE
+    }
+
+    private fun showTermsAndConditionView() {
+        (activity as? BalanceProtectionInsuranceActivity)?.setToolbarTitle(R.string.bpi_terms_conditions_title)
+        hideAllViews()
+        bpiScrollView?.visibility = VISIBLE
+        bpiEmailCopyButton?.visibility = VISIBLE
     }
 
     private fun showEmailSuccessView() {
@@ -99,7 +109,7 @@ class BPITermsAndConditionFragment : Fragment()  {
             }
             bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, activity) }
 
-            showEmailProcessingView()
+            showProcessingView()
             OneAppService.emailBPITermsAndConditions(productGroupCode).enqueue(
                 CompletionHandler(object : IResponseListener<GenericResponse> {
                     override fun onSuccess(response: GenericResponse?) {
@@ -158,6 +168,11 @@ class BPITermsAndConditionFragment : Fragment()  {
                     super.onPageFinished(view, url)
                 }
             }
+        }
+
+        val htmlContent = arguments?.getString(BPI_TERMS_CONDITIONS_HTML)
+        if(htmlContent != null){
+            bpiTermsConditionsWebView?.loadData(htmlContent, "text/html; charset=utf-8", null)
         }
     }
 }
