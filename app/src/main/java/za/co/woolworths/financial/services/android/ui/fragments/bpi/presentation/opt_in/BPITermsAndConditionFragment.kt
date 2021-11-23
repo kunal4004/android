@@ -8,6 +8,8 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.JsonParser
@@ -27,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_TERMS_CONDITIONS_HTML
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
 class BPITermsAndConditionFragment : Fragment()  {
@@ -158,7 +161,7 @@ class BPITermsAndConditionFragment : Fragment()  {
 
             webViewClient = object : android.webkit.WebViewClient() {
 
-                override fun onPageFinished(view: android.webkit.WebView?, url: kotlin.String?) {
+                override fun onPageFinished(view: WebView?, url: String?) {
                     val inputStream: java.io.InputStream = resources.assets.open("fonts/WebViewFontFaceStyle.css")
                     var inputAsString = inputStream.bufferedReader().use { it.readText() }
 
@@ -171,6 +174,15 @@ class BPITermsAndConditionFragment : Fragment()  {
                     bpiTermsConditionsWebView.evaluateJavascript(js,null)
 
                     super.onPageFinished(view, url)
+                }
+
+                override fun shouldOverrideUrlLoading(
+                    view: WebView?,
+                    request: WebResourceRequest?): Boolean {
+                    if (request?.url.toString().contains("mailto:")) {
+                        KotlinUtils.sendEmail(activity, request?.url.toString(), "" )
+                    }
+                    return true
                 }
             }
         }
