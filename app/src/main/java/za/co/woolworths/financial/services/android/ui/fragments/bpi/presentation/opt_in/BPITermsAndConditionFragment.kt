@@ -10,6 +10,8 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import com.google.gson.JsonParser
+import com.huawei.hms.support.log.common.Base64
 import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
 import kotlinx.android.synthetic.main.bpi_email_sent_failure_layout.*
 import kotlinx.android.synthetic.main.bpi_email_sent_success_layout.*
@@ -20,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_TERMS_CONDITIONS_HTML
@@ -37,6 +40,8 @@ class BPITermsAndConditionFragment : Fragment()  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.let { Utils.updateStatusBarBackground(it, R.color.white) }
+
+        setUserEmail()
 
         hideAllViews()
         showProcessingView()
@@ -174,5 +179,16 @@ class BPITermsAndConditionFragment : Fragment()  {
         if(htmlContent != null){
             bpiTermsConditionsWebView?.loadData(htmlContent, "text/html; charset=utf-8", null)
         }
+    }
+
+    private fun setUserEmail() {
+        var email = ""
+        val splitToken = OneAppService.getSessionToken().split(".")
+        if(splitToken.size > 1){
+            val decodedBytes = Base64.decode(splitToken[1])
+            email = JsonParser.parseString(String(decodedBytes)).asJsonObject["email"].asString
+        }
+        mainDescriptionSuccessTextview?.text = bindString(R.string.bpi_sent_email_success, email)
+        mainDescriptionFailureTextview?.text = bindString(R.string.bpi_sent_email_failure, email)
     }
 }
