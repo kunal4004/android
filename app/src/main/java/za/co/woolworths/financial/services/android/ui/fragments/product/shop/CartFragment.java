@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
-import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.IS_DELIVERY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
@@ -19,7 +19,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -39,7 +38,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -128,7 +126,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
-    private static final int REQUEST_PAYMENT_STATUS = 4775;
+    public static final int REQUEST_PAYMENT_STATUS = 4775;
     private String mSuburbName, mProvinceName;
     private int mQuantity;
 
@@ -319,7 +317,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         if (activity != null) {
             mToggleItemRemoved = (ToggleRemoveItem) activity;
         }
-
     }
 
     /****
@@ -449,6 +446,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
+            checkoutActivityIntent.putExtra(IS_DELIVERY, !Utils.getPreferredDeliveryLocation().storePickup);
             activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
             activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
         }
@@ -496,7 +494,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         CartActivity cartActivity = (CartActivity) getActivity();
         ProductDetails productList = new ProductDetails();
         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
-        productList.externalImageRef = commerceItemInfo.externalImageURL;
+        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2;
         productList.productName = commerceItemInfo.productDisplayName;
         productList.fromPrice = (float) commerceItem.priceInfo.getAmount();
         productList.productId = commerceItemInfo.productId;
@@ -1261,20 +1259,21 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     if (requestCode == APPLY_PROMO_CODE_REQUEST_CODE)
                         showVouchersOrPromoCodeAppliedToast(getString(R.string.promo_code_applied_toast_message));
                     break;
-                case REQUEST_PAYMENT_STATUS:
-                    if (getActivity() != null) getActivity().onBackPressed();
-                    break;
                 default:
                     break;
             }
-        } else if (requestCode == REQUEST_PAYMENT_STATUS) {
-            switch (resultCode){
+        }
+        if (requestCode == REQUEST_PAYMENT_STATUS) {
+            switch (resultCode) {
                 case REQUEST_CHECKOUT_ON_DESTROY:
                     reloadFragment();
                     finishActivityOnCheckoutSuccess();
                     break;
                 case RESULT_RELOAD_CART:
-                    reloadFragment();
+                    checkLocationChangeAndReload();
+                    break;
+                case RESULT_OK:
+                    if (getActivity() != null) getActivity().onBackPressed();
                     break;
             }
         }
@@ -1307,13 +1306,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }
         if (currentStoreId == null && currentSuburbId == null) {
             //Fresh install with no location selection.
-        } else if (currentSuburbId == null && !(currentStoreId.equals(localStoreId))) {
+        } else if (currentSuburbId == null && !(currentStoreId == localStoreId)) {
             localStoreId = currentStoreId;
             localSuburbId = null;
             reloadFragment();
             return;
 
-        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
+        } else if (currentStoreId == null && !(localSuburbId == currentSuburbId)) {
             localSuburbId = currentSuburbId;
             localStoreId = null;
             reloadFragment();
@@ -1331,12 +1330,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void reloadFragment() {
-        Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentByTag(CartActivity.TAG);
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        if (fragmentTransaction != null && currentFragment != null) {
-            getActivity().getSupportFragmentManager().beginTransaction().detach(this).commit();
-            getActivity().getSupportFragmentManager().beginTransaction().attach(this).commit();
-        }
+        //Reload screen
+        loadShoppingCart(false);
     }
 
     @Override

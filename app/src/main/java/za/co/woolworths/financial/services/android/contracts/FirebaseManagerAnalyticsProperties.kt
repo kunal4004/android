@@ -79,7 +79,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val ABSA_CC_LOGIN_WITH_NEW_PASSCODE: String = "cc_login_with_new_passcode"
         const val ABSA_CC_VIEW_STATEMENTS: String = "absa_cc_view_statements"
         const val ABSA_CC_SHARE_STATEMENT: String = "absa_cc_share_statement"
-        const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "absa_cc_view_ind_statements"
+        const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "absa_cc_view_ind_statement"
 
         const val SHOPQS_ADD_TO_CART = "shopqs_add_to_cart"
         const val SHOP_SCAN_CODE = "shop_scan_code"
@@ -330,6 +330,9 @@ open class FirebaseManagerAnalyticsProperties {
         const val VOC_SKIP = "voc_skip"
         const val VOC_SUBMIT = "voc_submit"
         const val VOC_OPTOUT = "voc_optout"
+
+        //Sunsetting and Splash screen
+        const val SPLASH_BTN = "splash_"
     }
 
     class PropertyNames {

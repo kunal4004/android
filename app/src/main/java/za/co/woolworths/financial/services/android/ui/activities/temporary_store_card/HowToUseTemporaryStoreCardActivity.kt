@@ -6,11 +6,17 @@ import android.text.Spannable
 import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.*
+import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.staffMessage1CheckBox
+import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.staffMessage2CheckBox
+import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.staffMessage3CheckBox
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.VirtualCardStaffMemberMessage
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
@@ -21,14 +27,20 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
 
     companion object {
         var TRANSACTION_TYPE = "TRANSACTION_TYPE"
+        var STAFF_DISCOUNT_INFO = "STAFF_DISCOUNT_INFO"
     }
 
-    var type: Transition = Transition.SLIDE_LEFT
+    private var type: Transition = Transition.SLIDE_LEFT
+    private var virtualCardStaffMemberMessage: VirtualCardStaffMemberMessage? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.temp_card_how_to_use_layout)
         Utils.updateStatusBarBackground(this)
         type = intent?.extras?.getSerializable(TRANSACTION_TYPE) as Transition
+        if(intent?.hasExtra(STAFF_DISCOUNT_INFO) == true){
+            virtualCardStaffMemberMessage = intent?.extras?.getSerializable(STAFF_DISCOUNT_INFO) as VirtualCardStaffMemberMessage?
+        }
         actionBar()
 
         val howToUseSpannableStringBuilder = WSpannableStringBuilder(getString(R.string.temp_card_how_to_use6))
@@ -42,6 +54,19 @@ class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
         howToUse8SpannableContent.makeStringInteractable("0861 50 20 20", LinkType.PHONE)
         howToUse8SpannableContent.makeStringUnderlined("0861 50 20 20")
         setUnderlineText(howToUse8SpannableContent.build(), howToUse12)
+
+        virtualCardStaffMemberMessage.let {
+            if(!virtualCardStaffMemberMessage?.paragraphs.isNullOrEmpty() &&
+                virtualCardStaffMemberMessage?.paragraphs?.size == 3){
+                staffMessage1CheckBox.visibility = View.VISIBLE
+                staffMessage2CheckBox.visibility = View.VISIBLE
+                staffMessage3CheckBox.visibility = View.VISIBLE
+
+                staffMessage1CheckBox.text = virtualCardStaffMemberMessage?.paragraphs?.get(0)
+                staffMessage2CheckBox.text = virtualCardStaffMemberMessage?.paragraphs?.get(1)
+                staffMessage3CheckBox.text = virtualCardStaffMemberMessage?.paragraphs?.get(2)
+            }
+        }
 
         setUniqueIds()
 

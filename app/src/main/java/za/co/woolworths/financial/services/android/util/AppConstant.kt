@@ -50,6 +50,11 @@ class AppConstant {
         const val VTO_COLOR_NOT_MATCH = "color_not_match"
         const val VTO_COLOR_LIVE_CAMERA = "color_match"
         const val VTO =  "Virtual Try On"
+
+        const val EMPTY_STRING = ""
+        const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
+        const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }

@@ -934,19 +934,19 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         is AddAddressResponse -> {
                             when (response.httpCode) {
                                 HTTP_OK, HTTP_OK_201 -> {
-                                        if (savedAddressResponse?.addresses != null) {
-                                            savedAddressResponse?.addresses?.add(response.address)
-                                        } else {
-                                            if (savedAddressResponse == null)
-                                                savedAddressResponse = SavedAddressResponse()
-                                            val addressList: ArrayList<Address> = ArrayList()
-                                            addressList.add(response.address)
-                                            savedAddressResponse?.addresses = addressList
-                                        }
-                                        baseFragBundle?.putString(
-                                            SAVED_ADDRESS_KEY,
-                                            Utils.toJson(savedAddressResponse)
-                                        )
+                                    if (savedAddressResponse?.addresses != null) {
+                                        savedAddressResponse?.addresses?.add(response.address)
+                                    } else {
+                                        if (savedAddressResponse == null)
+                                            savedAddressResponse = SavedAddressResponse()
+                                        val addressList: ArrayList<Address> = ArrayList()
+                                        addressList.add(response.address)
+                                        savedAddressResponse?.addresses = addressList
+                                    }
+                                    baseFragBundle?.putString(
+                                        SAVED_ADDRESS_KEY,
+                                        Utils.toJson(savedAddressResponse)
+                                    )
                                     response.address.nickname?.let { nickName ->
                                         onAddNewAddress(
                                             nickName
@@ -982,6 +982,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             isNickNameExist()
             if (selectedDeliveryAddressType == null) {
                 deliveringAddressTypesErrorMsg.visibility = View.VISIBLE
+                showAnimationErrorMessage(deliveringAddressTypesErrorMsg, View.VISIBLE, 0)
             }
             listOfInputFields.forEach {
                 if (it is RelativeLayout) {

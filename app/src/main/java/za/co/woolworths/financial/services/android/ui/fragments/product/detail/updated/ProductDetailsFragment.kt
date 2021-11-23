@@ -464,7 +464,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 it.priceType,
                 it.kilogramPrice
             )
-            auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }
+            auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRefV2, it1) }
                 .toString())
             updateAuxiliaryImages(auxiliaryImages)
         }
@@ -691,13 +691,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun getImageByWidth(imageUrl: String?, context: Context): String {
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).apply {
-            var imageLink = imageUrl
+            var imageLink:String? = imageUrl
             val deviceHeight = this.defaultDisplay
             val size = Point()
             deviceHeight.getSize(size)
             val width = size.x
-            if (imageLink.isNullOrEmpty()) imageLink = KotlinUtils.productImageUrlPrefix
-            return imageLink + "" + if (imageLink.contains("jpg")) "" else "?w=$width&q=85"
+            return imageLink + "" + if (imageLink!!.contains("jpg")) "" else "?w=$width&q=85"
         }
     }
 
@@ -1170,7 +1169,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val auxiliaryImagesForGroupKey = ArrayList<String>()
         val groupKey = getSelectedGroupKey() ?: defaultGroupKey
 
-        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRef?.let {
+        otherSKUsByGroupKey[groupKey]?.get(0)?.externalImageRefV2?.let {
             if (productDetails?.otherSkus?.size!! > 0)
                 auxiliaryImagesForGroupKey.add(it)
         }
@@ -1183,7 +1182,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         getImageCodeForAuxiliaryImages(groupKey).forEach { imageCode ->
             allAuxImages.entries.forEach { entry ->
                 if (entry.key.contains(imageCode, true))
-                    auxiliaryImagesForGroupKey.add(entry.value.externalImageRef)
+                    auxiliaryImagesForGroupKey.add(entry.value.externalImageRefV2)
             }
         }
 
