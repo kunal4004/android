@@ -70,13 +70,13 @@ class AccountSalesModelImpl : IAccountSalesContract.AccountSalesModel {
             CardHeader(getString(R.string.store_card_title), getString(R.string.store_card_desc), storeCardHeaderDrawable)
 
     private val goldCreditCardHeader =
-            CardHeader(getString(R.string.goldCreditCard_title), getString(R.string.goldCreditCard_desc), goldCreditCardHeaderDrawable)
+            CardHeader(getString(R.string.gold_credit_card_title), getString(R.string.goldCreditCard_desc), goldCreditCardHeaderDrawable)
 
     private val blackCreditCardHeader =
-            CardHeader(getString(R.string.blackCreditCard_title), getString(R.string.blackCreditCard_desc), blackCreditCardHeaderDrawable)
+            CardHeader(getString(R.string.black_credit_card_title), getString(R.string.blackCreditCard_desc), blackCreditCardHeaderDrawable)
 
     private val personalLoanHeader =
-            CardHeader(getString(R.string.personalLoanCard_title), getString(R.string.personalLoanCard_desc), personalLoanHeaderDrawable)
+            CardHeader(getString(R.string.personal_loan_card_title), getString(R.string.personalLoanCard_desc), personalLoanHeaderDrawable)
 
     private val storeCardCardBenefits =
             mutableListOf(CardBenefit(automaticRewardIcon, getString(R.string.storeCardBenefits_row_1_title), getString(R.string.storeCardBenefits_row_1_desc), getString(R.string.cardBenefits_title)),
