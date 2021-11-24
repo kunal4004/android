@@ -2480,7 +2480,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         isVtoImage = true
         uri?.let {
             selectedImageUri = it
-            imgVTOEffect.setPhotoUri(uri)
+            imgVTOEffect.setPhotoUri(it)
         }
         if (!isObserveImageData) {
             isObserveImageData = true
@@ -2699,7 +2699,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 if (null != bitmap) {
                     imgVTOEffect.setImageBitmap(bitmap)
                 } else {
-                   // imgVTOEffect.setPhotoUri(selectedImageUri)
                     setBitmapFromUri(selectedImageUri)
                 }
             })

@@ -178,10 +178,20 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     }
 
     private void setBubbleLayoutPosition() {
-        if (!isFromVto) {
+        try {
             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) windowContainer.getLayoutParams();
-            lp.addRule(RelativeLayout.CENTER_VERTICAL);
-            windowContainer.setLayoutParams(lp);
+            if (!isFromVto) {
+                lp.addRule(RelativeLayout.CENTER_VERTICAL);
+                windowContainer.setLayoutParams(lp);
+            } else {
+                lp.setMargins(0, 40, 0, 0);
+                windowContainer.setArrowWidth(60);
+                windowContainer.setArrowHeight(40);
+                windowContainer.setArrowPosition(95);
+            }
+
+        } catch (Exception e) {
+            //Do Nothing
         }
     }
 
