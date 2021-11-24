@@ -2329,6 +2329,9 @@
     <!--  No browser dialog  -->
     <string name="browser_not_found_title">Browser Not Found</string>
     <string name="browser_not_found_msg">To continue, please install a web browser.</string>
+
+    <string name="select_your_preferred_collection_time_error">Please select a collection timeslot.</string>
+
     <string name="native_checkout_collecting_from">Collecting From</string>
     <string name="collection_time_detail_title">When Would You Like To Collect?</string>
     <string name="native_checkout_collection_date">Collection Date</string>

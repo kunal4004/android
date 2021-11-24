@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -25,6 +27,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.*
 import kotlinx.android.synthetic.main.checkout_add_address_retuning_user.loadingBar
+import kotlinx.android.synthetic.main.checkout_delivery_time_slot_selection_fragment.*
+import kotlinx.android.synthetic.main.checkout_how_would_you_delivered.*
 import kotlinx.android.synthetic.main.fragment_checkout_returning_user_collection.*
 import kotlinx.android.synthetic.main.layout_collection_time_details.*
 import kotlinx.android.synthetic.main.layout_collection_user_information.*
@@ -40,6 +44,8 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddr
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FoodSubstitution
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_COLLECTION_DATES
 import za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog.Companion.ARGS_KEY_SELECTED_POSITION
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
+import za.co.woolworths.financial.services.android.checkout.view.ErrorHandlerBottomSheetDialog.Companion.ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CollectionTimeSlotsAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.ShoppingBagsRadioGroupAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
@@ -61,9 +67,11 @@ import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_E
 import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
-    ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener {
+    ShoppingBagsRadioGroupAdapter.EventListner, View.OnClickListener, CollectionTimeSlotsListener {
 
+    private var selectedTimeSlot: Slot? = null
     private var selectedPosition: Int = 0
+    private var selectedShoppingBagType: Double? = null
     private lateinit var collectionTimeSlotsAdapter: CollectionTimeSlotsAdapter
     private var storePickupInfoResponse: ConfirmDeliveryAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
@@ -95,6 +103,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         const val REQUEST_KEY_SELECTED_COLLECTION_DATE: String = "SELECTED_COLLECTION_DATE"
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        collectionTimeSlotsAdapter = CollectionTimeSlotsAdapter(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -119,6 +132,22 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         initializeCollectingDetailsView()
         initializeCollectionTimeSlots()
         callStorePickupInfoAPI()
+        txtContinueToPaymentCollection?.setOnClickListener(this)
+        setFragmentResults()
+    }
+
+    private fun setFragmentResults() {
+
+        setFragmentResultListener(ErrorHandlerBottomSheetDialog.RESULT_ERROR_CODE_RETRY) { _, args ->
+            when (args?.get("bundle")) {
+                ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS -> {
+                    callStorePickupInfoAPI()
+                }
+                ERROR_TYPE_SHIPPING_DETAILS_COLLECTION -> {
+                    onCheckoutPaymentClick()
+                }
+            }
+        }
     }
 
     fun initShimmerView() {
@@ -278,11 +307,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 }
 
                                 if (response.orderSummary == null) {
-                                    //TODO: Handle Error screen
-                                    /*presentErrorDialog(
-                                getString(R.string.common_error_unfortunately_something_went_wrong),
-                                getString(R.string.no_internet_subtitle)
-                                )*/
+                                    presentErrorDialog(
+                                        getString(R.string.common_error_unfortunately_something_went_wrong),
+                                        getString(R.string.no_internet_subtitle),
+                                        ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
+                                    )
                                     return@observe
                                 }
 
@@ -291,29 +320,27 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                     return@observe
                                 }
 
-                                initializeOrderSummary(response?.orderSummary)
-                                response?.sortedJoinDeliverySlots?.apply {
+                                initializeOrderSummary(response.orderSummary)
+                                response.sortedJoinDeliverySlots?.apply {
                                     val firstAvailableDateSlot = getFirstAvailableSlot(this)
                                     initializeDatesAndTimeSlots(firstAvailableDateSlot)
                                 }
                             }
                             else -> {
-                                //TODO: Handle Error screen
-
-                                /*presentErrorDialog(
-                            getString(R.string.common_error_unfortunately_something_went_wrong),
-                            getString(R.string.no_internet_subtitle)
-                        )*/
+                                presentErrorDialog(
+                                    getString(R.string.common_error_unfortunately_something_went_wrong),
+                                    getString(R.string.no_internet_subtitle),
+                                    ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
+                                )
                             }
                         }
                     }
                     is Throwable -> {
-                        //TODO: Handle Error screen
-
-                        /*presentErrorDialog(
+                        presentErrorDialog(
                             getString(R.string.common_error_unfortunately_something_went_wrong),
-                            getString(R.string.no_internet_subtitle)
-                        )*/
+                            getString(R.string.no_internet_subtitle),
+                            ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS
+                        )
                     }
                 }
             })
@@ -398,7 +425,6 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private fun initializeCollectionTimeSlots() {
         recyclerViewCollectionTimeSlots?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-            collectionTimeSlotsAdapter = CollectionTimeSlotsAdapter()
             adapter = collectionTimeSlotsAdapter
             collectionTimeSlotsAdapter.setCollectionTimeSlotData(null)
         }
@@ -603,7 +629,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         shoppingBagsOptionsList: ShoppingBagsOptions,
         position: Int
     ) {
-//        selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
+        selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
     }
 
     override fun onClick(v: View?) {
@@ -631,6 +657,9 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             }
             R.id.chooseDateLayout -> {
                 onChooseDateClicked()
+            }
+            R.id.txtContinueToPaymentCollection -> {
+                onCheckoutPaymentClick()
             }
         }
     }
@@ -681,6 +710,149 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 }
             }
         }
+    }
+
+    override fun setSelectedTimeSlot(slot: Slot?) {
+        selectedTimeSlot = slot
+    }
+
+    private fun onCheckoutPaymentClick() {
+        if (isRequiredFieldsMissing() || isInstructionsMissing()) {
+            return
+        }
+
+        val body = getShipmentDetailsBody()
+        if (TextUtils.isEmpty(body.oddDeliverySlotId) && TextUtils.isEmpty(body.foodDeliverySlotId)
+            && TextUtils.isEmpty(body.otherDeliverySlotId)
+        ) {
+            return
+        }
+        loadingBar?.visibility = View.VISIBLE
+        setScreenClickEvents(false)
+        checkoutAddAddressNewUserViewModel.getShippingDetails(body)
+            .observe(viewLifecycleOwner, { response ->
+                loadingBar.visibility = View.GONE
+                setScreenClickEvents(true)
+                when (response) {
+                    is ShippingDetailsResponse -> {
+                        if (TextUtils.isEmpty(response.jsessionId) || TextUtils.isEmpty(response.auth)) {
+                            presentErrorDialog(
+                                getString(R.string.common_error_unfortunately_something_went_wrong),
+                                getString(R.string.common_error_message_without_contact_info),
+                                ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
+                            )
+                            return@observe
+                        }
+                        navigateToPaymentWebpage(response)
+                    }
+                    is Throwable -> {
+                        presentErrorDialog(
+                            getString(R.string.common_error_unfortunately_something_went_wrong),
+                            getString(R.string.common_error_message_without_contact_info),
+                            ERROR_TYPE_SHIPPING_DETAILS_COLLECTION
+                        )
+                    }
+                }
+            })
+    }
+
+    private fun presentErrorDialog(title: String, subTitle: String, errorType: Int) {
+        val bundle = Bundle()
+        bundle.putString(
+            ErrorHandlerBottomSheetDialog.ERROR_TITLE,
+            title
+        )
+        bundle.putString(
+            ErrorHandlerBottomSheetDialog.ERROR_DESCRIPTION,
+            subTitle
+        )
+        bundle.putInt(
+            ErrorHandlerBottomSheetDialog.ERROR_TYPE,
+            errorType
+        )
+        view?.findNavController()?.navigate(
+            R.id.action_checkoutReturningUserCollectionFragment_to_errorHandlerBottomSheetDialog,
+            bundle
+        )
+    }
+
+    private fun setScreenClickEvents(isClickable: Boolean) {
+        radioGroupFoodSubstitution?.isClickable = isClickable
+        checkoutDeliveryDetailsLayout?.isClickable = isClickable
+        switchNeedBags?.isClickable = isClickable
+        switchGiftInstructions?.isClickable = isClickable
+        switchSpecialDeliveryInstruction?.isClickable = isClickable
+    }
+
+    private fun getShipmentDetailsBody() = ShippingDetailsBody().apply {
+        requestFrom = "express"
+        joinBasket = true
+        foodShipOnDate = selectedTimeSlot?.stringShipOnDate
+        otherShipOnDate = ""
+        foodDeliverySlotId = selectedTimeSlot?.slotId
+        otherDeliverySlotId = ""
+        oddDeliverySlotId = ""
+        foodDeliveryStartHour = selectedTimeSlot?.hourFrom?.toLong() ?: 0
+        otherDeliveryStartHour = 0
+        substituesAllowed = selectedFoodSubstitution.rgb
+        plasticBags = switchNeedBags?.isChecked ?: false
+        shoppingBagType = selectedShoppingBagType
+        giftNoteSelected = switchGiftInstructions?.isChecked ?: false
+        deliverySpecialInstructions =
+            if (switchSpecialDeliveryInstruction?.isChecked == true) edtTxtSpecialDeliveryInstruction?.text.toString() else ""
+        giftMessage =
+            if (switchGiftInstructions?.isChecked == true) edtTxtGiftInstructions?.text.toString() else ""
+        suburbId = ""
+        storeId = Utils.getPreferredDeliveryLocation()?.let {
+            it.store?.id ?: ""
+        }
+    }
+
+    private fun isInstructionsMissing(): Boolean {
+        return when {
+            switchSpecialDeliveryInstruction?.isChecked == true -> {
+                if (TextUtils.isEmpty(edtTxtSpecialDeliveryInstruction?.text.toString())) {
+                    // scroll to instructions layout
+                    checkoutReturningCollectionScrollView?.smoothScrollTo(
+                        0,
+                        layoutCollectionInstructions?.top ?: 0
+                    )
+                    true
+                } else false
+            }
+            switchGiftInstructions?.isChecked == true -> {
+                if (TextUtils.isEmpty(edtTxtGiftInstructions?.text?.toString())) {
+                    // scroll to instructions layout
+                    checkoutReturningCollectionScrollView?.smoothScrollTo(
+                        0,
+                        layoutCollectionInstructions?.top ?: 0
+                    )
+                    true
+                } else false
+            }
+            else -> false
+        }
+    }
+
+    private fun isRequiredFieldsMissing(): Boolean {
+        if (!TextUtils.isEmpty(selectedTimeSlot?.slotId)) {
+            txtSelectCollectionTimeSlotFoodError?.visibility = View.GONE
+            return false
+        }
+        // scroll to slot selection layout
+        checkoutReturningCollectionScrollView?.smoothScrollTo(
+            0,
+            checkoutCollectingTimeDetailsLayout?.top ?: 0
+        )
+        txtSelectCollectionTimeSlotFoodError?.visibility = View.VISIBLE
+        return true
+    }
+
+    private fun navigateToPaymentWebpage(webTokens: ShippingDetailsResponse) {
+        view?.findNavController()?.navigate(
+            R.id.action_checkoutReturningUserCollectionFragment_to_checkoutPaymentWebFragment,
+            bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens)
+        )
     }
 
     @VisibleForTesting

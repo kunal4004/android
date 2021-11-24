@@ -232,6 +232,18 @@
             android:id="@+id/action_checkoutReturningUserCollectionFragment_to_collectionDatesBottomSheetDialog"
             app:destination="@id/collectionDatesBottomSheetDialog" />
 
+        <action
+            android:id="@+id/action_checkoutReturningUserCollectionFragment_to_checkoutPaymentWebFragment"
+            app:destination="@id/checkoutPaymentWebFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"  />
+
+        <action
+            android:id="@+id/action_checkoutReturningUserCollectionFragment_to_errorHandlerBottomSheetDialog"
+            app:destination="@id/errorHandlerBottomSheetDialog" />
+
     </fragment>
     <dialog
         android:id="@+id/collectionDatesBottomSheetDialog"
