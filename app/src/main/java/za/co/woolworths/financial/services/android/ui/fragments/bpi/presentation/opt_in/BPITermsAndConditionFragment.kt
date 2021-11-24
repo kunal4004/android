@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_TERMS_CONDITIONS_HTML
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.carousel.BPIOptInCarouselFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
@@ -188,9 +188,8 @@ class BPITermsAndConditionFragment : Fragment()  {
             }
         }
 
-        val htmlContent = arguments?.getString(BPI_TERMS_CONDITIONS_HTML)
-        if(htmlContent != null){
-            bpiTermsConditionsWebView?.loadData(htmlContent, "text/html; charset=utf-8", null)
+        BPIOptInCarouselFragment.htmlContent?.termsAndConditionsHtml?.let {
+            bpiTermsConditionsWebView?.loadData(it,"text/html; charset=utf-8", null)
         }
     }
 
