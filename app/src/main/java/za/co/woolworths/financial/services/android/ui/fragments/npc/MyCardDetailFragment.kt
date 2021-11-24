@@ -378,6 +378,14 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 activity?.apply {
                     Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
                         it.putExtra(HowToUseTemporaryStoreCardActivity.TRANSACTION_TYPE, Transition.SLIDE_LEFT)
+                        mStoreCardsResponse?.apply {
+                            if(isUserGotVirtualCard(storeCardsData) &&
+                                storeCardsData != null &&
+                                storeCardsData?.isStaffMember == true &&
+                                storeCardsData?.virtualCardStaffMemberMessage != null){
+                                it.putExtra(HowToUseTemporaryStoreCardActivity.STAFF_DISCOUNT_INFO, storeCardsData?.virtualCardStaffMemberMessage)
+                            }
+                        }
                         startActivity(it)
                     }
                     overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
