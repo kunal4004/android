@@ -2362,4 +2362,7 @@
     <string name="slash">/</string>
     <string name="skin_profile">skin profile</string>
     <string name="customer_reviews">Customer Reviews</string>
+    <string name="report_moderated">It is currently being moderated.</string>
+    <string name="report_submit">Report Submitted</string>
+    <string name="report_gotit">GOT IT</string>
 </resources>
