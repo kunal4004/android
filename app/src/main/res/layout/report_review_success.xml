@@ -14,23 +14,19 @@
         android:background="@drawable/ic_closecircle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.917"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.05" />
+         />
 
     <ImageView
         android:id="@+id/report_submit_success"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/success_tick"
-
         app:layout_constraintBottom_toTopOf="@+id/tv_report_submit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.914" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_report_moderate"
@@ -43,10 +39,9 @@
         android:textSize="@dimen/fifteen_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.499" />
+         />
 
     <TextView
         android:id="@+id/tv_report_submit"
@@ -59,25 +54,21 @@
         android:textSize="@dimen/twenty_dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_report_moderate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.912" />
+         />
 
     <Button
         android:id="@+id/tvGotIt_report"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/store_card_text_field_height_50_dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
         android:background="@drawable/black_button_drawable_state"
         android:fontFamily="@font/futura_semi_bold_ttf"
-        android:lineSpacingExtra="1.dp"
-        android:lineSpacingMultiplier="1.40"
         android:gravity="center"
-        android:letterSpacing="0.1"
         android:text="@string/report_gotit"
         android:textColor="@color/white"
         android:textSize="@dimen/fifteen_sp"
