@@ -51,6 +51,7 @@ import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.AccountOptions;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
+import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceObject;
 import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncrease;
@@ -70,6 +71,7 @@ import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForD
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
@@ -155,6 +157,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Liquor liquor;
     private static AccountOptions accountOptions;
     private static DeviceSecurity deviceSecurity;
+    private static BalanceProtectionInsuranceObject balanceProtectionInsurance;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -775,5 +778,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static DeviceSecurity getDeviceSecurity() {
         return deviceSecurity;
+    }
+
+    public static void setBalanceProtectionInsuranceObject(@Nullable BalanceProtectionInsuranceObject balanceProtectionInsurance) {
+        WoolworthsApplication.balanceProtectionInsurance = balanceProtectionInsurance;
+    }
+
+    public static BalanceProtectionInsuranceObject getBalanceProtectionInsuranceObject() {
+        return balanceProtectionInsurance;
     }
 }

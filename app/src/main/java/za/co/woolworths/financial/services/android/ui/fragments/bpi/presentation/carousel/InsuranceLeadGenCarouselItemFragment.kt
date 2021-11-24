@@ -30,8 +30,8 @@ class InsuranceLeadGenCarouselItemFragment : Fragment() {
         val carouselItem = arguments?.get(className) as? Pair<*, *>
         (carouselItem?.second as? InsuranceLeadCarousel)?.apply {
             insuranceLeadGenCarouselImageview?.setImageResource(imageResource)
-            insuranceLeadGenCarouselTitleTextView?.text = bindString(titleResource)
-            insuranceLeadGenCarouselDescTextView?.text = bindString(descriptionResource)
+            insuranceLeadGenCarouselTitleTextView?.text = title
+            insuranceLeadGenCarouselDescTextView?.text = description
         }
     }
 
