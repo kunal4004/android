@@ -58,7 +58,7 @@ class ComparisonView : View {
     }
 
     private fun setComparisonPosition(@FloatRange(from = 0.0, to = 1.0) position: Float) {
-        makeupCam?.enableComparison(isEnabled)
+        makeupCam?.setComparisonPosition(position)
     }
 
     fun isCompareModeEnable() : Boolean = inCompareMode
@@ -97,7 +97,7 @@ class ComparisonView : View {
     private fun setupDividerDrawingRect() {
         val viewW = width.toFloat()
         val viewH = height.toFloat()
-        val dividerDrawingW = 4f
+        val dividerDrawingW = 8f
         val dividerDrawingH = viewH
         val dividerDrawingLeft = viewW * dividerPosition - dividerDrawingW * 0.5f
         dividerDrawingRect[dividerDrawingLeft, 0f, dividerDrawingLeft + dividerDrawingW] =

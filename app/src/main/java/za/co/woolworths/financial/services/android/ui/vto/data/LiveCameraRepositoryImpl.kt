@@ -18,7 +18,7 @@ class LiveCameraRepositoryImpl @Inject constructor(
     private var vtoApplier: VtoApplier? = null
     val getApplyResult = MutableLiveData<Any>()
     private var makeupCamera: MakeupCam? = null
-
+    val getOriginalPicture = MutableLiveData<Bitmap?>()
 
     override fun liveCameraVtoApplier(
         makeupCam: MakeupCam?,
@@ -114,11 +114,14 @@ class LiveCameraRepositoryImpl @Inject constructor(
             true,
             true,
             false,
-            false,
+            true,
             object : MakeupCam.PictureCallback {
                 override fun onPictureTaken(originalPicture: Bitmap?, resultPicture: Bitmap?) {
                     resultPicture?.let {
                         takenPicture.value = it
+                    }
+                    originalPicture?.let {
+                        getOriginalPicture.value = it
                     }
                 }
 
@@ -142,6 +145,10 @@ class LiveCameraRepositoryImpl @Inject constructor(
                     //Do Nothing
                 }
             })
+    }
+
+    override fun getOriginalPicture(): MutableLiveData<Bitmap?> {
+        return getOriginalPicture
     }
 
 }
