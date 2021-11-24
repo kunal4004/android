@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_more_reviews.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -24,14 +23,20 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import androidx.fragment.app.FragmentTransaction
+import com.awfs.coordination.R
+import java.util.ArrayList
 
-class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpenListener {
+class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListener {
 
     companion object {
         fun newInstance() = MoreReviewsFragment()
     }
 
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
+
+    var reportReviewFragment: ReportReviewFragment? = null
+
 
     private var productId: String = "-1"
 
@@ -44,11 +49,11 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.apply {
-            val ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_STATISTICS),
+            val ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_DATA),
                     RatingReviewResponse::class.java) as RatingReviewResponse
             productId = ratingAndResponse.reviews.get(0).productId
             setupViewModel()
-            setReviewsList(ratingAndResponse.reviewStatistics)
+            setReviewsList(ratingAndResponse.reviewStatistics, ratingAndResponse.reportReviewOptions)
         }
     }
 
@@ -59,8 +64,10 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpen
         ).get(RatingAndReviewViewModel::class.java)
     }
 
-    private fun setReviewsList(reviewStatistics: ReviewStatistics) {
-        val moreReviewsAdapter = MoreReviewsAdapter(requireContext(), this, reviewStatistics)
+    private fun setReviewsList(reviewStatistics: ReviewStatistics,
+                               reportReviewOptions: List<String>) {
+        val moreReviewsAdapter = MoreReviewsAdapter(requireContext(),
+                this, reviewStatistics, reportReviewOptions)
         moreReviewsAdapter.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
@@ -77,13 +84,26 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpen
             }
         }
 
-
         rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
         rv_more_reviews.adapter = moreReviewsAdapter
     }
 
     override fun openSkinProfileDialog(reviews: Reviews) {
         viewSkinProfileDialog(reviews)
+    }
+
+    override fun openReportScreen(reportReviewOptions: List<String>) {
+        val bundle = Bundle()
+        bundle.putStringArrayList(KotlinUtils.REVIEW_REPORT, reportReviewOptions as ArrayList<String>)
+        reportReviewFragment = ReportReviewFragment.newInstance()
+        reportReviewFragment?.arguments = bundle
+        activity?.apply {
+            val fragmentManager = getSupportFragmentManager()
+            val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
+            fragmentTransaction.addToBackStack(null)
+            fragmentTransaction.commit()
+        }
     }
 
     private fun viewSkinProfileDialog(reviews: Reviews) {

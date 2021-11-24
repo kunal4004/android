@@ -267,7 +267,7 @@ public class ScreenManager {
         Gson gson = new Gson();
         String ratingResponseData  = gson.toJson(ratingReviewResponse);
         Bundle bundle = new Bundle();
-        bundle.putString(KotlinUtils.REVIEW_STATISTICS, ratingResponseData);
+        bundle.putString(KotlinUtils.REVIEW_DATA, ratingResponseData);
         naviagteToMoreReviewsActivity(activity, bundle);
     }
 

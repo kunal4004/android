@@ -22,8 +22,9 @@ import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAd
 import za.co.woolworths.financial.services.android.util.Utils
 
 class MoreReviewsAdapter(val context: Context,
-                         val skinProfileDialogListener: SkinProfileDialogOpenListener,
-                         val reviewStatistics: ReviewStatistics) : PagingDataAdapter<Reviews,
+                         val reviewItemClickListener: ReviewItemClickListener,
+                         val reviewStatistics: ReviewStatistics,
+                         val reportReviewOptions: List<String>) : PagingDataAdapter<Reviews,
         RecyclerView.ViewHolder>(MoreReviewsComparator), ReviewThumbnailAdapter.ThumbnailClickListener {
 
     private val TYPE_HEADER = 0
@@ -33,8 +34,9 @@ class MoreReviewsAdapter(val context: Context,
     private var thumbnailFullList = listOf<Thumbnails>()
 
 
-    interface SkinProfileDialogOpenListener {
+    interface ReviewItemClickListener {
         fun openSkinProfileDialog(reviews: Reviews)
+        fun openReportScreen(reportReviewOptions: List<String>)
     }
 
     inner class ReviewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -64,13 +66,16 @@ class MoreReviewsAdapter(val context: Context,
 
                     reviewHelpfulReport.apply {
                         tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                        tvReport.setOnClickListener {
+                            reviewItemClickListener.openReportScreen(reportReviewOptions)
+                        }
                     }
 
                     if (contextDataValue.isEmpty() && tagDimensions.isEmpty()) {
                         tvSkinProfile.visibility = View.GONE
                     }
                     tvSkinProfile.setOnClickListener {
-                        skinProfileDialogListener.openSkinProfileDialog(review)
+                        reviewItemClickListener.openSkinProfileDialog(review)
                     }
                 }
             }
