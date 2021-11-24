@@ -1697,7 +1697,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         (activity as? ProductDetailsActivity)?.apply {
 
             walkThroughPromtView =
-                WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.VTO_TRY_IT)
+                WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.VTO_TRY_IT,true)
                     .setTarget(imgVTOOpen)
                     .setTitle(R.string.try_on_intro_txt)
                     .setDescription(R.string.try_on_intro_desc)

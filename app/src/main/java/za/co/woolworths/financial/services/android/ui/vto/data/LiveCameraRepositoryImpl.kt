@@ -54,7 +54,6 @@ class LiveCameraRepositoryImpl @Inject constructor(
     ) {
 
         val vtoSetting = VtoSetting.builder()
-            .setProductGuid(productId)
             .setSkuGuid(sku)
             .build()
 
@@ -84,7 +83,6 @@ class LiveCameraRepositoryImpl @Inject constructor(
     ): MutableLiveData<Any> {
         val selectedColorResult = MutableLiveData<Any>()
         val vtoSetting = VtoSetting.builder()
-            .setProductGuid(productId)
             .setSkuGuid(sku)
             .build()
 
