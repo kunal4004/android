@@ -2,8 +2,12 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.DialogInterface
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_more_reviews.*
+import kotlinx.android.synthetic.main.fragment_more_reviews.view.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.view.*
@@ -23,25 +28,28 @@ import za.co.woolworths.financial.services.android.models.dto.SortOption
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.ReviewStatistics
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.SortOptions
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.newtwork.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewLoadStateAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewsAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip
 
-class MoreReviewsFragment : Fragment(), View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected {
+class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpenListener, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected {
     private var sortOptionDialog: Dialog? = null
+    private var flReview: FrameLayout? = null
 
     companion object {
         fun newInstance() = MoreReviewsFragment()
     }
 
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
-    private var ratingAndResponse: RatingReviewResponse? = null
+    private lateinit var ratingAndResponse: RatingReviewResponse
 
     private var productId: String = "-1"
 
@@ -53,35 +61,33 @@ class MoreReviewsFragment : Fragment(), View.OnClickListener, SortOptionsAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        flReview = view.findViewById(R.id.fl_review)
         arguments?.apply {
-            val ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_STATISTICS),
+              ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_STATISTICS),
                     RatingReviewResponse::class.java) as RatingReviewResponse
             productId = ratingAndResponse.reviews.get(0).productId
             setRatingDetailsUI(ratingAndResponse.reviewStatistics)
             setupViewModel()
-            refineProducts?.setOnClickListener(this@MoreReviewsFragment)
-            sortProducts?.setOnClickListener(this@MoreReviewsFragment)
         }
+        refineProducts?.setOnClickListener(this@MoreReviewsFragment)
+        sortProducts?.setOnClickListener(this@MoreReviewsFragment)
+        flReview?.setOnClickListener(this@MoreReviewsFragment)
     }
 
     override fun onStart() {
         super.onStart()
-        setReviewsList()
-    }
+        setReviewsList(null,null)
+        }
 
     private fun setupViewModel() {
-        moreReviewViewModel =  ViewModelProvider(
+        moreReviewViewModel = ViewModelProvider(
                 this,
                 RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
         ).get(RatingAndReviewViewModel::class.java)
     }
 
-    private fun setReviewsList() {
-        val  moreReviewsAdapter = MoreReviewsAdapter(requireContext())
-        rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
-        rv_more_reviews.setHasFixedSize(true)
-        rv_more_reviews.adapter = moreReviewsAdapter
-
+    private fun setReviewsList(sort: String?, refinements: String?) {
+        val moreReviewsAdapter = MoreReviewsAdapter(requireContext(), this)
         moreReviewsAdapter.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
@@ -91,7 +97,7 @@ class MoreReviewsFragment : Fragment(), View.OnClickListener, SortOptionsAdapter
         }
 
         lifecycleScope.launch {
-            moreReviewViewModel.getReviewDataSource(productId).collectLatest { pagedData ->
+            moreReviewViewModel.getReviewDataSource(productId, sort, refinements).collectLatest { pagedData ->
                 moreReviewsAdapter.submitData(pagedData)
             }
         }
@@ -100,6 +106,8 @@ class MoreReviewsFragment : Fragment(), View.OnClickListener, SortOptionsAdapter
                 header = MoreReviewLoadStateAdapter(),
                 footer = MoreReviewLoadStateAdapter()
         )
+        rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
+        rv_more_reviews.adapter = moreReviewsAdapter
     }
 
     private fun setRatingDetailsUI(reviewStaticsData: ReviewStatistics) {
@@ -110,7 +118,7 @@ class MoreReviewsFragment : Fragment(), View.OnClickListener, SortOptionsAdapter
             layout_rating_details.recommend.text = recommendedPercentage
             layout_rating_details.rating_details.pdpratings.apply {
                 ratingBarTop.rating = averageRating
-                tvTotalReviews.text = "Customer Reviews"
+                tvTotalReviews.text = getString(R.string.customer_reviews)
             }
             recommend.text = recommendedPercentage
             view_2.visibility = View.GONE
@@ -155,7 +163,7 @@ class MoreReviewsFragment : Fragment(), View.OnClickListener, SortOptionsAdapter
 
     override fun onClick(view: View) {
         KotlinUtils.avoidDoubleClicks(view)
-        activity?.let { activity ->
+        //activity?.let { activity ->
             when (view.id) {
                 R.id.refineProducts -> {
                     //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED, activity)
@@ -166,32 +174,42 @@ class MoreReviewsFragment : Fragment(), View.OnClickListener, SortOptionsAdapter
                 }
                 R.id.sortProducts -> {
                     //Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED, activity)
-                    ratingAndResponse?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
+                    ratingAndResponse.sortOptions.let {
+                        val rectF = Rect()
+                        sortProducts.getGlobalVisibleRect(rectF)
+                        this.showShortOptions(it,rectF.bottom)
+                    }
+                }
+                R.id.fl_review -> {
+                    if (sortOptionDialog != null && sortOptionDialog?.isShowing == true)
+                        sortOptionDialog?.dismiss()
                 }
                 else -> return
-            }
         }
     }
 
     override fun onSortOptionSelected(sortOption: SortOption) {
         if (sortOptionDialog != null && sortOptionDialog?.isShowing == true) {
             sortOptionDialog?.dismiss()
-            val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] = sortOption.label
-            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments, this) }
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] =
-                sortOption.label
-            activity?.apply {  Utils.triggerFireBaseEvents(
+            //val arguments = HashMap<String, String>()
+            //arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] = sortOption.label
+            //activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments, this) }
+            //arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] =
+            //    sortOption.label
+            /*activity?.apply {  Utils.triggerFireBaseEvents(
                 FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED,
                 arguments,this
-            )}
+            )}*/
             //updateProductRequestBodyForSort(sortOption.sortOption)
             //reloadProductsWithSortAndFilter()
+            setReviewsList(sortOption.sortOption,null)
+
         }
     }
 
+
     @SuppressLint("InflateParams")
-    private fun showShortOptions(sortOptions: ArrayList<SortOption>) {
+    private fun showShortOptions(sortOptions: ArrayList<SortOption>, position: Int) {
         sortOptionDialog = activity?.let { activity -> Dialog(activity) }
         sortOptionDialog?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -212,14 +230,38 @@ class MoreReviewsFragment : Fragment(), View.OnClickListener, SortOptionsAdapter
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.WRAP_CONTENT
                 )
+                val param :WindowManager.LayoutParams = attributes
+                param.gravity = Gravity.TOP
+                param.y = (position- 330)
                 setBackgroundDrawableResource(R.color.transparent)
-                setGravity(Gravity.TOP)
             }
 
             setTitle(null)
             setCancelable(true)
+            flReview?.visibility = View.VISIBLE
             show()
+
+        }
+        sortOptionDialog?.setOnDismissListener {
+            flReview?.visibility = View.GONE
         }
 
+    }
+
+    override fun openSkinProfileDialog(reviews: Reviews) {
+        viewSkinProfileDialog(reviews)
+    }
+
+    private fun viewSkinProfileDialog(reviews: Reviews) {
+        val dialog = SkinProfileDialog(reviews)
+        activity?.apply {
+            childFragmentManager.beginTransaction()
+                    .let { fragmentTransaction ->
+                        dialog.show(
+                                fragmentTransaction,
+                                SkinProfileDialog::class.java.simpleName
+                        )
+                    }
+        }
     }
 }
