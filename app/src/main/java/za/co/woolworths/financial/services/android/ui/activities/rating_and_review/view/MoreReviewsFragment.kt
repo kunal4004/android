@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.ReviewStatistics
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.newtwork.apihelper.RatingAndReviewApiHelper
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewLoadStateAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewsAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
