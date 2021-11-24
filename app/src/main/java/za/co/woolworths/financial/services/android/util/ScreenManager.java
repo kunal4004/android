@@ -9,7 +9,9 @@ import android.util.Log;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -26,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.activities.product.Product
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.MoreReviewActivity;
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReportReviewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.ReviewerInfoDetailsActivity;
 
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
@@ -268,6 +271,10 @@ public class ScreenManager {
         naviagteToMoreReviewsActivity(activity, bundle);
     }
 
+    public static void presentReportReview(Activity activity, ArrayList<String> reportReviewOptions) {
+        naviagteToReportReviewActivity(activity, reportReviewOptions);
+    }
+
     private static void naviagteToReviewInfoDetailsActivity(Activity activity, Bundle bundle) {
         Intent intent = new Intent(activity, ReviewerInfoDetailsActivity.class);
         intent.putExtras(bundle);
@@ -279,6 +286,14 @@ public class ScreenManager {
     private static void naviagteToMoreReviewsActivity(Activity activity, Bundle bundle) {
         Intent intent = new Intent(activity, MoreReviewActivity.class);
         intent.putExtras(bundle);
+        activity.startActivityForResult(intent, 0);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        activity.finish();
+    }
+
+    private static void naviagteToReportReviewActivity(Activity activity, ArrayList<String> reportReviews) {
+        Intent intent = new Intent(activity, ReportReviewActivity.class);
+        intent.putExtra(KotlinUtils.REVIEW_REPORT, reportReviews);
         activity.startActivityForResult(intent, 0);
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         activity.finish();

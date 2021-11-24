@@ -2730,4 +2730,9 @@
         <item name="android:textSize">@dimen/fifteen_sp</item>
         <item name="android:textColor">@color/account_card_desc_grey_color</item>
     </style>
+
+    <style name="BlackCheck">
+        <item name="colorAccent">@color/black</item>
+    </style>
+
 </resources>
