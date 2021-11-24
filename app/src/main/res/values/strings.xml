@@ -2316,4 +2316,11 @@
     <!--  No browser dialog  -->
     <string name="browser_not_found_title">Browser Not Found</string>
     <string name="browser_not_found_msg">To continue, please install a web browser.</string>
+
+    <string name="bpi_opt_in_carousel_title_1">Death, permanent disability or critical illness cover</string>
+    <string name="bpi_opt_in_carousel_title_2">Retrenchment Benefit</string>
+    <string name="bpi_opt_in_carousel_title_3">Instant Cover</string>
+    <string name="bpi_opt_in_carousel_desc_3">Cover is immediate upon activation of the insurance</string>
+    <string name="bpi_opt_in_carousel_desc_1">"Pays the outstanding balance on your account up to a maximum of R100 000 in the event of your death, permanent disability or critical illness. "</string>
+    <string name="bpi_opt_in_carousel_desc_2">Pays your instalments up to 12 months up to a maximum of R1000 000 in the event that you are retrenchment or temporarily disabled.</string>
 </resources>

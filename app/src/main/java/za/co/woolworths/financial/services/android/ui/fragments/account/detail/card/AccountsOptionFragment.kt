@@ -34,6 +34,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
@@ -97,9 +99,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
         mCardPresenterImpl?.apply {
-            setBalanceProtectionInsuranceState()
+            getBpiInsuranceApplication()
             displayCardHolderName()
             creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
+            showBalanceProtectionInsuranceLead()
         }
 
         disposable?.add(WoolworthsApplication.getInstance()
@@ -290,22 +293,38 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, storeCardResponse, requestUnblockStoreCardCall)
     }
 
-    override fun navigateToDebitOrderActivity(debitOrder: DebitOrder) {
-        MyAccountsScreenNavigator.navigateToDebitOrderActivity(activity, debitOrder)
-    }
-
-    override fun navigateToBalanceProtectionInsurance(accountInfo: String?) {
-        MyAccountsScreenNavigator.navigateToBalanceProtectionInsurance(activity, accountInfo, mCardPresenterImpl?.getAccount())
-    }
-
-    override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
-        when (coveredText) {
+    override fun showBalanceProtectionInsurance(insuranceCovered: Boolean?) {
+        when (insuranceCovered){
             true -> {
-                KotlinUtils.roundCornerDrawable(bpiCoveredTextView, "#bad110")
                 bpiCoveredTextView?.visibility = VISIBLE
                 bpiNotCoveredGroup?.visibility = GONE
             }
             false -> {
+                bpiCoveredTextView?.visibility = GONE
+                bpiNotCoveredGroup?.visibility = VISIBLE
+            }
+        }
+    }
+
+    override fun navigateToDebitOrderActivity(debitOrder: DebitOrder) {
+        MyAccountsScreenNavigator.navigateToDebitOrderActivity(activity, debitOrder)
+    }
+
+    override fun navigateToBalanceProtectionInsuranceApplication(accountInfo: String?, bpiInsuranceStatus: BpiInsuranceApplicationStatusType?) {
+        MyAccountsScreenNavigator.navigateToBalanceProtectionInsurance(activity, accountInfo, mCardPresenterImpl?.getAccount(), bpiInsuranceStatus)
+    }
+
+    override fun showBalanceProtectionInsuranceLead(bpiInsuranceApplication: BpiInsuranceApplication?) {
+        when (bpiInsuranceApplication?.status) {
+            BpiInsuranceApplicationStatusType.COVERED ,
+            BpiInsuranceApplicationStatusType.OPTED_IN,
+            BpiInsuranceApplicationStatusType.NOT_OPTED_IN-> {
+                bpiCoveredTextView?.text = bpiInsuranceApplication.displayLabel
+                KotlinUtils.roundCornerDrawable(bpiCoveredTextView, bpiInsuranceApplication.displayLabelColor)
+                bpiCoveredTextView?.visibility = VISIBLE
+                bpiNotCoveredGroup?.visibility = GONE
+            }
+            else  -> {
                 bpiCoveredTextView?.visibility = GONE
                 bpiNotCoveredGroup?.visibility = VISIBLE
             }
@@ -450,7 +469,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         }
     }
 
-    fun showOnlyCardVisibleState() {
+    private fun showOnlyCardVisibleState() {
         stopCardActivationShimmer()
         includeAccountDetailHeaderView?.visibility = VISIBLE
         includeManageMyCard?.visibility = GONE
