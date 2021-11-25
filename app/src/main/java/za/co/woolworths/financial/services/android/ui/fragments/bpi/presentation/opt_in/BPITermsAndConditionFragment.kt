@@ -140,7 +140,6 @@ class BPITermsAndConditionFragment : Fragment()  {
                         when(response?.httpCode){
                             AppConstant.HTTP_OK -> {
                                 showEmailSuccessView()
-                                //TODO: handle response when api starts working
                             }
                             else -> {
                                 showEmailFailureView()
