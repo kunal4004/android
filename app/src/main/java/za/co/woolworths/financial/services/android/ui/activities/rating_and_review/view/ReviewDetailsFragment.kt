@@ -7,24 +7,30 @@ import android.view.View
 import android.view.ViewGroup
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.review_detail_layout.*
 import kotlinx.android.synthetic.main.review_detail_layout.rvSecondaryRatings
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.android.synthetic.main.skin_profile_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Normal
+import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ProductReviewViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.SkinProfileAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.ArrayList
 
 class ReviewDetailsFragment : Fragment(){
 
     private lateinit var productViewPagerAdapter: ProductReviewViewPagerAdapter
+
+    var reportReviewFragment: ReportReviewFragment? = null
 
     companion object {
         fun newInstance() = ReviewDetailsFragment()
@@ -41,13 +47,14 @@ class ReviewDetailsFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.apply {
-            val reviewData = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_DATA), Reviews::class.java) as Reviews
-            setDefaultUi(reviewData)
-            setProductImageViewPager(reviewData.photos.normal)
+            val ratingAndResponseData = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_DATA),  RatingReviewResponse::class.java) as RatingReviewResponse
+            val reviews = ratingAndResponseData.reviews.get(0)
+            setDefaultUi(reviews, ratingAndResponseData.reportReviewOptions)
+            setProductImageViewPager(reviews.photos.normal)
         }
     }
 
-    private fun setDefaultUi(reviewData: Reviews?) {
+    private fun setDefaultUi(reviewData: Reviews?, reportReviewOptions: List<String>) {
 
         reviewData?.run {
 
@@ -62,9 +69,28 @@ class ReviewDetailsFragment : Fragment(){
             setSkinProfielLayout(contextDataValue , tagDimensions)
             RatingAndReviewUtil.setReviewAdditionalFields(additionalFields, lladdiionField, requireContext())
             RatingAndReviewUtil.setSecondaryRatingsUI(secondaryRatings, rvSecondaryRatings, requireContext())
+            layout_helpful_review.apply {
+                tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                tvReport.setOnClickListener {
+                    openReportScreen(reportReviewOptions)
+                }
+            }
         }
     }
 
+    private fun openReportScreen(reportReviewOptions: List<String>) {
+        activity?.apply {
+            val bundle = Bundle()
+            bundle.putStringArrayList(KotlinUtils.REVIEW_REPORT, reportReviewOptions as ArrayList<String>)
+            reportReviewFragment = ReportReviewFragment.newInstance()
+            reportReviewFragment?.arguments = bundle
+            val fragmentManager = getSupportFragmentManager()
+            val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
+            fragmentTransaction.addToBackStack(null)
+            fragmentTransaction.commit()
+        }
+    }
 
     private fun setSkinProfielLayout(contextDataValue: List<SkinProfile>, tagDimensions: List<SkinProfile>) {
         if (contextDataValue.isNotEmpty() || tagDimensions.isNotEmpty()) {

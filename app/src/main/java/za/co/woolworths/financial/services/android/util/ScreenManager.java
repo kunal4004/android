@@ -254,11 +254,11 @@ public class ScreenManager {
         activity.startActivity(intent);
     }
 
-    public static void presentReviewDetail(Activity activity, Reviews reviews) {
+    public static void presentReviewDetail(Activity activity, RatingReviewResponse ratingReviewResponse) {
         Gson gson = new Gson();
-        String reviewData = gson.toJson(reviews);
+        String ratingReviewResponseData = gson.toJson(ratingReviewResponse);
         Bundle bundle = new Bundle();
-        bundle.putString(KotlinUtils.REVIEW_DATA, reviewData);
+        bundle.putString(KotlinUtils.REVIEW_DATA, ratingReviewResponseData);
         naviagteToReviewInfoDetailsActivity(activity, bundle);
     }
 

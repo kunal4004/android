@@ -719,7 +719,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun sendReviewDataToReviewDetailScreen(ratingNReviewResponse: RatingReviewResponse) {
-        ScreenManager.presentReviewDetail(requireActivity(), ratingNReviewResponse.reviews[0])
+        ScreenManager.presentReviewDetail(requireActivity(), ratingNReviewResponse)
     }
 
     private fun setReviewAdditionalFields(additionalFields: List<AdditionalFields>){
