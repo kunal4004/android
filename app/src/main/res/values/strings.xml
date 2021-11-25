@@ -2363,4 +2363,7 @@
     <string name="report_sub_label">I find this review to contains:</string>
     <string name="submit_report">Submit Report</string>
     <string name="hint_reason">Please enter a reason here</string>
+    <string name="report_moderated">It is currently being moderated.</string>
+    <string name="report_submit">Report Submitted</string>
+    <string name="report_gotit">GOT IT</string>
 </resources>
