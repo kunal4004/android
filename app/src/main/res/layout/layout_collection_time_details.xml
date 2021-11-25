@@ -47,9 +47,9 @@
             <include
                 android:id="@+id/firstAvailableDateLayout"
                 layout="@layout/where_are_we_delivering_items"
-                android:layout_marginTop="@dimen/fifteen_dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fifteen_dp"
                 app:layout_constraintStart_toStartOf="@id/tvCollectionTimeDetailsDate"
                 app:layout_constraintTop_toBottomOf="@id/tvCollectionTimeDetailsDate" />
 
@@ -58,10 +58,10 @@
                 layout="@layout/where_are_we_delivering_items"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="@id/firstAvailableDateLayout"
                 android:layout_marginStart="@dimen/ten_dp"
                 app:layout_constraintStart_toEndOf="@id/firstAvailableDateLayout"
-                app:layout_constraintTop_toBottomOf="@id/tvCollectionTimeDetailsDate" />
+                app:layout_constraintTop_toBottomOf="@id/tvCollectionTimeDetailsDate"
+                app:layout_constraintTop_toTopOf="@id/firstAvailableDateLayout" />
 
             <TextView
                 android:id="@+id/tvCollectionTimeDetailsTimeSlot"
@@ -83,6 +83,22 @@
                 app:layout_constraintTop_toBottomOf="@id/tvCollectionTimeDetailsTimeSlot"
                 tools:itemCount="6"
                 tools:listitem="@layout/where_are_we_delivering_items" />
+
+            <TextView
+                android:id="@+id/txtSelectCollectionTimeSlotFoodError"
+                style="@style/myriad_pro_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ten_dp"
+                android:layout_marginBottom="@dimen/sixteen_dp"
+                android:layout_weight="@integer/point_five"
+                android:padding="@dimen/two_dp"
+                android:text="@string/select_your_preferred_collection_time_error"
+                android:textColor="@color/color_D0021B"
+                android:textSize="@dimen/fifteen_sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewCollectionTimeSlots" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>

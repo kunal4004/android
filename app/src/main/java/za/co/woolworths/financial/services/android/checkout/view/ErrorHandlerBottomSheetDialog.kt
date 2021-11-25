@@ -26,6 +26,8 @@ class ErrorHandlerBottomSheetDialog : WBottomSheetDialogFragment(),
         const val ERROR_TYPE_ADD_ADDRESS = 1034
         const val ERROR_TYPE_DELETE_ADDRESS = 1035
         const val ERROR_TYPE_CONFIRM_DELIVERY_ADDRESS = 1036
+        const val ERROR_TYPE_CONFIRM_COLLECTION_ADDRESS = 1037
+        const val ERROR_TYPE_SHIPPING_DETAILS_COLLECTION = 1038
         const val RESULT_ERROR_CODE_RETRY = "RESULT_ERROR_CODE_RETRY"
     }
 
