@@ -17,7 +17,6 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_activa
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
-import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
@@ -1222,5 +1221,5 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Path("insuranceType") insuranceType: String,
         @Body insuranceTypeOptInBody: InsuranceTypeOptInBody
-    ):Call< GenericResponse>
+    ):Call<GenericResponse>
 }
