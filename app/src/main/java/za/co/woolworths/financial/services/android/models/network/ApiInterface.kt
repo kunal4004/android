@@ -1213,7 +1213,7 @@ interface ApiInterface {
     ): Call<GenericResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/accounts/{insuranceType}/optin")
+    @POST("wfs/app/v4/user/{insuranceType}/optin")
     fun postInsuranceLeadGenOptIn(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
