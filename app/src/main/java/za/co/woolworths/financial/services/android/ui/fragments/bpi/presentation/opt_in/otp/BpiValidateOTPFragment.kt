@@ -82,7 +82,7 @@ class BpiValidateOTPFragment: Fragment() {
         if (!isAdded) return
         validateOTPResponse?.apply {
             when (httpCode) {
-                AppConstant.HTTP_OK -> navController?.navigate(R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
+                AppConstant.HTTP_OK -> navController?.navigate(R.id.action_bpiValidateOTPFragment_to_BPIProcessingRequestFragment, bundleOf("bundle" to bundle))
                 AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
                     if (response?.code.equals("1060"))
                         navController?.navigate(R.id.action_bpiValidateOTPFragment_to_bpiEnterOtpFragment, bundleOf("bundle" to bundle))
