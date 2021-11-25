@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.HashMap
 
 class BPITermsAndConditionFragment : Fragment()  {
 
@@ -109,13 +110,28 @@ class BPITermsAndConditionFragment : Fragment()  {
 
     private fun emailTermsAndConditions() {
         productGroupCode?.let { productGroupCode ->
-            val bpiTaggingEventCode = when (productGroupCode) {
-                AccountsProductGroupCode.CREDIT_CARD.groupCode -> FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_SEND_EMAIL
-                AccountsProductGroupCode.STORE_CARD.groupCode -> FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_SEND_EMAIL
-                AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_SEND_EMAIL
-                else -> null
+            var bpiTaggingEventCode: String? = null
+            val arguments: MutableMap<String, String> = HashMap()
+
+            when (productGroupCode) {
+                AccountsProductGroupCode.CREDIT_CARD.groupCode -> {
+                    bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_SEND_EMAIL
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                        FirebaseManagerAnalyticsProperties.PropertyValues.CC_BPI_OPT_IN_SEND_EMAIL_VALUE
+                }
+                AccountsProductGroupCode.STORE_CARD.groupCode -> {
+                    bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_SEND_EMAIL
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                        FirebaseManagerAnalyticsProperties.PropertyValues.SC_BPI_OPT_IN_SEND_EMAIL_VALUE
+                }
+                AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> {
+                    bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_SEND_EMAIL
+                    arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                        FirebaseManagerAnalyticsProperties.PropertyValues.PL_BPI_OPT_IN_SEND_EMAIL_VALUE
+                }
             }
-            bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, activity) }
+
+            bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, arguments, activity) }
 
             showProcessingView()
             OneAppService.emailBPITermsAndConditions(productGroupCode).enqueue(

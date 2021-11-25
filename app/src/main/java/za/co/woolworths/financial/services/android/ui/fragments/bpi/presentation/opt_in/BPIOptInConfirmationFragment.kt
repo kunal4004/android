@@ -19,6 +19,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import java.util.HashMap
 
 
 class BPIOptInConfirmationFragment : Fragment() {
@@ -34,13 +35,28 @@ class BPIOptInConfirmationFragment : Fragment() {
 
         confirmBpiButton?.setOnClickListener {
             arguments?.getString(BalanceProtectionInsuranceActivity.BPI_PRODUCT_GROUP_CODE).let { productGroupCode ->
-                val bpiTaggingEventCode = when (productGroupCode) {
-                    AccountsProductGroupCode.CREDIT_CARD.groupCode -> FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_CONFIRM
-                    AccountsProductGroupCode.STORE_CARD.groupCode -> FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_CONFIRM
-                    AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_CONFIRM
-                    else -> null
+                var bpiTaggingEventCode: String? = null
+                val arguments: MutableMap<String, String> = HashMap()
+
+                when (productGroupCode) {
+                    AccountsProductGroupCode.CREDIT_CARD.groupCode -> {
+                        bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_CONFIRM
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                            FirebaseManagerAnalyticsProperties.PropertyValues.CC_BPI_OPT_IN_CONFIRM_VALUE
+                    }
+                    AccountsProductGroupCode.STORE_CARD.groupCode -> {
+                        bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_CONFIRM
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                            FirebaseManagerAnalyticsProperties.PropertyValues.SC_BPI_OPT_IN_CONFIRM_VALUE
+                    }
+                    AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> {
+                        bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_CONFIRM
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                            FirebaseManagerAnalyticsProperties.PropertyValues.PL_BPI_OPT_IN_CONFIRM_VALUE
+                    }
                 }
-                bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, activity) }
+
+                bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, arguments, activity) }
             }
         }
     }
