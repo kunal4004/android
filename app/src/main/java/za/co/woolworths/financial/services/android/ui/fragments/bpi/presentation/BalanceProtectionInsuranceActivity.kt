@@ -16,6 +16,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiEnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.overview_detail.BPIOverviewDetailFragmentArgs
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewPresenter
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
@@ -80,7 +81,13 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val backPressedFragment = bpiPresenter?.navigateToPreviousFragment()
+        var backPressedFragment = bpiPresenter?.navigateToPreviousFragment()
+
+        if(BpiEnterOtpFragment.shouldBackPressed){
+            BpiEnterOtpFragment.shouldBackPressed = false
+            backPressedFragment = bpiPresenter?.navigateToPreviousFragment()
+        }
+
         if (backPressedFragment == false) {
             super.onBackPressed()
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)

@@ -50,10 +50,12 @@ open class BPIRetrieveOtpFragment : Fragment(), IProgressAnimationState,View.OnC
         retry?.setOnClickListener(this)
         needHelp?.setOnClickListener(this)
 
-        mCircularProgressIndicator = ProgressIndicator(circularProgressIndicator,success_frame,imFailureIcon,success_tick)
-        mCircularProgressIndicator?.progressIndicatorListener {}
+        if(!BpiEnterOtpFragment.shouldBackPressed){
+            mCircularProgressIndicator = ProgressIndicator(circularProgressIndicator,success_frame,imFailureIcon,success_tick)
+            mCircularProgressIndicator?.progressIndicatorListener {}
 
-        initRetrieveOTP(otpMethodType)
+            initRetrieveOTP(otpMethodType)
+        }
     }
 
     private fun initRetrieveOTP(otpMethodType: OTPMethodType) {
