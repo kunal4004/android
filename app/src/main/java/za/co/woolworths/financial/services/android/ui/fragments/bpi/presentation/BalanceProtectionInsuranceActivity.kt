@@ -38,7 +38,7 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.balance_protection_insurance_activity)
-
+        bpiViewModel?.setAccount(intent?.extras)
         actionBar()
         /*
         * Implementation of room db will eliminate bundle argument requirement by fetching account data directly from db

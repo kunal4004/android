@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
+import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
@@ -1211,4 +1212,15 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body bpiBody: BPIBody
     ): Call<GenericResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/accounts/{insuranceType}/optin")
+    fun postInsuranceLeadGenOptIn(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("insuranceType") insuranceType: String,
+        @Body insuranceTypeOptInBody: InsuranceTypeOptInBody
+    ):Call< GenericResponse>
 }

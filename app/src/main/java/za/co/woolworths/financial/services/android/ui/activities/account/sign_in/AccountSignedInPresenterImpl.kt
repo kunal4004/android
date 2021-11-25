@@ -106,7 +106,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.BLACK_CREDIT_CARD -> resources?.getString(R.string.black_credit_card_title)
             ApplyNowState.GOLD_CREDIT_CARD -> resources?.getString(R.string.gold_credit_card_title)
             ApplyNowState.PERSONAL_LOAN -> resources?.getString(R.string.personal_loan)
-            else -> ""
         }
     }
 
