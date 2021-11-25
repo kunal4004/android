@@ -672,8 +672,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, reviewCount, reviewCount)
                 val recommend= recommendedPercentage.split("%")
                 if (recommend.size == 2) {
-                    val percentage = recommend[0]
-                    tvRecommendPer.text = "$percentage% "
+                    tvRecommendPer.text = "${recommend[0]}% "
                     tvRecommendTxt.text = recommend[1]
                 }
                 if(reviewCount>1)
