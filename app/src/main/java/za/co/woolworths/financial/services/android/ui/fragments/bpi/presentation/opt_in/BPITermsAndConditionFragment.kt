@@ -195,8 +195,13 @@ class BPITermsAndConditionFragment : Fragment()  {
                 override fun shouldOverrideUrlLoading(
                     view: WebView?,
                     request: WebResourceRequest?): Boolean {
-                    val url = request?.url.toString()
+                    var url = request?.url.toString()
                     if (url.contains("mailto:")) {
+                        url.split(":").let {
+                            if(it.size>1){
+                                url = it[1]
+                            }
+                        }
                         KotlinUtils.sendEmail(activity, url, "" )
                     }
                     return true
