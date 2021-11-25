@@ -31,6 +31,10 @@ class BpiEnterOtpFragment : EnterOTPFragmentExtension(),
     lateinit var numberToOTPSent: String
     lateinit var otpValue: String
 
+    companion object{
+        var shouldBackPressed: Boolean = false
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,18 +51,7 @@ class BpiEnterOtpFragment : EnterOTPFragmentExtension(),
         setupInputListeners()
         clickEvent()
         configureUI()
-        onBackPressed()
-    }
-
-    private fun onBackPressed() {
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    hideKeyboard()
-                    NavHostFragment.findNavController(this@BpiEnterOtpFragment).navigateUp()
-                }
-            })
+        shouldBackPressed = true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,6 +104,7 @@ class BpiEnterOtpFragment : EnterOTPFragmentExtension(),
         if (otpMethodType == OTPMethodType.NONE)
             requestEditTextFocus()
         else {
+            shouldBackPressed = false
             bundle?.putString("otpMethodType", otpMethodType.name)
             bundle?.putString("otpValue", "")
             navController?.navigate(
