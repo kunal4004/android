@@ -131,7 +131,6 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
             activity?.let {
                 val otpToBeVerified = enterOTPEditText.text.toString()
                 progressIndicator(View.VISIBLE)
-                //mCreditCardNumber?.let { creditCardNumber -> ValidateATMPinCode(creditCardNumber, pinCode, this).make() }
                 submitOTPToVerify(otpToBeVerified)
             }
         }
@@ -141,7 +140,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         enterOTPProgressBar?.visibility = state
         activity?.let { enterOTPProgressBar?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
         if (state == View.VISIBLE)
-            wrongOTP.visibility = View.INVISIBLE
+            wrongOTP?.visibility = View.INVISIBLE
     }
 
     private fun createTextListener(enterOTPEditText: EditText?) {
@@ -198,7 +197,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         alwaysShowWindowSoftInputMode()
     }
 
-    fun showCommonError() {
+    private fun showCommonError() {
         cancelRequest()
         progressIndicator(View.INVISIBLE)
         clearPin()
@@ -257,7 +256,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun showWrongOTPMessage() {
-        wrongOTP.visibility = View.VISIBLE
+        wrongOTP?.visibility = View.VISIBLE
         cancelRequest()
         progressIndicator(View.INVISIBLE)
         clearPin()

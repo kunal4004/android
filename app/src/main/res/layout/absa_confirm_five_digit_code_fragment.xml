@@ -130,7 +130,7 @@
         android:background="@android:color/transparent"
         android:clickable="false"
         android:maxLines="1"
-        android:imeOptions="actionNext"
+        android:imeOptions="actionDone"
         android:singleLine="true"
         android:gravity="center"
         android:inputType="number|numberPassword"

@@ -25,7 +25,7 @@ sealed class AbsaResultWrapper {
         }
 
         sealed class ValidateSureCheck : Section() {
-            data class StatusCodeValid(val validateCardAndPinResponseProperty: ValidateSureCheckResponseProperty) : ValidateCardAndPin()
+            data class StatusCodeValid(val validateSureCheckResponseProperty: ValidateSureCheckResponseProperty) : ValidateCardAndPin()
             object Accepted : ValidateSureCheck()
             data class FailedMessage(var message: String, var isActivityRunning : Boolean = false) : ValidateSureCheck()
             data class ContinueValidateSureCheck(var message: String, var isActivityRunning : Boolean = false) : ValidateSureCheck()
