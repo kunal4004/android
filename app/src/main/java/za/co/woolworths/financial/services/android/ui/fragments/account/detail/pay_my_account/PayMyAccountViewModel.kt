@@ -456,9 +456,9 @@ class PayMyAccountViewModel : ViewModel() {
         val currency = "ZAR"
 
         val account = cardInfo?.account?.second
-        // Select absaAccountToken for credit card products and account number for personal loan and store card
+        // Select absaCardToken for credit card products and account number for personal loan and store card
         val accountNumber = if (account?.productGroupCode?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true) == true)
-            account.cards?.get(0)?.absaAccountToken ?: ""
+            account.cards?.get(0)?.absaCardToken ?: ""
         else
             account?.accountNumber ?: ""
         val productOfferingId = account?.productOfferingId ?: 0
