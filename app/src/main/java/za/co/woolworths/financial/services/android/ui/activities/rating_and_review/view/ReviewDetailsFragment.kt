@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.common_toolbar.view.*
+import kotlinx.android.synthetic.main.fragment_more_reviews.*
 import kotlinx.android.synthetic.main.review_detail_layout.*
 import kotlinx.android.synthetic.main.review_detail_layout.rvSecondaryRatings
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
@@ -46,6 +48,9 @@ class ReviewDetailsFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toolbar.btn_back.setOnClickListener {
+            activity?.onBackPressed()
+        }
         arguments?.apply {
             val ratingAndResponseData = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_DATA),  RatingReviewResponse::class.java) as RatingReviewResponse
             val reviews = ratingAndResponseData.reviews.get(0)
@@ -57,14 +62,12 @@ class ReviewDetailsFragment : Fragment(){
     private fun setDefaultUi(reviewData: Reviews?, reportReviewOptions: List<String>) {
 
         reviewData?.run {
-
             txt_date.text = submissionTime
             txt_reviewer_name.text = userNickname
             rating_bar.rating = rating
             tv_skin_label.text = title
             skin_detail.text = reviewText
             tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
-
             setVerifiedBuyers(isVerifiedBuyer)
             setSkinProfielLayout(contextDataValue , tagDimensions)
             RatingAndReviewUtil.setReviewAdditionalFields(additionalFields, lladdiionField, requireContext())

@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.common_toolbar.view.*
+import kotlinx.android.synthetic.main.fragment_more_reviews.*
 
 class ReportSuccessFragment : Fragment() {
 

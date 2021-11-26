@@ -19,9 +19,6 @@ class ReviewerInfoDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reviewer_info_details)
         reviewDetailsFragment = ReviewDetailsFragment.newInstance()
-        toolbar.btn_back.setOnClickListener {
-            super.onBackPressed()
-        }
         if (intent.extras != null)
             goToReviewDetailsFragment(intent.extras)
     }

@@ -25,6 +25,8 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import androidx.fragment.app.FragmentTransaction
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.common_toolbar.view.*
+import kotlinx.android.synthetic.main.review_detail_layout.*
 import java.util.ArrayList
 
 class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListener {
@@ -48,6 +50,9 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toolbar_more_review.btn_back.setOnClickListener {
+            activity?.onBackPressed()
+        }
         arguments?.apply {
             val ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_DATA),
                     RatingReviewResponse::class.java) as RatingReviewResponse

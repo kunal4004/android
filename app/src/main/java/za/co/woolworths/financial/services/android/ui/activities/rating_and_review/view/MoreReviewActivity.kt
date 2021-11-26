@@ -19,9 +19,6 @@ class MoreReviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reviewer_info_details)
         moreReviewsFragment = MoreReviewsFragment.newInstance()
-        toolbar.btn_back.setOnClickListener {
-            super.onBackPressed()
-        }
         if (intent.extras != null)
             goToMoreReviewsFragment(intent.extras)
     }

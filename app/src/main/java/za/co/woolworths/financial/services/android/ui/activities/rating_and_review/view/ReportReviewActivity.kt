@@ -20,9 +20,6 @@ class ReportReviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_report_review)
         reportReviewFragment = ReportReviewFragment.newInstance()
-        toolbar.btn_back.setOnClickListener {
-            super.onBackPressed()
-        }
         if (intent != null)
             goToReportReviewFragment(intent.getSerializableExtra(KotlinUtils.REVIEW_REPORT) as ArrayList<String>)
     }
