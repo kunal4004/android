@@ -81,7 +81,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         firebaseRemoteConfig.setDefaultsAsync(defaultValues as Map<String, Any>)
     }
 
-    private fun fetchFirebaseConfigData() {
+    private fun fetchFirebaseConfigData(isComingFromSuccess:Boolean) {
         firebaseRemoteConfig
                 .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL).addOnCompleteListener { task ->
             run {
@@ -89,30 +89,61 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     //set dynamic ui here
                     firebaseRemoteConfig.activate()
                     remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
-                    if (remoteConfigJsonString.isEmpty()) {
-                        //navigate with normal flow
-                        presentNextScreenOrServerMessage()
-                    } else {
-                        setContentView(R.layout.activity_splash_screen)
-                        val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
-                        if (configData?.expiryTime == -1L) {
-                           // in case of firebase use local json then naviagte to next screen
-                           progress_bar?.visibility = View.GONE
-                           presentNextScreenOrServerMessage()
+
+                    if (isComingFromSuccess) {
+                         //success of api
+                        if (remoteConfigJsonString.isEmpty()) {
+                            // api successfull but firebase not configured so navigate with normal flow
+                            presentNextScreenOrServerMessage()
                         } else {
-                            setDataOnUI(configData)
+                            // api successfull and  firebase also configured so display sunsetting ui
+                            setContentView(R.layout.activity_splash_screen)
+                            val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                            if (configData?.expiryTime == -1L || configData == null) {
+                                // in case we get json exception while parsing then we navigate with normal flow
+                                progress_bar?.visibility = View.GONE
+                                presentNextScreenOrServerMessage()
+                            } else {
+                                setDataOnUI(configData, true)
+                            }
+                        }
+                    } else {
+                        // error  of api
+                        if (remoteConfigJsonString.isEmpty()) {
+                            //api is  failed and firebase not configured so show error screen of api reposne
+                            showNonVideoViewWithErrorLayout()
+                        } else {
+                             // api is failed and sunsetting is cofigured then show sunsetting ui
+
+                            val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                            if (configData?.expiryTime == -1L || configData == null) {
+                                // in case we get json exception while parsing then show error screen of api
+                                progress_bar?.visibility = View.GONE
+                                showNonVideoViewWithErrorLayout()
+                            } else {
+                                setContentView(R.layout.activity_splash_screen)
+                                setDataOnUI(configData, false)
+                            }
                         }
                     }
                 } else {
-                    //capture value from local json
-                    progress_bar?.visibility = View.GONE
-                    presentNextScreenOrServerMessage()
+                    // firebase fail
+                    if (isComingFromSuccess) {
+                        // api is success and firebase  is failed so navigate to next screen
+                        progress_bar?.visibility = View.GONE
+                        presentNextScreenOrServerMessage()
+                    } else  {
+                        // api is failed and firebase  is failed so display error layout
+
+                        progress_bar?.visibility = View.GONE
+                        showNonVideoViewWithErrorLayout()
+                    }
                 }
             }
         }
     }
 
-    private fun setDataOnUI(configData: ConfigData?) {
+    private fun setDataOnUI(configData: ConfigData?, isComingFromSuccess: Boolean) {
         progress_bar?.visibility = View.GONE
         first_btn?.visibility = View.VISIBLE
         second_btn?.visibility = View.VISIBLE
@@ -194,8 +225,10 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         actionUrlSecond = secondButton.actionUrl
                     }
                 }
-            } else if(configData.expiryTime == -1L){
+            } else if(configData.expiryTime == -1L && isComingFromSuccess) {
                 presentNextScreenOrServerMessage()
+            } else if (configData.expiryTime == -1L && !isComingFromSuccess) {
+                showNonVideoViewWithErrorLayout()
             }
         }
     }
@@ -326,7 +359,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
                     if (!startupViewModel.isVideoPlaying) {
                         if(startupViewModel.isConnectedToInternet(this)) {
-                            fetchFirebaseConfigData()
+                            fetchFirebaseConfigData(true)
                         } else {
                             showNonVideoViewWithErrorLayout()
                         }
@@ -336,7 +369,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     setupLoadingScreen()
                 }
                 ResponseStatus.ERROR -> {
-                    showNonVideoViewWithErrorLayout()
+                    fetchFirebaseConfigData(false)
                 }
             }
         })

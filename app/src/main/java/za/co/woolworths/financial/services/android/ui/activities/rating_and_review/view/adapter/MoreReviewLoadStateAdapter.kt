@@ -9,8 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bottom_progress_bar.view.*
 
-class MoreReviewLoadStateAdapter(
-) : LoadStateAdapter<MoreReviewLoadStateAdapter
+class MoreReviewLoadStateAdapter() : LoadStateAdapter<MoreReviewLoadStateAdapter
 .ReviewLoadStateViewHolder>() {
 
     inner class ReviewLoadStateViewHolder(

@@ -13,14 +13,12 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.review_detail_layout.*
 import kotlinx.android.synthetic.main.review_detail_layout.rvSecondaryRatings
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
-import kotlinx.android.synthetic.main.review_row_layout.*
 import kotlinx.android.synthetic.main.skin_profile_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Normal
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtils
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ProductReviewViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.SkinProfileAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.SecondaryRatingAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -62,8 +60,8 @@ class ReviewDetailsFragment : Fragment(){
 
             setVerifiedBuyers(isVerifiedBuyer)
             setSkinProfielLayout(contextDataValue , tagDimensions)
-            RatingAndReviewUtils.setReviewAdditionalFields(additionalFields, lladdiionField, requireContext())
-            RatingAndReviewUtils.setSecondaryRatingsUI(secondaryRatings, rvSecondaryRatings, requireContext())
+            RatingAndReviewUtil.setReviewAdditionalFields(additionalFields, lladdiionField, requireContext())
+            RatingAndReviewUtil.setSecondaryRatingsUI(secondaryRatings, rvSecondaryRatings, requireContext())
         }
     }
 

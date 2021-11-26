@@ -6,8 +6,6 @@ import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_more_review.*
 import kotlinx.android.synthetic.main.common_toolbar.view.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
-import java.io.Serializable
 
 class MoreReviewActivity : AppCompatActivity() {
 
@@ -21,7 +19,6 @@ class MoreReviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reviewer_info_details)
         moreReviewsFragment = MoreReviewsFragment.newInstance()
-        toolbar.txt_toolbar_title.text = getString(R.string.review_details)
         toolbar.btn_back.setOnClickListener {
             super.onBackPressed()
         }

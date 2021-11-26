@@ -9,24 +9,34 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 class ReviewsDataSource(val reviewApiHelper: RatingAndReviewApiHelper,
                         val prodId: String, val sort: String?, val refinement: String?) : PagingSource<Int, Reviews>() {
 
-    override fun getRefreshKey(state: PagingState<Int, Reviews>): Int? {
-        return state.anchorPosition?.let { anchorPosition ->
-            val anchorPage = state.closestPageToPosition(anchorPosition)
-            anchorPage?.prevKey?.plus(10) ?: anchorPage?.nextKey?.minus(10)
-        }
-    }
-
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Reviews> {
+
+            val position  = params.key ?: 0
+            val response = reviewApiHelper.getMoreReviews(prodId, position, sort, refinement)
         return try {
+            val reviews = response.data[0].reviews
+            val nextKey = if (reviews.isEmpty()) {
+                null
+            } else {
+                position + 10
+            }
+
             val nextPageNumber = params.key ?: 1
             val response = reviewApiHelper.getMoreReviews(prodId, nextPageNumber,sort,refinement)
             LoadResult.Page (
-                    data = response.data.get(0).reviews,
-                    prevKey = if (nextPageNumber > 1) nextPageNumber - 10 else null,
-                    nextKey = if (nextPageNumber < response.data.get(0).reviews.size) nextPageNumber + 10 else null
+                    data = reviews,
+                    prevKey =  if (position == 0) null else position - 10,
+                    nextKey = nextKey
             )
         } catch (e: Exception) {
-            LoadResult.Error(e)
+           return LoadResult.Error(e)
+        }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, Reviews>): Int? {
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(10)
+                    ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(10)
         }
     }
 }

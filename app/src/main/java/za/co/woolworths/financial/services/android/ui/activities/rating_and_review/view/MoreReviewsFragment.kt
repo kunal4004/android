@@ -66,8 +66,8 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpen
               ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_STATISTICS),
                     RatingReviewResponse::class.java) as RatingReviewResponse
             productId = ratingAndResponse.reviews.get(0).productId
-            setRatingDetailsUI(ratingAndResponse.reviewStatistics)
             setupViewModel()
+            setReviewsList(null,null,ratingAndResponse.reviewStatistics)
         }
         refineProducts?.setOnClickListener(this@MoreReviewsFragment)
         sortProducts?.setOnClickListener(this@MoreReviewsFragment)
@@ -76,7 +76,7 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpen
 
     override fun onStart() {
         super.onStart()
-        setReviewsList(null,null)
+        //setReviewsList(null,null, ratingAndResponse.reviewStatistics)
         }
 
     private fun setupViewModel() {
@@ -86,8 +86,10 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpen
         ).get(RatingAndReviewViewModel::class.java)
     }
 
-    private fun setReviewsList(sort: String?, refinements: String?) {
-        val moreReviewsAdapter = MoreReviewsAdapter(requireContext(), this)
+    private fun setReviewsList(sort: String?, refinements: String?,reviewStatistics: ReviewStatistics) {
+        /*val moreReviewsAdapter = MoreReviewsAdapter(requireContext(), this)
+    private fun setReviewsList(reviewStatistics: ReviewStatistics) {*/
+        val moreReviewsAdapter = MoreReviewsAdapter(requireContext(), this, reviewStatistics)
         moreReviewsAdapter.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
@@ -95,17 +97,16 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpen
                 progress_bar?.visibility = View.GONE
             }
         }
-
+        moreReviewsAdapter.withLoadStateFooter(
+                footer = MoreReviewLoadStateAdapter()
+        )
         lifecycleScope.launch {
             moreReviewViewModel.getReviewDataSource(productId, sort, refinements).collectLatest { pagedData ->
                 moreReviewsAdapter.submitData(pagedData)
             }
         }
 
-        moreReviewsAdapter.withLoadStateHeaderAndFooter(
-                header = MoreReviewLoadStateAdapter(),
-                footer = MoreReviewLoadStateAdapter()
-        )
+
         rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
         rv_more_reviews.adapter = moreReviewsAdapter
     }
@@ -202,7 +203,7 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.SkinProfileDialogOpen
             )}*/
             //updateProductRequestBodyForSort(sortOption.sortOption)
             //reloadProductsWithSortAndFilter()
-            setReviewsList(sortOption.sortOption,null)
+            //setReviewsList(sortOption.sortOption,null)
 
         }
     }
