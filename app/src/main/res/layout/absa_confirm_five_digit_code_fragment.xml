@@ -80,7 +80,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/placeholder"
-            android:visibility="visible"
             app:srcCompat="@drawable/pin_empty" />
 
     </LinearLayout>
