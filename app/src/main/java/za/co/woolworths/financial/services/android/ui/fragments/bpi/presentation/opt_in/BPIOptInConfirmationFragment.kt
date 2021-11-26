@@ -109,7 +109,7 @@ class BPIOptInConfirmationFragment : Fragment() {
             val productOfferingId = bpiViewModel?.mAccount?.productOfferingId?.toString() ?: ""
             bundle.putString("otpMethodType",OTPMethodType.SMS.name)
             bundle.putString("productOfferingId",productOfferingId)
-            view?.findNavController()?.navigate(R.id.action_BPIOptInConfirmationFragment_to_sendOtpFragment,
+            view.findNavController().navigate(R.id.action_BPIOptInConfirmationFragment_to_sendOtpFragment,
                 bundleOf("bundle" to bundle)
             )
         }
