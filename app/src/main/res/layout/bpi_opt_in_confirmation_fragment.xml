@@ -12,7 +12,7 @@
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/thirty_two_dp"
         android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/confirmBpiButton"
+        app:layout_constraintBottom_toTopOf="@id/confirmOptInButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
@@ -97,7 +97,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <Button
-        android:id="@+id/confirmBpiButton"
+        android:id="@+id/confirmOptInButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"

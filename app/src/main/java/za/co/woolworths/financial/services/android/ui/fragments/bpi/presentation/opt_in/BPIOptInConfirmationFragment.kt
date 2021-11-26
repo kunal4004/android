@@ -24,9 +24,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import java.util.HashMap
 
-import kotlinx.android.synthetic.main.bpi_opt_in_confirmation_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
-import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 
 class BPIOptInConfirmationFragment : Fragment() {
@@ -39,35 +37,8 @@ class BPIOptInConfirmationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setClickableDescriptionText()
-
-        confirmBpiButton?.setOnClickListener {
-            arguments?.getString(BalanceProtectionInsuranceActivity.BPI_PRODUCT_GROUP_CODE).let { productGroupCode ->
-                var bpiTaggingEventCode: String? = null
-                val arguments: MutableMap<String, String> = HashMap()
-
-                when (productGroupCode) {
-                    AccountsProductGroupCode.CREDIT_CARD.groupCode -> {
-                        bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_CONFIRM
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
-                            FirebaseManagerAnalyticsProperties.PropertyValues.CC_BPI_OPT_IN_CONFIRM_VALUE
-                    }
-                    AccountsProductGroupCode.STORE_CARD.groupCode -> {
-                        bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_CONFIRM
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
-                            FirebaseManagerAnalyticsProperties.PropertyValues.SC_BPI_OPT_IN_CONFIRM_VALUE
-                    }
-                    AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> {
-                        bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_CONFIRM
-                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
-                            FirebaseManagerAnalyticsProperties.PropertyValues.PL_BPI_OPT_IN_CONFIRM_VALUE
-                    }
-                }
-
-                bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, arguments, activity) }
-            }
-        }
+        listener()
     }
 
     private fun setClickableDescriptionText() {
@@ -104,14 +75,45 @@ class BPIOptInConfirmationFragment : Fragment() {
             text = descriptionText
             movementMethod = LinkMovementMethod.getInstance()
         }
-        confirmBpiButton?.onClick {
-            val bundle  = Bundle()
+    }
+
+    private fun listener() {
+        confirmOptInButton?.setOnClickListener {
+
+            arguments?.getString(BalanceProtectionInsuranceActivity.BPI_PRODUCT_GROUP_CODE)
+                .let { productGroupCode ->
+                    var bpiTaggingEventCode: String? = null
+                    val arguments: MutableMap<String, String> = HashMap()
+
+                    when (productGroupCode) {
+                        AccountsProductGroupCode.CREDIT_CARD.groupCode -> {
+                            bpiTaggingEventCode =
+                                FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_CONFIRM
+                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                                FirebaseManagerAnalyticsProperties.PropertyValues.CC_BPI_OPT_IN_CONFIRM_VALUE
+                        }
+                        AccountsProductGroupCode.STORE_CARD.groupCode -> {
+                            bpiTaggingEventCode =
+                                FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_CONFIRM
+                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                                FirebaseManagerAnalyticsProperties.PropertyValues.SC_BPI_OPT_IN_CONFIRM_VALUE
+                        }
+                        AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> {
+                            bpiTaggingEventCode =
+                                FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_CONFIRM
+                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                                FirebaseManagerAnalyticsProperties.PropertyValues.PL_BPI_OPT_IN_CONFIRM_VALUE
+                        }
+                    }
+
+                    bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, arguments, activity) }
+                }
+
+            val bundle = Bundle()
             val productOfferingId = bpiViewModel?.mAccount?.productOfferingId?.toString() ?: ""
-            bundle.putString("otpMethodType",OTPMethodType.SMS.name)
-            bundle.putString("productOfferingId",productOfferingId)
-            view.findNavController().navigate(R.id.action_BPIOptInConfirmationFragment_to_sendOtpFragment,
-                bundleOf("bundle" to bundle)
-            )
+            bundle.putString("otpMethodType", OTPMethodType.SMS.name)
+            bundle.putString("productOfferingId", productOfferingId)
+            view?.findNavController()?.navigate(R.id.action_BPIOptInConfirmationFragment_to_sendOtpFragment, bundleOf("bundle" to bundle))
         }
     }
 }
