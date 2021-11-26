@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_more_info_fragment.*
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
+import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_MORE_INFO_HTML
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
@@ -35,16 +36,16 @@ class BPIMoreInfoFragment : Fragment()  {
             bpiMoreInfoWebView?.loadData(htmlContent, "text/html; charset=utf-8", null)
         }
 
-        bpiCheckBox?.setOnClickListener {
+        bpiCheckBox?.onClick {
             it.isSelected = !it.isSelected
             optInBpiButton.isEnabled = it.isSelected
         }
 
-        optInBpiButton?.setOnClickListener{
+        optInBpiButton?.onClick{
             view.findNavController().navigate(R.id.action_BPIMoreInfoFragment_to_BPIOptInConfirmationFragment)
         }
 
-        bpiCheckBoxDescriptionTextView?.setOnClickListener{
+        bpiCheckBoxDescriptionTextView?.onClick{
             view.findNavController().navigate(R.id.action_BPIMoreInfoFragment_to_BPITermsAndConditionFragment,
                 bundleOf(BPI_TERMS_CONDITIONS_HTML to arguments?.getString(BPI_TERMS_CONDITIONS_HTML),
                     BPI_PRODUCT_GROUP_CODE to arguments?.getString(BPI_PRODUCT_GROUP_CODE)))

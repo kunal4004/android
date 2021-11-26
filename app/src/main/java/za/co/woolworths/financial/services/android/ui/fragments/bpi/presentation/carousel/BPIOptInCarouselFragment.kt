@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.BPITermsConditions
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_MORE_INFO_HTML
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
@@ -71,7 +72,7 @@ class BPIOptInCarouselFragment : Fragment() {
             configurePageIndicator(carouselList)
         }
 
-        nextButton?.setOnClickListener {
+        nextButton?.onClick {
             findOutPageIndicatorTabLayout.let { tabLayout ->
                 findOutCarouselViewPager?.let { viewPager ->
                     when(nextButton?.text){

@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -12,16 +10,18 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.circle_progress_layout.*
 import kotlinx.android.synthetic.main.retrieve_otp_error_fragment.*
 import kotlinx.android.synthetic.main.insurance_lead_retrieve_otp_fragment.*
-import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 
-open class BPIRetrieveOtpFragment : Fragment(), IProgressAnimationState,View.OnClickListener {
+open class BPIRetrieveOtpFragment : Fragment(),View.OnClickListener {
 
+    private var menuCloseIcon: MenuItem? = null
     private var mCircularProgressIndicator: ProgressIndicator? = null
     var navController: NavController? = null
     lateinit var absaCardToken: String
@@ -36,6 +36,7 @@ open class BPIRetrieveOtpFragment : Fragment(), IProgressAnimationState,View.OnC
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
             absaCardToken = getString("absaCardToken", "")
@@ -53,7 +54,6 @@ open class BPIRetrieveOtpFragment : Fragment(), IProgressAnimationState,View.OnC
         if(!BpiEnterOtpFragment.shouldBackPressed){
             mCircularProgressIndicator = ProgressIndicator(circularProgressIndicator,success_frame,imFailureIcon,success_tick)
             mCircularProgressIndicator?.progressIndicatorListener {}
-
             initRetrieveOTP(otpMethodType)
         }
     }
@@ -69,10 +69,7 @@ open class BPIRetrieveOtpFragment : Fragment(), IProgressAnimationState,View.OnC
             }
 
             override fun onFailure(error: Throwable?) {
-                mCircularProgressIndicator?.apply {
-                    animationStatus = ProgressIndicator.AnimationStatus.Failure
-                    stopSpinning()
-                }
+                failureHandler()
             }
         }, RetrieveOTPResponse::class.java))
     }
@@ -88,7 +85,7 @@ open class BPIRetrieveOtpFragment : Fragment(), IProgressAnimationState,View.OnC
         if (!isAdded)return
         response?.apply {
             when (httpCode) {
-                200 -> {
+                AppConstant.HTTP_OK -> {
                     bundle?.apply {
                         putString("otpSentTo", otpSentTo)
                         putString("otpMethodType", otpMethodType.name)
@@ -98,13 +95,16 @@ open class BPIRetrieveOtpFragment : Fragment(), IProgressAnimationState,View.OnC
                     }
                 }
 
-                else -> {
-                    mCircularProgressIndicator?.apply {
-                        animationStatus = ProgressIndicator.AnimationStatus.Failure
-                        stopSpinning()
-                    }
-                }
+                else -> { failureHandler()}
             }
+        }
+    }
+
+    private fun failureHandler() {
+        mCircularProgressIndicator?.apply {
+            animationStatus = ProgressIndicator.AnimationStatus.Failure
+            stopSpinning()
+            showErrorView()
         }
     }
 
@@ -114,20 +114,46 @@ open class BPIRetrieveOtpFragment : Fragment(), IProgressAnimationState,View.OnC
         pageHeader?.visibility = View.VISIBLE
         processingLayout?.visibility = View.VISIBLE
         mCircularProgressIndicator?.spin()
+        menuCloseIconVisibility(false)
         initRetrieveOTP(otpMethodType)
+        showBackArrow(true)
     }
 
     private fun startProgress() {
         mCircularProgressIndicator?.animationStatus = ProgressIndicator.AnimationStatus.InProgress
         mCircularProgressIndicator?.spin()
+        menuCloseIconVisibility(false)
         processingLayout?.visibility = View.VISIBLE
+        showBackArrow(true)
+
     }
 
     private fun showErrorView() {
         pageHeader?.visibility = View.INVISIBLE
         processingLayout?.visibility = View.GONE
         errorView?.visibility = View.VISIBLE
+        menuCloseIconVisibility(true)
+        showBackArrow(false)
+
     }
+
+    private fun showBackArrow(state: Boolean) {
+        (activity as? BalanceProtectionInsuranceActivity)?.apply {
+            if (state) showDisplayHomeAsUpEnabled() else hideDisplayHomeAsUpEnabled()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.close_menu_item, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+        menuCloseIcon = menu.findItem(R.id.closeIcon)
+        menuCloseIconVisibility(false)
+    }
+
+    private fun menuCloseIconVisibility(state : Boolean) {
+        menuCloseIcon?.isVisible = state
+    }
+
 
     override fun onClick(v: View?) {
         when(v?.id){
@@ -136,10 +162,16 @@ open class BPIRetrieveOtpFragment : Fragment(), IProgressAnimationState,View.OnC
         }
     }
 
-    override fun onAnimationEnd(isAnimationFinished: Boolean) {
-        super.onAnimationEnd(isAnimationFinished)
-        if(!isAnimationFinished){
-            showErrorView()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.closeIcon -> {
+                activity?.apply {
+                    finish()
+                    overridePendingTransition(0,0)
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

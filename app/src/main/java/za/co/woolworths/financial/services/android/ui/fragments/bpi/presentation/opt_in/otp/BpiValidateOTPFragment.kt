@@ -18,8 +18,8 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
-import za.co.woolworths.financial.services.android.util.AppConstant
 
 class BpiValidateOTPFragment: Fragment() {
 
@@ -34,11 +34,13 @@ class BpiValidateOTPFragment: Fragment() {
     var validateOTPResponse: ValidateOTPResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.validate_otp_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? BalanceProtectionInsuranceActivity)?.hideDisplayHomeAsUpEnabled()
         navController = Navigation.findNavController(view)
         description.text = activity?.resources?.getString(R.string.icr_otp_phone_desc, otpSentTo)
         initValidateOTP()
@@ -53,15 +55,15 @@ class BpiValidateOTPFragment: Fragment() {
             productOfferingId = getString("productOfferingId", "")
             otpMethodType = OTPMethodType.valueOf(getString("otpMethodType", OTPMethodType.SMS.name))
         }
+        bundle?.putString("screenType", BpiValidateOTPFragment::class.java.simpleName)
     }
 
     private fun initValidateOTP() {
-
-        val validateOTPRequest= ValidateOTPRequest(otpMethodType.name, otpValue)
+        val validateOTPRequest = ValidateOTPRequest(otpMethodType.name, otpValue)
         bpiViewModel?.setValidateOTPRequest(validateOTPRequest)
         OneAppService.validateOTP(validateOTPRequest, productOfferingId).enqueue(CompletionHandler(object : IResponseListener<ValidateOTPResponse> {
-            override fun onSuccess(validateOTPResponse: ValidateOTPResponse?) {
-                validateOTPResponse?.apply {
+            override fun onSuccess(response: ValidateOTPResponse?) {
+                response?.apply {
                     this@BpiValidateOTPFragment.validateOTPResponse = this
                     handleValidateOTPResponse(this)
                 }
@@ -75,22 +77,25 @@ class BpiValidateOTPFragment: Fragment() {
     }
 
     fun navigateToValidateOTPErrorFragment() {
-        navController?.navigate(R.id.action_to_validateOTPErrorFragment, bundleOf("bundle" to bundle))
+        navController?.navigate(R.id.action_bpiValidateOTPFragment_to_bpiValidateOTPErrorFragment, bundleOf("bundle" to bundle))
+
     }
 
     fun handleValidateOTPResponse(validateOTPResponse: ValidateOTPResponse?) {
         if (!isAdded) return
         validateOTPResponse?.apply {
-            when (httpCode) {
-                AppConstant.HTTP_OK -> navController?.navigate(R.id.action_bpiValidateOTPFragment_to_BPIProcessingRequestFragment, bundleOf("bundle" to bundle))
-                AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
-                    if (response?.code.equals("1060"))
-                        navController?.navigate(R.id.action_bpiValidateOTPFragment_to_bpiEnterOtpFragment, bundleOf("bundle" to bundle))
-                    else
-                        navigateToValidateOTPErrorFragment()
-                }
-                else -> navigateToValidateOTPErrorFragment()
-            }
+            navigateToValidateOTPErrorFragment()
+
+//            when (httpCode) {
+//                AppConstant.HTTP_OK -> navController?.navigate(R.id.action_bpiValidateOTPFragment_to_BPIProcessingRequestFragment, bundleOf("bundle" to bundle))
+//                AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+//                    if (response?.code.equals("1060"))
+//                        navController?.navigate(R.id.action_bpiValidateOTPFragment_to_bpiEnterOtpFragment, bundleOf("bundle" to bundle))
+//                    else
+//                        navigateToValidateOTPErrorFragment()
+//                }
+//                else -> navigateToValidateOTPErrorFragment()
+//            }
         }
     }
 

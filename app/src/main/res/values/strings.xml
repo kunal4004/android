@@ -2331,6 +2331,6 @@
     <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>
     <string name="bpi_sent_email_success">Balance Protection Insurance Terms and Conditions have been sent to %1$s</string>
     <string name="bpi_sent_email_failure">Balance Protection Insurance Terms and Conditions failed to send to %1$s</string>
-    <string name="bpi_request_failed_retry">Request failed. Please try again.</string>
+    <string name="bpi_request_failed_retry">Request failed.\nPlease try again.</string>
     <string name="bpi_you_have_opted_in_success">You have opted in for Balance Protection Insurance</string>
 </resources>

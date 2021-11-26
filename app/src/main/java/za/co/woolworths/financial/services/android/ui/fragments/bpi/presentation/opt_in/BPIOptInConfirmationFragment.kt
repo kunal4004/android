@@ -11,6 +11,7 @@ import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_opt_in_confirmation_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 
 class BPIOptInConfirmationFragment : Fragment() {
@@ -24,7 +25,7 @@ class BPIOptInConfirmationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        confirmBpiButton?.setOnClickListener {
+        confirmBpiButton?.onClick {
             val bundle  = Bundle()
             val productOfferingId = bpiViewModel?.mAccount?.productOfferingId?.toString() ?: ""
             bundle.putString("otpMethodType",OTPMethodType.SMS.name)

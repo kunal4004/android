@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_TERMS_CONDITIONS_HTML
@@ -44,15 +45,16 @@ class BPITermsAndConditionFragment : Fragment()  {
             bpiTermsConditionsWebView?.loadData(htmlContent, "text/html; charset=utf-8", null)
         }
 
-        bpiEmailCopyButton?.setOnClickListener{
-            emailTermsAndConditions()
+
+        bpiEmailCopyButton?.onClick {
+                emailTermsAndConditions()
         }
 
-        bpiGotItButton?.setOnClickListener {
+        bpiGotItButton?.onClick {
             (activity as? BalanceProtectionInsuranceActivity)?.onBackPressed()
         }
 
-        bpiRetryButton?.setOnClickListener {
+        bpiRetryButton?.onClick {
             emailTermsAndConditions()
         }
 

@@ -1,12 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -19,12 +19,14 @@ import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeO
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.FailureHandler
+
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import java.lang.Exception
+
 
 class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
 
@@ -38,6 +40,8 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
         super.onViewCreated(view, savedInstanceState)
         successTitleTextView?.text = bindString(R.string.bpi_you_have_opted_in_success)
 
+        (activity as? BalanceProtectionInsuranceActivity)?.hideDisplayHomeAsUpEnabled()
+
         fetchInsuranceLeadGenOptIn()
         observeInsuranceLeadOptInResult()
 
@@ -50,8 +54,10 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
     }
 
     private fun observeInsuranceLeadOptInResult() {
-        bpiViewModel?.apply {
 
+        navigateErrorScreen()
+
+        bpiViewModel?.apply {
             insuranceLeadGenOptIn.observe(viewLifecycleOwner, {
                 isApiResultSuccess(true)
                 activationProcessingLayout?.visibility = View.GONE
@@ -77,7 +83,7 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
     }
 
     private fun navigateErrorScreen() {
-        findNavController().navigate(R.id.action_BPIProcessingRequestFragment_to_bpiValidateOTPErrorFragment)
+        findNavController().navigate(R.id.action_BPIProcessingRequestFragment_to_bpiValidateOTPErrorFragment, bundleOf("bundle" to bundleOf("screenType" to BPIProcessingRequestFragment::class.java.simpleName)))
     }
 
     private fun fetchInsuranceLeadGenOptIn(){
@@ -90,17 +96,12 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
     }
 
     private fun startProgress() {
-        try {
             (activity as? AppCompatActivity)?.addFragment(
                 fragment = ProgressStateFragment.newInstance(this@BPIProcessingRequestFragment),
                 tag = ProgressStateFragment::class.java.simpleName,
                 containerViewId = R.id.flProgressIndicator
             )
             activationProcessingLayout?.visibility = View.VISIBLE
-
-        }catch (ex: Exception){
-            Log.e("ex-d",ex.toString())
-        }
     }
 
     private fun getProgressState(): ProgressStateFragment? = (activity as? AppCompatActivity)?.findFragmentByTag(ProgressStateFragment::class.java.simpleName) as? ProgressStateFragment
@@ -111,5 +112,4 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
         super.onPrepareOptionsMenu(menu)
         menu.clear()
     }
-
 }

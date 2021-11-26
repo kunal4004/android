@@ -153,4 +153,12 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
         }
         supportActionBar?.elevation = 0f
     }
+
+    fun hideDisplayHomeAsUpEnabled(){
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
+
+    fun showDisplayHomeAsUpEnabled(){
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
 }

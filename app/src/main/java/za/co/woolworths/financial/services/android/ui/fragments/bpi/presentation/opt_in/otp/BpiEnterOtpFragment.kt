@@ -8,15 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_enter_otp.*
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.otp.EnterOTPFragmentExtension
 import za.co.woolworths.financial.services.android.ui.fragments.otp.ResendOTPDialogFragment
 
@@ -47,6 +46,7 @@ class BpiEnterOtpFragment : EnterOTPFragmentExtension(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        (activity as? BalanceProtectionInsuranceActivity)?.showDisplayHomeAsUpEnabled()
         buttonNext?.isEnabled = false
         setupInputListeners()
         clickEvent()

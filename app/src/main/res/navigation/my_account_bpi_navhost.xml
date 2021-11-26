@@ -105,7 +105,7 @@
 
         <action
             android:id="@+id/action_BPIOptInConfirmationFragment_to_sendOtpFragment"
-            app:destination="@id/sendOtpFragment" />
+            app:destination="@id/insurance_lead_gen_otp_navhost" />
     </fragment>
 
     <fragment
@@ -113,62 +113,71 @@
         android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.BPITermsAndConditionFragment"
         android:label="BPITermsAndConditionFragment"
         tools:layout="@layout/bpi_terms_conditions_fragment" />
-    <fragment
-        android:id="@+id/sendOtpFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BPIRetrieveOtpFragment"
-        android:label="SendOtpFragment"
-        tools:layout="@layout/retrieve_otp_fragment">
-        <action
-            android:id="@+id/action_sendOtpFragment_to_bpiEnterOtpFragment"
-            app:destination="@id/bpiEnterOtpFragment"
-            app:enterAnim="@anim/navigation_slide_in_from_right"
-            app:exitAnim="@anim/navigation_slide_to_left"
-            app:popEnterAnim="@anim/navigation_slide_from_left"
-            app:popExitAnim="@anim/navigation_slide_to_right" />
-    </fragment>
-    <fragment
-        android:id="@+id/bpiEnterOtpFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiEnterOtpFragment"
-        android:label="BpiEnterOtpFragment"
-        tools:layout="@layout/fragment_enter_otp">
-        <action
-            android:id="@+id/action_bpiEnterOtpFragment_to_bpiValidateOTPFragment"
-            app:destination="@id/bpiValidateOTPFragment" />
-        <action
-            android:id="@+id/action_bpiEnterOtpFragment_to_sendOtpFragment"
-            app:destination="@id/sendOtpFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/bpiValidateOTPFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiValidateOTPFragment"
-        android:label="BpiValidateOTPFragment"
-        tools:layout="@layout/validate_otp_fragment">
-        <action
-            android:id="@+id/action_bpiValidateOTPFragment_to_bpiEnterOtpFragment"
-            app:destination="@id/bpiEnterOtpFragment" />
-        <action
-            android:id="@+id/action_bpiValidateOTPFragment_to_bpiValidateOTPErrorFragment"
-            app:destination="@id/bpiValidateOTPErrorFragment" />
-        <action
-            android:id="@+id/action_bpiValidateOTPFragment_to_BPIProcessingRequestFragment"
-            app:destination="@id/BPIProcessingRequestFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/bpiValidateOTPErrorFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiValidateOTPErrorFragment"
-        android:label="BpiValidateOTPErrorFragment"
-        tools:layout="@layout/bpi_validate_otp_error_fragment">
-        <action
-            android:id="@+id/action_bpiValidateOTPErrorFragment_to_BPIProcessingRequestFragment"
-            app:destination="@id/BPIProcessingRequestFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/BPIProcessingRequestFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BPIProcessingRequestFragment"
-        android:label="BPIProcessingRequestFragment"
-        tools:layout="@layout/bpi_processing_your_request_fragment" >
-        <action
-            android:id="@+id/action_BPIProcessingRequestFragment_to_bpiValidateOTPErrorFragment"
-            app:destination="@id/bpiValidateOTPErrorFragment" />
-    </fragment>
+    <navigation android:id="@+id/insurance_lead_gen_otp_navhost"
+        app:startDestination="@id/sendOtpFragment">
+        <fragment
+            android:id="@+id/sendOtpFragment"
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BPIRetrieveOtpFragment"
+            android:label="SendOtpFragment"
+            tools:layout="@layout/retrieve_otp_fragment">
+            <action
+                android:id="@+id/action_sendOtpFragment_to_bpiEnterOtpFragment"
+                app:destination="@id/bpiEnterOtpFragment"
+                app:enterAnim="@anim/navigation_slide_in_from_right"
+                app:exitAnim="@anim/navigation_slide_to_left"
+                app:popEnterAnim="@anim/navigation_slide_from_left"
+                app:popExitAnim="@anim/navigation_slide_to_right" />
+        </fragment>
+        <fragment
+            android:id="@+id/bpiValidateOTPFragment"
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiValidateOTPFragment"
+            android:label="BpiValidateOTPFragment"
+            tools:layout="@layout/validate_otp_fragment">
+            <action
+                android:id="@+id/action_bpiValidateOTPFragment_to_bpiEnterOtpFragment"
+                app:destination="@id/bpiEnterOtpFragment" />
+            <action
+                android:id="@+id/action_bpiValidateOTPFragment_to_bpiValidateOTPErrorFragment"
+                app:destination="@id/bpiValidateOTPErrorFragment" />
+            <action
+                android:id="@+id/action_bpiValidateOTPFragment_to_BPIProcessingRequestFragment"
+                app:destination="@id/BPIProcessingRequestFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/bpiEnterOtpFragment"
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiEnterOtpFragment"
+            android:label="BpiEnterOtpFragment"
+            tools:layout="@layout/fragment_enter_otp">
+            <action
+                android:id="@+id/action_bpiEnterOtpFragment_to_bpiValidateOTPFragment"
+                app:destination="@id/bpiValidateOTPFragment" />
+            <action
+                android:id="@+id/action_bpiEnterOtpFragment_to_sendOtpFragment"
+                app:destination="@id/sendOtpFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/BPIProcessingRequestFragment"
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BPIProcessingRequestFragment"
+            android:label="BPIProcessingRequestFragment"
+            tools:layout="@layout/bpi_processing_your_request_fragment">
+            <action
+                android:id="@+id/action_BPIProcessingRequestFragment_to_bpiValidateOTPErrorFragment"
+                app:destination="@id/bpiValidateOTPErrorFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/bpiValidateOTPErrorFragment"
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiValidateOTPErrorFragment"
+            android:label="BpiValidateOTPErrorFragment"
+            tools:layout="@layout/bpi_validate_otp_error_fragment">
+            <action
+                android:id="@+id/action_bpiValidateOTPErrorFragment_to_BPIProcessingRequestFragment"
+                app:destination="@id/BPIProcessingRequestFragment" />
+            <action
+                android:id="@+id/action_bpiValidateOTPErrorFragment_to_bpiValidateOTPFragment"
+                app:destination="@id/bpiValidateOTPFragment" />
+            <argument
+                android:name="FragmentIntResId"
+                app:argType="integer" />
+        </fragment>
+    </navigation>
 </navigation>
