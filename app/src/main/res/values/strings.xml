@@ -2365,5 +2365,5 @@
     <string name="hint_reason">Please enter a reason here</string>
     <string name="report_moderated">It is currently being moderated.</string>
     <string name="report_submit">Report Submitted</string>
-    <string name="report_gotit">GOT IT</string>
+    <string name="report_got_it">GOT IT</string>
 </resources>

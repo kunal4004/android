@@ -2731,7 +2731,7 @@
         <item name="android:textColor">@color/account_card_desc_grey_color</item>
     </style>
 
-    <style name="BlackCheck">
+    <style name="black_check_style">
         <item name="colorAccent">@color/black</item>
     </style>
 

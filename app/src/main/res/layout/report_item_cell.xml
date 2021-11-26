@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/eight_dp"
         android:shadowColor="@color/black"
-        android:theme="@style/BlackCheck"
+        android:theme="@style/black_check_style"
         android:textColor="@color/color_444444"
         android:fontFamily="@font/myriad_pro_regular"
         android:textSize="@dimen/fifteen_sp"
