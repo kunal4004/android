@@ -534,4 +534,10 @@
             android:windowSoftInputMode="adjustResize" />
     </application>
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+        </intent>
+    </queries>
+
 </manifest>
