@@ -118,7 +118,7 @@
         android:text="@string/complete_setup"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="@dimen/twelve_sp"
         android:visibility="gone" />
 
     <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
