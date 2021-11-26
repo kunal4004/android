@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 
@@ -65,10 +66,13 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
     private var cardWithPLCState: Card? = null
-    private val REQUEST_CREDIT_CARD_ACTIVATION = 1983
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var state: ApplyNowState? = null
+
+    companion object {
+        const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -218,9 +222,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     navigateToTemporaryStoreCard()
                 }
                 R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
-                    activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
                     val applyNowState = mApplyNowAccountKeyPair?.first
-                    creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+
+                    if (applyNowState != null) {
+                        if (MyAccountsFragment.verifyAppInstanceId()) {
+                            activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
+                            creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+                        }
+                    }
                 }
 
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {

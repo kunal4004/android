@@ -35,6 +35,16 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         const val MY_ACCOUNT_RESPONSE = "MY_ACCOUNT_RESPONSE"
         const val APPLY_NOW_STATE = "APPLY_NOW_STATE"
         const val DEEP_LINKING_PARAMS = "DEEP_LINKING_PARAMS"
+
+        fun getProductCode(applyNowState: ApplyNowState): String {
+            return when (applyNowState) {
+                ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode
+                ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
+                ApplyNowState.GOLD_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
+                ApplyNowState.BLACK_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
+                ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN.groupCode
+            }
+        }
     }
 
     override fun getAccountBundle(bundle: Bundle?): Pair<ApplyNowState?, AccountsResponse?>? {
@@ -43,16 +53,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         mDeepLinkingData = bundle?.getString(DEEP_LINKING_PARAMS, "")
         mAccountResponse = Gson().fromJson(accountResponseString, AccountsResponse::class.java)
         return Pair(mApplyNowState, mAccountResponse)
-    }
-
-    private fun getProductCode(applyNowState: ApplyNowState): String {
-        return when (applyNowState) {
-            ApplyNowState.STORE_CARD -> AccountsProductGroupCode.STORE_CARD.groupCode
-            ApplyNowState.SILVER_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
-            ApplyNowState.GOLD_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
-            ApplyNowState.BLACK_CREDIT_CARD -> AccountsProductGroupCode.CREDIT_CARD.groupCode
-            ApplyNowState.PERSONAL_LOAN -> AccountsProductGroupCode.PERSONAL_LOAN.groupCode
-        }
     }
 
     override fun setAvailableFundBundleInfo(navDetailController: NavController?) {
@@ -105,9 +105,9 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val resources = getAppCompatActivity()?.resources
         return when (state) {
             ApplyNowState.STORE_CARD -> resources?.getString(R.string.store_card_title)
-            ApplyNowState.SILVER_CREDIT_CARD -> resources?.getString(R.string.silverCreditCard_title)
-            ApplyNowState.BLACK_CREDIT_CARD -> resources?.getString(R.string.blackCreditCard_title)
-            ApplyNowState.GOLD_CREDIT_CARD -> resources?.getString(R.string.goldCreditCard_title)
+            ApplyNowState.SILVER_CREDIT_CARD -> resources?.getString(R.string.silver_credit_card_title)
+            ApplyNowState.BLACK_CREDIT_CARD -> resources?.getString(R.string.black_credit_card_title)
+            ApplyNowState.GOLD_CREDIT_CARD -> resources?.getString(R.string.gold_credit_card_title)
             ApplyNowState.PERSONAL_LOAN -> resources?.getString(R.string.personal_loan)
             else -> ""
         }
@@ -345,10 +345,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val accountInfo = getMyAccountCardInfo()
         return when (accountInfo?.first) {
             ApplyNowState.STORE_CARD -> Pair(R.drawable.w_store_card, R.string.store_card_title)
-            ApplyNowState.SILVER_CREDIT_CARD -> Pair(R.drawable.w_silver_credit_card, R.string.silverCreditCard_title)
-            ApplyNowState.BLACK_CREDIT_CARD -> Pair(R.drawable.w_black_credit_card, R.string.blackCreditCard_title)
-            ApplyNowState.GOLD_CREDIT_CARD -> Pair(R.drawable.w_gold_credit_card, R.string.goldCreditCard_title)
-            ApplyNowState.PERSONAL_LOAN -> Pair(R.drawable.w_personal_loan_card, R.string.personalLoanCard_title)
+            ApplyNowState.SILVER_CREDIT_CARD -> Pair(R.drawable.w_silver_credit_card, R.string.silver_credit_card_title)
+            ApplyNowState.BLACK_CREDIT_CARD -> Pair(R.drawable.w_black_credit_card, R.string.black_credit_card_title)
+            ApplyNowState.GOLD_CREDIT_CARD -> Pair(R.drawable.w_gold_credit_card, R.string.gold_credit_card_title)
+            ApplyNowState.PERSONAL_LOAN -> Pair(R.drawable.w_personal_loan_card, R.string.personal_loan_card_title)
             else -> throw RuntimeException("SixMonthOutstanding Invalid  ApplyNowState ${accountInfo?.first}")
         }
     }

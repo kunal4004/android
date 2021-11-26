@@ -88,5 +88,19 @@ class ImageManager {
             }
         }
 
+
+        fun setPictureWithSplashPlaceHolder(productImage: ImageView?, imageUrl: String) = productImage?.let { image ->
+            productImage.context?.apply {
+                Glide.with(this)
+                        .load(imageUrl)
+                        .format(DecodeFormat.PREFER_ARGB_8888)
+                        .placeholder(R.drawable.link_icon)
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                        .fitCenter()
+                        .dontAnimate()
+                        .into(image)
+            }
+        }
+
     }
 }

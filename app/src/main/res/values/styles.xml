@@ -636,6 +636,12 @@
         <item name="android:background">@color/default_background</item>
     </style>
 
+    <style name="bottom_line_rewards" parent="android:Theme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">5dp</item>
+        <item name="android:background">@color/green</item>
+    </style>
+
     <style name="bottom_line_with_margin" parent="android:Theme">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0.4dp</item>
@@ -1249,6 +1255,27 @@
         <item name="WTextView_font">medium_bold</item>
     </style>
 
+    <style name="absa_page_title_style" parent="absa_page_title_text_style">
+        <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="absa_page_desc_style" parent="absa_page_description_text_style">
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/desc_color_code</item>
+        <item name="android:lineSpacingExtra">1.5dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+    </style>
+
+
     <style name="absa_page_description_text_style">
         <item name="android:lineSpacingExtra">1.4dp</item>
         <item name="android:textColor">@color/permanent_card_block_desc_color</item>
@@ -1693,6 +1720,11 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="myriad_pro_regular_black_with_rounded_corner" parent="myriad_pro_regular">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@drawable/checkout_delivering_title_round_button</item>
+    </style>
+
     <style name="myriad_pro_regular_black_15_text_style" parent="myriad_pro_regular_black">
         <item name="android:textSize">@dimen/fifteen_sp</item>
     </style>
@@ -1836,7 +1868,8 @@
         <item name="android:paddingBottom">@dimen/one_dp</item>
         <item name="android:alpha">0.7</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:letterSpacing" tools:targetApi="lollipop">@integer/point_zero_three</item>
+        <item name="android:letterSpacing" tools:targetApi="lollipop">@integer/point_zero_three
+        </item>
     </style>
 
     <style name="accountSalesTextViewAmountStyle">
@@ -1869,7 +1902,8 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
         <item name="android:gravity">center</item>
-        <item name="android:letterSpacing" tools:ignore="NewApi">@integer/point_zero_twenty_one</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">@integer/point_zero_twenty_one
+        </item>
     </style>
 
     <style name="accountAvailableFundAmountStyle">
@@ -1934,6 +1968,33 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">@dimen/fourty_eight_dp</item>
         <item name="android:layout_marginTop">@dimen/six_dp</item>
+        <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/sixteen_dp</item>
+        <item name="android:paddingEnd">@dimen/sixteen_dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:textSize">@dimen/sixteen_sp</item>
+    </style>
+
+    <style name="shimmer_view_edittext_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/fourty_eight_dp</item>
+        <item name="android:layout_marginTop">@dimen/six_dp</item>
+        <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:textSize">@dimen/sixteen_sp</item>
+    </style>
+
+    <style name="checkout_edittext_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/fourty_eight_dp</item>
         <item name="android:background">@drawable/recipient_details_input_edittext_bg</item>
         <item name="android:fontFamily">@font/myriad_pro_regular</item>
         <item name="android:gravity">center_vertical</item>
@@ -2534,6 +2595,8 @@
         <item name="android:background">@drawable/amount_textview_bg</item>
         <item name="android:textColor">@color/black_white_color_selector</item>
         <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+        <item name="android:state_selected">false</item>
+
     </style>
 
     <style name="enterPaymentAmountRootLayoutStyle">
@@ -2591,5 +2654,26 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="FoodSubstRadioButtonStyle" parent="@android:style/Widget.CompoundButton.RadioButton">
+        <item name="android:button">@drawable/food_substitution_radio_button</item>
+    </style>
+
+    <style name="guideLineDefaultStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="guideLineDefaultHorizontalStyle" parent="guideLineDefaultStyle">
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="guideLineDefaultVerticalStyle" parent="guideLineDefaultStyle">
+        <item name="android:orientation">vertical</item>
+    </style>
+    <style name="iconInfoRoundedStyle"  parent="android:Theme">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 </resources>
