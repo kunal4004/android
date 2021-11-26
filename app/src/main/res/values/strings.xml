@@ -106,7 +106,7 @@
     <string name="search_by_store_loc">Search by Store or Location</string>
     <string name="skip">SKIP</string>
 
-    <string name="continueLabel">continue</string>
+    <string name="cli_continue">continue</string>
     <string name="cli_status_concluded">cli-concluded</string>
     <string name="cli_credit_limit_increase">CREDIT LIMIT INCREASE</string>
     <string name="cli_before_we_get_started">before we get started</string>
@@ -2299,7 +2299,7 @@
     <string name="link_my_device">Link my device</string>
     <string name="suburb_selection_subtitle">This will show all collection stores near you.</string>
     <string name="earliest_delivery_date_text">Earliest Delivery date \u0020</string>
-
+    <string name="continueLabel">continue</string>
     <!--  Link Device Confirmation  -->
     <string name="link_device_confirm_desc_cc">Please note, you won\'t be able to activate your card, schedule card deliveries or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
     <string name="link_device_confirm_desc_sc">Please note, you won\'t be able to block, freeze, replace your card or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
@@ -2333,4 +2333,5 @@
     <string name="bpi_sent_email_failure">Balance Protection Insurance Terms and Conditions failed to send to %1$s</string>
     <string name="bpi_request_failed_retry">Request failed.\nPlease try again.</string>
     <string name="bpi_you_have_opted_in_success">You have opted in for Balance Protection Insurance</string>
+
 </resources>
