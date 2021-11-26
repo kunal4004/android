@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/close"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_gravity="right"
+        android:layout_margin="@dimen/eight_dp"
+        android:background="@drawable/ic_closecircle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+
+    <ImageView
+        android:id="@+id/report_submit_success"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/success_tick"
+        app:layout_constraintBottom_toTopOf="@+id/tv_report_submit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_report_moderate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/report_moderated"
+        android:textAlignment="center"
+        android:textColor="@color/cli_step_indicator_done_text_color"
+        android:textSize="@dimen/fifteen_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+
+    <TextView
+        android:id="@+id/tv_report_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/report_submit"
+        android:textAlignment="center"
+        android:textColor="@color/indicator_border"
+        android:textSize="@dimen/twenty_dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_report_moderate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+
+    <Button
+        android:id="@+id/report_gotit"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:background="@drawable/black_button_drawable_state"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:text="@string/report_gotit"
+        android:textColor="@color/white"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
