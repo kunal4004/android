@@ -65,7 +65,7 @@ class CollectionTimeSlotsAdapter(val listener: CollectionTimeSlotsListener?) :
         }
     }
 
-    private fun setSelectedItem(adapterPosition: Int) {
+    internal fun setSelectedItem(adapterPosition: Int) {
         synchronized(this) {
             if (selectedPosition in 0 until list.size) {
                 notifyItemChanged(selectedPosition, list[selectedPosition])
@@ -73,13 +73,19 @@ class CollectionTimeSlotsAdapter(val listener: CollectionTimeSlotsListener?) :
             if (adapterPosition in 0 until list.size) {
                 selectedPosition = adapterPosition
                 notifyItemChanged(adapterPosition, list[adapterPosition])
+
+                listener?.setSelectedTimeSlot(list[adapterPosition])
             }
-            listener?.setSelectedTimeSlot(list[adapterPosition])
         }
     }
 
     fun setCollectionTimeSlotData(list: ArrayList<Slot>?) {
         this.list = list ?: ArrayList(0)
+        notifyDataSetChanged()
+    }
+
+    fun clearSelection() {
+        selectedPosition = -1
         notifyDataSetChanged()
     }
 }

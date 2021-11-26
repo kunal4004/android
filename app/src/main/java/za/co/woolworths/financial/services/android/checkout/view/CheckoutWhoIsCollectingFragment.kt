@@ -37,7 +37,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     private var navController: NavController? = null
 
     companion object {
-        const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@#\$&().+,-/\\\"']+\$"
+        const val REGEX_VEHICLE_TEXT: String = "^\$|^[a-zA-Z0-9\\s<!>@\$&().+,-/\\\"']+\$"
     }
 
     override fun onCreateView(
