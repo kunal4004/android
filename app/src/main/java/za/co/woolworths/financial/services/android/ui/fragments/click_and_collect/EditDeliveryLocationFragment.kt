@@ -317,6 +317,18 @@ class EditDeliveryLocationFragment : Fragment(),
             }
     }
 
+    private fun showSuburbFailureErrorDialog(desc: String?) {
+        val dialog =
+            ErrorDialogFragment.newInstance(desc ?: bindString(R.string.general_error_desc))
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
+            ?.let { fragmentTransaction ->
+                dialog.show(
+                    fragmentTransaction,
+                    ErrorDialogFragment::class.java.simpleName
+                )
+            }
+    }
+
     override fun onSetSuburbSuccess() {
         hideSetSuburbProgressBar()
         when (deliveryType) {
@@ -350,9 +362,9 @@ class EditDeliveryLocationFragment : Fragment(),
         navigateToSuburbConfirmationFragment()
     }
 
-    override fun onSetSuburbFailure() {
+    override fun onSetSuburbFailure(desc: String?) {
         hideSetSuburbProgressBar()
-        showErrorDialog()
+        showSuburbFailureErrorDialog(desc)
     }
 
     private fun onProvinceSelected(province: Province?) {
