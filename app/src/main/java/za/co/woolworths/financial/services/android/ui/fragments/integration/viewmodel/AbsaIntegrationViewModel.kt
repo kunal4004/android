@@ -145,8 +145,10 @@ class AbsaIntegrationViewModel : ViewModel() {
         with(absaValidateCardAndPinDelegate) {
             mScheduleValidateSureCheck = schedulePollingWithFixedDelay {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheck(securityNotificationType)
+                    val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheck(securityNotificationType, null)
                     AbsaApiResponse(true, fetchAbsaValidateSureCheck, ValidateSureCheckResponseProperty::class) { result ->
+                        stopPolling()
+                        fetchValidateSureCheckForOTP()
                         when(result){
                            is AbsaResultWrapper.Loading -> inProgress(true)
                            is AbsaResultWrapper.Failure ->  {
@@ -158,16 +160,15 @@ class AbsaIntegrationViewModel : ViewModel() {
                                stopPolling()
                            }
                            is AbsaResultWrapper.Section.ValidateSureCheck.StatusCodeValid -> {
-                               val validateCardAndPinResponseProperty = result.validateCardAndPinResponseProperty
-
+                               val validateSureCheckResponseProperty = result.validateSureCheckResponseProperty
                                when (securityNotificationType){
                                    SecurityNotificationType.OTP -> { // handle OTP Scenarios
                                        stopPolling()
-                                       _cellNumber.postValue(validateCardAndPinResponseProperty.cellNumber)
+                                       _cellNumber.postValue(validateSureCheckResponseProperty.cellNumber)
                                    }
 
                                    SecurityNotificationType.SureCheck -> { //handle Surechecks
-                                       when(validateCardAndPinResponseProperty.result.lowercase()){
+                                       when(validateSureCheckResponseProperty.result.lowercase()){
                                            in acceptedResultMessages -> {
                                                //SureCheck was accepted, continue with registration process
                                                stopPolling()
@@ -215,8 +216,7 @@ class AbsaIntegrationViewModel : ViewModel() {
     fun fetchValidateSureCheckForOTP(otpToBeVerified : String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             with(absaValidateCardAndPinDelegate) {
-                val fetchAbsaValidateSureCheck =
-                    fetchAbsaValidateSureCheckOTP(SecurityNotificationType.OTP, otpToBeVerified)
+                val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheck(SecurityNotificationType.OTP, otpToBeVerified)
                 AbsaApiResponse(true, fetchAbsaValidateSureCheck, ValidateSureCheckResponseProperty::class) { result ->
                     when (result) {
                         is AbsaResultWrapper.Loading -> inProgress(true)
@@ -225,16 +225,19 @@ class AbsaIntegrationViewModel : ViewModel() {
                             stopPolling()
                         }
                         is AbsaResultWrapper.Section.ValidateSureCheck.StatusCodeValid -> {
-                            when(otpToBeVerified == null){
-                                true -> {
-                                    mCellNumber = result.validateCardAndPinResponseProperty.cellNumber
-                                    _cellNumber.postValue(mCellNumber)
-                                }
-                                false -> {
-                                    _validateSureCheckResponseProperty.postValue(result.validateCardAndPinResponseProperty)
+                            with( result.validateSureCheckResponseProperty) {
+                                when (otpToBeVerified == null) {
+                                    true -> {
+                                        mCellNumber = cellNumber
+                                        _cellNumber.postValue(cellNumber)
+                                    }
+                                    false -> _validateSureCheckResponseProperty.postValue(this)
                                 }
                             }
-
+                        }
+                        is AbsaResultWrapper.Section.ValidateSureCheck.StatusCodeInvalid -> {
+                            stopPolling()
+                            failureHandler(result.absaApiFailureHandler)
                         }
                     }
                 }

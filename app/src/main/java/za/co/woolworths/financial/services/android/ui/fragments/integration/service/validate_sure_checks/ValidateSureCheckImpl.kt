@@ -31,29 +31,15 @@ class ValidateSureCheckImpl : IValidateSureCheck {
         }
     }
 
-    override fun createAbsaValidateSureCheckRequestProperty(
-        securityNotificationType: SecurityNotificationType, otpToBeVerified: String?
-    ): ValidateSureCheckRequestProperty {
+    override fun createAbsaValidateSureCheckRequestProperty(securityNotificationType: SecurityNotificationType, otpToBeVerified: String?): ValidateSureCheckRequestProperty {
         return ValidateSureCheckRequestProperty(securityNotificationType, otpToBeVerified)
     }
 
-    override suspend fun fetchAbsaValidateSureCheck(securityNotificationType: SecurityNotificationType?): NetworkState<AbsaProxyResponseProperty> {
-        val validateCardAndPinRequestProperty = createAbsaValidateSureCheckRequestProperty(
-            securityNotificationType ?: SecurityNotificationType.SureCheck).json()
+    override suspend fun fetchAbsaValidateSureCheck(securityNotificationType: SecurityNotificationType?,otpToBeVerified: String?): NetworkState<AbsaProxyResponseProperty> {
+        val validateCardAndPinRequestProperty = createAbsaValidateSureCheckRequestProperty(securityNotificationType ?: SecurityNotificationType.SureCheck,otpToBeVerified = otpToBeVerified ?: "null").json()
         validateCardAndPinRequestProperty.contentLength()
         val withEncryptedBody = validateCardAndPinRequestProperty.toAes256Encrypt()
         return resultOf(AbsaRemoteApi.service.queryAbsaServiceValidateSureCheck( AbsaTemporaryDataSourceSingleton.cookie,withEncryptedBody))
     }
 
-    override suspend fun fetchAbsaValidateSureCheckOTP(
-        securityNotificationType: SecurityNotificationType,
-        otpToBeVerified: String?
-    ): NetworkState<AbsaProxyResponseProperty> {
-        val validateCardAndPinRequestProperty = createAbsaValidateSureCheckRequestProperty(
-            securityNotificationType,
-            otpToBeVerified).json()
-        validateCardAndPinRequestProperty.contentLength()
-        val withEncryptedBody = validateCardAndPinRequestProperty.toAes256Encrypt()
-        return resultOf(AbsaRemoteApi.service.queryAbsaServiceValidateSureCheck( AbsaTemporaryDataSourceSingleton.cookie,withEncryptedBody))
-    }
 }

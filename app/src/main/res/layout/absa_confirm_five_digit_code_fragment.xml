@@ -38,6 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:layout_marginTop="0dp"
         android:background="@color/white"
         android:gravity="center"
         android:orientation="horizontal">
@@ -79,7 +80,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/placeholder"
-            android:visibility="visible"
             app:srcCompat="@drawable/pin_empty" />
 
     </LinearLayout>
@@ -118,7 +118,7 @@
         android:text="@string/complete_setup"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textSize="@dimen/twelve_sp"
+        android:textSize="12sp"
         android:visibility="gone" />
 
     <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
@@ -129,7 +129,7 @@
         android:background="@android:color/transparent"
         android:clickable="false"
         android:maxLines="1"
-        android:imeOptions="actionNext"
+        android:imeOptions="actionDone"
         android:singleLine="true"
         android:gravity="center"
         android:inputType="number|numberPassword"
