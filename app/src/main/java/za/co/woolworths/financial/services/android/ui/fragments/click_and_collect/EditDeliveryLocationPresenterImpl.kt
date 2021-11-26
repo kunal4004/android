@@ -4,7 +4,6 @@ import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderVi
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse
-import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
 import za.co.woolworths.financial.services.android.util.DeliveryType
 
@@ -50,7 +49,7 @@ class EditDeliveryLocationPresenterImpl(var mainView: EditDeliveryLocationContra
                 is SetDeliveryLocationSuburbResponse -> {
                     when (httpCode) {
                         200 -> mainView?.onSetSuburbSuccess()
-                        else -> mainView?.onSetSuburbFailure()
+                        else -> mainView?.onSetSuburbFailure((response as? SetDeliveryLocationSuburbResponse)?.response?.desc)
                     }
                 }
                 is ValidateSelectedSuburbResponse -> {
