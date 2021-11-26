@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
+import za.co.woolworths.financial.services.android.util.AppConstant
 
 class BpiValidateOTPFragment: Fragment() {
 
@@ -84,18 +85,16 @@ class BpiValidateOTPFragment: Fragment() {
     fun handleValidateOTPResponse(validateOTPResponse: ValidateOTPResponse?) {
         if (!isAdded) return
         validateOTPResponse?.apply {
-            navigateToValidateOTPErrorFragment()
-
-//            when (httpCode) {
-//                AppConstant.HTTP_OK -> navController?.navigate(R.id.action_bpiValidateOTPFragment_to_BPIProcessingRequestFragment, bundleOf("bundle" to bundle))
-//                AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
-//                    if (response?.code.equals("1060"))
-//                        navController?.navigate(R.id.action_bpiValidateOTPFragment_to_bpiEnterOtpFragment, bundleOf("bundle" to bundle))
-//                    else
-//                        navigateToValidateOTPErrorFragment()
-//                }
-//                else -> navigateToValidateOTPErrorFragment()
-//            }
+            when (httpCode) {
+                AppConstant.HTTP_OK -> navController?.navigate(R.id.action_bpiValidateOTPFragment_to_BPIProcessingRequestFragment, bundleOf("bundle" to bundle))
+                AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
+                    if (response?.code.equals("1060"))
+                        navController?.navigate(R.id.action_bpiValidateOTPFragment_to_bpiEnterOtpFragment, bundleOf("bundle" to bundle))
+                    else
+                        navigateToValidateOTPErrorFragment()
+                }
+                else -> navigateToValidateOTPErrorFragment()
+            }
         }
     }
 
