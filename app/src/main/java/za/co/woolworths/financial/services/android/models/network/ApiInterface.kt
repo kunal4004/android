@@ -1192,7 +1192,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("accounts/collections/checkEligibility")
+    @GET("https://d0e0f0f1-07ac-4290-8d18-51ade5ee2661.mock.pstmn.io/accounts/collections/checkEligibility")
     fun getEligibilityForTakeUpPlan(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
