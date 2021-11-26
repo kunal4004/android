@@ -12,9 +12,8 @@ import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_MORE_INFO_HTML
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_TERMS_CONDITIONS_HTML
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.carousel.BPIOptInCarouselFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -31,9 +30,8 @@ class BPIMoreInfoFragment : Fragment()  {
 
         setUpWebView()
 
-        val htmlContent = arguments?.getString(BPI_MORE_INFO_HTML)
-        if(htmlContent != null){
-            bpiMoreInfoWebView?.loadData(htmlContent, "text/html; charset=utf-8", null)
+        BPIOptInCarouselFragment.htmlContent?.moreInformationHtml?.let {
+            bpiMoreInfoWebView?.loadData(it, "text/html; charset=utf-8", null)
         }
 
         bpiCheckBox?.onClick {
@@ -42,13 +40,13 @@ class BPIMoreInfoFragment : Fragment()  {
         }
 
         optInBpiButton?.onClick{
-            view.findNavController().navigate(R.id.action_BPIMoreInfoFragment_to_BPIOptInConfirmationFragment)
+            view.findNavController().navigate(R.id.action_BPIMoreInfoFragment_to_BPIOptInConfirmationFragment,
+                bundleOf(BPI_PRODUCT_GROUP_CODE to arguments?.getString(BPI_PRODUCT_GROUP_CODE)))
         }
 
         bpiCheckBoxDescriptionTextView?.onClick{
             view.findNavController().navigate(R.id.action_BPIMoreInfoFragment_to_BPITermsAndConditionFragment,
-                bundleOf(BPI_TERMS_CONDITIONS_HTML to arguments?.getString(BPI_TERMS_CONDITIONS_HTML),
-                    BPI_PRODUCT_GROUP_CODE to arguments?.getString(BPI_PRODUCT_GROUP_CODE)))
+                bundleOf(BPI_PRODUCT_GROUP_CODE to arguments?.getString(BPI_PRODUCT_GROUP_CODE)))
         }
     }
 

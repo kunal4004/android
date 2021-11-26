@@ -12,10 +12,10 @@
         android:src="@drawable/ic_error_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/mainDescriptionTextview"/>
+        app:layout_constraintBottom_toTopOf="@id/mainDescriptionFailureTextview"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/mainDescriptionTextview"
+        android:id="@+id/mainDescriptionFailureTextview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/thirty_two_dp"

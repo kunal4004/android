@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BP
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtension
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
+import java.util.HashMap
 
 class MyAccountsScreenNavigator {
 
@@ -74,8 +75,31 @@ class MyAccountsScreenNavigator {
 
                 productGroupCode?.let { Utils.triggerFireBaseEvents(it, this) }
                 val navigateToBalanceProtectionInsurance = Intent(this, BalanceProtectionInsuranceActivity::class.java)
-                bpiInsuranceStatus?.let {
-                    if(it == BpiInsuranceApplicationStatusType.NOT_OPTED_IN){
+                bpiInsuranceStatus?.let { status ->
+                    if(status == BpiInsuranceApplicationStatusType.NOT_OPTED_IN){
+                        var bpiTaggingEventCode: String? = null
+                        val arguments: MutableMap<String, String> = HashMap()
+
+                        when (accounts?.productGroupCode) {
+                            AccountsProductGroupCode.CREDIT_CARD.groupCode -> {
+                                bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_START
+                                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.CC_BPI_OPT_IN_START_VALUE
+                            }
+                            AccountsProductGroupCode.STORE_CARD.groupCode -> {
+                                bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_START
+                                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.SC_BPI_OPT_IN_START_VALUE
+                            }
+                            AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> {
+                                bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_START
+                                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.PL_BPI_OPT_IN_START_VALUE
+                            }
+                        }
+
+                        bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, arguments, this) }
+
                         navigateToBalanceProtectionInsurance.putExtra(BPI_OPT_IN, true)
                         navigateToBalanceProtectionInsurance.putExtra(BPI_PRODUCT_GROUP_CODE, accounts?.productGroupCode)
                     }

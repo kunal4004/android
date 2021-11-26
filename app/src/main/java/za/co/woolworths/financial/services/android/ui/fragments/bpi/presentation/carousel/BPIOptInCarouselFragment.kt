@@ -18,14 +18,13 @@ import kotlinx.android.synthetic.main.bpi_opt_in_carousel_fragment.*
 import kotlinx.android.synthetic.main.on_boarding_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.dto.BPITermsConditionsResponse
+import za.co.woolworths.financial.services.android.models.dto.bpi.BPITermsConditions
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_MORE_INFO_HTML
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
-import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_TERMS_CONDITIONS_HTML
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.InsuranceLeadCarousel
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -34,9 +33,11 @@ import za.co.woolworths.financial.services.android.util.Utils
 class BPIOptInCarouselFragment : Fragment() {
 
     private val bpiViewModel: BPIViewModel? by activityViewModels()
-    private var moreInfoHTMLContent = ""
-    private var termsConditionsHTMLContent = ""
     private var productGroupCode: String? = null
+
+    companion object{
+        var htmlContent: BPITermsConditions? = null
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bpi_opt_in_carousel_fragment, container, false)
@@ -77,14 +78,11 @@ class BPIOptInCarouselFragment : Fragment() {
                 findOutCarouselViewPager?.let { viewPager ->
                     when(nextButton?.text){
                         bindString(R.string.continueLabel) -> {
-                            if(moreInfoHTMLContent == "" && termsConditionsHTMLContent == ""){
+                            if(htmlContent == null){
                                 getOptInHTMLContent()
                             }
                             view.findNavController().navigate(R.id.action_BPIOptInCarouselFragment_to_BPIMoreInfoFragment,
-                                bundleOf(
-                                    BPI_MORE_INFO_HTML to moreInfoHTMLContent,
-                                    BPI_TERMS_CONDITIONS_HTML to termsConditionsHTMLContent,
-                                    BPI_PRODUCT_GROUP_CODE to productGroupCode))
+                                bundleOf(BPI_PRODUCT_GROUP_CODE to productGroupCode))
                         }
                         else -> {
                             viewPager.currentItem = tabLayout.selectedTabPosition + 1
@@ -107,8 +105,9 @@ class BPIOptInCarouselFragment : Fragment() {
                 override fun onSuccess(response: BPITermsConditionsResponse?) {
                     when(response?.httpCode){
                         AppConstant.HTTP_OK -> {
-                            moreInfoHTMLContent = extractHTMLContent(response.moreInformationHtml)
-                            termsConditionsHTMLContent = extractHTMLContent(response.termsAndConditionsHtml)
+                            htmlContent = BPITermsConditions(
+                                extractHTMLContent(response.moreInformationHtml),
+                                extractHTMLContent(response.termsAndConditionsHtml))
                         }
                     }
                 }

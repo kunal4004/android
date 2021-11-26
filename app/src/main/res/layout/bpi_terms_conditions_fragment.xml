@@ -47,7 +47,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <include
-        android:id="@+id/bpiEmailProcessingInclude"
+        android:id="@+id/bpiProcessingInclude"
         layout="@layout/bpi_processing_request_layout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
