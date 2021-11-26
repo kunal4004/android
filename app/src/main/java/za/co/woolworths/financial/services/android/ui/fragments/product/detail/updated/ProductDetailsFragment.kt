@@ -171,6 +171,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         tvRatingDetails.setOnClickListener(this)
         tvSkinProfile.setOnClickListener(this)
         btViewMoreReview.setOnClickListener(this)
+        tvTotalReviews.setOnClickListener(this)
         closePage.setOnClickListener {
             activity?.apply {
                 setResult(RESULT_CANCELED)
@@ -204,6 +205,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.tvRatingDetails -> showRatingDetailsDailog()
             R.id.tvSkinProfile->viewSkinProfileDialog()
             R.id.btViewMoreReview->navigateToMoreReviewsScreen()
+            R.id.tvTotalReviews->navigateToMoreReviewsScreen()
         }
     }
 
@@ -668,7 +670,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             reviewStatistics.apply {
                 ratingBar.rating = averageRating
                 tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, reviewCount, reviewCount)
-                tvRecommend.text = recommendedPercentage
+                val recommend= recommendedPercentage.split("%")
+                if (recommend.size == 2) {
+                    tvRecommendPer.text = "${recommend[0]}% "
+                    tvRecommendTxt.text = recommend[1]
+                }
                 if(reviewCount>1)
                     btViewMoreReview.text = resources.getQuantityString(R.plurals.more_review, (reviewCount-1), (reviewCount-1))
                 else {
