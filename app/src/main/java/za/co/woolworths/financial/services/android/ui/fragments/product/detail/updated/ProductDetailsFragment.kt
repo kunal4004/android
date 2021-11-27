@@ -184,7 +184,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isFaceNotDetect: Boolean = false
     private var isFaceDetect: Boolean = false
     private var isColorNotMatch: Boolean = false
-
+    private var isTakePicture: Boolean = false
+    private var takenOriginalPicture : Bitmap? = null
 
     @OpenTermAndLighting
     @Inject
@@ -332,6 +333,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun captureImageFromVtoLiveCamera() {
         try {
+            isTakePicture = true
             liveCameraViewModel.takenPicture()
             job?.cancel()
             viewLifecycleOwner.lifecycleScope.launch {
@@ -346,10 +348,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     viewLifecycleOwner,
                     Observer { result ->
                         saveVtoApplyImage = result as Bitmap
-                        captureImgLiveCamera = result
                         txtCountCameraCaptureImage.visibility = View.GONE
-                        setPickedImage(null, result, true)
                         isLiveCameraResumeState = false
+
                     })
 
                 retakeCamera.visibility = View.VISIBLE
@@ -360,11 +361,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 cameraSurfaceView.visibility = View.GONE
                 isColorApplyFromLiveCamera = false
                 isRefreshImageEffectLiveCamera = false
-
+                getOriginalPicture()
             }
         } catch (e: Exception) {
             // Do Nothing
         }
+    }
+
+    private fun getOriginalPicture() {
+        liveCameraViewModel.getOriginalPicture()
+        liveCameraViewModel.getOriginalPicture.observe(
+            viewLifecycleOwner,
+            Observer { result ->
+                result?.let {
+                    takenOriginalPicture = it
+                    captureImgLiveCamera = it
+                    setPickedImage(null, result, true)
+                }
+            })
+
     }
 
 
@@ -399,6 +414,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             imgVTORefresh.visibility = View.VISIBLE
             comparisonView.leaveComparisonMode()
             isDividerVtoEffect = false
+            scrollView.setScrollingEnabled(true)
         } else {
             captureImage.visibility = View.GONE
             imgVTOSplit.setImageResource(R.drawable.ic_vto_icon_compare)
@@ -407,6 +423,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             imgVTORefresh.visibility = View.GONE
             vtoDividerLayout.visibility = View.VISIBLE
             isDividerVtoEffect = true
+            scrollView.setScrollingEnabled(false)
         }
     }
 
@@ -1697,7 +1714,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         (activity as? ProductDetailsActivity)?.apply {
 
             walkThroughPromtView =
-                WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.VTO_TRY_IT)
+                WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.VTO_TRY_IT,true)
                     .setTarget(imgVTOOpen)
                     .setTitle(R.string.try_on_intro_txt)
                     .setDescription(R.string.try_on_intro_desc)
@@ -2376,6 +2393,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             imgVTOSplit.visibility = View.GONE
             captureImage.visibility = View.GONE
             imgVTORefresh.visibility = View.GONE
+            scrollView.setScrollingEnabled(true)
             if (comparisonView.isCompareModeEnable()) {
                 vtoDividerLayout.visibility = View.GONE
                 isDividerVtoEffect = false
@@ -2480,7 +2498,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         isVtoImage = true
         uri?.let {
             selectedImageUri = it
-            imgVTOEffect.setPhotoUri(uri)
+            imgVTOEffect.setPhotoUri(it)
         }
         if (!isObserveImageData) {
             isObserveImageData = true
@@ -2692,17 +2710,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun clearImageEffect() {
-        vtoApplyEffectOnImageViewModel.clearEffect()
-        vtoApplyEffectOnImageViewModel.clearEffectImage.observe(
-            viewLifecycleOwner,
-            Observer { bitmap ->
-                if (null != bitmap) {
-                    imgVTOEffect.setImageBitmap(bitmap)
-                } else {
-                   // imgVTOEffect.setPhotoUri(selectedImageUri)
-                    setBitmapFromUri(selectedImageUri)
-                }
-            })
+        if (isTakePicture) {
+            isTakePicture = false
+            imgVTOEffect.setImageBitmap(takenOriginalPicture)
+            setPickedImage(null, takenOriginalPicture, true)
+        } else {
+            vtoApplyEffectOnImageViewModel.clearEffect()
+            vtoApplyEffectOnImageViewModel.clearEffectImage.observe(
+                viewLifecycleOwner,
+                Observer { bitmap ->
+                    if (null != bitmap) {
+                        imgVTOEffect.setImageBitmap(bitmap)
+                    } else {
+                        setBitmapFromUri(selectedImageUri)
+                    }
+                })
+        }
         productColorSelectorAdapter?.clearSelection()
 
     }

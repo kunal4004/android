@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.daasuu.bl.ArrowDirection;
@@ -112,9 +113,17 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     public Feature feature;
     private WTextView mNewFeature;
     private View mContentView;
+    private boolean isFromVto = false;
 
     public WMaterialShowcaseView(Context context, Feature feature) {
         super(context);
+        init(context);
+        this.feature = feature;
+    }
+
+    public WMaterialShowcaseView(Context context, Feature feature, Boolean isFromVto) {
+        super(context);
+        this.isFromVto = isFromVto;
         init(context);
         this.feature = feature;
     }
@@ -165,8 +174,26 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         mDismissButton.setOnClickListener(this);
         mWalkThroughAction.setOnClickListener(this);
         mHideTutorialAction.setOnClickListener(this);
+        setBubbleLayoutPosition();
     }
 
+    private void setBubbleLayoutPosition() {
+        try {
+            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) windowContainer.getLayoutParams();
+            if (!isFromVto) {
+                lp.addRule(RelativeLayout.CENTER_VERTICAL);
+                windowContainer.setLayoutParams(lp);
+            } else {
+                lp.setMargins(0, 40, 0, 0);
+                windowContainer.setArrowWidth(60);
+                windowContainer.setArrowHeight(40);
+                windowContainer.setArrowPosition(95);
+            }
+
+        } catch (Exception e) {
+            //Do Nothing
+        }
+    }
 
     /**
      * Interesting drawing stuff.
@@ -640,6 +667,11 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         public Builder(Activity activity,Feature feature) {
             this.activity = activity;
             showcaseView = new WMaterialShowcaseView(activity,feature);
+        }
+
+        public Builder(Activity activity,Feature feature,Boolean isFromVto) {
+            this.activity = activity;
+            showcaseView = new WMaterialShowcaseView(activity,feature,isFromVto);
         }
 
         /**

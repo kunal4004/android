@@ -148,7 +148,6 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
     ) {
 
         val vtoSetting = VtoSetting.builder()
-            .setProductGuid(productId)
             .setSkuGuid(sku)
             .build()
 
@@ -177,7 +176,6 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
     override fun applyEffect(productId: String?, sku: String?): MutableLiveData<Any> {
         val data = MutableLiveData<Any>()
         val vtoSetting = VtoSetting.builder()
-            .setProductGuid(productId)
             .setSkuGuid(sku)
             .build()
 

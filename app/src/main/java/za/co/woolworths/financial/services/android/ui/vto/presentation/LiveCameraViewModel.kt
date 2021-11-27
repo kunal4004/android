@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.vto.presentation
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,8 @@ class LiveCameraViewModel @Inject constructor(
     private var _selectedSkuResult = MutableLiveData<Any>()
     val selectedSkuResult: LiveData<Any> get() = _selectedSkuResult
 
+    private var _getOriginalPicture = MutableLiveData<Bitmap?>()
+    val getOriginalPicture: LiveData<Bitmap?> get() = _getOriginalPicture
 
     fun liveCameraVtoApplier(
         makeupCam: MakeupCam?,
@@ -48,5 +51,8 @@ class LiveCameraViewModel @Inject constructor(
 
     }
 
+    fun getOriginalPicture() {
+        _getOriginalPicture = liveCameraRepository.getOriginalPicture()
+    }
 
 }
