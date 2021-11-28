@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.ccs_end_session_dialog_fragment.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
+import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
@@ -33,7 +34,11 @@ class RatingDetailDialog(private val ratingReviewData: RatingReviewResponse) :
             ratingBarTop.rating = averageRating
             tvTotalReviews.text =
                 resources.getQuantityString(R.plurals.no_review, reviewCount, reviewCount)
-            recommend.text = recommendedPercentage
+            val recommend= recommendedPercentage.split("%")
+            if (recommend.size == 2) {
+                tvRecommendPercent.text = "${recommend[0]}% "
+                tvRecommendTxtValue.text = recommend[1]
+            }
             setRatingDistributionUI(ratingDistribution, reviewCount)
         }
         tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG

@@ -90,14 +90,17 @@ class MoreReviewsAdapter(val context: Context,
                 pdpratings.visibility = View.VISIBLE
 
                 reviewStatistics.apply {
-                    recommend.text = recommendedPercentage
+                    val recommend= recommendedPercentage.split("%")
+                    if (recommend.size == 2) {
+                        tvRecommendPercent.text = "${recommend[0]}% "
+                        tvRecommendTxtValue.text = recommend[1]
+                    }
                     pdpratings.apply {
                         ratingBarTop.visibility = View.VISIBLE
                         tvTotalReviews.visibility = View.VISIBLE
                         ratingBarTop.rating = averageRating
                         tvTotalReviews.text = context.getString(R.string.customer_reviews)
                     }
-                    recommend.text = recommendedPercentage
                     view_2.visibility = View.GONE
                     close.visibility = View.INVISIBLE
                     setRatingDistributionUI(ratingDistribution, reviewCount, itemView)
