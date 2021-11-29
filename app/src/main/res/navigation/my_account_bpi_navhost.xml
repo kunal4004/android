@@ -67,5 +67,26 @@
         android:id="@+id/BPIOptInCarouselFragment"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.carousel.BPIOptInCarouselFragment"
         android:label="BPIOptInCarouselFragment"
-        tools:layout="@layout/bpi_opt_in_carousel_fragment" />
+        tools:layout="@layout/bpi_opt_in_carousel_fragment" >
+        <action
+            android:id="@+id/action_BPIOptInCarouselFragment_to_BPIMoreInfoFragment"
+            app:destination="@id/BPIMoreInfoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/BPIMoreInfoFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.BPIMoreInfoFragment"
+        android:label="BPIMoreInfoFragment"
+        tools:layout="@layout/bpi_more_info_fragment" >
+        <action
+            android:id="@+id/action_BPIMoreInfoFragment_to_BPIOptInConfirmationFragment"
+            app:destination="@id/BPIOptInConfirmationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/BPIOptInConfirmationFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.BPIOptInConfirmationFragment"
+        android:label="BPIOptInConfirmationFragment"
+        tools:layout="@layout/bpi_opt_in_confirmation_fragment" >
+    </fragment>
 </navigation>

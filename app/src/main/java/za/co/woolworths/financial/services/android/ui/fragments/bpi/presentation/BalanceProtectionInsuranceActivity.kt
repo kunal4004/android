@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
@@ -22,11 +23,15 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BP
 class BalanceProtectionInsuranceActivity : AppCompatActivity() {
 
     private var bpiOptIn: Boolean = false
+    private var bpiProductGroupCode: String? = null
     private var bpiPresenter: BPIOverviewPresenter? = null
     private val bpiViewModel: BPIViewModel? by viewModels()
 
     companion object {
         const val BPI_OPT_IN = "bpi_opt_in"
+        const val BPI_PRODUCT_GROUP_CODE = "bpi_product_group_code"
+        const val BPI_MORE_INFO_HTML = "bpi_more_info_html"
+        const val BPI_TERMS_CONDITIONS_HTML = "bpi_terms_conditions_html"
     }
 
     @SuppressLint("ResourceType")
@@ -41,13 +46,14 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
             intent?.extras?.let { args ->
                 bpiPresenter = bpiViewModel?.overviewPresenter(args)
                 bpiOptIn = args.getBoolean(BPI_OPT_IN, false)
+                bpiProductGroupCode = args.getString(BPI_PRODUCT_GROUP_CODE)
             }
         if(bpiOptIn){
             bpiPresenter?.createNavigationGraph(
                 fragmentContainerView = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as? NavHostFragment,
                 navHostFragmentId = R.navigation.my_account_bpi_navhost,
                 startDestination =  R.id.BPIOptInCarouselFragment,
-                extras = null)
+                extras = bundleOf(BPI_PRODUCT_GROUP_CODE to bpiProductGroupCode))
         }
         else{
             val overviewPair = bpiPresenter?.navigateToOverviewDetail()
@@ -69,7 +75,11 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.back24)
         }
         bpiToolbar.setNavigationOnClickListener {
-            onBackPressed()
+            val backPressedFragment = bpiPresenter?.navigateToPreviousFragment()
+            if (backPressedFragment == false) {
+                super.onBackPressed()
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
         }
     }
 
@@ -102,7 +112,7 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
         supportActionBar?.elevation = 0f
     }
 
-    fun changeActionBarUIForCarousel() {
+    fun changeActionBarUIForBPIOptIn() {
         appbar?.setBackgroundColor(Color.TRANSPARENT)
         horizontalDivider?.visibility = GONE
         toolbarTitleTextView?.visibility = GONE

@@ -2323,4 +2323,9 @@
     <string name="bpi_opt_in_carousel_desc_3">Cover is immediate upon activation of the insurance</string>
     <string name="bpi_opt_in_carousel_desc_1">"Pays the outstanding balance on your account up to a maximum of R100 000 in the event of your death, permanent disability or critical illness. "</string>
     <string name="bpi_opt_in_carousel_desc_2">Pays your instalments up to 12 months up to a maximum of R1000 000 in the event that you are retrenchment or temporarily disabled.</string>
+    <string name="bpi_checkbox_text">I agree with the <u>Comprehensive Balance Protection Terms &amp; Conditions</u></string>
+    <string name="bpi_opt_in_text">opt in</string>
+    <string name="bpi_opt_in_for_balance_protection_insurance">Opt in for Balance Protection Insurance</string>
+    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you <br/> cancel within the first 31 days after which you have <br/> received the policy terms and conditions, <br/> we will reverse any premiums paid,<br/> provided have not claimed.</string>
+    <string name="bpi_confirm_opt_in_desc2">Should you require more information; need to <br/> submit a claim; log a complaint; wish to cancel or <br/> have not received your policy wording within 30 <br/> days please contact Woolworth Financial Services <br/> on <u>0861502020</u></string>
 </resources>
