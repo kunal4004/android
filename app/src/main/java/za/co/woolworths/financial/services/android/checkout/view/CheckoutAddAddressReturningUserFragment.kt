@@ -219,10 +219,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 return@setOnCheckedChangeListener
             }
             if (isChecked)
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION,
-                    activity
-                )
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SPECIAL_COLLECTION_INSTRUCTION, hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SPECIAL_INSTRUCTION
+                ), activity)
             edtTxtInputLayoutSpecialDeliveryInstruction?.visibility =
                 if (isChecked) VISIBLE else GONE
             edtTxtInputLayoutSpecialDeliveryInstruction?.isCounterEnabled = isChecked
@@ -235,10 +235,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 return@setOnCheckedChangeListener
             }
             if (isChecked)
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT,
-                    activity
-                )
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_IS_THIS_GIFT, hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_IS_THIS_GIFT
+                ), activity)
             edtTxtInputLayoutGiftInstructions?.visibility =
                 if (isChecked) VISIBLE else GONE
             edtTxtInputLayoutGiftInstructions?.isCounterEnabled = isChecked
@@ -251,10 +251,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             newShoppingBagsLayout.visibility = GONE
             switchNeedBags?.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
-                        activity
-                    )
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO, hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO
+                    ), activity)
                 }
             }
         } else if (WoolworthsApplication.getNativeCheckout()?.newShoppingBag?.isEnabled == true) {
@@ -354,20 +354,21 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioBtnPhoneConfirmation -> {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME,
-                        activity
-                    )
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_PHONE_ME, hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_PHONE
+                    ), activity)
+
                     selectedFoodSubstitution = FoodSubstitution.PHONE_CONFIRM
                 }
                 R.id.radioBtnSimilarSubst -> {
                     selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
                 }
                 R.id.radioBtnNoThanks -> {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS,
-                        activity
-                    )
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_FOOD_SUBSTITUTE_NO_THANKS, hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_NO_THANKS
+                    ), activity)
                     selectedFoodSubstitution = FoodSubstitution.NO_THANKS
                 }
             }
@@ -774,10 +775,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 )
             }
             R.id.txtContinueToPayment -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT,
-                    activity
-                )
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONTINUE_TO_PAYMENT, hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CONTINUE_TO_PAYMENT
+                ), activity)
                 onCheckoutPaymentClick()
             }
         }
@@ -1051,8 +1052,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     ) {
         oddSelectedPosition = position
         selectedOpenDayDeliverySlot = openDayDeliverySlot
+
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_.plus(openDayDeliverySlot.deliveryType),
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY_OPTION_PRE_VALUE1
+                            .plus(openDayDeliverySlot.deliveryType)
+                            .plus(FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY_OPTION_PRE_VALUE2)
+            ),
             activity
         )
         when (openDayDeliverySlot.deliveryType) {
@@ -1082,10 +1090,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         shoppingBagsOptionsList: ShoppingBagsOptions,
         position: Int
     ) {
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
-            activity
-        )
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO, hashMapOf(
+            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO
+        ), activity)
         selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType
     }
 
