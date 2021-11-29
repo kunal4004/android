@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -149,7 +150,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
     }
 
-    private fun startShimmerView() {
+    fun initShimmerView() {
 
         shimmerComponentArray = listOf(
             Pair<ShimmerFrameLayout, View>(
@@ -248,9 +249,12 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 imageViewCaretForwardCollection
             )
         )
+        startShimmerView()
+    }
 
-        txtNeedBags.visibility = View.GONE
-        switchNeedBags.visibility = View.GONE
+    fun startShimmerView() {
+        txtNeedBags?.visibility = View.GONE
+        switchNeedBags?.visibility = View.GONE
 
         val shimmer = Shimmer.AlphaHighlightBuilder().build()
         shimmerComponentArray.forEach {
@@ -260,7 +264,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
     }
 
-    private fun stopShimmerView() {
+    fun stopShimmerView() {
         shimmerComponentArray.forEach {
             if (it.first.isShimmerStarted) {
                 it.first.stopShimmer()
@@ -269,8 +273,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             }
         }
 
-        txtNeedBags.visibility = View.VISIBLE
-        switchNeedBags.visibility = View.VISIBLE
+        txtNeedBags?.visibility = View.VISIBLE
+        switchNeedBags?.visibility = View.VISIBLE
 
         initializeFoodSubstitution()
         initializeDeliveryInstructions()
@@ -287,8 +291,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         ).get(CheckoutAddAddressNewUserViewModel::class.java)
     }
 
-    private fun callStorePickupInfoAPI() {
-        startShimmerView()
+    fun callStorePickupInfoAPI() {
+        initShimmerView()
 
         checkoutAddAddressNewUserViewModel?.getStorePickupInfo(getStorePickupInfoBody())
             .observe(viewLifecycleOwner, { response ->
@@ -381,7 +385,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         collectionTimeSlotsAdapter.setCollectionTimeSlotData(ArrayList(slots))
     }
 
-    private fun getFirstAvailableSlot(list: List<SortedJoinDeliverySlot>): Week? {
+    fun getFirstAvailableSlot(list: List<SortedJoinDeliverySlot>): Week? {
         if (list.isNullOrEmpty()) {
             return null
         }
@@ -483,7 +487,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         checkoutCollectingUserInfoLayout.setOnClickListener(this)
     }
 
-    private fun initializeDeliveryInstructions() {
+    fun initializeDeliveryInstructions() {
         edtTxtSpecialDeliveryInstruction?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtGiftInstructions?.addTextChangedListener(deliveryInstructionsTextWatcher)
         edtTxtInputLayoutSpecialDeliveryInstruction?.visibility = View.GONE
@@ -560,7 +564,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
      *
      * @see [FoodSubstitution]
      */
-    private fun initializeFoodSubstitution() {
+    fun initializeFoodSubstitution() {
         selectedFoodSubstitution = FoodSubstitution.SIMILAR_SUBSTITUTION
         radioGroupFoodSubstitution?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
@@ -660,7 +664,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         }
     }
 
-    private fun onChooseDateClicked() {
+    fun onChooseDateClicked() {
         storePickupInfoResponse?.sortedJoinDeliverySlots?.apply {
             // No available dates to select
             if (this.isNullOrEmpty()) {
@@ -675,14 +679,18 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     weekDaysList.addAll(it)
                 }
             }
-            navController?.navigate(
-                R.id.action_checkoutReturningUserCollectionFragment_to_collectionDatesBottomSheetDialog,
-                bundleOf(
-                    ARGS_KEY_COLLECTION_DATES to weekDaysList,
-                    ARGS_KEY_SELECTED_POSITION to selectedPosition
-                )
-            )
+            navigateToCollectionDateDialog(weekDaysList)
         }
+    }
+
+    fun navigateToCollectionDateDialog(weekDaysList: ArrayList<Week>) {
+        navController?.navigate(
+            R.id.action_checkoutReturningUserCollectionFragment_to_collectionDatesBottomSheetDialog,
+            bundleOf(
+                ARGS_KEY_COLLECTION_DATES to weekDaysList,
+                ARGS_KEY_SELECTED_POSITION to selectedPosition
+            )
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -845,5 +853,20 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             R.id.action_checkoutReturningUserCollectionFragment_to_checkoutPaymentWebFragment,
             bundleOf(CheckoutPaymentWebFragment.KEY_ARGS_WEB_TOKEN to webTokens)
         )
+    }
+
+    @VisibleForTesting
+    fun testSetShimmerArray(mockedArray: List<Pair<ShimmerFrameLayout, View>>) {
+        shimmerComponentArray = mockedArray
+    }
+
+    @VisibleForTesting
+    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
+        checkoutAddAddressNewUserViewModel = viewModel
+    }
+
+    @VisibleForTesting
+    fun testSetStorePickupInfoResponse(mockStorePickupInfoResponse: ConfirmDeliveryAddressResponse) {
+        storePickupInfoResponse = mockStorePickupInfoResponse
     }
 }
