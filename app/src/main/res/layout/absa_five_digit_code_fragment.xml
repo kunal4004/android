@@ -38,7 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginTop="0dp"
         android:background="@color/white"
         android:gravity="center"
         android:orientation="horizontal">
@@ -106,7 +105,7 @@
         app:srcCompat="@drawable/next_button_icon" />
 
     <TextView
-        android:id="@+id/completeSetup"
+        android:id="@+id/completeSetupButton"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
         android:layout_alignParentBottom="true"
@@ -119,7 +118,7 @@
         android:text="@string/complete_setup"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="@dimen/twelve_sp"
         android:visibility="gone" />
 
     <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
@@ -129,6 +128,9 @@
         android:layout_above="@+id/llPinCodeContainer"
         android:background="@android:color/transparent"
         android:clickable="false"
+        android:maxLines="1"
+        android:imeOptions="actionNext"
+        android:singleLine="true"
         android:gravity="center"
         android:inputType="number|numberPassword"
         android:maxLength="5"
