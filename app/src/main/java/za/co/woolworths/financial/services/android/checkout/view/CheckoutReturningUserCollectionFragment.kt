@@ -324,6 +324,8 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                                 response.sortedJoinDeliverySlots?.apply {
                                     val firstAvailableDateSlot = getFirstAvailableSlot(this)
                                     initializeDatesAndTimeSlots(firstAvailableDateSlot)
+                                    // Set default time slot selected
+                                    collectionTimeSlotsAdapter.setSelectedItem(0)
                                 }
                             }
                             else -> {
@@ -437,9 +439,15 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                 (this as? Week)?.let { selectedWeek ->
                     selectedPosition = bundle.getInt(ARGS_KEY_SELECTED_POSITION, 0)
                     initializeDatesAndTimeSlots(selectedWeek)
+                    clearSelectedTimeSlot()
                 }
             }
         }
+    }
+
+    private fun clearSelectedTimeSlot() {
+        selectedTimeSlot = null
+        collectionTimeSlotsAdapter.clearSelection()
     }
 
     private fun initializeCollectingFromView() {
@@ -635,6 +643,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
+
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT, hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
+                ), activity)
                 val bundle = Bundle()
                 bundle.putBoolean(KEY_IS_WHO_IS_COLLECTING, true)
                 navController?.navigate(
@@ -714,6 +727,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     override fun setSelectedTimeSlot(slot: Slot?) {
         selectedTimeSlot = slot
+        isRequiredFieldsMissing()
     }
 
     private fun onCheckoutPaymentClick() {

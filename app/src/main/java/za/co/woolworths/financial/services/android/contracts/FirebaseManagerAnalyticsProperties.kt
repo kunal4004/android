@@ -233,6 +233,10 @@ open class FirebaseManagerAnalyticsProperties {
         const val CHECKOUT_REMOVE_UNSELLABLE_ITEMS = "chckout_rmve_itms"
         const val CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS = "chckout_cncl_rmve_itms"
         const val CHECKOUT_CONTINUE_TO_PAYMENT = "chckout_cnt_to_pmnt"
+        const val CHECKOUT_COLLECTION_USER_EDIT = "clikcllct_edt_prsn"
+        const val CHECKOUT_COLLECTION_VECHILE_SELECT = "clikcllct_veh_det"
+        const val CHECKOUT_COLLECTION_TAXI_SELECT = "clikcllct_taxi"
+        const val CHECKOUT_COLLECTION_CONFIRM_DETAILS = "clikcllct_confrm"
 
         //PLDD
         const val personalLoanDrawdownStart = "pldd_start"
@@ -408,6 +412,16 @@ open class FirebaseManagerAnalyticsProperties {
     class PropertyValues {
         companion object {
             const val NOT_APPLICABLE: String = "N/A"
+
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS: String =
+                "Customer selected to edit (change details) of a collector"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT: String =
+                "Customer selected to enter Vehicle details"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_TAXI_SELECT: String =
+                "Customer selected one of the Ride-along options"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CONFIRM_DETAILS: String =
+                "Customer confirms their added Click & Collect details"
+
         }
     }
 
