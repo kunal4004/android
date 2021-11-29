@@ -25,8 +25,6 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import androidx.fragment.app.FragmentTransaction
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.common_toolbar.view.*
-import kotlinx.android.synthetic.main.review_detail_layout.*
 import java.util.ArrayList
 
 class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListener {
@@ -50,9 +48,9 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar_more_review.btn_back.setOnClickListener {
-            activity?.onBackPressed()
-        }
+//        toolbar_more_review.btn_back.setOnClickListener {
+//            activity?.onBackPressed()
+//        }
         arguments?.apply {
             val ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_DATA),
                     RatingReviewResponse::class.java) as RatingReviewResponse
@@ -73,6 +71,19 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
                                reportReviewOptions: List<String>) {
         val moreReviewsAdapter = MoreReviewsAdapter(requireContext(),
                 this, reviewStatistics, reportReviewOptions)
+        rv_more_reviews.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = moreReviewsAdapter.withLoadStateFooter(
+                    footer = MoreReviewLoadStateAdapter{moreReviewsAdapter.retry()}
+            )
+        }
+
+        lifecycleScope.launch {
+            moreReviewViewModel.getReviewDataSource(productId).collectLatest { pagedData ->
+                moreReviewsAdapter.submitData(pagedData)
+            }
+        }
+
         moreReviewsAdapter.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
@@ -80,17 +91,6 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
                 progress_bar?.visibility = View.GONE
             }
         }
-        moreReviewsAdapter.withLoadStateFooter(
-                footer = MoreReviewLoadStateAdapter()
-        )
-        lifecycleScope.launch {
-            moreReviewViewModel.getReviewDataSource(productId).collectLatest { pagedData ->
-                moreReviewsAdapter.submitData(pagedData)
-            }
-        }
-
-        rv_more_reviews.layoutManager = LinearLayoutManager(requireContext())
-        rv_more_reviews.adapter = moreReviewsAdapter
     }
 
     override fun openSkinProfileDialog(reviews: Reviews) {
