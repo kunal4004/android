@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.vto_term_and_lighting_bottom_dialog.view.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import javax.inject.Inject
 
 
@@ -22,6 +23,7 @@ class TermAndLightingBottomDialog @Inject constructor(
         fromListingPage: Boolean
     ) {
 
+        val lightingTipMessage = WoolworthsApplication.getInstance()?.virtualTryOn?.lightingTipText
         val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
         val view = dialog.layoutInflater.inflate(R.layout.vto_term_and_lighting_bottom_dialog, null)
         view.txtLightingTips.text = context.getString(R.string.lighting_tips)
@@ -37,7 +39,7 @@ class TermAndLightingBottomDialog @Inject constructor(
                 dialog.dismiss()
             }
         } else {
-            view.txtLightingDescription.text = context.getString(R.string.vto_try_on_desc)
+            view.txtLightingDescription.text = lightingTipMessage
 
         }
         dialog.setContentView(view)
