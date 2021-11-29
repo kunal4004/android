@@ -147,8 +147,6 @@ class AbsaIntegrationViewModel : ViewModel() {
                 viewModelScope.launch(Dispatchers.IO) {
                     val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheck(securityNotificationType, null)
                     AbsaApiResponse(true, fetchAbsaValidateSureCheck, ValidateSureCheckResponseProperty::class) { result ->
-                        stopPolling()
-                        fetchValidateSureCheckForOTP()
                         when(result){
                            is AbsaResultWrapper.Loading -> inProgress(true)
                            is AbsaResultWrapper.Failure ->  {

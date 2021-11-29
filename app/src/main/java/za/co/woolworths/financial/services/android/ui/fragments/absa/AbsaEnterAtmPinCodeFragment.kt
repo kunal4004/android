@@ -15,9 +15,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
-import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
-import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
@@ -269,7 +266,6 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
 
     override fun onFailureHandler(responseMessage: String, dismissActivity: Boolean) {
         // Navigate back to credit card screen when resultMessage is failed or rejected.
-        cancelRequest()
         clearPin()
 
         activity?.apply {
@@ -313,17 +309,6 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cancelRequest()
-    }
-
-    private fun cancelRequest() {
-        cancelVolleyRequest(AbsaValidateCardAndPinRequest::class.java.simpleName)
-        cancelVolleyRequest(AbsaValidateSureCheckRequest::class.java.simpleName)
-        cancelVolleyRequest(AbsaCreateAliasRequest::class.java.simpleName)
-    }
-
     private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
         activity?.let {
             val intent = Intent(it, ErrorHandlerActivity::class.java)
@@ -343,9 +328,5 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
                 }
             }
         }
-    }
-
-    override fun onSuccessOFOTPSureCheck(userCellNumber: String?) {
-
     }
 }

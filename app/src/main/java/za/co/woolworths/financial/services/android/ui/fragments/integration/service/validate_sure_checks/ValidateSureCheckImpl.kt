@@ -36,7 +36,11 @@ class ValidateSureCheckImpl : IValidateSureCheck {
     }
 
     override suspend fun fetchAbsaValidateSureCheck(securityNotificationType: SecurityNotificationType?,otpToBeVerified: String?): NetworkState<AbsaProxyResponseProperty> {
-        val validateCardAndPinRequestProperty = createAbsaValidateSureCheckRequestProperty(securityNotificationType ?: SecurityNotificationType.SureCheck,otpToBeVerified = otpToBeVerified ?: "null").json()
+       val sNotificationType : String? = when(securityNotificationType){
+           SecurityNotificationType.OTP ->  otpToBeVerified ?: "null"
+           else -> null
+       }
+        val validateCardAndPinRequestProperty = createAbsaValidateSureCheckRequestProperty(securityNotificationType ?: SecurityNotificationType.SureCheck,otpToBeVerified = sNotificationType).json()
         validateCardAndPinRequestProperty.contentLength()
         val withEncryptedBody = validateCardAndPinRequestProperty.toAes256Encrypt()
         return resultOf(AbsaRemoteApi.service.queryAbsaServiceValidateSureCheck( AbsaTemporaryDataSourceSingleton.cookie,withEncryptedBody))
