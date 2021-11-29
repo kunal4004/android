@@ -423,15 +423,15 @@ open class FirebaseManagerAnalyticsProperties {
         companion object {
             const val NOT_APPLICABLE: String = "N/A"
 
-            const val SC_BPI_OPT_IN_START_VALUE = "Store Card Landing - BPI : Opt-in"
+            const val SC_BPI_OPT_IN_START_VALUE = "Store Card Landing - BPI - Opt-in"
             const val SC_BPI_OPT_IN_CONFIRM_VALUE = "Store Card Landing - BPI - Confirm"
             const val SC_BPI_OPT_IN_SEND_EMAIL_VALUE = "Store Card Landing - BPI - Send Email"
 
-            const val CC_BPI_OPT_IN_START_VALUE = "Credit Card Landing - BPI : Opt-in"
+            const val CC_BPI_OPT_IN_START_VALUE = "Credit Card Landing - BPI - Opt-in"
             const val CC_BPI_OPT_IN_CONFIRM_VALUE = "Credit Card Landing - BPI - Confirm"
             const val CC_BPI_OPT_IN_SEND_EMAIL_VALUE = "Credit Card Landing - BPI - Send Email"
 
-            const val PL_BPI_OPT_IN_START_VALUE = "Personal Loan Landing - BPI : Opt-in"
+            const val PL_BPI_OPT_IN_START_VALUE = "Personal Loan Landing - BPI - Opt-in"
             const val PL_BPI_OPT_IN_CONFIRM_VALUE = "Personal Loan Landing - BPI - Confirm"
             const val PL_BPI_OPT_IN_SEND_EMAIL_VALUE = "Personal Loan Landing - BPI - Send Email"
         }
