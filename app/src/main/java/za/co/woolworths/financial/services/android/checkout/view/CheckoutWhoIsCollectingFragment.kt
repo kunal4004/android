@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.checkout_who_is_collecting_fragment.*
 import kotlinx.android.synthetic.main.vehicle_details_layout.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_COLLECTING_DETAILS
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -70,6 +71,11 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     }
 
     private fun onVehicleSelected() {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_VECHILE_SELECT, hashMapOf(
+            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT
+        ), activity)
         isMyVehicle = true
         taxiDescription.visibility = View.GONE
         vehicleDetailsLayout.visibility = View.VISIBLE
@@ -77,6 +83,11 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     }
 
     private fun onTaxiSelected() {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_TAXI_SELECT, hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_TAXI_SELECT
+            ), activity)
         isMyVehicle = false
         taxiDescription.visibility = View.VISIBLE
         vehicleDetailsLayout.visibility = View.GONE
@@ -131,6 +142,11 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
     }
 
     private fun onConfirmButtonClick() {
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_CONFIRM_DETAILS, hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CONFIRM_DETAILS
+            ), activity)
         val whoIsCollectingDetails = WhoIsCollectingDetails(
             recipientNameEditText.text.toString(),
             cellphoneNumberEditText.text.toString(),

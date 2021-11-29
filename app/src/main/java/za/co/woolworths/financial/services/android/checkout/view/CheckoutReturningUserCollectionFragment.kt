@@ -639,6 +639,11 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.checkoutCollectingFromLayout -> {
+
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLLECTION_USER_EDIT, hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS
+                ), activity)
                 val bundle = Bundle()
                 bundle.putBoolean(KEY_IS_WHO_IS_COLLECTING, true)
                 navController?.navigate(
