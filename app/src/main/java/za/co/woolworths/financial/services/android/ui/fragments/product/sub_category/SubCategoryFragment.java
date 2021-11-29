@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.sub_cat
 
 import android.app.Activity;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -24,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -34,6 +37,8 @@ import za.co.woolworths.financial.services.android.util.expand.ParentSubCategory
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryAdapter;
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryChild;
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryModel;
+
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 
 public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragmentBinding, SubCategoryViewModel> implements SubCategoryNavigator, View.OnClickListener {
 
@@ -48,6 +53,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	private ParentSubCategoryViewHolder mParentViewHolder;
 	private List<SubCategoryModel> mSubCategoryListModel;
 	private String version;
+	public static final int ERROR_DIALOG_REQUEST = 1456;
 
 	@Override
 	public int getLayoutId() {
@@ -152,8 +158,8 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 
 	private void subcategoryOtherHttpResponse(Response response) {
 		if (!TextUtils.isEmpty(response.desc)) {
-			Utils.displayValidationMessage(getActivity(),
-					CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+			Utils.displayValidationMessageForResult(getActivity(),
+					CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc,ERROR_DIALOG_REQUEST);
 		}
 	}
 
@@ -298,4 +304,19 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 			hideToolbar();
 		}
 	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		//TODO: Comment what's actually happening here.
+		if(requestCode == ERROR_DIALOG_REQUEST && resultCode == Activity.RESULT_CANCELED ){
+			Activity activity = getActivity();
+			if (activity instanceof BottomNavigationActivity) {
+				activity.onBackPressed();
+				((BottomNavigationActivity) activity).reloadDepartmentFragment();
+			}
+		}
+	}
+
+
 }
