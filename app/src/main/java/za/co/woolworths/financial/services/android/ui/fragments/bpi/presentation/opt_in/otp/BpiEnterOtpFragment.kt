@@ -26,10 +26,10 @@ class BpiEnterOtpFragment : EnterOTPFragmentExtension(),
 
     private var navController: NavController? = null
     private var mResendOTPDialogFragment: ResendOTPDialogFragment? = null
-    var bundle: Bundle? = null
-    lateinit var otpSentTo: String
-    lateinit var numberToOTPSent: String
-    lateinit var otpValue: String
+    private var bundle: Bundle? = null
+    private lateinit var otpSentTo: String
+    private lateinit var numberToOTPSent: String
+    private lateinit var otpValue: String
 
     companion object{
         var shouldBackPressed: Boolean = false
