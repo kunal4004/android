@@ -509,7 +509,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         for (address in place.addressComponents?.asList()!!) {
             when (address.types[0]) {
                 STREET_NUMBER.value -> addressText1 = address.name
-                ROUTE.value -> addressText2 = address.name
+                ROUTE.value -> addressText2 =
+                    if (!address.name.isNullOrEmpty()) address.name else addressText2
                 ADMINISTRATIVE_AREA_LEVEL_1.value -> {
                     selectedAddress.provinceName = address.name
                 }
@@ -525,13 +526,18 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
                 LOCALITY.value -> selectedAddress.provinceName = address.name
 
+                PREMISE.value -> {
+                    if (addressText2.isNullOrEmpty()) addressText2 = address.name
+                }
             }
         }
         if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
         selectedAddress.savedAddress.apply {
-            address1 = if (place.name.isNullOrEmpty()) addressText1.plus(" ")
-                .plus(addressText2) else place.name
+            val tempAddress1 =
+                if (addressText1.isNullOrEmpty()) addressText2 else addressText1.plus(" ")
+                    .plus(addressText2)
+            address1 = if (!tempAddress1.isNullOrEmpty()) tempAddress1 else place.name
             latitude = place.latLng?.latitude
             longitude = place.latLng?.longitude
             placesId = place.id
@@ -553,7 +559,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
 
         autoCompleteTextView.apply {
-            setText(selectedAddress.savedAddress.address1)
+            setText(
+                if (place.name.isNullOrEmpty()) selectedAddress.savedAddress.address1 else place.name
+            )
             setSelection(autoCompleteTextView.length())
             autoCompleteTextView.dismissDropDown()
         }
@@ -1179,7 +1187,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         return AddAddressRequestBody(
             addressNicknameEditText?.text.toString().trim(),
             recipientNameEditText?.text.toString().trim(),
-            autoCompleteTextView?.text.toString().trim(),
+            (selectedAddress.savedAddress.address1 ?: "").toString().trim(),
             unitComplexFloorEditText?.text.toString().trim(),
             postalCode?.text.toString().trim(),
             cellphoneNumberEditText?.text.toString().trim(),
