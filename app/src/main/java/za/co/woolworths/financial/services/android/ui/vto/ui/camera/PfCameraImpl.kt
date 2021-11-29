@@ -362,6 +362,9 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
                 CaptureRequest.CONTROL_AF_MODE_OFF
             )
             try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    captureSession!!.stopRepeating();
+                }
                 captureSession!!.capture(previewRequestBuilder!!.build(), null, backgroundHandler)
             } catch (e: CameraAccessException) {
                 callback.onAutoFocus(false, this)
@@ -380,6 +383,9 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
                 CameraMetadata.CONTROL_AF_MODE_AUTO
             )
             try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    captureSession!!.stopRepeating()
+                }
                 captureSession!!.capture(
                     previewRequestBuilder!!.build(),
                     object : CaptureCallback() {
