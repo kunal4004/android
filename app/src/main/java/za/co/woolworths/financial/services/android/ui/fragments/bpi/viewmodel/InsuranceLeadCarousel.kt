@@ -22,13 +22,15 @@ fun getDescription(slide: BpiSlideText?): Spannable {
         val description: Spannable = SpannableString(slide.description)
         slide.descriptionBoldParts.forEach {
             val start: Int = description.indexOf(it)
-            val end: Int = start + it.length
-            description.setSpan(
-                StyleSpan(Typeface.BOLD),
-                start,
-                end,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            if(start >=0) {
+                val end: Int = start + it.length
+                description.setSpan(
+                    StyleSpan(Typeface.BOLD),
+                    start,
+                    end,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
         }
         return description
     }
