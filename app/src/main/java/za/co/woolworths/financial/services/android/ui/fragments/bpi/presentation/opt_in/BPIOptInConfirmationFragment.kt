@@ -38,7 +38,7 @@ class BPIOptInConfirmationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setClickableDescriptionText()
-        listener()
+        addConfirmBtnListner()
     }
 
     private fun setClickableDescriptionText() {
@@ -77,7 +77,7 @@ class BPIOptInConfirmationFragment : Fragment() {
         }
     }
 
-    private fun listener() {
+    private fun addConfirmBtnListner() {
         confirmOptInButton?.setOnClickListener {
 
             arguments?.getString(BalanceProtectionInsuranceActivity.BPI_PRODUCT_GROUP_CODE)
