@@ -203,7 +203,7 @@ class BPITermsAndConditionFragment : Fragment()  {
                                 url = it[1]
                             }
                         }
-                        KotlinUtils.sendEmail(activity, url, "" )
+                        KotlinUtils.sendEmail(activity, url, "BPI Terms and Conditions" )
                     }
                     return true
                 }

@@ -29,6 +29,11 @@ open class BPIRetrieveOtpFragment : Fragment(),View.OnClickListener {
     var bundle: Bundle? = null
     lateinit var otpMethodType: OTPMethodType
     var retrieveOTPResponse: RetrieveOTPResponse? = null
+    private var otpMethodTypeKey = "otpMethodType"
+    private val absaCardTokenKey = "absaCardToken"
+    private val productOfferingIdKey = "productOfferingId"
+    private val numberToOTPSentKey = "numberToOTPSent"
+    private val otpSentToKey = "otpSentTo"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bpi_retrieve_otp_fragment, container, false)
@@ -39,9 +44,9 @@ open class BPIRetrieveOtpFragment : Fragment(),View.OnClickListener {
         setHasOptionsMenu(true)
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
-            absaCardToken = getString("absaCardToken", "")
-            productOfferingId = getString("productOfferingId", "")
-            otpMethodType = OTPMethodType.valueOf(getString("otpMethodType", OTPMethodType.SMS.name))
+            absaCardToken = getString(absaCardTokenKey, "")
+            productOfferingId = getString(productOfferingIdKey, "")
+            otpMethodType = OTPMethodType.valueOf(getString(otpMethodTypeKey, OTPMethodType.SMS.name))
         }
     }
 
@@ -87,10 +92,10 @@ open class BPIRetrieveOtpFragment : Fragment(),View.OnClickListener {
             when (httpCode) {
                 AppConstant.HTTP_OK -> {
                     bundle?.apply {
-                        putString("otpSentTo", otpSentTo)
-                        putString("otpMethodType", otpMethodType.name)
+                        putString(otpSentToKey, otpSentTo)
+                        putString(otpMethodTypeKey, otpMethodType.name)
                         if (otpMethodType == OTPMethodType.SMS)
-                            putString("numberToOTPSent", otpSentTo)
+                            putString(numberToOTPSentKey, otpSentTo)
                         navController?.navigate(R.id.action_sendOtpFragment_to_bpiEnterOtpFragment, bundleOf("bundle" to this))
                     }
                 }
