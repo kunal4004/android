@@ -150,10 +150,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     ?: getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
                 setHasOptionsMenu(true)
             } else if (containsKey(SAVED_ADDRESS_KEY)) {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_ADD_NEW_ADDRESS,
-                    activity
-                )
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_ADD_NEW_ADDRESS, hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_ADD_NEW_ADDRESS
+                ), activity)
                 savedAddressResponse = Utils.jsonStringToObject(
                     getString(SAVED_ADDRESS_KEY),
                     SavedAddressResponse::class.java
@@ -408,10 +408,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
             when (screenName) {
                 SCREEN_NAME_ADD_NEW_ADDRESS -> {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
-                        activity
-                    )
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS, hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
+                    ), activity)
                     savedAddressResponse?.defaultAddressNickname =
                         selectedAddress.savedAddress.nickname
                     view?.findNavController()?.navigate(
@@ -422,10 +422,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     )
                 }
                 SCREEN_NAME_EDIT_ADDRESS -> {
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
-                        activity
-                    )
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS, hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
+                    ), activity)
                     setFragmentResult(
                         UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
                             SAVED_ADDRESS_KEY to savedAddressResponse
@@ -773,10 +773,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun deleteAddress() {
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELETE_ADDRESS,
-            activity
-        )
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELETE_ADDRESS, hashMapOf(
+            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELETE_ADDRESS
+        ), activity)
         loadingProgressBar.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.deleteAddress(selectedAddressId)
             .observe(viewLifecycleOwner, { response ->
@@ -900,10 +900,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun onSaveAddressClicked() {
-        Utils.triggerFireBaseEvents(
-            FirebaseManagerAnalyticsProperties.CHECKOUT_SAVE_ADDRESS,
-            activity
-        )
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SAVE_ADDRESS, hashMapOf(
+            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SAVE_ADDRESS
+        ), activity)
 
         if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
             && cellphoneNumberEditText?.text.toString().trim().length < 10

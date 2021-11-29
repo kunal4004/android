@@ -630,4 +630,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             }
         }
     }
+
+    public fun reloadRequest(){
+        executeDepartmentRequest()
+    }
 }
