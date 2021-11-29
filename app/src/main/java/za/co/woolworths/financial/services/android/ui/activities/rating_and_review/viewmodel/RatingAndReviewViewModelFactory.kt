@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.newtwork.apihelper.RatingAndReviewApiHelper
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 
 class RatingAndReviewViewModelFactory(
         private val ratingAndReviewApiHelper: RatingAndReviewApiHelper)

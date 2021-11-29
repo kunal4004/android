@@ -172,6 +172,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         tvSkinProfile.setOnClickListener(this)
         btViewMoreReview.setOnClickListener(this)
         tvTotalReviews.setOnClickListener(this)
+        tvReport.setOnClickListener(this)
         closePage.setOnClickListener {
             activity?.apply {
                 setResult(RESULT_CANCELED)
@@ -206,7 +207,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.tvSkinProfile->viewSkinProfileDialog()
             R.id.btViewMoreReview->navigateToMoreReviewsScreen()
             R.id.tvTotalReviews->navigateToMoreReviewsScreen()
+            R.id.tvReport->navigateToReportReviewScreen()
         }
+    }
+
+    private fun navigateToReportReviewScreen() {
+        ScreenManager.presentReportReview(activity, ratingReviewResponse.reportReviewOptions as ArrayList<String>?)
     }
 
     private fun navigateToMoreReviewsScreen() {
@@ -719,7 +725,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun sendReviewDataToReviewDetailScreen(ratingNReviewResponse: RatingReviewResponse) {
-        ScreenManager.presentReviewDetail(requireActivity(), ratingNReviewResponse.reviews[0])
+        ScreenManager.presentReviewDetail(requireActivity(), ratingNReviewResponse)
     }
 
     private fun setReviewAdditionalFields(additionalFields: List<AdditionalFields>){

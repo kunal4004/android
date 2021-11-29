@@ -1,10 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.datasource
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.newtwork.apihelper.RatingAndReviewApiHelper
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 
 class ReviewsDataSource(val reviewApiHelper: RatingAndReviewApiHelper,
                         val prodId: String) : PagingSource<Int, Reviews>() {

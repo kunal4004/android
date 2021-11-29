@@ -9,6 +9,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/common_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/reviewProductImagesViewPager"
@@ -17,7 +25,7 @@
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
         </androidx.viewpager.widget.ViewPager>
 
         <com.google.android.material.tabs.TabLayout
@@ -142,21 +150,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/twenty_four_dp"
                 android:layout_marginTop="@dimen/twenty_four_dp"
-                android:layout_marginEnd="@dimen/twenty_four_dp"
+                android:layout_marginEnd="@dimen/twelve_dp"
+                android:layout_marginBottom="@dimen/twelve_dp"
                 android:fontFamily="@font/futura_semi_bold"
                 android:textSize="@dimen/eighteen_sp" />
-
-            <TextView
-                android:id="@+id/txt_place"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fifteen_sp"
-                android:visibility="gone"
-                android:layout_marginTop="@dimen/eight_dp"
-                android:layout_marginStart="@dimen/twenty_four_dp"
-                android:fontFamily="@font/myriad_pro_regular"
-                android:layout_below="@+id/txt_reviewer_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/txt_verified"
@@ -166,7 +163,7 @@
                 android:layout_marginStart="@dimen/twenty_four_dp"
                 android:layout_marginTop="@dimen/twenty_four_dp"
                 android:layout_marginEnd="@dimen/twenty_four_dp"
-                android:layout_marginBottom="@dimen/twenty_four_dp"
+                android:layout_marginBottom="@dimen/twelve_dp"
                 android:drawablePadding="@dimen/eight_dp"
                 android:fontFamily="@font/myriad_pro_semi_bold"
                 android:text="@string/verified_buyer_label"
@@ -179,7 +176,7 @@
                 layout="@layout/skin_profile_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/txt_place"
+                android:layout_below="@+id/txt_reviewer_name"
                 app:layout_constraintStart_toStartOf="parent" />
         </RelativeLayout>
 

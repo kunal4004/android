@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.newtwork.apihelper
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper
 
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 
