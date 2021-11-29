@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewOverviewImpl.Companion.ACCOUNT_INFO
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtension
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
 import java.util.HashMap
@@ -105,7 +106,7 @@ class MyAccountsScreenNavigator {
                     }
                 }
                 navigateToBalanceProtectionInsurance.putExtra(ACCOUNT_INFO, accountInfo)
-                startActivity(navigateToBalanceProtectionInsurance)
+                startActivityForResult(navigateToBalanceProtectionInsurance, AppConstant.BALANCE_PROTECTION_INSURANCE_REQUEST_CODE)
                 overridePendingTransition(0, 0)
             }
         }

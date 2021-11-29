@@ -1,21 +1,25 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.credit_card_activation_progress_layout.*
 import kotlinx.android.synthetic.main.credit_card_activation_success_layout.*
+import kotlinx.android.synthetic.main.my_accounts_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -25,12 +29,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BP
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.FailureHandler
 
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 
 class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
 
+    private var mAccounts: Account? = null
     private val bpiViewModel: BPIViewModel? by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,11 +49,14 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
 
         (activity as? BalanceProtectionInsuranceActivity)?.hideDisplayHomeAsUpEnabled()
 
-        fetchInsuranceLeadGenOptIn()
+        fetchInsuranceLeadGenOptIn(activity)
         observeInsuranceLeadOptInResult()
 
         okGotItButton?.setOnClickListener {
            activity?.apply {
+               val intent  = Intent()
+               intent.putExtra(BalanceProtectionInsuranceActivity.ACCOUNT_RESPONSE,  Gson().toJson(mAccounts))
+               setResult(AppConstant.BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE,intent)
                finish()
                overridePendingTransition(0,0)
            }
@@ -55,16 +64,13 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
     }
 
     private fun observeInsuranceLeadOptInResult() {
-
         bpiViewModel?.apply {
-            insuranceLeadGenOptIn.observe(viewLifecycleOwner, {
+            insuranceLeadGenOptIn.observe(viewLifecycleOwner, { accounts ->
+                mAccounts = accounts
                 isApiResultSuccess(true)
                 activationProcessingLayout?.visibility = View.GONE
                 activationSuccessView?.visibility = View.VISIBLE
-                // Disable onBack click
-                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-                    // With blank your fragment BackPressed will be disabled.
-                }
+
             })
 
             failureHandler.observe(viewLifecycleOwner, { result ->
@@ -89,12 +95,12 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
         findNavController().navigate(R.id.action_BPIProcessingRequestFragment_to_bpiValidateOTPErrorFragment, bundleOf("bundle" to bundleOf("screenType" to BPIProcessingRequestFragment::class.java.simpleName)))
     }
 
-    private fun fetchInsuranceLeadGenOptIn(){
+    private fun fetchInsuranceLeadGenOptIn(activity: Activity?){
         startProgress()
         bpiViewModel?.apply {
             val validateOTPRequest = mValidateOTPRequest
             val insuranceTypeOptInBody = InsuranceTypeOptInBody(getProductGroupCode(), validateOTPRequest?.otp, validateOTPRequest?.otpMethod)
-            fetchInsuranceLeadGenOptIn("bpi",insuranceTypeOptInBody)
+            fetchInsuranceLeadGenOptIn(activity,"bpi",insuranceTypeOptInBody)
         }
     }
 

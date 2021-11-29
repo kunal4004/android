@@ -29,7 +29,7 @@ class BpiValidateOTPFragment: Fragment() {
 
     var navController: NavController? = null
     var bundle: Bundle? = null
-    lateinit var otpValue: String
+    private lateinit var otpValue: String
     lateinit var productOfferingId: String
     lateinit var otpMethodType: OTPMethodType
     lateinit var otpSentTo: String

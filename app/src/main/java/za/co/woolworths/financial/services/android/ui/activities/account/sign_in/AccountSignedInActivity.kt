@@ -27,12 +27,12 @@ import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehavio
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
-import za.co.woolworths.financial.services.android.models.dto.ViewTreatmentPlan
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
@@ -41,6 +41,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountSixMonthArrearsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.BALANCE_PROTECTION_INSURANCE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
@@ -54,6 +56,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         const val REQUEST_CODE_ACCOUNT_INFORMATION = 2112
     }
 
+    private var isReloadCacheAccountDataEnabled: Boolean = false
     var mAccountOptionsNavHost: NavHostFragment? = null
     var mAvailableFundsNavHost: NavHostFragment? = null
     private var mPeekHeight: Int = 0
@@ -73,10 +76,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter?.apply {
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
 
-            mAvailableFundsNavHost =
-                supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
-            mAccountOptionsNavHost =
-                supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
+            mAvailableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
+            mAccountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
 
             setAvailableFundBundleInfo(mAvailableFundsNavHost?.navController)
             setAccountCardDetailInfo(mAccountOptionsNavHost?.navController)
@@ -123,6 +124,10 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
             return
         }
+
+        if (isReloadCacheAccountDataEnabled)
+            setResult(MyAccountsFragment.RELOAD_ACCOUNT_RESULT_CODE)
+
         mAccountSignedInPresenter?.onBackPressed(this@AccountSignedInActivity)
     }
 
@@ -268,6 +273,25 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         super.onActivityResult(requestCode, resultCode, data)
         val extras = data?.extras
         when (requestCode) {
+            BALANCE_PROTECTION_INSURANCE_REQUEST_CODE -> {
+                when(resultCode){
+                    BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE -> {
+                        isReloadCacheAccountDataEnabled = true
+                        supportFragmentManager.fragments.apply {
+                            if (this.isNotEmpty()) {
+                                this[1].let {
+                                    it.childFragmentManager.fragments.let { childFragments ->
+                                        if (childFragments.isNotEmpty()) {
+                                            childFragments[0].onActivityResult(requestCode, resultCode, data)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             PAY_MY_ACCOUNT_REQUEST_CODE -> {
                 when (resultCode) {
                     RESULT_OK, PMA_UPDATE_CARD_RESULT_CODE -> {

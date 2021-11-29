@@ -34,6 +34,7 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
     companion object {
         const val BPI_OPT_IN = "bpi_opt_in"
         const val BPI_PRODUCT_GROUP_CODE = "bpi_product_group_code"
+        const val ACCOUNT_RESPONSE = "ACCOUNT_RESPONSE"
     }
 
     @SuppressLint("ResourceType")

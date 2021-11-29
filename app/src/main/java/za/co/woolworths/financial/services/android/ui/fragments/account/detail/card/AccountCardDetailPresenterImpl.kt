@@ -15,14 +15,10 @@ import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitI
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.Card
-import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
-import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
-import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -393,5 +389,13 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return false
     }
 
+    fun refreshAccount(account: Account?) {
+        val balanceProtectionInsurance = account?.bpiInsuranceApplication
+        if (balanceProtectionInsurance != null)
+            mainView?.showBalanceProtectionInsuranceLead(balanceProtectionInsurance)
+        else
+            mainView?.showBalanceProtectionInsurance(account?.insuranceCovered)
+
+    }
 
 }

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
@@ -14,9 +16,11 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.helper.NavGraphRouterImpl
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 
 sealed class FailureHandler {
@@ -38,8 +42,8 @@ class BPIViewModel : ViewModel() {
         get() = _failureHandler
 
 
-    private val _insuranceLeadGenOptIn = MutableLiveData<GenericResponse?>()
-        val insuranceLeadGenOptIn: LiveData<GenericResponse?>
+    private val _insuranceLeadGenOptIn = MutableLiveData<Account?>()
+        val insuranceLeadGenOptIn: LiveData<Account?>
             get() = _insuranceLeadGenOptIn
 
     companion object {
@@ -60,24 +64,20 @@ class BPIViewModel : ViewModel() {
         return InsuranceLeadCarousel.values()
     }
 
-    fun fetchInsuranceLeadGenOptIn(insurance : String, insuranceTypeOptInBody: InsuranceTypeOptInBody){
+    fun fetchInsuranceLeadGenOptIn(activity: Activity?,insurance : String, insuranceTypeOptInBody: InsuranceTypeOptInBody){
         if (!NetworkManager().isConnectedToNetwork(WoolworthsApplication.getAppContext())){
             handleFailure(FailureHandler.NoInternetConnection)
             return
         }
+
         OneAppService.postInsuranceLeadGenOptIn(insurance, insuranceTypeOptInBody).enqueue(
             CompletionHandler(object : IResponseListener<GenericResponse> {
                 override fun onSuccess(response: GenericResponse?) {
-                    when(response?.httpCode){
-                        AppConstant.HTTP_OK -> {
-                           _insuranceLeadGenOptIn.postValue(response)
-                        }
+                    when(response?.httpCode) {
+                        AppConstant.HTTP_OK -> fetchAccount(activity)
                         AppConstant.HTTP_SESSION_TIMEOUT_440 ,
-                        AppConstant.HTTP_SESSION_TIMEOUT_400-> {
-                            handleFailure(FailureHandler.SessionTimeout(response.response?.stsParams))
-                        }
+                        AppConstant.HTTP_SESSION_TIMEOUT_400-> handleFailure(FailureHandler.SessionTimeout(response.response?.stsParams))
                         else -> handleFailure(FailureHandler.UnknownHttpCode(response?.response))
-
                     }
                 }
 
@@ -103,5 +103,34 @@ class BPIViewModel : ViewModel() {
     fun getProductGroupCode(): String? {
         return mAccount?.productGroupCode
     }
+
+    private fun fetchAccount(activity: Activity?){
+       val reloadMyAccount = UpdateMyAccount(null ,null)
+        reloadMyAccount.fetchAccount(true,{ accountsResponse ->
+            when (accountsResponse?.httpCode) {
+                AppConstant.HTTP_OK -> {
+                    val productGroupCode = getProductGroupCode()
+                    accountsResponse.accountList?.forEach { account ->
+                        if (account.productGroupCode == productGroupCode) {
+                            _insuranceLeadGenOptIn.postValue(account)
+                            return@forEach
+                        }
+                    }
+                }
+                AppConstant.HTTP_SESSION_TIMEOUT_400 -> {
+                    SessionUtilities.getInstance().setSessionState(
+                        SessionDao.SESSION_STATE.INACTIVE,
+                        accountsResponse.response?.stsParams,
+                        activity
+                    )
+                }
+                else -> _insuranceLeadGenOptIn.postValue(null)
+
+            }
+        }, { error ->
+            handleFailure(FailureHandler.UnknownException(error?.message, error))
+        })
+    }
+
 
 }

@@ -161,6 +161,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private static final int ACCOUNT_CARD_REQUEST_CODE = 2043;
     public static final int RESULT_CODE_LINK_DEVICE = 5432;
     public static final int RESULT_CODE_DEVICE_LINKED = 5431;
+    public static final int RELOAD_ACCOUNT_RESULT_CODE = 55555;
 
     private final List<String> unavailableAccounts;
     public static AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
@@ -1570,6 +1571,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //TODO: Comment what's actually happening here.
+
+        if (resultCode == RELOAD_ACCOUNT_RESULT_CODE) {
+            loadAccounts(false);
+            return;
+        }
 
         if (requestCode == ScreenManager.BIOMETRICS_LAUNCH_VALUE) {
             if (!isPromptsShown && isAccountsCallMade) {
