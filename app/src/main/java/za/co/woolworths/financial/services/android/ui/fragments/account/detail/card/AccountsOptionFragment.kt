@@ -212,7 +212,11 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         KotlinUtils.avoidDoubleClicks(v)
         mCardPresenterImpl?.apply {
             when (v?.id) {
-                R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsurance()
+                R.id.balanceProtectionInsuranceView -> {
+                    if(bpiCoveredTextView?.text != bindString(R.string.status_in_progress)){
+                        navigateToBalanceProtectionInsurance()
+                    }
+                }
                 R.id.cardImageRootView -> navigateToTemporaryStoreCard()
                 R.id.debitOrderView -> navigateToDebitOrderActivity()
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
