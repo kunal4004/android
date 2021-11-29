@@ -12,7 +12,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_checkout_payment_web.*
@@ -29,12 +31,14 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
     companion object {
         const val KEY_ARGS_WEB_TOKEN = "web_tokens"
         const val KEY_STATUS = "status"
+        const val REQUEST_KEY_PAYMENT_STATUS = "payment_status"
     }
 
     enum class PaymentStatus(val type: String) {
         PAYMENT_SUCCESS("success"),
         PAYMENT_ABANDON("abandon"),
-        PAYMENT_UNAUTHENTICATED("unauthenticated")
+        PAYMENT_UNAUTHENTICATED("unauthenticated"),
+        PAYMENT_ERROR("error")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,7 +126,18 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
             PaymentStatus.PAYMENT_SUCCESS.type -> {
                 navigateToOrderConfirmation()
             }
-            PaymentStatus.PAYMENT_UNAUTHENTICATED.type, PaymentStatus.PAYMENT_ABANDON.type -> {
+            PaymentStatus.PAYMENT_ABANDON.type -> {
+                view?.findNavController()?.navigateUp()
+            }
+            PaymentStatus.PAYMENT_UNAUTHENTICATED.type, PaymentStatus.PAYMENT_ERROR.type -> {
+                if(!isAdded){
+                    return
+                }
+                setFragmentResult(
+                    REQUEST_KEY_PAYMENT_STATUS, bundleOf(
+                        KEY_STATUS to PaymentStatus.PAYMENT_ERROR
+                    )
+                )
                 view?.findNavController()?.navigateUp()
             }
         }

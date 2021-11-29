@@ -2318,4 +2318,5 @@
     <!--  No browser dialog  -->
     <string name="browser_not_found_title">Browser Not Found</string>
     <string name="browser_not_found_msg">To continue, please install a web browser.</string>
+    <string name="please_try_again">Please try again.</string>
 </resources>
