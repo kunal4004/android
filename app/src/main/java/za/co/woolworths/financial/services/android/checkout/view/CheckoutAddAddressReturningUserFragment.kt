@@ -1052,8 +1052,15 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     ) {
         oddSelectedPosition = position
         selectedOpenDayDeliverySlot = openDayDeliverySlot
+
         Utils.triggerFireBaseEvents(
             FirebaseManagerAnalyticsProperties.CHECKOUT_DELIVERY_OPTION_.plus(openDayDeliverySlot.deliveryType),
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY_OPTION_PRE_VALUE1
+                            .plus(openDayDeliverySlot.deliveryType)
+                            .plus(FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY_OPTION_PRE_VALUE2)
+            ),
             activity
         )
         when (openDayDeliverySlot.deliveryType) {

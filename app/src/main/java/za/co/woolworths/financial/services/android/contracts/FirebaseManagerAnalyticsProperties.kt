@@ -438,13 +438,18 @@ open class FirebaseManagerAnalyticsProperties {
             const val ACTION_VALUE_NATIVE_CHECKOUT_IS_THIS_GIFT: String =
                 "Customer selects ‘Is this a gift’ toggle to add information"
             const val ACTION_VALUE_NATIVE_CHECKOUT_CONTINUE_TO_PAYMENT: String =
-                "Customer selects ‘Is this a gift’ toggle to add information"
+                "Customer has entered all the relevant info and confirms by selecting 'Continue to Payment'"
             const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING: String =
                 "Customer selects the 'Missed WRewards Savings' information button"
             const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SIGN_UP: String =
                 "Customer selects to sign up for WRewards savings on additional information button"
             const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_ADD_CARD: String =
                 "Customer selects that they want to add their WRewards card"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY_OPTION_PRE_VALUE1: String =
+                "Customer selects "
+            const val ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY_OPTION_PRE_VALUE2: String =
+                " delivery option"
+
         }
     }
 
