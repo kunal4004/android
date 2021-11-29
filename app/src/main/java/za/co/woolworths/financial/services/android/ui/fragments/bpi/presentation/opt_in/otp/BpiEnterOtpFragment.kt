@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_enter_otp.*
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
@@ -107,10 +108,8 @@ class BpiEnterOtpFragment : EnterOTPFragmentExtension(),
             shouldBackPressed = false
             bundle?.putString("otpMethodType", otpMethodType.name)
             bundle?.putString("otpValue", "")
-            navController?.navigate(
-                R.id.action_bpiEnterOtpFragment_to_sendOtpFragment,
-                bundleOf("bundle" to bundle)
-            )
+            view?.findNavController()?.navigate( R.id.action_bpiEnterOtpFragment_to_sendOtpFragment,bundleOf("bundle" to bundle))
+            configureUI()
         }
     }
 

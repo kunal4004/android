@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.validate_otp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -86,7 +87,7 @@ class BpiValidateOTPFragment: Fragment() {
         if (!isAdded) return
         validateOTPResponse?.apply {
             when (httpCode) {
-                AppConstant.HTTP_OK -> navController?.navigate(R.id.action_bpiValidateOTPFragment_to_BPIProcessingRequestFragment, bundleOf("bundle" to bundle))
+                AppConstant.HTTP_OK -> view?.findNavController()?.navigate(R.id.action_bpiValidateOTPFragment_to_BPIProcessingRequestFragment, bundleOf("bundle" to bundle))
                 AppConstant.HTTP_EXPECTATION_FAILED_502 -> {
                     if (response?.code.equals("1060"))
                         navController?.navigate(R.id.action_bpiValidateOTPFragment_to_bpiEnterOtpFragment, bundleOf("bundle" to bundle))

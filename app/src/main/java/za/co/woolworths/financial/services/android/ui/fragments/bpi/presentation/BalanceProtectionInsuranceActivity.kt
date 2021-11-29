@@ -11,11 +11,14 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BPIProcessingRequestFragment
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiEnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.overview_detail.BPIOverviewDetailFragmentArgs
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewPresenter
@@ -78,7 +81,15 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onBackPressed() {
+        // disable onBackPressed for BPIProcessingRequestFragment scenario's
+        if (supportFragmentManager.fragments.first()?.findNavController()?.backStack?.last?.destination?.label
+            == BPIProcessingRequestFragment::class.java.simpleName) {
+            return
+        }
+
+
         var backPressedFragment = bpiPresenter?.navigateToPreviousFragment()
 
         if(BpiEnterOtpFragment.shouldBackPressed){
@@ -159,4 +170,9 @@ class BalanceProtectionInsuranceActivity : AppCompatActivity() {
     fun showDisplayHomeAsUpEnabled(){
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
+
+    val currentFragment: Fragment?
+        get() = (supportFragmentManager.fragments.first()
+                as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.bpi_navigation)
+
 }

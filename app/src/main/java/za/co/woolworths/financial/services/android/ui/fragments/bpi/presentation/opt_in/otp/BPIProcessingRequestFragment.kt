@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -55,13 +56,15 @@ class BPIProcessingRequestFragment : Fragment(), IProgressAnimationState {
 
     private fun observeInsuranceLeadOptInResult() {
 
-        navigateErrorScreen()
-
         bpiViewModel?.apply {
             insuranceLeadGenOptIn.observe(viewLifecycleOwner, {
                 isApiResultSuccess(true)
                 activationProcessingLayout?.visibility = View.GONE
                 activationSuccessView?.visibility = View.VISIBLE
+                // Disable onBack click
+                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+                    // With blank your fragment BackPressed will be disabled.
+                }
             })
 
             failureHandler.observe(viewLifecycleOwner, { result ->
