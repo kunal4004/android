@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -190,7 +190,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
         return isEmptyError
     }
 
-    private fun initView() {
+    fun initView() {
         arguments?.apply {
             if (containsKey(KEY_COLLECTING_DETAILS)) {
                 getString(KEY_COLLECTING_DETAILS)?.let {
@@ -201,7 +201,7 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             }
         }
 
-        recipientDetailsTitle.text = bindString(R.string.who_is_collecting)
+        recipientDetailsTitle?.text = bindString(R.string.who_is_collecting)
         confirmDetails?.setOnClickListener(this)
         myVehicleText?.setOnClickListener(this)
         taxiText?.setOnClickListener(this)
@@ -321,5 +321,15 @@ class CheckoutWhoIsCollectingFragment : CheckoutAddressManagementBaseFragment(),
             anim.setDuration(300).start()
         }
         textView?.visibility = visible
+    }
+
+    @VisibleForTesting
+    fun testGetMyVehicleList(): List<View> {
+        return listOfVehicleInputFields
+    }
+
+    @VisibleForTesting
+    fun testGetTaxiList(): List<View> {
+        return listOfTaxiInputFields
     }
 }
