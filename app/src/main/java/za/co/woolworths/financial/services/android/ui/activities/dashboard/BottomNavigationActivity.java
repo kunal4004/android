@@ -277,32 +277,39 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                             skuHandler.syncServer(new SkuHandler.SyncServerCallback() {
                                 @Override
                                 public void progress(double progress) {
-
+                                  //sync SDK in background. when update needed.
+                                    // later may be required show on UI
                                 }
 
                                 @Override
                                 public void onSuccess() {
-
+                                     //Do Nothing
+                                       // required later update UI.
                                 }
 
                                 @Override
                                 public void onFailure(Throwable throwable) {
+                                    handleExceptionWithFireBase(throwable);
                                 }
                             });
                         }
                     }
                     @Override
                     public void onFailure(Throwable throwable) {
-
+                        handleExceptionWithFireBase(throwable);
                     }
                 });
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-
+                handleExceptionWithFireBase(throwable);
             }
         });
+    }
+
+    private void handleExceptionWithFireBase(Throwable throwable) {
+        FirebaseManager.logException(throwable);
     }
 
     private void parseDeepLinkData() {

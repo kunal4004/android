@@ -110,6 +110,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonitor
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import android.graphics.Bitmap
+import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
@@ -154,7 +155,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var liquorDialog: Dialog? = null
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private val permissionViewModel: PermissionViewModel by viewModels()
-    private lateinit var dataPrefViewModel: DataPrefViewModel
     private var isFromFile = false
     private var observeFirstTime: Boolean = true
     private var liveCamera: Boolean = false
@@ -169,9 +169,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var saveVtoApplyImage : Bitmap? = null
     private var isColorSelectionLayoutOnTop: Boolean = false
     private var isLiveCamera: Boolean = false
-    private var isColorApplyFromLiveCamera: Boolean = false
-    private lateinit var vtoApplyEffectOnImageViewModel : VtoApplyEffectOnImageViewModel
-    private lateinit var liveCameraViewModel : LiveCameraViewModel
+    private var isColorAppliedWithLiveCamera: Boolean = false
+    private val vtoApplyEffectOnImageViewModel : VtoApplyEffectOnImageViewModel? by activityViewModels()
+    private val liveCameraViewModel : LiveCameraViewModel? by activityViewModels()
+    private val dataPrefViewModel: DataPrefViewModel? by activityViewModels()
     private var makeupCamera: MakeupCam? = null
     private var isObserveImageData: Boolean = false
     private var isRefreshImageEffectLiveCamera: Boolean = false
@@ -184,8 +185,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isFaceDetect: Boolean = false
     private var isColorNotMatch: Boolean = false
     private var isTakePicture: Boolean = false
-    private var isCaptureImgLiveCamera: Boolean = false
+    private var isPickedImageFromLiveCamera: Boolean = false
     private var takenOriginalPicture : Bitmap? = null
+
 
     @OpenTermAndLighting
     @Inject
@@ -229,16 +231,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
-        initViewModel()
         initViews()
         setUniqueIds()
 
-    }
-
-    private fun initViewModel() {
-        dataPrefViewModel = ViewModelProvider(this).get(DataPrefViewModel::class.java)
-        vtoApplyEffectOnImageViewModel = ViewModelProvider(this).get(VtoApplyEffectOnImageViewModel::class.java)
-        liveCameraViewModel = ViewModelProvider(this).get(LiveCameraViewModel::class.java)
     }
 
     private fun initViews() {
@@ -254,9 +249,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         dietaryInformation.setOnClickListener(this)
         allergensInformation.setOnClickListener(this)
         moreColor.setOnClickListener(this)
-        imgCloseVTO.setOnClickListener(this)
-        imgVTORefresh.setOnClickListener(this)
-        closePage.setOnClickListener(this)
+        imgCloseVTO?.setOnClickListener(this)
+        imgVTORefresh?.setOnClickListener(this)
+        closePage?.setOnClickListener(this)
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
         imgVTOOpen?.setOnClickListener(this)
@@ -286,13 +281,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showVTOTryItOn() {
        imgVTOOpen.setImageResource(R.drawable.ic_camera_vto)
         if (isTryIt) {
-            dataPrefViewModel.isTryItOn.observe(
+            dataPrefViewModel?.isTryItOn?.observe(
                 viewLifecycleOwner,
                 Observer { isTryItOn ->
                     if (isTryItOn && isTryIt) {
                         imgVTOOpen.setImageResource(R.drawable.ic_try_on_camera)
                         isTryIt = false
-                        dataPrefViewModel.disableTryItOn(false)
+                        dataPrefViewModel?.disableTryItOn(false)
                     }
 
                 })
@@ -343,13 +338,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     countText--
                 }
                 isTakePicture = true
-                liveCameraViewModel.takenPicture()
-                liveCameraViewModel.takenPicture.observe(
+                liveCameraViewModel?.takenPicture()
+                liveCameraViewModel?.takenPicture?.observe(
                     viewLifecycleOwner,
                     Observer { result ->
                         takenOriginalPicture =  result.originalPicture
                         saveVtoApplyImage = result.resultPicture
-                        isCaptureImgLiveCamera = true
+                        isPickedImageFromLiveCamera = true
                         setPickedImage(null, result.originalPicture, true)
                         txtCountCameraCaptureImage.visibility = View.GONE
                         isLiveCameraResumeState = false
@@ -358,7 +353,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         captureImage.visibility = View.GONE
                         imgDownloadVTO.visibility = View.VISIBLE
                         imgVTOEffect.setImageBitmap(result.resultPicture)
-                        isColorApplyFromLiveCamera = false
+                        isColorAppliedWithLiveCamera = false
                         isRefreshImageEffectLiveCamera = false
                         stopVtoLiveCamera()
                         cameraSurfaceView.visibility = View.GONE
@@ -366,7 +361,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             }
         } catch (e: Exception) {
-            // Do Nothing
+            handleExceptionWithFireBase(e)
         }
     }
 
@@ -389,7 +384,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             noFaceDetected.visibility = View.GONE
             imgDownloadVTO.visibility = View.GONE
             colourUnavailableError.visibility = View.GONE
-            isColorApplyFromLiveCamera = true
+            isColorAppliedWithLiveCamera = true
             isRefreshImageEffectLiveCamera = true
             isLiveCameraOpened = true
             isVtoImage = false
@@ -423,9 +418,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun closeVto() {
         try {
-            isColorApplyFromLiveCamera = false
+            isColorAppliedWithLiveCamera = false
             isVtoImage = false
-            isCaptureImgLiveCamera = false
+            isPickedImageFromLiveCamera = false
             isRefreshImageEffectLiveCamera = false
             isTakePicture = false
             isDividerVtoEffect = false
@@ -454,7 +449,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             vtoLayout.visibility = View.GONE
         } catch (e: Exception) {
-            // DO Nothing
+            handleExceptionWithFireBase(e)
         }
     }
 
@@ -577,12 +572,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 true -> {
                     title = getString(R.string.product_unavailable)
                     message =
-                        "Unfortunately this item is unavailable in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
+                        getString(R.string.unavailable_item, if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name)
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
                     message =
-                        "Unfortunately this item is out of stock in " + if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name + ". Try changing your delivery location and try again."
+                        getString(R.string.out_of_stock_item, if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name)
+
                 }
             }
             activity?.apply {
@@ -986,7 +982,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         updateUIForSelectedSKU(getSelectedSku())
     }
 
-    override fun onColorSelection(selectedColor: String?,isFromVto :Boolean) {
+    override fun onColorSelection(selectedColor: String?,isFeature :Boolean) {
         setSelectedGroupKey(selectedColor)
         showSelectedColor()
         if (hasSize) updateSizesOnColorSelection() else {
@@ -995,20 +991,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
 
-        if (!isFromVto && isColorApplyFromLiveCamera) {
+        if (!isFeature && isColorAppliedWithLiveCamera) {
             applyEffectOnLiveCamera()
         }
-        if (!isFromVto && isVtoImage) {
+        if (!isFeature && isVtoImage) {
             applyVtoEffectOnImage()
         }
     }
 
     private fun applyEffectOnLiveCamera() {
-        liveCameraViewModel.applyVtoEffectOnLiveCamera(
+        liveCameraViewModel?.applyVtoEffectOnLiveCamera(
             productDetails?.productId,
             getSelectedSku()?.sku
         )
-        liveCameraViewModel.selectedSkuResult.observe(
+        liveCameraViewModel?.selectedSkuResult?.observe(
             viewLifecycleOwner,
             Observer { result ->
                 applyColorVtoMappedResult(result)
@@ -1016,7 +1012,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun applyVtoEffectOnImage() {
-        vtoApplyEffectOnImageViewModel.applyEffect(
+        vtoApplyEffectOnImageViewModel?.applyEffect(
             productDetails?.productId,
             getSelectedSku()?.sku
         )
@@ -1026,7 +1022,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun getApplyResultSelectColor( ) {
 
-            vtoApplyEffectOnImageViewModel.applyEffectImage.observe(
+            vtoApplyEffectOnImageViewModel?.applyEffectImage?.observe(
                 viewLifecycleOwner,
                 Observer { result ->
                     when {
@@ -1034,7 +1030,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             colourUnavailableError.visibility = View.VISIBLE
                             imgVTORefresh.visibility = View.GONE
                             imgDownloadVTO.visibility = View.GONE
-                            if (isCaptureImgLiveCamera) {
+                            if (isPickedImageFromLiveCamera) {
                                 imgVTOEffect.setImageBitmap(takenOriginalPicture)
                             } else {
                                 setBitmapFromUri(selectedImageUri)
@@ -1051,7 +1047,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             colourUnavailableError.visibility = View.GONE
                             imgVTORefresh.visibility = View.GONE
                             imgDownloadVTO.visibility = View.GONE
-                            if (isCaptureImgLiveCamera) {
+                            if (isPickedImageFromLiveCamera) {
                                 imgVTOEffect.setImageBitmap(takenOriginalPicture)
                             } else {
                                 setBitmapFromUri(uri)
@@ -1627,22 +1623,27 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     }
                     else -> {
                         if (isFromFile) {
-                            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
-                                this@ProductDetailsFragment,
-                                requireActivity(),
-                                resources.getString(R.string.vto_file_access_error),
-                                resources.getString(R.string.vto_file_error_description),
-                                resources.getString(R.string.vto_change_setting)
-                            )
+                            requireActivity().resources?.apply {
+                                vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                                    this@ProductDetailsFragment,
+                                    requireActivity(),
+                                    getString(R.string.vto_file_access_error),
+                                    getString(R.string.vto_file_error_description),
+                                    getString(R.string.vto_change_setting)
+                                )
+                            }
 
                         } else {
-                            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
-                                this@ProductDetailsFragment,
-                                requireActivity(),
-                                resources.getString(R.string.vto_photo_library_access_error),
-                                resources.getString(R.string.vto_photo_library_error_description),
-                                resources.getString(R.string.vto_change_setting)
-                            )
+                            requireActivity().resources?.apply {
+                                vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                                    this@ProductDetailsFragment,
+                                    requireActivity(),
+                                    getString(R.string.vto_photo_library_access_error),
+                                    getString(R.string.vto_photo_library_error_description),
+                                    getString(R.string.vto_change_setting)
+                                )
+                            }
+
                         }
                     }
                 }
@@ -2278,13 +2279,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (type.equals("jpg") || type.equals("png")) {
             setPickedImage(uri, null,false)
         } else {
-            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
-                this@ProductDetailsFragment,
-                requireActivity(),
-                resources.getString(R.string.vto_invalid_file_access_error),
-                resources.getString(R.string.vto_invalid_file_type_error_description),
-                resources.getString(R.string.try_again)
-            )
+            requireActivity().resources?.apply {
+                vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                    this@ProductDetailsFragment,
+                    requireActivity(),
+                    getString(R.string.vto_invalid_file_access_error),
+                    getString(R.string.vto_invalid_file_type_error_description),
+                    getString(R.string.try_again)
+                )
+            }
+
         }
 
     }
@@ -2313,7 +2317,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     // open live camera
                     liveCameraViewHandle()
                     isLiveCamera = true
-                    isColorApplyFromLiveCamera = true
+                    isColorAppliedWithLiveCamera = true
                     isRefreshImageEffectLiveCamera = true
                     openPfLiveCamera()
                     moveColorSelectionLayout()
@@ -2323,13 +2327,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             } else {
                 //Can’t Access Camera permission
-                vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
-                    this@ProductDetailsFragment,
-                    requireActivity(),
-                    resources.getString(R.string.vto_camera_access_error),
-                    resources.getString(R.string.vto_error_description),
-                    resources.getString(R.string.vto_change_setting)
-                )
+                requireActivity().resources?.apply {
+                    vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                        this@ProductDetailsFragment,
+                        requireActivity(),
+                        getString(R.string.vto_camera_access_error),
+                        getString(R.string.vto_error_description),
+                        getString(R.string.vto_change_setting)
+                    )
+                }
+
             }
         }
 
@@ -2359,11 +2366,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             ) {
                                 makeupCamera = makeupCam
                                 comparisonView.init(makeupCamera)
-                                liveCameraViewModel.liveCameraVtoApplier(
+                                liveCameraViewModel?.liveCameraVtoApplier(
                                     makeupCamera, productDetails?.productId,
                                     getSelectedSku()?.sku
                                 )
-                                liveCameraViewModel.colorMappedResult.observe(
+                                liveCameraViewModel?.colorMappedResult?.observe(
                                     viewLifecycleOwner,
                                     Observer { result ->
                                         applyColorVtoMappedResult(result)
@@ -2454,13 +2461,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun applyColorVtoMappedResult(result: Any?) {
         when {
-            result!! == VTO_COLOR_NOT_MATCH -> {
+            result == VTO_COLOR_NOT_MATCH -> {
                 colourUnavailableError.visibility = View.VISIBLE
                 imgVTORefresh.visibility = View.GONE
                 imgVTOSplit.visibility = View.GONE
                 captureImage.visibility = View.GONE
                 imgDownloadVTO.visibility = View.GONE
-                liveCameraViewModel.clearLiveCameraEffect()
+                liveCameraViewModel?.clearLiveCameraEffect()
                 isColorNotMatch = true
                 if (isDividerVtoEffect) {
                     comparisonView.leaveComparisonMode()
@@ -2468,7 +2475,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     scrollView.setScrollingEnabled(true)
                 }
             }
-            result!! == VTO_COLOR_LIVE_CAMERA -> {
+            result == VTO_COLOR_LIVE_CAMERA -> {
                 colourUnavailableError.visibility = View.GONE
                 imgVTORefresh.visibility = View.VISIBLE
                 imgVTOSplit.visibility = View.VISIBLE
@@ -2516,7 +2523,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             moveColorSelectionLayout()
         }
         isLiveCameraOpened = false
-        vtoApplyEffectOnImageViewModel.setApplier(
+        vtoApplyEffectOnImageViewModel?.setApplier(
             uri, productDetails?.productId,
             getSelectedSku()?.sku, captureLiveCameraImg, isFromLiveCamera
         )
@@ -2575,7 +2582,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         viewLifecycleOwner.lifecycleScope.launch {
             delay(DELAY_1000_MS)
             try {
-                dataPrefViewModel.isLightingTipsTakePhoto.observe(
+                dataPrefViewModel?.isLightingTipsTakePhoto?.observe(
                     viewLifecycleOwner,
                     Observer { lightingTips ->
                         if (lightingTips) {
@@ -2585,10 +2592,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 false
                             )
                         }
-                        dataPrefViewModel.disableLightingTipsTakePhoto(false)
+                        dataPrefViewModel?.disableLightingTipsTakePhoto(false)
                     })
 
             } catch (e: Exception) {
+                handleExceptionWithFireBase(e)
             }
         }
 
@@ -2598,7 +2606,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         viewLifecycleOwner.lifecycleScope.launch {
             delay(DELAY_1000_MS)
             try {
-                dataPrefViewModel.isLightingTipsFiles.observe(
+                dataPrefViewModel?.isLightingTipsFiles?.observe(
                     viewLifecycleOwner,
                     Observer { lightingTips ->
                         if (lightingTips) {
@@ -2608,9 +2616,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 false
                             )
                         }
-                        dataPrefViewModel.disableLightingFiles(false)
+                        dataPrefViewModel?.disableLightingFiles(false)
                     })
             } catch (e: Exception) {
+                handleExceptionWithFireBase(e)
             }
         }
 
@@ -2620,7 +2629,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         viewLifecycleOwner.lifecycleScope.launch {
             delay(DELAY_1000_MS)
             try {
-                dataPrefViewModel.isLightingTipsCamera.observe(
+                dataPrefViewModel?.isLightingTipsCamera?.observe(
                     viewLifecycleOwner,
                     Observer { lightingTips ->
                         if (lightingTips) {
@@ -2630,9 +2639,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 false
                             )
                         }
-                        dataPrefViewModel.disableLightingTipsLiveCamera(false)
+                        dataPrefViewModel?.disableLightingTipsLiveCamera(false)
                     })
             } catch (e: Exception) {
+                handleExceptionWithFireBase(e)
             }
         }
 
@@ -2643,7 +2653,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             delay(DELAY_1000_MS)
             try {
                 if (observeFirstTime) {
-                    dataPrefViewModel.isLightingTipsGallery.observe(
+                    dataPrefViewModel?.isLightingTipsGallery?.observe(
                         viewLifecycleOwner,
                         Observer { lightingTips ->
                             if (lightingTips) {
@@ -2654,18 +2664,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 )
                                 observeFirstTime = false
                             }
-                            dataPrefViewModel.disableLightingGallery(false)
+                            dataPrefViewModel?.disableLightingGallery(false)
                         })
 
                 }
             } catch (e: Exception) {
-
+                handleExceptionWithFireBase(e)
             }
         }
     }
 
     private fun getApplyResult() {
-            vtoApplyEffectOnImageViewModel.applyEffectResult.observe(
+            vtoApplyEffectOnImageViewModel?.applyEffectResult?.observe(
                 viewLifecycleOwner,
                 Observer { result ->
                     when {
@@ -2695,13 +2705,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             colourUnavailableError.visibility = View.GONE
                             imgVTORefresh.visibility = View.GONE
                             imgDownloadVTO.visibility = View.GONE
-                            vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
-                                this@ProductDetailsFragment,
-                                requireActivity(),
-                                resources.getString(R.string.vto_generic_error),
-                                resources.getString(R.string.vto_generic_error_description),
-                                resources.getString(R.string.try_again)
-                            )
+                           requireActivity().resources?.apply {
+                               vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
+                                   this@ProductDetailsFragment,
+                                   requireActivity(),
+                                   getString(R.string.vto_generic_error),
+                                   getString(R.string.vto_generic_error_description),
+                                   getString(R.string.try_again)
+                               )
+                           }
+
 
                         }
                     }
@@ -2736,7 +2749,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
                     }
             } catch (e: Exception) {
-                //Do Nothing
+                handleExceptionWithFireBase(e)
             }
         }
     }
@@ -2755,8 +2768,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             imgVTOEffect.setImageBitmap(takenOriginalPicture)
             setPickedImage(null, takenOriginalPicture, true)
         } else {
-            vtoApplyEffectOnImageViewModel.clearEffect()
-            vtoApplyEffectOnImageViewModel.clearEffectImage.observe(
+            vtoApplyEffectOnImageViewModel?.clearEffect()
+            vtoApplyEffectOnImageViewModel?.clearEffectImage?.observe(
                 viewLifecycleOwner,
                 Observer { bitmap ->
                     if (null != bitmap) {
@@ -2771,7 +2784,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun clearLiveCameraEffect() {
-        liveCameraViewModel.clearLiveCameraEffect()
+        liveCameraViewModel?.clearLiveCameraEffect()
         productColorSelectorAdapter?.clearSelection()
     }
 
@@ -2868,6 +2881,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         isColorSelectionLayoutOnTop = false
     }
 
+    private fun handleExceptionWithFireBase(e: Exception) {
+        FirebaseManager.logException(e)
+    }
 
 }
 
