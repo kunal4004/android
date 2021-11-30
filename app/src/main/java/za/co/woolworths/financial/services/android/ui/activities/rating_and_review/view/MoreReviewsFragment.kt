@@ -59,6 +59,7 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
         arguments?.apply {
               ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_DATA),
                     RatingReviewResponse::class.java) as RatingReviewResponse
+
             productId = ratingAndResponse.reviews.get(0).productId
             setupViewModel()
             setReviewsList(null,null, null)
@@ -74,7 +75,13 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
     }
 
     private fun setReviewsList(sort: String?, refinements: String?, reportReviewOptions: List<String>?) {
-        val moreReviewsAdapter = MoreReviewsAdapter(requireContext(), this, ratingAndResponse.reviewStatistics, reportReviewOptions,this)
+
+        val moreReviewsAdapter = MoreReviewsAdapter(requireContext(),
+                this,
+                ratingAndResponse.reviewStatistics,
+                reportReviewOptions,
+                this)
+
         moreReviewsAdapter.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
@@ -86,7 +93,10 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
                 footer = MoreReviewLoadStateAdapter()
         )
         lifecycleScope.launch {
-            moreReviewViewModel.getReviewDataSource(productId, sort, refinements).collectLatest { pagedData ->
+            Log.e("sort_option_:", ratingAndResponse.sortOptions.toString())
+            moreReviewViewModel.getReviewDataSource(productId,
+                    sort, refinements, ratingAndResponse).collectLatest { pagedData ->
+                //////////////////
                 moreReviewsAdapter.submitData(pagedData)
             }
         }
@@ -147,13 +157,17 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
     }
 
     override fun openRefineDrawer() {
+        ////////
         onSortRefineFragmentListener?.setupDrawer(false,ratingAndResponse)
         onSortRefineFragmentListener?.openDrawer()
     }
 
     override fun openSortDrawer() {
-        onSortRefineFragmentListener?.setupDrawer(true,ratingAndResponse)
-        onSortRefineFragmentListener?.openDrawer()
+            val data =  moreReviewViewModel.getRatingReviewResponseLiveData()
+
+            Log.e("data_is:", data.value.toString())
+            onSortRefineFragmentListener?.setupDrawer(true,data.value!!)
+            onSortRefineFragmentListener?.openDrawer()
     }
 
     fun onSortOptionSelected(sortOption: SortOption){
