@@ -13,7 +13,6 @@
         android:id="@+id/windowContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         app:bl_arrowDirection="top"
         app:bl_arrowHeight="10dp"
         app:bl_arrowPosition="24dp"

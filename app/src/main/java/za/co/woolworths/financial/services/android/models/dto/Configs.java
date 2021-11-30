@@ -67,4 +67,6 @@ public class Configs {
     public AccountOptions accountOptions;
     @Nullable
     public DeviceSecurity deviceSecurity;
+    @Nullable
+    public VirtualTryOn virtualTryOn;
 }
