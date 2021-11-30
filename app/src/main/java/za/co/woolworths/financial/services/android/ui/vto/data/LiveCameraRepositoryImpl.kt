@@ -6,6 +6,7 @@ import android.graphics.Color
 import androidx.lifecycle.MutableLiveData
 import com.perfectcorp.perfectlib.*
 import dagger.hilt.android.qualifiers.ApplicationContext
+import za.co.woolworths.financial.services.android.ui.vto.data.model.LiveCameraBitmapImages
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import javax.inject.Inject
@@ -18,7 +19,7 @@ class LiveCameraRepositoryImpl @Inject constructor(
     private var vtoApplier: VtoApplier? = null
     val getApplyResult = MutableLiveData<Any>()
     private var makeupCamera: MakeupCam? = null
-    val getOriginalPicture = MutableLiveData<Bitmap?>()
+
 
     override fun liveCameraVtoApplier(
         makeupCam: MakeupCam?,
@@ -108,8 +109,8 @@ class LiveCameraRepositoryImpl @Inject constructor(
 
     }
 
-    override fun takePhoto(): MutableLiveData<Any> {
-        val takenPicture = MutableLiveData<Any>()
+    override fun takePhoto(): MutableLiveData<LiveCameraBitmapImages> {
+        val takenPicture = MutableLiveData<LiveCameraBitmapImages>()
         makeupCamera?.takePicture(
             true,
             true,
@@ -118,10 +119,8 @@ class LiveCameraRepositoryImpl @Inject constructor(
             object : MakeupCam.PictureCallback {
                 override fun onPictureTaken(originalPicture: Bitmap?, resultPicture: Bitmap?) {
                     resultPicture?.let {
-                        takenPicture.value = it
-                    }
-                    originalPicture?.let {
-                        getOriginalPicture.value = it
+                        takenPicture.value= LiveCameraBitmapImages(originalPicture,resultPicture)
+
                     }
                 }
 
@@ -147,8 +146,5 @@ class LiveCameraRepositoryImpl @Inject constructor(
             })
     }
 
-    override fun getOriginalPicture(): MutableLiveData<Bitmap?> {
-        return getOriginalPicture
-    }
 
 }

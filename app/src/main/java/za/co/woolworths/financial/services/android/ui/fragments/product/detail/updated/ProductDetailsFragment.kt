@@ -167,7 +167,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var lightingTipsLiveCamera: Boolean = false
     private var lightingTipsTakePhoto: Boolean = false
     private var saveVtoApplyImage : Bitmap? = null
-    private var captureImgLiveCamera : Bitmap? = null
     private var isColorSelectionLayoutOnTop: Boolean = false
     private var isLiveCamera: Boolean = false
     private var isColorApplyFromLiveCamera: Boolean = false
@@ -185,6 +184,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isFaceDetect: Boolean = false
     private var isColorNotMatch: Boolean = false
     private var isTakePicture: Boolean = false
+    private var isCaptureImgLiveCamera: Boolean = false
     private var takenOriginalPicture : Bitmap? = null
 
     @OpenTermAndLighting
@@ -319,7 +319,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
             R.id.imgVTOOpen -> vtoOptionSelectBottomDialog.showBottomSheetDialog(this@ProductDetailsFragment,requireActivity(), false)
             R.id.closePage ->  closeScreen()
-            R.id.imgCloseVTO ->  closeScreen()
+            R.id.imgCloseVTO ->  closeVto()
             R.id.imgVTORefresh -> clearEffect()
             R.id.retakeCamera -> reOpenCamera()
             R.id.changeImage -> pickPhotoLauncher.launch("image/*")
@@ -333,53 +333,47 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun captureImageFromVtoLiveCamera() {
         try {
-            isTakePicture = true
-            liveCameraViewModel.takenPicture()
-            job?.cancel()
             viewLifecycleOwner.lifecycleScope.launch {
+                job?.cancel()
                 var countText = 3
-                while (countText >= 0) {
+                while (countText >= 1) {
                     delay(DELAY_1000_MS)
                     txtCountCameraCaptureImage.visibility = View.VISIBLE
                     txtCountCameraCaptureImage.text = countText.toString()
                     countText--
                 }
+                isTakePicture = true
+                liveCameraViewModel.takenPicture()
                 liveCameraViewModel.takenPicture.observe(
                     viewLifecycleOwner,
                     Observer { result ->
-                        saveVtoApplyImage = result as Bitmap
+                        takenOriginalPicture =  result.originalPicture
+                        saveVtoApplyImage = result.resultPicture
+                        isCaptureImgLiveCamera = true
+                        setPickedImage(null, result.originalPicture, true)
                         txtCountCameraCaptureImage.visibility = View.GONE
                         isLiveCameraResumeState = false
-
+                        retakeCamera.visibility = View.VISIBLE
+                        imgVTOSplit.visibility = View.GONE
+                        captureImage.visibility = View.GONE
+                        imgDownloadVTO.visibility = View.VISIBLE
+                        imgVTOEffect.setImageBitmap(result.resultPicture)
+                        isColorApplyFromLiveCamera = false
+                        isRefreshImageEffectLiveCamera = false
+                        stopVtoLiveCamera()
+                        cameraSurfaceView.visibility = View.GONE
                     })
 
-                retakeCamera.visibility = View.VISIBLE
-                imgVTOSplit.visibility = View.GONE
-                captureImage.visibility = View.GONE
-                imgDownloadVTO.visibility = View.VISIBLE
-                imgVTOEffect.setImageBitmap(saveVtoApplyImage)
-                cameraSurfaceView.visibility = View.GONE
-                isColorApplyFromLiveCamera = false
-                isRefreshImageEffectLiveCamera = false
-                getOriginalPicture()
             }
         } catch (e: Exception) {
             // Do Nothing
         }
     }
 
-    private fun getOriginalPicture() {
-        liveCameraViewModel.getOriginalPicture()
-        liveCameraViewModel.getOriginalPicture.observe(
-            viewLifecycleOwner,
-            Observer { result ->
-                result?.let {
-                    takenOriginalPicture = it
-                    captureImgLiveCamera = it
-                    setPickedImage(null, result, true)
-                }
-            })
-
+    private fun stopVtoLiveCamera() {
+        val cameraMonitor =
+            CameraMonitor(requireActivity(), makeupCamera, lifecycle)
+        cameraMonitor.stopCamera()
     }
 
 
@@ -421,9 +415,46 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             comparisonView.enterComparisonMode()
             imgDownloadVTO.visibility = View.GONE
             imgVTORefresh.visibility = View.GONE
-            vtoDividerLayout.visibility = View.VISIBLE
             isDividerVtoEffect = true
             scrollView.setScrollingEnabled(false)
+
+        }
+    }
+
+    private fun closeVto() {
+        try {
+            isColorApplyFromLiveCamera = false
+            isVtoImage = false
+            isCaptureImgLiveCamera = false
+            isRefreshImageEffectLiveCamera = false
+            isTakePicture = false
+            isDividerVtoEffect = false
+            scrollView.setScrollingEnabled(true)
+            resetColorSelectionLayout()
+            comparisonView.leaveComparisonMode()
+            cameraSurfaceView.visibility = View.GONE
+            colourUnavailableError.visibility = View.GONE
+            imgDownloadVTO.visibility = View.GONE
+            imgVTOSplit.visibility = View.GONE
+            imgVTORefresh.visibility = View.GONE
+            captureImage.visibility = View.GONE
+            retakeCamera.visibility = View.GONE
+            changeImage.visibility = View.GONE
+            changeImageFiles.visibility = View.GONE
+            noFaceDetected.visibility = View.GONE
+            txtCountCameraCaptureImage.visibility = View.GONE
+            share.visibility = View.VISIBLE
+            productImagesViewPagerIndicator.visibility = View.VISIBLE
+            closePage.visibility = View.VISIBLE
+            productImagesViewPager.visibility = View.VISIBLE
+            imgVTOOpen.visibility = View.VISIBLE
+            if (null != makeupCamera) {
+                job?.cancel()
+                stopVtoLiveCamera()
+            }
+            vtoLayout.visibility = View.GONE
+        } catch (e: Exception) {
+            // DO Nothing
         }
     }
 
@@ -1004,8 +1035,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             colourUnavailableError.visibility = View.VISIBLE
                             imgVTORefresh.visibility = View.GONE
                             imgDownloadVTO.visibility = View.GONE
-                            if (null != captureImgLiveCamera) {
-                                imgVTOEffect.setImageBitmap(captureImgLiveCamera)
+                            if (isCaptureImgLiveCamera) {
+                                imgVTOEffect.setImageBitmap(takenOriginalPicture)
                             } else {
                                 setBitmapFromUri(selectedImageUri)
                             }
@@ -1021,8 +1052,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             colourUnavailableError.visibility = View.GONE
                             imgVTORefresh.visibility = View.GONE
                             imgDownloadVTO.visibility = View.GONE
-                            if (null != captureImgLiveCamera) {
-                                imgVTOEffect.setImageBitmap(captureImgLiveCamera)
+                            if (isCaptureImgLiveCamera) {
+                                imgVTOEffect.setImageBitmap(takenOriginalPicture)
                             } else {
                                 setBitmapFromUri(uri)
                             }
@@ -2432,18 +2463,28 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 imgDownloadVTO.visibility = View.GONE
                 liveCameraViewModel.clearLiveCameraEffect()
                 isColorNotMatch = true
+                if (isDividerVtoEffect) {
+                    comparisonView.leaveComparisonMode()
+                    vtoDividerLayout.visibility = View.GONE
+                    scrollView.setScrollingEnabled(true)
+                }
             }
             result!! == VTO_COLOR_LIVE_CAMERA -> {
                 colourUnavailableError.visibility = View.GONE
                 imgVTORefresh.visibility = View.VISIBLE
                 imgVTOSplit.visibility = View.VISIBLE
                 imgDownloadVTO.visibility = View.GONE
-                if(isDividerVtoEffect){
+                if (isDividerVtoEffect) {
                     captureImage.visibility = View.GONE
                 } else {
                     captureImage.visibility = View.VISIBLE
                 }
                 isColorNotMatch = false
+                if (isDividerVtoEffect) {
+                    imgVTORefresh.visibility = View.GONE
+                    scrollView.setScrollingEnabled(false)
+                    comparisonView.enterComparisonMode()
+                }
             }
         }
 

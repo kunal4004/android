@@ -51,8 +51,9 @@ class CameraMonitor constructor(
         makeupCamera?.onStopped()
         makeupCamera?.onDestroyed()
         stopCamera()
+        initCoroutine()
         job?.cancel()
-        lifecycle.removeObserver(this)
+
     }
 
     private fun initCoroutine() {
@@ -182,7 +183,7 @@ class CameraMonitor constructor(
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private fun stopCamera() {
+    internal fun stopCamera() {
         if (camera != null) {
             camera!!.stopPreview()
             surfaceTexture = null
