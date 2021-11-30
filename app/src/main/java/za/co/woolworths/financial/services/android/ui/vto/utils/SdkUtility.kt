@@ -68,7 +68,7 @@ object SdkUtility {
             .setDeveloperMode(true)
             .setMappingMode(true)
             .setPreviewMode(true)
-            .setAdvancedFaceTrackingMode(false)
+            .setAdvancedFaceTrackingMode(true)
             .build()
         PerfectLib.init(context, configuration, wrappedCallback)
     }
