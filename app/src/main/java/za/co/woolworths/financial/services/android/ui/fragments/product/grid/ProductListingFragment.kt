@@ -179,7 +179,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun showVtoBanner() {
-        //TODO: need set vto banner with flag condition
         if (!mSubCategoryName.isNullOrEmpty() && mSubCategoryName.equals(VTO) && VirtualTryOnUtil.isVtoConfigAvailable()) {
             vtoTryItOnBanner.visibility = View.VISIBLE
         }

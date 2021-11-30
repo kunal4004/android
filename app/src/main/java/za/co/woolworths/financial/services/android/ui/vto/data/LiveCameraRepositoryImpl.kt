@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import za.co.woolworths.financial.services.android.ui.vto.data.model.LiveCameraBitmapImages
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import javax.inject.Inject
 
 class LiveCameraRepositoryImpl @Inject constructor(
@@ -41,7 +42,7 @@ class LiveCameraRepositoryImpl @Inject constructor(
             override fun onFailure(
                 throwable: Throwable
             ) {
-                // Do Nothing
+                handleExceptionWithFireBase(throwable)
             }
         })
 
@@ -125,25 +126,28 @@ class LiveCameraRepositoryImpl @Inject constructor(
                 }
 
                 override fun onFailure(t: Throwable) {
-                    // Do Nothing
+                    handleExceptionWithFireBase(t)
                 }
             })
         return takenPicture
     }
 
     override fun clearEffect() {
-        vtoApplier!!.clearAllEffects(
+        vtoApplier?.clearAllEffects(
             object : VtoApplier.ApplyCallback {
                 override fun onSuccess(ignored: Bitmap?) {
                     //Do Nothing
                 }
                 override fun onFailure(throwable: Throwable) {
-                    //Do Nothing
+                    handleExceptionWithFireBase(throwable)
                 }
                 override fun applyProgress(progress: Double) {
                     //Do Nothing
                 }
             })
+    }
+    private fun handleExceptionWithFireBase(t: Throwable) {
+        FirebaseManager.logException(t)
     }
 
 
