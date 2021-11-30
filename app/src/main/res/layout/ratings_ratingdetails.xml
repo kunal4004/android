@@ -42,16 +42,27 @@
         app:layout_constraintTop_toBottomOf="@+id/rating_details" />
 
     <TextView
-        android:id="@+id/recommend"
+        android:id="@+id/tvRecommendPercent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
+        android:layout_marginTop="@dimen/twenty_dp"
+        style="@style/card_item_semi_bold_text_style"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvRecommendTxtValue"
+        app:layout_constraintTop_toBottomOf="@+id/pdpratings" />
+
+    <TextView
+        android:id="@+id/tvRecommendTxtValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twenty_dp"
         android:fontFamily="@font/myriad_pro_regular"
         android:textAlignment="center"
         android:textColor="@color/card_details_value_color"
         android:textSize="@dimen/fifteen_sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvRecommendPercent"
         app:layout_constraintTop_toBottomOf="@+id/pdpratings" />
 
     <View
@@ -61,7 +72,7 @@
         android:layout_marginRight="@dimen/twenty_dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recommend"
+        app:layout_constraintTop_toBottomOf="@+id/tvRecommendPercent"
         android:layout_marginTop="@dimen/twenty_dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_dp">

@@ -6,7 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.datasource.ReviewsDataSource
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.newtwork.apihelper.RatingAndReviewApiHelper
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 
 class RatingAndReviewViewModel(
         private val reviewApiHelper: RatingAndReviewApiHelper,

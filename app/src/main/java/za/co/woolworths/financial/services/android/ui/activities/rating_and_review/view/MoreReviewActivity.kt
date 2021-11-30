@@ -2,20 +2,11 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.os.Bundle
 import android.view.Gravity
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
-import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.activity_more_review.*
-import kotlinx.android.synthetic.main.activity_more_review.toolbar
 import kotlinx.android.synthetic.main.activity_reviewer_info_details.*
-import kotlinx.android.synthetic.main.common_toolbar.view.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
-import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawerFragment
 
 
 class MoreReviewActivity : AppCompatActivity(), MoreReviewsFragment.OnSortRefineFragmentListener {
@@ -33,9 +24,6 @@ class MoreReviewActivity : AppCompatActivity(), MoreReviewsFragment.OnSortRefine
         setContentView(R.layout.activity_reviewer_info_details)
         moreReviewsFragment = MoreReviewsFragment.newInstance()
         sortAndFilterReviewFragment = SortAndFilterReviewFragment.newInstance()
-        toolbar.btn_back.setOnClickListener {
-            super.onBackPressed()
-        }
         if (intent.extras != null)
             goToMoreReviewsFragment(intent.extras)
     }

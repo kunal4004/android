@@ -26,9 +26,10 @@ import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAd
 import za.co.woolworths.financial.services.android.util.Utils
 
 class MoreReviewsAdapter(val context: Context,
-                         val skinProfileDialogListener: SkinProfileDialogOpenListener,
+                         val reviewItemClickListener: ReviewItemClickListener,
                          val reviewStatistics: ReviewStatistics,
-val sortAndRefineListener: SortAndRefineListener) : PagingDataAdapter<Reviews,
+                         val reportReviewOptions: List<String>?,
+                         val sortAndRefineListener: SortAndRefineListener) : PagingDataAdapter<Reviews,
         RecyclerView.ViewHolder>(MoreReviewsComparator), ReviewThumbnailAdapter.ThumbnailClickListener {
 
     private val TYPE_HEADER = 0
@@ -38,8 +39,9 @@ val sortAndRefineListener: SortAndRefineListener) : PagingDataAdapter<Reviews,
     private var thumbnailFullList = listOf<Thumbnails>()
 
 
-    interface SkinProfileDialogOpenListener {
+    interface ReviewItemClickListener {
         fun openSkinProfileDialog(reviews: Reviews)
+        fun openReportScreen(reportReviewOptions: List<String>?)
     }
 
     interface SortAndRefineListener {
@@ -73,13 +75,16 @@ val sortAndRefineListener: SortAndRefineListener) : PagingDataAdapter<Reviews,
 
                     reviewHelpfulReport.apply {
                         tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                        tvReport.setOnClickListener {
+                            reviewItemClickListener.openReportScreen(reportReviewOptions)
+                        }
                     }
 
                     if (contextDataValue.isEmpty() && tagDimensions.isEmpty()) {
                         tvSkinProfile.visibility = View.GONE
                     }
                     tvSkinProfile.setOnClickListener {
-                        skinProfileDialogListener.openSkinProfileDialog(review)
+                        reviewItemClickListener.openSkinProfileDialog(review)
                     }
                 }
             }
@@ -97,14 +102,17 @@ val sortAndRefineListener: SortAndRefineListener) : PagingDataAdapter<Reviews,
                 sortProducts.setOnClickListener(View.OnClickListener { sortAndRefineListener.openSortDrawer() })
 
                 reviewStatistics.apply {
-                    recommend.text = recommendedPercentage
+                    val recommend= recommendedPercentage.split("%")
+                    if (recommend.size == 2) {
+                        tvRecommendPercent.text = "${recommend[0]}% "
+                        tvRecommendTxtValue.text = recommend[1]
+                    }
                     pdpratings.apply {
                         ratingBarTop.visibility = View.VISIBLE
                         tvTotalReviews.visibility = View.VISIBLE
                         ratingBarTop.rating = averageRating
                         tvTotalReviews.text = context.getString(R.string.customer_reviews)
                     }
-                    recommend.text = recommendedPercentage
                     view_2.visibility = View.GONE
                     close.visibility = View.INVISIBLE
                     setRatingDistributionUI(ratingDistribution, reviewCount, itemView)

@@ -2359,4 +2359,11 @@
     <string name="slash">/</string>
     <string name="skin_profile">skin profile</string>
     <string name="customer_reviews">Customer Reviews</string>
+    <string name="report_reviews">Report Review</string>
+    <string name="report_sub_label">I find this review to contains:</string>
+    <string name="submit_report">Submit Report</string>
+    <string name="hint_reason">Please enter a reason here</string>
+    <string name="report_moderated">It is currently being moderated.</string>
+    <string name="report_submit">Report Submitted</string>
+    <string name="report_got_it">GOT IT</string>
 </resources>
