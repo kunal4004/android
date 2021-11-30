@@ -45,6 +45,10 @@ class AppConstant {
 
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
 
+        //Absa cookie content
+        const val ABSA_COOKIE_WFPT = "wfpt"
+        const val ABSA_COOKIE_XFPT = "xfpt"
+
         const val EMPTY_STRING = ""
         const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
         const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15

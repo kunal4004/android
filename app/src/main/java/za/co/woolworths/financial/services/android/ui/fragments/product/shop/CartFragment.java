@@ -417,7 +417,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     default:
                         pBar.setVisibility(View.GONE);
                         if (response.getResponse() != null) {
-                            showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, response.getResponse().getMessage());
+                            showErrorDialog(ErrorHandlerActivity.COMMON_WITH_BACK_BUTTON, response.getResponse().message);
                         }
                         break;
                 }

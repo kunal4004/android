@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import java.util.HashMap
 
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiEnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 
 class BPIOptInConfirmationFragment : Fragment() {
@@ -79,7 +80,7 @@ class BPIOptInConfirmationFragment : Fragment() {
 
     private fun addConfirmBtnListner() {
         confirmOptInButton?.setOnClickListener {
-
+            BpiEnterOtpFragment.shouldBackPressed = false
             arguments?.getString(BalanceProtectionInsuranceActivity.BPI_PRODUCT_GROUP_CODE)
                 .let { productGroupCode ->
                     var bpiTaggingEventCode: String? = null

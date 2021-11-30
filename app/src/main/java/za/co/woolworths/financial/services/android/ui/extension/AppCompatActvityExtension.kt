@@ -42,6 +42,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.amplifyframework.core.Amplify
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import retrofit2.Call
@@ -440,3 +441,5 @@ fun View.onClick(result: (View) -> Unit) {
         result(it)
     }
 }
+
+inline fun <reified T : Any> T.json(): String = GsonBuilder().disableHtmlEscaping().create().toJson(this, T::class.java)

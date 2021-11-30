@@ -2312,7 +2312,9 @@
 
     <string name="blackCreditCard_title">Black Credit Card</string>
     <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
-
+    <string name="absa_technical_error_occurred">Technical error occurred</string>
+    <string name="absa_technical_error_occurred_try_again_later">An error has occurred. Please try again later.</string>
+    <string name="absa_maximum_polling_rate_reached">Maximum polling rate reached</string>
     <!--  No browser dialog  -->
     <string name="browser_not_found_title">Browser Not Found</string>
     <string name="browser_not_found_msg">To continue, please install a web browser.</string>
@@ -2335,4 +2337,5 @@
     <string name="bpi_request_failed_retry">Request failed.\nPlease try again.</string>
     <string name="bpi_you_have_opted_in_success">You have opted in for Balance Protection Insurance</string>
 
+    <string name="please_try_again">Please try again.</string>
 </resources>
