@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 import androidx.fragment.app.FragmentTransaction
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.common_toolbar.view.*
+import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import java.util.ArrayList
 
 class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListener {
@@ -80,6 +81,7 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
 
         lifecycleScope.launch {
             moreReviewViewModel.getReviewDataSource(productId).collectLatest { pagedData ->
+                error_layout?.visibility = View.GONE
                 moreReviewsAdapter.submitData(pagedData)
             }
         }
@@ -87,8 +89,19 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
         moreReviewsAdapter.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
-            } else {
+            } else  {
+                 // getting the error
                 progress_bar?.visibility = View.GONE
+                val errorState = when {
+                    it.prepend is LoadState.Error -> it.prepend as LoadState.Error
+                    it.append is LoadState.Error -> it.append as LoadState.Error
+                    it.refresh is LoadState.Error -> {
+                        it.refresh as LoadState.Error
+                        error_layout?.visibility = View.VISIBLE
+                        error_layout?.no_connection_layout?.visibility = View.VISIBLE
+                    }
+                    else -> null
+                }
             }
         }
     }
