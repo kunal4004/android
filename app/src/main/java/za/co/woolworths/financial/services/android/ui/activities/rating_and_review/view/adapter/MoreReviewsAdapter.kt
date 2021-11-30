@@ -9,21 +9,26 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.header_more_review_recycler_view.*
+import kotlinx.android.synthetic.main.header_more_review_recycler_view.view.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.view.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.view.*
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.android.synthetic.main.review_row_layout.view.*
+import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.ReviewStatistics
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Thumbnails
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.SortAndFilterReviewFragment
 import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 import za.co.woolworths.financial.services.android.util.Utils
 
 class MoreReviewsAdapter(val context: Context,
                          val skinProfileDialogListener: SkinProfileDialogOpenListener,
-                         val reviewStatistics: ReviewStatistics) : PagingDataAdapter<Reviews,
+                         val reviewStatistics: ReviewStatistics,
+val sortAndRefineListener: SortAndRefineListener) : PagingDataAdapter<Reviews,
         RecyclerView.ViewHolder>(MoreReviewsComparator), ReviewThumbnailAdapter.ThumbnailClickListener {
 
     private val TYPE_HEADER = 0
@@ -37,8 +42,12 @@ class MoreReviewsAdapter(val context: Context,
         fun openSkinProfileDialog(reviews: Reviews)
     }
 
-    inner class ReviewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    interface SortAndRefineListener {
+        fun openRefineDrawer()
+        fun openSortDrawer()
+    }
 
+    inner class ReviewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindView(review: Reviews?) {
             itemView.apply {
                 review?.apply {
@@ -83,6 +92,9 @@ class MoreReviewsAdapter(val context: Context,
                 close_top.visibility = View.GONE
                 rating_details.text = context.getString(R.string.customer_reviews)
                 pdpratings.visibility = View.VISIBLE
+                sort_and_refine.visibility = View.VISIBLE
+                refineProducts.setOnClickListener(View.OnClickListener { sortAndRefineListener.openRefineDrawer() })
+                sortProducts.setOnClickListener(View.OnClickListener { sortAndRefineListener.openSortDrawer() })
 
                 reviewStatistics.apply {
                     recommend.text = recommendedPercentage

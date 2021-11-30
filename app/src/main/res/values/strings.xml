@@ -2166,8 +2166,6 @@
     <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
 
 
-
-
     <string name="common_error_unfortunately_something_went_wrong">Unfortunately, something went wrong.</string>
     <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
     <string name="suburb_not_found">We Can’t Seem To Find This Suburb</string>
@@ -2317,7 +2315,6 @@
     <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
     <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
     <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
-
 
 
     <!--  Rating and Review Feature -->

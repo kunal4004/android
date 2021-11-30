@@ -7,7 +7,7 @@
     android:clickable="true"
     android:focusable="true"
     android:orientation="horizontal"
-    android:visibility="visible"
+    android:visibility="gone"
     >
 
     <RelativeLayout
@@ -20,7 +20,6 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/sort_and_filter_selection_text_style"
             android:text="@string/sort_by" />
-        />
 
         <ImageView
             android:layout_width="wrap_content"
