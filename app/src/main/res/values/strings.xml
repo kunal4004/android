@@ -2309,26 +2309,7 @@
     <string name="product_item">item found</string>
     <string name="goldCreditCard_title">Gold Credit Card</string>
     <string name="silverCreditCard_title">Silver Credit Card</string>
-    <!--  Voice of Customer  -->
-    <string name="voc_question_slider_desc">Please rate your experience, %1$d being poor and %2$d being excellent</string>
-    <string name="voc_question_freetext_hint_optional">Describe your experience in detail (optional)</string>
-    <string name="voc_question_freetext_hint_required">Describe your experience in detail</string>
-    <string name="voc_survey_submit">SUBMIT</string>
-    <string name="voc_survey_opt_out">DON\'T ASK AGAIN</string>
-    <string name="voc_survey_skip">NOT NOW</string>
-    <string name="voc_opt_out_dialog_title">Are You Sure You Don’t Want To Take This Survey?</string>
-    <string name="voc_opt_out_dialog_desc">If you proceed, we won’t ask you to take this survey again.</string>
-    <string name="voc_opt_out_dialog_action">YES, PROCEED</string>
-    <string name="voc_opt_out_dialog_cancel">CANCEL</string>
-    <string name="voc_skip_dialog_title">Are You Sure You Want To Skip This Survey?</string>
-    <string name="voc_skip_dialog_desc">You can skip for now, and we\'ll ask you again later.</string>
-    <string name="voc_skip_dialog_action">YES</string>
-    <string name="voc_skip_dialog_cancel">CANCEL</string>
-    <string name="voc_processing_request_title">Processing Request</string>
-    <string name="voc_processing_request_desc">This may take a few seconds</string>
-    <string name="voc_request_successful_title">Thank you! Your feedback has been submitted.</string>
-    <string name="voc_request_failed_title">There was a Problem Submitting Your Feedback</string>
-    <string name="reward_shake_tap_label">Not scanning? Tap here or shake to max brightness</string>
+     <!--vto-->
     <string name="capture">Capture Image</string>
     <string name="use_live_camera">Use Live Camera</string>
     <string name="take_a_photo">Take a Photo</string>
@@ -2343,7 +2324,6 @@
     <string name="try_on_intro_txt">INTRODUCING VIRTUAL TRY ON</string>
     <string name="try_on_intro_desc">Use our new Try It On feature  to find out how our make-up shades will look on you.</string>
     <string name="no_face_detected">NO FACE DETECTED. TRY AGAIN.</string>
-
     <string name="vto_camera_access_error">Unfortunately, We Can’t Access Your Camera</string>
     <string name="vto_error_description">Please ensure you have enabled Woolworths access to your camera from your device settings, and try again.</string>
     <string name="vto_change_setting">CHANGE SETTINGS</string>
@@ -2356,52 +2336,14 @@
     <string name="vto_invalid_file_type_error_description">Please upload only .jpg or .png images.</string>
     <string name="vto_generic_error">Unfortunately, Something Went Wrong</string>
     <string name="vto_generic_error_description">Please try again.</string>
-
+    <string name="actual_size">Actual Size</string>
+    <string name="vto_color_selected_error">Oh no! That colour is unavailable to try on.</string>
 
     <string name="blackCreditCard_title">Black Credit Card</string>
     <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
     <string name="absa_technical_error_occurred">Technical error occurred</string>
     <string name="absa_technical_error_occurred_try_again_later">An error has occurred. Please try again later.</string>
     <string name="absa_maximum_polling_rate_reached">Maximum polling rate reached</string>
-
-    <!--order details-->
-    <string name="order_details_toolbar_title">ORDER #%1$s</string>
-    <string name="order_details">Order Details</string>
-    <string name="collection_from">Collection from</string>
-    <string name="delivery_semicolon">Delivery:</string>
-    <string name="collection_semicolon">Collection:</string>
-    <string name="food_items_semicolon">Food Items:</string>
-    <string name="other_items_semicolon">Other Items:</string>
-    <string name="order_total_semicolon">Order Total:</string>
-    <string name="missed_wrewards_savings">Missed WRewards Savings</string>
-    <string name="delivery_location_semicolon">Delivery location:</string>
-    <string name="collection_location_semicolon">Collection location:</string>
-    <string name="number_items">%1$s Items</string>
-    <string name="number_item">%1$s Item</string>
-    <string name="order_again">ORDER AGAIN</string>
-    <string name="you_could_have_saved">You could have saved</string>
-    <string name="already_have_a_wrewards_card">Already have a wrewards card?</string>
-    <string name="add_it_now">Add it now</string>
-    <string name="sign_up">SIGN UP</string>
-    <string name="wrewards_logo_rewards">REWARDS</string>
-    <string name="wrewards_logo_w">W</string>
-    <string name="payment_order_confirmed">Order Confirmed</string>
-    <string name="submitted_order_error_something_went_wrong">Your order was successful,  but we’re having trouble displaying the details here.</string>
-    <string name="submitted_order_error_message">Please try again, or check your order history under Account details later.</string>
-    <string name="submitted_order_error_continue_shopping">CONTINUE SHOPPING</string>
-    <string name="select_your_preferred_delivery_time_error">Please select a delivery timeslot.</string>
-
-    <string name="absa_mobile_app_pin_blocked_title">Mobile App PIN Is Now\nBlocked</string>
-    <string name="absa_mobile_app_pin_blocked_desc_block_1">To release the hold on your PIN, please contact customer service on 086 150 2020 or email queries@wfs.co.za.</string>
-    <string name="absa_mobile_app_pin_blocked_desc_block_2">Please use the reference App PIN as this does not impact your card pin in stores or at ATMs.</string>
-    <string name="pma_total_amount_due_popup_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
-    <string name="pma_amount_overdue_popup_desc">The amount that is outstanding from the previous billing due date</string>
-    <string name="collection_remove_block_current_balance_popup_desc">Balance as at the current date.</string>
-    <string name="empty_cart_title">Your Cart Is Empty</string>
-    <string name="removed_items_empty_cart_desc">When you made changes to your location, your cart was updated, and all items were removed.</string>
-    <string name="actual_size">Actual Size</string>
-    <string name="vto_color_selected_error">Oh no! That colour is unavailable to try on.</string>
-
     <!--  No browser dialog  -->
     <string name="browser_not_found_title">Browser Not Found</string>
     <string name="browser_not_found_msg">To continue, please install a web browser.</string>
