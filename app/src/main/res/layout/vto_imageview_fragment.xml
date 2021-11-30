@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/tools"
+    android:id="@+id/vtoImageRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:descendantFocusability="blocksDescendants">
+
+
+    <za.co.woolworths.financial.services.android.util.photo.PhotoDraweeView
+        android:id="@+id/imgVTOEffect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:focusableInTouchMode="false"
+        android:scaleType="centerCrop"
+        fresco:placeholderImage="@drawable/woolworth_logo_icon" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/five_dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+
+    <com.perfectcorp.perfectlib.CameraView
+        android:id="@+id/cameraSurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <za.co.woolworths.financial.services.android.ui.vto.utils.ComparisonView
+        android:id="@+id/comparisonView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txtCountCameraCaptureImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="@dimen/vto_count_txt_size"
+        android:visibility="gone"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgCloseVTO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/acc_fifteen_dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_vto_back" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgDownloadVTO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/six_dp"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="@+id/guidelineEnd"
+        app:srcCompat="@drawable/ic_vto_download" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgVTOSplit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/six_dp"
+        app:layout_constraintBottom_toTopOf="@+id/imgDownloadVTO"
+        app:layout_constraintEnd_toEndOf="@+id/guidelineEnd"
+        app:srcCompat="@drawable/ic_vto_split_screen" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgVTORefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/six_dp"
+        app:layout_constraintBottom_toTopOf="@+id/imgVTOSplit"
+        app:layout_constraintEnd_toEndOf="@+id/guidelineEnd"
+        app:srcCompat="@drawable/ic_vto_refresh" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/captureImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/six_dp"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_camera_capture" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/vtoDividerLayout"
+        android:layout_width="@dimen/fourty_dp"
+        android:layout_height="@dimen/fourty_dp"
+        android:background="@drawable/vto_divider_black_circle"
+        android:gravity="center"
+        android:visibility="gone"
+        android:alpha=".6"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgLeftVtoDivider"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/fourty_dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/four_dp"
+            android:padding="@dimen/four_dp"
+            app:srcCompat="@drawable/ic_vto_left_arrow" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgRightVtoDivider"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/fourty_dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/four_dp"
+            android:padding="@dimen/four_dp"
+            app:srcCompat="@drawable/ic_vto_right_arrow" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/retakeCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/ten_dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:srcCompat="@drawable/ic_retake" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/changeImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/ten_dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:srcCompat="@drawable/ic_vto_change_image" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/changeImageFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/ten_dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:srcCompat="@drawable/ic_vto_change_image" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/noFaceDetected"
+        style="@style/chatTimeDisplayStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/minimum_spend_view_height_45dp"
+        android:layout_marginEnd="@dimen/minimum_spend_view_height_45dp"
+        android:background="@color/white"
+        android:gravity="center_vertical|center_horizontal"
+        android:letterSpacing="0.2"
+        android:paddingStart="@dimen/thirty_seven_dp"
+        android:paddingTop="@dimen/store_card_text_field_text_size_14_dp"
+        android:paddingEnd="@dimen/thirty_five_dp"
+        android:paddingBottom="@dimen/twelve_dp"
+        android:text="@string/no_face_detected"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
