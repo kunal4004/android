@@ -25,16 +25,14 @@ class MoreReviewLoadStateAdapter(
             if (loadState is LoadState.Loading) {
                 itemView.pbFooterProgress.visibility = View.VISIBLE
             } else if (loadState is LoadState.Error){
+                Log.e("ReviewLoadStateViewHolder_Error  :", "called")
                 itemView.pbFooterProgress.visibility = View.GONE
                 itemView.linearlayout_error_footer.visibility = View.VISIBLE
             }
-
             itemView.linearlayout_error_footer.txt_retry.setOnClickListener {
                 retry()
             }
-
         }
-
     }
 
     override fun onBindViewHolder(holder: MoreReviewLoadStateAdapter

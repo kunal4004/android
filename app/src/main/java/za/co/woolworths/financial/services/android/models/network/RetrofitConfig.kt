@@ -15,7 +15,7 @@ abstract class RetrofitConfig : NetworkConfig() {
 
     companion object {
         private const val READ_CONNECT_TIMEOUT_UNIT: Long = 45
-        private const val READ_CONNECT_TIMEOUT_UNIT_QA: Long = 180
+        private const val READ_CONNECT_TIMEOUT_UNIT_QA: Long = 30
         lateinit var mApiInterface: ApiInterface
     }
 

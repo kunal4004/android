@@ -48,7 +48,7 @@ class ReviewDetailsFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.btn_back.setOnClickListener {
+        toolbar_more_review.btn_back.setOnClickListener {
             activity?.onBackPressed()
         }
         arguments?.apply {

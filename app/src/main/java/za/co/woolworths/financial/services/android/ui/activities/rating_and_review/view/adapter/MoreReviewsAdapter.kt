@@ -172,7 +172,7 @@ class MoreReviewsAdapter(val context: Context,
         return ReviewHeaderViewHolder(
                 LayoutInflater
                         .from(parent.context)
-                        .inflate(R.layout.ratings_ratingdetails, parent, false))
+                        .inflate(R.layout.header_more_review_recycler_view, parent, false))
 
 
     }
