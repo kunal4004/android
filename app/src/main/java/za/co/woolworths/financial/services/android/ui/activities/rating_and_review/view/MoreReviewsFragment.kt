@@ -130,7 +130,6 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
         super.onAttach(context)
         if (context is OnSortRefineFragmentListener) {
             onSortRefineFragmentListener = context
-            Log.d("short","filter")
         } else {
             throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
