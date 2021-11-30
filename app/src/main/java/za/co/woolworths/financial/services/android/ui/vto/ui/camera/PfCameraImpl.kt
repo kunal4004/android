@@ -25,6 +25,7 @@ import com.google.common.util.concurrent.Uninterruptibles
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.PfCamera.Parameters.Companion.FOCUS_MODE_AUTO
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
+import java.lang.Long.signum
 import java.util.*
 
 
@@ -60,7 +61,7 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
 
         override fun compare(lhs: android.util.Size?, rhs: android.util.Size?): Int {
             // Do cast here to ensure the multiplications won't overflow.
-            return java.lang.Long.signum(lhs!!.width.toLong() * lhs.height - rhs!!.width.toLong() * rhs.height)
+            return signum(lhs?.width?.toLong()!! * lhs?.height!! - rhs?.width?.toLong()!! * rhs?.height)
 
         }
     }
@@ -97,21 +98,27 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
     @GuardedBy("lock")
     private var previewCallback: PreviewCallback? = null
 
-    override val cameraInfo: CameraInfo
+    override val cameraInfo: CameraInfo?
         get() = try {
             val characteristics = manager.getCameraCharacteristics(cameraId)
             val cameraFacing =
                 Objects.requireNonNull(characteristics.get(CameraCharacteristics.LENS_FACING))
             val orientation =
                 Objects.requireNonNull(characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION))
-            CameraInfo(getPfCameraFacing(cameraFacing!!), orientation!!)
+            orientation?.let { cameraFacing?.let { getPfCameraFacing(it) }?.let { it1 ->
+                CameraInfo(
+                    it1, it)
+            } }
         } catch (t: Throwable) {
             val characteristics = manager.getCameraCharacteristics(cameraId)
             val cameraFacing =
                 Objects.requireNonNull(characteristics.get(CameraCharacteristics.LENS_FACING))
             val orientation =
                 Objects.requireNonNull(characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION))
-            CameraInfo(getPfCameraFacing(cameraFacing!!), orientation!!)
+            orientation?.let { cameraFacing?.let { getPfCameraFacing(it) }?.let { it1 ->
+                CameraInfo(
+                    it1, it)
+            } }
         }
 
     internal class Camera2Parameters(pfCamera2: PfCameraImpl) : Parameters {
@@ -160,20 +167,27 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
 
         init {
             val map =
-                pfCamera2.characteristics!!.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                pfCamera2.characteristics?.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
             val preview = Objects.requireNonNull(map)
                 ?.getOutputSizes(PREVIEW_IMAGE_FORMAT)
             supportedPreviewSizes = Lists.transform(
                 Lists.newArrayList(*preview)
             ) { input: android.util.Size? ->
-                Size(
-                    input!!.width, input.height
-                )
+                input?.let {
+                    Size(
+                        it.width, it.height
+                    )
+                }
             }
             supportedFocusModes = buildFocusModes(
                 pfCamera2.characteristics!!
             )
-            previewSize = Size(pfCamera2.previewSize!!.width, pfCamera2.previewSize!!.height)
+            previewSize =
+                pfCamera2.previewSize?.width?.let { pfCamera2.previewSize?.height?.let { it1 ->
+                    Size(it,
+                        it1
+                    )
+                } }!!
             focusMode = pfCamera2.focusMode
         }
     }
@@ -195,11 +209,13 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
             }
             if (updateCaptureRequest && previewRequestBuilder != null) {
                 try {
-                    captureSession!!.setRepeatingRequest(
-                        previewRequestBuilder!!.build(),
-                        null,
-                        backgroundHandler
-                    )
+                    previewRequestBuilder?.build()?.let {
+                        captureSession?.setRepeatingRequest(
+                            it,
+                            null,
+                            backgroundHandler
+                        )
+                    }
                 } catch (t: Throwable) {
                     //throw Unchecked.of(t)
                 }
@@ -220,7 +236,7 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
             synchronized(lock) {
                 if (previewCallback != null) {
                     val image = reader.acquireNextImage()
-                    previewCallback!!.onPreviewFrame(
+                    previewCallback?.onPreviewFrame(
                         CameraImageUtil.toNV21(image),
                         this@PfCameraImpl
                     )
@@ -234,22 +250,24 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
             val future =
                 SettableFuture.create<Void>() // Let it be synchronized call like camera 1 API behavior.
             synchronized(lock) {
-                previewImageReader = ImageReader.newInstance(
-                    previewSize!!.width,
-                    previewSize!!.height,
-                    PREVIEW_IMAGE_FORMAT,
-                    1
-                )
-                previewImageReader!!.setOnImageAvailableListener(
+                previewImageReader = previewSize?.let {
+                    ImageReader.newInstance(
+                        it.width,
+                        it.height,
+                        PREVIEW_IMAGE_FORMAT,
+                        1
+                    )
+                }
+                previewImageReader?.setOnImageAvailableListener(
                     onPreviewImageAvailableListener,
                     backgroundHandler
                 )
                 val outputs =
-                    listOf(previewImageReader!!.surface)
+                    listOf(previewImageReader?.surface)
                 previewRequestBuilder =
-                    cameraDevice!!.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
-                previewRequestBuilder!!.addTarget(previewImageReader!!.surface)
-                cameraDevice!!.createCaptureSession(
+                    cameraDevice?.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
+                previewRequestBuilder?.addTarget(previewImageReader!!.surface)
+                cameraDevice?.createCaptureSession(
                     outputs,
                     object : CameraCaptureSession.StateCallback() {
                         override fun onConfigured(session: CameraCaptureSession) {
@@ -259,12 +277,14 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
                                     captureSession = session
                                     setFocus(focusMode, previewRequestBuilder)
                                     val previewRequest =
-                                        previewRequestBuilder!!.build()
-                                    session.setRepeatingRequest(
-                                        previewRequest,
-                                        null,
-                                        backgroundHandler
-                                    )
+                                        previewRequestBuilder?.build()
+                                    previewRequest?.let {
+                                        session.setRepeatingRequest(
+                                            it,
+                                            null,
+                                            backgroundHandler
+                                        )
+                                    }
                                 } catch (e: CameraAccessException) {
                                     val message = "configure camera failed"
 
@@ -323,7 +343,7 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
 
     private fun isHardwareLevelSupported(requiredLevel: Int): Boolean {
         var result = false
-        val deviceLevel = characteristics!!.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)
+        val deviceLevel = characteristics?.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)
         if (null != deviceLevel) {
             result =
                 if (deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
@@ -340,11 +360,11 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
         synchronized(lock) {
             previewCallback = null
             if (captureSession != null) {
-                captureSession!!.close()
+                captureSession?.close()
                 captureSession = null
             }
             if (previewImageReader != null) {
-                previewImageReader!!.close()
+                previewImageReader?.close()
                 previewImageReader = null
             }
         }
@@ -353,83 +373,86 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
     override fun autoFocus(callback: AutoFocusCallback) {
         Objects.requireNonNull<Any>(callback)
         synchronized(lock) {
-            previewRequestBuilder!!.set(
+            previewRequestBuilder?.set(
                 CaptureRequest.CONTROL_AF_TRIGGER,
                 CameraMetadata.CONTROL_AF_TRIGGER_CANCEL
             )
-            previewRequestBuilder!!.set(
+            previewRequestBuilder?.set(
                 CaptureRequest.CONTROL_AF_MODE,
                 CaptureRequest.CONTROL_AF_MODE_OFF
             )
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                    captureSession!!.stopRepeating();
+                    captureSession?.stopRepeating();
                 }
-                captureSession!!.capture(previewRequestBuilder!!.build(), null, backgroundHandler)
+                captureSession?.capture(previewRequestBuilder!!.build(), null, backgroundHandler)
             } catch (e: CameraAccessException) {
                 callback.onAutoFocus(false, this)
 
             }
-            previewRequestBuilder!!.set(
+            previewRequestBuilder?.set(
                 CaptureRequest.CONTROL_AF_TRIGGER,
                 CameraMetadata.CONTROL_AF_TRIGGER_START
             )
-            previewRequestBuilder!!.set(
+            previewRequestBuilder?.set(
                 CaptureRequest.CONTROL_MODE,
                 CameraMetadata.CONTROL_AF_MODE_AUTO
             )
-            previewRequestBuilder!!.set(
+            previewRequestBuilder?.set(
                 CaptureRequest.CONTROL_AF_MODE,
                 CameraMetadata.CONTROL_AF_MODE_AUTO
             )
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                    captureSession!!.stopRepeating()
+                    captureSession?.stopRepeating()
                 }
-                captureSession!!.capture(
-                    previewRequestBuilder!!.build(),
-                    object : CaptureCallback() {
-                        override fun onCaptureCompleted(
-                            session: CameraCaptureSession,
-                            request: CaptureRequest,
-                            result: TotalCaptureResult
-                        ) {
-                            synchronized(lock) {
-                                callback.onAutoFocus(true, this@PfCameraImpl)
-                                disableAutoFocus()
+                previewRequestBuilder?.build()?.let { it ->
+                    captureSession?.capture(
+                        it,
+                        object : CaptureCallback() {
+                            override fun onCaptureCompleted(
+                                session: CameraCaptureSession,
+                                request: CaptureRequest,
+                                result: TotalCaptureResult
+                            ) {
+                                synchronized(lock) {
+                                    callback.onAutoFocus(true, this@PfCameraImpl)
+                                    disableAutoFocus()
+                                }
                             }
-                        }
 
-                        override fun onCaptureFailed(
-                            session: CameraCaptureSession,
-                            request: CaptureRequest,
-                            failure: CaptureFailure
-                        ) {
-                            synchronized(lock) {
-                                callback.onAutoFocus(false, this@PfCameraImpl)
-                                disableAutoFocus()
+                            override fun onCaptureFailed(
+                                session: CameraCaptureSession,
+                                request: CaptureRequest,
+                                failure: CaptureFailure
+                            ) {
+                                synchronized(lock) {
+                                    callback.onAutoFocus(false, this@PfCameraImpl)
+                                    disableAutoFocus()
+                                }
                             }
-                        }
 
-                        private fun disableAutoFocus() {
-                            previewRequestBuilder!!.set(
-                                CaptureRequest.CONTROL_AF_TRIGGER,
-                                CameraMetadata.CONTROL_AF_TRIGGER_IDLE
-                            )
-                            try {
-                                captureSession!!.setRepeatingRequest(
-                                    previewRequestBuilder!!.build(),
-                                    null,
-                                    backgroundHandler
+                            private fun disableAutoFocus() {
+                                previewRequestBuilder?.set(
+                                    CaptureRequest.CONTROL_AF_TRIGGER,
+                                    CameraMetadata.CONTROL_AF_TRIGGER_IDLE
                                 )
-                            } catch (e: CameraAccessException) {
-                                val message = "disable auto focus failed"
-
+                                try {
+                                    previewRequestBuilder?.build()?.let {
+                                        captureSession?.setRepeatingRequest(
+                                            it,
+                                            null,
+                                            backgroundHandler
+                                        )
+                                    }
+                                } catch (e: CameraAccessException) {
+                                    //DO Nothing
+                                }
                             }
-                        }
-                    },
-                    backgroundHandler
-                )
+                        },
+                        backgroundHandler
+                    )
+                }
             } catch (e: CameraAccessException) {
                 callback.onAutoFocus(false, this)
 
@@ -448,11 +471,11 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
         synchronized(lock) {
             previewCallback = null
             if (previewImageReader != null) {
-                previewImageReader!!.close()
+                previewImageReader?.close()
                 previewImageReader = null
             }
             if (cameraDevice != null) {
-                cameraDevice!!.close()
+                cameraDevice?.close()
                 cameraDevice = null
             }
         }
@@ -589,7 +612,7 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
                     cropW -= cropW and 3
                     cropH -= cropH and 3
                     val zoom = Rect(cropW, cropH, m.width() - cropW, m.height() - cropH)
-                    previewRequestBuilder!!.set(CaptureRequest.SCALER_CROP_REGION, zoom)
+                    previewRequestBuilder?.set(CaptureRequest.SCALER_CROP_REGION, zoom)
                 }
                 fingerSpacing = current_finger_spacing
             } else {
@@ -598,8 +621,10 @@ class PfCameraImpl private constructor(builder: Builder) : PfCamera() {
                 }
             }
             try {
-                captureSession
-                    ?.setRepeatingRequest(previewRequestBuilder!!.build(),null, null)
+                previewRequestBuilder?.let {
+                    captureSession
+                        ?.setRepeatingRequest(it.build(),null, null)
+                }
 
             } catch (e: CameraAccessException) {
                //Do Nothing
