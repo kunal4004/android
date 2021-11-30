@@ -311,4 +311,13 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     fun switchToDepartmentTab(){
         viewpager_main.currentItem = 0
     }
+
+    fun refreshCategories() {
+        when (viewpager_main.currentItem) {
+            0 -> {
+                val detailsFragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+                detailsFragment?.reloadRequest()
+            }
+        }
+    }
 }

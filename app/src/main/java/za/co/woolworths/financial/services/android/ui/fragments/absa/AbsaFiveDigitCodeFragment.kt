@@ -60,7 +60,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         edtEnterATMPin?.movementMethod = null
         edtEnterATMPin?.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
                 handled = true
                 navigateToConfirmFiveDigitCodeFragment()
             }

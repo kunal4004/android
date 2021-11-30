@@ -51,6 +51,10 @@ class AppConstant {
         const val VTO_COLOR_LIVE_CAMERA = "color_match"
         const val VTO =  "Virtual Try On"
 
+        //Absa cookie content
+        const val ABSA_COOKIE_WFPT = "wfpt"
+        const val ABSA_COOKIE_XFPT = "xfpt"
+
         const val EMPTY_STRING = ""
         const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
         const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15

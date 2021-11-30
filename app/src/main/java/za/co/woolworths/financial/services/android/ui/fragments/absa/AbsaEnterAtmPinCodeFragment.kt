@@ -13,13 +13,8 @@ import android.view.View.*
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import com.android.volley.NoConnectionError
-import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
-import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
-import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
@@ -34,11 +29,15 @@ import za.co.woolworths.financial.services.android.util.AsteriskPasswordTransfor
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.fragment.app.viewModels
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
+import za.co.woolworths.financial.services.android.ui.fragments.integration.viewmodel.AbsaIntegrationViewModel
 
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
     private lateinit var mActivityResultLaunch: ActivityResultLauncher<Intent>
     private var mCreditCardToken: String? = ""
+    private val mViewModel: AbsaIntegrationViewModel by viewModels()
 
     companion object {
         const val MAXIMUM_PIN_ALLOWED: Int = 3
@@ -78,8 +77,81 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
                 }
             }
         }
+
+        absaApiResultObservers()
     }
 
+    private fun absaApiResultObservers() {
+        with(mViewModel) {
+            failureHandler.observe(viewLifecycleOwner, { failure ->
+                progressIndicator(GONE)
+                clearPin()
+                when (failure) {
+                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.ValidateCardAndPinStatusCodeInvalid -> {
+                        onFailureHandler(failure.message?: "",failure.isActivityRunning)
+                    }
+
+                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.ValidateSureCheckStatusCodeInvalid -> {
+                        onFailureHandler(failure.message?: "",false)
+                    }
+
+                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckContinuePolling -> {
+                        onFailureHandler(failure.message?: "",failure.isActivityRunning)
+                    }
+
+                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckFailedMessage -> {
+                        onFailureHandler(failure.message?: "",failure.isActivityRunning)
+                    }
+                    is AbsaApiFailureHandler.HttpException -> {
+                        showErrorScreen(ErrorHandlerActivity.COMMON)
+                    }
+                    is AbsaApiFailureHandler.NoInternetApiFailure -> activity?.let {
+                        ErrorHandlerView(it).showToast()  }
+
+                    is AbsaApiFailureHandler.AppServerFailure.GeneralFailure -> {
+                        showErrorScreen(ErrorHandlerActivity.COMMON)
+                    }
+
+                    else -> return@observe
+                }
+            })
+
+            cellNumber.observe(viewLifecycleOwner,
+                { cellNumber ->
+                    replaceFragment(fragment = AbsaOTPConfirmationFragment.newInstance(cellNumber, mCreditCardToken),
+                        tag = AbsaOTPConfirmationFragment::class.java.simpleName,
+                        containerViewId = R.id.flAbsaOnlineBankingToDevice,
+                        allowStateLoss = true,
+                        enterAnimation = R.anim.slide_in_from_right,
+                        exitAnimation = R.anim.slide_to_left,
+                        popEnterAnimation = R.anim.slide_from_left,
+                        popExitAnimation = R.anim.slide_to_right
+                    )
+                })
+
+            isLoading.observe(viewLifecycleOwner, { isInProgress ->
+                pbEnterAtmPin?.visibility = when (isInProgress) {
+                    true -> VISIBLE
+                    else -> GONE
+                }
+            })
+
+            createAliasId.observe(viewLifecycleOwner, { aliasId ->
+                aliasId?.let { aliasID ->
+                    replaceFragment(
+                        fragment = AbsaFiveDigitCodeFragment.newInstance(aliasID, mCreditCardToken),
+                        tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
+                        containerViewId = R.id.flAbsaOnlineBankingToDevice,
+                        allowStateLoss = true,
+                        enterAnimation = R.anim.slide_in_from_right,
+                        exitAnimation = R.anim.slide_to_left,
+                        popEnterAnimation = R.anim.slide_from_left,
+                        popExitAnimation = R.anim.slide_to_right
+                    )
+                }
+            })
+        }
+    }
 
     private fun initViewsAndEvents() {
         activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
@@ -110,14 +182,14 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
         if ((edtEnterATMPin.length() - 1) >= MAXIMUM_PIN_ALLOWED && pbEnterAtmPin.visibility != VISIBLE) {
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
-                progressIndicator(VISIBLE)
-                mCreditCardToken?.let { creditCardNumber -> ValidateATMPinCode(creditCardNumber, pinCode, this).make() }
+                mViewModel.fetchAbsaContentEncryptionKeyId(pinCode,mCreditCardToken)
            }
         }
     }
 
     private fun progressIndicator(state: Int) {
         pbEnterAtmPin?.visibility = state
+        mViewModel.inProgress(false)
         activity?.let { pbEnterAtmPin?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
     }
 
@@ -189,22 +261,11 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
     }
 
     override fun onSuccessHandler(aliasID: String) {
-        replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(aliasID,mCreditCardToken),
-                tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
-                containerViewId = R.id.flAbsaOnlineBankingToDevice,
-                allowStateLoss = true,
-                enterAnimation = R.anim.slide_in_from_right,
-                exitAnimation = R.anim.slide_to_left,
-                popEnterAnimation = R.anim.slide_from_left,
-                popExitAnimation = R.anim.slide_to_right
-        )
+
     }
 
     override fun onFailureHandler(responseMessage: String, dismissActivity: Boolean) {
         // Navigate back to credit card screen when resultMessage is failed or rejected.
-        cancelRequest()
-        progressIndicator(INVISIBLE)
         clearPin()
 
         activity?.apply {
@@ -230,10 +291,10 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
 
     }
 
-    override fun onFatalError(error: VolleyError?) {
+    override fun onFatalError() {
         progressIndicator(GONE)
         clearPin()
-        if (error is NoConnectionError) ErrorHandlerView(activity).showToast() else showErrorScreen(ErrorHandlerActivity.COMMON)
+        showErrorScreen(ErrorHandlerActivity.COMMON)
     }
 
     override fun onResume() {
@@ -246,17 +307,6 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
             text.clear()
             showKeyboard(this)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cancelRequest()
-    }
-
-    private fun cancelRequest() {
-        cancelVolleyRequest(AbsaValidateCardAndPinRequest::class.java.simpleName)
-        cancelVolleyRequest(AbsaValidateSureCheckRequest::class.java.simpleName)
-        cancelVolleyRequest(AbsaCreateAliasRequest::class.java.simpleName)
     }
 
     private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
@@ -278,18 +328,5 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
                 }
             }
         }
-    }
-
-    override fun onSuccessOFOTPSureCheck(userCellNumber: String?) {
-        replaceFragment(
-                fragment = AbsaOTPConfirmationFragment.newInstance(userCellNumber,mCreditCardToken),
-                tag = AbsaOTPConfirmationFragment::class.java.simpleName,
-                containerViewId = R.id.flAbsaOnlineBankingToDevice,
-                allowStateLoss = true,
-                enterAnimation = R.anim.slide_in_from_right,
-                exitAnimation = R.anim.slide_to_left,
-                popEnterAnimation = R.anim.slide_from_left,
-                popExitAnimation = R.anim.slide_to_right
-        )
     }
 }

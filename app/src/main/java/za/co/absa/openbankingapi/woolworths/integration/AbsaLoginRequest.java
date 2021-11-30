@@ -69,39 +69,34 @@ public class AbsaLoginRequest {
 			FirebaseManager.Companion.logException(e);
 		}
 
-		new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<LoginResponse>() {
-
-			@Override
-			public void onResponse(LoginResponse loginResponse, List<HttpCookie> cookies) {
-				final String nonce = loginResponse.getNonce();
-				final String resultMessage = loginResponse.getResultMessage();
-				String statusCode = "0";
-				try {
-					statusCode = loginResponse.getHeader().getStatusCode();
-				} catch (Exception e) {
-					FirebaseManager.Companion.logException(e);
-				}
-
-				if (resultMessage == null && nonce != null && !nonce.isEmpty() && cookies != null && statusCode.equalsIgnoreCase("0")) {
-					for (HttpCookie cookie : cookies) {
-						if (cookie.getName().equalsIgnoreCase("jsessionid"))
-							jsessionCookie = new JSession(cookie.getName(), cookie);
-						else if (cookie.getName().equalsIgnoreCase("wfpt"))
-							wfpt = new JSession(cookie.getName(), cookie);
-						else if (cookie.getName().equalsIgnoreCase("xfpt"))
-							xfpt = new JSession(cookie.getName(), cookie);
-					}
-					responseDelegate.onSuccess(loginResponse, cookies);
-					//clearing up sensitive values
-					sessionKey = null;
-				}
-
-				else {
-					responseDelegate.onFailure(resultMessage);
-					//clearing up sensitive values
-					sessionKey = null;
-				}
+		new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, (loginResponse, cookies) -> {
+			final String nonce = loginResponse.getNonce();
+			final String resultMessage = loginResponse.getResultMessage();
+			String statusCode = "0";
+			try {
+				statusCode = loginResponse.getHeader().getStatusCode();
+			} catch (Exception e) {
+				FirebaseManager.Companion.logException(e);
 			}
+
+			if (resultMessage == null && nonce != null && !nonce.isEmpty() && cookies != null && statusCode.equalsIgnoreCase("0")) {
+				for (HttpCookie cookie : cookies) {
+					if (cookie.getName().equalsIgnoreCase("jsessionid"))
+						jsessionCookie = new JSession(cookie.getName(), cookie);
+					else if (cookie.getName().equalsIgnoreCase("wfpt"))
+						wfpt = new JSession(cookie.getName(), cookie);
+					else if (cookie.getName().equalsIgnoreCase("xfpt"))
+						xfpt = new JSession(cookie.getName(), cookie);
+				}
+				responseDelegate.onSuccess(loginResponse, cookies);
+				//clearing up sensitive values
+			}
+
+			else {
+				responseDelegate.onFailure(resultMessage);
+				//clearing up sensitive values
+			}
+			sessionKey = null;
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
