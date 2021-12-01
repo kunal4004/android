@@ -1,13 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.utils
 
-import android.util.Base64
-import android.util.Log
+
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import org.json.JSONException
 import org.json.JSONObject
-import za.co.absa.openbankingapi.DecryptionFailureException
-import za.co.absa.openbankingapi.SymmetricCipher
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaResultWrapper
@@ -24,8 +21,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.serv
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.validate_card_and_pin.ValidateCardAndPinResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.validate_sure_checks.ValidateSureCheckResponseProperty
 import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.FirebaseManager
-import java.util.*
 import kotlin.reflect.KClass
 
 class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFromNetwork: NetworkState<Any>, private val typeParameterClass:KClass<W>, private val outputResult: (Any?) -> Unit) : IAbsaApiResponseWrapper {
@@ -45,8 +40,6 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
                                 var proxyPayload = proxy.payload
 
                                 proxyPayload = decryptedPayloadInStringFormat(isResponseBodyEncrypted, proxyPayload)
-                                Log.e("payloadxda", typeParameterClass.java.simpleName +" -000- "+ proxyPayload)
-
                                 try {
                                     val payloadJSONObject = JSONObject(proxyPayload ?: "")
                                     saveKeyId(payloadJSONObject)
@@ -54,9 +47,10 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
 
                                     outputResult(handleAbsaStatusCode(proxyPayload))
                                 } catch (e: JSONException){
-                                    outputResult( when(proxy.payload?.lowercase()?.contains(DOC_TYPE)) {
+                                    val proxyPayloadResult = proxy.payload
+                                    outputResult( when(proxyPayloadResult?.lowercase()?.contains(DOC_TYPE)) {
                                         true -> AbsaResultWrapper.Section.ListStatement.IndividualStatusCodeValid()
-                                        else -> decryptAes256BodyToByteArray(proxy.payload)
+                                        else ->proxyPayloadResult?.toAes256DecryptBase64BodyToByteArray()
                                     })
                             }
 
@@ -80,22 +74,6 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
         }
     }
 
-    private fun decryptAes256BodyToByteArray(bodyParams: String?): ByteArray? {
-        val derivedSeed = AbsaTemporaryDataSourceSingleton.deriveSeeds
-        val response = Base64.decode(bodyParams, Base64.DEFAULT)
-        val ivForDecrypt = Arrays.copyOfRange(response, 0, 16)
-        val encryptedResponse = Arrays.copyOfRange(response, 16, response.size)
-        try {
-            return SymmetricCipher.Aes256Decrypt(
-                derivedSeed,
-                encryptedResponse,
-                ivForDecrypt
-            )
-        } catch (e: DecryptionFailureException) {
-            FirebaseManager.logException(e)
-        }
-        return null
-    }
 
     override fun decryptedPayloadInStringFormat(isResponseBodyEncrypted: Boolean, payload: String?): String? {
         return when (isResponseBodyEncrypted) {
@@ -177,9 +155,7 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
                             AbsaResultWrapper.Section.Login.StatusCodeValid(this)
                         }
                         false -> AbsaResultWrapper.Section.Login.StatusCodeInValid(
-                            AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaLoginStatusCode(
-                                setErrorMessage(header)
-                            )
+                            AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaLoginStatusCode(resultMessage ?: bindString(R.string.absa_technical_error_occurred))
                         )
                     }
                 }

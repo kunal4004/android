@@ -1,13 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.utils
 
+import android.util.Base64
 import retrofit2.HttpException
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper
+import za.co.absa.openbankingapi.DecryptionFailureException
+import za.co.absa.openbankingapi.SymmetricCipher
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.Aes256DecryptSymmetricCipherDelegate
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.Aes256EncryptSymmetricCipherDelegate
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.model.AbsaProxyResponseProperty
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import java.util.*
 
 fun resultOf(absaProxyResponseProperty: AbsaProxyResponseProperty): NetworkState<AbsaProxyResponseProperty> {
     return when (NetworkManager.getInstance().isConnectedToNetwork(WoolworthsApplication.getAppContext())) {
@@ -48,4 +53,22 @@ fun String.toAes256Decrypt(): String {
     var decrypt: String? by Aes256DecryptSymmetricCipherDelegate()
     decrypt = this
     return decrypt ?: ""
+}
+
+
+fun String.toAes256DecryptBase64BodyToByteArray(): ByteArray? {
+    val derivedSeed = AbsaTemporaryDataSourceSingleton.deriveSeeds
+    val response = Base64.decode(this, Base64.DEFAULT)
+    val ivForDecrypt = Arrays.copyOfRange(response, 0, 16)
+    val encryptedResponse = Arrays.copyOfRange(response, 16, response.size)
+    try {
+        return SymmetricCipher.Aes256Decrypt(
+            derivedSeed,
+            encryptedResponse,
+            ivForDecrypt
+        )
+    } catch (e: DecryptionFailureException) {
+        FirebaseManager.logException(e)
+    }
+    return null
 }

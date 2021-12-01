@@ -390,8 +390,8 @@ class AbsaIntegrationViewModel : ViewModel() {
     }
 
     fun clearAliasIdAndCellphoneNumber(){
-        _cellNumber.value = null
-        _createAliasId.postValue(null)
+            _cellNumber.postValue(null)
+            _createAliasId.postValue(null)
     }
 
     private fun failureHandler(appFailureHandler: AbsaApiFailureHandler?){

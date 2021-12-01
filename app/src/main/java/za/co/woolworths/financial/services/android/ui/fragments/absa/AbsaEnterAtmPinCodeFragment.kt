@@ -128,6 +128,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
                             popEnterAnimation = R.anim.slide_from_left,
                             popExitAnimation = R.anim.slide_to_right
                         )
+                        clearAliasIdAndCellphoneNumber()
+                        inProgress(false)
                     }
                 })
 
@@ -150,6 +152,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
                         popEnterAnimation = R.anim.slide_from_left,
                         popExitAnimation = R.anim.slide_to_right
                     )
+                    clearAliasIdAndCellphoneNumber()
+                    inProgress(false)
                 }
             })
         }
