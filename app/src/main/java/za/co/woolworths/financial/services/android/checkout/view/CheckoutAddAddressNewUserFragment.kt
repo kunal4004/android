@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.annotation.NonNull
-import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -57,7 +56,6 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
@@ -723,41 +721,43 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun showWhereAreWeDeliveringView() {
-        for ((index, options) in deliveringOptionsList!!.withIndex()) {
-            val view = View.inflate(context, R.layout.where_are_we_delivering_items, null)
-            val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
-            titleTextView?.tag = index
-            titleTextView?.text = options
-            if (!selectedDeliveryAddressType.isNullOrEmpty() && selectedDeliveryAddressType.equals(
-                    options
-                )
-            ) {
-                selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
-                titleTextView?.background =
-                    bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                titleTextView?.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
+        if (!deliveringOptionsList.isNullOrEmpty()) {
+            for ((index, options) in deliveringOptionsList!!.withIndex()) {
+                val view = View.inflate(context, R.layout.where_are_we_delivering_items, null)
+                val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
+                titleTextView?.tag = index
+                titleTextView?.text = options
+                if (!selectedDeliveryAddressType.isNullOrEmpty() && selectedDeliveryAddressType.equals(
+                        options
                     )
-                )
-            }
-            titleTextView?.setOnClickListener {
-                resetOtherDeliveringTitle(it.tag as Int)
-                selectedDeliveryAddressType = (it as TextView).text as? String
-                selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
-                deliveringAddressTypesErrorMsg.visibility = View.GONE
-                // change background of selected textView
-                it.background =
-                    bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                it.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
+                ) {
+                    selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
+                    titleTextView?.background =
+                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                    titleTextView?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
                     )
-                )
+                }
+                titleTextView?.setOnClickListener {
+                    resetOtherDeliveringTitle(it.tag as Int)
+                    selectedDeliveryAddressType = (it as TextView).text as? String
+                    selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
+                    deliveringAddressTypesErrorMsg.visibility = View.GONE
+                    // change background of selected textView
+                    it.background =
+                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                    it.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                }
+                delivering_layout?.addView(view)
             }
-            delivering_layout?.addView(view)
         }
     }
 
