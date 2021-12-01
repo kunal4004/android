@@ -33,7 +33,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.serv
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.validate_sure_checks.ValidateSureCheckResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiResponse
-import java.io.ByteArrayInputStream
 import java.util.concurrent.ScheduledFuture
 
 class AbsaIntegrationViewModel : ViewModel() {
@@ -364,15 +363,14 @@ class AbsaIntegrationViewModel : ViewModel() {
             AbsaApiResponse(
                 true,
                 fetchIndividualStatement,
-                ByteArrayInputStream::class
+                ByteArray::class
             ) { resultWrapper ->
                 when (resultWrapper) {
                     is AbsaResultWrapper.Loading -> inProgress(true)
                     is AbsaResultWrapper.Failure -> _failureHandler.postValue(resultWrapper.failure)
-                    is AbsaResultWrapper.Section.ListStatement.StatusCodeInValid -> _failureHandler.postValue(resultWrapper.failure)
-                    is AbsaResultWrapper.Section.ListStatement.IndividualStatusCodeValid -> _individualStatementResponseProperty.postValue(resultWrapper.response)
-                    is ByteArray -> _individualStatementResponseProperty.postValue(this)
-                }
+                    is AbsaResultWrapper.Section.IndividualStatement.StatusCodeInValid -> _failureHandler.postValue(resultWrapper.failure)
+                    is AbsaResultWrapper.Section.ListStatement.IndividualStatusCodeValid -> _failureHandler.postValue(AbsaApiFailureHandler.FeatureValidateCardAndPin.LoadPdfError)
+                    is ByteArray -> _individualStatementResponseProperty.postValue(resultWrapper)                }
                 inProgress(false)
             }
         }
