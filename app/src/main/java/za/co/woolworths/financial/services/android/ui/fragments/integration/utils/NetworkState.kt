@@ -36,6 +36,7 @@ sealed class AbsaApiFailureHandler {
         class InvalidValidateSureCheckContinuePolling(var message: String ?, var isActivityRunning: Boolean) : FeatureValidateCardAndPin()
         class InvalidAliasIdStatusCode(var message: String ?, var isActivityRunning: Boolean = false) : FeatureValidateCardAndPin()
         class InvalidAbsaRegisterCredentialStatusCode(var message: String?, var errorCode: Int? = null) : FeatureValidateCardAndPin()
+        class InvalidAbsaLoginStatusCode(var message: String?, var errorCode: Int? = null) : FeatureValidateCardAndPin()
     }
 
     sealed class FeatureRegisterCredentials: AbsaApiFailureHandler(){

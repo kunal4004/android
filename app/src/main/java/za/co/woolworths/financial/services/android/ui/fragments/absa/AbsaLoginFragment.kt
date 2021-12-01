@@ -84,9 +84,8 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                         ErrorHandlerView(activity).showToast()
                         activity?.apply { FirebaseEventDetailManager.network(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
                     }
-                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaRegisterCredentialStatusCode -> {
+                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaLoginStatusCode -> {
                         activity?.apply { FirebaseEventDetailManager.pin(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS, this) }
-                        showErrorScreen(ErrorHandlerActivity.COMMON)
                         failureHandler(failure.message)
                     }
                 }

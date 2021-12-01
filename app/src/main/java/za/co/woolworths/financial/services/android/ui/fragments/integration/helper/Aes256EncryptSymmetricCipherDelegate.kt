@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.helper
 
 import android.util.Base64
+import android.util.Log
 import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.KeyGenerationFailureException
 import za.co.absa.openbankingapi.SessionKey
@@ -23,6 +24,7 @@ class Aes256EncryptSymmetricCipherDelegate : ReadWriteProperty<Any?, String?> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): String? = bodyProperty
 
     private fun encryptAes256Body(body: String?): String? {
+        Log.d("payloadxda", "encryp\n$body\n")
         var encryptionResult: String? = null
     val outputStream = ByteArrayOutputStream()
     var iv: ByteArray? = null

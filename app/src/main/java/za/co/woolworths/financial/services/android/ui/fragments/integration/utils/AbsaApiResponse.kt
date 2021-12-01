@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.utils
 
+import android.util.Log
 import com.awfs.coordination.R
-import com.google.common.io.ByteStreams
 import com.google.gson.Gson
 import org.json.JSONException
 import org.json.JSONObject
@@ -21,8 +21,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.serv
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.validate_card_and_pin.ValidateCardAndPinResponseProperty
 import za.co.woolworths.financial.services.android.ui.fragments.integration.service.validate_sure_checks.ValidateSureCheckResponseProperty
 import za.co.woolworths.financial.services.android.util.AppConstant
-import java.lang.Exception
-import java.nio.charset.Charset
 import kotlin.reflect.KClass
 
 class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFromNetwork: NetworkState<Any>, private val typeParameterClass:KClass<W>, private val outputResult: (Any?) -> Unit) : IAbsaApiResponseWrapper {
@@ -40,6 +38,7 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
 
                                 proxyPayload = decryptedPayloadInStringFormat(isResponseBodyEncrypted, proxyPayload)
 
+                                Log.e("payloadxda", typeParameterClass.java.simpleName +" -000- "+ proxyPayload)
                                 try {
                                     val payloadJSONObject = JSONObject(proxyPayload ?: "")
                                     saveKeyId(payloadJSONObject)
@@ -150,7 +149,7 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
                             AbsaResultWrapper.Section.Login.StatusCodeValid(this)
                         }
                         false -> AbsaResultWrapper.Section.Login.StatusCodeInValid(
-                            AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaRegisterCredentialStatusCode(
+                            AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidAbsaLoginStatusCode(
                                 setErrorMessage(header)
                             )
                         )

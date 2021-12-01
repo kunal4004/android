@@ -145,7 +145,7 @@ class AbsaIntegrationViewModel : ViewModel() {
         with(absaValidateCardAndPinDelegate) {
             mScheduleValidateSureCheck = schedulePollingWithFixedDelay {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheck(securityNotificationType, null)
+                    val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheck(securityNotificationType)
                     AbsaApiResponse(true, fetchAbsaValidateSureCheck, ValidateSureCheckResponseProperty::class) { result ->
                         when(result){
                            is AbsaResultWrapper.Loading -> inProgress(true)
@@ -214,7 +214,7 @@ class AbsaIntegrationViewModel : ViewModel() {
     fun fetchValidateSureCheckForOTP(otpToBeVerified : String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             with(absaValidateCardAndPinDelegate) {
-                val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheck(SecurityNotificationType.OTP, otpToBeVerified)
+                val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheckOTP(SecurityNotificationType.OTP, otpToBeVerified)
                 AbsaApiResponse(true, fetchAbsaValidateSureCheck, ValidateSureCheckResponseProperty::class) { result ->
                     when (result) {
                         is AbsaResultWrapper.Loading -> inProgress(true)
@@ -389,6 +389,11 @@ class AbsaIntegrationViewModel : ViewModel() {
 
     fun inProgress(state: Boolean) {
         _isLoading.postValue(state)
+    }
+
+    fun clearAliasIdAndCellphoneNumber(){
+        _cellNumber.value = null
+        _createAliasId.postValue(null)
     }
 
     private fun failureHandler(appFailureHandler: AbsaApiFailureHandler?){
