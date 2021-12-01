@@ -60,13 +60,13 @@ public class Configs {
     @Nullable
     public InAppReview inAppReview;
     @Nullable
-    public BalanceProtectionInsurance balanceProtectionInsurance;
-    @Nullable
     public CustomerFeedback customerFeedback;
     @Nullable
     public AccountOptions accountOptions;
     @Nullable
     public DeviceSecurity deviceSecurity;
+    @Nullable
+    public BalanceProtectionInsuranceObject balanceProtectionInsurance;
     @Nullable
     public VirtualTryOn virtualTryOn;
 }

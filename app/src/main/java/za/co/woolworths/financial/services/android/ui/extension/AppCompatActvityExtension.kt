@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderVi
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.ui.views.SafeClickListener
+import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 /**
  * Method to add the fragment. The [fragment] is added to the container view with id
@@ -433,5 +434,12 @@ fun NavController.navigateUpOrFinish(activity: AppCompatActivity?): Boolean {
  */
 fun isAWSAmplifyConfigured() = Amplify.API.plugins.isEmpty()
         &&  Amplify.Auth.plugins.isEmpty()
+
+fun View.onClick(result: (View) -> Unit) {
+    AnimationUtilExtension.animateViewPushDown(this)
+    setOnClickListener{
+        result(it)
+    }
+}
 
 inline fun <reified T : Any> T.json(): String = GsonBuilder().disableHtmlEscaping().create().toJson(this, T::class.java)

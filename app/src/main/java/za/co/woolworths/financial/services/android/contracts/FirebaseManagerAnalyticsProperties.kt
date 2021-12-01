@@ -332,6 +332,20 @@ open class FirebaseManagerAnalyticsProperties {
 
         //Sunsetting and Splash screen
         const val SPLASH_BTN = "splash_"
+
+
+        //Bpi insurance lead generation
+        const val SC_BPI_OPT_IN_START: String = "sc_bpi_optin_start"
+        const val SC_BPI_OPT_IN_CONFIRM: String = "sc_bpi_optin_confirm"
+        const val SC_BPI_OPT_IN_SEND_EMAIL: String = "sc_bpi_send_email"
+
+        const val PL_BPI_OPT_IN_START: String = "pl_bpi_optin_start"
+        const val PL_BPI_OPT_IN_CONFIRM: String = "pl_bpi_optin_confirm"
+        const val PL_BPI_OPT_IN_SEND_EMAIL: String = "pl_bpi_send_email"
+
+        const val CC_BPI_OPT_IN_START: String = "cc_bpi_optin_start"
+        const val CC_BPI_OPT_IN_CONFIRM: String = "cc_bpi_optin_confirm"
+        const val CC_BPI_OPT_IN_SEND_EMAIL: String = "cc_bpi_send_email"
     }
 
     class PropertyNames {
@@ -408,6 +422,17 @@ open class FirebaseManagerAnalyticsProperties {
         companion object {
             const val NOT_APPLICABLE: String = "N/A"
 
+            const val SC_BPI_OPT_IN_START_VALUE = "Store Card Landing - BPI - Opt-in"
+            const val SC_BPI_OPT_IN_CONFIRM_VALUE = "Store Card Landing - BPI - Confirm"
+            const val SC_BPI_OPT_IN_SEND_EMAIL_VALUE = "Store Card Landing - BPI - Send Email"
+
+            const val CC_BPI_OPT_IN_START_VALUE = "Credit Card Landing - BPI - Opt-in"
+            const val CC_BPI_OPT_IN_CONFIRM_VALUE = "Credit Card Landing - BPI - Confirm"
+            const val CC_BPI_OPT_IN_SEND_EMAIL_VALUE = "Credit Card Landing - BPI - Send Email"
+
+            const val PL_BPI_OPT_IN_START_VALUE = "Personal Loan Landing - BPI - Opt-in"
+            const val PL_BPI_OPT_IN_CONFIRM_VALUE = "Personal Loan Landing - BPI - Confirm"
+            const val PL_BPI_OPT_IN_SEND_EMAIL_VALUE = "Personal Loan Landing - BPI - Send Email"
             // Native Checkout
             const val ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY: String = "Customer selects the Delivery option"
             const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION: String = "Customer selects the Collections option"
