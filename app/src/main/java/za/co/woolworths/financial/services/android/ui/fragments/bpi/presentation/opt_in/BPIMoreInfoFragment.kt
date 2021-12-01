@@ -64,6 +64,7 @@ class BPIMoreInfoFragment : Fragment()  {
 
         BPIOptInCarouselFragment.htmlContent?.moreInformationHtml?.let {
             bpiMoreInfoWebView?.loadData(it, "text/html; charset=utf-8", null)
+            bpiMoreInfoWebView?.refreshDrawableState()
         }
 
         bpiCheckBox?.onClick {
@@ -112,7 +113,7 @@ class BPIMoreInfoFragment : Fragment()  {
                     activity?.apply {
                         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
                         builder
-                            .setTitle("test webview")
+                            .setTitle("test webview height: "+ view?.height)
                             .setMessage(url)
                             .setCancelable(true)
                             .setNegativeButton("Close") { dialog, _ ->
