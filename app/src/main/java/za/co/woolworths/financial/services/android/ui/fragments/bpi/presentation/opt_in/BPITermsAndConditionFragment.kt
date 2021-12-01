@@ -17,6 +17,7 @@ import com.huawei.hms.support.log.common.Base64
 import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
 import kotlinx.android.synthetic.main.bpi_email_sent_failure_layout.*
 import kotlinx.android.synthetic.main.bpi_email_sent_success_layout.*
+import kotlinx.android.synthetic.main.bpi_more_info_fragment.*
 import kotlinx.android.synthetic.main.bpi_terms_conditions_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -212,6 +213,7 @@ class BPITermsAndConditionFragment : Fragment()  {
 
         BPIOptInCarouselFragment.htmlContent?.termsAndConditionsHtml?.let {
             bpiTermsConditionsWebView?.loadData(it,"text/html; charset=utf-8", null)
+            bpiTermsConditionsWebView?.refreshDrawableState()
         }
     }
 
