@@ -280,7 +280,6 @@ public class ScreenManager {
         intent.putExtras(bundle);
         activity.startActivityForResult(intent, 0);
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        activity.finish();
     }
 
     private static void naviagteToMoreReviewsActivity(Activity activity, Bundle bundle) {
@@ -288,7 +287,6 @@ public class ScreenManager {
         intent.putExtras(bundle);
         activity.startActivityForResult(intent, 0);
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        activity.finish();
     }
 
     private static void naviagteToReportReviewActivity(Activity activity, ArrayList<String> reportReviews) {
@@ -296,6 +294,5 @@ public class ScreenManager {
         intent.putExtra(KotlinUtils.REVIEW_REPORT, reportReviews);
         activity.startActivityForResult(intent, 0);
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        activity.finish();
     }
 }

@@ -30,6 +30,9 @@ class ReportReviewFragment: Fragment() , ReportReviewsAdapter.ReportItemClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toolbar.setOnClickListener {
+            activity?.onBackPressed()
+        }
         arguments?.apply {
             val reportReviews = getStringArrayList(KotlinUtils.REVIEW_REPORT)
             reportReviews?.let {
@@ -55,7 +58,6 @@ class ReportReviewFragment: Fragment() , ReportReviewsAdapter.ReportItemClick {
             val fragmentManager = getSupportFragmentManager()
             val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
             fragmentTransaction.replace(R.id.content_main_frame, reportSuccessFragment!!)
-            fragmentTransaction.addToBackStack(null)
             fragmentTransaction.commit()
         }
     }
