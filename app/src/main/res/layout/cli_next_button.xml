@@ -28,7 +28,7 @@
             style="@style/blackButtonStyle"
             android:background="@drawable/button_disable_color"
             android:gravity="center"
-            android:text="@string/cli_continue"
+            android:text="@string/continueLabel"
             android:textColor="@color/text_color_selector"
             app:WButton_font="medium_bold"/>
     </RelativeLayout>

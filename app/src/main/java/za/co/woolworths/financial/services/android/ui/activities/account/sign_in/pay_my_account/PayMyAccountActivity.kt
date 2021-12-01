@@ -134,7 +134,7 @@ class PayMyAccountActivity : AppCompatActivity(), IPaymentOptionContract.PayMyAc
 
     val currentFragment: Fragment?
         get() = (supportFragmentManager.fragments.first()
-                as? NavHostFragment)?.childFragmentManager?.findFragmentById(R.id.payMyAccountNavHostFragmentContainerView)
+                as? NavHostFragment)?.childFragmentManager?.findFragmentByTag("bpiFragmentContainerViewTag")
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

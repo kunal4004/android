@@ -151,6 +151,10 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                     WoolworthsApplication.setDeviceSecurity(this)
                 }
 
+                balanceProtectionInsurance?.apply {
+                    WoolworthsApplication.setBalanceProtectionInsuranceObject(this)
+                }
+                
                 virtualTryOn?.apply {
                     minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                     WoolworthsApplication.getInstance().virtualTryOn = this
