@@ -2319,7 +2319,7 @@
 
     <!--  Rating and Review Feature -->
     <string name="percent_recommend_to_friend">%s Would recommend this product to a friend</string>
-    <string name="rating_details">Rating details</string>
+    <string name="rating_details">Ratings Details</string>
     <plurals name="no_review">
         <item quantity="one">%d Review</item>
         <item quantity="other">%d Reviews</item>
