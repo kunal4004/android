@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.common_toolbar.view.*
-import kotlinx.android.synthetic.main.fragment_more_reviews.*
+import kotlinx.android.synthetic.main.fragment_report_review_success.*
 
 class ReportSuccessFragment : Fragment() {
 
@@ -25,5 +24,8 @@ class ReportSuccessFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        btn_close.setOnClickListener {
+            activity?.onBackPressed()
+        }
     }
 }
