@@ -67,4 +67,6 @@ public class Configs {
     public DeviceSecurity deviceSecurity;
     @Nullable
     public BalanceProtectionInsuranceObject balanceProtectionInsurance;
+    @Nullable
+    public VirtualTryOn virtualTryOn;
 }

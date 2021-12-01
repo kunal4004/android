@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import dagger.hilt.android.HiltAndroidApp;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
@@ -70,6 +71,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
+import za.co.woolworths.financial.services.android.models.dto.VirtualTryOn;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
@@ -85,6 +87,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
 
+@HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
     private static Context context;
@@ -158,6 +161,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static AccountOptions accountOptions;
     private static DeviceSecurity deviceSecurity;
     private static BalanceProtectionInsuranceObject balanceProtectionInsurance;
+    private static VirtualTryOn virtualTryOn;
 
     private static String logPublicKey;
 
@@ -796,5 +800,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static BalanceProtectionInsuranceObject getBalanceProtectionInsuranceObject() {
         return balanceProtectionInsurance;
+    }
+
+    public void setVirtualTryOn(VirtualTryOn virtualTryOn) {
+        this.virtualTryOn = virtualTryOn;
+    }
+
+    public VirtualTryOn getVirtualTryOn() {
+        return virtualTryOn;
     }
 }
