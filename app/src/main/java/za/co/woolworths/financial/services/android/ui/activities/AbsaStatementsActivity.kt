@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
@@ -104,6 +105,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                 when(failure){
                     is AbsaApiFailureHandler.ListStatement.FacadeStatusCodeInvalid,
                     is AbsaApiFailureHandler.ListStatement.ArchiveStatusCodeInvalid -> showErrorView()
+                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.LoadPdfError -> KotlinUtils.showGeneralInfoDialog(supportFragmentManager, description = bindString(R.string.absa_statement_error_try_again_later))
                     else -> showErrorView()
                 }
             })
