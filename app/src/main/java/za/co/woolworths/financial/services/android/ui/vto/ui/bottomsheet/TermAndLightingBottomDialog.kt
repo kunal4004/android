@@ -26,7 +26,7 @@ class TermAndLightingBottomDialog @Inject constructor(
         val lightingTipMessage = WoolworthsApplication.getInstance()?.virtualTryOn?.lightingTipText
         val dialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
         val view = dialog.layoutInflater.inflate(R.layout.vto_term_and_lighting_bottom_dialog, null)
-        view.txtLightingTips.text = context.getString(R.string.lighting_tips)
+        view.txtLightingTips.text = context.getString(R.string.vto_try_it_on_tips)
         view.btnLightingGotIt.setOnClickListener {
 
             dialog.dismiss()
