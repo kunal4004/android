@@ -9,6 +9,7 @@ import android.view.*
 import android.widget.*
 import androidx.annotation.NonNull
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -69,6 +70,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SCREEN_NAME
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_SUBURB
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment.Companion.KEY_ARGS_UNSELLABLE_COMMERCE_ITEMS
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK_201
 import java.net.HttpURLConnection.HTTP_OK
@@ -150,10 +152,14 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     ?: getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
                 setHasOptionsMenu(true)
             } else if (containsKey(SAVED_ADDRESS_KEY)) {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_ADD_NEW_ADDRESS, hashMapOf(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_ADD_NEW_ADDRESS
-                ), activity)
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_ADD_NEW_ADDRESS,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_ADD_NEW_ADDRESS
+                    ),
+                    activity
+                )
                 savedAddressResponse = Utils.jsonStringToObject(
                     getString(SAVED_ADDRESS_KEY),
                     SavedAddressResponse::class.java
@@ -408,10 +414,14 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
             when (screenName) {
                 SCREEN_NAME_ADD_NEW_ADDRESS -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS, hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
-                    ), activity)
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
+                        ),
+                        activity
+                    )
                     savedAddressResponse?.defaultAddressNickname =
                         selectedAddress.savedAddress.nickname
                     view?.findNavController()?.navigate(
@@ -422,10 +432,14 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     )
                 }
                 SCREEN_NAME_EDIT_ADDRESS -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS, hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
-                    ), activity)
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
+                        ),
+                        activity
+                    )
                     setFragmentResult(
                         UPDATE_SAVED_ADDRESS_REQUEST_KEY, bundleOf(
                             SAVED_ADDRESS_KEY to savedAddressResponse
@@ -509,7 +523,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         for (address in place.addressComponents?.asList()!!) {
             when (address.types[0]) {
                 STREET_NUMBER.value -> addressText1 = address.name
-                ROUTE.value -> addressText2 = address.name
+                ROUTE.value -> addressText2 =
+                    if (!address.name.isNullOrEmpty()) address.name else addressText2
                 ADMINISTRATIVE_AREA_LEVEL_1.value -> {
                     selectedAddress.provinceName = address.name
                 }
@@ -525,13 +540,20 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
                 LOCALITY.value -> selectedAddress.provinceName = address.name
 
+                PREMISE.value -> {
+                    if (addressText2.isNullOrEmpty()) addressText2 = address.name
+                }
             }
         }
         if (!selectedAddress.provinceName.isNullOrEmpty() && !selectedAddress.savedAddress.suburb.isNullOrEmpty())
             selectedAddress.savedAddress.region = ""
         selectedAddress.savedAddress.apply {
-            address1 = if (place.name.isNullOrEmpty()) addressText1.plus(" ")
-                .plus(addressText2) else place.name
+            val tempAddress1 =
+                if (addressText1.isNullOrEmpty()) addressText2 else addressText1.plus(" ")
+                    .plus(addressText2)
+            val googlePlacesName = place.name
+            address1 =
+                if (googlePlacesName.isNullOrEmpty()) tempAddress1 else if (googlePlacesName.length > 50) tempAddress1 else googlePlacesName
             latitude = place.latLng?.latitude
             longitude = place.latLng?.longitude
             placesId = place.id
@@ -553,7 +575,11 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
 
         autoCompleteTextView.apply {
-            setText(selectedAddress.savedAddress.address1)
+            setText(
+                if (place.name.isNullOrEmpty()) selectedAddress.savedAddress.address1 else place.name
+            )
+            if (selectedAddress.savedAddress.address1.isNullOrEmpty())
+                showErrorDialog()
             setSelection(autoCompleteTextView.length())
             autoCompleteTextView.dismissDropDown()
         }
@@ -773,10 +799,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun deleteAddress() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELETE_ADDRESS, hashMapOf(
-            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELETE_ADDRESS
-        ), activity)
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELETE_ADDRESS, hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELETE_ADDRESS
+            ), activity
+        )
         loadingProgressBar.visibility = View.VISIBLE
         checkoutAddAddressNewUserViewModel.deleteAddress(selectedAddressId)
             .observe(viewLifecycleOwner, { response ->
@@ -900,10 +928,16 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun onSaveAddressClicked() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SAVE_ADDRESS, hashMapOf(
-            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SAVE_ADDRESS
-        ), activity)
+        if (selectedAddress.savedAddress.address1.isNullOrEmpty()) {
+            showErrorDialog()
+            return
+        }
+        Utils.triggerFireBaseEvents(
+            FirebaseManagerAnalyticsProperties.CHECKOUT_SAVE_ADDRESS, hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_SAVE_ADDRESS
+            ), activity
+        )
 
         if (cellphoneNumberEditText?.text.toString().trim().isNotEmpty()
             && cellphoneNumberEditText?.text.toString().trim().length < 10
@@ -1179,7 +1213,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         return AddAddressRequestBody(
             addressNicknameEditText?.text.toString().trim(),
             recipientNameEditText?.text.toString().trim(),
-            autoCompleteTextView?.text.toString().trim(),
+            (selectedAddress.savedAddress.address1 ?: "").toString().trim(),
             unitComplexFloorEditText?.text.toString().trim(),
             postalCode?.text.toString().trim(),
             cellphoneNumberEditText?.text.toString().trim(),
@@ -1349,6 +1383,21 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             R.id.action_CheckoutAddAddressNewUserFragment_to_ErrorHandlerBottomSheetDialog,
             bundle
         )
+    }
+
+    private fun showErrorDialog() {
+        FirebaseManager.logException(WoolworthsApplication.getNativeCheckout()?.googlePlacesAddressErrorMessage)
+        val dialog = ErrorDialogFragment.newInstance(
+            WoolworthsApplication.getNativeCheckout()?.googlePlacesAddressErrorMessage
+                ?: ""
+        )
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
+            ?.let { fragmentTransaction ->
+                dialog.show(
+                    fragmentTransaction,
+                    ErrorDialogFragment::class.java.simpleName
+                )
+            }
     }
 
     private fun navigateToAddressConfirmation() {

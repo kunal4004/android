@@ -6,7 +6,6 @@ package za.co.woolworths.financial.services.android.models.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import org.jetbrains.annotations.Nullable;
 
 public class PromotionImages {
 
@@ -28,4 +27,6 @@ public class PromotionImages {
     @SerializedName("reduced")
     @Expose
     public String reduced;
+
+
 }

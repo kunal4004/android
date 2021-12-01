@@ -104,4 +104,8 @@ public class ProductDetails {
 	public String colourSizeVariants;
 	@SerializedName("isLiquor")
 	public boolean isLiquor;
+	@SerializedName("virtualTryOn")
+	@Expose
+	public String virtualTryOn;
+
 }

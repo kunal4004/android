@@ -19,6 +19,7 @@ class FirebaseManager : IFirebaseManager {
             return instance
         }
 
+        @JvmStatic
         fun logException(e: Any?) {
             WFirebaseCrashlytics().logException(e)
         }

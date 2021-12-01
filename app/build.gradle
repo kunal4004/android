@@ -6,6 +6,7 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'com.google.gms.google-services'  // Google Services plugin
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
 
@@ -17,6 +18,9 @@ android {
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
+        enabled = true
+    }
+    viewBinding {
         enabled = true
     }
 
@@ -197,6 +201,11 @@ dependencies {
     implementation(name: 'utils-1.1.8', ext: 'aar')
     implementation(name: 'Logger-1', ext: 'aar')
 
+    //pf sdk
+    implementation(name: 'PerfectLibCore', ext: 'aar')
+    implementation(name: 'PerfectLibMakeup', ext: 'aar')
+    implementation(name: 'PerfectLibProductHandler', ext: 'aar')
+
     implementation 'io.jsonwebtoken:jjwt:0.9.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
@@ -206,7 +215,6 @@ dependencies {
 
     api 'com.google.zxing:android-core:3.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
-    //noinspection LifecycleAnnotationProcessorWithJava8
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.3.1'
     implementation 'me.relex:circleindicator:2.1.0@aar'
     implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
@@ -273,9 +281,14 @@ dependencies {
     testImplementation 'android.arch.core:core-testing:1.1.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test:rules:1.4.0-alpha04'
-
     //UI testing with Espresso
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0-alpha04'
+    //Data store
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    // Hilt DI
+    implementation "com.google.dagger:hilt-android:2.38.1"
+    kapt "com.google.dagger:hilt-android-compiler:2.37"
+
 }
 
 apply plugin: 'com.google.gms.google-services'
