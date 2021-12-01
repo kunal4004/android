@@ -2319,7 +2319,7 @@
     <string name="vto_try_on_desc">For the best experience, make sure that you are surrounded by multiple light sources with no harsh lighting spots, as these may cause dark shadows.</string>
     <string name="choose">Choose</string>
     <string name="vto_terms_conditions">Terms &amp; Conditions</string>
-    <string name="try_it_on_banner_txt">Wondering how a make-up shade would look on you? Click the <b><font color='#000000'>Try It On </font></b> tag and find out.</string>
+    <string name="try_it_on_banner_txt">Wondering how a make-up shade would look on you? Click the <b><font color='#000000'>Try It On </font></b>tag and find out.</string>
     <string name="vto_term_and_condition_desc">By using Virtual Try On, I consent to Woolworths processing my personal information, including but not limited to my image, as per the Woolworths privacy policy, and agree to the \n<u>Terms and Conditions</u></string>
     <string name="try_on_intro_txt">INTRODUCING VIRTUAL TRY ON</string>
     <string name="try_on_intro_desc">Use our new Try It On feature  to find out how our make-up shades will look on you.</string>
@@ -2338,6 +2338,7 @@
     <string name="vto_generic_error_description">Please try again.</string>
     <string name="actual_size">Actual Size</string>
     <string name="vto_color_selected_error">Oh no! That colour is unavailable to try on.</string>
+    <string name="vto_try_it_on_tips">Try It On Tips</string>
 
     <string name="blackCreditCard_title">Black Credit Card</string>
     <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
@@ -2369,5 +2370,5 @@
     <string name="please_try_again">Please try again.</string>
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
-
+    <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
 </resources>

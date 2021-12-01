@@ -25,25 +25,60 @@ sealed class AbsaApiFailureHandler {
      */
 
     sealed class AppServerFailure : AbsaApiFailureHandler() {
-        class SessionTimeout(var stsParams: String?, var errorCode: Int? = null) : AppServerFailure()
+        class SessionTimeout(var stsParams: String?, var errorCode: Int? = null) :
+            AppServerFailure()
+
         class GeneralFailure(var message: String?, var errorCode: Int? = null) : AppServerFailure()
     }
 
     sealed class FeatureValidateCardAndPin : AbsaApiFailureHandler() {
-        class ValidateCardAndPinStatusCodeInvalid(var message: String ?, var isActivityRunning: Boolean) : FeatureValidateCardAndPin()
-        class ValidateSureCheckStatusCodeInvalid(var message: String ?, var errorCode: Int? = null) : FeatureValidateCardAndPin()
-        class InvalidValidateSureCheckFailedMessage(var message: String ?, var isActivityRunning: Boolean) : FeatureValidateCardAndPin()
-        class InvalidValidateSureCheckContinuePolling(var message: String ?, var isActivityRunning: Boolean) : FeatureValidateCardAndPin()
-        class InvalidAliasIdStatusCode(var message: String ?, var isActivityRunning: Boolean = false) : FeatureValidateCardAndPin()
-        class InvalidAbsaRegisterCredentialStatusCode(var message: String?, var errorCode: Int? = null) : FeatureValidateCardAndPin()
+        data class ValidateCardAndPinStatusCodeInvalid(
+            var message: String?,
+            var isActivityRunning: Boolean
+        ) : FeatureValidateCardAndPin()
+
+        data class ValidateSureCheckStatusCodeInvalid(
+            var message: String?,
+            var errorCode: Int? = null
+        ) : FeatureValidateCardAndPin()
+
+        data class InvalidValidateSureCheckFailedMessage(
+            var message: String?,
+            var isActivityRunning: Boolean
+        ) : FeatureValidateCardAndPin()
+
+        data class InvalidValidateSureCheckContinuePolling(
+            var message: String?,
+            var isActivityRunning: Boolean
+        ) : FeatureValidateCardAndPin()
+
+        data class InvalidAliasIdStatusCode(
+            var message: String?,
+            var isActivityRunning: Boolean = false
+        ) : FeatureValidateCardAndPin()
+
+        data class InvalidAbsaRegisterCredentialStatusCode(
+            var message: String?,
+            var errorCode: Int? = null
+        ) : FeatureValidateCardAndPin()
+
+        data class InvalidAbsaLoginStatusCode(var message: String?, var errorCode: Int? = null) :
+            FeatureValidateCardAndPin()
+
+        object LoadPdfError : FeatureValidateCardAndPin()
     }
 
-    sealed class FeatureRegisterCredentials: AbsaApiFailureHandler(){
-        class StatusCodeInvalid(var message: String?, var errorCode: Int? = null) : FeatureRegisterCredentials()
+    sealed class FeatureRegisterCredentials : AbsaApiFailureHandler() {
+        data class StatusCodeInvalid(var message: String?, var errorCode: Int? = null) :
+            FeatureRegisterCredentials()
     }
-    sealed class ListStatement: AbsaApiFailureHandler(){
-        class FacadeStatusCodeInvalid(var message: String?, var errorCode: Int? = null) : ListStatement()
-        class ArchiveStatusCodeInvalid(var message: String?, var errorCode: Int? = null) : ListStatement()
+
+    sealed class ListStatement : AbsaApiFailureHandler() {
+        data class FacadeStatusCodeInvalid(var message: String?, var errorCode: Int? = null) :
+            ListStatement()
+
+        data class ArchiveStatusCodeInvalid(var message: String?, var errorCode: Int? = null) :
+            ListStatement()
     }
 
 }

@@ -86,7 +86,7 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
                 clearPin()
                 when (failure) {
                     is AbsaApiFailureHandler.NoInternetApiFailure -> ErrorHandlerView(activity).showToast()
-                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckContinuePolling -> {}
+                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckContinuePolling -> {showCommonError()}
                     is AbsaApiFailureHandler.HttpException -> handleFatalError(failure)
                     else -> showCommonError()
                 }

@@ -52,8 +52,12 @@ sealed class AbsaResultWrapper {
         sealed class ListStatement : Section() {
             data class FacadeStatusCodeValid(val response: AbsaBalanceEnquiryResponseProperty?) : ListStatement()
             data class ArchivedStatusCodeValid(val response: ArchivedStatementListResponseProperty?) : ListStatement()
-            data class IndividualStatusCodeValid(val response: IndividualStatementResponseProperty?) : ListStatement()
+            class IndividualStatusCodeValid() : ListStatement()
             data class StatusCodeInValid(val failure: AbsaApiFailureHandler?) : ListStatement()
+        }
+
+        sealed class IndividualStatement : Section() {
+            data class StatusCodeInValid(val failure: AbsaApiFailureHandler?) : IndividualStatement()
         }
     }
 

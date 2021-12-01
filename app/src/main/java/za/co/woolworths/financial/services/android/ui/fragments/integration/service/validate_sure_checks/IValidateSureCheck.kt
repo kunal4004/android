@@ -13,5 +13,6 @@ interface IValidateSureCheck {
     fun schedulePollingWithFixedDelay(func : () -> Unit): ScheduledFuture<*>?
     fun stopPolling(scheduledFuture: ScheduledFuture<*>?)
     fun createAbsaValidateSureCheckRequestProperty(securityNotificationType: SecurityNotificationType, otpToBeVerified: String?): ValidateSureCheckRequestProperty
-    suspend fun fetchAbsaValidateSureCheck(securityNotificationType: SecurityNotificationType?, otpToBeVerified: String? =null): NetworkState<AbsaProxyResponseProperty>
+    suspend fun fetchAbsaValidateSureCheck(securityNotificationType: SecurityNotificationType?): NetworkState<AbsaProxyResponseProperty>
+    suspend fun fetchAbsaValidateSureCheckOTP(securityNotificationType: SecurityNotificationType, otpToBeVerified: String?): NetworkState<AbsaProxyResponseProperty>
 }
