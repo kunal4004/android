@@ -67,6 +67,22 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
         }, AccountsResponse::class.java))
     }
 
+    fun fetchAccount(forceNetworkUpdate: Boolean, result: (AccountsResponse?) -> Unit, failure: (Throwable?) -> Unit) {
+        val oneAppService = OneAppService
+        mAccountRequest = oneAppService.getAccounts()
+        OneAppService.forceNetworkUpdate = forceNetworkUpdate
+        mAccountRequest?.enqueue(CompletionHandler(object : IResponseListener<AccountsResponse> {
+            override fun onSuccess(accountsResponse: AccountsResponse?) {
+                result(accountsResponse)
+            }
+
+            override fun onFailure(error: Throwable?) {
+                failure(error)
+            }
+
+        }, AccountsResponse::class.java))
+    }
+
     public fun getProductAccountHashMap(accountsResponse: AccountsResponse?): HashMap<Products, Account?> {
         val productsList = accountsResponse?.products
         val accountsList = accountsResponse?.accountList

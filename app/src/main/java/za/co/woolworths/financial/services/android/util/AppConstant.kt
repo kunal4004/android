@@ -45,10 +45,17 @@ class AppConstant {
 
         const val PLAY_STORE_URL ="https://play.google.com/store/apps/details?id="
 
+        //Absa cookie content
+        const val ABSA_COOKIE_WFPT = "wfpt"
+        const val ABSA_COOKIE_XFPT = "xfpt"
+
         const val EMPTY_STRING = ""
         const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
         const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15
 
+
+       const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
+        const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }

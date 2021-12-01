@@ -515,9 +515,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BalanceProtectionInsuranceStyle" />
+            android:theme="@style/BalanceProtectionInsuranceStyle"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="za.co.woolworths.financial.services.android.util.location.LocationPermissionActivity"
             android:launchMode="singleTask"
@@ -531,5 +533,11 @@
             android:theme="@style/VocStyle"
             android:windowSoftInputMode="adjustResize" />
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+        </intent>
+    </queries>
 
 </manifest>

@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRe
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -212,7 +213,11 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         KotlinUtils.avoidDoubleClicks(v)
         mCardPresenterImpl?.apply {
             when (v?.id) {
-                R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsurance()
+                R.id.balanceProtectionInsuranceView -> {
+                    if(bpiCoveredTextView?.text != bindString(R.string.status_in_progress)){
+                        navigateToBalanceProtectionInsurance()
+                    }
+                }
                 R.id.cardImageRootView -> navigateToTemporaryStoreCard()
                 R.id.debitOrderView -> navigateToDebitOrderActivity()
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
@@ -502,13 +507,31 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CREDIT_CARD_ACTIVATION -> {
+
+        when (requestCode){
+            AppConstant.BALANCE_PROTECTION_INSURANCE_REQUEST_CODE -> {
+                if (resultCode == AppConstant.BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE){
+                    val extras = data?.extras
+                    val response  = extras?.getString(BalanceProtectionInsuranceActivity.ACCOUNT_RESPONSE)
+                    val accounts = Gson().fromJson(response, Account::class.java)
+                    mCardPresenterImpl?.apply {
+                        showAccount(accounts)
+                    }
+                }
+            }
+
+            REQUEST_CREDIT_CARD_ACTIVATION -> {
+                if (resultCode == RESULT_OK) {
                     executeCreditCardTokenService()
                 }
             }
+
         }
+    }
+
+    private fun showAccount(accounts: Account?) {
+        val applyNowState =  mCardPresenterImpl?.mApplyNowAccountKeyPair?.first
+        mCardPresenterImpl?.refreshAccount(accounts)
     }
 
     private fun initCreditCardActivation() {

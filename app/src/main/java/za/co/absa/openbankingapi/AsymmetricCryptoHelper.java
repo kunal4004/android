@@ -18,6 +18,7 @@ import android.util.Base64;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -29,6 +30,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -37,10 +39,6 @@ public class AsymmetricCryptoHelper {
     private static final String CIPHER_ALGORITHM = "RSA/ECB/PKCS1Padding";
 
 
-    public final byte[] encryptSymmetricKey(byte[] symmetricKey, String pubKey) throws AsymmetricKeyGenerationFailureException, AsymmetricEncryptionFailureException {
-        PublicKey publicKey = loadPublicKey(pubKey);
-        return encrypt(publicKey, symmetricKey);
-    }
 
     private PublicKey loadPublicKey(String pubKey) throws AsymmetricKeyGenerationFailureException {
         try {
@@ -64,12 +62,34 @@ public class AsymmetricCryptoHelper {
         return assetManager.open(keyFile);
     }
 
+    public final byte[] encryptSymmetricKey(byte[] symmetricKey, String pubKey) throws AsymmetricKeyGenerationFailureException, AsymmetricEncryptionFailureException {
+        PublicKey publicKey = loadPublicKey(pubKey);
+        return encrypt(publicKey, symmetricKey);
+    }
+
+    public final String encryptToString(String symmetricKey, String pubKey) throws AsymmetricKeyGenerationFailureException, AsymmetricEncryptionFailureException {
+        PublicKey publicKey = loadPublicKey(pubKey);
+        return encryptedString(publicKey, symmetricKey);
+    }
+
     private byte[] encrypt(PublicKey publicKey, byte[] plainData) throws AsymmetricEncryptionFailureException {
         try {
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            byte[] cipherData = cipher.doFinal(plainData);
-            return cipherData;
+            return cipher.doFinal(plainData);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+                IllegalBlockSizeException | BadPaddingException e) {
+            FirebaseManager.Companion.logException(e);
+            throw new AsymmetricEncryptionFailureException(e);
+        }
+    }
+
+    private String encryptedString(PublicKey publicKey, String symmetricKey) throws AsymmetricEncryptionFailureException {
+        try {
+            Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            byte[] cipherData = cipher.doFinal(symmetricKey.getBytes(StandardCharsets.UTF_8));
+            return Base64.encodeToString(cipherData,Base64.NO_WRAP);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
                 IllegalBlockSizeException | BadPaddingException e) {
             FirebaseManager.Companion.logException(e);

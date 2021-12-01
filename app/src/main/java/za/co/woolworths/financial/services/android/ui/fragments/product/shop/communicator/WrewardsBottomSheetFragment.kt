@@ -61,19 +61,19 @@ class WrewardsBottomSheetFragment(activity: FragmentActivity?) : WBottomSheetDia
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.signUpButton -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_WREWARD_SIGN_UP,
-                    activity
-                )
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_WREWARD_SIGN_UP, hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SIGN_UP
+                ), activity)
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)
                 Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsLink())
             }
             R.id.addItNowButton -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_ALREADY_HAVE_WREWARD,
-                    activity
-                )
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_ALREADY_HAVE_WREWARD, hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_ADD_CARD
+                ), activity)
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)
                 ScreenManager.presentSSOLinkAccounts(activity)

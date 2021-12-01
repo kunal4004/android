@@ -69,7 +69,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferOutstanding(accountInfo?.first)
+        accountInfo?.first?.let { showProductOfferOutstanding(it) }
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -106,7 +106,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.BLACK_CREDIT_CARD -> resources?.getString(R.string.black_credit_card_title)
             ApplyNowState.GOLD_CREDIT_CARD -> resources?.getString(R.string.gold_credit_card_title)
             ApplyNowState.PERSONAL_LOAN -> resources?.getString(R.string.personal_loan)
-            else -> ""
         }
     }
 
@@ -121,7 +120,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
             ApplyNowState.SILVER_CREDIT_CARD-> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber!!
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber ?: 999
             }
         }
 
@@ -135,7 +134,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
             ApplyNowState.SILVER_CREDIT_CARD-> {
-                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle ?: 999
             }
         }
 
@@ -150,7 +149,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 true
             }
         }
-
 
         val account = getAccount()
         account?.apply {
