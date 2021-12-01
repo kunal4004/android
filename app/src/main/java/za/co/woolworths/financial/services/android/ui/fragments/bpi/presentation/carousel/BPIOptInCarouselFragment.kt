@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.carousel
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.BPITermsConditions
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPITermsConditions
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
@@ -125,6 +127,9 @@ class BPIOptInCarouselFragment : Fragment() {
                                     .setTitle("test what we got")
                                     .setMessage(htmlContent?.moreInformationHtml)
                                     .setCancelable(true)
+                                    .setNegativeButton("Close") { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
                                 val dialog: AlertDialog = builder.create()
                                 dialog.show()
                             }
@@ -139,6 +144,9 @@ class BPIOptInCarouselFragment : Fragment() {
                             .setTitle("test failure")
                             .setMessage("get more info failed")
                             .setCancelable(true)
+                            .setNegativeButton("Close") { dialog, _ ->
+                                dialog.dismiss()
+                            }
                         val dialog: AlertDialog = builder.create()
                         dialog.show()
                     }

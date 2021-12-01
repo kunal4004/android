@@ -38,6 +38,9 @@ class BPIMoreInfoFragment : Fragment()  {
                     .setTitle("test")
                     .setMessage("BPIOptInCarouselFragment.htmlContent is null")
                     .setCancelable(true)
+                    .setNegativeButton("Close") { dialog, _ ->
+                        dialog.dismiss()
+                    }
                 val dialog: AlertDialog = builder.create()
                 dialog.show()
             }
@@ -51,6 +54,9 @@ class BPIMoreInfoFragment : Fragment()  {
                     .setTitle("test")
                     .setMessage("BPIOptInCarouselFragment.htmlContent.moreInformationHtml is null")
                     .setCancelable(true)
+                    .setNegativeButton("Close") { dialog, _ ->
+                        dialog.dismiss()
+                    }
                 val dialog: AlertDialog = builder.create()
                 dialog.show()
             }
@@ -109,6 +115,9 @@ class BPIMoreInfoFragment : Fragment()  {
                             .setTitle("test webview")
                             .setMessage(url)
                             .setCancelable(true)
+                            .setNegativeButton("Close") { dialog, _ ->
+                                dialog.dismiss()
+                            }
                         val dialog: AlertDialog = builder.create()
                         dialog.show()
                     }
