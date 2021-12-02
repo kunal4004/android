@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.carousel
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,7 +21,6 @@ import za.co.woolworths.financial.services.android.models.dto.BPITermsConditions
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPITermsConditions
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.onClick
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
@@ -82,15 +79,6 @@ class BPIOptInCarouselFragment : Fragment() {
                     when(nextButton?.text){
                         bindString(R.string.continueLabel) -> {
                             if(htmlContent == null){
-                                activity?.apply {
-                                    val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                                    builder
-                                        .setTitle("test onclick continue")
-                                        .setMessage("htmlContent was null")
-                                        .setCancelable(true)
-                                    val dialog: AlertDialog = builder.create()
-                                    dialog.show()
-                                }
                                 getOptInHTMLContent()
                             }
                             view.findNavController().navigate(R.id.action_BPIOptInCarouselFragment_to_BPIMoreInfoFragment,
@@ -120,36 +108,11 @@ class BPIOptInCarouselFragment : Fragment() {
                             htmlContent = BPITermsConditions(
                                 extractHTMLContent(response.moreInformationHtml),
                                 extractHTMLContent(response.termsAndConditionsHtml))
-
-                            activity?.apply {
-                                val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                                builder
-                                    .setTitle("test what we got")
-                                    .setMessage(htmlContent?.moreInformationHtml)
-                                    .setCancelable(true)
-                                    .setNegativeButton("Close") { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                val dialog: AlertDialog = builder.create()
-                                dialog.show()
-                            }
                         }
                     }
                 }
 
                 override fun onFailure(error: Throwable?) {
-                    activity?.apply {
-                        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                        builder
-                            .setTitle("test failure")
-                            .setMessage("get more info failed")
-                            .setCancelable(true)
-                            .setNegativeButton("Close") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                        val dialog: AlertDialog = builder.create()
-                        dialog.show()
-                    }
                     //do nothing
                 }
             }, BPITermsConditionsResponse::class.java))

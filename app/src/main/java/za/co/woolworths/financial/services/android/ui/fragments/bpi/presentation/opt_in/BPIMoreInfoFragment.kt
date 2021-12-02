@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_more_info_fragment.*
@@ -30,37 +29,6 @@ class BPIMoreInfoFragment : Fragment()  {
         activity?.let { Utils.updateStatusBarBackground(it, R.color.white) }
 
         setUpWebView()
-
-        if(BPIOptInCarouselFragment.htmlContent == null){
-            activity?.apply {
-                val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                builder
-                    .setTitle("test")
-                    .setMessage("BPIOptInCarouselFragment.htmlContent is null")
-                    .setCancelable(true)
-                    .setNegativeButton("Close") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                val dialog: AlertDialog = builder.create()
-                dialog.show()
-            }
-        }
-
-
-        if(BPIOptInCarouselFragment.htmlContent?.moreInformationHtml == null){
-            activity?.apply {
-                val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                builder
-                    .setTitle("test")
-                    .setMessage("BPIOptInCarouselFragment.htmlContent.moreInformationHtml is null")
-                    .setCancelable(true)
-                    .setNegativeButton("Close") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                val dialog: AlertDialog = builder.create()
-                dialog.show()
-            }
-        }
 
         BPIOptInCarouselFragment.htmlContent?.moreInformationHtml?.let {
             bpiMoreInfoWebView?.loadData(it, "text/html; charset=utf-8", null)
@@ -110,18 +78,7 @@ class BPIMoreInfoFragment : Fragment()  {
                             " document.head.appendChild(style);" +
                             "document.querySelectorAll('body').forEach((element) => { element.classList.add('bpi-notes'); });"
                     bpiMoreInfoWebView.evaluateJavascript(js,null)
-                    activity?.apply {
-                        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-                        builder
-                            .setTitle("test webview height: "+ view?.height)
-                            .setMessage(url)
-                            .setCancelable(true)
-                            .setNegativeButton("Close") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                        val dialog: AlertDialog = builder.create()
-                        dialog.show()
-                    }
+
                     super.onPageFinished(view, url)
                 }
             }
