@@ -115,6 +115,8 @@ import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 
 @AndroidEntryPoint
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
@@ -156,16 +158,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private val permissionViewModel: PermissionViewModel by viewModels()
     private var isFromFile = false
-    private var observeFirstTime: Boolean = true
     private var liveCamera: Boolean = false
     private lateinit var uri: Uri
     private var isVtoImage: Boolean = false
     private var isTryIt: Boolean = true
     private var selectedImageUri: Uri? = null
-    private var lightingTipsGallery: Boolean = false
-    private var lightingTipsFiles: Boolean = false
-    private var lightingTipsLiveCamera: Boolean = false
-    private var lightingTipsTakePhoto: Boolean = false
+    private var isPhotoPickedFromGallery: Boolean = false
+    private var isPhotoPickedFromDefaultCamera: Boolean = false
     private var saveVtoApplyImage : Bitmap? = null
     private var isColorSelectionLayoutOnTop: Boolean = false
     private var isLiveCamera: Boolean = false
@@ -361,7 +360,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
             }
         } catch (e: Exception) {
-            handleExceptionWithFireBase(e)
+            handleException(e)
         }
     }
 
@@ -449,7 +448,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
             vtoLayout.visibility = View.GONE
         } catch (e: Exception) {
-            handleExceptionWithFireBase(e)
+            handleException(e)
         }
     }
 
@@ -1979,7 +1978,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val cameraMonitor =
                 CameraMonitor(requireActivity(), makeupCamera, lifecycle)
             cameraMonitor.startCamera()
-            job = detectFaceLiveCamera()
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(DELAY_1000_MS)
+                job = detectFaceLiveCamera()
+            }
         }
         activity?.apply {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
@@ -2353,7 +2355,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun openPfLiveCamera() {
         cameraSurfaceView.visibility = View.VISIBLE
-        liveCameraFirstTimeLightingTips()
+        showLightingTipsFirstTime()
         SdkUtility.initSdk(
             requireActivity(),
             object : PfSDKInitialCallback {
@@ -2381,14 +2383,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             override fun onFailure(
                                 throwable: Throwable
                             ) {
-
+                                handleException(throwable)
                             }
                         })
                 }
                 override fun onFailure(
                     throwable: Throwable?
                 ) {
-
+                    handleException(throwable)
                 }
             })
     }
@@ -2400,14 +2402,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         isLiveCameraOpened = true
         cameraSurfaceView.scaleType = CameraView.ScaleType.CENTER_CROP
         initCoroutine()
-        job = detectFaceLiveCamera()
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(DELAY_1500_MS)
+            job = detectFaceLiveCamera()
+        }
 
     }
 
     private fun detectFaceLiveCamera(): Job {
         return coroutineScope.launch {
             while (isActive) {
-                delay(2000)
+               delay(DELAY_500_MS)
                 var getFaceCount =
                     makeupCamera?.getCurrentFrameInfo(MakeupCam.FrameInfo.OPTION_FACE_RECT)
 
@@ -2527,12 +2532,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             uri, productDetails?.productId,
             getSelectedSku()?.sku, captureLiveCameraImg, isFromLiveCamera
         )
-        when {
-            lightingTipsGallery -> galleryFirstTimeLightingTips()
-            lightingTipsFiles -> filesFirstTimeLightingTips()
-            lightingTipsTakePhoto -> takePhotoFirstTimeLightingTips()
-
-        }
+        showLightingTipsFirstTime()
         setChangePickedImage()
         vtoLayout.visibility = View.VISIBLE
         share.visibility = View.GONE
@@ -2563,13 +2563,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 changeImageFiles.visibility = View.VISIBLE
                 imgVTOOpen.visibility = View.GONE
             }
-            lightingTipsTakePhoto -> {
+            isPhotoPickedFromDefaultCamera -> {
                 changeImage.visibility = View.GONE
                 retakeCamera.visibility = View.VISIBLE
                 changeImageFiles.visibility = View.GONE
                 imgVTOOpen.visibility = View.GONE
             }
-            lightingTipsGallery -> {
+            isPhotoPickedFromGallery -> {
                 changeImage.visibility = View.VISIBLE
                 retakeCamera.visibility = View.GONE
                 changeImageFiles.visibility = View.GONE
@@ -2578,11 +2578,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun takePhotoFirstTimeLightingTips() {
+    private fun showLightingTipsFirstTime() {
         viewLifecycleOwner.lifecycleScope.launch {
             delay(DELAY_1000_MS)
             try {
-                dataPrefViewModel?.isLightingTipsTakePhoto?.observe(
+                dataPrefViewModel?.isLightingTips?.observe(
                     viewLifecycleOwner,
                     Observer { lightingTips ->
                         if (lightingTips) {
@@ -2592,84 +2592,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                                 false
                             )
                         }
-                        dataPrefViewModel?.disableLightingTipsTakePhoto(false)
-                    })
-
-            } catch (e: Exception) {
-                handleExceptionWithFireBase(e)
-            }
-        }
-
-    }
-
-    private fun filesFirstTimeLightingTips() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(DELAY_1000_MS)
-            try {
-                dataPrefViewModel?.isLightingTipsFiles?.observe(
-                    viewLifecycleOwner,
-                    Observer { lightingTips ->
-                        if (lightingTips) {
-                            vtoBottomSheetDialog.showBottomSheetDialog(
-                                this@ProductDetailsFragment,
-                                requireActivity(),
-                                false
-                            )
-                        }
-                        dataPrefViewModel?.disableLightingFiles(false)
+                        dataPrefViewModel?.disableLighting(false)
                     })
             } catch (e: Exception) {
-                handleExceptionWithFireBase(e)
-            }
-        }
-
-    }
-
-    private fun liveCameraFirstTimeLightingTips() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(DELAY_1000_MS)
-            try {
-                dataPrefViewModel?.isLightingTipsCamera?.observe(
-                    viewLifecycleOwner,
-                    Observer { lightingTips ->
-                        if (lightingTips) {
-                            vtoBottomSheetDialog.showBottomSheetDialog(
-                                this@ProductDetailsFragment,
-                                requireActivity(),
-                                false
-                            )
-                        }
-                        dataPrefViewModel?.disableLightingTipsLiveCamera(false)
-                    })
-            } catch (e: Exception) {
-                handleExceptionWithFireBase(e)
-            }
-        }
-
-    }
-
-    private fun galleryFirstTimeLightingTips() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(DELAY_1000_MS)
-            try {
-                if (observeFirstTime) {
-                    dataPrefViewModel?.isLightingTipsGallery?.observe(
-                        viewLifecycleOwner,
-                        Observer { lightingTips ->
-                            if (lightingTips) {
-                                vtoBottomSheetDialog.showBottomSheetDialog(
-                                    this@ProductDetailsFragment,
-                                    requireActivity(),
-                                    false
-                                )
-                                observeFirstTime = false
-                            }
-                            dataPrefViewModel?.disableLightingGallery(false)
-                        })
-
-                }
-            } catch (e: Exception) {
-                handleExceptionWithFireBase(e)
+                handleException(e)
             }
         }
     }
@@ -2749,7 +2675,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
                     }
             } catch (e: Exception) {
-                handleExceptionWithFireBase(e)
+                handleException(e)
             }
         }
     }
@@ -2791,44 +2717,36 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun tryAgain() {
         if (isFromFile) {
             pickPhotoFromFile.launch("image/*")
-        } else if (lightingTipsGallery) {
+        } else if (isPhotoPickedFromGallery) {
             pickPhotoLauncher.launch("image/*")
         }
     }
 
     override fun openLiveCamera() {
-        lightingTipsTakePhoto = false
-        lightingTipsGallery = false
-        lightingTipsLiveCamera = true
-        lightingTipsFiles = false
+        isPhotoPickedFromDefaultCamera = false
+        isPhotoPickedFromGallery = false
         liveCamera = true
         requestSinglePermissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
     override fun openCamera() {
-        lightingTipsTakePhoto = true
-        lightingTipsGallery = false
-        lightingTipsLiveCamera = false
-        lightingTipsFiles = false
+        isPhotoPickedFromDefaultCamera = true
+        isPhotoPickedFromGallery = false
         requestSinglePermissionLauncher.launch(Manifest.permission.CAMERA)
         liveCamera = false
     }
 
     override fun openGallery() {
-        lightingTipsTakePhoto = false
-        lightingTipsGallery = true
-        lightingTipsLiveCamera = false
-        lightingTipsFiles = false
+        isPhotoPickedFromDefaultCamera = false
+        isPhotoPickedFromGallery = true
         isFromFile = false
         checkStoragePermission()
         handlePermission()
     }
 
     override fun browseFiles() {
-        lightingTipsTakePhoto = false
-        lightingTipsGallery = false
-        lightingTipsLiveCamera = false
-        lightingTipsFiles = true
+        isPhotoPickedFromDefaultCamera = false
+        isPhotoPickedFromGallery = false
         isFromFile =true
         checkStoragePermission()
         handlePermission()
@@ -2881,7 +2799,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         isColorSelectionLayoutOnTop = false
     }
 
-    private fun handleExceptionWithFireBase(e: Exception) {
+    private fun handleException(e: Any?) {
         FirebaseManager.logException(e)
     }
 

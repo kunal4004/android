@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.datastorepref.getPrefData
 import za.co.woolworths.financial.services.android.util.datastorepref.setValue
 import javax.inject.Inject
@@ -23,48 +24,20 @@ class PrefStoreImpl
 
     private val dataStore: DataStore<Preferences> = context._dataStore
 
-    override fun isLightingTipsGallery() =
-        dataStore.getPrefData(LIGHTING_TIPS_GALLERY, true)
-            .catch {
-                // handle error
-            }
-
-    override fun isLightingTipsFiles() =
-        dataStore.getPrefData(LIGHTING_TIPS_FILES, true)
-            .catch {
-                // handle error
-            }
-
-    override fun isLightingTipsTakePhoto() =
-        dataStore.getPrefData(LIGHTING_TIPS_TAKE_PHOTO, true)
-            .catch {
-                // handle error
-            }
-
-    override fun isLightingTipsLiveCamera() =
-        dataStore.getPrefData(LIGHTING_TIPS_CAMERA, true)
-            .catch {
-                // handle error
+    override fun isLightingTipsFirstTime() =
+        dataStore.getPrefData(LIGHTING_TIPS, true)
+            .catch { e ->
+                FirebaseManager.logException(e)
             }
 
     override fun isTryItOnFirstTime() =
         dataStore.getPrefData(TRY_IT_ON, true)
-            .catch {
-                // handle error
+            .catch { e ->
+                FirebaseManager.logException(e)
             }
 
-    override suspend fun disableLightingTipsGallery(isLighting: Boolean) =
-        dataStore.setValue(LIGHTING_TIPS_GALLERY, isLighting)
-
-    override suspend fun disableLightingFiles(isLighting: Boolean) =
-        dataStore.setValue(LIGHTING_TIPS_FILES, isLighting)
-
-
-    override suspend fun disableLightingTipsTakePhoto(isLighting: Boolean) =
-        dataStore.setValue(LIGHTING_TIPS_TAKE_PHOTO, isLighting)
-
-    override suspend fun disableLightingTipsLiveCamera(isLighting: Boolean) =
-        dataStore.setValue(LIGHTING_TIPS_CAMERA, isLighting)
+    override suspend fun disableLightingTips(isLighting: Boolean) =
+        dataStore.setValue(LIGHTING_TIPS, isLighting)
 
     override suspend fun disableTryItOnMode(isTryItOn: Boolean) =
         dataStore.setValue(TRY_IT_ON, isTryItOn)
@@ -72,10 +45,8 @@ class PrefStoreImpl
 
     companion object {
         private val TRY_IT_ON = booleanPreferencesKey("try_it_on")
-        private val LIGHTING_TIPS_GALLERY = booleanPreferencesKey("gallery")
-        private val LIGHTING_TIPS_CAMERA = booleanPreferencesKey("camera")
-        private val LIGHTING_TIPS_TAKE_PHOTO = booleanPreferencesKey("take_photo")
-        private val LIGHTING_TIPS_FILES = booleanPreferencesKey("files")
+        private val LIGHTING_TIPS = booleanPreferencesKey("lighting_tips")
+
     }
 
 
