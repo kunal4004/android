@@ -722,6 +722,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         tvCustomerReview.setOnClickListener {
             sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
         }
+        tvDate.setOnClickListener {
+            sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
+        }
+        tvReviewHeading.setOnClickListener {
+            sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
+        }
     }
 
     private fun sendReviewDataToReviewDetailScreen(ratingNReviewResponse: RatingReviewResponse) {
