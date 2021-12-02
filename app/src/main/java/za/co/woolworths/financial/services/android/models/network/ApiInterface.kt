@@ -1211,8 +1211,8 @@ interface ApiInterface {
             @Query("productId") productId: String,
             @Query("limit") limit: Int,
             @Query("offset") offset: Int,
-            @Query("Sort") sort: String?,
-            @Query("Refinements") refinement: String?
+            @Query("sort") sort: String?,
+            @Query("refinement") refinement: String?
 
     ): RatingAndReviewData
 }

@@ -31,8 +31,11 @@ import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
 class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListener,
-    MoreReviewsAdapter.SortAndRefineListener{
+    MoreReviewsAdapter.SortAndRefineListener {
     private var onSortRefineFragmentListener: OnSortRefineFragmentListener? = null
+    private var sortString: String? = null
+    private var refinementString: String? = null
+
     companion object {
         fun newInstance() = MoreReviewsFragment()
     }
@@ -45,9 +48,11 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
 
     private var productId: String = "-1"
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_more_reviews, container, false)
     }
 
@@ -57,30 +62,38 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
             activity?.onBackPressed()
         }
         arguments?.apply {
-              ratingAndResponse = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_DATA),
-                    RatingReviewResponse::class.java) as RatingReviewResponse
+            ratingAndResponse = Utils.jsonStringToObject(
+                getString(KotlinUtils.REVIEW_DATA),
+                RatingReviewResponse::class.java
+            ) as RatingReviewResponse
 
             productId = ratingAndResponse.reviews.get(0).productId
             setupViewModel()
-            setReviewsList(null,null, null)
+            setReviewsList(null, null, null)
         }
     }
 
 
     private fun setupViewModel() {
         moreReviewViewModel = ViewModelProvider(
-                this,
-                RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
+            this,
+            RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
         ).get(RatingAndReviewViewModel::class.java)
     }
 
-    private fun setReviewsList(sort: String?, refinements: String?, reportReviewOptions: List<String>?) {
+    private fun setReviewsList(
+        sort: String?,
+        refinements: String?,
+        reportReviewOptions: List<String>?
+    ) {
 
-        val moreReviewsAdapter = MoreReviewsAdapter(requireContext(),
-                this,
-                ratingAndResponse.reviewStatistics,
-                reportReviewOptions,
-                this)
+        val moreReviewsAdapter = MoreReviewsAdapter(
+            requireContext(),
+            this,
+            ratingAndResponse.reviewStatistics,
+            reportReviewOptions,
+            this
+        )
 
         moreReviewsAdapter.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
@@ -90,13 +103,13 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
             }
         }
         moreReviewsAdapter.withLoadStateFooter(
-                footer = MoreReviewLoadStateAdapter()
+            footer = MoreReviewLoadStateAdapter()
         )
         lifecycleScope.launch {
-            Log.e("sort_option_:", ratingAndResponse.sortOptions.toString())
-            moreReviewViewModel.getReviewDataSource(productId,
-                    sort, refinements, ratingAndResponse).collectLatest { pagedData ->
-                //////////////////
+            moreReviewViewModel.getReviewDataSource(
+                productId,
+                sort, refinements
+            ).collectLatest { pagedData ->
                 moreReviewsAdapter.submitData(pagedData)
             }
         }
@@ -111,7 +124,10 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
 
     override fun openReportScreen(reportReviewOptions: List<String>?) {
         val bundle = Bundle()
-        bundle.putStringArrayList(KotlinUtils.REVIEW_REPORT, reportReviewOptions as ArrayList<String>)
+        bundle.putStringArrayList(
+            KotlinUtils.REVIEW_REPORT,
+            reportReviewOptions as ArrayList<String>
+        )
         reportReviewFragment = ReportReviewFragment.newInstance()
         reportReviewFragment?.arguments = bundle
         activity?.apply {
@@ -127,12 +143,12 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
         val dialog = SkinProfileDialog(reviews)
         activity?.apply {
             childFragmentManager.beginTransaction()
-                    .let { fragmentTransaction ->
-                        dialog.show(
-                                fragmentTransaction,
-                                SkinProfileDialog::class.java.simpleName
-                        )
-                    }
+                .let { fragmentTransaction ->
+                    dialog.show(
+                        fragmentTransaction,
+                        SkinProfileDialog::class.java.simpleName
+                    )
+                }
         }
     }
 
@@ -150,28 +166,34 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
         onSortRefineFragmentListener = null
     }
 
-    interface OnSortRefineFragmentListener{
+    interface OnSortRefineFragmentListener {
         fun openDrawer()
         fun closeDrawer()
-        fun setupDrawer(isShortClicked: Boolean, ratingReviewResponse: RatingReviewResponse )
+        fun setupDrawer(isShortClicked: Boolean, ratingReviewResponse: RatingReviewResponse)
     }
 
     override fun openRefineDrawer() {
-        ////////
-        onSortRefineFragmentListener?.setupDrawer(false,ratingAndResponse)
+        onSortRefineFragmentListener?.setupDrawer(false, ratingAndResponse)
         onSortRefineFragmentListener?.openDrawer()
     }
 
     override fun openSortDrawer() {
-            val data =  moreReviewViewModel.getRatingReviewResponseLiveData()
-
-            Log.e("data_is:", data.value.toString())
-            onSortRefineFragmentListener?.setupDrawer(true,data.value!!)
-            onSortRefineFragmentListener?.openDrawer()
+        val data = moreReviewViewModel.getRatingReviewResponseLiveData()
+        Log.e("data_is:", data.value.toString())
+        onSortRefineFragmentListener?.setupDrawer(true, data.value!!)
+        onSortRefineFragmentListener?.openDrawer()
     }
 
-    fun onSortOptionSelected(sortOption: SortOption){
+    fun onSortOptionSelected(sortOption: SortOption) {
+        sortString = sortOption.sortOption
         onSortRefineFragmentListener?.closeDrawer()
-        setReviewsList(sortOption.sortOption,null, null)
+        setReviewsList(sortString, refinementString, null)
+    }
+
+    fun onRefineOptionSelected(refinements: String?) {
+        refinementString = refinements
+        onSortRefineFragmentListener?.closeDrawer()
+        if (refinementString != null)
+            setReviewsList(sortString, refinementString, null)
     }
 }

@@ -11,7 +11,7 @@ data class RatingReviewResponse (
 	@SerializedName("reviews") val reviews : List<Reviews>,
 	@SerializedName("reviewStatistics") val reviewStatistics : ReviewStatistics,
 	@SerializedName("sortOptions") val sortOptions : ArrayList<SortOption>,
-	@SerializedName("refinements") val refinements : List<Refinements>,
+	@SerializedName("refinements") val refinements : ArrayList<Refinements>,
 	@SerializedName("reportReviewOptions") val reportReviewOptions : List<String>,
 	/*@SerializedName("response") val response : Response,*/
 	@SerializedName("httpCode") val httpCode : Int
