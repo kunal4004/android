@@ -25,7 +25,10 @@ class ReportSuccessFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         btn_close.setOnClickListener {
-            activity?.onBackPressed()
+            activity?.finish()
+        }
+        btn_got_it.setOnClickListener {
+            activity?.finish()
         }
     }
 }

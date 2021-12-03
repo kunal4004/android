@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,7 +49,15 @@ class ReportReviewFragment: Fragment() , ReportReviewsAdapter.ReportItemClick {
         val reportReviewsAdapter = ReportReviewsAdapter(reportReviewList, this)
         recyler_report.setAdapter(reportReviewsAdapter)
         btn_submit_report.setOnClickListener {
-            openReportScreenFragment()
+            if (reportReviewsAdapter.getAllCheckBoxCount() !=0) {
+                if (!edt_txt_feedback.isVisible) {
+                    openReportScreenFragment()
+                    return@setOnClickListener
+                }
+                if (edt_txt_feedback.isVisible && edt_txt_feedback.text.isNotEmpty()) {
+                     openReportScreenFragment()
+                }
+            }
         }
     }
 
