@@ -131,7 +131,7 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
         reportReviewFragment = ReportReviewFragment.newInstance()
         reportReviewFragment?.arguments = bundle
         activity?.apply {
-            val fragmentManager = getSupportFragmentManager()
+            val fragmentManager = supportFragmentManager
             val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
             fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
             fragmentTransaction.addToBackStack(null)
@@ -173,15 +173,19 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
     }
 
     override fun openRefineDrawer() {
-        onSortRefineFragmentListener?.setupDrawer(false, ratingAndResponse)
-        onSortRefineFragmentListener?.openDrawer()
+        val data = moreReviewViewModel.getRatingReviewResponseLiveData()
+        data.value?.let { onSortRefineFragmentListener?.setupDrawer(false, it)
+            onSortRefineFragmentListener?.openDrawer() }
+
     }
+
+
 
     override fun openSortDrawer() {
         val data = moreReviewViewModel.getRatingReviewResponseLiveData()
-        Log.e("data_is:", data.value.toString())
-        onSortRefineFragmentListener?.setupDrawer(true, data.value!!)
-        onSortRefineFragmentListener?.openDrawer()
+        data.value?.let { onSortRefineFragmentListener?.setupDrawer(true, it)
+            onSortRefineFragmentListener?.openDrawer() }
+
     }
 
     fun onSortOptionSelected(sortOption: SortOption) {
@@ -191,9 +195,10 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
     }
 
     fun onRefineOptionSelected(refinements: String?) {
-        refinementString = refinements
-        onSortRefineFragmentListener?.closeDrawer()
-        if (refinementString != null)
+        if(refinementString!=refinements) {
+            refinementString = refinements
             setReviewsList(sortString, refinementString, null)
+        }
+        onSortRefineFragmentListener?.closeDrawer()
     }
 }

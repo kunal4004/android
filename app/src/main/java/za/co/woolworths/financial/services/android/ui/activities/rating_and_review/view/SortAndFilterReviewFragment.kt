@@ -1,10 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -12,7 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.common_toolbar.view.*
 import kotlinx.android.synthetic.main.fragment_refinement.*
+import kotlinx.android.synthetic.main.fragment_sort_and_filter_review.*
 import za.co.woolworths.financial.services.android.models.dto.SortOption
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Refinements
@@ -20,20 +24,17 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ReviewSortOptionsAdapter
 
 
-class SortAndFilterReviewFragment : Fragment(), ReviewSortOptionsAdapter.OnSortOptionSelected, ReviewRefineOptionsAdapter.OnRefineOptionSelected {
+class SortAndFilterReviewFragment : Fragment(), ReviewSortOptionsAdapter.OnSortOptionSelected {
+    private var onSortRefineFragmentListener: MoreReviewsFragment.OnSortRefineFragmentListener? = null
     private var toolbarTitle: TextView? = null
     private var rvSortOptions: RecyclerView? = null
     private var refineAdapter: ReviewRefineOptionsAdapter? = null
     private var btSeeResult: RelativeLayout? = null
     private var tvClearFilter: TextView? = null
+
     companion object {
         fun newInstance() =
             SortAndFilterReviewFragment()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -51,9 +52,26 @@ class SortAndFilterReviewFragment : Fragment(), ReviewSortOptionsAdapter.OnSortO
         tvClearFilter = view.findViewById(R.id.clearAndResetFilter)
 
         btSeeResult?.setOnClickListener(View.OnClickListener {
-            onRefineOptionSelected1(refineAdapter?.getRefineOption()) })
+            onRefineOptionSelected(refineAdapter?.getRefineOption())
+        })
 
         tvClearFilter?.setOnClickListener(View.OnClickListener { refineAdapter?.clearRefinement() })
+        toolbar.btn_back.setOnClickListener(View.OnClickListener {
+            onSortRefineFragmentListener?.closeDrawer() })
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is MoreReviewsFragment.OnSortRefineFragmentListener) {
+            onSortRefineFragmentListener = context
+        } else {
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        onSortRefineFragmentListener = null
     }
 
     fun setDrawerUI(isShortClicked: Boolean, ratingReviewResponse: RatingReviewResponse) {
@@ -63,7 +81,7 @@ class SortAndFilterReviewFragment : Fragment(), ReviewSortOptionsAdapter.OnSortO
             tvClearFilter?.visibility = View.INVISIBLE
             rvSortOptions?.layoutManager =
                 activity?.let { activity -> LinearLayoutManager(activity) }
-             rvSortOptions?.adapter = activity?.let { activity ->
+            rvSortOptions?.adapter = activity?.let { activity ->
                 ReviewSortOptionsAdapter(
                     activity,
                     ratingReviewResponse.sortOptions,
@@ -79,8 +97,7 @@ class SortAndFilterReviewFragment : Fragment(), ReviewSortOptionsAdapter.OnSortO
             refineAdapter = activity?.let { activity ->
                 ReviewRefineOptionsAdapter(
                     activity,
-                    ratingReviewResponse.refinements,
-                    this
+                    ratingReviewResponse.refinements
                 )
             }
             rvSortOptions?.adapter = refineAdapter
@@ -89,21 +106,15 @@ class SortAndFilterReviewFragment : Fragment(), ReviewSortOptionsAdapter.OnSortO
     }
 
     override fun onSortOptionSelected(sortOption: SortOption) {
-        val fm = fragmentManager
-        val fragm: MoreReviewsFragment? =
-            fm!!.findFragmentById(R.id.content_main_frame) as MoreReviewsFragment?
-        fragm?.onSortOptionSelected(sortOption)
+        val moreReviewsFragment: MoreReviewsFragment =
+            requireFragmentManager().findFragmentById(R.id.content_main_frame) as MoreReviewsFragment
+        moreReviewsFragment.onSortOptionSelected(sortOption)
     }
 
-    override fun onRefineOptionSelected(refinementOption: Refinements) {
-        TODO("Not yet implemented")
-    }
-
-    fun onRefineOptionSelected1(refinementOption: String?){
-        val fm = fragmentManager
-        val fragm: MoreReviewsFragment? =
-            fm!!.findFragmentById(R.id.content_main_frame) as MoreReviewsFragment?
-        fragm?.onRefineOptionSelected(refinementOption)
+    private fun onRefineOptionSelected(refinementOption: String?) {
+        val moreReviewsFragment: MoreReviewsFragment =
+            requireFragmentManager().findFragmentById(R.id.content_main_frame) as MoreReviewsFragment
+        moreReviewsFragment.onRefineOptionSelected(refinementOption)
     }
 
 }
