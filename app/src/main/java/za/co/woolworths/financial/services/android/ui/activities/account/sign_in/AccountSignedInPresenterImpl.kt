@@ -155,18 +155,25 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             return when {
                 !productOfferingGoodStanding && supported &&
                         delinquencyCycle>=minimumDelinquencyCycle -> {
-                    if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
-                        if(!isCreditCard){
-                            mainView?.removeBlocksWhenChargedOff(supported)
-                            mainView?.showViewTreatmentPlan(false)!!
-                        } else{
-                            mainView?.removeBlocksWhenChargedOff(supported)!!
+                    when {
+                        productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
+                            if(!isCreditCard){
+                                mainView?.removeBlocksWhenChargedOff(supported)
+                                mainView?.showViewTreatmentPlan(false)!!
+                            } else{
+                                mainView?.removeBlocksWhenChargedOff(supported)!!
+                            }
                         }
-                    } else if(productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true)){
+                        productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
                             //display treatment plan popup with view payment options
                             mainView?.showViewTreatmentPlan(isCreditCard)!!
-                    } else {
-                        mainView?.showViewTreatmentPlan(false)!!
+                            mainView?.showAccountHelp(getCardProductInformation(true))!!
+
+                        }
+                        else -> {
+                            mainView?.showViewTreatmentPlan(false)!!
+                            mainView?.showAccountHelp(getCardProductInformation(false))!!
+                        }
                     }
                 }
                 else -> {
@@ -176,13 +183,11 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                         mainView?.removeBlocksOnCollectionCustomer()!!
                     } else if(!productOfferingGoodStanding) { // account is in arrears
                         mainView?.showAccountInArrears(account)
-                        val informationModel = getCardProductInformation(true)
-                        mainView?.showAccountHelp(informationModel)!!
+                        mainView?.showAccountHelp(getCardProductInformation(true))!!
                     } else{
                         //when productOfferingGoodStanding == true
                         mainView?.hideAccountInArrears(account)
-                        val informationInArrearsModel = getCardProductInformation(false)
-                        mainView?.showAccountHelp(informationInArrearsModel)!!
+                        mainView?.showAccountHelp(getCardProductInformation(false))!!
                     }
                 }
             }
