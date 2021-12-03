@@ -135,6 +135,23 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        activity?.apply {
+            if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+                mCardPresenterImpl?.apply {
+                    logoIncreaseLimit?.visibility = GONE
+                    llCommonLayer?.visibility = GONE
+                    tvIncreaseLimit?.text = ""
+                    tvIncreaseLimit?.visibility = GONE
+                    logoIncreaseLimit?.visibility = GONE
+                    tvIncreaseLimitDescription?.visibility = GONE
+                    getUserCLIOfferActive()
+                }
+            }
+        }
+    }
+
     fun disableShimmer() {
         cardDetailImageShimmerFrameLayout?.setShimmer(null)
         myCardTextViewShimmerFrameLayout?.setShimmer(null)
