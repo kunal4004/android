@@ -10,6 +10,7 @@ import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
 import static za.co.woolworths.financial.services.android.util.Utils.ACCOUNT_CHARGED_OFF;
 import static za.co.woolworths.financial.services.android.util.Utils.hideView;
+import static za.co.woolworths.financial.services.android.util.Utils.sessionDaoSave;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -45,6 +46,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.awfs.coordination.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -262,6 +264,15 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
         if (savedInstanceState == null) {
             hideToolbar();
+            try {
+                FirebaseInstallations.getInstance().getId().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        sessionDaoSave(SessionDao.KEY.DEVICE_ID, task.getResult());
+                    }
+                });
+            } catch (Exception ex) {
+                FirebaseManager.Companion.logException(ex);
+            }
             setToolbarBackgroundColor(R.color.white);
             openMessageActivity = view.findViewById(R.id.openMessageActivity);
             ImageView openShoppingList = view.findViewById(R.id.openShoppingList);

@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.util;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
-import static com.facebook.FacebookSdk.getApplicationContext;
 import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
 import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
@@ -81,8 +80,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -673,12 +670,12 @@ public class Utils {
 
     public static String getUniqueDeviceID() {
         String deviceID = null;
-        deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
-        if ( Utils.isGooglePlayServicesAvailable() && TextUtils.isEmpty(deviceID)) {
-            deviceID = FirebaseInstallations.getInstance().getId().getResult();
-            sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
-        }else {
-            deviceID= "1234";
+        if (deviceID == null) {
+            deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
+            if (deviceID == null) {
+                deviceID = FirebaseInstallations.getInstance().getId().getResult().toString();
+                sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
+            }
         }
 
         return deviceID;
