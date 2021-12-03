@@ -212,6 +212,7 @@ class BPITermsAndConditionFragment : Fragment()  {
 
         BPIOptInCarouselFragment.htmlContent?.termsAndConditionsHtml?.let {
             bpiTermsConditionsWebView?.loadData(it,"text/html; charset=utf-8", null)
+            bpiTermsConditionsWebView?.refreshDrawableState()
         }
     }
 
