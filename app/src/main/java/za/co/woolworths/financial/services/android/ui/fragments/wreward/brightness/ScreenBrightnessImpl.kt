@@ -95,7 +95,7 @@ class ScreenBrightnessImpl : ScreenBrightnessInterface {
     }
 
     // unregister the listener when we're done (e.g. activity/fragment destroyed)
-    override fun unRegisterContentObserverForBrightness() {
+    override fun deRegisterContentObserverForBrightness() {
         mContentObserver?.let { mContentResolver?.unregisterContentObserver(it) }
 
     }

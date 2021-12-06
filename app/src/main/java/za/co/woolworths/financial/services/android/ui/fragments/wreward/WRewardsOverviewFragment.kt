@@ -393,7 +393,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        mScreenBrightnessDelegate?.unRegisterContentObserverForBrightness()
+        mScreenBrightnessDelegate?.deRegisterContentObserverForBrightness()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
