@@ -12,6 +12,9 @@ import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
+import za.co.woolworths.financial.services.android.checkout.service.network.AddAddressResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.Response
+import za.co.woolworths.financial.services.android.checkout.service.network.ValidationError
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.models.dto.Province
@@ -126,5 +129,48 @@ class CheckoutAddAddressNewUserFragmentTest : Fragment() {
         )
         verify(checkoutAddAddressNewUserFragment, times(1)).enableEditText()
         verify(checkoutAddAddressNewUserFragment, times(1)).disablePostalCode()
+    }
+
+    @Test
+    fun showErrorDialog_if_address1_isEmpty() {
+        checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
+        doNothing().`when`(checkoutAddAddressNewUserFragment).showErrorDialog()
+        checkoutAddAddressNewUserFragment.onSaveAddressClicked()
+        verify(checkoutAddAddressNewUserFragment, times(1)).showErrorDialog()
+    }
+
+    @Test
+    fun show_suburb_not_deliverable_dialog() {
+        val mockAddAddressResponse = AddAddressResponse()
+        val response = Response()
+        response.code =
+            SuburbNotDeliverableBottomsheetDialogFragment.ERROR_CODE_SUBURB_NOT_DELIVERABLE
+
+        mockAddAddressResponse.response = response
+        checkoutAddAddressNewUserFragment.addAddressErrorResponse(mockAddAddressResponse, 1)
+        verify(
+            checkoutAddAddressNewUserFragment,
+            times(1)
+        ).showSuburbNotDeliverableBottomSheetDialog(response.code)
+    }
+
+    @Test
+    fun show_nickName_exist_error() {
+        val mockAddAddressResponse = AddAddressResponse()
+        val response = Response()
+        response.code = "500"
+
+        mockAddAddressResponse.response = response
+        val validationErrorList = ArrayList<ValidationError>()
+        val validationError = ValidationError()
+        validationError.setField("nickname")
+        validationErrorList.add(validationError)
+        mockAddAddressResponse.validationErrors = listOf(validationError)
+        doNothing().`when`(checkoutAddAddressNewUserFragment).showNickNameExist()
+        checkoutAddAddressNewUserFragment.addAddressErrorResponse(mockAddAddressResponse, 1)
+        verify(checkoutAddAddressNewUserFragment, times(1)).isNickNameAlreadyExist(
+            mockAddAddressResponse
+        )
+        verify(checkoutAddAddressNewUserFragment, times(1)).showNickNameExist()
     }
 }

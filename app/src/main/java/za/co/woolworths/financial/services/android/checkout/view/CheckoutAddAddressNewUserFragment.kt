@@ -928,7 +928,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         progressbarGetProvinces?.visibility = View.VISIBLE
     }
 
-    private fun onSaveAddressClicked() {
+    fun onSaveAddressClicked() {
         if (selectedAddress.savedAddress.address1.isNullOrEmpty()) {
             showErrorDialog()
             return
@@ -1040,7 +1040,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    private fun addAddressErrorResponse(response: AddAddressResponse, errorMessage: Int) {
+    fun addAddressErrorResponse(response: AddAddressResponse, errorMessage: Int) {
         if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
             response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
         ) {
@@ -1148,7 +1148,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    private fun isNickNameAlreadyExist(response: AddAddressResponse): Boolean {
+    fun isNickNameAlreadyExist(response: AddAddressResponse): Boolean {
         if (!response.validationErrors.isNullOrEmpty()) {
             for (errorsFields in response.validationErrors) {
                 if (errorsFields.getField() == "nickname") {
@@ -1159,7 +1159,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         return false
     }
 
-    private fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
+    fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
         view?.findNavController()?.navigate(
             R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
             bundleOf(
@@ -1363,9 +1363,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         return isExist
     }
 
-    private fun showNickNameExist() {
-        addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
-        addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
+    fun showNickNameExist() {
+        addressNicknameEditText?.setBackgroundResource(R.drawable.input_error_background)
+        addressNicknameErrorMsg?.text = bindString(R.string.nick_name_exist_error_msg)
         showAnimationErrorMessage(addressNicknameErrorMsg, View.VISIBLE, 0)
     }
 
@@ -1386,7 +1386,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         )
     }
 
-    private fun showErrorDialog() {
+    fun showErrorDialog() {
         FirebaseManager.logException(WoolworthsApplication.getNativeCheckout()?.googlePlacesAddressErrorMessage)
         val dialog = ErrorDialogFragment.newInstance(
             WoolworthsApplication.getNativeCheckout()?.googlePlacesAddressErrorMessage
@@ -1409,9 +1409,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun showErrorPhoneNumber() {
-        cellphoneNumberEditText.setBackgroundResource(R.drawable.input_error_background)
+        cellphoneNumberEditText?.setBackgroundResource(R.drawable.input_error_background)
         cellphoneNumberErrorMsg?.visibility = View.VISIBLE
-        cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
+        cellphoneNumberErrorMsg?.text = bindString(R.string.phone_number_invalid_error_msg)
         showAnimationErrorMessage(
             cellphoneNumberErrorMsg,
             View.VISIBLE,
