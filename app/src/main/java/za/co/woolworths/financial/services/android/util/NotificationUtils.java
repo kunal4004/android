@@ -14,7 +14,7 @@ import androidx.annotation.RequiresApi;
 import com.awfs.coordination.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
 
@@ -29,7 +29,6 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 
 public class NotificationUtils {
 
-    private static String TAG = NotificationUtils.class.getSimpleName();
     private static NotificationUtils instance;
 
     private final Context appContext;
@@ -84,9 +83,9 @@ public class NotificationUtils {
 
     public void sendRegistrationToServer(){
         if (isGooglePlayServicesAvailable()){
-            FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener(task -> {
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
                 if (task.isSuccessful())
-                    sendRegistrationToServer(task.getResult().getToken());
+                    sendRegistrationToServer(task.getResult());
             });
         }
 	}
@@ -96,31 +95,35 @@ public class NotificationUtils {
         Log.d("FCM", token);
         // sending gcm token to server
         final CreateUpdateDevice device = new CreateUpdateDevice();
-        device.appInstanceId = Utils.getUniqueDeviceID();
-        Utils.setToken(token);
-        device.pushNotificationToken = token;
-        device.deviceIdentityId = AppInstanceObject.get().getCurrentUserObject().linkedDeviceIdentityId;
+        KotlinUtils.Companion.getUniqueDeviceID( deviceId -> {
+            device.appInstanceId = deviceId;
+            Utils.setToken(token);
+            device.pushNotificationToken = token;
+            device.deviceIdentityId = AppInstanceObject.get().getCurrentUserObject().linkedDeviceIdentityId;
 
-        //Don't update token if pushNotificationToken or appInstanceID NULL
-        if(device.appInstanceId == null || device.pushNotificationToken==null)
-            return;
+            //Don't update token if pushNotificationToken or appInstanceID NULL
+            if(device.appInstanceId == null || device.pushNotificationToken==null)
+                return null;
 
 
-        //Sending Token and app instance Id to App server
-        //Need to be done after Login
+            //Sending Token and app instance Id to App server
+            //Need to be done after Login
 
-        Call<CreateUpdateDeviceResponse> createUpdateDeviceCall = OneAppService.INSTANCE.getResponseOnCreateUpdateDevice(device);
-        createUpdateDeviceCall.enqueue(new CompletionHandler<>(new IResponseListener<CreateUpdateDeviceResponse>() {
-            @Override
-            public void onSuccess(CreateUpdateDeviceResponse response) {
+            Call<CreateUpdateDeviceResponse> createUpdateDeviceCall = OneAppService.INSTANCE.getResponseOnCreateUpdateDevice(device);
+            createUpdateDeviceCall.enqueue(new CompletionHandler<>(new IResponseListener<CreateUpdateDeviceResponse>() {
+                @Override
+                public void onSuccess(CreateUpdateDeviceResponse response) {
 
-            }
+                }
 
-            @Override
-            public void onFailure(Throwable error) {
+                @Override
+                public void onFailure(Throwable error) {
 
-            }
-        },CreateUpdateDeviceResponse.class));
+                }
+            },CreateUpdateDeviceResponse.class));
+
+            return  null;
+        });
     }
 
     private Boolean isGooglePlayServicesAvailable() {
