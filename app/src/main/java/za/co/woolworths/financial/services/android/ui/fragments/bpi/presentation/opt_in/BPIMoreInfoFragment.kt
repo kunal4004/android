@@ -32,6 +32,7 @@ class BPIMoreInfoFragment : Fragment()  {
 
         BPIOptInCarouselFragment.htmlContent?.moreInformationHtml?.let {
             bpiMoreInfoWebView?.loadData(it, "text/html; charset=utf-8", null)
+            bpiMoreInfoWebView?.refreshDrawableState()
         }
 
         bpiCheckBox?.onClick {

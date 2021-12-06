@@ -1,10 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,16 +20,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.ui.fragments.mypreferences.LinkDeviceOTPFragment;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.ui.activities.WStoreLocatorActivity.mToolbar;
 
 public class MyPreferencesActivity extends AppCompatActivity implements MyPreferencesInterface {
 
     private NavController navigationHost = null;
     private Toolbar mPrefsToolbar;
+    private UserDevice userPrimaryDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,5 +138,13 @@ public class MyPreferencesActivity extends AppCompatActivity implements MyPrefer
         }
         TextView title = mPrefsToolbar.findViewById(R.id.toolbarText);
         title.setGravity(gravity);
+    }
+
+    public void setDefaultPrimaryDevice(UserDevice defaultPrimaryDevice) {
+        userPrimaryDevice  = defaultPrimaryDevice;
+    }
+
+    public UserDevice getUserPrimaryDevice() {
+        return userPrimaryDevice;
     }
 }
