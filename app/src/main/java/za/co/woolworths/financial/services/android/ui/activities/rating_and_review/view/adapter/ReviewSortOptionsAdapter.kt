@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.SortOption
 
 class ReviewSortOptionsAdapter(
     val context: Context,
-    var sortOptions: ArrayList<SortOption>,
+    var sortOptions: MutableList<SortOption>,
     var listner: OnSortOptionSelected
 ) : RecyclerView.Adapter<ReviewSortOptionsAdapter.ReviewSortOptionViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewSortOptionViewHolder {

@@ -10,9 +10,8 @@ data class RatingReviewResponse (
 	@SerializedName("totalResults") val totalResults : Int,
 	@SerializedName("reviews") val reviews : List<Reviews>,
 	@SerializedName("reviewStatistics") val reviewStatistics : ReviewStatistics,
-	@SerializedName("sortOptions") val sortOptions : ArrayList<SortOption>,
-	@SerializedName("refinements") val refinements : ArrayList<Refinements>,
+	@SerializedName("sortOptions") val sortOptions : MutableList<SortOption>,
+	@SerializedName("refinements") val refinements : MutableList<Refinements>,
 	@SerializedName("reportReviewOptions") val reportReviewOptions : List<String>,
-	/*@SerializedName("response") val response : Response,*/
 	@SerializedName("httpCode") val httpCode : Int
 )

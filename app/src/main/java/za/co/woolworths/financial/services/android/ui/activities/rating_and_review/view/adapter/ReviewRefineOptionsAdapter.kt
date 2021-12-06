@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView
 
 class ReviewRefineOptionsAdapter (
     val context: Context,
-    var refinementOptions: ArrayList<Refinements>
+    var refinementOptions: MutableList<Refinements>
 ) : RecyclerView.Adapter<ReviewRefineOptionsAdapter.ReviewRefineOptionViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewRefineOptionViewHolder {
         return ReviewRefineOptionViewHolder(
