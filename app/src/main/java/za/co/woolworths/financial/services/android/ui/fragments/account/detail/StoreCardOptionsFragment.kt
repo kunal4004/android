@@ -189,8 +189,9 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         )
                     )
                 }
+                imLogoIncreaseLimit?.alpha = AppConstant.alpha1f
                 manageMyCardTextView?.text = bindString(R.string.activate_vtc_title)
-                cardDetailImageView?.alpha = 0.3f
+                cardDetailImageView?.alpha = AppConstant.alpha0_3f
             }
 
             // Temporary card
