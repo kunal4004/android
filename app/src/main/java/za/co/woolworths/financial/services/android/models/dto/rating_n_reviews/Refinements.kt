@@ -6,5 +6,5 @@ data class Refinements (
 
 	@SerializedName("displayName") val displayName : String,
 	@SerializedName("navigationState") val navigationState : String,
-	@SerializedName("selected") val selected : Boolean
+	@SerializedName("selected") var selected : Boolean
 )
