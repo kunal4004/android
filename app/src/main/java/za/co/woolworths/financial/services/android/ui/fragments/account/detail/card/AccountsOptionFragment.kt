@@ -246,7 +246,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     val applyNowState = mApplyNowAccountKeyPair?.first
 
                     if (applyNowState != null) {
-                        if (MyAccountsFragment.verifyAppInstanceId()) {
+                        if (!MyAccountsFragment.verifyAppInstanceId()) {
                             activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
                             creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
                         }
