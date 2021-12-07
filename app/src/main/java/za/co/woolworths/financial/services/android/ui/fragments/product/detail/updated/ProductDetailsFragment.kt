@@ -348,6 +348,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.imgDownloadVTO -> saveVtoApplyImage?.let { ImageResultContract.saveImageToStorage(requireContext(),saveVtoApplyImage!!) }
             R.id.imgVTOSplit -> compareWithLiveCamera()
             R.id.captureImage -> captureImageFromVtoLiveCamera()
+            R.id.tvRatingDetails -> showRatingDetailsDailog()
+            R.id.tvSkinProfile->viewSkinProfileDialog()
+            R.id.btViewMoreReview->navigateToMoreReviewsScreen()
+            R.id.tvTotalReviews->navigateToMoreReviewsScreen()
+            R.id.tvReport->navigateToReportReviewScreen()
 
         }
     }
@@ -485,11 +490,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setResult(RESULT_CANCELED)
             onBackPressed()
 
-            R.id.tvRatingDetails -> showRatingDetailsDailog()
-            R.id.tvSkinProfile->viewSkinProfileDialog()
-            R.id.btViewMoreReview->navigateToMoreReviewsScreen()
-            R.id.tvTotalReviews->navigateToMoreReviewsScreen()
-            R.id.tvReport->navigateToReportReviewScreen()
+
         }
     }
 
