@@ -130,9 +130,10 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 
 @AndroidEntryPoint
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
-     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener,VtoTryAgainListener ,     ReviewThumbnailAdapter.ThumbnailClickListener {
-    {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
+    MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
+     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener,VtoTryAgainListener ,
+    ReviewThumbnailAdapter.ThumbnailClickListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -489,8 +490,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             setResult(RESULT_CANCELED)
             onBackPressed()
-
-
         }
     }
 
@@ -2458,7 +2457,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-}
 
     private fun handlePermissionAction(action: PermissionAction?) {
         when (action) {
