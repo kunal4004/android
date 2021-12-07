@@ -130,9 +130,10 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 
 @AndroidEntryPoint
-class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
-     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener,VtoTryAgainListener ,     ReviewThumbnailAdapter.ThumbnailClickListener {
-    {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
+    MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
+     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener,VtoTryAgainListener ,
+    ReviewThumbnailAdapter.ThumbnailClickListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -348,6 +349,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.imgDownloadVTO -> saveVtoApplyImage?.let { ImageResultContract.saveImageToStorage(requireContext(),saveVtoApplyImage!!) }
             R.id.imgVTOSplit -> compareWithLiveCamera()
             R.id.captureImage -> captureImageFromVtoLiveCamera()
+            R.id.tvRatingDetails -> showRatingDetailsDailog()
+            R.id.tvSkinProfile->viewSkinProfileDialog()
+            R.id.btViewMoreReview->navigateToMoreReviewsScreen()
+            R.id.tvTotalReviews->navigateToMoreReviewsScreen()
+            R.id.tvReport->navigateToReportReviewScreen()
 
         }
     }
@@ -484,12 +490,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             setResult(RESULT_CANCELED)
             onBackPressed()
-
-            R.id.tvRatingDetails -> showRatingDetailsDailog()
-            R.id.tvSkinProfile->viewSkinProfileDialog()
-            R.id.btViewMoreReview->navigateToMoreReviewsScreen()
-            R.id.tvTotalReviews->navigateToMoreReviewsScreen()
-            R.id.tvReport->navigateToReportReviewScreen()
         }
     }
 
@@ -2448,7 +2448,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
             setContentView(view)
-            window?.apply {
+           window?.apply {
                 setLayout(
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT
@@ -2463,7 +2463,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-}
 
     private fun handlePermissionAction(action: PermissionAction?) {
         when (action) {
