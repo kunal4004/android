@@ -70,14 +70,10 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         with(mViewModel){
             createAliasId.observe(viewLifecycleOwner, { aliasId ->
                 replaceFragment(
-                    fragment = AbsaFiveDigitCodeFragment.newInstance(aliasId,mCreditCardToken),
-                    tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
+                    fragment = AbsaSecurityCheckSuccessfulFragment.newInstance(aliasId,mCreditCardToken),
+                    tag = AbsaSecurityCheckSuccessfulFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
-                    allowStateLoss = true,
-                    enterAnimation = R.anim.slide_in_from_right,
-                    exitAnimation = R.anim.slide_to_left,
-                    popEnterAnimation = R.anim.slide_from_left,
-                    popExitAnimation = R.anim.slide_to_right
+                    allowStateLoss = false
                 )
             })
 

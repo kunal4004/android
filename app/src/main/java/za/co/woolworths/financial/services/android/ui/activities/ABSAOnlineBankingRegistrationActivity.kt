@@ -110,6 +110,9 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
                 closeDownActivity()
             }
 
+            is AbsaSecurityCheckSuccessfulFragment -> return
+
+
             is AbsaEnterAtmPinCodeFragment -> {
                 Utils.hideSoftKeyboard(this)
             }

@@ -143,14 +143,10 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
             createAliasId.observe(viewLifecycleOwner, { aliasId ->
                 aliasId?.let { aliasID ->
                     replaceFragment(
-                        fragment = AbsaFiveDigitCodeFragment.newInstance(aliasID, mCreditCardToken),
-                        tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
+                        fragment = AbsaSecurityCheckSuccessfulFragment.newInstance(aliasID, mCreditCardToken),
+                        tag = AbsaSecurityCheckSuccessfulFragment::class.java.simpleName,
                         containerViewId = R.id.flAbsaOnlineBankingToDevice,
-                        allowStateLoss = true,
-                        enterAnimation = R.anim.slide_in_from_right,
-                        exitAnimation = R.anim.slide_to_left,
-                        popEnterAnimation = R.anim.slide_from_left,
-                        popExitAnimation = R.anim.slide_to_right
+                        allowStateLoss = false
                     )
                     clearAliasIdAndCellphoneNumber()
                     inProgress(false)

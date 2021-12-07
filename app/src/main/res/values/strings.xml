@@ -2371,4 +2371,11 @@
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
+
+    <string name="security_check_successful_label">Security Check Successful.</string>
+    <string name="lets_set_up_your_passcode_label">Lets set up your passcode.</string>
+
+
+
+
 </resources>

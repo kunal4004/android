@@ -26,6 +26,7 @@ class AppConstant {
         // Durations
         const val DURATION_1000_MS: Long = 1000
 
+
         //API Response Code
         const val HTTP_OK: Int = 200
         const val HTTP_OK_201: Int = 201
@@ -59,6 +60,7 @@ class AppConstant {
         const val FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL:Long = 7200
         const val FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL:Long = 15
 
+        const val DELAY_3_S: Long = 3
 
        const val BALANCE_PROTECTION_INSURANCE_REQUEST_CODE: Int = 291621
         const val BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE: Int = 20
