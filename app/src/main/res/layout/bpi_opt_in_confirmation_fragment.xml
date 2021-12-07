@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/confirmOptInButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <ImageView
+                android:id="@+id/optInImageView"
+                android:layout_width="@dimen/hundred_dp"
+                android:layout_height="@dimen/hundred_dp"
+                android:layout_marginTop="@dimen/sixty_dp"
+                android:src="@drawable/icon_opt_in"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toStartOf="@id/left_guideline"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/optInTitleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sixty_dp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:layout_marginRight="@dimen/sixty_dp"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:gravity="center"
+                android:letterSpacing="0.029"
+                android:text="@string/bpi_opt_in_for_balance_protection_insurance"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_20sp"
+                app:layout_constraintTop_toBottomOf="@+id/optInImageView"/>
+
+            <TextView
+                android:id="@+id/optInDescription1TextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:text="@string/bpi_confirm_opt_in_desc1"
+                android:gravity="center"
+                android:lineSpacingExtra="@dimen/five_dp"
+                android:textColor="@color/description_color"
+                android:textSize="@dimen/sixteen_sp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toEndOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/optInTitleTextView"/>
+
+            <TextView
+                android:id="@+id/optInDescription2TextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:text="@string/bpi_confirm_opt_in_desc2"
+                android:gravity="center"
+                android:lineSpacingExtra="@dimen/five_dp"
+                android:textColor="@color/description_color"
+                android:textSize="@dimen/sixteen_sp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:clickable="true"
+                app:layout_constraintEnd_toEndOf="@id/right_guideline"
+                app:layout_constraintStart_toEndOf="@id/left_guideline"
+                app:layout_constraintTop_toBottomOf="@id/optInDescription1TextView"
+                android:focusable="true" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@id/left_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/twenty_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@id/right_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/twenty_dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/confirmOptInButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:background="@drawable/black_button_drawable_state"
+        android:fontFamily="@font/futura_semi_bold"
+        android:letterSpacing="0.13"
+        android:textSize="@dimen/thirteen_sp"
+        android:text="@string/confirm"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

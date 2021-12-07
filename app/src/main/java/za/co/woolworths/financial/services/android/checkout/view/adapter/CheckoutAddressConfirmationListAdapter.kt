@@ -104,10 +104,10 @@ class CheckoutAddressConfirmationListAdapter(
                 }
                 editAddressImageView.setOnClickListener {
                     val bundle = Bundle()
-                    Utils.triggerFireBaseEvents(
-                        FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_EDIT_ADDRESS,
-                        activity
-                    )
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_EDIT_ADDRESS, hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_EDIT_ADDRESS
+                    ), activity)
                     bundle.putString(EDIT_SAVED_ADDRESS_RESPONSE_KEY, Utils.toJson(savedAddress))
                     bundle.putInt(EDIT_ADDRESS_POSITION_KEY, position)
                     navController?.navigate(

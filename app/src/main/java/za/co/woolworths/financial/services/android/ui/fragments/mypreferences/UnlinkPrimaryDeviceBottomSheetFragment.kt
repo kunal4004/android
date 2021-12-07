@@ -9,6 +9,7 @@ import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_unlink_primary_device_bottom_sheet.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
+import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -55,6 +56,15 @@ class UnlinkPrimaryDeviceBottomSheetFragment : WBottomSheetDialogFragment(), Vie
     }
 
     private fun hasNoOtherDevices(): Boolean? {
+        val defaultPrimaryDeviceList = deviceList?.filter { userDevice -> userDevice.primarydDevice == true }
+        if (defaultPrimaryDeviceList != null) {
+            if(defaultPrimaryDeviceList.isNotEmpty()){
+                (activity as? MyPreferencesActivity)?.setDefaultPrimaryDevice(
+                    defaultPrimaryDeviceList[0]
+                )
+            }
+        }
+
         return deviceList?.none { userDevice -> userDevice.primarydDevice == false }
     }
 }
