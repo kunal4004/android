@@ -1,22 +1,22 @@
-package za.co.woolworths.financial.services.android.ui.adapters
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter
 
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.SortOption
 import kotlinx.android.synthetic.main.sort_opitions_item.view.*
+import za.co.woolworths.financial.services.android.models.dto.SortOption
 
-class SortOptionsAdapter(
+class ReviewSortOptionsAdapter(
     val context: Context,
-    var sortOptions: ArrayList<SortOption>,
+    var sortOptions: MutableList<SortOption>,
     var listner: OnSortOptionSelected
-) : RecyclerView.Adapter<SortOptionsAdapter.SortOptionViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SortOptionViewHolder {
-        return SortOptionViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.sort_opitions_item, parent, false)
+) : RecyclerView.Adapter<ReviewSortOptionsAdapter.ReviewSortOptionViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewSortOptionViewHolder {
+        return ReviewSortOptionViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.review_sort_selection_layout, parent, false)
         )
     }
 
@@ -24,7 +24,7 @@ class SortOptionsAdapter(
         return sortOptions.size
     }
 
-    override fun onBindViewHolder(holder: SortOptionViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ReviewSortOptionViewHolder, position: Int) {
         holder.tvSortOption.text = sortOptions[position].label
         holder.rbsortSelector.isChecked = sortOptions[position].selected
         holder.view.setOnClickListener {
@@ -34,7 +34,7 @@ class SortOptionsAdapter(
         }
     }
 
-    inner class SortOptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ReviewSortOptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val tvSortOption = itemView.sortOptionType
         val view = itemView

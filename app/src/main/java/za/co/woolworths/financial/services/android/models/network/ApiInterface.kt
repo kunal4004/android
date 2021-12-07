@@ -1210,6 +1210,9 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("productId") productId: String,
             @Query("limit") limit: Int,
-            @Query("offset") offset: Int
+            @Query("offset") offset: Int,
+            @Query("sort") sort: String?,
+            @Query("refinement") refinement: String?
+
     ): RatingAndReviewData
 }
