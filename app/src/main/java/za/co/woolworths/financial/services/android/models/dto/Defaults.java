@@ -17,6 +17,7 @@ public class Defaults {
     private String wrewardsTCLink;
     private String cartCheckoutLink;
     private UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes;
+    private String logPublicKey;
 
 
     public String getAnalitics() {
@@ -121,5 +122,9 @@ public class Defaults {
 
     public void setFirebaseUserPropertiesForDelinquentProductGroupCodes(UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes) {
         this.firebaseUserPropertiesForDelinquentProductGroupCodes = firebaseUserPropertiesForDelinquentProductGroupCodes;
+    }
+
+    public String getLogPublicKey() {
+        return logPublicKey;
     }
 }

@@ -11,11 +11,12 @@ import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburb
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
+import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
-import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
@@ -1191,6 +1192,37 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<SubmittedOrderResponse>
 
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/accounts/termsAndConditions/BPI")
+    fun getBPITermsAndConditionsInfo(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Query("productGroupCode") productGroupCode: String
+    ): Call<BPITermsConditionsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/accounts/termsAndConditions/BPI")
+    fun emailBPITermsAndConditions(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body bpiBody: BPIBody
+    ): Call<GenericResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/user/{insuranceType}/optin")
+    fun postInsuranceLeadGenOptIn(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Path("insuranceType") insuranceType: String,
+        @Body insuranceTypeOptInBody: InsuranceTypeOptInBody
+    ):Call<GenericResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("/retail-ratings-reviews/app/v1")

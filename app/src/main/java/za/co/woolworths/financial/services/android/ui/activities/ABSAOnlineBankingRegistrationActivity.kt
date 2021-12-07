@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
@@ -15,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.absa.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
+import za.co.woolworths.financial.services.android.ui.fragments.integration.viewmodel.AbsaIntegrationViewModel
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListener {
@@ -22,6 +24,8 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
     private var mAccounts: String? = null
     private var mShouldDisplayABSALogin: Boolean? = false
     private var mCreditAccountInfo: String? = ""
+
+    private val viewModel: AbsaIntegrationViewModel? by viewModels()
 
     companion object {
         const val SHOULD_DISPLAY_LOGIN_SCREEN = "SHOULD_DISPLAY_LOGIN_SCREEN"
@@ -87,24 +91,30 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
 
     private fun navigateBack() {
 
-        //Hide back button when moving back to EnterFiveDigitPassCode screen
-        if (getCurrentFragment() is AbsaConfirmFiveDigitCodeFragment)
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        when(getCurrentFragment()){
+            is AbsaConfirmFiveDigitCodeFragment -> {
+                //Hide back button when moving back to EnterFiveDigitPassCode screen
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            }
 
-        // Refrain from navigate to previous fragment when landing fragment is AbsaPinCodeSuccessFragment
-        if ((getCurrentFragment() is AbsaPinCodeSuccessFragment) || (getCurrentFragment() is AbsaLoginFragment)) {
-            finishActivity()
-            return
+            is AbsaOTPConfirmationFragment -> {
+                viewModel?.clearAliasIdAndCellphoneNumber()
+            }
+
+            is AbsaPinCodeSuccessFragment, is AbsaLoginFragment -> {
+                // Refrain from navigate to previous fragment when landing fragment is AbsaPinCodeSuccessFragment
+                finishActivity()
+            }
+
+            is AbsaFiveDigitCodeFragment -> {
+                closeDownActivity()
+            }
+
+            is AbsaEnterAtmPinCodeFragment -> {
+                Utils.hideSoftKeyboard(this)
+            }
         }
 
-        if ((getCurrentFragment() is AbsaFiveDigitCodeFragment)) {
-            closeDownActivity()
-            return
-        }
-
-        if ((getCurrentFragment() is AbsaEnterAtmPinCodeFragment)) {
-            Utils.hideSoftKeyboard(this)
-        }
 
         val fragmentManager = supportFragmentManager
         if (fragmentManager.backStackEntryCount > 0) {
@@ -114,7 +124,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
         }
     }
 
-    public fun finishActivity() {
+     fun finishActivity() {
         this.finish()
         this.overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
