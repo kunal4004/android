@@ -90,7 +90,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private lateinit var listOfInputFields: List<View>
     var deliveryType: DeliveryType = DeliveryType.DELIVERY
     private var selectedDeliveryAddressType: String? = null
-    private var selectedAddress = SelectedPlacesAddress()
+    var selectedAddress = SelectedPlacesAddress()
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private var selectedAddressId = ""
@@ -121,7 +121,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleBundleResponse()
+    }
 
+    fun handleBundleResponse() {
         arguments?.apply {
             if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
@@ -1496,5 +1499,25 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             )
             anim.setDuration(300).start()
         }
+    }
+
+    @VisibleForTesting
+    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
+        checkoutAddAddressNewUserViewModel = viewModel
+    }
+
+    @VisibleForTesting
+    fun testSetBundleArguments(bundle: Bundle) {
+        arguments = bundle
+    }
+
+    @VisibleForTesting
+    fun testGetSelectedAddressId(): String {
+        return selectedAddressId
+    }
+
+    @VisibleForTesting
+    fun testGetSelectedDeliveryAddressType(): String? {
+        return selectedDeliveryAddressType
     }
 }
