@@ -9,7 +9,8 @@ import kotlinx.android.synthetic.main.activity_reviewer_info_details.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 
 
-class MoreReviewActivity : AppCompatActivity(), MoreReviewsFragment.OnSortRefineFragmentListener {
+class MoreReviewActivity : AppCompatActivity(),
+        MoreReviewsFragment.OnSortRefineFragmentListener {
 
     private var moreReviewsFragment: MoreReviewsFragment? = null
     private var sortAndFilterReviewFragment: SortAndFilterReviewFragment? = null
@@ -51,6 +52,4 @@ class MoreReviewActivity : AppCompatActivity(), MoreReviewsFragment.OnSortRefine
     override fun setupDrawer(isShortClicked: Boolean, ratingReviewResponse: RatingReviewResponse) {
         sortAndFilterReviewFragment?.setDrawerUI(isShortClicked,ratingReviewResponse)
     }
-
-
 }

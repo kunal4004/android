@@ -24,7 +24,8 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ReviewSortOptionsAdapter
 
 
-class SortAndFilterReviewFragment : Fragment(), ReviewSortOptionsAdapter.OnSortOptionSelected {
+class SortAndFilterReviewFragment : Fragment(),
+        ReviewSortOptionsAdapter.OnSortOptionSelected {
     private var onSortRefineFragmentListener: MoreReviewsFragment.OnSortRefineFragmentListener? = null
     private var toolbarTitle: TextView? = null
     private var rvSortOptions: RecyclerView? = null
