@@ -31,7 +31,7 @@ class ReportReviewFragment: Fragment() , ReportReviewsAdapter.ReportItemClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.setOnClickListener {
+        toolbar?.setOnClickListener {
             activity?.onBackPressed()
         }
         arguments?.apply {

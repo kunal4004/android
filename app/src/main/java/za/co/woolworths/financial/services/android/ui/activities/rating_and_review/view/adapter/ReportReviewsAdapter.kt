@@ -21,7 +21,9 @@ class ReportReviewsAdapter (
                 if (isChecked) {
                     count ++
                 } else {
-                    count --
+                    if (count>=0) {
+                        count--
+                    }
                 }
                 reportItemClick.reportItemClicked(reportReview, isChecked)
             }
