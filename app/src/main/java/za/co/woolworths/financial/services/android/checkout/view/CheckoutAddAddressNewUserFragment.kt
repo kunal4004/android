@@ -455,7 +455,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    private fun onProvinceSelected(province: Province?) {
+    fun onProvinceSelected(province: Province?) {
         selectedAddress.apply {
             provinceName = province?.name.toString()
             savedAddress.region = province?.id.toString()
@@ -464,17 +464,17 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         provinceAutocompleteEditText?.setText(province?.name)
     }
 
-    private fun resetSuburbSelection() {
+    fun resetSuburbSelection() {
         selectedAddress.savedAddress.apply {
             suburb = ""
             suburbId = ""
         }
         selectedAddress.store = ""
         selectedAddress.storeId = ""
-        suburbEditText.text.clear()
+        suburbEditText?.text?.clear()
     }
 
-    private fun onSuburbSelected(onSelectedSuburb: Suburb?) {
+    fun onSuburbSelected(onSelectedSuburb: Suburb?) {
         if (deliveryType == DeliveryType.DELIVERY) {
             selectedAddress.savedAddress.apply {
                 suburb = onSelectedSuburb?.name.toString()
@@ -488,7 +488,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         enableDisableUserInputEditText(
             addressNicknameEditText,
             true,
-            addressNicknameErrorMsg.isVisible
+            addressNicknameErrorMsg?.isVisible == true
         )
         enableDisableUserInputEditText(
             unitComplexFloorEditText,
@@ -499,10 +499,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         suburbEditText?.setText(onSelectedSuburb?.name)
         if (onSelectedSuburb?.postalCode.isNullOrEmpty()) {
             enablePostalCode()
-            postalCode.text.clear()
+            postalCode?.text?.clear()
         } else {
             postalCode?.setText(onSelectedSuburb?.postalCode)
-            if (postalCode.text.isNotEmpty()) {
+            if (onSelectedSuburb?.postalCode?.isNotEmpty() == true) {
                 disablePostalCode()
             } else
                 enablePostalCode()
@@ -589,7 +589,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         checkIfSelectedProvinceExist(WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>)
     }
 
-    private fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
+    fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
         val localProvince = Province()
         val provinceName = selectedAddress.provinceName
         if (!provinceName.isNullOrEmpty()) {
@@ -600,7 +600,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                         id = provinces.id
                         name = provinces.name
                     }
-                    provinceAutocompleteEditText.setText(provinceName)
+                    provinceAutocompleteEditText?.setText(provinceName)
                     disableProvinceSelection()
                     selectedAddress.apply {
                         this.provinceName = localProvince.name
@@ -610,7 +610,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             }
             if (localProvince.name.isNullOrEmpty()) {
                 // province name is not matching with the province list from config.
-                provinceAutocompleteEditText.setText("")
+                provinceAutocompleteEditText?.setText("")
                 provinceSuburbEnableType =
                     ONLY_PROVINCE
             }
@@ -623,14 +623,14 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             provinceSuburbEnableType =
                 if (selectedAddress.provinceName.isNullOrEmpty()) BOTH else ONLY_SUBURB
         } else {
-            suburbEditText.setText(selectedAddress.savedAddress.suburb)
+            suburbEditText?.setText(selectedAddress.savedAddress.suburb)
             disableSuburbSelection()
         }
         enableEditText()
         when (selectedAddress.savedAddress.postalCode.isNullOrEmpty()) {
             true -> {
                 enablePostalCode()
-                postalCode.text.clear()
+                postalCode?.text?.clear()
             }
             false -> {
                 postalCode.setText(selectedAddress.savedAddress.postalCode)
@@ -642,61 +642,61 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    private fun enableProvinceSelection() {
+    fun enableProvinceSelection() {
         selectProvinceLayout?.isClickable = true
         provinceAutocompleteEditText?.isClickable = true
         selectProvinceLayout?.isEnabled = true
         provinceAutocompleteEditText?.isEnabled = true
         selectProvinceLayout?.setOnClickListener(this)
         provinceAutocompleteEditText?.setOnClickListener(this)
-        dropdownGetProvincesImg.visibility = View.VISIBLE
-        selectProvinceLayout.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_active_bg)
-        provinceAutocompleteEditText.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_box_autocomplete_edit_text)
+        dropdownGetProvincesImg?.visibility = View.VISIBLE
+        selectProvinceLayout?.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_active_bg)
+        provinceAutocompleteEditText?.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_box_autocomplete_edit_text)
     }
 
-    private fun enableSuburbSelection() {
+    fun enableSuburbSelection() {
         selectSuburbLayout?.isClickable = true
         suburbEditText?.isClickable = true
         selectSuburbLayout?.isEnabled = true
         suburbEditText?.isEnabled = true
         selectSuburbLayout?.setOnClickListener(this)
         suburbEditText?.setOnClickListener(this)
-        dropdownGetSuburbImg.visibility = View.VISIBLE
-        selectSuburbLayout.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_active_bg)
-        suburbEditText.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_box_autocomplete_edit_text)
+        dropdownGetSuburbImg?.visibility = View.VISIBLE
+        selectSuburbLayout?.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_box_active_bg)
+        suburbEditText?.setBackgroundResource(if (suburbNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_box_autocomplete_edit_text)
     }
 
-    private fun disableProvinceSelection() {
+    fun disableProvinceSelection() {
         selectProvinceLayout?.isClickable = false
         provinceAutocompleteEditText?.isClickable = false
         selectProvinceLayout?.isEnabled = false
         provinceAutocompleteEditText?.isEnabled = false
-        dropdownGetProvincesImg.visibility = View.GONE
-        selectProvinceLayout.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
-        provinceAutocompleteEditText.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_non_editable_half_edit_text)
+        dropdownGetProvincesImg?.visibility = View.GONE
+        selectProvinceLayout?.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
+        provinceAutocompleteEditText?.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_non_editable_half_edit_text)
     }
 
-    private fun disableSuburbSelection() {
+    fun disableSuburbSelection() {
         selectSuburbLayout?.isClickable = false
         suburbEditText?.isClickable = false
         selectSuburbLayout?.isEnabled = false
         suburbEditText?.isEnabled = false
-        dropdownGetSuburbImg.visibility = View.GONE
-        selectSuburbLayout.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
-        suburbEditText.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_non_editable_half_edit_text)
+        dropdownGetSuburbImg?.visibility = View.GONE
+        selectSuburbLayout?.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
+        suburbEditText?.setBackgroundResource(if (provinceNameErrorMsg.visibility == View.VISIBLE) R.drawable.input_box_half_error_bg else R.drawable.input_non_editable_half_edit_text)
     }
 
-    private fun enablePostalCode() {
-        postalCode.setBackgroundResource(if (postalCodeTextErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
-        postalCode.isClickable = true
-        postalCode.isEnabled = true
+    fun enablePostalCode() {
+        postalCode?.setBackgroundResource(if (postalCodeTextErrorMsg.visibility == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
+        postalCode?.isClickable = true
+        postalCode?.isEnabled = true
     }
 
-    private fun disablePostalCode() {
+    fun disablePostalCode() {
         showErrorInputField(postalCode, View.GONE)
-        postalCode.setBackgroundResource(R.drawable.input_box_inactive_bg)
-        postalCode.isClickable = false
-        postalCode.isEnabled = false
+        postalCode?.setBackgroundResource(R.drawable.input_box_inactive_bg)
+        postalCode?.isClickable = false
+        postalCode?.isEnabled = false
     }
 
     private fun enableDisableUserInputEditText(
@@ -726,41 +726,43 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun showWhereAreWeDeliveringView() {
-        for ((index, options) in deliveringOptionsList!!.withIndex()) {
-            val view = View.inflate(context, R.layout.where_are_we_delivering_items, null)
-            val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
-            titleTextView?.tag = index
-            titleTextView?.text = options
-            if (!selectedDeliveryAddressType.isNullOrEmpty() && selectedDeliveryAddressType.equals(
-                    options
-                )
-            ) {
-                selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
-                titleTextView?.background =
-                    bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                titleTextView?.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
+        if (!deliveringOptionsList.isNullOrEmpty()) {
+            for ((index, options) in deliveringOptionsList!!.withIndex()) {
+                val view = View.inflate(context, R.layout.where_are_we_delivering_items, null)
+                val titleTextView: TextView? = view?.findViewById(R.id.titleTv)
+                titleTextView?.tag = index
+                titleTextView?.text = options
+                if (!selectedDeliveryAddressType.isNullOrEmpty() && selectedDeliveryAddressType.equals(
+                        options
                     )
-                )
-            }
-            titleTextView?.setOnClickListener {
-                resetOtherDeliveringTitle(it.tag as Int)
-                selectedDeliveryAddressType = (it as TextView).text as? String
-                selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
-                deliveringAddressTypesErrorMsg.visibility = View.GONE
-                // change background of selected textView
-                it.background =
-                    bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
-                it.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
+                ) {
+                    selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
+                    titleTextView?.background =
+                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                    titleTextView?.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
                     )
-                )
+                }
+                titleTextView?.setOnClickListener {
+                    resetOtherDeliveringTitle(it.tag as Int)
+                    selectedDeliveryAddressType = (it as TextView).text as? String
+                    selectedAddress.savedAddress.addressType = selectedDeliveryAddressType
+                    deliveringAddressTypesErrorMsg.visibility = View.GONE
+                    // change background of selected textView
+                    it.background =
+                        bindDrawable(R.drawable.checkout_delivering_title_round_button_pressed)
+                    it.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                }
+                delivering_layout?.addView(view)
             }
-            delivering_layout?.addView(view)
         }
     }
 
@@ -930,7 +932,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         progressbarGetProvinces?.visibility = View.VISIBLE
     }
 
-    private fun onSaveAddressClicked() {
+    fun onSaveAddressClicked() {
         if (selectedAddress.savedAddress.address1.isNullOrEmpty()) {
             showErrorDialog()
             return
@@ -1042,7 +1044,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    private fun addAddressErrorResponse(response: AddAddressResponse, errorMessage: Int) {
+    fun addAddressErrorResponse(response: AddAddressResponse, errorMessage: Int) {
         if (response.response.code.toString() == ERROR_CODE_SUBURB_NOT_DELIVERABLE ||
             response.response.code.toString() == ERROR_CODE_SUBURB_NOT_FOUND
         ) {
@@ -1150,7 +1152,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    private fun isNickNameAlreadyExist(response: AddAddressResponse): Boolean {
+    fun isNickNameAlreadyExist(response: AddAddressResponse): Boolean {
         if (!response.validationErrors.isNullOrEmpty()) {
             for (errorsFields in response.validationErrors) {
                 if (errorsFields.getField() == "nickname") {
@@ -1161,7 +1163,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         return false
     }
 
-    private fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
+    fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
         view?.findNavController()?.navigate(
             R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
             bundleOf(
@@ -1365,9 +1367,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         return isExist
     }
 
-    private fun showNickNameExist() {
-        addressNicknameEditText.setBackgroundResource(R.drawable.input_error_background)
-        addressNicknameErrorMsg.text = bindString(R.string.nick_name_exist_error_msg)
+    fun showNickNameExist() {
+        addressNicknameEditText?.setBackgroundResource(R.drawable.input_error_background)
+        addressNicknameErrorMsg?.text = bindString(R.string.nick_name_exist_error_msg)
         showAnimationErrorMessage(addressNicknameErrorMsg, View.VISIBLE, 0)
     }
 
@@ -1388,7 +1390,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         )
     }
 
-    private fun showErrorDialog() {
+    fun showErrorDialog() {
         FirebaseManager.logException(WoolworthsApplication.getNativeCheckout()?.googlePlacesAddressErrorMessage)
         val dialog = ErrorDialogFragment.newInstance(
             WoolworthsApplication.getNativeCheckout()?.googlePlacesAddressErrorMessage
@@ -1411,9 +1413,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun showErrorPhoneNumber() {
-        cellphoneNumberEditText.setBackgroundResource(R.drawable.input_error_background)
+        cellphoneNumberEditText?.setBackgroundResource(R.drawable.input_error_background)
         cellphoneNumberErrorMsg?.visibility = View.VISIBLE
-        cellphoneNumberErrorMsg.text = bindString(R.string.phone_number_invalid_error_msg)
+        cellphoneNumberErrorMsg?.text = bindString(R.string.phone_number_invalid_error_msg)
         showAnimationErrorMessage(
             cellphoneNumberErrorMsg,
             View.VISIBLE,
@@ -1437,7 +1439,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    private fun enableEditText() {
+    fun enableEditText() {
         when (provinceSuburbEnableType) {
             ONLY_PROVINCE -> enableProvinceSelection()
             ONLY_SUBURB -> enableSuburbSelection()
@@ -1448,39 +1450,41 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         }
     }
 
-    private fun showErrorInputField(editText: EditText, visible: Int) {
-        editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
-        when (editText.id) {
-            R.id.autoCompleteTextView -> {
-                showAnimationErrorMessage(autocompletePlaceErrorMsg, visible, 0)
-            }
-            R.id.addressNicknameEditText -> {
-                showAnimationErrorMessage(addressNicknameErrorMsg, visible, 0)
-            }
-            R.id.suburbEditText -> {
-                showAnimationErrorMessage(suburbNameErrorMsg, visible, 0)
-            }
-            R.id.provinceAutocompleteEditText -> {
-                showAnimationErrorMessage(provinceNameErrorMsg, visible, 0)
-            }
-            R.id.postalCode -> {
-                showAnimationErrorMessage(postalCodeTextErrorMsg, visible, 0)
-                editText.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
-            }
-            R.id.recipientNameEditText -> {
-                showAnimationErrorMessage(
-                    recipientNameErrorMsg,
-                    visible,
-                    recipientAddressLayout.y.toInt()
-                )
-            }
-            R.id.cellphoneNumberEditText -> {
-                cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
-                showAnimationErrorMessage(
-                    cellphoneNumberErrorMsg,
-                    visible,
-                    recipientAddressLayout.y.toInt()
-                )
+    private fun showErrorInputField(editText: EditText?, visible: Int) {
+        editText?.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.recipient_details_input_edittext_bg)
+        if (editText != null) {
+            when (editText?.id) {
+                R.id.autoCompleteTextView -> {
+                    showAnimationErrorMessage(autocompletePlaceErrorMsg, visible, 0)
+                }
+                R.id.addressNicknameEditText -> {
+                    showAnimationErrorMessage(addressNicknameErrorMsg, visible, 0)
+                }
+                R.id.suburbEditText -> {
+                    showAnimationErrorMessage(suburbNameErrorMsg, visible, 0)
+                }
+                R.id.provinceAutocompleteEditText -> {
+                    showAnimationErrorMessage(provinceNameErrorMsg, visible, 0)
+                }
+                R.id.postalCode -> {
+                    showAnimationErrorMessage(postalCodeTextErrorMsg, visible, 0)
+                    editText?.setBackgroundResource(if (visible == View.VISIBLE) R.drawable.input_error_background else R.drawable.input_non_editable_edit_text)
+                }
+                R.id.recipientNameEditText -> {
+                    showAnimationErrorMessage(
+                        recipientNameErrorMsg,
+                        visible,
+                        recipientAddressLayout.y.toInt()
+                    )
+                }
+                R.id.cellphoneNumberEditText -> {
+                    cellphoneNumberErrorMsg.text = bindString(R.string.mobile_number_error_msg)
+                    showAnimationErrorMessage(
+                        cellphoneNumberErrorMsg,
+                        visible,
+                        recipientAddressLayout.y.toInt()
+                    )
+                }
             }
         }
     }
