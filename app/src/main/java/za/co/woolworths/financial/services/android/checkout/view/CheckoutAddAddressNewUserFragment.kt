@@ -1506,11 +1506,6 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     @VisibleForTesting
-    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
-        checkoutAddAddressNewUserViewModel = viewModel
-    }
-
-    @VisibleForTesting
     fun testSetBundleArguments(bundle: Bundle) {
         arguments = bundle
     }

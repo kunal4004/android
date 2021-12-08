@@ -12,7 +12,6 @@ import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
-import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.models.NativeCheckout
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -38,7 +37,6 @@ class CheckoutAddAddressNewUserFragmentTest : Fragment() {
     @get:Rule
     val testCoroutineRule = TestCoroutineRule()
 
-    private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private lateinit var checkoutAddAddressNewUserFragment: CheckoutAddAddressNewUserFragment
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
@@ -46,10 +44,6 @@ class CheckoutAddAddressNewUserFragmentTest : Fragment() {
     fun init() {
         checkoutAddAddressNewUserFragment =
             mock(CheckoutAddAddressNewUserFragment::class.java, CALLS_REAL_METHODS)
-        checkoutAddAddressNewUserViewModel = mock()
-        checkoutAddAddressNewUserFragment.testSetViewModelInstance(
-            checkoutAddAddressNewUserViewModel
-        )
         firebaseAnalytics = mock()
     }
 
