@@ -1520,4 +1520,14 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     fun testGetSelectedDeliveryAddressType(): String? {
         return selectedDeliveryAddressType
     }
+
+    @VisibleForTesting
+    fun testGetIsAddNewAddress(): Boolean {
+        return isAddNewAddress
+    }
+
+    @VisibleForTesting
+    fun testGetSavedAddress(): SavedAddressResponse? {
+        return savedAddressResponse
+    }
 }

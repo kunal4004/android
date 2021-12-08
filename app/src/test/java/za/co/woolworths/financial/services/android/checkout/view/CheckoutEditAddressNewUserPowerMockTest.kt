@@ -1,13 +1,13 @@
 package za.co.woolworths.financial.services.android.checkout.view
 
-import android.os.Bundle
+import com.google.firebase.analytics.FirebaseAnalytics
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
-import org.powermock.core.classloader.annotations.PrepareForTest
-import org.powermock.modules.junit4.PowerMockRunner
+import org.mockito.junit.MockitoJUnitRunner
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
@@ -25,12 +25,12 @@ import za.co.woolworths.financial.services.android.utils.mock
  * Created by Kunal Uttarwar on 07/12/21.
  */
 
-@RunWith(PowerMockRunner::class)
-@PrepareForTest(Bundle::class)
+@RunWith(MockitoJUnitRunner::class)
 class CheckoutEditAddressNewUserPowerMockTest {
 
     private lateinit var checkoutAddAddressNewUserViewModel: CheckoutAddAddressNewUserViewModel
     private lateinit var checkoutAddAddressNewUserFragment: CheckoutAddAddressNewUserFragment
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     @Before
     fun init() {
@@ -40,6 +40,7 @@ class CheckoutEditAddressNewUserPowerMockTest {
         checkoutAddAddressNewUserFragment.testSetViewModelInstance(
             checkoutAddAddressNewUserViewModel
         )
+        firebaseAnalytics = mock()
     }
 
     @Test
@@ -77,21 +78,76 @@ class CheckoutEditAddressNewUserPowerMockTest {
         checkoutAddAddressNewUserFragment.handleBundleResponse()
 
         Assert.assertEquals(
-            checkoutAddAddressNewUserFragment.testGetSelectedAddressId(),
-            addressList[1].id
+            addressList[1].id, checkoutAddAddressNewUserFragment.testGetSelectedAddressId()
         )
         Assert.assertEquals(
-            checkoutAddAddressNewUserFragment.selectedAddress.provinceName,
-            province.name
+            province.name, checkoutAddAddressNewUserFragment.selectedAddress.provinceName
         )
         Assert.assertEquals(
-            checkoutAddAddressNewUserFragment.testGetSelectedDeliveryAddressType(),
-            addressList[1].addressType
+            addressList[1].addressType,
+            checkoutAddAddressNewUserFragment.testGetSelectedDeliveryAddressType()
         )
         Assert.assertEquals(
-            checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.id,
-            addressList[1].id
+            addressList[1].id, checkoutAddAddressNewUserFragment.selectedAddress.savedAddress.id
         )
 
+    }
+
+    @Test
+    fun check_if_newAddress_button_click() {
+        val bundle = BundleMock.mock()
+        val savedAddress = SavedAddressResponse()
+        val address = Address()
+        address.apply {
+            id = "1"
+            addressType = "Home"
+            region = "1"
+        }
+        val addressList = ArrayList<Address>()
+        addressList.add(address)
+        addressList.add(address)
+        savedAddress.addresses = addressList
+        bundle.putString(
+            CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+            Utils.toJson(savedAddress)
+        )
+        bundle.putBoolean(CheckoutAddressConfirmationFragment.ADD_NEW_ADDRESS_KEY, true)
+        checkoutAddAddressNewUserFragment.testSetBundleArguments(bundle)
+        checkoutAddAddressNewUserFragment.handleBundleResponse()
+
+        Assert.assertEquals(true, checkoutAddAddressNewUserFragment.testGetIsAddNewAddress())
+        Assert.assertEquals(
+            savedAddress?.addresses?.get(0)?.id,
+            checkoutAddAddressNewUserFragment.testGetSavedAddress()?.addresses?.get(0)?.id
+        )
+    }
+
+    @Ignore
+    fun checkOnlySavedAddressCall() {
+        val bundle = BundleMock.mock()
+        val savedAddress = SavedAddressResponse()
+        val address = Address()
+        address.apply {
+            id = "1"
+            addressType = "Home"
+            region = "1"
+        }
+        val addressList = ArrayList<Address>()
+        addressList.add(address)
+        addressList.add(address)
+        savedAddress.addresses = addressList
+        bundle.putString(
+            CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+            Utils.toJson(savedAddress)
+        )
+        checkoutAddAddressNewUserFragment.testSetBundleArguments(bundle)
+        mock(Utils::class.java)
+        doNothing().`when`(Utils.triggerFireBaseEvents(anyString(), anyMap(), any()))
+        checkoutAddAddressNewUserFragment.handleBundleResponse()
+
+        Assert.assertEquals(false, checkoutAddAddressNewUserFragment.testGetIsAddNewAddress())
+        Assert.assertEquals(
+            "", checkoutAddAddressNewUserFragment.testGetSelectedAddressId()
+        )
     }
 }
