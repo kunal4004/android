@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +31,7 @@ import java.util.*
 
 class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListener,
     MoreReviewsAdapter.SortAndRefineListener {
+    private var reportOptionsList: List<String> = listOf()
     private var onSortRefineFragmentListener: OnSortRefineFragmentListener? = null
     private var sortString: String? = null
     private var refinementString: String? = null
@@ -68,8 +68,9 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
             ) as RatingReviewResponse
 
             productId = ratingAndResponse.reviews.get(0).productId
+            reportOptionsList = ratingAndResponse.reportReviewOptions
             setupViewModel()
-            setReviewsList(null, null, null)
+            setReviewsList(null, null, reportOptionsList)
         }
     }
 
@@ -179,8 +180,6 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
 
     }
 
-
-
     override fun openSortDrawer() {
         val data = moreReviewViewModel.getRatingReviewResponseLiveData()
         data.value?.let { onSortRefineFragmentListener?.setupDrawer(true, it)
@@ -191,13 +190,13 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
     fun onSortOptionSelected(sortOption: SortOption) {
         sortString = sortOption.sortOption
         onSortRefineFragmentListener?.closeDrawer()
-        setReviewsList(sortString, refinementString, null)
+        setReviewsList(sortString, refinementString, reportOptionsList)
     }
 
     fun onRefineOptionSelected(refinements: String?) {
         if(refinementString!=refinements) {
             refinementString = refinements
-            setReviewsList(sortString, refinementString, null)
+            setReviewsList(sortString, refinementString, reportOptionsList)
         }
         onSortRefineFragmentListener?.closeDrawer()
     }
