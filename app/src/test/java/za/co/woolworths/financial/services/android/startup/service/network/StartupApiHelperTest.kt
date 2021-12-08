@@ -57,13 +57,7 @@ class StartupApiHelperTest {
         startupApiHelper.getConfig()
         verify(RetrofitConfig.mApiInterface).getConfig("ANDROID_Vza.co.woolworths.financial.services.android",
                 "363d1f4695e51234849733f0c46be51eff6cd892",
-                "Woolworths",
-                "Zensar",
-                "Airtel",
-                "Android",
-                "0",
-                ".",
-                "za.co.woolworths.financial.services.android.models")
+                "Woolworths")
     }
 
     @Test

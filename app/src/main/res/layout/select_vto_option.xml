@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vto_select_option_bg_color"
+    android:paddingBottom="@dimen/ten_dp">
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/vtoSelectedLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/ten_dp"
+        android:background="@drawable/bg_vto_option_bottomsheet"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/openLiveCamera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ten_dp"
+            android:gravity="center_vertical"
+            android:padding="@dimen/fifteen_dp"
+            android:text="@string/use_live_camera"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_20sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#3C3C43" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/takePhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ten_dp"
+            android:gravity="center_vertical"
+            android:padding="@dimen/fifteen_dp"
+            android:text="@string/take_a_photo"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_20sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#3C3C43" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/choosePhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ten_dp"
+            android:gravity="center_vertical"
+            android:padding="@dimen/fifteen_dp"
+            android:text="@string/choose_from_photo_library"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_20sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#3C3C43" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/browseFiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ten_dp"
+            android:gravity="center_vertical"
+            android:padding="@dimen/fifteen_dp"
+            android:text="@string/browse"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_20sp" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/cancelVTO"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ten_dp"
+        android:layout_marginTop="@dimen/ten_dp"
+        android:layout_marginEnd="@dimen/ten_dp"
+        android:background="@drawable/bg_vto_option_bottomsheet"
+        android:gravity="center"
+        android:padding="@dimen/fifteen_dp"
+        android:paddingBottom="@dimen/fifteen_dp"
+        android:text="Cancel"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_20sp"
+        app:layout_constraintTop_toBottomOf="@+id/vtoSelectedLayout" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

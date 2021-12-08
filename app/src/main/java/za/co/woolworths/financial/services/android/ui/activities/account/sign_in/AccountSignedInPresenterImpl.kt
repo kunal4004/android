@@ -69,7 +69,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferOutstanding(accountInfo?.first)
+        accountInfo?.first?.let { showProductOfferOutstanding(it) }
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -106,7 +106,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.BLACK_CREDIT_CARD -> resources?.getString(R.string.black_credit_card_title)
             ApplyNowState.GOLD_CREDIT_CARD -> resources?.getString(R.string.gold_credit_card_title)
             ApplyNowState.PERSONAL_LOAN -> resources?.getString(R.string.personal_loan)
-            else -> ""
         }
     }
 
@@ -121,7 +120,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
             ApplyNowState.SILVER_CREDIT_CARD-> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber!!
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber ?: 999
             }
         }
 
@@ -135,7 +134,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
             ApplyNowState.SILVER_CREDIT_CARD-> {
-                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle ?: 999
             }
         }
 
@@ -151,24 +150,30 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             }
         }
 
-
         val account = getAccount()
         account?.apply {
             return when {
                 !productOfferingGoodStanding && supported &&
                         delinquencyCycle>=minimumDelinquencyCycle -> {
-                    if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
-                        if(!isCreditCard){
-                            mainView?.removeBlocksWhenChargedOff(supported)
-                            mainView?.showViewTreatmentPlan(false)!!
-                        } else{
-                            mainView?.removeBlocksWhenChargedOff(supported)!!
+                    when {
+                        productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
+                            if(!isCreditCard){
+                                mainView?.removeBlocksWhenChargedOff(supported)
+                                mainView?.showViewTreatmentPlan(false)!!
+                            } else{
+                                mainView?.removeBlocksWhenChargedOff(supported)!!
+                            }
                         }
-                    } else if(productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true)){
+                        productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
                             //display treatment plan popup with view payment options
                             mainView?.showViewTreatmentPlan(isCreditCard)!!
-                    } else {
-                        mainView?.showViewTreatmentPlan(false)!!
+                            mainView?.showAccountHelp(getCardProductInformation(true))!!
+
+                        }
+                        else -> {
+                            mainView?.showViewTreatmentPlan(false)!!
+                            mainView?.showAccountHelp(getCardProductInformation(false))!!
+                        }
                     }
                 }
                 else -> {
@@ -178,13 +183,11 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                         mainView?.removeBlocksOnCollectionCustomer()!!
                     } else if(!productOfferingGoodStanding) { // account is in arrears
                         mainView?.showAccountInArrears(account)
-                        val informationModel = getCardProductInformation(true)
-                        mainView?.showAccountHelp(informationModel)!!
+                        mainView?.showAccountHelp(getCardProductInformation(true))!!
                     } else{
                         //when productOfferingGoodStanding == true
                         mainView?.hideAccountInArrears(account)
-                        val informationInArrearsModel = getCardProductInformation(false)
-                        mainView?.showAccountHelp(informationInArrearsModel)!!
+                        mainView?.showAccountHelp(getCardProductInformation(false))!!
                     }
                 }
             }
