@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -25,6 +26,7 @@ import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import androidx.annotation.RawRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
@@ -630,10 +632,24 @@ class KotlinUtils {
         }
 
         fun openUrlInPhoneBrowser(urlString: String?, activity: Activity?) {
-            urlString?.apply {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                activity?.startActivity(intent)
+            try {
+                urlString?.apply {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    activity?.startActivity(intent)
+                }
+            }
+            catch (exception: ActivityNotFoundException){
+                FirebaseManager.logException("no browser found - $exception")
+                activity?.apply {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                    builder
+                        .setTitle(R.string.browser_not_found_title)
+                        .setMessage(R.string.browser_not_found_msg)
+                        .setCancelable(true)
+                    val dialog: AlertDialog = builder.create()
+                    dialog.show()
+                }
             }
         }
 
@@ -815,7 +831,7 @@ class KotlinUtils {
         }
 
         fun linkDeviceIfNecessary(activity: Activity?, state: ApplyNowState, doJob: () -> Unit, elseJob: () -> Unit){
-            if (!MyAccountsFragment.verifyAppInstanceId() &&
+            if (MyAccountsFragment.verifyAppInstanceId() &&
                 Utils.isGooglePlayServicesAvailable() &&
                 state == ApplyNowState.STORE_CARD) {
                     doJob()

@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import dagger.hilt.android.HiltAndroidApp;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
@@ -51,6 +52,7 @@ import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.AccountOptions;
 import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
+import za.co.woolworths.financial.services.android.models.dto.BalanceProtectionInsuranceObject;
 import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
 import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncrease;
@@ -69,7 +71,9 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
 import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
+import za.co.woolworths.financial.services.android.models.dto.VirtualTryOn;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
 import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
 import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
@@ -83,6 +87,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
 
+@HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
     private static Context context;
@@ -155,6 +160,18 @@ public class WoolworthsApplication extends Application implements Application.Ac
     private static Liquor liquor;
     private static AccountOptions accountOptions;
     private static DeviceSecurity deviceSecurity;
+    private static BalanceProtectionInsuranceObject balanceProtectionInsurance;
+    private static VirtualTryOn virtualTryOn;
+
+    private static String logPublicKey;
+
+    public static String getLogPublicKey(){
+    return logPublicKey;
+    }
+
+    public static void setLogPublicKey(String logPublicKey) {
+        WoolworthsApplication.logPublicKey = logPublicKey;
+    }
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -775,5 +792,21 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public static DeviceSecurity getDeviceSecurity() {
         return deviceSecurity;
+    }
+
+    public static void setBalanceProtectionInsuranceObject(@Nullable BalanceProtectionInsuranceObject balanceProtectionInsurance) {
+        WoolworthsApplication.balanceProtectionInsurance = balanceProtectionInsurance;
+    }
+
+    public static BalanceProtectionInsuranceObject getBalanceProtectionInsuranceObject() {
+        return balanceProtectionInsurance;
+    }
+
+    public void setVirtualTryOn(VirtualTryOn virtualTryOn) {
+        this.virtualTryOn = virtualTryOn;
+    }
+
+    public VirtualTryOn getVirtualTryOn() {
+        return virtualTryOn;
     }
 }

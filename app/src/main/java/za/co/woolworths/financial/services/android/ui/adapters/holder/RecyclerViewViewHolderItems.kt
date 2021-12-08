@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
+import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -28,7 +29,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     fun setProductItem(productList: ProductList, navigator: IProductListing, nextProduct: ProductList? = null, previousProduct: ProductList? = null) {
         with(productList) {
             setProductImage(this)
-            setPromotionalImage(promotionImages)
+            setPromotionalImage(promotionImages,virtualTryOn)
             setProductName(this)
             setBrandText(this, nextProduct, previousProduct)
             setPromotionalText(this)
@@ -115,7 +116,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
         }
     }
 
-    private fun setPromotionalImage(imPromo: PromotionImages?) {
+    private fun setPromotionalImage(imPromo: PromotionImages?,virtualTryOn : String?) {
         with(itemView) {
             measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
@@ -125,6 +126,9 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             ImageManager.setPictureWithoutPlaceHolder(imReward, imPromo?.wRewards ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imVitality, imPromo?.vitality ?: "")
             ImageManager.setPictureWithoutPlaceHolder(imNewImage, imPromo?.newImage ?: "")
+            if (VirtualTryOnUtil.isVtoConfigAvailable()) {
+                ImageManager.setPictureWithoutPlaceHolder(imgTryItOn, virtualTryOn ?: "")
+            }
         }
     }
 

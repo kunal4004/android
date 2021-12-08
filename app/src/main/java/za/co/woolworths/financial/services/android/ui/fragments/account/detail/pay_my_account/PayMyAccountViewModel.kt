@@ -20,7 +20,9 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.request
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.BeginPayMyAccountJourneyActionImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PayMyAccountPresenter
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
@@ -47,6 +49,7 @@ class PayMyAccountViewModel : ViewModel() {
     var deleteCardList: MutableList<Pair<GetPaymentMethod?, Int>>? = mutableListOf()
     private var payUPayResultRequest: MutableLiveData<PayUPayResultRequest> = MutableLiveData()
 
+   val payMyAccountPresenter : PayMyAccountPresenter =  PayMyAccountPresenter(BeginPayMyAccountJourneyActionImpl(this))
 
     var pma3dSecureRedirection: PMARedirection? = null
 
@@ -201,7 +204,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun isPaymentMethodListSizeLimitedToTenItem(): Boolean = getPaymentMethodList()?.size ?: 0 >= 10
 
-    private fun getProductGroupCode(): String = getAccount()?.productGroupCode ?: ""
+    fun getProductGroupCode(): String = getAccount()?.productGroupCode ?: ""
 
     fun getProductOfferingId(): Int? = getAccount()?.productOfferingId
 
@@ -211,7 +214,8 @@ class PayMyAccountViewModel : ViewModel() {
 
     fun getProductLabelId() = when (getApplyNowState()) {
         ApplyNowState.STORE_CARD -> R.string.store_card_title
-        else -> R.string.personalLoanCard_title
+        ApplyNowState.PERSONAL_LOAN -> R.string.personal_loan_card_title
+        else ->  R.string.credit_card_title
     }
 
     fun getAccountWithApplyNowState() = getCardDetail()?.account
@@ -452,7 +456,11 @@ class PayMyAccountViewModel : ViewModel() {
         val currency = "ZAR"
 
         val account = cardInfo?.account?.second
-        val accountNumber = account?.accountNumber ?: "0"
+        // Select absaCardToken for credit card products and account number for personal loan and store card
+        val accountNumber = if (account?.productGroupCode?.equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true) == true)
+            account.cards?.get(0)?.absaCardToken ?: ""
+        else
+            account?.accountNumber ?: ""
         val productOfferingId = account?.productOfferingId ?: 0
         val paymentMethod = PayUPaymentMethod(token ?: "", creditCardCVV ?: "", type ?: "")
 

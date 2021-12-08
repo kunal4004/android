@@ -197,15 +197,16 @@ class OrderConfirmationFragment : Fragment() {
         deliveryFeeTextView.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
 
-        if (response?.wfsCardDetails?.isWFSCardAvailable == false) {
+        // Commenting this Till Jan-2022 Release as per WOP-13825
+        /*if (response?.wfsCardDetails?.isWFSCardAvailable == false) {
             if (response.orderSummary?.discountDetails?.wrewardsDiscount!! > 0.0) {
                 setMissedRewardsSavings(response.orderSummary?.discountDetails?.wrewardsDiscount!!)
             } else if (response.orderSummary?.savedAmount!! > 10) {
                 setMissedRewardsSavings(response.orderSummary?.savedAmount!!.toDouble())
             }
-        } else {
+        } else {*/
             missedRewardsLinearLayout.visibility = View.GONE
-        }
+        //}
     }
 
     private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
@@ -308,10 +309,10 @@ class OrderConfirmationFragment : Fragment() {
             .formatAmountToRandAndCentWithSpace(amount)
 
         wrewardsIconImageView.setOnClickListener {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
-                activity
-            )
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS, hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING
+            ), activity)
             val bottomSheetFragment = WrewardsBottomSheetFragment(activity)
 
             val bundle = Bundle()
