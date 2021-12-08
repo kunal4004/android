@@ -105,7 +105,6 @@ public class NotificationUtils {
             if(device.appInstanceId == null || device.pushNotificationToken==null)
                 return null;
 
-
             //Sending Token and app instance Id to App server
             //Need to be done after Login
 
