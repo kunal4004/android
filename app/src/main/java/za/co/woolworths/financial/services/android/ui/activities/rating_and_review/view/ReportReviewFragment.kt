@@ -34,6 +34,9 @@ class ReportReviewFragment: Fragment() , ReportReviewsAdapter.ReportItemClick {
         toolbar?.setOnClickListener {
             activity?.onBackPressed()
         }
+    }
+
+    fun init() {
         arguments?.apply {
             val reportReviews = getStringArrayList(KotlinUtils.REVIEW_REPORT)
             reportReviews?.let {
@@ -42,12 +45,16 @@ class ReportReviewFragment: Fragment() , ReportReviewsAdapter.ReportItemClick {
         }
     }
 
-    private fun setDefaultUi(reportReviewList: List<String>) {
-        val llm = LinearLayoutManager(requireContext())
-        llm.orientation = LinearLayoutManager.VERTICAL
-        recyler_report.setLayoutManager(llm)
-        val reportReviewsAdapter = ReportReviewsAdapter(reportReviewList, this)
-        recyler_report.setAdapter(reportReviewsAdapter)
+     fun setDefaultUi(reportReviewList: List<String>) {
+         val reportReviewsAdapter = ReportReviewsAdapter(reportReviewList, this)
+
+         recyler_report?.apply {
+             val linearLayoutManager = LinearLayoutManager(context)
+             linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+             setLayoutManager(linearLayoutManager)
+             adapter = reportReviewsAdapter
+         }
+
         btn_submit_report.setOnClickListener {
             if (reportReviewsAdapter.getAllCheckBoxCount() !=0) {
                 if (!edt_txt_feedback.isVisible) {
