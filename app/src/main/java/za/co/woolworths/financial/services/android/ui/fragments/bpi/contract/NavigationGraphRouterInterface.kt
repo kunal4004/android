@@ -14,5 +14,5 @@ interface NavigationGraphRouterInterface {
     ): NavHostFragment?
     fun navigateTo(destinationId: Int, bundle: Bundle?)
     fun navigate(destinationId: Int, bundle: Bundle?){}
-    fun navigateToPreviousFragment()
+    fun navigateToPreviousFragment(): Boolean
 }

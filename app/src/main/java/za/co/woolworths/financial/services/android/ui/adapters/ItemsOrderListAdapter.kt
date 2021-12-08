@@ -30,7 +30,7 @@ class ItemsOrderListAdapter(var items: ArrayList<OrderItem>) : RecyclerView.Adap
 
     class ItemsOrderListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(orderItem: OrderItem) {
-            itemView.itemImageView.setImageURI(orderItem.commerceItemInfo?.externalImageURLV2);
+            itemView.itemImageView.setImageURI(orderItem.commerceItemInfo?.externalImageRefV2);
 
             val itemDescriptionSpan: Spannable = SpannableString(orderItem.commerceItemInfo?.quantity.toString()
                 .plus(" X ")

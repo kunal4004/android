@@ -834,7 +834,7 @@ class KotlinUtils {
         }
 
         fun linkDeviceIfNecessary(activity: Activity?, state: ApplyNowState, doJob: () -> Unit, elseJob: () -> Unit){
-            if (!MyAccountsFragment.verifyAppInstanceId() &&
+            if (MyAccountsFragment.verifyAppInstanceId() &&
                 Utils.isGooglePlayServicesAvailable() &&
                 state == ApplyNowState.STORE_CARD) {
                     doJob()

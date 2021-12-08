@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPRes
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
@@ -477,17 +478,22 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     }
 
     private fun performDeletePrimaryDevice() {
-        OneAppService.deleteDevice(oldPrimaryDevice?.deviceIdentityId.toString(),
-            newPrimaryDevice?.deviceIdentityId.toString(),
-            otpNumber,
-            otpMethod)
-            .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
-                override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                    handleDeletePrimaryDeviceSuccess(response)
-                }
-                override fun onFailure(error: Throwable?) {
-                    handleChangeOrDeletePrimaryDeviceFailure()
-                } }, ViewAllLinkedDeviceResponse::class.java))
+        val oldPrimaryDevice = (activity as? MyPreferencesActivity)?.userPrimaryDevice
+        oldPrimaryDevice?.deviceIdentityId?.toString()?.let { deviceIdentityId ->
+            OneAppService.deleteDevice(
+                deviceIdentityId,
+                newPrimaryDevice?.deviceIdentityId.toString(),
+                otpNumber,
+                otpMethod)
+                .enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
+                    override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
+                        handleDeletePrimaryDeviceSuccess(response)
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+                        handleChangeOrDeletePrimaryDeviceFailure()
+                    } }, ViewAllLinkedDeviceResponse::class.java))
+        }
     }
 
     private fun handleDeletePrimaryDeviceSuccess(response: ViewAllLinkedDeviceResponse?) {

@@ -62,6 +62,9 @@ public class ProductList {
     public String productVariants;
     @SerializedName("isLiquor")
     public Boolean isLiquor;
+    @SerializedName("virtualTryOn")
+    @Expose
+    public String virtualTryOn;
     @SerializedName("isRnREnabled")
     public Boolean isRnREnabled;
     @SerializedName("averageRating")
