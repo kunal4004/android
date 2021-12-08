@@ -4,7 +4,6 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
-import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.toEncryptedHex
 
 class CommonAbsaHeadersInterceptor : Interceptor, RetrofitConfig() {
     override fun intercept(chain: Interceptor.Chain): Response = chain.run {
@@ -24,13 +23,19 @@ class CommonAbsaHeadersInterceptor : Interceptor, RetrofitConfig() {
                 }
             }
 
+            /**
+             * #WOP-14045 -  Remove decryption headers for all Absa via AppServer requests
+             * https://wigroup2.atlassian.net/browse/WOP-14045
+             * This code will be uncommented once we have sign off.
+             *
             AbsaTemporaryDataSourceSingleton.xEncryptedIv?.apply {
-                this.toEncryptedHex()?.let { addHeader("x-encryption-iv", it) }
+            this.toEncryptedHex()?.let { addHeader("x-encryption-iv", it) }
             }
 
             AbsaTemporaryDataSourceSingleton.xEncryptionKey?.apply {
-                this.toEncryptedHex()?.let { addHeader("x-encryption-key", it) }
+            this.toEncryptedHex()?.let { addHeader("x-encryption-key", it) }
             }
+             */
         }
         proceed(requestBuilder.build())
     }
