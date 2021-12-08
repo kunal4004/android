@@ -10,6 +10,9 @@ import kotlinx.android.synthetic.main.ccs_end_session_dialog_fragment.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.*
 import kotlinx.android.synthetic.main.product_details_options_and_information_layout.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.*
+import kotlinx.android.synthetic.main.ratings_ratingdetails.close
+import kotlinx.android.synthetic.main.ratings_ratingdetails.close_top
+import kotlinx.android.synthetic.main.reviews_skin_profile.*
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
 import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
@@ -42,6 +45,7 @@ class RatingDetailDialog(private val ratingReviewData: RatingReviewResponse) :
             setRatingDistributionUI(ratingDistribution, reviewCount)
         }
         tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        close.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         close_top?.setOnClickListener(this@RatingDetailDialog)
         close?.setOnClickListener(this@RatingDetailDialog)
     }
