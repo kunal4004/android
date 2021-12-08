@@ -17,13 +17,10 @@ import kotlinx.android.synthetic.main.account_options_layout.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
-import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE
@@ -32,14 +29,12 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.location.*
-import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
 
 class StoreCardOptionsFragment : AccountsOptionFragment() {
 
@@ -189,9 +184,9 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         )
                     )
                 }
-                imLogoIncreaseLimit?.alpha = AppConstant.alpha1f
+                imLogoIncreaseLimit?.alpha = AppConstant.ALPHA_1F
                 manageMyCardTextView?.text = bindString(R.string.activate_vtc_title)
-                cardDetailImageView?.alpha = AppConstant.alpha0_3f
+                cardDetailImageView?.alpha = AppConstant.ALPHA_POINT_3F
             }
 
             // Temporary card
