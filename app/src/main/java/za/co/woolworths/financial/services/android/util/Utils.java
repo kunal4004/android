@@ -1433,6 +1433,7 @@ public class Utils {
     }
 
     public static int getMinimumSupportedAppBuildNumber(Integer  minimumSupportedAppBuildNumber) {
+        if (minimumSupportedAppBuildNumber == null) return  0;
         return minimumSupportedAppBuildNumber;
     }
 
