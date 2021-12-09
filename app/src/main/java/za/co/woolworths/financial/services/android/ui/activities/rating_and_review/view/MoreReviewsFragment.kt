@@ -16,6 +16,7 @@ import com.awfs.coordination.R
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.common_toolbar.view.*
 import kotlinx.android.synthetic.main.fragment_more_reviews.*
+import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.SortOption
@@ -32,13 +33,15 @@ import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import java.util.ArrayList
 
-class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListener,
-    MoreReviewsAdapter.SortAndRefineListener {
-    private var reportOptionsList: List<String> = listOf()
-        MoreReviewsAdapter.SortAndRefineListener, MoreReviewLoadStateAdapter.HandlePaginationError {
+class MoreReviewsFragment : Fragment(),
+        MoreReviewsAdapter.ReviewItemClickListener,
+        MoreReviewsAdapter.SortAndRefineListener,
+        MoreReviewLoadStateAdapter.HandlePaginationError {
+
     private var onSortRefineFragmentListener: OnSortRefineFragmentListener? = null
     private var sortString: String? = null
     private var refinementString: String? = null
+    private var reportOptionsList: List<String> = listOf()
 
     companion object {
         fun newInstance() = MoreReviewsFragment()
@@ -74,9 +77,11 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
             reportOptionsList = ratingAndResponse.reportReviewOptions
             setupViewModel()
             setReviewsList(null, null, reportOptionsList)
+            btnRetry?.setOnClickListener {
+                setReviewsList(null, null, reportOptionsList)
+            }
         }
     }
-
 
     private fun setupViewModel() {
         moreReviewViewModel = ViewModelProvider(
@@ -105,7 +110,7 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
             adapter = moreReviewsAdapter.withLoadStateFooter(
                     footer = MoreReviewLoadStateAdapter({
                         moreReviewsAdapter.retry()
-                    }, this@MoreReviewsFragment )
+                    }, this@MoreReviewsFragment)
             )
         }
 
@@ -227,11 +232,10 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
 
     override fun showFooterErrorMessage() {
         val actionTextColor = ContextCompat.getColor(requireContext(), R.color.white)
-        Snackbar
-              .make(more_review_layout, R.string.failed_more_reviews, Snackbar.LENGTH_INDEFINITE)
-              .setAction(R.string.retry_txt, {
-                  setReviewsList(null, null , null)
-              }).setActionTextColor(actionTextColor)
-              .show()
+        Snackbar.make(more_review_layout, R.string.failed_more_reviews, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.retry_txt, {
+                    setReviewsList(null, null, reportOptionsList)
+                }).setActionTextColor(actionTextColor)
+                .show()
     }
 }
