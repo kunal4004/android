@@ -2374,7 +2374,7 @@
 
     <!--  Rating and Review Feature -->
     <string name="percent_recommend_to_friend">%s Would recommend this product to a friend</string>
-    <string name="rating_details">Rating details</string>
+    <string name="rating_details">Ratings Details</string>
     <plurals name="no_review">
         <item quantity="one">%d Review</item>
         <item quantity="other">%d Reviews</item>
@@ -2403,7 +2403,7 @@
     <string name="run_large">Runs Large</string>
     <string name="fit">Fit:</string>
     <string name="product_quality">Product Quality:</string>
-    <string name="review_details">REVIEW DETAILS</string>
+    <string name="review_details">REVIEW DETAIL</string>
     <string name="close_btn">CLOSE</string>
     <string name="star_1">1</string>
     <string name="star_2">2</string>
@@ -2412,7 +2412,7 @@
     <string name="star_5">5</string>
     <string name="star_0">0</string>
     <string name="slash">/</string>
-    <string name="skin_profile">skin profile</string>
+    <string name="skin_profile">Skin Profile</string>
     <string name="customer_reviews">Customer Reviews</string>
     <string name="report_reviews">Report Review</string>
     <string name="report_sub_label">I find this review to contains:</string>

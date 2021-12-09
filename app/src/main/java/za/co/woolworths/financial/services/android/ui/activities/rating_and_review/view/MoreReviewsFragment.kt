@@ -33,6 +33,8 @@ import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import java.util.ArrayList
 
 class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListener,
+    MoreReviewsAdapter.SortAndRefineListener {
+    private var reportOptionsList: List<String> = listOf()
         MoreReviewsAdapter.SortAndRefineListener, MoreReviewLoadStateAdapter.HandlePaginationError {
     private var onSortRefineFragmentListener: OnSortRefineFragmentListener? = null
     private var sortString: String? = null
@@ -69,8 +71,9 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
             ) as RatingReviewResponse
 
             productId = ratingAndResponse.reviews.get(0).productId
+            reportOptionsList = ratingAndResponse.reportReviewOptions
             setupViewModel()
-            setReviewsList(null, null, null)
+            setReviewsList(null, null, reportOptionsList)
         }
     }
 
@@ -211,13 +214,13 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
     fun onSortOptionSelected(sortOption: SortOption) {
         sortString = sortOption.sortOption
         onSortRefineFragmentListener?.closeDrawer()
-        setReviewsList(sortString, refinementString, null)
+        setReviewsList(sortString, refinementString, reportOptionsList)
     }
 
     fun onRefineOptionSelected(refinements: String?) {
         if (refinementString != refinements) {
             refinementString = refinements
-            setReviewsList(sortString, refinementString, null)
+            setReviewsList(sortString, refinementString, reportOptionsList)
         }
         onSortRefineFragmentListener?.closeDrawer()
     }
