@@ -13,7 +13,7 @@ import org.junit.runner.RunWith
 class ReportSuccessFragmentTest {
 
     @Test
-    fun test_ReportSuccesscreenData() {
+    fun test_ReportSuccesScreenData() {
         launchFragmentInContainer<ReportSuccessFragment>()
         onView(ViewMatchers.withId(R.id.img_success))
                 .check(matches(ViewMatchers.isDisplayed()))

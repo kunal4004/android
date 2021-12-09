@@ -33,7 +33,6 @@ class ReportReviewFragmentUnitTest : Fragment() {
         reportReviewFragment.init()
         `when`(bundle.getStringArrayList(KotlinUtils.REVIEW_REPORT)).thenReturn(reportList)
         assertNotNull(reportList)
-
     }
 
     @Test
