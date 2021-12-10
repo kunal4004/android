@@ -28,7 +28,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.ArrayList
 
-class ReviewDetailsFragment : Fragment(){
+class ReviewDetailsFragment : Fragment() {
 
     private lateinit var productViewPagerAdapter: ProductReviewViewPagerAdapter
 
@@ -39,20 +39,26 @@ class ReviewDetailsFragment : Fragment(){
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.review_detail_layout, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar_more_review.btn_back.setOnClickListener {
-            activity?.onBackPressed()
+        toolbar_more_review?.apply {
+            btn_back?.setOnClickListener {
+                activity?.onBackPressed()
+            }
         }
+
         arguments?.apply {
-            val ratingAndResponseData = Utils.jsonStringToObject(getString(KotlinUtils.REVIEW_DATA),  RatingReviewResponse::class.java) as RatingReviewResponse
+            val ratingAndResponseData = Utils.jsonStringToObject(
+                getString(KotlinUtils.REVIEW_DATA),
+                RatingReviewResponse::class.java
+            ) as RatingReviewResponse
             val reviews = ratingAndResponseData.reviews.get(0)
             setDefaultUi(reviews, ratingAndResponseData.reportReviewOptions)
             setProductImageViewPager(reviews.photos.normal)
@@ -69,9 +75,17 @@ class ReviewDetailsFragment : Fragment(){
             skin_detail.text = reviewText
             tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
             setVerifiedBuyers(isVerifiedBuyer)
-            setSkinProfielLayout(contextDataValue , tagDimensions)
-            RatingAndReviewUtil.setReviewAdditionalFields(additionalFields, lladdiionField, requireContext())
-            RatingAndReviewUtil.setSecondaryRatingsUI(secondaryRatings, rvSecondaryRatings, requireContext())
+            setSkinProfielLayout(contextDataValue, tagDimensions)
+            RatingAndReviewUtil.setReviewAdditionalFields(
+                additionalFields,
+                lladdiionField,
+                requireContext()
+            )
+            RatingAndReviewUtil.setSecondaryRatingsUI(
+                secondaryRatings,
+                rvSecondaryRatings,
+                requireContext()
+            )
             layout_helpful_review.apply {
                 tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 tvReport.setOnClickListener {
@@ -84,7 +98,10 @@ class ReviewDetailsFragment : Fragment(){
     private fun openReportScreen(reportReviewOptions: List<String>) {
         activity?.apply {
             val bundle = Bundle()
-            bundle.putStringArrayList(KotlinUtils.REVIEW_REPORT, reportReviewOptions as ArrayList<String>)
+            bundle.putStringArrayList(
+                KotlinUtils.REVIEW_REPORT,
+                reportReviewOptions as ArrayList<String>
+            )
             reportReviewFragment = ReportReviewFragment.newInstance()
             reportReviewFragment?.arguments = bundle
             val fragmentManager = getSupportFragmentManager()
@@ -95,7 +112,10 @@ class ReviewDetailsFragment : Fragment(){
         }
     }
 
-    private fun setSkinProfielLayout(contextDataValue: List<SkinProfile>, tagDimensions: List<SkinProfile>) {
+    private fun setSkinProfielLayout(
+        contextDataValue: List<SkinProfile>,
+        tagDimensions: List<SkinProfile>
+    ) {
         if (contextDataValue.isNotEmpty() || tagDimensions.isNotEmpty()) {
             skin_profile_layout.rv_skin_profile.visibility = View.VISIBLE
         } else {
@@ -103,11 +123,13 @@ class ReviewDetailsFragment : Fragment(){
         }
 
         skin_profile_layout.rv_skin_profile.layoutManager = LinearLayoutManager(
-                activity, LinearLayoutManager.VERTICAL, false)
+            activity, LinearLayoutManager.VERTICAL, false
+        )
         val list: List<SkinProfile> = contextDataValue.plus(tagDimensions)
         skin_profile_layout.rv_skin_profile.adapter = SkinProfileAdapter(list)
         skin_profile_layout.rv_skin_profile.addItemDecoration(
-                DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL))
+            DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL)
+        )
     }
 
     private fun setVerifiedBuyers(isVerifiedBuyer: Boolean) {
@@ -125,12 +147,12 @@ class ReviewDetailsFragment : Fragment(){
         }
         activity?.apply {
             productViewPagerAdapter = ProductReviewViewPagerAdapter(context, photos)
-                    .apply {
-                        reviewProductImagesViewPager.let { pager ->
-                            pager.adapter = this
-                            tabDots.setupWithViewPager(pager, true)
-                        }
-           }
+                .apply {
+                    reviewProductImagesViewPager.let { pager ->
+                        pager.adapter = this
+                        tabDots.setupWithViewPager(pager, true)
+                    }
+                }
         }
     }
 }
