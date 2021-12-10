@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelF
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
@@ -120,7 +121,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleBundleResponse()
+    }
 
+    fun handleBundleResponse() {
         arguments?.apply {
             if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
@@ -1502,12 +1506,27 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     @VisibleForTesting
-    fun testSetViewModelInstance(viewModel: CheckoutAddAddressNewUserViewModel) {
-        checkoutAddAddressNewUserViewModel = viewModel
+    fun testSetBundleArguments(bundle: Bundle) {
+        arguments = bundle
     }
 
     @VisibleForTesting
-    fun testSetBundleArguments(bundle: Bundle) {
-        arguments?.putBundle("bundle", bundle)
+    fun testGetSelectedAddressId(): String {
+        return selectedAddressId
+    }
+
+    @VisibleForTesting
+    fun testGetSelectedDeliveryAddressType(): String? {
+        return selectedDeliveryAddressType
+    }
+
+    @VisibleForTesting
+    fun testGetIsAddNewAddress(): Boolean {
+        return isAddNewAddress
+    }
+
+    @VisibleForTesting
+    fun testGetSavedAddress(): SavedAddressResponse? {
+        return savedAddressResponse
     }
 }
