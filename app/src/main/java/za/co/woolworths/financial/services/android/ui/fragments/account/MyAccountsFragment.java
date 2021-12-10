@@ -1705,27 +1705,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
         if (getActivity() == null || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
             return;
-        View viewToScrollUp = null;
         String actionText = getActivity().getResources().getString(R.string.tips_tricks_go_to_accounts);
         if (unavailableAccounts.size() == 3) {
-            viewToScrollUp = imgStoreCardApplyNow;
             actionText = getActivity().getResources().getString(R.string.walkthrough_account_action_no_products);
-        } else {
-            if (!unavailableAccounts.contains(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
-                viewToScrollUp = imgStoreCardContainer;
-            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())) {
-                viewToScrollUp = imgCreditCard;
-            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
-                viewToScrollUp = imgPersonalLoanCardContainer;
-            }
         }
-        final View finalTarget1 = viewToScrollUp;
-        mScrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                ObjectAnimator.ofInt(mScrollView, "scrollY", finalTarget1.getBottom()).setDuration(300).start();
-            }
-        });
 
         promptsActionListener = 1;
         final View target = getTargetView(unavailableAccounts);
