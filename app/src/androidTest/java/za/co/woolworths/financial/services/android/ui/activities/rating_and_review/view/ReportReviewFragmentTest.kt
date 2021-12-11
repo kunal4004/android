@@ -28,7 +28,8 @@ class ReportReviewFragmentTest {
 
     @Test
     fun test_SubmitButton() {
-       onView(allOf(ViewMatchers.withId(R.id.btn_submit_report),
+        val sceanario  = launchFragmentInContainer<ReportReviewFragment>()
+        onView(allOf(ViewMatchers.withId(R.id.btn_submit_report),
                ViewMatchers.withText("SUBMIT REPORT"),
                ViewMatchers.withParent(ViewMatchers.withParent(
                        IsInstanceOf.instanceOf(ScrollView::class.java))),

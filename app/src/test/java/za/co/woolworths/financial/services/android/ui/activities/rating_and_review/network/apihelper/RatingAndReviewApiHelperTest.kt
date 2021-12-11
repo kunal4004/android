@@ -11,7 +11,6 @@ import org.powermock.modules.junit4.PowerMockRunner
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.utils.ApiHelperUtil
 
-
 @RunWith(PowerMockRunner::class)
 class RatingAndReviewApiHelperTest {
 
@@ -20,7 +19,8 @@ class RatingAndReviewApiHelperTest {
     @Before
     fun init() {
         ApiHelperUtil.setup()
-        ratingAndReviewApiHelper = Mockito.mock(RatingAndReviewApiHelper::class.java, Mockito.CALLS_REAL_METHODS)
+        ratingAndReviewApiHelper = Mockito.mock(RatingAndReviewApiHelper::class.java,
+                Mockito.CALLS_REAL_METHODS)
     }
 
     @Test
