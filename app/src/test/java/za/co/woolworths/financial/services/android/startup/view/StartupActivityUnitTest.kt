@@ -59,7 +59,6 @@ class StartupActivityUnitTest : Activity() {
         verify(startupViewModel, times(1)).setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
         verify(startupActivity, times(1)).showNonVideoViewWithErrorLayout()
         verify(startupViewModel, times(1)).isConnectedToInternet(startupActivity)
-        verify(startupViewModel, times(1)).clearSharedPreference(startupActivity)
     }
 
     @Test

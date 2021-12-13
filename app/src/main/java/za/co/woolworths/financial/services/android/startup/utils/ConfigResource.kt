@@ -55,6 +55,7 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 defaults?.apply {
                     WoolworthsApplication.setRegistrationTCLink(registerTCLink)
                     WoolworthsApplication.setFaqLink(faqLink)
+                    WoolworthsApplication.setLogPublicKey(logPublicKey)
                     WoolworthsApplication.setWrewardsLink(wrewardsLink)
                     WoolworthsApplication.setRewardingLink(rewardingLink)
                     WoolworthsApplication.setHowToSaveLink(howtosaveLink)
@@ -148,6 +149,15 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
 
                 deviceSecurity?.apply {
                     WoolworthsApplication.setDeviceSecurity(this)
+                }
+
+                balanceProtectionInsurance?.apply {
+                    WoolworthsApplication.setBalanceProtectionInsuranceObject(this)
+                }
+                
+                virtualTryOn?.apply {
+                    minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                    WoolworthsApplication.getInstance().virtualTryOn = this
                 }
             }
         }

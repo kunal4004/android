@@ -152,7 +152,7 @@
         <View
             android:id="@+id/accbottomSpaceView"
             android:layout_width="wrap_content"
-            android:layout_height="24dp"
+            android:layout_height="@dimen/fifty_five_dp"
             android:background="@color/light_gray_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
