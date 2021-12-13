@@ -5,21 +5,21 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import java.io.Serializable
 
 data class Reviews (
-        @SerializedName("isVerifiedBuyer") val isVerifiedBuyer : Boolean,
-        @SerializedName("isStaffMember") val isStaffMember : Boolean,
-        @SerializedName("id") val id : Int,
-        @SerializedName("productId") val productId : String,
-        @SerializedName("syndicatedSource") val syndicatedSource : String,
-        @SerializedName("rating") val rating : Float,
-        @SerializedName("isRecommended") val isRecommended : Boolean,
-        @SerializedName("submissionTime") val submissionTime : String,
-        @SerializedName("reviewText") val reviewText : String,
-        @SerializedName("title") val title : String,
-        @SerializedName("userNickname") val userNickname : String,
-        @SerializedName("totalPositiveFeedbackCount") val totalPositiveFeedbackCount : Int,
-        @SerializedName("additionalFields") val additionalFields : List<AdditionalFields>,
-        @SerializedName("secondaryRatings") val secondaryRatings : List<SecondaryRatings>,
-        @SerializedName("contextDataValue") val contextDataValue : List<SkinProfile>,
-        @SerializedName("tagDimensions") val tagDimensions : List<SkinProfile>,
-        @SerializedName("photos") val photos : Photos
+        @SerializedName("isVerifiedBuyer") var isVerifiedBuyer : Boolean,
+        @SerializedName("isStaffMember") var isStaffMember : Boolean,
+        @SerializedName("id") var id : Int,
+        @SerializedName("productId") var productId : String,
+        @SerializedName("syndicatedSource") var syndicatedSource : String,
+        @SerializedName("rating") var rating : Float,
+        @SerializedName("isRecommended") var isRecommended : Boolean,
+        @SerializedName("submissionTime") var submissionTime : String,
+        @SerializedName("reviewText") var reviewText : String,
+        @SerializedName("title") var title : String,
+        @SerializedName("userNickname") var userNickname : String,
+        @SerializedName("totalPositiveFeedbackCount") var totalPositiveFeedbackCount : Int,
+        @SerializedName("additionalFields") var additionalFields : List<AdditionalFields>,
+        @SerializedName("secondaryRatings") var secondaryRatings : List<SecondaryRatings>,
+        @SerializedName("contextDataValue") var contextDataValue : List<SkinProfile>,
+        @SerializedName("tagDimensions") var tagDimensions : List<SkinProfile>,
+        @SerializedName("photos") var photos : Photos
 ) : Serializable
