@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit
 abstract class RetrofitConfig : NetworkConfig() {
 
     companion object {
-        private const val READ_CONNECT_TIMEOUT_UNIT: Long = 45
-        private const val READ_CONNECT_TIMEOUT_UNIT_QA: Long = 180
+        const val READ_CONNECT_TIMEOUT_UNIT: Long = 45
+        const val READ_CONNECT_TIMEOUT_UNIT_QA: Long = 180
         lateinit var mApiInterface: ApiInterface
     }
 

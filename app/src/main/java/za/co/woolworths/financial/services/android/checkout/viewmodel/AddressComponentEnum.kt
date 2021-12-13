@@ -10,5 +10,6 @@ enum class AddressComponentEnum(val value: String) {
     POSTAL_CODE("postal_code"),
     SUBLOCALITY_LEVEL_1("sublocality_level_1"),
     SUBLOCALITY_LEVEL_2("sublocality_level_2"),
-    LOCALITY("locality")
+    LOCALITY("locality"),
+    PREMISE("premise")
 }

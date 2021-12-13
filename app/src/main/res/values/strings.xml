@@ -2312,7 +2312,7 @@
     <string name="link_my_device">Link my device</string>
     <string name="suburb_selection_subtitle">This will show all collection stores near you.</string>
     <string name="earliest_delivery_date_text">Earliest Delivery date \u0020</string>
-
+    <string name="continueLabel">continue</string>
     <!--  Link Device Confirmation  -->
     <string name="link_device_confirm_desc_cc">Please note, you won\'t be able to activate your card, schedule card deliveries or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
     <string name="link_device_confirm_desc_sc">Please note, you won\'t be able to block, freeze, replace your card or send statements until you link your device. If you would like to change this, please go to your preferences.</string>
@@ -2322,10 +2322,42 @@
     <string name="product_item">item found</string>
     <string name="goldCreditCard_title">Gold Credit Card</string>
     <string name="silverCreditCard_title">Silver Credit Card</string>
+     <!--vto-->
+    <string name="capture">Capture Image</string>
+    <string name="use_live_camera">Use Live Camera</string>
+    <string name="take_a_photo">Take a Photo</string>
+    <string name="choose_from_photo_library">Choose from Photo Library</string>
+    <string name="browse">Browse</string>
+    <string name="lighting_tips">Lighting Tips</string>
+    <string name="vto_try_on_desc">For the best experience, make sure that you are surrounded by multiple light sources with no harsh lighting spots, as these may cause dark shadows.</string>
+    <string name="choose">Choose</string>
+    <string name="vto_terms_conditions">Terms &amp; Conditions</string>
+    <string name="try_it_on_banner_txt">Wondering how a make-up shade would look on you? Click the <b><font color='#000000'>Try It On </font></b>tag and find out.</string>
+    <string name="vto_term_and_condition_desc">By using Virtual Try On, I consent to Woolworths processing my personal information, including but not limited to my image, as per the Woolworths privacy policy, and agree to the \n<u>Terms and Conditions</u></string>
+    <string name="try_on_intro_txt">INTRODUCING VIRTUAL TRY ON</string>
+    <string name="try_on_intro_desc">Use our new Try It On feature  to find out how our make-up shades will look on you.</string>
+    <string name="no_face_detected">NO FACE DETECTED. TRY AGAIN.</string>
+    <string name="vto_camera_access_error">Unfortunately, We Can’t Access Your Camera</string>
+    <string name="vto_error_description">Please ensure you have enabled Woolworths access to your camera from your device settings, and try again.</string>
+    <string name="vto_change_setting">CHANGE SETTINGS</string>
+    <string name="vto_dismiss"><u>DISMISS</u></string>
+    <string name="vto_photo_library_access_error"> Unfortunately, We Can’t Access Your Photo Library</string>
+    <string name="vto_photo_library_error_description">Please ensure you have enabled Woolworths to access your photos from your device settings, and try again.</string>
+    <string name="vto_file_access_error">Unfortunately, We Can’t Access Your Files</string>
+    <string name="vto_file_error_description">Please ensure you have enabled Woolworths to access your files from your device settings, and try again.</string>
+    <string name="vto_invalid_file_access_error">Unfortunately, We Can’t Use That File</string>
+    <string name="vto_invalid_file_type_error_description">Please upload only .jpg or .png images.</string>
+    <string name="vto_generic_error">Unfortunately, Something Went Wrong</string>
+    <string name="vto_generic_error_description">Please try again.</string>
+    <string name="actual_size">Actual Size</string>
+    <string name="vto_color_selected_error">Oh no! That colour is unavailable to try on.</string>
+    <string name="vto_try_it_on_tips">Try It On Tips</string>
 
     <string name="blackCreditCard_title">Black Credit Card</string>
     <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
-
+    <string name="absa_technical_error_occurred">Technical error occurred</string>
+    <string name="absa_technical_error_occurred_try_again_later">An error has occurred. Please try again later.</string>
+    <string name="absa_maximum_polling_rate_reached">Maximum polling rate reached</string>
     <!--  No browser dialog  -->
     <string name="browser_not_found_title">Browser Not Found</string>
     <string name="browser_not_found_msg">To continue, please install a web browser.</string>
@@ -2338,4 +2370,27 @@
     <string name="native_checkout_collection_timeslot">Collection Timeslot</string>
     <string name="choose_date">Choose Date</string>
     <string name="confirm_date">CONFIRM DATE</string>
+    <string name="bpi_opt_in_carousel_title_1">Death, permanent disability or critical illness cover</string>
+    <string name="bpi_opt_in_carousel_title_2">Retrenchment Benefit</string>
+    <string name="bpi_opt_in_carousel_title_3">Instant Cover</string>
+    <string name="bpi_opt_in_carousel_desc_3">Cover is immediate upon activation of the insurance</string>
+    <string name="bpi_opt_in_carousel_desc_1">"Pays the outstanding balance on your account up to a maximum of R100 000 in the event of your death, permanent disability or critical illness. "</string>
+    <string name="bpi_opt_in_carousel_desc_2">Pays your instalments up to 12 months up to a maximum of R1000 000 in the event that you are retrenchment or temporarily disabled.</string>
+    <string name="bpi_checkbox_text">I agree with the <u>Comprehensive Balance Protection Terms &amp; Conditions</u></string>
+    <string name="bpi_opt_in_text">opt in</string>
+    <string name="bpi_opt_in_for_balance_protection_insurance">Opt in for Balance Protection Insurance</string>
+    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br/> cancel within the first 31 days after which you have<br/> received the policy terms and conditions,<br/> we will reverse any premiums paid,<br/> provided have not claimed.</string>
+    <string name="bpi_confirm_opt_in_desc2">Should you require more information; need to<br/> submit a claim; log a complaint; wish to cancel or<br/> have not received your policy wording within 30<br/> days please contact Woolworth Financial Services<br/> on 0861502020</string>
+    <string name="bpi_confirm_opt_in_desc_call_services">0861502020</string>
+    <string name="bpi_email_me_a_copy">Email me a copy</string>
+    <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>
+    <string name="bpi_sent_email_success">Balance Protection Insurance Terms and Conditions have been sent to %1$s</string>
+    <string name="bpi_sent_email_failure">Balance Protection Insurance Terms and Conditions failed to send to %1$s</string>
+    <string name="bpi_request_failed_retry">Request failed.\nPlease try again.</string>
+    <string name="bpi_you_have_opted_in_success">You have opted in for Balance Protection Insurance</string>
+
+    <string name="please_try_again">Please try again.</string>
+    <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
+    <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
+    <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
 </resources>

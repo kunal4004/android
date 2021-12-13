@@ -62,6 +62,9 @@ public class ProductList {
     public String productVariants;
     @SerializedName("isLiquor")
     public Boolean isLiquor;
+    @SerializedName("virtualTryOn")
+    @Expose
+    public String virtualTryOn;
 
     public ProductListingViewType rowType = ProductListingViewType.PRODUCT;
     public Integer numberOfItems;

@@ -6,17 +6,21 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'com.google.gms.google-services'  // Google Services plugin
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
 
     def major = "8"
     def minor = "6"
     def fix = "0"
-    def jobNumber = 539
+    def jobNumber = 540
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
+        enabled = true
+    }
+    viewBinding {
         enabled = true
     }
 
@@ -88,7 +92,7 @@ android {
             jobNumber = 1
         } else {
             //assume prod
-            jobNumber = 170
+            jobNumber = 171
         }
 
         defaultConfig {
@@ -197,6 +201,11 @@ dependencies {
     implementation(name: 'utils-1.1.8', ext: 'aar')
     implementation(name: 'Logger-1', ext: 'aar')
 
+    //pf sdk
+    implementation(name: 'PerfectLibCore', ext: 'aar')
+    implementation(name: 'PerfectLibMakeup', ext: 'aar')
+    implementation(name: 'PerfectLibProductHandler', ext: 'aar')
+
     implementation 'io.jsonwebtoken:jjwt:0.9.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
@@ -206,12 +215,12 @@ dependencies {
 
     api 'com.google.zxing:android-core:3.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
-    //noinspection LifecycleAnnotationProcessorWithJava8
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.3.1'
     implementation 'me.relex:circleindicator:2.1.0@aar'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
@@ -237,13 +246,14 @@ dependencies {
 
     implementation 'com.android.volley:volley:1.2.0'
     implementation "com.google.android.gms:play-services-auth-api-phone:17.5.0"
-    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.core:core-ktx:1.6.0'
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.fragment:fragment-ktx:1.3.3'
+    implementation 'androidx.fragment:fragment-ktx:1.3.6'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'com.huawei.hms:location:5.1.0.303'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.6'
     implementation 'com.google.android.libraries.places:places:2.4.0'
     implementation 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.huawei.hms:location:5.1.0.303'
@@ -271,9 +281,14 @@ dependencies {
     testImplementation 'android.arch.core:core-testing:1.1.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test:rules:1.4.0-alpha04'
-
     //UI testing with Espresso
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0-alpha04'
+    //Data store
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    // Hilt DI
+    implementation "com.google.dagger:hilt-android:2.38.1"
+    kapt "com.google.dagger:hilt-android-compiler:2.37"
+
 }
 
 apply plugin: 'com.google.gms.google-services'
