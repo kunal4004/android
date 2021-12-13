@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,7 +71,6 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
             setReviewsList(null, null, null)
         }
     }
-
 
     private fun setupViewModel() {
         moreReviewViewModel = ViewModelProvider(
@@ -178,8 +176,6 @@ class MoreReviewsFragment : Fragment(), MoreReviewsAdapter.ReviewItemClickListen
             onSortRefineFragmentListener?.openDrawer() }
 
     }
-
-
 
     override fun openSortDrawer() {
         val data = moreReviewViewModel.getRatingReviewResponseLiveData()
