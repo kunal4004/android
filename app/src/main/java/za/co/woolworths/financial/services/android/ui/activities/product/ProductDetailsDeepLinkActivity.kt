@@ -30,10 +30,8 @@ import za.co.woolworths.financial.services.android.startup.viewmodel.StartupView
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.DEEP_LINK_REQUEST_CODE
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.SHARE_LINK_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.util.*
