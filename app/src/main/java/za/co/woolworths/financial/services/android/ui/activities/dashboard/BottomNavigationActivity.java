@@ -1,5 +1,24 @@
 package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE;
+import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
+import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
+import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
+import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
+import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController.UNLIMITED_TAB_HISTORY;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
@@ -110,25 +129,6 @@ import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
-import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController;
-
-import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
-import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
-import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
-import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
-import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
-import static za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE;
-import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
-import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
-import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
-import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
-import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
-import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
-import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 @AndroidEntryPoint
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
@@ -218,7 +218,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 R.id.frag_container)
                 .fragmentHideStrategy(FragNavController.HIDE)
                 .transactionListener(this)
-                .switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, (index, transactionOptions) -> getBottomNavigationById().setCurrentItem(index))
+                .switchController(UNLIMITED_TAB_HISTORY, (index, transactionOptions) -> getBottomNavigationById().setCurrentItem(index))
                 .eager(true)
                 .rootFragmentListener(this, 5)
                 .build();
@@ -1022,6 +1022,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         // Navigate from shopping list detail activity
         switch (requestCode) {
             case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
+                if (resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
+                    ToastFactory toastFactory = new ToastFactory();
+                    toastFactory.Companion.buildShoppingListToast(this, getBottomNavigationById(), true, data, this);
+                    break;
+                }
             case REQUEST_CODE_ORDER_DETAILS_PAGE:// Call back when Toast clicked after adding item to shopping list
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
                 navigateToMyList(requestCode, resultCode, data);
