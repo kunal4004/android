@@ -391,9 +391,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (mUpdateMyAccount != null) {
                 mUpdateMyAccount.enableSwipeToRefreshAccount(false);
                 mUpdateMyAccount.swipeToRefreshAccount(false);
-                imRefreshAccount.setEnabled(false);
+                refreshAccount(false);
             } else {
-                imRefreshAccount.setEnabled(true);
+                refreshAccount(true);
             }
         }
 
@@ -410,6 +410,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
         uniqueIdentifiersForAccount();
 
+    }
+
+    private void refreshAccount(boolean state) {
+        if (imRefreshAccount != null)
+            imRefreshAccount.setEnabled(state);
     }
 
     private void callLinkedDevicesAPI(Boolean isForced) {
@@ -497,7 +502,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (SessionUtilities.getInstance().isC2User()) {
                 mUpdateMyAccount.enableSwipeToRefreshAccount(true);
                 if (imRefreshAccount != null)
-                    imRefreshAccount.setEnabled(true);
+                    refreshAccount(true);
                 this.loadAccounts(false);
             } else {
                 this.configureSignInNoC2ID();
@@ -726,7 +731,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (mUpdateMyAccount != null)
             mUpdateMyAccount.enableSwipeToRefreshAccount(false);
         imRefreshAccount.setVisibility(View.GONE);
-        imRefreshAccount.setEnabled(false);
+        refreshAccount(false);
     }
 
     private void configureSignInNoC2ID() {
@@ -1388,7 +1393,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         configureView();
                         mUpdateMyAccount.enableSwipeToRefreshAccount(true);
                         mUpdateMyAccount.swipeToRefreshAccount(true);
-                        imRefreshAccount.setEnabled(true);
+                        refreshAccount(true);
                         Utils.alertErrorMessage(activity, mAccountResponse.response.desc);
                     }
                     break;
