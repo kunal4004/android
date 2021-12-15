@@ -208,7 +208,6 @@ class MoreReviewsAdapter(val context: Context,
     override fun getItemViewType(position: Int): Int {
         if (isPositionHeader(position))
             return TYPE_HEADER;
-
         return TYPE_ITEM;
     }
 

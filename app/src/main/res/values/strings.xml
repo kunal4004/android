@@ -2374,7 +2374,8 @@
 
     <!--  Rating and Review Feature -->
     <string name="percent_recommend_to_friend">%s Would recommend this product to a friend</string>
-    <string name="rating_details">Ratings Details</string>
+    <string name="ratings_details">Ratings Details</string>
+    <string name="rating_details">Rating Details</string>
     <plurals name="no_review">
         <item quantity="one">%d Review</item>
         <item quantity="other">%d Reviews</item>
@@ -2421,4 +2422,6 @@
     <string name="report_moderated">It is currently being moderated.</string>
     <string name="report_submit">Report Submitted</string>
     <string name="report_got_it">GOT IT</string>
+    <string name="failed_more_reviews">FAILED TO LOAD MORE REVIEWS</string>
+    <string name="retry_txt">RETRY</string>
 </resources>

@@ -85,7 +85,5 @@ class RatingAndReviewUtil {
             } else
                 reviewThumbnailAdapter.setDataList(thumbnails)
         }
-
-
     }
 }

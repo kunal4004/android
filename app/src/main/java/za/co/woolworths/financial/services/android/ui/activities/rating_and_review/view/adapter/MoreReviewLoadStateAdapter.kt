@@ -7,19 +7,30 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.bottom_progress_bar.view.*
 
-class MoreReviewLoadStateAdapter() : LoadStateAdapter<MoreReviewLoadStateAdapter
+import kotlinx.android.synthetic.main.layout_footer_more_reviews.view.*
+
+
+class MoreReviewLoadStateAdapter(
+        private val retry: () -> Unit,
+        private val handlePaginationError: HandlePaginationError
+
+) : LoadStateAdapter<MoreReviewLoadStateAdapter
 .ReviewLoadStateViewHolder>() {
 
+    interface HandlePaginationError {
+        fun showFooterErrorMessage()
+    }
+
     inner class ReviewLoadStateViewHolder(
-            itemView: View) : RecyclerView.ViewHolder(itemView) {
+            itemView: View, val retry: () -> Unit) : RecyclerView.ViewHolder(itemView) {
 
         fun bindView(loadState: LoadState) {
             if (loadState is LoadState.Loading) {
                 itemView.pbFooterProgress.visibility = View.VISIBLE
             } else {
                 itemView.pbFooterProgress.visibility = View.GONE
+                handlePaginationError.showFooterErrorMessage()
             }
         }
     }
@@ -29,12 +40,13 @@ class MoreReviewLoadStateAdapter() : LoadStateAdapter<MoreReviewLoadStateAdapter
         holder.bindView(loadState)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): MoreReviewLoadStateAdapter
-    .ReviewLoadStateViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState):
+            MoreReviewLoadStateAdapter.ReviewLoadStateViewHolder {
         return ReviewLoadStateViewHolder(
                 LayoutInflater
                         .from(parent.context)
-                        .inflate(R.layout.bottom_progress_bar, parent, false)
+                        .inflate(R.layout.layout_footer_more_reviews, parent, false),
+                retry
         )
     }
 }
