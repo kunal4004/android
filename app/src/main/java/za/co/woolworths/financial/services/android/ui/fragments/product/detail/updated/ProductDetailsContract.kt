@@ -20,7 +20,7 @@ interface ProductDetailsContract {
         fun updateDefaultUI(isInventoryCalled: Boolean)
         fun updateAuxiliaryImages(imagesList: List<String>)
         fun onSizeSelection(selectedSku: OtherSkus)
-        fun onColorSelection(selectedColor: String?)
+        fun onColorSelection(selectedColor: String?,isFromVto :Boolean)
         fun setSelectedSku(selectedSku: OtherSkus?)
         fun getSelectedSku(): OtherSkus?
         fun setSelectedQuantity(selectedQuantity: Int?)

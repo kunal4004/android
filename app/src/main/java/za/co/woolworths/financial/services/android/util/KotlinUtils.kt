@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -25,6 +26,7 @@ import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import androidx.annotation.RawRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
@@ -49,8 +51,11 @@ import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
@@ -66,7 +71,6 @@ class KotlinUtils {
     companion object {
 
         const val DELAY: Long = 900
-        const val productImageUrlPrefix = "https://images.woolworthsstatic.co.za/"
         const val collectionsIdUrl = "woolworths.wfs.co.za/CustomerCollections/IdVerification"
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
@@ -628,10 +632,24 @@ class KotlinUtils {
         }
 
         fun openUrlInPhoneBrowser(urlString: String?, activity: Activity?) {
-            urlString?.apply {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                activity?.startActivity(intent)
+            try {
+                urlString?.apply {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(this))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    activity?.startActivity(intent)
+                }
+            }
+            catch (exception: ActivityNotFoundException){
+                FirebaseManager.logException("no browser found - $exception")
+                activity?.apply {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                    builder
+                        .setTitle(R.string.browser_not_found_title)
+                        .setMessage(R.string.browser_not_found_msg)
+                        .setCancelable(true)
+                    val dialog: AlertDialog = builder.create()
+                    dialog.show()
+                }
             }
         }
 
@@ -812,6 +830,22 @@ class KotlinUtils {
             }
         }
 
+        fun linkDeviceIfNecessary(activity: Activity?, state: ApplyNowState, doJob: () -> Unit, elseJob: () -> Unit){
+            if (MyAccountsFragment.verifyAppInstanceId() &&
+                Utils.isGooglePlayServicesAvailable() &&
+                state == ApplyNowState.STORE_CARD) {
+                    doJob()
+                    activity?.let {
+                        val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
+                        intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, state)
+                        it.startActivity(intent)
+                        it.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+                    }
+            }
+            else{
+                elseJob()
+            }
+        }
     }
 
 }

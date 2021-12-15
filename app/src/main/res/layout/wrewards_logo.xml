@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/wTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/futura_semi_bold_black"
+        android:textSize="@dimen/fourty_sp"
+        android:text="@string/wrewards_logo_w"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/rewardsTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/futura_medium_black"
+        android:textSize="@dimen/fourty_sp"
+        android:text="@string/wrewards_logo_rewards"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/wTextView"/>
+
+    <View
+        android:id="@+id/deliveryLocationSeparator"
+        style="@style/bottom_line_rewards"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/wTextView"
+        app:layout_constraintRight_toRightOf="@+id/rewardsTextView"
+        app:layout_constraintTop_toBottomOf="@+id/rewardsTextView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

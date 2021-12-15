@@ -37,9 +37,6 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
             response?.configs?.apply {
 
                 enviroment?.apply {
-                    startupViewModel.splashScreenText = splashScreenText
-                    startupViewModel.isSplashScreenDisplay = splashScreenDisplay
-                    startupViewModel.isSplashScreenPersist = splashScreenPersist
 
                     WoolworthsApplication.setStoreCardBlockReasons(storeCardBlockReasons)
                     WoolworthsApplication.setSsoRedirectURI(getSsoRedirectURI())
@@ -47,7 +44,6 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                     WoolworthsApplication.setSsoRedirectURILogout(getSsoRedirectURILogout())
                     WoolworthsApplication.setSsoUpdateDetailsRedirectUri(getSsoUpdateDetailsRedirectUri())
                     WoolworthsApplication.setWwTodayURI(getWwTodayURI())
-                    WoolworthsApplication.setAuthenticVersionReleaseNote(getAuthenticVersionReleaseNote())
                     WoolworthsApplication.setAuthenticVersionStamp(getAuthenticVersionStamp())
                     WoolworthsApplication.getInstance().wGlobalState.startRadius =
                             getStoreStockLocatorConfigStartRadius()
@@ -59,6 +55,7 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 defaults?.apply {
                     WoolworthsApplication.setRegistrationTCLink(registerTCLink)
                     WoolworthsApplication.setFaqLink(faqLink)
+                    WoolworthsApplication.setLogPublicKey(logPublicKey)
                     WoolworthsApplication.setWrewardsLink(wrewardsLink)
                     WoolworthsApplication.setRewardingLink(rewardingLink)
                     WoolworthsApplication.setHowToSaveLink(howtosaveLink)
@@ -133,6 +130,9 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
                 creditLimitIncrease?.apply {
                     WoolworthsApplication.getInstance().setCreditLimitsIncrease(this)
                 }
+                nativeCheckout.apply {
+                    WoolworthsApplication.setNativeCheckout(nativeCheckout)
+                }
 
                 inAppReview?.apply {
                     isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
@@ -145,6 +145,19 @@ data class ConfigResource(val responseStatus: ResponseStatus, val data: ConfigRe
 
                 accountOptions?.apply {
                     WoolworthsApplication.setAccountOptions(this)
+                }
+
+                deviceSecurity?.apply {
+                    WoolworthsApplication.setDeviceSecurity(this)
+                }
+
+                balanceProtectionInsurance?.apply {
+                    WoolworthsApplication.setBalanceProtectionInsuranceObject(this)
+                }
+                
+                virtualTryOn?.apply {
+                    minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                    WoolworthsApplication.getInstance().virtualTryOn = this
                 }
             }
         }

@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -24,6 +25,7 @@ import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
@@ -91,6 +93,29 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             askLocationPermission()
         }
 
+        context?.let {
+            val deviceSecurity = WoolworthsApplication.getDeviceSecurity()
+            when(mApplyNowState){
+                ApplyNowState.STORE_CARD ->{
+                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.sc_asset)
+                    linkDeviceConfirmationTitle?.text = deviceSecurity?.storeCard?.primaryDeviceConfirmation?.title
+                    linkDeviceConfirmationDesc?.text = deviceSecurity?.storeCard?.primaryDeviceConfirmation?.description
+                }
+                ApplyNowState.PERSONAL_LOAN ->{
+                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.pl_asset)
+                    linkDeviceConfirmationTitle?.text = deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.title
+                    linkDeviceConfirmationDesc?.text = deviceSecurity?.personalLoan?.primaryDeviceConfirmation?.description
+                }
+                ApplyNowState.SILVER_CREDIT_CARD,
+                ApplyNowState.GOLD_CREDIT_CARD,
+                ApplyNowState.BLACK_CREDIT_CARD ->
+                {
+                    linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.cc_asset)
+                    linkDeviceConfirmationTitle?.text = deviceSecurity?.creditCard?.primaryDeviceConfirmation?.title
+                    linkDeviceConfirmationDesc?.text = deviceSecurity?.creditCard?.primaryDeviceConfirmation?.description
+                }
+            }
+        }
     }
 
     private fun askLocationPermission() {
@@ -192,7 +217,26 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
 
         context?.let {
             linkDeviceResultIcon?.setImageDrawable(ContextCompat.getDrawable(it, R.drawable.ic_skip))
-            linkDeviceResultTitle?.text = it.getString(R.string.ok_cool)
+
+            linkDeviceResultTitle?.text = it.getString(R.string.device_not_linked)
+            linkDeviceResultSubitle?.text = it.getString(R.string.not_linked_device_desc)
+
+            gotItLinkDeviceConfirmationButton.apply {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    val intent = Intent()
+                    intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
+                    activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
+                    activity?.finish()
+                }
+            }
+            linkMyDeviceConfirmationButton.apply {
+                visibility = View.VISIBLE
+                paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                setOnClickListener {
+                    askLocationPermission()
+                }
+            }
         }
         linkDeviceResultLayout.visibility = View.VISIBLE
         linkDeviceConfirmationScrollLayout.visibility = View.GONE
@@ -206,13 +250,6 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             if (this is LinkDeviceConfirmationInterface) {
                 hideToolbarButton()
             }
-            Handler().postDelayed({
-
-                val intent = Intent()
-                intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
-                finish()
-            }, AppConstant.DELAY_1500_MS)
         }
     }
 

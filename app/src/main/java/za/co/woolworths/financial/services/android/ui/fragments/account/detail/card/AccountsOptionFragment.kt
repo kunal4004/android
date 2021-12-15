@@ -34,6 +34,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
@@ -50,25 +52,30 @@ import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdr
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
-open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView{
+open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
 
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
     private var cardWithPLCState: Card? = null
-    private val REQUEST_CREDIT_CARD_ACTIVATION = 1983
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var state: ApplyNowState? = null
+
+    companion object {
+        const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,9 +104,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
 
         mCardPresenterImpl?.apply {
-            setBalanceProtectionInsuranceState()
+            getBpiInsuranceApplication()
             displayCardHolderName()
             creditLimitIncrease()?.showCLIProgress(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit)
+            showBalanceProtectionInsuranceLead()
         }
 
         disposable?.add(WoolworthsApplication.getInstance()
@@ -128,6 +136,23 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         //Disable shimmer for non store card
         if (mCardPresenterImpl?.isProductCodeStoreCard() != true) {
             disableShimmer()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity?.apply {
+            if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+                mCardPresenterImpl?.apply {
+                    logoIncreaseLimit?.visibility = GONE
+                    llCommonLayer?.visibility = GONE
+                    tvIncreaseLimit?.text = ""
+                    tvIncreaseLimit?.visibility = GONE
+                    logoIncreaseLimit?.visibility = GONE
+                    tvIncreaseLimitDescription?.visibility = GONE
+                    getUserCLIOfferActive()
+                }
+            }
         }
     }
 
@@ -209,7 +234,11 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         KotlinUtils.avoidDoubleClicks(v)
         mCardPresenterImpl?.apply {
             when (v?.id) {
-                R.id.balanceProtectionInsuranceView -> navigateToBalanceProtectionInsurance()
+                R.id.balanceProtectionInsuranceView -> {
+                    if(bpiCoveredTextView?.text != bindString(R.string.status_in_progress)){
+                        navigateToBalanceProtectionInsurance()
+                    }
+                }
                 R.id.cardImageRootView -> navigateToTemporaryStoreCard()
                 R.id.debitOrderView -> navigateToDebitOrderActivity()
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
@@ -218,9 +247,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     navigateToTemporaryStoreCard()
                 }
                 R.id.tvIncreaseLimit, R.id.relIncreaseMyLimit, R.id.llIncreaseLimitContainer -> {
-                    activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
                     val applyNowState = mApplyNowAccountKeyPair?.first
-                    creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+
+                    if (applyNowState != null) {
+                        if (!MyAccountsFragment.verifyAppInstanceId()) {
+                            activity?.apply { onStartCreditLimitIncreaseFirebaseEvent(this) }
+                            creditLimitIncrease()?.nextStep(getOfferActive(), getProductOfferingId()?.toString(),  applyNowState)
+                        }
+                    }
                 }
 
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
@@ -288,22 +322,38 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         MyAccountsScreenNavigator.navigateToMyCardDetailActivity(activity, storeCardResponse, requestUnblockStoreCardCall)
     }
 
-    override fun navigateToDebitOrderActivity(debitOrder: DebitOrder) {
-        MyAccountsScreenNavigator.navigateToDebitOrderActivity(activity, debitOrder)
-    }
-
-    override fun navigateToBalanceProtectionInsurance(accountInfo: String?) {
-        MyAccountsScreenNavigator.navigateToBalanceProtectionInsurance(activity, accountInfo, mCardPresenterImpl?.getAccount())
-    }
-
-    override fun setBalanceProtectionInsuranceState(coveredText: Boolean) {
-        when (coveredText) {
+    override fun showBalanceProtectionInsurance(insuranceCovered: Boolean?) {
+        when (insuranceCovered){
             true -> {
-                KotlinUtils.roundCornerDrawable(bpiCoveredTextView, "#bad110")
                 bpiCoveredTextView?.visibility = VISIBLE
                 bpiNotCoveredGroup?.visibility = GONE
             }
             false -> {
+                bpiCoveredTextView?.visibility = GONE
+                bpiNotCoveredGroup?.visibility = VISIBLE
+            }
+        }
+    }
+
+    override fun navigateToDebitOrderActivity(debitOrder: DebitOrder) {
+        MyAccountsScreenNavigator.navigateToDebitOrderActivity(activity, debitOrder)
+    }
+
+    override fun navigateToBalanceProtectionInsuranceApplication(accountInfo: String?, bpiInsuranceStatus: BpiInsuranceApplicationStatusType?) {
+        MyAccountsScreenNavigator.navigateToBalanceProtectionInsurance(activity, accountInfo, mCardPresenterImpl?.getAccount(), bpiInsuranceStatus)
+    }
+
+    override fun showBalanceProtectionInsuranceLead(bpiInsuranceApplication: BpiInsuranceApplication?) {
+        when (bpiInsuranceApplication?.status) {
+            BpiInsuranceApplicationStatusType.COVERED ,
+            BpiInsuranceApplicationStatusType.OPTED_IN,
+            BpiInsuranceApplicationStatusType.NOT_OPTED_IN-> {
+                bpiCoveredTextView?.text = bpiInsuranceApplication.displayLabel
+                KotlinUtils.roundCornerDrawable(bpiCoveredTextView, bpiInsuranceApplication.displayLabelColor)
+                bpiCoveredTextView?.visibility = VISIBLE
+                bpiNotCoveredGroup?.visibility = GONE
+            }
+            else  -> {
                 bpiCoveredTextView?.visibility = GONE
                 bpiNotCoveredGroup?.visibility = VISIBLE
             }
@@ -448,7 +498,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         }
     }
 
-    fun showOnlyCardVisibleState() {
+    private fun showOnlyCardVisibleState() {
         stopCardActivationShimmer()
         includeAccountDetailHeaderView?.visibility = VISIBLE
         includeManageMyCard?.visibility = GONE
@@ -481,13 +531,31 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CREDIT_CARD_ACTIVATION -> {
+
+        when (requestCode){
+            AppConstant.BALANCE_PROTECTION_INSURANCE_REQUEST_CODE -> {
+                if (resultCode == AppConstant.BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE){
+                    val extras = data?.extras
+                    val response  = extras?.getString(BalanceProtectionInsuranceActivity.ACCOUNT_RESPONSE)
+                    val accounts = Gson().fromJson(response, Account::class.java)
+                    mCardPresenterImpl?.apply {
+                        showAccount(accounts)
+                    }
+                }
+            }
+
+            REQUEST_CREDIT_CARD_ACTIVATION -> {
+                if (resultCode == RESULT_OK) {
                     executeCreditCardTokenService()
                 }
             }
+
         }
+    }
+
+    private fun showAccount(accounts: Account?) {
+        val applyNowState =  mCardPresenterImpl?.mApplyNowAccountKeyPair?.first
+        mCardPresenterImpl?.refreshAccount(accounts)
     }
 
     private fun initCreditCardActivation() {

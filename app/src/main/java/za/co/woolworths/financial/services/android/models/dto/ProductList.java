@@ -15,9 +15,9 @@ public class ProductList {
     public String productId;
     @Expose
     public String productName;
-    @SerializedName("externalImageRef")
+    @SerializedName("externalImageRefV2")
     @Expose
-    public String externalImageRef;
+    public String externalImageRefV2;
     @SerializedName("imagePath")
     @Expose
     public String imagePath;
@@ -62,6 +62,9 @@ public class ProductList {
     public String productVariants;
     @SerializedName("isLiquor")
     public Boolean isLiquor;
+    @SerializedName("virtualTryOn")
+    @Expose
+    public String virtualTryOn;
 
     public ProductListingViewType rowType = ProductListingViewType.PRODUCT;
     public Integer numberOfItems;

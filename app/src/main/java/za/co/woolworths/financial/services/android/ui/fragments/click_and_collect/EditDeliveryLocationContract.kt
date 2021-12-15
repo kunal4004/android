@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
-import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
@@ -23,7 +22,7 @@ interface EditDeliveryLocationContract {
         fun hideGetSuburbProgress()
         fun showErrorDialog()
         fun onSetSuburbSuccess()
-        fun onSetSuburbFailure()
+        fun onSetSuburbFailure(desc: String?)
         fun validateConfirmLocationButtonAvailability()
         fun hideSetSuburbProgressBar()
         fun showSetSuburbProgressBar()

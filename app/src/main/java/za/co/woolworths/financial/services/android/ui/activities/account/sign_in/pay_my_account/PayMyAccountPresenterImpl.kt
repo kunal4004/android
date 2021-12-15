@@ -36,12 +36,13 @@ class PayMyAccountPresenterImpl(private var mainView: IPaymentOptionContract.Pay
         return mAccountDetails?.second
     }
 
-    override fun getElectronicFundTransferBankingDetail(): Map<String, String> {
-        return Gson().fromJson(getAccount()?.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
+    override fun getElectronicFundTransferBankingDetail(): Map<String, String>? {
+        return getAccount()?.bankingDetails?.let { bankingDetails -> Gson().fromJson(bankingDetails, object : TypeToken<Map<String, String>>() {}.type)  }
     }
 
     override fun displayPaymentDetail() {
-        mainView?.showPaymentDetail(getElectronicFundTransferBankingDetail())
+        getElectronicFundTransferBankingDetail()?.let { bankingDetails -> mainView?.showPaymentDetail(bankingDetails)
+        }
     }
 
     override fun getAccountDetailValues(): HashMap<String, String?> {

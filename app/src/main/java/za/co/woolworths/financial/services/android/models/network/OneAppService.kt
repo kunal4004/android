@@ -3,10 +3,18 @@ package za.co.woolworths.financial.services.android.models.network
 import android.location.Location
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.Header
+import retrofit2.http.Path
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
+import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
+import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
+import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.AvailableTimeSlotsResponse
@@ -14,7 +22,6 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.PossibleAddressResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.ScheduleDeliveryRequest
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceBody
-import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkDeviceValidateBody
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.*
@@ -34,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
+import java.net.URLEncoder
 
 object OneAppService : RetrofitConfig() {
 
@@ -195,6 +203,54 @@ object OneAppService : RetrofitConfig() {
     fun getProvinces(): Call<ProvincesResponse> {
         return mApiInterface.getProvinces( "", "", getSessionToken(),
             getDeviceIdentityToken())
+    }
+
+    fun getSavedAddresses(): Call<SavedAddressResponse> {
+        return mApiInterface.getSavedAddresses( "", "", getSessionToken(),
+            getDeviceIdentityToken())
+    }
+
+    fun addAddress(addAddressRequestBody: AddAddressRequestBody): Call<AddAddressResponse> {
+        return mApiInterface.addAddress(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            addAddressRequestBody,
+        )
+    }
+    fun editAddress(
+        addAddressRequestBody: AddAddressRequestBody,
+        addressId: String
+    ): Call<AddAddressResponse> {
+        return mApiInterface.editAddress(
+            "",
+            "",
+            getSessionToken(), getDeviceIdentityToken(), addressId, addAddressRequestBody
+        )
+    }
+    fun deleteAddress(addressId: String): Call<DeleteAddressResponse> {
+        return mApiInterface.deleteAddress(getSessionToken(), getDeviceIdentityToken(), addressId)
+    }
+
+    fun changeAddress(nickName: String): Call<ChangeAddressResponse> {
+        return mApiInterface.changeAddress(nickName, "", "", getSessionToken(),
+            getDeviceIdentityToken())
+    }
+
+    fun getConfirmDeliveryAddressDetails(body: ConfirmDeliveryAddressBody): Call<ConfirmDeliveryAddressResponse>{
+        return mApiInterface.getConfirmDeliveryAddressDetails("", "", getSessionToken(),
+        getDeviceIdentityToken(), body)
+    }
+
+    fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
+        return mApiInterface.getShippingDetails("", "", getSessionToken(),
+        getDeviceIdentityToken(), body)
+    }
+
+    fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): Call<ConfirmSelectionResponse>{
+        return mApiInterface.setConfirmSelection("", "", getSessionToken(),
+        getDeviceIdentityToken(), confirmSelectionRequestBody)
     }
 
     fun getCartSummary(): Call<CartSummaryResponse> {
@@ -572,7 +628,7 @@ object OneAppService : RetrofitConfig() {
                 surveyId = surveyDetails.id,
                 surveyReplies = SurveyRepliesBody(
                         surveyId = surveyDetails.id,
-                        appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().applicationContext),
+                        appInstanceId = Utils.getUniqueDeviceID(),
                         participantReplies = surveyAnswers.values.toList()
                 )
         )
@@ -584,8 +640,46 @@ object OneAppService : RetrofitConfig() {
                 userAgentVersion =  "",
                 sessionToken = getSessionToken(),
                 optOutBody = SurveyOptOutBody(
-                        appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().applicationContext)
+                        appInstanceId = Utils.getUniqueDeviceID()
                 )
+        )
+    }
+
+    fun getSubmittedOrder(): Call<SubmittedOrderResponse> {
+        return mApiInterface.getSubmittedOrder(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken())
+    }
+
+    fun getBPITermsAndConditionsInfo(productGroupCode: String): Call<BPITermsConditionsResponse>{
+        return mApiInterface.getBPITermsAndConditionsInfo(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            productGroupCode)
+    }
+
+    fun emailBPITermsAndConditions(productGroupCode: String): Call<GenericResponse>{
+        return mApiInterface.emailBPITermsAndConditions(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            BPIBody(productGroupCode)
+        )
+    }
+
+    fun postInsuranceLeadGenOptIn(insuranceType: String, insuranceTypeOptInBody: InsuranceTypeOptInBody): Call<GenericResponse> {
+        return mApiInterface.postInsuranceLeadGenOptIn(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            insuranceType,
+            insuranceTypeOptInBody
         )
     }
 
