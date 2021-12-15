@@ -25,7 +25,7 @@
         android:layout_marginTop="@dimen/fifteen_dp"
         android:fontFamily="@font/futura_bold"
         android:letterSpacing="@string/star_0"
-        android:text="@string/rating_details"
+        android:text="@string/ratings_details"
         android:textColor="@color/no_active_card_title"
         android:textSize="@dimen/twenty_sp"
         app:layout_constraintStart_toStartOf="parent"

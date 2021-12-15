@@ -11,8 +11,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.common_toolbar.view.*
-import kotlinx.android.synthetic.main.fragment_more_reviews.*
+import kotlinx.android.synthetic.main.common_toolbar.*
 import kotlinx.android.synthetic.main.review_detail_layout.*
 import kotlinx.android.synthetic.main.review_detail_layout.rvSecondaryRatings
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
@@ -48,10 +47,11 @@ class ReviewDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar_more_review?.apply {
+        toolbar?.let {
             btn_back?.setOnClickListener {
                 activity?.onBackPressed()
             }
+            txt_toolbar_title.text = getString(R.string.review_details)
         }
 
         arguments?.apply {
