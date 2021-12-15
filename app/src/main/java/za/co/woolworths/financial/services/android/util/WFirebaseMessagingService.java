@@ -78,14 +78,19 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         Intent intent = new Intent(this, StartupActivity.class);
 
-            if (payload.get("feature") != null && payload.get("feature").equals("Product Listing"))
-            {
-                String json = payload.get("parameters").replaceAll("\\\\", "");
-                JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
+        String payloadParameters = payload.get("parameters");
+        String feature = payload.get("parameters");
 
-                intent.setData(Uri.parse(parameters.get("url").getAsString()));
-                intent.setAction(Intent.ACTION_VIEW);
-            }
+        if (feature != null &&
+                feature.equals("Product Listing") &&
+                payloadParameters != null) {
+
+            String json = payloadParameters.replaceAll("\\\\", "");
+            JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
+
+            intent.setData(Uri.parse(parameters.get("url").getAsString()));
+            intent.setAction(Intent.ACTION_VIEW);
+        }
         
         /*Deep link to PDP disabled*/
         /*else if (payload.get("feature").equals("Product Detail")){
