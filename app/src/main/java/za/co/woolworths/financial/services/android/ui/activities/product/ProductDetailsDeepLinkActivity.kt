@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
@@ -342,13 +341,14 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
                     ScreenManager.presentSSOSignin(this@ProductDetailsDeepLinkActivity)
                 } else {
-                    val openCartActivity =
+                    //TODO: Nav stack change
+                    /*val openCartActivity =
                         Intent(this@ProductDetailsDeepLinkActivity, CartActivity::class.java)
                     startActivityForResult(
                         openCartActivity,
                         BottomNavigationActivity.OPEN_CART_REQUEST
                     )
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)*/
                 }
             }
         }

@@ -150,7 +150,8 @@ class ToastFactory {
 
             // handle popupWindow click event
             tvButtonClick?.setOnClickListener {
-                ScreenManager.presentShoppingCart(activity)
+                //TODO: Nav stack
+//                ScreenManager.presentShoppingCart(activity)
                 popupWindow.dismiss() // dismiss the window
             }
             popupWindow.isFocusable = false
@@ -335,7 +336,8 @@ class ToastFactory {
             )
 
             viewCart?.setOnClickListener {
-                ScreenManager.presentShoppingCart(activity)
+                //TODO: Nav stack changes
+//                ScreenManager.presentShoppingCart(activity)
                 popupWindow.dismiss() // dismiss the window
             }
             popupWindow.isFocusable = false

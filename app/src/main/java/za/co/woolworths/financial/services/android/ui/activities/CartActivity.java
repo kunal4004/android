@@ -40,7 +40,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class CartActivity extends BottomActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem, ToastUtils.ToastInterface, IToastInterface {
+public class CartActivity extends BottomActivity implements View.OnClickListener, ToastUtils.ToastInterface, IToastInterface {
 
     private WTextView btnEditCart;
     private WTextView btnClearCart;
@@ -181,14 +181,6 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         btnClearCart.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onRemoveItem(boolean visibility) {
-        pbRemoveAllItem.setVisibility(visibility ? View.VISIBLE : View.GONE);
-        btnClearCart.setVisibility(visibility ? View.GONE : View.VISIBLE);
-        btnCloseCart.setVisibility(visibility ? View.GONE : View.GONE);
-        btnEditCart.setEnabled(visibility ? false : true);
-    }
-
     public void enableEditCart(boolean enable) {
         Utils.fadeInFadeOutAnimation(btnEditCart, enable);
         btnEditCart.setEnabled(enable ? false : true);
@@ -197,13 +189,6 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public void enableEditCart() {
         Utils.fadeInFadeOutAnimation(btnEditCart, false);
         btnEditCart.setEnabled(true);
-    }
-
-    @Override
-    public void onRemoveSuccess() {
-        pbRemoveAllItem.setVisibility(View.GONE);
-        btnCloseCart.setVisibility(View.VISIBLE);
-        btnClearCart.setVisibility(View.GONE);
     }
 
     @Override

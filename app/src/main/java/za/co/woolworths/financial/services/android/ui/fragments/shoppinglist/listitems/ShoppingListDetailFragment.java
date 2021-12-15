@@ -53,7 +53,6 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
@@ -1043,14 +1042,15 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onToastButtonClicked(JsonElement jsonElement) {
-        Activity activity = getActivity();
+        //TODO: Nav stack change        
+        /*Activity activity = getActivity();
         if (activity != null) {
             Intent openCartActivity = new Intent(activity, CartActivity.class);
             startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
             activity.overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
             activity.finish();
             activity.overridePendingTransition(0, 0);
-        }
+        }*/
     }
 
     public boolean shouldUserSetSuburb() {

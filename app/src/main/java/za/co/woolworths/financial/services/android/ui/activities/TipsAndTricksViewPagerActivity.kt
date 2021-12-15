@@ -109,7 +109,8 @@ import kotlin.properties.Delegates
                 //NAVIGATION
                     0 -> {
                         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
-                            startActivity(Intent(this, CartActivity::class.java))
+                                //TODO: Nav stack changes
+//                            startActivity(Intent(this, CartActivity::class.java))
                         } else {
                             setResult(RESULT_OK_PRODUCTS)
                             onBackPressed()

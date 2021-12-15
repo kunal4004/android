@@ -42,7 +42,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -1126,10 +1125,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun openCartActivity() {
-        activity?.apply {
+        //TODO: Nav stack change
+        /*activity?.apply {
             startActivityForResult(Intent(this, CartActivity::class.java), OPEN_CART_REQUEST)
             overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay)
-        }
+        }*/
     }
 
     override fun queryStoreFinderProductByFusedLocation(location: Location?) {

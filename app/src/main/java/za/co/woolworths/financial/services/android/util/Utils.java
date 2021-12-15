@@ -112,7 +112,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetailRespo
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
@@ -893,9 +892,10 @@ public class Utils {
                         if (false) {//TODO: this needs to change
                             ScreenManager.presentSSOSignin(activity);
                         } else {
-                            Intent openCartActivity = new Intent(activity, CartActivity.class);
+                            //TODO: Nav stack change
+                            /*Intent openCartActivity = new Intent(activity, CartActivity.class);
                             activity.startActivity(openCartActivity);
-                            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+                            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);*/
                         }
                         pw.dismiss(); // dismiss the window
                     }
