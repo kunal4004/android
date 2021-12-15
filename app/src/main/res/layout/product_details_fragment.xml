@@ -15,7 +15,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.core.widget.NestedScrollView
+        <za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -37,17 +37,29 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+
+                <include
+                    android:id="@+id/vtoLayout"
+                    layout="@layout/vto_imageview_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/vto_preview_size"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
                 <RelativeLayout
                     android:id="@+id/relViewPager"
                     android:layout_width="0dp"
-                    android:layout_height="353dp"
+                    android:layout_height="@dimen/vto_preview_size"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="353dp">
+                        android:layout_height="@dimen/vto_preview_size">
 
                         <androidx.viewpager.widget.ViewPager
                             android:id="@+id/productImagesViewPager"
@@ -82,12 +94,22 @@
                         android:layout_marginBottom="10dp"
                         android:src="@drawable/ic_share_circle" />
 
+                    <ImageView
+                        android:id="@+id/imgVTOOpen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true"
+                        android:padding="@dimen/six_dp"
+                        android:layout_marginBottom="@dimen/four_dp"
+                        android:layout_marginStart="@dimen/ten_dp"/>
+
                 </RelativeLayout>
 
                 <Space
                     android:id="@+id/space"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/thirty_dp"
+                    android:layout_height="@dimen/twenty_dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/relViewPager" />
@@ -245,7 +267,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </androidx.core.widget.NestedScrollView>
+        </za.co.woolworths.financial.services.android.ui.views.LockableNestedScrollView>
 
 
         <ProgressBar

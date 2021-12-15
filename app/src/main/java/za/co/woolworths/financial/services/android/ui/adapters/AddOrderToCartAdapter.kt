@@ -45,7 +45,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     inner class OrderItemViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as OrderHistoryCommerceItem
-            setProductImage(itemView.cartProductImage, item.commerceItemInfo.externalImageURL)
+            setProductImage(itemView.cartProductImage, item.commerceItemInfo.externalImageRefV2)
             itemView.tvTitle.text = item.commerceItemInfo.productDisplayName
             itemView.tvQuantity.text = item.userQuantity.toString()
             itemView.tvPrice.text = CurrencyFormatter.formatAmountToRandAndCentWithSpace(item.priceInfo.amount)
@@ -236,7 +236,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
         if (!isEmpty(imgUrl)) {
             image.setResizeImage(true)
-            image.setImageURI(Utils.getExternalImageRef() + imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
+            image.setImageURI( imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
         }
     }
 }

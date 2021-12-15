@@ -17,8 +17,8 @@ import kotlinx.android.synthetic.main.account_options_layout.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
@@ -35,7 +35,6 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLo
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.location.*
-import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
 
 class StoreCardOptionsFragment : AccountsOptionFragment() {
 
@@ -185,8 +184,9 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         )
                     )
                 }
+                imLogoIncreaseLimit?.alpha = AppConstant.ALPHA_1F
                 manageMyCardTextView?.text = bindString(R.string.activate_vtc_title)
-                cardDetailImageView?.alpha = 0.3f
+                cardDetailImageView?.alpha = AppConstant.ALPHA_POINT_3F
             }
 
             // Temporary card
@@ -333,6 +333,51 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         }
     }
 
+    companion object {
+        var SHOW_GET_REPLACEMENT_CARD_SCREEN = false
+        var GET_REPLACEMENT_CARD_DETAIL = false
+        var SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+        var ACTIVATE_VIRTUAL_CARD_DETAIL = false
+    }
+
+    private fun getReplacementCard(){
+        mCardPresenterImpl?.apply {
+            activity?.apply {
+                getStoreCardResponse()?.let {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, this)
+                    Intent(this, SelectStoreActivity::class.java).apply {
+                        putExtra(
+                            SelectStoreActivity.STORE_DETAILS,
+                            Gson().toJson(it)
+                        )
+                        startActivityForResult(
+                            this,
+                            MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD
+                        )
+                        overridePendingTransition(
+                            R.anim.slide_from_right,
+                            R.anim.slide_to_left
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(SHOW_GET_REPLACEMENT_CARD_SCREEN) {
+            SHOW_GET_REPLACEMENT_CARD_SCREEN = false
+            getReplacementCard()
+        }
+        else if(SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN) {
+            SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+            mCardPresenterImpl?.apply {
+                navigateToTemporaryStoreCard()
+            }
+        }
+    }
+
     override fun onClick(v: View?) {
         super.onClick(v)
         mCardPresenterImpl?.apply {
@@ -343,30 +388,19 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
                     when (manageMyCardTextView?.text?.toString()) {
                         bindString(R.string.replacement_card_label) -> {
-                            activity?.apply {
-                                getStoreCardResponse()?.let {
-                                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_ICR_GET_CARD, this)
-                                    Intent(this, SelectStoreActivity::class.java).apply {
-                                        putExtra(
-                                            SelectStoreActivity.STORE_DETAILS,
-                                            Gson().toJson(it)
-                                        )
-                                        startActivityForResult(
-                                            this,
-                                            MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD
-                                        )
-                                        overridePendingTransition(
-                                            R.anim.slide_from_right,
-                                            R.anim.slide_to_left
-                                        )
-                                    }
-                                }
-                            }
+                            KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+                                GET_REPLACEMENT_CARD_DETAIL = true
+                            },{
+                                getReplacementCard()
+                            })
+
                         }
                         bindString(R.string.activate_vtc_title) -> {
-                            activity?.apply {
+                            KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+                                ACTIVATE_VIRTUAL_CARD_DETAIL = true
+                            },{
                                 navigateToTemporaryStoreCard()
-                            }
+                            })
                         }
                         else -> {
                             activity?.apply {

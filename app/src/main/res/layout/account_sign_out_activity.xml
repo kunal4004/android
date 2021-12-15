@@ -93,6 +93,7 @@
         android:paddingTop="16dp"
         android:paddingBottom="24dp"
         android:text="@string/view_application_status"
+        android:textAllCaps="true"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
         app:layout_constraintEnd_toEndOf="@+id/storeCardApplyNowButton"

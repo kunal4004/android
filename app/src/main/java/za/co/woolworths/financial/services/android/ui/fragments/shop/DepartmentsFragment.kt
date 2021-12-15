@@ -77,7 +77,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
     init {
         isDashEnabled =
-            Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber)
+            Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber ?: 0)
                 ?: false
     }
 
@@ -629,5 +629,9 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 break
             }
         }
+    }
+
+    public fun reloadRequest(){
+        executeDepartmentRequest()
     }
 }

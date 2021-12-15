@@ -17,11 +17,16 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProviders
 import com.awfs.coordination.R
 import com.google.firebase.crashlytics.internal.common.CommonUtils
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.android.synthetic.main.activity_startup.*
 import kotlinx.android.synthetic.main.activity_startup_with_message.*
 import kotlinx.android.synthetic.main.activity_startup_without_video.*
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
+import za.co.woolworths.financial.services.android.firebase.model.ConfigData
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -38,14 +43,21 @@ import java.util.*
 class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     View.OnClickListener {
 
+    private lateinit var configBuilder: FirebaseRemoteConfigSettings.Builder
+    private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var startupViewModel: StartupViewModel
     private lateinit var deeplinkIntent: Intent
+    private var actionUrlFirst: String? = AppConstant.EMPTY_STRING
+    private var actionUrlSecond: String? = AppConstant.EMPTY_STRING
+    private var remoteConfigJsonString: String = AppConstant.EMPTY_STRING
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_startup)
-        setSupportActionBar(mToolbar)
         setupViewModel()
+        setSupportActionBar(mToolbar)
+        setUpFirebaseconfig()
+        setContentView(R.layout.activity_startup)
+
         window?.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -56,6 +68,169 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         retry?.setOnClickListener(this@StartupActivity)
         deeplinkIntent = intent
         init()
+    }
+
+    private fun setUpFirebaseconfig() {
+        firebaseRemoteConfig = startupViewModel.getFirebaseRemoteConfigData();
+         configBuilder = FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL)
+                .setFetchTimeoutInSeconds(AppConstant.FIREBASE_REMOTE_CONFIG_TIMEOUT_INTERVAL)
+        val defaultJsonString = FirebaseConfigUtils.getJsonDataFromAsset(this, FirebaseConfigUtils.FILE_NAME)
+        val defaultValues = mutableMapOf( FirebaseConfigUtils.CONFIG_KEY to defaultJsonString)
+        firebaseRemoteConfig.setConfigSettingsAsync(configBuilder.build())
+        firebaseRemoteConfig.setDefaultsAsync(defaultValues as Map<String, Any>)
+    }
+
+    private fun fetchFirebaseConfigData(isComingFromSuccess:Boolean) {
+        firebaseRemoteConfig
+                .fetch(AppConstant.FIREBASE_REMOTE_CONFIG_FETCH_INTERVAL).addOnCompleteListener { task ->
+            run {
+                if (task.isSuccessful) {
+                    //set dynamic ui here
+                    firebaseRemoteConfig.activate()
+                    remoteConfigJsonString = startupViewModel.fetchFirebaseRemoteConifgData()
+
+                    if (isComingFromSuccess) {
+                         //success of api
+                        if (remoteConfigJsonString.isEmpty()) {
+                            // api successfull but firebase not configured so navigate with normal flow
+                            presentNextScreenOrServerMessage()
+                        } else {
+                            // api successfull and  firebase also configured so display sunsetting ui
+                            setContentView(R.layout.activity_splash_screen)
+                            val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                            if (configData?.expiryTime == -1L || configData == null) {
+                                // in case we get json exception while parsing then we navigate with normal flow
+                                progress_bar?.visibility = View.GONE
+                                presentNextScreenOrServerMessage()
+                            } else {
+                                setDataOnUI(configData, true)
+                            }
+                        }
+                    } else {
+                        // error  of api
+                        if (remoteConfigJsonString.isEmpty()) {
+                            //api is  failed and firebase not configured so show error screen of api reposne
+                            showNonVideoViewWithErrorLayout()
+                        } else {
+                             // api is failed and sunsetting is cofigured then show sunsetting ui
+
+                            val configData:ConfigData? = startupViewModel.parseRemoteconfigData(remoteConfigJsonString)
+                            if (configData?.expiryTime == -1L || configData == null) {
+                                // in case we get json exception while parsing then show error screen of api
+                                progress_bar?.visibility = View.GONE
+                                showNonVideoViewWithErrorLayout()
+                            } else {
+                                setContentView(R.layout.activity_splash_screen)
+                                setDataOnUI(configData, false)
+                            }
+                        }
+                    }
+                } else {
+                    // firebase fail
+                    if (isComingFromSuccess) {
+                        // api is success and firebase  is failed so navigate to next screen
+                        progress_bar?.visibility = View.GONE
+                        presentNextScreenOrServerMessage()
+                    } else  {
+                        // api is failed and firebase  is failed so display error layout
+
+                        progress_bar?.visibility = View.GONE
+                        showNonVideoViewWithErrorLayout()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setDataOnUI(configData: ConfigData?, isComingFromSuccess: Boolean) {
+        progress_bar?.visibility = View.GONE
+        first_btn?.visibility = View.VISIBLE
+        second_btn?.visibility = View.VISIBLE
+        first_btn?.setOnClickListener(this)
+        second_btn?.setOnClickListener(this)
+
+        val timeIntervalSince1970: Long = System.currentTimeMillis()
+
+        if (configData != null) {
+            if (timeIntervalSince1970 < configData.expiryTime) {
+                val activeConfiguration = configData.activeConfiguration
+                activeConfiguration?.run {
+                    if (title == null)
+                        txt_title?.visibility = View.GONE
+                    else
+                        txt_title?.text = activeConfiguration.title
+
+                    if (description == null)
+                        txt_desc?.visibility = View.GONE
+                    else
+                        txt_desc?.text = activeConfiguration.description
+
+                    if (imageUrl == null)
+                        img_view?.visibility = View.GONE
+                    else {
+                        if (imageUrl.isEmpty())
+                            img_view.setImageResource(R.drawable.link_icon)
+                        else
+                            ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                    }
+
+                    if (firstButton == null)
+                        first_btn?.visibility = View.GONE
+                    else {
+                        first_btn?.text = firstButton.title
+                        actionUrlFirst = firstButton.actionUrl
+                    }
+
+                    if (secondButton == null)
+                        second_btn?.visibility = View.GONE
+                    else {
+                        second_btn?.text = secondButton.title
+                        actionUrlSecond = secondButton.actionUrl
+                    }
+                }
+            } else if (timeIntervalSince1970 >= configData.expiryTime && timeIntervalSince1970 != -1L) {
+                val inActiveConfiguration = configData?.inactiveConfiguration
+                inActiveConfiguration?.run {
+                    if (title == null)
+                        txt_title?.visibility = View.GONE
+                    else
+                        txt_title?.text = inActiveConfiguration.title
+
+                    if (description == null)
+                        txt_desc?.visibility = View.GONE
+                    else
+                        txt_desc?.text = inActiveConfiguration.description
+
+                    if (imageUrl == null)
+                        img_view?.visibility = View.GONE
+                    else {
+                        if(imageUrl.isEmpty())
+                            img_view.setImageResource(R.drawable.link_icon)
+                        else
+                            ImageManager.setPictureWithSplashPlaceHolder(img_view, imageUrl)
+                    }
+
+                    if (firstButton == null)
+                        first_btn?.visibility = View.GONE
+                    else {
+                        first_btn?.text = firstButton.title
+                        actionUrlFirst = firstButton.actionUrl
+                    }
+
+                    if (secondButton == null)
+                        second_btn?.visibility = View.GONE
+                    else {
+                        second_btn?.text = secondButton.title
+                        actionUrlSecond = secondButton.actionUrl
+                    }
+                }
+            } else if(configData.expiryTime == -1L && isComingFromSuccess) {
+                presentNextScreenOrServerMessage()
+            } else if (configData.expiryTime == -1L && !isComingFromSuccess) {
+                showNonVideoViewWithErrorLayout()
+            }
+        }
     }
 
     fun init() {
@@ -71,7 +246,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             showNonVideoViewWithErrorLayout()
         }
         //Remove old usage of SharedPreferences data.
-        startupViewModel.clearSharedPreference(this@StartupActivity)
+     //   startupViewModel.clearSharedPreference(this@StartupActivity)
         AuthenticateUtils.getInstance(this@StartupActivity).enableBiometricForCurrentSession(true)
     }
 
@@ -133,7 +308,41 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         showNonVideoViewWithErrorLayout()
                     }
                 }
+                R.id.first_btn-> handleFirstbuttonClick()
+                R.id.second_btn-> handleSecondbuttonClick()
             }
+        }
+    }
+
+    private fun handleSecondbuttonClick() {
+        val text: String = second_btn?.text.toString()
+        val updatedText: String = Utils.formatAnalyticsButtonText(text)
+        if (!text.isEmpty()) {
+            Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText),
+                    this
+            )
+        }
+        if (actionUrlSecond.isNullOrEmpty()) {
+            presentNextScreen()
+        } else {
+            ScreenManager.presentToActionView(this, actionUrlSecond)
+        }
+    }
+
+    private fun handleFirstbuttonClick() {
+        val text: String = first_btn?.text.toString()
+        val updatedText: String = Utils.formatAnalyticsButtonText(text)
+        if (!text.isEmpty()) {
+            Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SPLASH_BTN.plus(updatedText) ,
+                    this
+            )
+        }
+        if (actionUrlFirst.isNullOrEmpty()) {
+            presentNextScreen()
+        }  else {
+            ScreenManager.presentToActionView(this, actionUrlFirst)
         }
     }
 
@@ -147,15 +356,20 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                         showNonVideoViewWithErrorLayout()
                         return@observe
                     }
+
                     if (!startupViewModel.isVideoPlaying) {
-                        presentNextScreenOrServerMessage()
+                        if(startupViewModel.isConnectedToInternet(this)) {
+                            fetchFirebaseConfigData(true)
+                        } else {
+                            showNonVideoViewWithErrorLayout()
+                        }
                     }
                 }
                 ResponseStatus.LOADING -> {
                     setupLoadingScreen()
                 }
                 ResponseStatus.ERROR -> {
-                    showNonVideoViewWithErrorLayout()
+                    fetchFirebaseConfigData(false)
                 }
             }
         })
@@ -175,31 +389,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun presentNextScreenOrServerMessage() {
-        if (startupViewModel.isSplashScreenDisplay) {
-            showServerMessage()
-        } else {
-            showNonVideoViewWithoutErrorLayout()
-            presentNextScreen()
-        }
-    }
-
-    fun showServerMessage() {
-        progressBar?.visibility = View.GONE
-        videoViewLayout?.visibility = View.GONE
-        errorLayout?.visibility = View.GONE
-        splashNoVideoView?.visibility = View.GONE
-        messageLabel?.setText(startupViewModel.splashScreenText)
-        if (startupViewModel.isSplashScreenPersist) {
-            proceedButton?.visibility = View.GONE
-        } else {
-            proceedButton?.visibility = View.VISIBLE
-            proceedButton?.setOnClickListener { _: View? ->
-                showNonVideoViewWithoutErrorLayout()
-                presentNextScreen()
-            }
-        }
-        splashServerMessageView?.visibility = View.VISIBLE
-        startupViewModel.isServerMessageShown = true
+        showNonVideoViewWithoutErrorLayout()
+        presentNextScreen()
     }
 
     private fun setupViewModel() {

@@ -72,6 +72,11 @@ class ParticipatingStoreFragment : Fragment() {
         return inflater.inflate(R.layout.participating_store_fragment, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        Utils.hideSoftKeyboard(activity)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

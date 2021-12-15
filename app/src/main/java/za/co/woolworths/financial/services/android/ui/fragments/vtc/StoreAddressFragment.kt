@@ -235,7 +235,6 @@ class StoreAddressFragment : Fragment() {
                 && !TextUtils.isEmpty(cityTownEdtTV?.text.toString())
                 && !TextUtils.isEmpty(suburbEdtTV?.text.toString())
                 && !TextUtils.isEmpty(streetAddressEdtTV?.text.toString())
-                && !TextUtils.isEmpty(complexOrBuildingNameEdtTV?.text.toString())
                 && !TextUtils.isEmpty(postalCodeEdtTV?.text.toString())
                 // Check if address type is residential or not if not check for business edit text empty
                 && (ADDRESS_TYPE_RESIDENTIAL.equals(addressType, ignoreCase = true)
