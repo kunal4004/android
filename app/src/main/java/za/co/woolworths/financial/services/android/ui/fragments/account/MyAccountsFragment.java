@@ -1,5 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account;
 
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
+import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.IS_NON_WFS_USER;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_400;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
+import static za.co.woolworths.financial.services.android.util.Utils.ACCOUNT_CHARGED_OFF;
+import static za.co.woolworths.financial.services.android.util.Utils.hideView;
+import static za.co.woolworths.financial.services.android.util.Utils.sessionDaoSave;
+
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -34,6 +46,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.awfs.coordination.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -66,6 +79,8 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication;
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.account.Products;
@@ -117,17 +132,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType;
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent;
 
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
-import static za.co.woolworths.financial.services.android.ui.fragments.mypreferences.MyPreferencesFragment.IS_NON_WFS_USER;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_502;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_400;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
-import static za.co.woolworths.financial.services.android.util.Utils.ACCOUNT_CHARGED_OFF;
-import static za.co.woolworths.financial.services.android.util.Utils.hideView;
-
 public class MyAccountsFragment extends Fragment implements OnClickListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener, IAccountCardDetailsContract.AccountCardDetailView {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -159,6 +163,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private static final int ACCOUNT_CARD_REQUEST_CODE = 2043;
     public static final int RESULT_CODE_LINK_DEVICE = 5432;
     public static final int RESULT_CODE_DEVICE_LINKED = 5431;
+    public static final int RELOAD_ACCOUNT_RESULT_CODE = 55555;
 
     private final List<String> unavailableAccounts;
     public static AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
@@ -259,6 +264,15 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         }
         if (savedInstanceState == null) {
             hideToolbar();
+            try {
+                FirebaseInstallations.getInstance().getId().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        sessionDaoSave(SessionDao.KEY.DEVICE_ID, task.getResult());
+                    }
+                });
+            } catch (Exception ex) {
+                FirebaseManager.Companion.logException(ex);
+            }
             setToolbarBackgroundColor(R.color.white);
             openMessageActivity = view.findViewById(R.id.openMessageActivity);
             ImageView openShoppingList = view.findViewById(R.id.openShoppingList);
@@ -377,9 +391,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (mUpdateMyAccount != null) {
                 mUpdateMyAccount.enableSwipeToRefreshAccount(false);
                 mUpdateMyAccount.swipeToRefreshAccount(false);
-                imRefreshAccount.setEnabled(false);
+                refreshAccount(false);
             } else {
-                imRefreshAccount.setEnabled(true);
+                refreshAccount(true);
             }
         }
 
@@ -396,6 +410,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
         uniqueIdentifiersForAccount();
 
+    }
+
+    private void refreshAccount(boolean state) {
+        if (imRefreshAccount != null)
+            imRefreshAccount.setEnabled(state);
     }
 
     private void callLinkedDevicesAPI(Boolean isForced) {
@@ -483,7 +502,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (SessionUtilities.getInstance().isC2User()) {
                 mUpdateMyAccount.enableSwipeToRefreshAccount(true);
                 if (imRefreshAccount != null)
-                    imRefreshAccount.setEnabled(true);
+                    refreshAccount(true);
                 this.loadAccounts(false);
             } else {
                 this.configureSignInNoC2ID();
@@ -712,7 +731,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (mUpdateMyAccount != null)
             mUpdateMyAccount.enableSwipeToRefreshAccount(false);
         imRefreshAccount.setVisibility(View.GONE);
-        imRefreshAccount.setEnabled(false);
+        refreshAccount(false);
     }
 
     private void configureSignInNoC2ID() {
@@ -1054,7 +1073,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                                 if (WoolworthsApplication.getInstance() != null) {
 
-                                    if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null
+                                    if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
                                             && Utils.isGooglePlayServicesAvailable()) {
                                         navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
                                     } else {
@@ -1092,7 +1111,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null && Utils.isGooglePlayServicesAvailable()) {
+            if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null && Utils.isGooglePlayServicesAvailable()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.STORE_CARD);
             } else {
                 redirectToAccountSignInActivity(ApplyNowState.STORE_CARD);
@@ -1127,7 +1146,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 break;
             }
         }
-        return isLinked;
+        return !isLinked;
     }
 
     private void navigateToLinkDeviceConfirmation(ApplyNowState applyNowState) {
@@ -1166,7 +1185,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyDebitOrder(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
                                 FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode(), account);
 
-                                if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null
+                                if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
                                         && Utils.isGooglePlayServicesAvailable()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
                                 } else {
@@ -1202,7 +1221,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null
+            if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
                     && Utils.isGooglePlayServicesAvailable()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.PERSONAL_LOAN);
             } else {
@@ -1235,7 +1254,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                                 FirebaseAnalyticsUserProperty.Companion.setUserPropertiesOnRetryPreDelinquencyDebitOrder(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
                                 FirebaseAnalyticsUserProperty.Companion.setUserPropertiesDelinquencyCodeForProduct(AccountsProductGroupCode.CREDIT_CARD.getGroupCode(), account);
 
-                                if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId()&& deepLinkParams == null
+                                if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
                                         && Utils.isGooglePlayServicesAvailable()) {
                                     navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
                                 } else {
@@ -1272,7 +1291,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 mErrorHandlerView.showToast();
             }
         } else {
-            if (!Utils.getLinkDeviceConfirmationShown() && !verifyAppInstanceId() && deepLinkParams == null
+            if (!Utils.getLinkDeviceConfirmationShown() && verifyAppInstanceId() && deepLinkParams == null
                     && Utils.isGooglePlayServicesAvailable()) {
                 navigateToLinkDeviceConfirmation(ApplyNowState.SILVER_CREDIT_CARD);
             } else {
@@ -1374,7 +1393,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         configureView();
                         mUpdateMyAccount.enableSwipeToRefreshAccount(true);
                         mUpdateMyAccount.swipeToRefreshAccount(true);
-                        imRefreshAccount.setEnabled(true);
+                        refreshAccount(true);
                         Utils.alertErrorMessage(activity, mAccountResponse.response.desc);
                     }
                     break;
@@ -1568,6 +1587,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //TODO: Comment what's actually happening here.
+
+        if (resultCode == RELOAD_ACCOUNT_RESULT_CODE) {
+            loadAccounts(false);
+            return;
+        }
 
         if (requestCode == ScreenManager.BIOMETRICS_LAUNCH_VALUE) {
             if (!isPromptsShown && isAccountsCallMade) {
@@ -1931,16 +1955,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-    public void navigateToBalanceProtectionInsurance(@org.jetbrains.annotations.Nullable String accountInfo) {
-
-    }
-
-    @Override
-    public void setBalanceProtectionInsuranceState(boolean coveredText) {
-
-    }
-
-    @Override
     public void displayCardHolderName(@org.jetbrains.annotations.Nullable String name) {
 
     }
@@ -2086,4 +2100,18 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             applyNowRelativeLayout.performClick();
     }
 
+    @Override
+    public void showBalanceProtectionInsuranceLead(@Nullable BpiInsuranceApplication bpiInsuranceApplication) {
+
+    }
+
+    @Override
+    public void showBalanceProtectionInsurance(@Nullable Boolean insuranceCovered) {
+
+    }
+
+    @Override
+    public void navigateToBalanceProtectionInsuranceApplication(@Nullable String accountInfo, @Nullable BpiInsuranceApplicationStatusType bpiInsuranceStatus) {
+
+    }
 }

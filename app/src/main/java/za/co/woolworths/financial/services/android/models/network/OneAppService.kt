@@ -3,12 +3,17 @@ package za.co.woolworths.financial.services.android.models.network
 import android.location.Location
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.Header
+import retrofit2.http.Path
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
+import za.co.woolworths.financial.services.android.models.dto.bpi.InsuranceTypeOptInBody
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationRequestBody
 import za.co.woolworths.financial.services.android.models.dto.credit_card_activation.CreditCardActivationResponse
@@ -646,6 +651,36 @@ object OneAppService : RetrofitConfig() {
             "",
             getSessionToken(),
             getDeviceIdentityToken())
+    }
+
+    fun getBPITermsAndConditionsInfo(productGroupCode: String): Call<BPITermsConditionsResponse>{
+        return mApiInterface.getBPITermsAndConditionsInfo(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            productGroupCode)
+    }
+
+    fun emailBPITermsAndConditions(productGroupCode: String): Call<GenericResponse>{
+        return mApiInterface.emailBPITermsAndConditions(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            BPIBody(productGroupCode)
+        )
+    }
+
+    fun postInsuranceLeadGenOptIn(insuranceType: String, insuranceTypeOptInBody: InsuranceTypeOptInBody): Call<GenericResponse> {
+        return mApiInterface.postInsuranceLeadGenOptIn(
+            "",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            insuranceType,
+            insuranceTypeOptInBody
+        )
     }
 
     fun getEligibilityForTakeUpPlan(): Call<EligibilityTakeUpPlanResponse> {

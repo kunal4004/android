@@ -67,7 +67,6 @@ open class FirebaseManagerAnalyticsProperties {
         const val ACTION_SIZE_GUIDE = "Product id for product that customer has selected the size guide for"
         const val ACTION_PDP_DEEPLINK = "product_id of the item that was viewed in PDP"
 
-
         const val CRASH_CAUTION: String = "crash_caution"
         const val SHOP_CATEGORIES: String = "shopcategories"
         const val SHOPMYLISTS: String = "shop_mylists"
@@ -77,7 +76,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val ABSA_CC_SET_UP_PASSCODE: String = "absa_cc_setup_passcode"
         const val ABSA_CC_COMPLETE_SETUP: String = "absa_cc_complete_setup"
         const val ABSA_CC_LOGIN_WITH_NEW_PASSCODE: String = "cc_login_with_new_passcode"
-        const val ABSA_CC_VIEW_STATEMENTS: String = "absa_cc_view_statements"
+        const val ABSA_CC_VIEW_STATEMENTS: String = "absa_cc_view_statement"
         const val ABSA_CC_SHARE_STATEMENT: String = "absa_cc_share_statement"
         const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "absa_cc_view_ind_statement"
 
@@ -333,6 +332,20 @@ open class FirebaseManagerAnalyticsProperties {
 
         //Sunsetting and Splash screen
         const val SPLASH_BTN = "splash_"
+
+
+        //Bpi insurance lead generation
+        const val SC_BPI_OPT_IN_START: String = "sc_bpi_optin_start"
+        const val SC_BPI_OPT_IN_CONFIRM: String = "sc_bpi_optin_confirm"
+        const val SC_BPI_OPT_IN_SEND_EMAIL: String = "sc_bpi_send_email"
+
+        const val PL_BPI_OPT_IN_START: String = "pl_bpi_optin_start"
+        const val PL_BPI_OPT_IN_CONFIRM: String = "pl_bpi_optin_confirm"
+        const val PL_BPI_OPT_IN_SEND_EMAIL: String = "pl_bpi_send_email"
+
+        const val CC_BPI_OPT_IN_START: String = "cc_bpi_optin_start"
+        const val CC_BPI_OPT_IN_CONFIRM: String = "cc_bpi_optin_confirm"
+        const val CC_BPI_OPT_IN_SEND_EMAIL: String = "cc_bpi_send_email"
     }
 
     class PropertyNames {
@@ -408,6 +421,60 @@ open class FirebaseManagerAnalyticsProperties {
     class PropertyValues {
         companion object {
             const val NOT_APPLICABLE: String = "N/A"
+
+            const val SC_BPI_OPT_IN_START_VALUE = "Store Card Landing - BPI - Opt-in"
+            const val SC_BPI_OPT_IN_CONFIRM_VALUE = "Store Card Landing - BPI - Confirm"
+            const val SC_BPI_OPT_IN_SEND_EMAIL_VALUE = "Store Card Landing - BPI - Send Email"
+
+            const val CC_BPI_OPT_IN_START_VALUE = "Credit Card Landing - BPI - Opt-in"
+            const val CC_BPI_OPT_IN_CONFIRM_VALUE = "Credit Card Landing - BPI - Confirm"
+            const val CC_BPI_OPT_IN_SEND_EMAIL_VALUE = "Credit Card Landing - BPI - Send Email"
+
+            const val PL_BPI_OPT_IN_START_VALUE = "Personal Loan Landing - BPI - Opt-in"
+            const val PL_BPI_OPT_IN_CONFIRM_VALUE = "Personal Loan Landing - BPI - Confirm"
+            const val PL_BPI_OPT_IN_SEND_EMAIL_VALUE = "Personal Loan Landing - BPI - Send Email"
+            // Native Checkout
+            const val ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY: String = "Customer selects the Delivery option"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION: String = "Customer selects the Collections option"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CHANGE_SUBURB: String =
+                "Customer selects to change their province and suburb to display other stores"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_CONFIRM_STORE: String = "Customer selects to their store selected"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_ADD_NEW_ADDRESS: String =
+                "Customer selects to add an address for their delivery option"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_EDIT_ADDRESS: String =
+                "Customer selects to edit an already added address for their delivery option"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_DELETE_ADDRESS: String =
+                "Customer selects to Delete an already added address"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_CONFIRM_ADDRESS: String =
+                "Customer selects to Confirm after selecting a specific Delivery address"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_SAVE_ADDRESS: String =
+                "Customer confirms the delivery address that was added"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS: String =
+                "Customer changed Delivery address / Collection"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_CANCEL_REMOVE_ITEMS: String =
+                "Customer changed Delivery address / Collection and does not want items removed."
+            const val ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_PHONE: String =
+                "Customer selects to be phoned rather than the default Substitute for similar items if one is available"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_SUBSTITUTION_NO_THANKS: String =
+                "Customer selects No Thanks rather than the default Substitute for similar items if one is available"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_BAGS_INFO: String = "Customer selects to view additional information on shopping bags"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_SPECIAL_INSTRUCTION: String =
+                "Customer selects Special Collection Instructions toggle to add information"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_IS_THIS_GIFT: String =
+                "Customer selects ‘Is this a gift’ toggle to add information"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_CONTINUE_TO_PAYMENT: String =
+                "Customer has entered all the relevant info and confirms by selecting 'Continue to Payment'"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING: String =
+                "Customer selects the 'Missed WRewards Savings' information button"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SIGN_UP: String =
+                "Customer selects to sign up for WRewards savings on additional information button"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_ADD_CARD: String =
+                "Customer selects that they want to add their WRewards card"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY_OPTION_PRE_VALUE1: String =
+                "Customer selects "
+            const val ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY_OPTION_PRE_VALUE2: String =
+                " delivery option"
+
         }
     }
 

@@ -24,7 +24,7 @@ interface IPaymentOptionContract {
     interface PayMyAccountPresenter {
         fun retrieveAccountBundle(intent: Pair<ApplyNowState, Account>?){}
         fun getAccount(): Account?
-        fun getElectronicFundTransferBankingDetail(): Map<String, String>
+        fun getElectronicFundTransferBankingDetail(): Map<String, String>?
         fun displayPaymentDetail()
         fun getPayMyAccountCardDrawable() {}
         fun loadABSACreditCardInfoIfNeeded(){}

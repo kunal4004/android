@@ -2,9 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -13,7 +11,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -41,6 +38,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.perfectcorp.perfectlib.SkuHandler;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +49,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
@@ -76,7 +75,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.AccountM
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.AmplifyInit;
-import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
@@ -94,6 +92,8 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
+import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -104,7 +104,6 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
-import za.co.woolworths.financial.services.android.util.ServiceTools;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -132,6 +131,7 @@ import static za.co.woolworths.financial.services.android.util.FuseLocationAPISi
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
+@AndroidEntryPoint
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
     public static final int INDEX_TODAY = FragNavController.TAB1;
@@ -223,6 +223,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 .rootFragmentListener(this, 5)
                 .build();
         renderUI();
+        vtoSyncServer();
 
         /***
          * Update bottom navigation view counter
@@ -259,6 +260,58 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         queryBadgeCountOnStart();
         addDrawerFragment();
     }
+
+    private void vtoSyncServer() {
+        SdkUtility.initSdk(this, new PfSDKInitialCallback() {
+            @Override
+            public void onInitialized() {
+                SkuHandler skuHandler = SkuHandler.getInstance();
+                if (skuHandler == null) {
+                    return;
+                }
+
+                skuHandler.checkNeedToUpdate(new SkuHandler.CheckNeedToUpdateCallback() {
+                    @Override
+                    public void onSuccess(boolean needUpdate) {
+                        if (needUpdate) {
+                            skuHandler.syncServer(new SkuHandler.SyncServerCallback() {
+                                @Override
+                                public void progress(double progress) {
+                                  //sync SDK in background. when update needed.
+                                    // later may be required show on UI
+                                }
+
+                                @Override
+                                public void onSuccess() {
+                                     //Do Nothing
+                                       // required later update UI.
+                                }
+
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                    handleExceptionWithFireBase(throwable);
+                                }
+                            });
+                        }
+                    }
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        handleExceptionWithFireBase(throwable);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                handleExceptionWithFireBase(throwable);
+            }
+        });
+    }
+
+    private void handleExceptionWithFireBase(Throwable throwable) {
+        FirebaseManager.logException(throwable);
+    }
+
     private void parseDeepLinkData() {
         if (mBundle == null) {
             return;
@@ -344,9 +397,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 switch (deepLinkType) {
                     case AppConstant.DP_LINKING_PRODUCT_LISTING:
-                        if (appLinkData.get("url") == null) {
+                        if (appLinkData == null ) {
                             return;
                         }
+                       if (appLinkData.get("url") == null) {
+                                return;
+                       }
 
                         Uri linkData = Uri.parse(appLinkData.get("url").getAsString());
                         ProductSearchTypeAndTerm productSearchTypeAndSearchTerm = DeepLinkingUtils.Companion.getProductSearchTypeAndSearchTerm(linkData.toString());
@@ -1453,6 +1509,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         clearBadgeCount();
         ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
     }
-
+    public void reloadDepartmentFragment() {
+        Fragment currentFragment = mNavController.getCurrentFrag();
+        if (currentFragment instanceof ShopFragment) {
+            ShopFragment shopFragment = (ShopFragment) currentFragment;
+            shopFragment.refreshCategories();
+        }
+    }
 
 }

@@ -59,7 +59,6 @@ class StartupActivityUnitTest : Activity() {
         verify(startupViewModel, times(1)).setSessionDao(SessionDao.KEY.SPLASH_VIDEO, "1")
         verify(startupActivity, times(1)).showNonVideoViewWithErrorLayout()
         verify(startupViewModel, times(1)).isConnectedToInternet(startupActivity)
-        verify(startupViewModel, times(1)).clearSharedPreference(startupActivity)
     }
 
     @Test
@@ -85,17 +84,7 @@ class StartupActivityUnitTest : Activity() {
     }
 
     @Test
-    fun testPresentServerMessage() {
-        `when`(startupViewModel.isSplashScreenDisplay).thenReturn(true)
-        doNothing().`when`(startupActivity).showServerMessage()
-        startupActivity.presentNextScreenOrServerMessage()
-        verify(startupActivity, times(1)).showServerMessage()
-        Assert.assertTrue(startupViewModel.isSplashScreenDisplay)
-    }
-
-    @Test
     fun testPresentNextScreen() {
-        `when`(startupViewModel.isSplashScreenDisplay).thenReturn(false)
         doNothing().`when`(startupActivity).showNonVideoViewWithoutErrorLayout()
         val intent: Intent = mock()
         val bundle: Bundle = mock()
@@ -110,7 +99,6 @@ class StartupActivityUnitTest : Activity() {
         verify(startupActivity, times(1)).showNonVideoViewWithoutErrorLayout()
         verify(startupActivity, times(1)).presentNextScreen()
         verify(startupActivity, times(1)).handleAppLink(any())
-        Assert.assertFalse(startupViewModel.isSplashScreenDisplay)
     }
 
     @Test

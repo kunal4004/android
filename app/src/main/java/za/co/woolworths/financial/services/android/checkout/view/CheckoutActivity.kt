@@ -169,10 +169,10 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 (fragmentList[0] as SuburbSelectorFragment).onBackPressed()
             }
             is UnsellableItemsFragment -> {
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS,
-                    this
-                )
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS, hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CANCEL_REMOVE_ITEMS
+                ), this)
                 setReloadResultAndFinish()
             }
             is CheckoutAddAddressReturningUserFragment -> {

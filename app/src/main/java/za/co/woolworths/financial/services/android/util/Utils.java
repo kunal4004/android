@@ -1,5 +1,15 @@
 package za.co.woolworths.financial.services.android.util;
 
+import static android.Manifest.permission_group.STORAGE;
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
+import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
+import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,16 +29,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -47,6 +47,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
@@ -71,8 +80,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -88,6 +95,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.absa.openbankingapi.DecryptionFailureException;
@@ -119,16 +127,6 @@ import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
 import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
-
-import static android.Manifest.permission_group.STORAGE;
-import static android.graphics.Color.BLACK;
-import static android.graphics.Color.WHITE;
-import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
-import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
 
 public class Utils {
 
@@ -672,16 +670,20 @@ public class Utils {
     }
 
     public static String getUniqueDeviceID() {
-        String deviceID = null;
-        if (deviceID == null) {
-            deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
-            if (deviceID == null) {
-                deviceID = FirebaseInstallations.getInstance().getId().getResult().toString();
-                sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
-            }
+        AtomicReference<String> deviceID = new AtomicReference<>(getSessionDaoValue(SessionDao.KEY.DEVICE_ID));
+        if (deviceID.get() == null) {
+            FirebaseInstallations.getInstance().getId().addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    deviceID.set(task.getResult());
+                    sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID.get());
+                }
+                else if(!task.isSuccessful()){
+                    FirebaseManager.logException("Utils.getUniqueDeviceID() task failed");
+                }
+            });
         }
 
-        return deviceID;
+        return deviceID.get();
     }
 
     public static void disableEnableChildViews(View view, boolean enabled) {
@@ -1234,6 +1236,9 @@ public class Utils {
                 appInstanceObject.featureWalkThrough.cartRedeemVoucher = true;
             case CREDIT_SCORE:
                 appInstanceObject.featureWalkThrough.creditScore = true;
+                break;
+            case VTO_TRY_IT:
+                appInstanceObject.featureWalkThrough.isTryItOn = true;
                 break;
             default:
                 break;
