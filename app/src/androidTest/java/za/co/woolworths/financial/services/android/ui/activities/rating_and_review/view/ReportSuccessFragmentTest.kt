@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 
-import android.content.Intent
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -15,7 +14,7 @@ class ReportSuccessFragmentTest {
 
     @Test
     fun test_ReportSuccesScreenData() {
-        val sceanario  = launchFragmentInContainer<ReportSuccessFragment>()
+        launchFragmentInContainer<ReportSuccessFragment>()
         onView(ViewMatchers.withId(R.id.img_success))
                 .check(matches(ViewMatchers.isDisplayed()))
         onView(ViewMatchers.withId(R.id.txt_view_report_submitted))
