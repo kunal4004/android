@@ -13,6 +13,7 @@
         <TextView
             android:id="@+id/recipientDetailsTitle"
             style="@style/futura_semi_bold_black"
+            android:layout_width="wrap_content"
             android:contentDescription="@string/cd_ccd_lablerecipientdetailstitle"
             android:letterSpacing="0.1"
             android:paddingTop="@dimen/two_dp"
@@ -21,6 +22,23 @@
             android:textSize="@dimen/twenty_sp"
             app:layout_constraintRight_toRightOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toTopOf="@id/top_guideline" />
+
+        <TextView
+            android:id="@+id/addPersonTextView"
+            style="@style/futura_semi_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/change_location_round_black"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:padding="@dimen/six_dp"
+            android:text="@string/add_person"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twelve_sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/right_guideline"
             app:layout_constraintTop_toTopOf="@id/top_guideline" />
 
         <TextView
