@@ -75,10 +75,11 @@
         android:layout_width="wrap_content"
         android:gravity="center_horizontal"
         android:letterSpacing=".15"
-        android:text="@string/reset_filter"
+        android:text="@string/clear_filter"
         android:textAllCaps="true"
         android:textColor="@drawable/refine_toolbar_menu_text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/twenty_four_dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

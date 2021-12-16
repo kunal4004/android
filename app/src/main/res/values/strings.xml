@@ -558,6 +558,7 @@
     <string name="account_details_reference_number">Reference Number:</string>
     <string name="account_details_swift_code">Swift Code:</string>
     <string name="refine">REFINE</string>
+    <string name="filter">FILTER</string>
     <string name="sort_by">SORT BY</string>
     <string name="refinement_show_me">show me</string>
     <string name="refinement_filter_by">filter by</string>

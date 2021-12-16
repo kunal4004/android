@@ -46,7 +46,7 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/refinementText"
             style="@style/sort_and_filter_selection_text_style"
-            android:text="@string/refine" />
+            android:text="@string/filter" />
 
         <ImageView
             android:id="@+id/refineDownArrow"
