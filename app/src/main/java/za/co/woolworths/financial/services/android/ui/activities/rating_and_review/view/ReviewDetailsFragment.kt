@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.SkinProfile
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ProductReviewViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.SkinProfileAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -123,8 +124,8 @@ class ReviewDetailsFragment : Fragment() {
     }
 
     private fun setSkinProfielLayout(
-        contextDataValue: List<SkinProfile>,
-        tagDimensions: List<SkinProfile>
+            contextDataValue: List<SkinProfile>,
+            tagDimensions: List<SkinProfile>
     ) {
         if (contextDataValue.isNotEmpty() || tagDimensions.isNotEmpty()) {
             skin_profile_layout.rv_skin_profile.visibility = View.VISIBLE

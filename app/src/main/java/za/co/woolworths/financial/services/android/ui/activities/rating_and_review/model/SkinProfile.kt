@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model
 
 import com.google.gson.annotations.SerializedName
 
