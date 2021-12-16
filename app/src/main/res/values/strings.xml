@@ -2254,6 +2254,19 @@
     <string name="native_checkout_delivery_gift_instructions">Is this a Gift?</string>
     <string name="native_checkout_delivery_gift_instructions_hint">Please type gifting message here.</string>
 
+    <!-- Native Checkout : Collection -->
+    <string name="who_is_collecting">Who is Collecting?</string>
+    <string name="add_person">Add Person</string>
+    <string name="special_char_name_error_text">Only letters, numbers, or punctuation can be used here.</string>
+    <string name="vehicle_details_title">Vehicle Details</string>
+    <string name="my_vehicle_text">My Vehicle</string>
+    <string name="e_hailing_text">E-Hailing</string>
+    <string name="e_hailing_description">Select this option if you will be arriving to collect your order in an e-hailing vehicle (e.g. Uber, Bolt, Lyft).</string>
+    <string name="vehicle_colour">Vehicle Colour: *</string>
+    <string name="vehicle_model">Vehicle Model: *</string>
+    <string name="confirm_details">Confirm Details</string>
+    <string name="vehicle_registration">Vehicle Registration:</string>
+
     <!-- Native Checkout : Food Substitution    -->
     <string name="native_checkout_delivery_food_substitution_title">Food Substitutions</string>
     <string name="native_checkout_delivery_food_substitution_desc">If an item is out of stock, how should we handle substitutes for you? If no substitutes are found the difference is not charged.</string>
@@ -2348,6 +2361,15 @@
     <!--  No browser dialog  -->
     <string name="browser_not_found_title">Browser Not Found</string>
     <string name="browser_not_found_msg">To continue, please install a web browser.</string>
+
+    <string name="select_your_preferred_collection_time_error">Please select a collection timeslot.</string>
+
+    <string name="native_checkout_collecting_from">Collecting From</string>
+    <string name="collection_time_detail_title">When Would You Like To Collect?</string>
+    <string name="native_checkout_collection_date">Collection Date</string>
+    <string name="native_checkout_collection_timeslot">Collection Timeslot</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="confirm_date">CONFIRM DATE</string>
     <string name="bpi_opt_in_carousel_title_1">Death, permanent disability or critical illness cover</string>
     <string name="bpi_opt_in_carousel_title_2">Retrenchment Benefit</string>
     <string name="bpi_opt_in_carousel_title_3">Instant Cover</string>
