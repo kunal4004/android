@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.AdditionalFields
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.SecondaryRatings
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Thumbnails
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.AdditionalFields
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.SecondaryRatings
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Thumbnails
 import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SecondaryRatingAdapter
 import za.co.woolworths.financial.services.android.util.Utils

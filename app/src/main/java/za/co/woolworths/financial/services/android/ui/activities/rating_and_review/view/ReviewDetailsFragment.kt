@@ -17,9 +17,9 @@ import kotlinx.android.synthetic.main.review_detail_layout.rvSecondaryRatings
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.android.synthetic.main.skin_profile_layout.view.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Normal
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Normal
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ProductReviewViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.SkinProfileAdapter

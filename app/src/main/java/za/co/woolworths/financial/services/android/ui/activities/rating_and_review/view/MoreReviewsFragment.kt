@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -21,8 +20,8 @@ import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.SortOption
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewLoadStateAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewsAdapter

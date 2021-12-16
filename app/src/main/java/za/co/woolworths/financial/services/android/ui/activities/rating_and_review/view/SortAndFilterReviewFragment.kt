@@ -2,24 +2,19 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.common_toolbar.view.*
-import kotlinx.android.synthetic.main.fragment_refinement.*
 import kotlinx.android.synthetic.main.fragment_sort_and_filter_review.*
 import za.co.woolworths.financial.services.android.models.dto.SortOption
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Refinements
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ReviewRefineOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ReviewSortOptionsAdapter
 

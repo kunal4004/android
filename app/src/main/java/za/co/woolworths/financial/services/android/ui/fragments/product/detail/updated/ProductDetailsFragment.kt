@@ -85,7 +85,7 @@ import kotlin.collections.ArrayList
 import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.rating_n_reviews.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
@@ -123,6 +123,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import android.graphics.Bitmap
 import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility

@@ -9,19 +9,17 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.header_more_review_recycler_view.*
 import kotlinx.android.synthetic.main.header_more_review_recycler_view.view.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.view.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.view.*
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.android.synthetic.main.review_row_layout.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.view.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.ReviewStatistics
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Thumbnails
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingDistribution
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Thumbnails
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.SortAndFilterReviewFragment
 import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 import za.co.woolworths.financial.services.android.util.Utils
 
