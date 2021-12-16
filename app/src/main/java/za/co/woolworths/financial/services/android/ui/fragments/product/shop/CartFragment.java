@@ -165,7 +165,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public ConstraintLayout itemLimitsBanner;
     private RelativeLayout orderTotalLayout, rlLocationSelectedLayout, parentLayout, relEmptyStateHandler;
     public TextView itemLimitsMessage, itemLimitsCounter, upSellMessageTextView, orderTotal;
-    private ImageView deliverLocationIcon, deliverLocationRightArrow;
+    private ImageView deliverLocationIcon, deliverLocationRightArrow, imgDeliveryLocation;
     private NestedScrollView nestedScrollView;
     private RecyclerView rvCartList;
     private WButton btnCheckOut;
@@ -231,6 +231,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
         mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
         rlLocationSelectedLayout = view.findViewById(R.id.locationSelectedLayout);
+        imgDeliveryLocation = view.findViewById(R.id.truckIcon);
         upSellMessageTextView = view.findViewById(R.id.upSellMessageTextView);
         rlLocationSelectedLayout.setOnClickListener(this);
         mBtnRetry.setOnClickListener(this);
@@ -710,6 +711,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             relEmptyStateHandler.setVisibility(View.VISIBLE);
             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
         }
+
+        if(productCountMap != null) {
+            updateCartSummary(productCountMap.getTotalProductCount() > 0 ? productCountMap.getTotalProductCount() : 0);
+        }
+    }
+
+    private BottomNavigationActivity getBottomNavigationActivity() {
+        Activity activity = getActivity();
+        if (!(activity instanceof BottomNavigationActivity)) return null;
+        return (BottomNavigationActivity) activity;
     }
 
     @Override
@@ -719,10 +730,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 && !mDisposables.isDisposed()) {
             mDisposables.dispose();
         }
-        //TODO: Nav stack Change
-        /*if (CartActivity.walkThroughPromtView != null) {
-            CartActivity.walkThroughPromtView.removeFromWindow();
-        }*/
+
+        if (getBottomNavigationActivity() != null && getBottomNavigationActivity().walkThroughPromtView != null) {
+            getBottomNavigationActivity().walkThroughPromtView.removeFromWindow();
+        }
     }
 
     public void changeQuantity(CartResponse cartResponse, ChangeQuantity changeQuantity) {
@@ -1003,10 +1014,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
                         updateCart(cartResponse, commerceItem);
                         if (cartResponse.cartItems != null) {
-                            if (cartResponse.cartItems.isEmpty()) {
+                            if (cartResponse.cartItems.isEmpty())
                                 onRemoveSuccess();
-                                updateCartSummary(0);
-                            }
                         } else {
                             onRemoveSuccess();
                         }
@@ -1674,11 +1683,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     public void showEditDeliveryLocationFeatureWalkthrough() {
-        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation)
+        if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation
+                || getBottomNavigationActivity() == null || imgDeliveryLocation == null)
             return;
+        BottomNavigationActivity activity = getBottomNavigationActivity();
         FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getSimpleName());
-        //TODO: Nav stack change
-        /*CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
+        activity.walkThroughPromtView = new WMaterialShowcaseView.Builder(activity, WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
                 .setTarget(imgDeliveryLocation)
                 .setTitle(R.string.your_delivery_location)
                 .setDescription(R.string.walkthrough_delivery_location_desc)
@@ -1688,7 +1698,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 .setShapePadding(24)
                 .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
                 .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-        CartActivity.walkThroughPromtView.show(getActivity());*/
+        activity.walkThroughPromtView.show(activity);
     }
 
     @Override
@@ -1707,7 +1717,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public ArrayList<CartItemGroup> getCartItems() {
         return cartItems;
     }
-
 
     private void displayUpSellMessage(Data data) {
         if (data == null || data.globalMessages == null || mRemoveAllItemFromCartTapped) return;
@@ -1732,12 +1741,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     public void showRedeemVoucherFeatureWalkthrough() {
+        BottomNavigationActivity activity = getBottomNavigationActivity();
+        if (activity == null || !isAdded()) {
+            return;
+        }
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.cartRedeemVoucher) {
             isMaterialPopUpClosed = true;
             return;
         }
-        // TODO: Nav stack change
-        /*CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS)
+        activity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS)
                 .setTarget(new View(getActivity()))
                 .setTitle(R.string.redeem_voucher_walkthrough_title)
                 .setDescription(R.string.redeem_voucher_walkthrough_desc)
@@ -1747,7 +1759,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 .setShouldRender(false)
                 .setArrowPosition(WMaterialShowcaseView.Arrow.NONE)
                 .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-        CartActivity.walkThroughPromtView.show(getActivity());*/
+        activity.walkThroughPromtView.show(getActivity());
     }
 
     public void showAvailableVouchersToast(int availableVouchersCount) {
