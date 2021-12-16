@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util
 
 import android.net.Uri
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductSearchTypeAndTerm
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -16,7 +17,7 @@ class DeepLinkingUtils {
             val productSearchTypeAndTerm = ProductSearchTypeAndTerm()
             val uri = Uri.parse(urlString)
             uri?.host?.replace("www.", "")?.replace("www-win-qa.", "")?.let { domain ->
-                WoolworthsApplication.getWhitelistedDomainsForQRScanner()?.apply {
+                AppConfigSingleton.whitelistedDomainsForQRScanner?.apply {
                     if (domain in this) {
                         when {
                             domain.contains(DOMAIN_WOOLWORTHS, true) -> when {

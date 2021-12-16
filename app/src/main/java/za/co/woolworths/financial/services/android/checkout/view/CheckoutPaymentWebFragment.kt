@@ -19,6 +19,7 @@ import androidx.navigation.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_checkout_payment_web.*
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsResponse
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.util.AdvancedWebView
@@ -70,7 +71,7 @@ class CheckoutPaymentWebFragment : Fragment(), AdvancedWebView.Listener {
             CookieManager.getInstance().flush()
 
             CookieManager.getInstance().acceptCookie()
-            val paymentUrl = WoolworthsApplication.getNativeCheckout()?.checkoutPaymentURL
+            val paymentUrl = AppConfigSingleton.nativeCheckout?.checkoutPaymentURL
             val webTokens =
                 arguments?.getSerializable(KEY_ARGS_WEB_TOKEN) as? ShippingDetailsResponse
             val cookie = "TOKEN=${webTokens?.jsessionId};AUTHENTICATION=${webTokens?.auth};"

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.block_my_card_fragment.*
 import org.json.JSONObject
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockReason
 import za.co.woolworths.financial.services.android.ui.adapters.BlockCardReasonAdapter
@@ -38,7 +39,7 @@ class BlockMyCardReasonFragment : MyCardExtension() {
         }
 
         val blockReasonList = mutableListOf<BlockReason>()
-        WoolworthsApplication.getInstance()?.storeCardBlockReasons?.asJsonArray?.forEach {
+        AppConfigSingleton.storeCardBlockReasons?.asJsonArray?.forEach {
             val blockReasonJsObject = JSONObject(it.toString())
             val key = blockReasonJsObject.keys().next()
             val value = blockReasonJsObject.get(key)

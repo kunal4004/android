@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.imgCreditCard
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
@@ -44,7 +45,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
         super.onViewCreated(view, savedInstanceState)
         Utils.updateStatusBarBackground(activity, R.color.grey_bg)
         navController = Navigation.findNavController(view)
-        callTheCallCenter?.setOnClickListener { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
+        callTheCallCenter?.setOnClickListener { Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber) }
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity)?.apply {
                 changeToolbarBackground(R.color.grey_bg)

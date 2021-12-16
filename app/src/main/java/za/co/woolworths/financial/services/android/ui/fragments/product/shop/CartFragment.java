@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -79,7 +80,6 @@ import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.GlobalMessages;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
-import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -378,8 +378,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         return;
                     }
                     // Go to Web checkout journey if...
-                    if (WoolworthsApplication.getNativeCheckout() != null
-                            && !WoolworthsApplication.getNativeCheckout().isNativeCheckoutEnabled()) {
+                    if (AppConfigSingleton.INSTANCE.getNativeCheckout() != null
+                            && !AppConfigSingleton.INSTANCE.getNativeCheckout().isNativeCheckoutEnabled()) {
                         Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
                         getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
                         checkOutActivity.overridePendingTransition(0, 0);

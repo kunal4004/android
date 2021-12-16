@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -94,7 +95,7 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_SCOPE = "TAG_SCOPE";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 	//Default redirect url used by LOGIN AND LINK CARDS
-	private static String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+	private static String redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURI();
 	private Protocol protocol;
 	private Host host;
 	public Path path;
@@ -239,7 +240,7 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	public enum Host implements SSORequiredParameter {
-		STS(WoolworthsApplication.getStsURI());
+		STS(AppConfigSingleton.INSTANCE.getStsURI());
 
 		private final String host;
 
@@ -298,7 +299,7 @@ public class SSOActivity extends WebViewActivity {
 		switch (this.path) {
 
 			case SIGNIN:
-				redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+				redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURI();
 
                 /*
 				* // Check if sts params were supplied.
@@ -340,19 +341,19 @@ public class SSOActivity extends WebViewActivity {
                 * */
 				break;
 			case REGISTER:
-				redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+				redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURI();
 				break;
 
 
 			case UPDATE_PASSWORD:
-				redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
+				redirectURIString = AppConfigSingleton.INSTANCE.getSsoUpdateDetailsRedirectUri();
 				break;
 			case UPDATE_PROFILE:
-				redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
+				redirectURIString = AppConfigSingleton.INSTANCE.getSsoUpdateDetailsRedirectUri();
 				break;
 
 			case LOGOUT:
-				redirectURIString = WoolworthsApplication.getSsoRedirectURILogout();
+				redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURILogout();
 				break;
 
 			default:
@@ -377,7 +378,7 @@ public class SSOActivity extends WebViewActivity {
 					.appendQueryParameter("state", this.state)
 					.appendQueryParameter("nonce", this.nonce)
 					.appendQueryParameter("scope", scope)
-					.appendQueryParameter("appVersion", WoolworthsApplication.getStsValues().getKmsiMinimumSupportedAppVersion() != null ? WoolworthsApplication.getStsValues().getKmsiMinimumSupportedAppVersion() : WoolworthsApplication.getAppVersionName());
+					.appendQueryParameter("appVersion", AppConfigSingleton.INSTANCE.getStsValues().getKmsiMinimumSupportedAppVersion() != null ? AppConfigSingleton.INSTANCE.getStsValues().getKmsiMinimumSupportedAppVersion() : WoolworthsApplication.getAppVersionName());
 		}
 
 		if (this.extraQueryStringParams != null) {
@@ -439,14 +440,14 @@ public class SSOActivity extends WebViewActivity {
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						Utils.setUserKMSIState(false);
-						WoolworthsApplication.setIsBadgesRequired(true);
+						AppConfigSingleton.INSTANCE.setBadgesRequired(true);
 						clearAllCookies();
 						closeActivity();
 					} else {
 					}
 				}
 
-			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
+			} else if (url.equalsIgnoreCase(AppConfigSingleton.INSTANCE.getSsoUpdateDetailsRedirectUri())) {
 				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
 				closeActivity();
 			}

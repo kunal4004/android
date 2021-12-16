@@ -10,6 +10,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.StatementListRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.StatementListResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -31,7 +32,7 @@ public class AbsaGetArchivedStatementListRequest {
             FirebaseManager.Companion.logException(e);
         }
 
-        new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/ArchivedStatementFacadeGetArchivedStatementList.exp", StatementListResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<StatementListResponse>() {
+        new AbsaBankingOpenApiRequest<>(AppConfigSingleton.INSTANCE.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/ArchivedStatementFacadeGetArchivedStatementList.exp", StatementListResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<StatementListResponse>() {
             @Override
             public void onResponse(StatementListResponse response, List<HttpCookie> cookies) {
                 responseDelegate.onSuccess(response, cookies);
