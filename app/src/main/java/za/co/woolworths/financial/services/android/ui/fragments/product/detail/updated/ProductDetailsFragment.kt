@@ -85,7 +85,6 @@ import kotlin.collections.ArrayList
 import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.rating_n_reviews.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
@@ -1130,7 +1129,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         secondaryRatingAdapter.setDataList(secondaryRatings)
     }
 
-    private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>){
+    private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>) {
         rvThumbnail.layoutManager = GridLayoutManager(getApplicationContext(),3)
         reviewThumbnailAdapter = ReviewThumbnailAdapter(getApplicationContext(),this)
         rvThumbnail.adapter = reviewThumbnailAdapter
