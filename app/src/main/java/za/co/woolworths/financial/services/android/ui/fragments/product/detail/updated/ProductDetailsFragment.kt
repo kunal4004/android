@@ -1065,7 +1065,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     setReviewAdditionalFields(additionalFields)
                     setSecondaryRatingsUI(secondaryRatings)
                     setReviewThumbnailUI(photos.thumbnails)
-                    if(contextDataValue.isEmpty()){
+                    if(contextDataValue.isEmpty() && tagDimensions.isEmpty()){
                         tvSkinProfile.visibility = View.GONE
                     }
                 }
@@ -1075,13 +1075,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
 
-        tvCustomerReview.setOnClickListener {
-            sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
-        }
-        tvDate.setOnClickListener {
-            sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
-        }
-        tvReviewHeading.setOnClickListener {
+        linear_layout_customer_review?.setOnClickListener {
             sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
         }
     }

@@ -20,11 +20,15 @@ import za.co.woolworths.financial.services.android.util.Utils
 class RatingAndReviewUtil {
 
     companion object {
+
+        var isComingFromMoreReview:Boolean = false
+
         fun isRatingAndReviewConfigavailbel () = Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.ratingsAndReviews?.minimumSupportedAppBuildNumber  )
             ?: false
 
 
-        fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>, rvSecondaryRatings: RecyclerView, context: Context) {
+        fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>,
+                                  rvSecondaryRatings: RecyclerView, context: Context) {
             rvSecondaryRatings.layoutManager = GridLayoutManager(context, 2)
             val secondaryRatingAdapter = SecondaryRatingAdapter()
             rvSecondaryRatings.adapter = secondaryRatingAdapter

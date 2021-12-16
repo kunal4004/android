@@ -42,6 +42,7 @@ class MoreReviewsAdapter(val context: Context,
     interface ReviewItemClickListener {
         fun openSkinProfileDialog(reviews: Reviews)
         fun openReportScreen(reportReviewOptions: List<String>?)
+        fun openReviewDetailsScreen(reviews: Reviews, reportReviewOptions: List<String>?)
     }
 
     interface SortAndRefineListener {
@@ -85,6 +86,10 @@ class MoreReviewsAdapter(val context: Context,
                     }
                     tvSkinProfile.setOnClickListener {
                         reviewItemClickListener.openSkinProfileDialog(review)
+                    }
+
+                    linear_layout_customer_review.setOnClickListener {
+                        reviewItemClickListener.openReviewDetailsScreen(review, reportReviewOptions)
                     }
                 }
             }
@@ -185,8 +190,6 @@ class MoreReviewsAdapter(val context: Context,
                 LayoutInflater
                         .from(parent.context)
                         .inflate(R.layout.header_more_review_recycler_view, parent, false))
-
-
     }
 
     object MoreReviewsComparator : DiffUtil.ItemCallback<Reviews>() {
@@ -214,5 +217,4 @@ class MoreReviewsAdapter(val context: Context,
     private fun isPositionHeader(position: Int): Boolean {
         return position == 0
     }
-
 }

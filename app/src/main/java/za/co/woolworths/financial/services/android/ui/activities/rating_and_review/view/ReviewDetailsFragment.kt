@@ -55,13 +55,23 @@ class ReviewDetailsFragment : Fragment() {
         }
 
         arguments?.apply {
-            val ratingAndResponseData = Utils.jsonStringToObject(
-                getString(KotlinUtils.REVIEW_DATA),
-                RatingReviewResponse::class.java
-            ) as RatingReviewResponse
-            val reviews = ratingAndResponseData.reviews.get(0)
-            setDefaultUi(reviews, ratingAndResponseData.reportReviewOptions)
-            setProductImageViewPager(reviews.photos.normal)
+            if (RatingAndReviewUtil.isComingFromMoreReview) {
+                RatingAndReviewUtil.isComingFromMoreReview = false
+                val reviews = getSerializable(KotlinUtils.REVIEW_DATA) as Reviews
+                val reportReviewOptions = getStringArrayList(KotlinUtils.REVIEW_REPORT)
+                if (reviews != null && reportReviewOptions != null) {
+                    setDefaultUi(reviews, reportReviewOptions)
+                    setProductImageViewPager(reviews.photos.normal)
+                }
+            } else {
+                val ratingAndResponseData = Utils.jsonStringToObject(
+                        getString(KotlinUtils.REVIEW_DATA),
+                        RatingReviewResponse::class.java
+                ) as RatingReviewResponse
+                val reviews = ratingAndResponseData.reviews.get(0)
+                setDefaultUi(reviews, ratingAndResponseData.reportReviewOptions)
+                setProductImageViewPager(reviews.photos.normal)
+            }
         }
     }
 
