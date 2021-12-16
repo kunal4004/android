@@ -132,7 +132,9 @@ import static za.co.woolworths.financial.services.android.util.ScreenManager.CAR
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 @AndroidEntryPoint
-public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
+public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel>
+        implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener,
+        PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
     public static final int INDEX_TODAY = FragNavController.TAB1;
     public static final int INDEX_PRODUCT = FragNavController.TAB2;
@@ -835,6 +837,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return;
         }
 
+        if (mNavController.getCurrentFrag() instanceof CartFragment) {
+            finish();
+            return;
+        }
+
         /**
          *  Slide to previous fragment with custom left to right animation
          *  Close activity if fragment is at root level
@@ -1277,6 +1284,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             getGlobalState().setDetermineLocationPopUpEnabled(true);
             ScreenManager.presentCartSSOSignin(BottomNavigationActivity.this);
         } else {
+            clearStack();
             pushFragment(new CartFragment());
         }
     }
@@ -1505,6 +1513,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (getCurrentFragment() instanceof ProductListingFragment) {
             ((ProductListingFragment) getCurrentFragment()).onResetFilter();
         }
+    }
+
+    @Override
+    public void navigateToTabIndex(int tabIndex, @androidx.annotation.Nullable Bundle data) {
+        getBottomNavigationById().setCurrentItem(tabIndex);
     }
 
     public void onSignedOut() {

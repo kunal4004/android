@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/cartToolbar"
             android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -61,15 +61,6 @@
                     android:indeterminateTint="@color/black"
                     android:visibility="gone"/>
 
-                <ImageView
-                    android:id="@+id/btnCloseCart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/sixteen_dp"
-                    android:src="@drawable/close_24"/>
-
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/btnClearCart"
                     android:layout_width="wrap_content"
@@ -89,7 +80,7 @@
 
         <View
             android:id="@+id/toolbarSeparator"
-            android:layout_below="@id/toolbar"
+            android:layout_below="@id/cartToolbar"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="#1a000000"/>

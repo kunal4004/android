@@ -7,6 +7,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.C
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
@@ -101,6 +102,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment;
@@ -163,7 +165,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public ConstraintLayout itemLimitsBanner;
     private RelativeLayout orderTotalLayout, rlLocationSelectedLayout, parentLayout, relEmptyStateHandler;
     public TextView itemLimitsMessage, itemLimitsCounter, upSellMessageTextView, orderTotal;
-    private ImageView deliverLocationIcon, btnCloseCart, deliverLocationRightArrow;
+    private ImageView deliverLocationIcon, deliverLocationRightArrow;
     private NestedScrollView nestedScrollView;
     private RecyclerView rvCartList;
     private WButton btnCheckOut;
@@ -198,21 +200,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
         Utils.updateStatusBarBackground(getActivity());
 
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
-        btnCloseCart = view.findViewById(R.id.btnCloseCart);
-        btnEditCart = view.findViewById(R.id.btnEditCart);
-        pbRemoveAllItem = view.findViewById(R.id.pbRemoveAllItem);
-        btnClearCart = view.findViewById(R.id.btnClearCart);
+        Toolbar toolbar = view.findViewById(R.id.cartToolbar);
+        btnEditCart = toolbar.findViewById(R.id.btnEditCart);
+        pbRemoveAllItem = toolbar.findViewById(R.id.pbRemoveAllItem);
+        btnClearCart = toolbar.findViewById(R.id.btnClearCart);
         btnEditCart.setOnClickListener(this);
         btnClearCart.setOnClickListener(this);
-        btnCloseCart.setOnClickListener(this);
 
-        Activity activity  = getActivity();
-        if(activity instanceof BottomNavigationActivity) {
+        Activity activity = getActivity();
+        if (activity instanceof BottomNavigationActivity) {
             BottomNavigationActivity bottomActivity = (BottomNavigationActivity) activity;
-            bottomActivity.setSupportActionBar(toolbar);
-            bottomActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            bottomActivity.getSupportActionBar().setTitle(null);
+            bottomActivity.hideToolbar();
         }
         localCartCount = QueryBadgeCounter.getInstance().getCartItemCount();
         //One time biometricsWalkthrough
@@ -328,7 +326,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void emptyCartUI(View view) {
-        if(!SessionUtilities.getInstance().isUserAuthenticated()){
+        if (!SessionUtilities.getInstance().isUserAuthenticated()) {
             return;
         }
         String firstName = SessionUtilities.getInstance().getJwt().name.get(0);
@@ -347,19 +345,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void onRemoveItem(boolean visibility) {
         pbRemoveAllItem.setVisibility(visibility ? View.VISIBLE : View.GONE);
         btnClearCart.setVisibility(visibility ? View.GONE : View.VISIBLE);
-        btnCloseCart.setVisibility(visibility ? View.GONE : View.GONE);
+//        btnCloseCart.setVisibility(visibility ? View.GONE : View.GONE);
         btnEditCart.setEnabled(visibility ? false : true);
     }
 
     public void onRemoveSuccess() {
         pbRemoveAllItem.setVisibility(View.GONE);
-        btnCloseCart.setVisibility(View.VISIBLE);
+//        btnCloseCart.setVisibility(View.VISIBLE);
         btnClearCart.setVisibility(View.GONE);
     }
 
     public void resetToolBarIcons() {
         hideEditCart();
-        btnCloseCart.setVisibility(View.VISIBLE);
+//        btnCloseCart.setVisibility(View.VISIBLE);
         btnClearCart.setVisibility(View.GONE);
     }
 
@@ -383,9 +381,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 // prevent remove all item progressbar visible
                 dismissProgress();
                 break;
-            case R.id.btnCloseCart:
-                onCloseButtonClick();
-                break;
             case R.id.btnClearCart:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL, getActivity());
                 removeAllCartItem(null);
@@ -394,11 +389,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 locationSelectionClicked();
                 break;
             case R.id.btnGoToProduct:
+                //TODO: Nav stack changes. Start shopping clicked so go to shop tab
+                // since cart activity is removed setResult wont work
                 Activity activity = getActivity();
-                if (activity != null) {
-                    activity.setResult(Activity.RESULT_OK);
-                    activity.finish();
-                    activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+                if (activity instanceof BottomNavigator) {
+                    BottomNavigator navigator = (BottomNavigator) activity;
+                    navigator.navigateToTabIndex(INDEX_PRODUCT, null);
+                    //TODO: check where all the places result is being checked
+//                    activity.setResult(Activity.RESULT_OK);
+//                    activity.finish();
+//                    activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
                 }
                 break;
             case R.id.btnRetry:
@@ -444,7 +444,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void toggleCartMode() {
         boolean isEditMode = toggleEditMode();
         btnEditCart.setText(isEditMode ? R.string.done : R.string.edit);
-        btnCloseCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
+//        btnCloseCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
         btnClearCart.setVisibility(isEditMode ? View.VISIBLE : View.GONE);
         deliveryLocationEnabled(!isEditMode);
     }
@@ -464,21 +464,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }
 
         //TODO: Nav stack changes
-        /*Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        // Overrides activityResult to prevent cart summary api when shopping list is empty
-        if (currentFragment instanceof CartFragment) {
-            ArrayList<CartItemGroup> cartItem = ((CartFragment) currentFragment).getCartItems();
-            if (cartItem == null || cartItem.isEmpty()) {
-                // No product, hide badge counter
-                QueryBadgeCounter.getInstance().setCartCount(0);
-                setResult(RESULT_PREVENT_CART_SUMMARY_CALL);
-            }
+        //TODO: Updates cart count when closed cart. In nav stack close button is not present
+        // so find another way to implement this functionality
+        /*ArrayList<CartItemGroup> cartItem = getCartItems();
+        if (cartItem == null || cartItem.isEmpty()) {
+            // No product, hide badge counter
+            QueryBadgeCounter.getInstance().setCartCount(0);
         }*/
 
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT, getActivity());
-//        finish();
-//        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-
     }
 
     private void callSavedAddress() {
@@ -663,7 +657,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         this.productCountMap = cartResponse.productCountMap;
         setItemLimitsBanner();
         if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
-            ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
+            ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>(0);
             for (CartItemGroup cartItemGroup : cartItems) {
 
                 if (commerceItemToRemove != null) {
@@ -1008,10 +1002,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     if (shoppingCartResponse.httpCode == 200) {
                         CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
                         updateCart(cartResponse, commerceItem);
-
                         if (cartResponse.cartItems != null) {
-                            if (cartResponse.cartItems.isEmpty())
+                            if (cartResponse.cartItems.isEmpty()) {
                                 onRemoveSuccess();
+                                updateCartSummary(0);
+                            }
                         } else {
                             onRemoveSuccess();
                         }
@@ -1046,7 +1041,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public Call<ShoppingCartResponse> removeAllCartItem(final CommerceItem commerceItem) {
         mRemoveAllItemFromCartTapped = true;
         onRemoveItem(true);
-        updateCartSummary(0);
         Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.removeAllCartItems();
         shoppingCartResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingCartResponse>() {
             @Override
@@ -1056,6 +1050,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
                         mRemoveAllItemFromCartTapped = false;
                         updateCart(cartResponse, commerceItem);
+                        updateCartSummary(0);
                         onRemoveSuccess();
                     } else {
                         onRemoveItem(false);
@@ -1202,7 +1197,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         super.onResume();
         Activity activity = getActivity();
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST);
-        checkLocationChangeAndReload();
+        //TODO: Nav Stack change. this function wont get called everytime landed on cart screen
+        // Since Cart Activity has been removed
+//        checkLocationChangeAndReload();
         if (activity != null) {
             activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         }
