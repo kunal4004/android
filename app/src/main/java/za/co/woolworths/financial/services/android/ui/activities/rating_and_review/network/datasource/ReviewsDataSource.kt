@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.datasource
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.datasource
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource

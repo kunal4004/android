@@ -494,7 +494,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun navigateToReportReviewScreen() {
-        ScreenManager.presentReportReview(activity, ratingReviewResponse.reportReviewOptions as ArrayList<String>?)
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
+            ScreenManager.presentReportReview(activity,
+                    ratingReviewResponse.reportReviewOptions as ArrayList<String>?)
+        }
     }
 
     private fun navigateToMoreReviewsScreen() {
@@ -2191,6 +2196,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
         activity?.apply {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
+        }
+
+        if(RatingAndReviewUtil.isSuccessFullyReported) {
+            tvReport?.text = getString(R.string.reported)
+            tvReport?.setTextColor(resources.getColor(R.color.red))
+            RatingAndReviewUtil.isSuccessFullyReported = false
         }
     }
 

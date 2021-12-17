@@ -23,6 +23,8 @@ class RatingAndReviewUtil {
 
         var isComingFromMoreReview:Boolean = false
 
+        var isSuccessFullyReported:Boolean = false
+
         fun isRatingAndReviewConfigavailbel () = Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.ratingsAndReviews?.minimumSupportedAppBuildNumber  )
             ?: false
 
