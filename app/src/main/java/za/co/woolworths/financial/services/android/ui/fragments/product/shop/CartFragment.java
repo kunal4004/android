@@ -649,6 +649,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         parentLayout.setVisibility(View.VISIBLE);
         mSkuInventories = new HashMap<>();
         if (cartResponse.cartItems.size() > 0) {
+            relEmptyStateHandler.setVisibility(View.GONE);
+            rvCartList.setVisibility(View.VISIBLE);
             rlCheckOut.setVisibility(View.VISIBLE);
             showEditCart();
 
