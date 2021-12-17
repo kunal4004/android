@@ -114,7 +114,8 @@ class MoreReviewsAdapter(val context: Context,
                         ratingBarTop.visibility = View.VISIBLE
                         tvTotalReviews.visibility = View.VISIBLE
                         ratingBarTop.rating = averageRating
-                        tvTotalReviews.text = context.getString(R.string.customer_reviews)
+                        tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, reviewCount, reviewCount)
+                        tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
                     view_2.visibility = View.GONE
                     close.visibility = View.INVISIBLE
