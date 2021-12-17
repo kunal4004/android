@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.contact_us
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUs
 import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUsCall
 import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUsOptions
 import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUsValue
-import za.co.woolworths.financial.services.android.models.dto.contact_us.*
 
 class ContactUsModel {
 

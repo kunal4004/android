@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.models.dto.app_config.credit
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import java.io.Serializable
 
 @Parcelize
 data class ConfigPermissions(
