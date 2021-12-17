@@ -249,6 +249,11 @@ object OneAppService : RetrofitConfig() {
         getDeviceIdentityToken(), body)
     }
 
+    fun getStorePickupInfo(body: StorePickupInfoBody): Call<ConfirmDeliveryAddressResponse> {
+        return mApiInterface.getStorePickupInfo("", "", getSessionToken(),
+        getDeviceIdentityToken(), body)
+    }
+
     fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): Call<ConfirmSelectionResponse>{
         return mApiInterface.setConfirmSelection("", "", getSessionToken(),
         getDeviceIdentityToken(), confirmSelectionRequestBody)
