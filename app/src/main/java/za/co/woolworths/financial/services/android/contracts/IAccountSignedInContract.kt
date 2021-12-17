@@ -20,10 +20,16 @@ interface IAccountSignedInContract {
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
         fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean)
         fun removeBlocksOnCollectionCustomer()
-        fun showViewTreatmentPlan(dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType)
+        fun showViewTreatmentPlan(state: ApplyNowState,
+                                  dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType,
+                                  takeUpProduct: String?,
+                                  integrationJwt:String?)
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
-        fun showSetUpPaymentPlanButton(state: ApplyNowState)
+        fun showSetUpPaymentPlanButton(state: ApplyNowState,
+                                       takeUpIntegrationJwt: String?,
+                                       takeUpProduct: String?,
+                                       takeUpFunction: String?)
     }
 
     interface MyAccountPresenter {

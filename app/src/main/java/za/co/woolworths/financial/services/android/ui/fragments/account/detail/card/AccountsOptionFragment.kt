@@ -15,6 +15,8 @@ import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
+import com.google.gson.JsonParser
+import com.huawei.hms.support.log.common.Base64
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -42,6 +44,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.CreditCard
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
@@ -72,6 +75,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var state: ApplyNowState? = null
+    private var takeUpIntegrationJwt: String? = null
+    private var takeUpProduct: String? = null
+    private var c2id: String? = null
+    private var takeUpFunction: String? = null
 
     companion object {
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
@@ -665,42 +672,67 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         tvScheduleOrMangeDelivery?.text = bindString(R.string.schedule_your_delivery)
     }
 
-    fun showSetUpPaymentPlanButton(state: ApplyNowState) {
+    fun showSetUpPaymentPlanButton(state: ApplyNowState,
+                                   takeUpIntegrationJwt: String?,
+                                   takeUpProduct: String?,
+                                   takeUpFunction: String?) {
         setUpPaymentPlanGroup?.visibility = VISIBLE
         this.state = state
+        this.takeUpIntegrationJwt = takeUpIntegrationJwt
+        this.takeUpProduct = takeUpProduct
+        val splitToken = OneAppService.getSessionToken().split(".")
+        if(splitToken.size > 1){
+            val decodedBytes = Base64.decode(splitToken[1])
+            this.c2id = Base64.encode((JsonParser.parseString(String(decodedBytes)).asJsonObject["C2Id"].asString).toByteArray())
+        }
+        this.takeUpFunction = takeUpFunction
     }
 
     private fun openSetupPaymentPlanPage() {
+        val arguments = HashMap<String, String>()
         when(state){
-            ApplyNowState.PERSONAL_LOAN -> {
-                when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
-                    AvailableFundFragment.NATIVE_BROWSER ->
-                        KotlinUtils.openUrlInPhoneBrowser(
-                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.personalLoan?.collectionsUrl, activity)
-
-                    else ->
-                        KotlinUtils.openLinkInInternalWebView(activity,
-                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.personalLoan?.collectionsUrl,
-                            true,
-                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.personalLoan?.exitUrl)
-                }
-            }
             ApplyNowState.STORE_CARD -> {
-                when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
-                    AvailableFundFragment.NATIVE_BROWSER ->
-                        KotlinUtils.openUrlInPhoneBrowser(
-                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.storeCard?.collectionsUrl, activity)
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC_ACTION
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC,
+                    arguments,
+                    activity)
+            }
+            ApplyNowState.PERSONAL_LOAN -> {
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL_ACTION
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL,
+                    arguments,
+                    activity)
+            }
+            ApplyNowState.SILVER_CREDIT_CARD,
+            ApplyNowState.GOLD_CREDIT_CARD,
+            ApplyNowState.BLACK_CREDIT_CARD, -> {
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_CC_ACTION
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_CC,
+                    arguments,
+                    activity)
+            }
+        }
 
-                    else ->
-                        KotlinUtils.openLinkInInternalWebView(activity,
-                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.storeCard?.collectionsUrl,
-                            true,
-                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.storeCard?.exitUrl)
-                }
-            }
-            else -> {
-                //do nothing
-            }
+        //TODO: Take up treatment plan - do not use hardcoded url
+        val url = "https://dev.woolworths.wfs.co.za/CustomerCollections/interauth?" +
+                "Token=" + takeUpIntegrationJwt + "&" +
+                "Product=" + takeUpProduct + "&" +
+                "C2ID=" + c2id + "&" +
+                "Function=" + takeUpFunction
+
+        when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
+            AvailableFundFragment.NATIVE_BROWSER ->
+                KotlinUtils.openUrlInPhoneBrowser(url, activity)
+
+            else ->
+                KotlinUtils.openLinkInInternalWebView(activity,
+                    url,
+                    true,
+                    WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.storeCard?.exitUrl
+                )
         }
     }
 }

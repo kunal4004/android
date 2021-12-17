@@ -157,9 +157,15 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         this.mAccountHelpInformation = informationModelAccount
     }
 
-    override fun showViewTreatmentPlan(dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType){
+    override fun showViewTreatmentPlan(state: ApplyNowState,
+                                       dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType,
+                                       takeUpProduct: String?,
+                                       integrationJwt: String?){
         val bundle = Bundle()
         bundle.putSerializable(ViewTreatmentPlanDialogFragment.PLAN_BUTTON_TYPE, dialogButtonType)
+        bundle.putSerializable(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE, state)
+        bundle.putString(ViewTreatmentPlanDialogFragment.ELIGIBILITY_INTEGRATION_JWT, integrationJwt)
+        bundle.putString(ViewTreatmentPlanDialogFragment.TAKE_UP_PRODUCT, takeUpProduct)
         mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment, bundle)
     }
 
@@ -340,10 +346,13 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         showChatToCollectionAgent()
     }
 
-    override fun showSetUpPaymentPlanButton(state: ApplyNowState) {
+    override fun showSetUpPaymentPlanButton(state: ApplyNowState,
+                                            takeUpIntegrationJwt: String?,
+                                            takeUpProduct: String?,
+                                            takeUpFunction: String?) {
         val fragment = mAccountOptionsNavHost?.childFragmentManager?.primaryNavigationFragment
         if (fragment is AccountsOptionFragment) {
-            fragment.showSetUpPaymentPlanButton(state)
+            fragment.showSetUpPaymentPlanButton(state, takeUpIntegrationJwt, takeUpProduct, takeUpFunction)
         }
     }
 }

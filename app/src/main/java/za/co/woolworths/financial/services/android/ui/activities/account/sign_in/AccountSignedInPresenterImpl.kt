@@ -118,6 +118,14 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             .enqueue(CompletionHandler(object : IResponseListener<EligibilityTakeUpPlanResponse> {
                 override fun onSuccess(response: EligibilityTakeUpPlanResponse?) {
                     if (response != null && response.httpCode == HTTP_OK) {
+                        val integrationJwt = response.integrationJwt
+                        val takeUpProduct: String = when (state) {
+                            ApplyNowState.BLACK_CREDIT_CARD,
+                            ApplyNowState.GOLD_CREDIT_CARD,
+                            ApplyNowState.SILVER_CREDIT_CARD -> "CreditCard"
+                            ApplyNowState.PERSONAL_LOAN -> "PersonalLoan"
+                            ApplyNowState.STORE_CARD -> "StoreCard"
+                        }
                         val plan: ProductTakeUpPlan? = when (state) {
                             ApplyNowState.BLACK_CREDIT_CARD,
                             ApplyNowState.GOLD_CREDIT_CARD,
@@ -132,22 +140,62 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                     productTakeUpPlan -> productTakeUpPlan.productGroupCode == ProductGroupCode.SC }
                         }
                         if(plan != null){
-                            if(!plan.hasPlan && plan.isEligible){
-                                //For personal loan
-                                mainView?.showSetUpPaymentPlanButton(state)
-                                when (state){
-                                    ApplyNowState.PERSONAL_LOAN ->
-                                        mainView?.showViewTreatmentPlan(
-                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ELIGIBLE)!!
+                            if(!plan.hasPlan && plan.isEligible) { //For personal loan and store card
+                                //TODO: Take up treatment plan "TmV3UGxhbg==" get from configs
+                                mainView?.showSetUpPaymentPlanButton(state, integrationJwt, takeUpProduct,"TmV3UGxhbg==" )
 
-                                    ApplyNowState.STORE_CARD ->
-                                        mainView?.showViewTreatmentPlan(
-                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_ELIGIBLE)!!
+                                val account = getAccount()
+                                account?.apply {
+                                    when {
+                                        productOfferingStatus.equals(
+                                            Utils.ACCOUNT_CHARGED_OFF,
+                                            ignoreCase = true
+                                        ) -> {
+                                            when (state){
+                                                ApplyNowState.PERSONAL_LOAN ->
+                                                    mainView?.showViewTreatmentPlan(
+                                                        state,
+                                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE,
+                                                        takeUpProduct,
+                                                        integrationJwt)!!
+
+                                                ApplyNowState.STORE_CARD ->
+                                                    mainView?.showViewTreatmentPlan(
+                                                        state,
+                                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE,
+                                                        takeUpProduct,
+                                                        integrationJwt)!!
+                                            }
+                                        }
+                                        productOfferingStatus.equals(
+                                            Utils.ACCOUNT_ACTIVE,
+                                            ignoreCase = true
+                                        ) -> {
+                                            when (state){
+                                                ApplyNowState.PERSONAL_LOAN ->
+                                                    mainView?.showViewTreatmentPlan(
+                                                        state,
+                                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE,
+                                                        takeUpProduct,
+                                                        integrationJwt)!!
+
+                                                ApplyNowState.STORE_CARD ->
+                                                    mainView?.showViewTreatmentPlan(
+                                                        state,
+                                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE,
+                                                        takeUpProduct,
+                                                        integrationJwt)!!
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             else if(plan.hasPlan){
                                 mainView?.showViewTreatmentPlan(
-                                    ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
+                                    state,
+                                    ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
+                                    null,
+                                    null)!!
                             }
                         }
                     }
@@ -211,7 +259,11 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                             productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
                                 if(!isCreditCard){
                                     mainView?.removeBlocksWhenChargedOff(supported)
-                                    mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
+                                    mainView?.showViewTreatmentPlan(
+                                        state,
+                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
+                                        null,
+                                        null)!!
                                 } else{
                                     mainView?.removeBlocksWhenChargedOff(supported)!!
                                 }
@@ -219,15 +271,27 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                             productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
                                 if (isCreditCard){
                                     //display treatment plan popup with view payment options for CC
-                                    mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.CC_ACTIVE)!!
+                                    mainView?.showViewTreatmentPlan(
+                                        state,
+                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.CC_ACTIVE,
+                                        null,
+                                        null)!!
                                 }
                                 else{
                                     //display treatment plan popup with make a payment for PL and SC
-                                    mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
+                                    mainView?.showViewTreatmentPlan(
+                                        state,
+                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
+                                        null,
+                                        null)!!
                                 }
                             }
                             else -> {
-                                mainView?.showViewTreatmentPlan(ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL)!!
+                                mainView?.showViewTreatmentPlan(
+                                    state,
+                                    ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
+                                    null,
+                                    null)!!
                             }
                         }
                     }
