@@ -13,6 +13,7 @@ import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
@@ -84,7 +85,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
-                    VIEW_PAYMENT_PLAN_BUTTON, CANNOT_AFFORD_PAYMENT_BUTTON -> {
+                    VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {
                             val arguments = HashMap<String, String>()
                             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION
@@ -104,6 +105,13 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                                         WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.exitUrl)
                             }
                         }
+                    }
+                    CANNOT_AFFORD_PAYMENT_BUTTON -> {
+                        val intent = Intent(context, GetAPaymentPlanActivity::class.java)
+                        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_INTEGRATION_JWT, bundle.getString(ViewTreatmentPlanDialogFragment.ELIGIBILITY_INTEGRATION_JWT))
+                        intent.putExtra(ViewTreatmentPlanDialogFragment.TAKE_UP_PRODUCT, bundle.getString(ViewTreatmentPlanDialogFragment.TAKE_UP_PRODUCT))
+                        startActivity(intent)
+                        activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
                     }
                     MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()
                 }

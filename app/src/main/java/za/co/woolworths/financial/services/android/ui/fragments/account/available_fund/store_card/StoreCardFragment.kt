@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
+import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
@@ -75,7 +76,7 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
                 when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
-                    VIEW_PAYMENT_PLAN_BUTTON, CANNOT_AFFORD_PAYMENT_BUTTON -> {
+                    VIEW_PAYMENT_PLAN_BUTTON -> {
                         activity?.apply {
                             val arguments = HashMap<String, String>()
                             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD_ACTION
@@ -96,6 +97,13 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                                 )
                             }
                         }
+                    }
+                    CANNOT_AFFORD_PAYMENT_BUTTON -> {
+                        val intent = Intent(context, GetAPaymentPlanActivity::class.java)
+                        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_INTEGRATION_JWT, bundle.getString(ViewTreatmentPlanDialogFragment.ELIGIBILITY_INTEGRATION_JWT))
+                        intent.putExtra(ViewTreatmentPlanDialogFragment.TAKE_UP_PRODUCT, bundle.getString(ViewTreatmentPlanDialogFragment.TAKE_UP_PRODUCT))
+                        startActivity(intent)
+                        activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
                     }
                     MAKE_A_PAYMENT_BUTTON -> onStoreCardButtonTap()
                 }
