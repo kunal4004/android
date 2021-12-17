@@ -684,6 +684,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     replaceAccountIcon(item);
                     setCurrentSection(R.id.navigate_to_cart);
                     switchTab(INDEX_CART);
+                    hideToolbar();
                     identifyTokenValidationAPI();
                     if(WoolworthsApplication.isIsBadgesRequired())
                         queryBadgeCountOnStart();
@@ -762,7 +763,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     break;
 
                 case R.id.navigate_to_cart:
-                    //Do Nothing
+                    clearStack();
                     break;
 
                 case R.id.navigate_to_wreward:
@@ -837,11 +838,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return;
         }
 
-        if (mNavController.getCurrentFrag() instanceof CartFragment) {
-            finish();
-            return;
-        }
-
         /**
          *  Slide to previous fragment with custom left to right animation
          *  Close activity if fragment is at root level
@@ -884,8 +880,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case INDEX_PRODUCT:
                 return new ShopFragment();
             case INDEX_CART:
-                return new Fragment();
-//                return new CartFragment();
+                return new CartFragment();
             case INDEX_REWARD:
                 WRewardsFragment wRewardsFragment = new WRewardsFragment();
                 return wRewardsFragment;
@@ -1164,7 +1159,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     //open cart activity after login from cart only
                     if (requestCode == CART_LAUNCH_VALUE) {
                         clearStack();
-                        pushFragment(new CartFragment());
+                        if (mNavController == null || !(mNavController.getCurrentFrag() instanceof CartFragment)) {
+                            return;
+                        }
+                        CartFragment cartFragment = (CartFragment) mNavController.getCurrentFrag();
+                        cartFragment.reloadFragment();
                         return;
                     }
                     break;
@@ -1284,8 +1283,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             getGlobalState().setDetermineLocationPopUpEnabled(true);
             ScreenManager.presentCartSSOSignin(BottomNavigationActivity.this);
         } else {
-            clearStack();
-            pushFragment(new CartFragment());
+            if(!(mNavController.getCurrentFrag() instanceof CartFragment)){
+                return;
+            }
+            CartFragment cartFragment = (CartFragment) mNavController.getCurrentFrag();
+            cartFragment.reloadFragment();
         }
     }
 
