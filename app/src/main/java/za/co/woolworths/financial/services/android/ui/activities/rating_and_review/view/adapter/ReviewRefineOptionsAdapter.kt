@@ -8,10 +8,7 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.review_refine_selection_layout.view.*
-import kotlinx.android.synthetic.main.sort_opitions_item.view.*
-import za.co.woolworths.financial.services.android.models.dto.Refinement
-import za.co.woolworths.financial.services.android.models.dto.SortOption
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Refinements
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Refinements
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 
 class ReviewRefineOptionsAdapter (

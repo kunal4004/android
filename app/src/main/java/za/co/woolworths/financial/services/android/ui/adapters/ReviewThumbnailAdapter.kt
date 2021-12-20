@@ -10,7 +10,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Thumbnails
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Thumbnails
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 
 class ReviewThumbnailAdapter(var context: Context, var thumbnailClickListener: ThumbnailClickListener) : RecyclerView.Adapter<ReviewThumbnailAdapter.ViewHolder>() {

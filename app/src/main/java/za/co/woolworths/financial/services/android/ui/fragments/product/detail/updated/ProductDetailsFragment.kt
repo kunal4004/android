@@ -85,7 +85,6 @@ import kotlin.collections.ArrayList
 import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.adapters.*
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
@@ -123,6 +122,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import android.graphics.Bitmap
 import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
@@ -494,7 +494,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun navigateToReportReviewScreen() {
-        ScreenManager.presentReportReview(activity, ratingReviewResponse.reportReviewOptions as ArrayList<String>?)
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
+            ScreenManager.presentReportReview(activity,
+                    ratingReviewResponse.reportReviewOptions as ArrayList<String>?)
+        }
     }
 
     private fun navigateToMoreReviewsScreen() {
@@ -1065,7 +1070,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     setReviewAdditionalFields(additionalFields)
                     setSecondaryRatingsUI(secondaryRatings)
                     setReviewThumbnailUI(photos.thumbnails)
-                    if(contextDataValue.isEmpty()){
+                    if(contextDataValue.isEmpty() && tagDimensions.isEmpty()){
                         tvSkinProfile.visibility = View.GONE
                     }
                 }
@@ -1075,13 +1080,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
 
-        tvCustomerReview.setOnClickListener {
-            sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
-        }
-        tvDate.setOnClickListener {
-            sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
-        }
-        tvReviewHeading.setOnClickListener {
+        linear_layout_customer_review?.setOnClickListener {
             sendReviewDataToReviewDetailScreen(ratingNReviewResponse)
         }
     }
@@ -1135,7 +1134,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         secondaryRatingAdapter.setDataList(secondaryRatings)
     }
 
-    private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>){
+    private fun setReviewThumbnailUI(thumbnails: List<Thumbnails>) {
         rvThumbnail.layoutManager = GridLayoutManager(getApplicationContext(),3)
         reviewThumbnailAdapter = ReviewThumbnailAdapter(getApplicationContext(),this)
         rvThumbnail.adapter = reviewThumbnailAdapter
@@ -2197,6 +2196,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
         activity?.apply {
             Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL)
+        }
+
+        if(RatingAndReviewUtil.isSuccessFullyReported) {
+            tvReport?.text = getString(R.string.reported)
+            tvReport?.setTextColor(resources.getColor(R.color.red))
+            RatingAndReviewUtil.isSuccessFullyReported = false
         }
     }
 

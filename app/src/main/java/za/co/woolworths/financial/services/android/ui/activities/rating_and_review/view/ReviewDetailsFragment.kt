@@ -17,10 +17,11 @@ import kotlinx.android.synthetic.main.review_detail_layout.rvSecondaryRatings
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.android.synthetic.main.skin_profile_layout.view.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Normal
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Normal
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.SkinProfile
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ProductReviewViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.SkinProfileAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -55,13 +56,23 @@ class ReviewDetailsFragment : Fragment() {
         }
 
         arguments?.apply {
-            val ratingAndResponseData = Utils.jsonStringToObject(
-                getString(KotlinUtils.REVIEW_DATA),
-                RatingReviewResponse::class.java
-            ) as RatingReviewResponse
-            val reviews = ratingAndResponseData.reviews.get(0)
-            setDefaultUi(reviews, ratingAndResponseData.reportReviewOptions)
-            setProductImageViewPager(reviews.photos.normal)
+            if (RatingAndReviewUtil.isComingFromMoreReview) {
+                RatingAndReviewUtil.isComingFromMoreReview = false
+                val reviews = getSerializable(KotlinUtils.REVIEW_DATA) as Reviews
+                val reportReviewOptions = getStringArrayList(KotlinUtils.REVIEW_REPORT)
+                if (reviews != null && reportReviewOptions != null) {
+                    setDefaultUi(reviews, reportReviewOptions)
+                    setProductImageViewPager(reviews.photos.normal)
+                }
+            } else {
+                val ratingAndResponseData = Utils.jsonStringToObject(
+                        getString(KotlinUtils.REVIEW_DATA),
+                        RatingReviewResponse::class.java
+                ) as RatingReviewResponse
+                val reviews = ratingAndResponseData.reviews.get(0)
+                setDefaultUi(reviews, ratingAndResponseData.reportReviewOptions)
+                setProductImageViewPager(reviews.photos.normal)
+            }
         }
     }
 
@@ -113,8 +124,8 @@ class ReviewDetailsFragment : Fragment() {
     }
 
     private fun setSkinProfielLayout(
-        contextDataValue: List<SkinProfile>,
-        tagDimensions: List<SkinProfile>
+            contextDataValue: List<SkinProfile>,
+            tagDimensions: List<SkinProfile>
     ) {
         if (contextDataValue.isNotEmpty() || tagDimensions.isNotEmpty()) {
             skin_profile_layout.rv_skin_profile.visibility = View.VISIBLE

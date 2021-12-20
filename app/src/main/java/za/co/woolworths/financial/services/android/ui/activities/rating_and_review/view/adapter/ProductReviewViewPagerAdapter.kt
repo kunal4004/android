@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Normal
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Normal
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 
 class ProductReviewViewPagerAdapter(var context: Context?, var imagesList: List<Normal>)

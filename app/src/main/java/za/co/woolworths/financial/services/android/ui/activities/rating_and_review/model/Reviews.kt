@@ -1,7 +1,6 @@
-package za.co.woolworths.financial.services.android.models.dto.rating_n_reviews
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model
 
 import com.google.gson.annotations.SerializedName
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.SkinProfile
 import java.io.Serializable
 
 data class Reviews (

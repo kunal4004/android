@@ -1,8 +1,10 @@
-package za.co.woolworths.financial.services.android.models.dto.rating_n_reviews
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model
 
 import com.google.gson.annotations.SerializedName
 
-data class TagDimensions (
+
+data class AdditionalFields (
+
 	@SerializedName("valueLabel") val valueLabel : String,
 	@SerializedName("label") val label : String
 )
