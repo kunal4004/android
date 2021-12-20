@@ -341,6 +341,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         View view = getView();
         Toolbar toolbar = view.findViewById(R.id.cartToolbar);
         btnEditCart = toolbar.findViewById(R.id.btnEditCart);
+        btnEditCart.setText(R.string.edit);
         pbRemoveAllItem = toolbar.findViewById(R.id.pbRemoveAllItem);
         btnClearCart = toolbar.findViewById(R.id.btnClearCart);
         btnEditCart.setOnClickListener(this);
@@ -733,7 +734,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
             cartProductAdapter.notifyAdapter(cartItems, orderSummary, voucherDetails);
         } else {
-
             cartProductAdapter.clear();
             resetToolBarIcons();
             rlCheckOut.setVisibility(View.GONE);
@@ -1423,6 +1423,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     public void reloadFragment() {
         //Reload screen
+        setupToolbar();
         initializeLoggedInUserCartUI();
         loadShoppingCart(false);
     }

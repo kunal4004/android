@@ -122,6 +122,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.CustomPo
 import static za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
+import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.DEEP_LINK_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
@@ -764,6 +765,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 case R.id.navigate_to_cart:
                     clearStack();
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU, BottomNavigationActivity.this);
                     break;
 
                 case R.id.navigate_to_wreward:
@@ -791,13 +793,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
     };
-
-    //TODO: Nav stack change
-    /*public void openCartActivity() {
-        Intent openCartActivity = new Intent(this, CartActivity.class);
-        startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
-        overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -1232,6 +1227,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     break;
                 case TipsAndTricksViewPagerActivity.RESULT_OK_REWARDS:
                     getBottomNavigationById().setCurrentItem(INDEX_REWARD);
+                    break;
+                case RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS:
+                    if (SessionUtilities.getInstance().isUserAuthenticated()) {
+                        getBottomNavigationById().setCurrentItem(INDEX_CART);
+                    }
                     break;
             }
         }

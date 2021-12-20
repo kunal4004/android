@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.MyAccou
 import za.co.woolworths.financial.services.android.ui.activities.account.apply_now.AccountSalesActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
@@ -46,6 +47,7 @@ import kotlin.properties.Delegates
         const val RESULT_OK_REWARDS = 345
         const val REQUEST_CODE_DELIVERY_LOCATION = 456
         const val REQUEST_CODE_SHOPPING_LIST = 567
+        const val RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS = 9999
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,7 +103,7 @@ import kotlin.properties.Delegates
                 if (current < titles!!.size) viewPager?.currentItem = current else onBackPressed()
             }
             R.id.previous -> {
-                var current: Int = viewPager.currentItem
+                val current: Int = viewPager.currentItem
                 viewPager?.currentItem = current - 1
             }
             R.id.featureActionButton -> {
@@ -109,12 +111,11 @@ import kotlin.properties.Delegates
                 //NAVIGATION
                     0 -> {
                         if (SessionUtilities.getInstance().isUserAuthenticated && QueryBadgeCounter.instance.cartCount > 0) {
-                                //TODO: Nav stack changes
-//                            startActivity(Intent(this, CartActivity::class.java))
+                            setResult(RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS)
                         } else {
                             setResult(RESULT_OK_PRODUCTS)
-                            onBackPressed()
                         }
+                        onBackPressed()
                     }
                 //BARCODE SCAN
                     1 -> {
