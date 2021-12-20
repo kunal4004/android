@@ -66,7 +66,6 @@ import za.co.woolworths.financial.services.android.contracts.IAccountCardDetails
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
-import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;

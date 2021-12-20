@@ -21,7 +21,7 @@ import java.util.*
 
 
 object AppConfigSingleton {
-    var storeCardBlockReasons: JsonElement? = null
+    var storeCardBlockReasons: List<Map<String, String>>? = null
     var whatsApp: ConfigWhatsApp? = null
     var mContactUs: MutableList<ConfigContactUs>? = null
     var mPayMyAccount: ConfigPayMyAccount? = null
@@ -80,7 +80,7 @@ object AppConfigSingleton {
                 ssoRedirectURILogout = env.ssoRedirectURILogout
                 ssoUpdateDetailsRedirectUri = env.ssoUpdateDetailsRedirectUri
                 wwTodayURI = env.wwTodayURI
-                authenticVersionStamp = env.authenticVersionStamp
+                authenticVersionStamp = env.authenticVersionStamp ?: ""
 
                 WoolworthsApplication.getInstance().wGlobalState.startRadius = env.storeStockLocatorConfigStartRadius ?: 0
                 WoolworthsApplication.getInstance().wGlobalState.endRadius = env.storeStockLocatorConfigEndRadius ?: 0

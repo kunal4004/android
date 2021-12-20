@@ -80,6 +80,7 @@ import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.GlobalMessages;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
+import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -1050,9 +1051,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             cartResponse.voucherDetails = data.voucherDetails;
             cartResponse.productCountMap = data.productCountMap;// set delivery location
             if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
-                Province province = new Province();
-                province.name = data.provinceName;
-                province.id = data.provinceId;
+                Province province = new Province(data.provinceId, data.provinceName);
                 if (cartResponse.orderSummary.store != null) {
                     Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, null, cartResponse.orderSummary.store));
                 } else if (cartResponse.orderSummary.suburb != null) {

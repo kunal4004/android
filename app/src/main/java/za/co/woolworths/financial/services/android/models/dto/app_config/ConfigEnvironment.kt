@@ -17,6 +17,6 @@ data class ConfigEnvironment(
     val storeStockLocatorConfigEndRadius: Int?,
     val storeStockLocatorConfigFoodProducts: Boolean?,
     val storeStockLocatorConfigClothingProducts: Boolean?,
-    val storeCardBlockReasons: JsonElement?,
+    val storeCardBlockReasons: List<Map<String, String>>?,
     val emailSizeKB: Long = 0
 ) : Parcelable

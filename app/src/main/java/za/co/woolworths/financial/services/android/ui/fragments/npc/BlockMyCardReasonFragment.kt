@@ -39,10 +39,9 @@ class BlockMyCardReasonFragment : MyCardExtension() {
         }
 
         val blockReasonList = mutableListOf<BlockReason>()
-        AppConfigSingleton.storeCardBlockReasons?.asJsonArray?.forEach {
-            val blockReasonJsObject = JSONObject(it.toString())
-            val key = blockReasonJsObject.keys().next()
-            val value = blockReasonJsObject.get(key)
+        AppConfigSingleton.storeCardBlockReasons?.forEach {
+            val key = it.keys.first()
+            val value = it[key]
             blockReasonList.add(BlockReason(key.toInt(), value.toString(), false))
         }
 
