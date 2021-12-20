@@ -33,6 +33,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.JsonElement;
+import com.perfectcorp.perfectlib.SkuHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,6 +83,8 @@ import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
+import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -342,6 +345,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
         );
         getTracker();
         bus = new RxBus();
+        vtoSyncServer();
+
     }
 
     //#region ShowServerMessage
@@ -808,5 +813,72 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
     public VirtualTryOn getVirtualTryOn() {
         return virtualTryOn;
+    }
+
+    /**
+     *  This method used for check PF crop SDK for (VTO) sync server
+     *  When user come first time or when update available
+     */
+    private void vtoSyncServer() {
+        SdkUtility.initSdk(this, new PfSDKInitialCallback() {
+            @Override
+            public void onInitialized() {
+                checkVtoUpdate();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                FirebaseManager.logException(throwable);
+            }
+        });
+    }
+
+    /**
+     * This method check if SDK update update available or not for syncServer
+     */
+    private void checkVtoUpdate() {
+        SkuHandler skuHandler = SkuHandler.getInstance();
+        if (skuHandler == null) {
+            return;
+        }
+        skuHandler.checkNeedToUpdate(new SkuHandler.CheckNeedToUpdateCallback() {
+            @Override
+            public void onSuccess(boolean needUpdate) {
+                if (needUpdate) {
+                    callVtoSyncServer(skuHandler);
+                }
+            }
+            @Override
+            public void onFailure(Throwable throwable) {
+                FirebaseManager.logException(throwable);
+            }
+        });
+    }
+
+    /**
+     * This method call when update available/getting true
+     * @param skuHandler
+     */
+    private void callVtoSyncServer(SkuHandler skuHandler) {
+
+        skuHandler.syncServer(new SkuHandler.SyncServerCallback() {
+            @Override
+            public void progress(double progress) {
+                //sync SDK in background. when update needed.
+                // later may be required show on UI
+            }
+
+            @Override
+            public void onSuccess() {
+                //Do Nothing
+                // required later update UI.
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                FirebaseManager.logException(throwable);
+            }
+        });
+
     }
 }
