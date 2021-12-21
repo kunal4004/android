@@ -391,6 +391,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     fragmentTransaction,
                     SingleButtonDialogFragment::class.java.simpleName
                 )
+                it.commitAllowingStateLoss()
             }
         } catch (ex: IllegalStateException) {
             FirebaseManager.logException(ex)
