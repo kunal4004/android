@@ -721,20 +721,25 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     };
 
     private void replaceAccountIcon(@NonNull MenuItem item) {
-        if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
-                && item.getItemId() != R.id.navigate_to_account) {
-            accountNavigationView.removeView(notificationBadgeOne);
-            SessionStateType sessionStateType = ChatAWSAmplify.INSTANCE.getSessionStateType();
-            if (sessionStateType!=null) {
-                if (sessionStateType == SessionStateType.DISCONNECT) {
-                    onlineIconImageView.setImageResource(R.drawable.nb_borderless_disconnect_badge_bg);
-                } else {
-                    onlineIconImageView.setImageResource(R.drawable.nb_borderless_badge_bg);
+        if(accountNavigationView != null){
+            if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
+                    && item.getItemId() != R.id.navigate_to_account) {
+                accountNavigationView.removeView(notificationBadgeOne);
+                SessionStateType sessionStateType = ChatAWSAmplify.INSTANCE.getSessionStateType();
+                if (sessionStateType!=null) {
+                    if (sessionStateType == SessionStateType.DISCONNECT) {
+                        onlineIconImageView.setImageResource(R.drawable.nb_borderless_disconnect_badge_bg);
+                    } else {
+                        onlineIconImageView.setImageResource(R.drawable.nb_borderless_badge_bg);
+                    }
                 }
+                accountNavigationView.addView(notificationBadgeOne);
+            } else {
+                accountNavigationView.removeView(notificationBadgeOne);
             }
-            accountNavigationView.addView(notificationBadgeOne);
-        } else {
-            accountNavigationView.removeView(notificationBadgeOne);
+        }
+        else {
+            FirebaseManager.logException("accountNavigationView is null");
         }
     }
 
