@@ -69,7 +69,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     fun showBackArrowWithoutTitle() {
         toolbar?.visibility = View.VISIBLE
         setSupportActionBar(toolbar)
-        toolbarText.text = ""
+        toolbarText?.text = ""
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(false)
@@ -81,7 +81,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     fun showBackArrowWithTitle(titleText: String) {
         toolbar?.visibility = View.VISIBLE
         setSupportActionBar(toolbar)
-        toolbarText.text = titleText
+        toolbarText?.text = titleText
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(false)
@@ -94,7 +94,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         btnClose?.visibility = View.VISIBLE
         btnClose?.setOnClickListener(this)
         toolbar?.visibility = View.VISIBLE
-        toolbarText.text = titleText
+        toolbarText?.text = titleText
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
             title = ""

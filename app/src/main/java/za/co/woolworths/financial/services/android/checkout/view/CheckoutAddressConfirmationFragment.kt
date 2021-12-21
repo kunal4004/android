@@ -876,8 +876,8 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun getProvinceName(provinceId: String?): String {
         val provinceList =
-            AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>
-        if (!provinceId.isNullOrEmpty()) {
+            AppConfigSingleton.nativeCheckout?.regions as? MutableList<Province>
+        if (!provinceId.isNullOrEmpty() && !provinceList.isNullOrEmpty()) {
             for (provinces in provinceList) {
                 if (provinceId.equals(provinces.id)) {
                     // province id is matching with the province list from config.
