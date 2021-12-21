@@ -38,10 +38,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.perfectcorp.perfectlib.SkuHandler;
-
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -224,7 +221,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 .rootFragmentListener(this, 5)
                 .build();
         renderUI();
-        vtoSyncServer();
 
         /***
          * Update bottom navigation view counter
@@ -260,57 +256,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         queryBadgeCountOnStart();
         addDrawerFragment();
-    }
-
-    private void vtoSyncServer() {
-        SdkUtility.initSdk(this, new PfSDKInitialCallback() {
-            @Override
-            public void onInitialized() {
-                SkuHandler skuHandler = SkuHandler.getInstance();
-                if (skuHandler == null) {
-                    return;
-                }
-
-                skuHandler.checkNeedToUpdate(new SkuHandler.CheckNeedToUpdateCallback() {
-                    @Override
-                    public void onSuccess(boolean needUpdate) {
-                        if (needUpdate) {
-                            skuHandler.syncServer(new SkuHandler.SyncServerCallback() {
-                                @Override
-                                public void progress(double progress) {
-                                  //sync SDK in background. when update needed.
-                                    // later may be required show on UI
-                                }
-
-                                @Override
-                                public void onSuccess() {
-                                     //Do Nothing
-                                       // required later update UI.
-                                }
-
-                                @Override
-                                public void onFailure(Throwable throwable) {
-                                    handleExceptionWithFireBase(throwable);
-                                }
-                            });
-                        }
-                    }
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        handleExceptionWithFireBase(throwable);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                handleExceptionWithFireBase(throwable);
-            }
-        });
-    }
-
-    private void handleExceptionWithFireBase(Throwable throwable) {
-        FirebaseManager.logException(throwable);
     }
 
     private void parseDeepLinkData() {
