@@ -12,10 +12,10 @@ import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.*
 import za.co.woolworths.financial.services.android.models.network.NetworkConfig
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.SkinProfile
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.datasource.ReviewsDataSource
 import za.co.woolworths.financial.services.android.util.TestCoroutineRule
 
 @ExperimentalCoroutinesApi
@@ -99,7 +99,8 @@ class ReviewsDataSourceTest {
                         1,
                         sortOptions.sortOption,
                         "refinements")).willReturn(null)
-        val expectedResult = PagingSource.LoadResult.Error<Int, RatingReviewResponse>(NullPointerException())
+        val expectedResult = PagingSource.LoadResult.Error<Int,
+                RatingReviewResponse>(NullPointerException())
         assertEquals(
                 expectedResult.toString(), reviewsPagingSource.load(
                 PagingSource.LoadParams.Refresh(
