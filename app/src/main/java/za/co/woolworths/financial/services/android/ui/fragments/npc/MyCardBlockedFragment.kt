@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import androidx.appcompat.app.AppCompatActivity
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
@@ -55,7 +56,7 @@ class MyCardBlockedFragment : MyCardExtension() {
         btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 3
         // Hide Replacement card if MC config is true
-        when (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
+        when (AppConfigSingleton.instantCardReplacement?.isEnabled == true) {
             true -> {
                 tvNoActiveCardDesc?.text = bindString(R.string.card_block_desc)
                 btnGetReplacementCard?.visibility = VISIBLE

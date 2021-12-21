@@ -47,7 +47,6 @@ import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues
 import za.co.woolworths.financial.services.android.ui.activities.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -112,6 +111,8 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import android.graphics.Bitmap
 import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQuickShopDefaultValues
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
@@ -1865,7 +1866,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             }
                         }
                     }
-                    is QuickShopDefaultValues -> {
+                    is ConfigQuickShopDefaultValues -> {
                         currentDeliveryLocation.text = it.suburb.name
                         defaultLocationPlaceholder.text = getString(R.string.set_to_default)
                     }
@@ -2016,7 +2017,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 getDeliveryLocation().let {
                     val suburbName = when (it) {
                         is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
-                        is QuickShopDefaultValues -> it.suburb.name
+                        is ConfigQuickShopDefaultValues -> it.suburb.name
                         else -> ""
                     }
                     val message =
@@ -2033,7 +2034,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun getDeliveryLocation(): Any? {
         val userLocation = Utils.getPreferredDeliveryLocation()
-        val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
+        val defaultLocation = AppConfigSingleton.quickShopDefaultValues
         return if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation else defaultLocation
     }
 
@@ -2181,8 +2182,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ), this
             )
             val message =
-                WoolworthsApplication.getProductDetailsPage()?.shareItemMessage + " " + productDetails?.productId?.let {
-                    WoolworthsApplication.getProductDetailsPage()?.shareItemURITemplate?.replace(
+                AppConfigSingleton.productDetailsPage?.shareItemMessage + " " + productDetails?.productId?.let {
+                    AppConfigSingleton.productDetailsPage?.shareItemURITemplate?.replace(
                         "{product_id}",
                         it,
                         true
@@ -2214,7 +2215,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             val desc = view.findViewById<TextView>(R.id.desc)
             val close = view.findViewById<Button>(R.id.close)
             val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
-            desc?.text = WoolworthsApplication.getLiquor()?.message ?: ""
+            desc?.text = AppConfigSingleton.liquor?.message ?: ""
             close?.setOnClickListener { dismiss() }
             setSuburb?.setOnClickListener {
                 dismiss()

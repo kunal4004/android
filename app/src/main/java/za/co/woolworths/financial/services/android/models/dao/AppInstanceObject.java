@@ -7,10 +7,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
-import za.co.woolworths.financial.services.android.models.dto.chat.CreditCard;
+import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigChatEnabledForProductFeatures;
 import za.co.woolworths.financial.services.android.models.dto.chat.InAppChatTipAcknowledgements;
-import za.co.woolworths.financial.services.android.models.dto.chat.PersonalLoan;
-import za.co.woolworths.financial.services.android.models.dto.chat.StoreCard;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
@@ -32,7 +30,7 @@ public class AppInstanceObject {
     public AppInstanceObject() {
         users = new ArrayList<>();
         featureWalkThrough =  new FeatureWalkThrough();
-        inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new StoreCard(false, false, false, false), new CreditCard(false, false, false, false), new PersonalLoan(false, false, false, false), false);
+        inAppChatTipAcknowledgements = new InAppChatTipAcknowledgements(false, new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), new ConfigChatEnabledForProductFeatures(false, false, false, false), false);
     }
 
     public static AppInstanceObject get() {

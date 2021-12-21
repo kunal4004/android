@@ -65,7 +65,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner;
-import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -84,6 +84,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuran
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.account.Products;
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice;
@@ -846,7 +847,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(preferenceRelativeLayout);
             showView(appVersionNameInfoTextView);
             showView(loginUserOptionsLayout);
-            if (WoolworthsApplication.getCreditView() != null && WoolworthsApplication.getCreditView().isEnabled())
+            if (AppConfigSingleton.INSTANCE.getCreditView() != null && AppConfigSingleton.INSTANCE.getCreditView().isEnabled())
                 showView(creditReportView);
             mUpdateMyAccount.swipeToRefreshAccount(true);
             if (SessionUtilities.getInstance().isC2User())
@@ -1681,9 +1682,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (account != null && account.cards != null) {
                 if (account.cards.get(0).cardStatus != null) {
                     if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null)) {
-                        List<CreditCardDeliveryCardTypes> cardTypes = WoolworthsApplication.getCreditCardDelivery().getCardTypes();
+                        List<ConfigCreditCardDeliveryCardTypes> cardTypes = AppConfigSingleton.INSTANCE.getCreditCardDelivery().getCardTypes();
                         if (cardTypes != null) {
-                            for (CreditCardDeliveryCardTypes ccdTypes : cardTypes) {
+                            for (ConfigCreditCardDeliveryCardTypes ccdTypes : cardTypes) {
                                 if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
                                         && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
                                     executeCreditCardDeliveryStatusService();
