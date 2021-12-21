@@ -165,7 +165,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public ConstraintLayout itemLimitsBanner;
     private RelativeLayout orderTotalLayout, rlLocationSelectedLayout, parentLayout, relEmptyStateHandler;
     public TextView itemLimitsMessage, itemLimitsCounter, upSellMessageTextView, orderTotal;
-    private ImageView deliverLocationIcon, deliverLocationRightArrow, imgDeliveryLocation;
+    private ImageView deliverLocationIcon, deliverLocationRightArrow;
     private NestedScrollView nestedScrollView;
     private RecyclerView rvCartList;
     private WButton btnCheckOut;
@@ -297,7 +297,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         pBar = view.findViewById(R.id.loadingBar);
         relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
         rlLocationSelectedLayout = view.findViewById(R.id.locationSelectedLayout);
-        imgDeliveryLocation = view.findViewById(R.id.truckIcon);
         upSellMessageTextView = view.findViewById(R.id.upSellMessageTextView);
         tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
         tvDeliveringToText = view.findViewById(R.id.tvDeliveringTo);

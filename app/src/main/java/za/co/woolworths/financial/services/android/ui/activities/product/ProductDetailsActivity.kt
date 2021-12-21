@@ -11,11 +11,14 @@ import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.navigateToShoppingListOnToastClicked
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.buildShoppingListToast
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.Utils
 
 /**
@@ -47,10 +50,18 @@ class ProductDetailsActivity : AppCompatActivity(), IToastInterface {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE
-                && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            buildShoppingListToast(this, flContentFrame!!, true, data, this)
-            return
+        when {
+            requestCode == SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE &&
+                    resultCode == BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS -> {
+                setResult(BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS)
+                finishActivity(SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE)
+                return
+            }
+            requestCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE &&
+                    resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE -> {
+                buildShoppingListToast(this, flContentFrame!!, true, data, this)
+                return
+            }
         }
         if (productDetailsFragmentNew != null) productDetailsFragmentNew!!.onActivityResult(requestCode, resultCode, data)
     }

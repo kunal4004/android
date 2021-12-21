@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment
@@ -26,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Fragm
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -89,6 +91,15 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        //Nav Stack change
+        when (requestCode) {
+            SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE -> {
+                // Pass back result to BottomNavigation to load cart screen.
+                setResult(BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS)
+                finishActivity(SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE)
+                return
+            }
+        }
         if(requestCode == CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER && resultCode == RESULT_CODE_CANCEL_ORDER_SUCCESS){
             setResult(RESULT_CODE_CANCEL_ORDER_SUCCESS)
             finish()

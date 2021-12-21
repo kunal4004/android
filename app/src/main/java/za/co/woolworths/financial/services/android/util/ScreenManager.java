@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -25,8 +26,10 @@ import za.co.woolworths.financial.services.android.ui.activities.product.shop.Sh
 
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.RESULT_OK_OPEN_CART;
 
 /**
  * Created by eesajacobs on 2016/11/30.
@@ -169,6 +172,19 @@ public class ScreenManager {
         intent.putExtras(bundle);
         activity.startActivityForResult(intent, PDP_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+    }
+
+    public static void presentShoppingCart(Activity activity) {
+        if (activity instanceof BottomNavigationActivity) {
+            BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+            if(bottomNavigationActivity.getBottomNavigationById() == null){
+                return;
+            }
+            bottomNavigationActivity.getBottomNavigationById().setCurrentItem(INDEX_CART);
+            return;
+        }
+        activity.setResult(RESULT_OK_OPEN_CART);
+        activity.finishActivity(OPEN_CART_REQUEST);
     }
 
     public static void presentShoppingListDetailActivity(Activity activity, String listId, String listName) {

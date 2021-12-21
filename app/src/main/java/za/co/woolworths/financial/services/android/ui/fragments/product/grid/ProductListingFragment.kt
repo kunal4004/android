@@ -48,8 +48,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
@@ -1125,11 +1124,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun openCartActivity() {
-        //TODO: Nav stack change
-        /*activity?.apply {
-            startActivityForResult(Intent(this, CartActivity::class.java), OPEN_CART_REQUEST)
-            overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay)
-        }*/
+        (activity as? BottomNavigationActivity)?.apply {
+            bottomNavigationById?.currentItem = INDEX_CART
+        }
     }
 
     override fun queryStoreFinderProductByFusedLocation(location: Location?) {

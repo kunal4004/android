@@ -341,7 +341,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
                     ScreenManager.presentSSOSignin(this@ProductDetailsDeepLinkActivity)
                 } else {
-                    //TODO: Nav stack change
+                    //TODO: Nav stack change. Cart Activity removed find another way.
                     /*val openCartActivity =
                         Intent(this@ProductDetailsDeepLinkActivity, CartActivity::class.java)
                     startActivityForResult(

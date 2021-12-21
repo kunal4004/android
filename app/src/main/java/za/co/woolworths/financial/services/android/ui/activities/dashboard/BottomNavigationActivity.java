@@ -149,6 +149,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
     public static final int BOTTOM_FRAGMENT_REQUEST_CODE = 3401;
     public static final int TIPS_AND_TRICKS_CTA_REQUEST_CODE = 3627;
+    public static final int RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS = 3628;
+    public static final int RESULT_OK_OPEN_CART = 3629;
 
     public final String TAG = this.getClass().getSimpleName();
     public AccountMasterCache mAccountMasterCache = AccountMasterCache.INSTANCE;
@@ -1049,6 +1051,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                             setToast(itemAddToCartMessage, "", productCountMap, itemsCount);
                         }
                         break;
+                    case RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS:
+                        if (getBottomNavigationById() == null){
+                            return;
+                        }
+                        getBottomNavigationById().setCurrentItem(INDEX_CART);
+                        break;
                 }
                 break;
 
@@ -1142,6 +1150,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     //ensure counter is refresh when user cart activity is closed
                     QueryBadgeCounter.getInstance().queryCartSummaryCount();
                     break;
+                case RESULT_OK_OPEN_CART:
+                    if(getBottomNavigationById() == null){
+                        return;
+                    }
+                    getBottomNavigationById().setCurrentItem(INDEX_CART);
+                    break;
                 default:
                     break;
             }
@@ -1154,11 +1168,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     //open cart activity after login from cart only
                     if (requestCode == CART_LAUNCH_VALUE) {
                         clearStack();
-                        if (mNavController == null || !(mNavController.getCurrentFrag() instanceof CartFragment)) {
-                            return;
-                        }
-                        CartFragment cartFragment = (CartFragment) mNavController.getCurrentFrag();
-                        cartFragment.reloadFragment();
+                        identifyTokenValidationAPI();
                         return;
                     }
                     break;
@@ -1347,10 +1357,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (!SessionUtilities.getInstance().isUserAuthenticated()) {
                     ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
                 } else {
-                    //TODO: Nav stack change
-                    /*Intent openCartActivity = new Intent(BottomNavigationActivity.this, CartActivity.class);
-                    startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);*/
+                    if(getBottomNavigationById() == null) {
+                        return;
+                    }
+                    getBottomNavigationById().setCurrentItem(INDEX_CART);
                 }
             }
         }
