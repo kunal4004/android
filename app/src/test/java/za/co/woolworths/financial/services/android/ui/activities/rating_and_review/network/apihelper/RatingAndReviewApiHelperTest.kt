@@ -7,11 +7,12 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
 import org.powermock.modules.junit4.PowerMockRunner
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 import za.co.woolworths.financial.services.android.utils.ApiHelperUtil
 
-@RunWith(PowerMockRunner::class)
+@RunWith(MockitoJUnitRunner::class)
 class RatingAndReviewApiHelperTest {
 
     private lateinit var ratingAndReviewApiHelper: RatingAndReviewApiHelper

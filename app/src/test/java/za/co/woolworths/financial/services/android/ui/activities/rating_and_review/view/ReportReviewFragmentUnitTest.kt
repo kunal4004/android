@@ -10,6 +10,7 @@ import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.utils.BundleMock
+import za.co.woolworths.financial.services.android.utils.mock
 
 @RunWith(MockitoJUnitRunner::class)
 class ReportReviewFragmentUnitTest : Fragment() {
@@ -17,7 +18,7 @@ class ReportReviewFragmentUnitTest : Fragment() {
     private lateinit var reportReviewFragment: ReportReviewFragment
 
     @Mock
-    private lateinit var reportList: ArrayList<String>
+    private  var reportList: ArrayList<String> = mock()
 
     @Before
     fun init() {

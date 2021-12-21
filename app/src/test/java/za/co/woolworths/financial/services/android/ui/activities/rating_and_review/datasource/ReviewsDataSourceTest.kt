@@ -7,12 +7,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.datasource.ReviewsDataSource
@@ -41,11 +41,6 @@ class ReviewsDataSourceTest {
     @Mock
     lateinit var ratingAndResponseLiveData: MutableLiveData<RatingReviewResponse>
 
-    @Mock
-    lateinit var ratingAndReviewData: RatingAndReviewData
-
-    @Mock
-    lateinit var newtworkConfig: NetworkConfig
 
     @Before
     fun setup() {
@@ -93,7 +88,7 @@ class ReviewsDataSourceTest {
         )
     }
     @Test
-    fun `reviews paging source load - failure - received null`() = runBlockingTest {
+    fun reviewsPagingSourceLoadFailureNullPointerExaception() = runBlockingTest {
         given(ratingAndReviewApiHelper
                 .getMoreReviews(mockReview.productId,
                         1,
@@ -112,7 +107,7 @@ class ReviewsDataSourceTest {
         )
     }
 
-//    @Test
+ //   @Ignore
 //    fun `reviews paging source refresh - success`() = runBlockingTest {
 //        given(ratingAndReviewApiHelper.getMoreReviews(
 //                "prod id",
