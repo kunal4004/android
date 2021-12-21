@@ -38,6 +38,10 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick, T
         toolbar?.setOnClickListener {
             activity?.onBackPressed()
         }
+        init()
+    }
+
+    fun init() {
         arguments?.apply {
             val reportReviews = getStringArrayList(KotlinUtils.REVIEW_REPORT)
             reportReviews?.let {
