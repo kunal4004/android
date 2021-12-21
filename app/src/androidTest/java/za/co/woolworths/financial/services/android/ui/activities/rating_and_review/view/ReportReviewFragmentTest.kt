@@ -17,7 +17,7 @@ class ReportReviewFragmentTest {
 
     @Test
     fun test_ReportReviewScreenData() {
-        val sceanario  = launchFragmentInContainer<ReportReviewFragment>()
+        launchFragmentInContainer<ReportReviewFragment>()
         onView(ViewMatchers.withId(R.id.txt_report_label))
                 .check(matches(ViewMatchers.withText(R.string.report_reviews)))
         onView(ViewMatchers.withId(R.id.review_sub_label))
@@ -28,7 +28,7 @@ class ReportReviewFragmentTest {
 
     @Test
     fun test_SubmitButton() {
-        val sceanario  = launchFragmentInContainer<ReportReviewFragment>()
+        launchFragmentInContainer<ReportReviewFragment>()
         onView(allOf(ViewMatchers.withId(R.id.btn_submit_report),
                ViewMatchers.withText("SUBMIT REPORT"),
                ViewMatchers.withParent(ViewMatchers.withParent(
