@@ -53,6 +53,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
@@ -332,13 +333,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     private void queryBadgeCountOnStart() {
-        if (SessionUtilities.getInstance().isUserAuthenticated() && WoolworthsApplication.isIsBadgesRequired()) {
+        if (SessionUtilities.getInstance().isUserAuthenticated() && AppConfigSingleton.INSTANCE.isBadgesRequired()) {
             mQueryBadgeCounter.queryVoucherCount();
             mQueryBadgeCounter.queryCartSummaryCount();
             mQueryBadgeCounter.queryMessageCount();
-            WoolworthsApplication.setIsBadgesRequired(false);
-        } else if (!WoolworthsApplication.isIsBadgesRequired()) {
-            WoolworthsApplication.setIsBadgesRequired(true);
+            AppConfigSingleton.INSTANCE.setBadgesRequired(false);
+        } else if (!AppConfigSingleton.INSTANCE.isBadgesRequired()) {
+            AppConfigSingleton.INSTANCE.setBadgesRequired(true);
         }
     }
 
@@ -681,7 +682,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 case R.id.navigate_to_cart:
                     setCurrentSection(R.id.navigate_to_cart);
                     identifyTokenValidationAPI();
-                    if(WoolworthsApplication.isIsBadgesRequired())
+                    if(AppConfigSingleton.INSTANCE.isBadgesRequired())
                         queryBadgeCountOnStart();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU, BottomNavigationActivity.this);
                     return false;
@@ -691,7 +692,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     currentSection = R.id.navigate_to_wreward;
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_REWARD);
-                    if(WoolworthsApplication.isIsBadgesRequired())
+                    if(AppConfigSingleton.INSTANCE.isBadgesRequired())
                         queryBadgeCountOnStart();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU, BottomNavigationActivity.this);
                     return true;
@@ -699,7 +700,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 case R.id.navigate_to_account:
                     setCurrentSection(R.id.navigate_to_account);
                     replaceAccountIcon(item);
-                    if(WoolworthsApplication.isIsBadgesRequired() && !isDeeplinkAction)
+                    if(AppConfigSingleton.INSTANCE.isBadgesRequired() && !isDeeplinkAction)
                         queryBadgeCountOnStart();
                     isDeeplinkAction = false;
                     if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
@@ -720,20 +721,25 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     };
 
     private void replaceAccountIcon(@NonNull MenuItem item) {
-        if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
-                && item.getItemId() != R.id.navigate_to_account) {
-            accountNavigationView.removeView(notificationBadgeOne);
-            SessionStateType sessionStateType = ChatAWSAmplify.INSTANCE.getSessionStateType();
-            if (sessionStateType!=null) {
-                if (sessionStateType == SessionStateType.DISCONNECT) {
-                    onlineIconImageView.setImageResource(R.drawable.nb_borderless_disconnect_badge_bg);
-                } else {
-                    onlineIconImageView.setImageResource(R.drawable.nb_borderless_badge_bg);
+        if(accountNavigationView != null){
+            if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
+                    && item.getItemId() != R.id.navigate_to_account) {
+                accountNavigationView.removeView(notificationBadgeOne);
+                SessionStateType sessionStateType = ChatAWSAmplify.INSTANCE.getSessionStateType();
+                if (sessionStateType!=null) {
+                    if (sessionStateType == SessionStateType.DISCONNECT) {
+                        onlineIconImageView.setImageResource(R.drawable.nb_borderless_disconnect_badge_bg);
+                    } else {
+                        onlineIconImageView.setImageResource(R.drawable.nb_borderless_badge_bg);
+                    }
                 }
+                accountNavigationView.addView(notificationBadgeOne);
+            } else {
+                accountNavigationView.removeView(notificationBadgeOne);
             }
-            accountNavigationView.addView(notificationBadgeOne);
-        } else {
-            accountNavigationView.removeView(notificationBadgeOne);
+        }
+        else {
+            FirebaseManager.logException("accountNavigationView is null");
         }
     }
 

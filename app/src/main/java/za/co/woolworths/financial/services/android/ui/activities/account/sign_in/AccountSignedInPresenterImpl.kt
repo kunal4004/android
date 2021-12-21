@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.contracts.IAccountSignedInContract
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
@@ -110,7 +111,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     override fun showProductOfferOutstanding(state: ApplyNowState) {
-        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.let { showTreatmentPlanJourney ->
+        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.let { showTreatmentPlanJourney ->
             val supported = when(state) {
                 ApplyNowState.PERSONAL_LOAN -> {
                     showTreatmentPlanJourney.personalLoan.minimumSupportedAppBuildNumber?.let {

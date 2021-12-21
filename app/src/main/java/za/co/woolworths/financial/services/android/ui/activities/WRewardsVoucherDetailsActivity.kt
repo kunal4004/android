@@ -9,6 +9,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.wrewards_voucher_details.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Voucher
 import za.co.woolworths.financial.services.android.models.dto.VoucherCollection
@@ -110,7 +111,7 @@ class WRewardsVoucherDetailsActivity : AppCompatActivity(), View.OnClickListener
     private fun viewTermsAndConditions() {
         val terms = vouchers?.get(cardSwipeStackView?.topIndex ?: 0)?.termsAndConditions
         if (TextUtils.isEmpty(terms)) {
-            Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsTCLink())
+            Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsTCLink)
         } else {
             startActivity(Intent(this@WRewardsVoucherDetailsActivity, WRewardsVoucherTermAndConditions::class.java).putExtra(TERMS, terms))
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)

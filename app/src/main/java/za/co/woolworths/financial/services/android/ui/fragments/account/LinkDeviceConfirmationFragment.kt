@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
@@ -94,7 +95,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         }
 
         context?.let {
-            val deviceSecurity = WoolworthsApplication.getDeviceSecurity()
+            val deviceSecurity = AppConfigSingleton.deviceSecurity
             when(mApplyNowState){
                 ApplyNowState.STORE_CARD ->{
                     linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.sc_asset)
