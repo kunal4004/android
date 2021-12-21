@@ -4,8 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_reviewer_info_details.*
-import kotlinx.android.synthetic.main.common_toolbar.view.*
 
 class ReviewerInfoDetailsActivity : AppCompatActivity() {
 

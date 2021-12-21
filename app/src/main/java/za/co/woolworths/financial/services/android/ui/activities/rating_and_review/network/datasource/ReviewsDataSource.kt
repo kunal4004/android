@@ -1,10 +1,10 @@
-package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.datasource
+package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.datasource
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 
 class ReviewsDataSource(
