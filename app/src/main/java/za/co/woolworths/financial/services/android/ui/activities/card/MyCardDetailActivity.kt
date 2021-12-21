@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.contracts.IStoreCardListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
@@ -79,7 +80,7 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
             val shouldDisplayStoreCardDetail = TextUtils.isEmpty(blockType) || blockType == TemporaryFreezeStoreCard.TEMPORARY
             val virtualCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.virtualCard
             // Determine if card is blocked: if blockCode is not null, card is blocked.
-            when ((virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+            when ((virtualCard != null && AppConfigSingleton.virtualTempCard?.isEnabled == true)
                     || shouldDisplayStoreCardDetail
                     && blockType != TemporaryFreezeStoreCard.PERMANENT) {
                 true -> {
@@ -102,9 +103,9 @@ class MyCardDetailActivity : AppCompatActivity(), IStoreCardListener {
             }
         }
         else{
-            val instantCardReplacement = WoolworthsApplication.getInstantCardReplacement()
+            val instantCardReplacement = AppConfigSingleton.instantCardReplacement
             instantCardReplacement?.isEnabled = false
-            WoolworthsApplication.setInstantCardReplacement(instantCardReplacement)
+            AppConfigSingleton.instantCardReplacement = instantCardReplacement
             addFragment(
                 fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
                 tag = MyCardBlockedFragment::class.java.simpleName,

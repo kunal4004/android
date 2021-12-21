@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.try_it_on_banner.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -305,9 +306,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showDeliveryOptionDialog()
                 }
 
-                if (WoolworthsApplication.isProductItemForLiquorInvetoryPending()) {
-                    WoolworthsApplication.getProductItemForInventory()?.let { productList ->
-                        WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId?.let {
+                if (AppConfigSingleton.isProductItemForLiquorInventoryPending) {
+                    AppConfigSingleton.productItemForLiquorInventory?.let { productList ->
+                        AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId?.let {
                             dismissProgressBar()
                             queryInventoryForStore(
                                 it,
@@ -316,8 +317,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             )
                         }
 
-                        WoolworthsApplication.setCallForLiquorInventory(false)
-                        WoolworthsApplication.setProductItemForInventory(null)
+                        AppConfigSingleton.isProductItemForLiquorInventoryPending = false
+                        AppConfigSingleton.productItemForLiquorInventory = null
                     }
                 }
             } else {
@@ -336,7 +337,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             val desc = view.findViewById<TextView>(R.id.desc)
             val close = view.findViewById<Button>(R.id.close)
             val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
-            desc?.text = WoolworthsApplication.getLiquor()?.message ?: ""
+            desc?.text = AppConfigSingleton.liquor?.message ?: ""
             close?.setOnClickListener { dismiss() }
             setSuburb?.setOnClickListener {
                 dismiss()
@@ -785,7 +786,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         )
                     }
                 } else if(resultCode == RESULT_OK){
-                    WoolworthsApplication.setCallForLiquorInventory(true)
+                    AppConfigSingleton.isProductItemForLiquorInventoryPending = true
                 }
             }
             else -> return
@@ -889,7 +890,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if(productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
-            WoolworthsApplication.setProductItemForInventory(productList)
+            AppConfigSingleton.productItemForLiquorInventory = productList
             return
         }
 

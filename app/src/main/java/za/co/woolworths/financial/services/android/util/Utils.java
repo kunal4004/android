@@ -100,6 +100,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -1553,8 +1554,8 @@ public class Utils {
     }
 
     public static Boolean isCreditCardActivationEndpointAvailable() {
-        String startTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
-        String endTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
+        String startTime = AppConfigSingleton.INSTANCE.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
+        String endTime = AppConfigSingleton.INSTANCE.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
         Calendar now = Calendar.getInstance();
         int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
         int minute = now.get(Calendar.MINUTE);

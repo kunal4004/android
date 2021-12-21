@@ -38,6 +38,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY
@@ -47,7 +48,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.models.dto.account.Transaction
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionHeader
 import za.co.woolworths.financial.services.android.models.dto.account.TransactionItem
-import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
+import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity
@@ -400,7 +401,7 @@ class KotlinUtils {
         fun updateCheckOutLink(jSessionId: String?) {
             val appVersionParam = "appVersion"
             val jSessionIdParam = "JSESSIONID"
-            val checkoutLink = WoolworthsApplication.getCartCheckoutLink()
+            val checkoutLink = AppConfigSingleton.cartCheckoutLink
             val context = WoolworthsApplication.getAppContext()
             val packageManager = context.packageManager
 
@@ -550,7 +551,7 @@ class KotlinUtils {
             return capitaliseFirstLetterInName?.plus(lowercaseOtherLetterInName)
         }
 
-        fun isOperatingHoursForInAppChat(tradingHours: MutableList<TradingHours>): Boolean? {
+        fun isOperatingHoursForInAppChat(tradingHours: MutableList<ConfigTradingHours>): Boolean? {
             val (_, opens, closes) = getInAppTradingHoursForToday(tradingHours)
 
             val now = Calendar.getInstance()
@@ -563,8 +564,8 @@ class KotlinUtils {
             return currentTime.after(openingTime) && currentTime.before(closingTime)
         }
 
-        fun getInAppTradingHoursForToday(tradingHours: MutableList<TradingHours>?): TradingHours {
-            var tradingHoursForToday: TradingHours? = null
+        fun getInAppTradingHoursForToday(tradingHours: MutableList<ConfigTradingHours>?): ConfigTradingHours {
+            var tradingHoursForToday: ConfigTradingHours? = null
             tradingHours?.let {
                 it.forEach { tradingHours ->
                     if (tradingHours.day.equals(Utils.getCurrentDay(), true)) {
@@ -573,7 +574,7 @@ class KotlinUtils {
                     }
                 }
             }
-            return tradingHoursForToday ?: TradingHours("sunday", "00:00", "00:00")
+            return tradingHoursForToday ?: ConfigTradingHours("sunday", "00:00", "00:00")
         }
 
         fun avoidDoubleClicks(view: View?) {
@@ -785,7 +786,7 @@ class KotlinUtils {
          */
         fun isCurrentSuburbDeliversLiquor(): Boolean {
             Utils.getPreferredDeliveryLocation()?.apply {
-                return (!storePickup && suburb != null && WoolworthsApplication.getLiquor()?.suburbs?.contains(suburb.id) == true)
+                return (!storePickup && suburb != null && AppConfigSingleton.liquor?.suburbs?.contains(suburb.id) == true)
             }
             return false
         }

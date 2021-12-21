@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -59,7 +60,7 @@ public class SessionKey {
             AsymmetricCryptoHelper.AsymmetricEncryptionFailureException,
             AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException {
         byte[] symmetricKey = generateKey(OUTPUT_KEY_LENGTH).getEncoded();
-        byte[] encryptedSymmetricKeyBuffer = new AsymmetricCryptoHelper().encryptSymmetricKey(symmetricKey, WoolworthsApplication.getAbsaBankingOpenApiServices().getAppPublicKey());
+        byte[] encryptedSymmetricKeyBuffer = new AsymmetricCryptoHelper().encryptSymmetricKey(symmetricKey, AppConfigSingleton.INSTANCE.getAbsaBankingOpenApiServices().getAppPublicKey());
         byte[] symmetricKeyIV = generateKey(OUTPUT_KEY_LENGTH_IV).getEncoded();
         return new SessionKey(symmetricKey, encryptedSymmetricKeyBuffer, symmetricKeyIV);
     }
