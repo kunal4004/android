@@ -111,84 +111,95 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     override fun showProductOfferOutstanding(state: ApplyNowState) {
-        val supported = when(state) {
-            ApplyNowState.PERSONAL_LOAN -> {
-                Utils.getAppBuildNumber() >= AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber!!
-            }
-            ApplyNowState.STORE_CARD -> {
-                Utils.getAppBuildNumber() >= AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.minimumSupportedAppBuildNumber!!
-            }
-            ApplyNowState.GOLD_CREDIT_CARD,
-            ApplyNowState.BLACK_CREDIT_CARD,
-            ApplyNowState.SILVER_CREDIT_CARD-> {
-                Utils.getAppBuildNumber() >= AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber ?: 999
-            }
-        }
-
-        val minimumDelinquencyCycle = when(state){
-            ApplyNowState.PERSONAL_LOAN -> {
-                AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.minimumDelinquencyCycle!!
-            }
-            ApplyNowState.STORE_CARD -> {
-                AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.minimumDelinquencyCycle!!
-            }
-            ApplyNowState.GOLD_CREDIT_CARD,
-            ApplyNowState.BLACK_CREDIT_CARD,
-            ApplyNowState.SILVER_CREDIT_CARD-> {
-                AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle ?: 999
-            }
-        }
-
-        val isCreditCard = when(state){
-            ApplyNowState.PERSONAL_LOAN,
-            ApplyNowState.STORE_CARD-> {
-                false
-            }
-            ApplyNowState.GOLD_CREDIT_CARD,
-            ApplyNowState.BLACK_CREDIT_CARD,
-            ApplyNowState.SILVER_CREDIT_CARD-> {
-                true
-            }
-        }
-
-        val account = getAccount()
-        account?.apply {
-            return when {
-                !productOfferingGoodStanding && supported &&
-                        delinquencyCycle>=minimumDelinquencyCycle -> {
-                    when {
-                        productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
-                            if(!isCreditCard){
-                                mainView?.removeBlocksWhenChargedOff(supported)
-                                mainView?.showViewTreatmentPlan(false)!!
-                            } else{
-                                mainView?.removeBlocksWhenChargedOff(supported)!!
-                            }
-                        }
-                        productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
-                            //display treatment plan popup with view payment options
-                            mainView?.showViewTreatmentPlan(isCreditCard)!!
-                            mainView?.showAccountHelp(getCardProductInformation(true))!!
-
-                        }
-                        else -> {
-                            mainView?.showViewTreatmentPlan(false)!!
-                            mainView?.showAccountHelp(getCardProductInformation(false))!!
-                        }
+        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.let { showTreatmentPlanJourney ->
+            val supported = when(state) {
+                ApplyNowState.PERSONAL_LOAN -> {
+                    showTreatmentPlanJourney.personalLoan.minimumSupportedAppBuildNumber?.let {
+                        Utils.getAppBuildNumber() >= it
                     }
                 }
-                else -> {
-                    if(!productOfferingGoodStanding &&
-                        productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
-                        // account is in arrears for more than 6 months
-                        mainView?.removeBlocksOnCollectionCustomer()!!
-                    } else if(!productOfferingGoodStanding) { // account is in arrears
-                        mainView?.showAccountInArrears(account)
-                        mainView?.showAccountHelp(getCardProductInformation(true))!!
-                    } else{
-                        //when productOfferingGoodStanding == true
-                        mainView?.hideAccountInArrears(account)
-                        mainView?.showAccountHelp(getCardProductInformation(false))!!
+                ApplyNowState.STORE_CARD -> {
+                    showTreatmentPlanJourney.storeCard.minimumSupportedAppBuildNumber?.let {
+                        Utils.getAppBuildNumber() >= it
+                    }
+                }
+                ApplyNowState.GOLD_CREDIT_CARD,
+                ApplyNowState.BLACK_CREDIT_CARD,
+                ApplyNowState.SILVER_CREDIT_CARD-> {
+                    showTreatmentPlanJourney.creditCard.minimumSupportedAppBuildNumber?.let {
+                        Utils.getAppBuildNumber() >= it
+                    }
+                }
+            }
+
+            val minimumDelinquencyCycle = when(state){
+                ApplyNowState.PERSONAL_LOAN -> {
+                    showTreatmentPlanJourney.personalLoan.minimumDelinquencyCycle
+                }
+                ApplyNowState.STORE_CARD -> {
+                    showTreatmentPlanJourney.storeCard.minimumDelinquencyCycle
+                }
+                ApplyNowState.GOLD_CREDIT_CARD,
+                ApplyNowState.BLACK_CREDIT_CARD,
+                ApplyNowState.SILVER_CREDIT_CARD-> {
+                    showTreatmentPlanJourney.creditCard.minimumDelinquencyCycle
+                }
+            }
+
+            val isCreditCard = when(state){
+                ApplyNowState.PERSONAL_LOAN,
+                ApplyNowState.STORE_CARD-> {
+                    false
+                }
+                ApplyNowState.GOLD_CREDIT_CARD,
+                ApplyNowState.BLACK_CREDIT_CARD,
+                ApplyNowState.SILVER_CREDIT_CARD-> {
+                    true
+                }
+            }
+
+            val account = getAccount()
+            account?.apply {
+                return when {
+                    !productOfferingGoodStanding &&
+                            supported!= null &&
+                            supported &&
+                            minimumDelinquencyCycle!= null &&
+                            delinquencyCycle>=minimumDelinquencyCycle -> {
+                        when {
+                            productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
+                                if(!isCreditCard){
+                                    mainView?.removeBlocksWhenChargedOff(supported)
+                                    mainView?.showViewTreatmentPlan(false)!!
+                                } else{
+                                    mainView?.removeBlocksWhenChargedOff(supported)!!
+                                }
+                            }
+                            productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
+                                //display treatment plan popup with view payment options
+                                mainView?.showViewTreatmentPlan(isCreditCard)!!
+                                mainView?.showAccountHelp(getCardProductInformation(true))!!
+
+                            }
+                            else -> {
+                                mainView?.showViewTreatmentPlan(false)!!
+                                mainView?.showAccountHelp(getCardProductInformation(false))!!
+                            }
+                        }
+                    }
+                    else -> {
+                        if(!productOfferingGoodStanding &&
+                            productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                            // account is in arrears for more than 6 months
+                            mainView?.removeBlocksOnCollectionCustomer()!!
+                        } else if(!productOfferingGoodStanding) { // account is in arrears
+                            mainView?.showAccountInArrears(account)
+                            mainView?.showAccountHelp(getCardProductInformation(true))!!
+                        } else{
+                            //when productOfferingGoodStanding == true
+                            mainView?.hideAccountInArrears(account)
+                            mainView?.showAccountHelp(getCardProductInformation(false))!!
+                        }
                     }
                 }
             }
