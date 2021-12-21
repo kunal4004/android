@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.AdditionalFields
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.SecondaryRatings
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Thumbnails
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.AdditionalFields
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.SecondaryRatings
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Thumbnails
 import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SecondaryRatingAdapter
 import za.co.woolworths.financial.services.android.util.Utils
@@ -20,11 +20,17 @@ import za.co.woolworths.financial.services.android.util.Utils
 class RatingAndReviewUtil {
 
     companion object {
+
+        var isComingFromMoreReview:Boolean = false
+
+        var isSuccessFullyReported:Boolean = false
+
         fun isRatingAndReviewConfigavailbel () = Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.ratingsAndReviews?.minimumSupportedAppBuildNumber  )
             ?: false
 
 
-        fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>, rvSecondaryRatings: RecyclerView, context: Context) {
+        fun setSecondaryRatingsUI(secondaryRatings: List<SecondaryRatings>,
+                                  rvSecondaryRatings: RecyclerView, context: Context) {
             rvSecondaryRatings.layoutManager = GridLayoutManager(context, 2)
             val secondaryRatingAdapter = SecondaryRatingAdapter()
             rvSecondaryRatings.adapter = secondaryRatingAdapter

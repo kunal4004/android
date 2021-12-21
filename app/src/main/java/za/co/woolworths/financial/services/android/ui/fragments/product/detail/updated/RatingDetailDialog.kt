@@ -13,8 +13,8 @@ import kotlinx.android.synthetic.main.ratings_ratingdetails.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.close
 import kotlinx.android.synthetic.main.ratings_ratingdetails.close_top
 import kotlinx.android.synthetic.main.reviews_skin_profile.*
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingDistribution
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingDistribution
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -50,7 +50,7 @@ class RatingDetailDialog(private val ratingReviewData: RatingReviewResponse) :
         close?.setOnClickListener(this@RatingDetailDialog)
     }
 
-    private fun setRatingDistributionUI( ratingDistribution: List<RatingDistribution>, reviewCount: Int){
+    private fun setRatingDistributionUI(ratingDistribution: List<RatingDistribution>, reviewCount: Int){
         for (rating in ratingDistribution) {
             when (rating.ratingValue) {
                 1 -> {

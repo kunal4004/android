@@ -14,5 +14,4 @@ class RatingAndReviewApiHelper() : RetrofitConfig() {
             sort,
             refinements
         )
-
 }

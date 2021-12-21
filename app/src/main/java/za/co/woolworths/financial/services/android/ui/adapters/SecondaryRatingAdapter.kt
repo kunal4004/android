@@ -1,14 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.Application
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.SecondaryRatings
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.SecondaryRatings
 
 class SecondaryRatingAdapter() : RecyclerView.Adapter<SecondaryRatingAdapter.ViewHolder>() {
     var dataList = emptyList<SecondaryRatings>()
