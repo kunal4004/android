@@ -14,6 +14,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ArchivedStatement;
 import za.co.absa.openbankingapi.woolworths.integration.dto.IndividualStatementRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -31,6 +32,6 @@ public class AbsaGetIndividualStatementRequest {
         } catch (UnsupportedEncodingException e) {
             FirebaseManager.Companion.logException(e);
         }
-        new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/ArchivedStatementFacadeGetArchivedStatement.exp", NetworkResponse.class, headers, body, true, responseDelegate::onSuccess, responseDelegate::onFatalError);
+        new AbsaBankingOpenApiRequest<>(AppConfigSingleton.INSTANCE.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/ArchivedStatementFacadeGetArchivedStatement.exp", NetworkResponse.class, headers, body, true, responseDelegate::onSuccess, responseDelegate::onFatalError);
     }
 }

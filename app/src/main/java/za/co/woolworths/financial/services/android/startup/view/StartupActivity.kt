@@ -27,6 +27,7 @@ import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.firebase.FirebaseConfigUtils
 import za.co.woolworths.financial.services.android.firebase.model.ConfigData
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
@@ -404,7 +405,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         val isFirstTime = startupViewModel.getSessionDao(SessionDao.KEY.ON_BOARDING_SCREEN)
         var appLinkData: Any? = deeplinkIntent.data
 
-        WoolworthsApplication.setIsBadgesRequired(deeplinkIntent.extras?.containsKey("google.message_id") != true)
+        AppConfigSingleton.isBadgesRequired = deeplinkIntent.extras?.containsKey("google.message_id") != true
 
         if (appLinkData == null && deeplinkIntent.extras != null) {
             appLinkData = deeplinkIntent.extras
