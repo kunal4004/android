@@ -1433,16 +1433,14 @@ public class Utils {
         }
     }
 
-    public static int getMinimumSupportedAppBuildNumber(Integer  minimumSupportedAppBuildNumber) {
-        return minimumSupportedAppBuildNumber;
-    }
-
     public static Integer getAppBuildNumber() {
         return BuildConfig.VERSION_CODE;
     }
 
-    public static Boolean isFeatureEnabled(Integer  minimumSupportedAppBuildNumber) {
-        return (getAppBuildNumber() >= getMinimumSupportedAppBuildNumber(minimumSupportedAppBuildNumber));
+    public static Boolean isFeatureEnabled(Integer minimumSupportedAppBuildNumber) {
+        // if minimumSupportedAppBuildNumber is not present in AppConfig, then we consider the feature to be disabled
+        if (minimumSupportedAppBuildNumber == null) return false;
+        return getAppBuildNumber() >= minimumSupportedAppBuildNumber;
     }
 
     public static boolean checkForBinarySu() {
