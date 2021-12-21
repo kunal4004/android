@@ -1247,7 +1247,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     break;
                 case REQUEST_SUBURB_CHANGE:
                     loadShoppingCartAndSetDeliveryLocation();
-                    reloadFragment();
                     break;
                 case REDEEM_VOUCHERS_REQUEST_CODE:
                 case APPLY_PROMO_CODE_REQUEST_CODE:
@@ -1305,13 +1304,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }
         if (currentStoreId == null && currentSuburbId == null) {
             //Fresh install with no location selection.
-        } else if (currentSuburbId == null && !(currentStoreId == localStoreId)) {
+        } else if (currentSuburbId == null && !(currentStoreId.equals(localStoreId))) {
             localStoreId = currentStoreId;
             localSuburbId = null;
             reloadFragment();
             return;
 
-        } else if (currentStoreId == null && !(localSuburbId == currentSuburbId)) {
+        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
             localSuburbId = currentSuburbId;
             localStoreId = null;
             reloadFragment();
