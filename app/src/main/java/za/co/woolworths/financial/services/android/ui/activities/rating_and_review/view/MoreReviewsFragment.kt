@@ -20,8 +20,8 @@ import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.models.dto.SortOption
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingReviewResponse
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.Reviews
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewLoadStateAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewsAdapter
@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import java.util.ArrayList
 
 class MoreReviewsFragment : Fragment(),
@@ -51,6 +52,8 @@ class MoreReviewsFragment : Fragment(),
     private lateinit var ratingAndResponse: RatingReviewResponse
 
     var reportReviewFragment: ReportReviewFragment? = null
+
+    var reviewDetailsFragment: ReviewDetailsFragment? = null
 
     private var productId: String = "-1"
 
@@ -127,9 +130,9 @@ class MoreReviewsFragment : Fragment(),
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
             } else {
-                // getting the error
+                // show error
                 progress_bar?.visibility = View.GONE
-                val errorState = when {
+                when {
                     it.prepend is LoadState.Error -> it.prepend as LoadState.Error
                     it.append is LoadState.Error -> it.append as LoadState.Error
                     it.refresh is LoadState.Error -> {
@@ -155,13 +158,32 @@ class MoreReviewsFragment : Fragment(),
         )
         reportReviewFragment = ReportReviewFragment.newInstance()
         reportReviewFragment?.arguments = bundle
+        navigateToNextScreen(reportReviewFragment)
+    }
+
+    fun navigateToNextScreen(fragment: Fragment?) {
         activity?.apply {
-            val fragmentManager = supportFragmentManager
-            val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
-            fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.commit()
+            fragment?.let {
+                val fragmentManager = supportFragmentManager
+                val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.content_main_frame, fragment)
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commit()
+            }
         }
+    }
+
+    override fun openReviewDetailsScreen(reviews: Reviews, reportReviewOptions: List<String>?) {
+        RatingAndReviewUtil.isComingFromMoreReview = true
+        val bundle = Bundle()
+        bundle.putStringArrayList(
+                KotlinUtils.REVIEW_REPORT,
+                reportReviewOptions as ArrayList<String>
+        )
+        bundle.putSerializable(KotlinUtils.REVIEW_DATA, reviews)
+        reviewDetailsFragment = ReviewDetailsFragment.newInstance()
+        reviewDetailsFragment?.arguments = bundle
+        navigateToNextScreen(reviewDetailsFragment)
     }
 
     private fun viewSkinProfileDialog(reviews: Reviews) {

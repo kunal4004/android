@@ -92,6 +92,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view1" />
 
+    <LinearLayout
+        android:id="@+id/linear_layout_customer_review"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <TextView
         android:id="@+id/tvReviewHeading"
         style="@style/myriad_pro_semi_bold_black_15_text_style"
@@ -151,13 +160,14 @@
         tools:itemCount="1"
         tools:listitem="@layout/review_secondary_rating_row_item_layout" />
 
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvThumbnail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/twelve_dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvSecondaryRatings"
+        app:layout_constraintTop_toBottomOf="@+id/linear_layout_customer_review"
         tools:itemCount="1"
         tools:listitem="@layout/review_thumbnail_row_item" />
 

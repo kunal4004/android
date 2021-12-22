@@ -1,21 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter
 
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.skin_profile_layout_cell.view.*
-import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.SkinProfile
-import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.SkinProfile
 
 class SkinProfileAdapter(private var skinProfileList: List<SkinProfile>):RecyclerView.Adapter<SkinProfileAdapter.ViewHolder>() {
      class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {

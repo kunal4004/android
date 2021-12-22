@@ -3,13 +3,9 @@ package za.co.woolworths.financial.services.android.models.network
 import android.location.Location
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.Header
-import retrofit2.http.Path
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
@@ -30,7 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.DeleteResponse
 import za.co.woolworths.financial.services.android.models.dto.pma.PaymentMethodsResponse
-import za.co.woolworths.financial.services.android.models.dto.rating_n_reviews.RatingAndReviewData
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingAndReviewData
 import za.co.woolworths.financial.services.android.models.dto.size_guide.SizeGuideResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
@@ -42,7 +38,6 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
-import java.net.URLEncoder
 
 object OneAppService : RetrofitConfig() {
 
@@ -246,6 +241,11 @@ object OneAppService : RetrofitConfig() {
 
     fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
         return mApiInterface.getShippingDetails("", "", getSessionToken(),
+        getDeviceIdentityToken(), body)
+    }
+
+    fun getStorePickupInfo(body: StorePickupInfoBody): Call<ConfirmDeliveryAddressResponse> {
+        return mApiInterface.getStorePickupInfo("", "", getSessionToken(),
         getDeviceIdentityToken(), body)
     }
 
