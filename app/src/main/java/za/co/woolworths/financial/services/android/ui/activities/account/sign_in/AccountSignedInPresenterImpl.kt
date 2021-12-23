@@ -73,7 +73,12 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
-        return accountsResponse.accountList?.filter { account -> account?.productGroupCode == getProductCode(mApplyNowState) }?.get(0)
+        val accountFilteredList: List<Account>? = accountsResponse.accountList?.filter { account -> account?.productGroupCode == getProductCode(mApplyNowState) }
+        return if(!accountFilteredList.isNullOrEmpty()){
+            accountFilteredList[0]
+        } else{
+            null
+        }
     }
 
     @Throws(RuntimeException::class)
