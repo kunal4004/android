@@ -334,7 +334,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void setupToolbar() {
         Utils.updateStatusBarBackground(getActivity());
-        if(getView() == null){
+        if (getView() == null) {
             return;
         }
         View view = getView();
@@ -593,11 +593,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     @Override
     public void onOpenProductDetail(CommerceItem commerceItem) {
-
-        if (!(getActivity() instanceof BottomActivity)) {
-            return;
-        }
-        BottomActivity bottomActivity = (BottomActivity) getActivity();
         ProductDetails productDetails = new ProductDetails();
         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
         productDetails.externalImageRefV2 = commerceItemInfo.externalImageRefV2;
@@ -605,7 +600,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         productDetails.fromPrice = (float) commerceItem.priceInfo.getAmount();
         productDetails.productId = commerceItemInfo.productId;
         productDetails.sku = commerceItemInfo.catalogRefId;
-        bottomActivity.openProductDetailFragment("", productDetails);
+        openProductDetailFragment("", productDetails);
+    }
+
+    public void openProductDetailFragment(String productName, ProductDetails productDetails) {
+        if (getActivity() == null) {
+            return;
+        }
+        Gson gson = new Gson();
+        String strProductList = gson.toJson(productDetails);
+        Bundle bundle = new Bundle();
+        bundle.putString("strProductList", strProductList);
+        bundle.putString("strProductCategory", productName);
+        ScreenManager.presentProductDetails(getActivity(), bundle);
     }
 
     @Override

@@ -91,7 +91,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         localCartCount = QueryBadgeCounter.getInstance().getCartItemCount();
 
         //One time biometricsWalkthrough
-        ScreenManager.presentBiometricWalkthrough(CartActivity.this);
+        ScreenManager.presentBiometricWalkthrough(this);
     }
 
     @Override
