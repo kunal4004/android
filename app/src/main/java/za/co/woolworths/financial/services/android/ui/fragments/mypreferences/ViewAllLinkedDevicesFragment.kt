@@ -130,16 +130,22 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun callRetrieveDevices() {
-        progressLoadDevices.visibility = View.VISIBLE
+        progressLoadDevices?.let {
+            it.visibility = View.VISIBLE
+        }
         val mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse> = OneAppService.getAllLinkedDevices(true)
         mViewAllLinkedDevices.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
             override fun onFailure(error: Throwable?) {
                 //Do Nothing
-                progressLoadDevices.visibility = View.GONE
+                progressLoadDevices?.let {
+                    it.visibility = View.GONE
+                }
             }
 
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                progressLoadDevices.visibility = View.GONE
+                progressLoadDevices?.let {
+                    it.visibility = View.GONE
+                }
                 deviceList = ArrayList(0)
                 deviceList = response?.userDevices
                 if (deviceList.isNullOrEmpty()) {
