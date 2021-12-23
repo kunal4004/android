@@ -32,7 +32,6 @@ class BPIMoreInfoFragment : Fragment()  {
 
         BPIOptInCarouselFragment.htmlContent?.moreInformationHtml?.let {
             bpiMoreInfoWebView?.loadData(it, "text/html; charset=utf-8", null)
-            bpiMoreInfoWebView?.refreshDrawableState()
         }
 
         bpiCheckBox?.onClick {
@@ -61,6 +60,7 @@ class BPIMoreInfoFragment : Fragment()  {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setUpWebView(){
         bpiMoreInfoWebView?.apply {
+            visibility = View.GONE
             with(settings) {
                 javaScriptEnabled = true
             }
@@ -79,6 +79,8 @@ class BPIMoreInfoFragment : Fragment()  {
                             "document.querySelectorAll('body').forEach((element) => { element.classList.add('bpi-notes'); });"
                     bpiMoreInfoWebView.evaluateJavascript(js,null)
 
+                    visibility = View.VISIBLE
+                    refreshDrawableState()
                     super.onPageFinished(view, url)
                 }
             }
