@@ -267,8 +267,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         response.history?.apply {
             if (!categoryDimensions?.isNullOrEmpty()) {
                 mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
-            } else if (!searchCrumbs?.isNullOrEmpty()) {
-                mSubCategoryName = searchCrumbs.get(searchCrumbs.size - 1).terms
+            } else if (searchCrumbs?.isNullOrEmpty() == false) {
+                searchCrumbs?.let {
+                    mSubCategoryName = it.get(it.size -1).terms
+                }
             }
         }
 
@@ -391,6 +393,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     fragmentTransaction,
                     SingleButtonDialogFragment::class.java.simpleName
                 )
+                it.commitAllowingStateLoss()
             }
         } catch (ex: IllegalStateException) {
             FirebaseManager.logException(ex)
