@@ -977,6 +977,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
+                if(it.reviewCount<=0) {
+                    tvTotalReviews.setClickable(false)
+                }
                 tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             }else{
                 hideRatingAndReview()
