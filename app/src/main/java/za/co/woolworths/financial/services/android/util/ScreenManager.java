@@ -172,10 +172,10 @@ public class ScreenManager {
     }
 
     public static void presentProductDetails(FragmentManager fragmentManager, int layoutId, Bundle bundle) {
-        Intent intent = new Intent(activity, ProductDetailsActivity.class);
+        /*Intent intent = new Intent(activity, ProductDetailsActivity.class);
         intent.putExtras(bundle);
         activity.startActivityForResult(intent, PDP_REQUEST_CODE);
-        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);*/
 
         Fragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
         productDetailsFragmentNew.setArguments(bundle);
