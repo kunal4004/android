@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.header_more_review_recycler_view.view.*
 import kotlinx.android.synthetic.main.pdp_rating_layout.view.*
 import kotlinx.android.synthetic.main.ratings_ratingdetails.view.*
+import kotlinx.android.synthetic.main.review_count_layout.view.*
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.android.synthetic.main.review_row_layout.view.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.view.*
@@ -110,7 +111,8 @@ class MoreReviewsAdapter(val context: Context,
                         tvRecommendPercent.text = "${recommend[0]}% "
                         tvRecommendTxtValue.text = recommend[1]
                     }
-                    pdpratings.apply {
+                    tv_review_count.text = reviewCount.toString()
+                        pdpratings.apply {
                         ratingBarTop.visibility = View.VISIBLE
                         tvTotalReviews.visibility = View.VISIBLE
                         ratingBarTop.rating = averageRating

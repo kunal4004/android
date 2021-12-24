@@ -21,42 +21,15 @@
         android:layout_marginTop="@dimen/sixteen_dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/store_card_text_field_height_50_dp" />
-    <TextView
-        android:id="@+id/tv_review_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/futura_semi_bold_black_12_text_style"
 
-        app:layout_constraintTop_toBottomOf="@+id/ratingstatics"
-        app:layout_constraintStart_toStartOf="parent"
-
-        android:layout_marginTop="@dimen/twenty_five_dp"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_reviews_found"
-        android:layout_marginBottom="@dimen/twenty_five_dp"
-        android:text="7"/>
-    <TextView
-        android:id="@+id/tv_reviews_found"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/futura_medium_black_12_text_style"
-        app:layout_constraintTop_toBottomOf="@+id/ratingstatics"
-        app:layout_constraintStart_toStartOf="@+id/tv_review_count"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/twenty_five_dp"
-        android:text="REVIEWS FOUND"
-        android:alpha=".3"
-        android:layout_marginBottom="@dimen/twenty_five_dp"/>
-
-    <View
-        android:background="@color/layout_background_gray"
-        android:id="@+id/view_1"
-        android:layout_marginLeft="@dimen/twenty_dp"
-        android:layout_marginRight="@dimen/twenty_dp"
+    <include
+        android:id="@+id/review_count"
+        layout="@layout/review_count_layout"
+        app:layout_constraintTop_toBottomOf="@+id/sort_and_refine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_reviews_found"
-        android:layout_marginTop="@dimen/twenty_dp"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/one_dp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/two_dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
