@@ -38,6 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -1619,17 +1620,21 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation)
             return;
         FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getSimpleName());
-        CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
-                .setTarget(imgDeliveryLocation)
-                .setTitle(R.string.your_delivery_location)
-                .setDescription(R.string.walkthrough_delivery_location_desc)
-                .setActionText(R.string.tips_edit_delivery_location)
-                .setImage(R.drawable.tips_tricks_ic_stores)
-                .setAction(this)
-                .setShapePadding(24)
-                .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-        CartActivity.walkThroughPromtView.show(getActivity());
+        FragmentActivity fragmentActivity = getActivity();
+        if(fragmentActivity != null){
+            CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
+                    .setTarget(imgDeliveryLocation)
+                    .setTitle(R.string.your_delivery_location)
+                    .setDescription(R.string.walkthrough_delivery_location_desc)
+                    .setActionText(R.string.tips_edit_delivery_location)
+                    .setImage(R.drawable.tips_tricks_ic_stores)
+                    .setAction(this)
+                    .setShapePadding(24)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                    .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+            CartActivity.walkThroughPromtView.show(fragmentActivity);
+        }
+
     }
 
     @Override
@@ -1677,17 +1682,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             isMaterialPopUpClosed = true;
             return;
         }
-        CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS)
-                .setTarget(new View(getActivity()))
-                .setTitle(R.string.redeem_voucher_walkthrough_title)
-                .setDescription(R.string.redeem_voucher_walkthrough_desc)
-                .setActionText(R.string.got_it)
-                .setImage(R.drawable.tips_tricks_ic_redeem_voucher)
-                .setAction(this)
-                .setShouldRender(false)
-                .setArrowPosition(WMaterialShowcaseView.Arrow.NONE)
-                .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-        CartActivity.walkThroughPromtView.show(getActivity());
+        FragmentActivity fragmentActivity = getActivity();
+        if(fragmentActivity != null){
+            CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.CART_REDEEM_VOUCHERS)
+                    .setTarget(new View(fragmentActivity))
+                    .setTitle(R.string.redeem_voucher_walkthrough_title)
+                    .setDescription(R.string.redeem_voucher_walkthrough_desc)
+                    .setActionText(R.string.got_it)
+                    .setImage(R.drawable.tips_tricks_ic_redeem_voucher)
+                    .setAction(this)
+                    .setShouldRender(false)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.NONE)
+                    .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+            CartActivity.walkThroughPromtView.show(fragmentActivity);
+        }
     }
 
     public void showAvailableVouchersToast(int availableVouchersCount) {
