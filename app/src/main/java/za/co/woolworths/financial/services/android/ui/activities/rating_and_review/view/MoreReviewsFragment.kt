@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.android.material.snackbar.Snackbar
@@ -32,11 +34,12 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewHeaderAdapter
 import java.util.ArrayList
 
 class MoreReviewsFragment : Fragment(),
         MoreReviewsAdapter.ReviewItemClickListener,
-        MoreReviewsAdapter.SortAndRefineListener,
+        MoreReviewHeaderAdapter.SortAndRefineListener,
         MoreReviewLoadStateAdapter.HandlePaginationError {
 
     private var onSortRefineFragmentListener: OnSortRefineFragmentListener? = null
@@ -56,6 +59,8 @@ class MoreReviewsFragment : Fragment(),
     var reviewDetailsFragment: ReviewDetailsFragment? = null
 
     private var productId: String = "-1"
+
+    private var totalPages: Int = -1
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -102,19 +107,24 @@ class MoreReviewsFragment : Fragment(),
         val moreReviewsAdapter = MoreReviewsAdapter(
                 requireContext(),
                 this,
-                ratingAndResponse.reviewStatistics,
                 reportReviewOptions,
-                this
+                0
         )
+
+        val loadStateAdapter =  moreReviewsAdapter.withLoadStateFooter(
+                footer = MoreReviewLoadStateAdapter({
+                    moreReviewsAdapter.retry()
+                }, this@MoreReviewsFragment)
+        )
+
+        val headerAdapter = MoreReviewHeaderAdapter(
+                ratingAndResponse.reviewStatistics,
+                this)
+        val concatAdapter = ConcatAdapter(headerAdapter, moreReviewsAdapter, loadStateAdapter)
 
         rv_more_reviews.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = moreReviewsAdapter
-            adapter = moreReviewsAdapter.withLoadStateFooter(
-                    footer = MoreReviewLoadStateAdapter({
-                        moreReviewsAdapter.retry()
-                    }, this@MoreReviewsFragment)
-            )
+            adapter = concatAdapter
         }
 
         lifecycleScope.launch {
@@ -122,7 +132,13 @@ class MoreReviewsFragment : Fragment(),
                     productId,
                     sort, refinements
             ).collectLatest { pagedData ->
-                moreReviewsAdapter.submitData(pagedData)
+                moreReviewViewModel.getRatingReviewResponseLiveData().observe(
+                        requireActivity(), {
+                    totalPages = it.totalResults
+                    moreReviewsAdapter.setTotalPages(totalPages)
+                })
+                moreReviewsAdapter.submitData(lifecycle, pagedData)
+                moreReviewsAdapter.notifyDataSetChanged()
             }
         }
 
@@ -225,9 +241,7 @@ class MoreReviewsFragment : Fragment(),
             onSortRefineFragmentListener?.setupDrawer(false, it)
             onSortRefineFragmentListener?.openDrawer()
         }
-
     }
-
 
     override fun openSortDrawer() {
         val data = moreReviewViewModel.getRatingReviewResponseLiveData()

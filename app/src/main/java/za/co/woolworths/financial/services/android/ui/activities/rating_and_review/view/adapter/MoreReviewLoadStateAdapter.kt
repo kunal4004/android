@@ -10,7 +10,6 @@ import com.awfs.coordination.R
 
 import kotlinx.android.synthetic.main.layout_footer_more_reviews.view.*
 
-
 class MoreReviewLoadStateAdapter(
         private val retry: () -> Unit,
         private val handlePaginationError: HandlePaginationError

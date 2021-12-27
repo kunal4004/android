@@ -22,14 +22,4 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/store_card_text_field_height_50_dp" />
 
-    <include
-        android:id="@+id/review_count"
-        layout="@layout/review_count_layout"
-        app:layout_constraintTop_toBottomOf="@+id/sort_and_refine"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/two_dp" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

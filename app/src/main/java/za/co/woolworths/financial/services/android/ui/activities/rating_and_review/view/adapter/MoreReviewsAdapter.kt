@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.graphics.Paint
+import android.hardware.camera2.TotalCaptureResult
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,10 +27,10 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class MoreReviewsAdapter(val context: Context,
                          val reviewItemClickListener: ReviewItemClickListener,
-                         val reviewStatistics: ReviewStatistics,
                          val reportReviewOptions: List<String>?,
-                         val sortAndRefineListener: SortAndRefineListener) : PagingDataAdapter<Reviews,
-        RecyclerView.ViewHolder>(MoreReviewsComparator), ReviewThumbnailAdapter.ThumbnailClickListener {
+                         var mTotalPages: Int  ) : PagingDataAdapter<Reviews,
+        RecyclerView.ViewHolder>(MoreReviewsComparator),
+        ReviewThumbnailAdapter.ThumbnailClickListener {
 
     private val TYPE_HEADER = 0
     private val TYPE_ITEM = 1
@@ -37,16 +38,10 @@ class MoreReviewsAdapter(val context: Context,
     private lateinit var reviewThumbnailAdapter: ReviewThumbnailAdapter
     private var thumbnailFullList = listOf<Thumbnails>()
 
-
     interface ReviewItemClickListener {
         fun openSkinProfileDialog(reviews: Reviews)
         fun openReportScreen(reportReviewOptions: List<String>?)
         fun openReviewDetailsScreen(reviews: Reviews, reportReviewOptions: List<String>?)
-    }
-
-    interface SortAndRefineListener {
-        fun openRefineDrawer()
-        fun openSortDrawer()
     }
 
     inner class ReviewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -98,33 +93,13 @@ class MoreReviewsAdapter(val context: Context,
     inner class ReviewHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindView() {
             itemView.apply {
-                close_top.visibility = View.GONE
-                rating_details.text = context.getString(R.string.customer_reviews)
-                pdpratings.visibility = View.VISIBLE
-                sort_and_refine.visibility = View.VISIBLE
-                refineProducts.setOnClickListener(View.OnClickListener { sortAndRefineListener.openRefineDrawer() })
-                sortProducts.setOnClickListener(View.OnClickListener { sortAndRefineListener.openSortDrawer() })
-
-                reviewStatistics.apply {
-                    val recommend= recommendedPercentage.split("%")
-                    if (recommend.size == 2) {
-                        tvRecommendPercent.text = "${recommend[0]}% "
-                        tvRecommendTxtValue.text = recommend[1]
-                    }
-                    tv_review_count.text = reviewCount.toString()
-                        pdpratings.apply {
-                        ratingBarTop.visibility = View.VISIBLE
-                        tvTotalReviews.visibility = View.VISIBLE
-                        ratingBarTop.rating = averageRating
-                        tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, reviewCount, reviewCount)
-                        tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-                    }
-                    view_2.visibility = View.GONE
-                    close.visibility = View.INVISIBLE
-                    setRatingDistributionUI(ratingDistribution, reviewCount, itemView)
-                }
+                tv_review_count.text = mTotalPages.toString()
             }
         }
+    }
+
+    fun setTotalPages(totalPages: Int) {
+        this.mTotalPages = totalPages
     }
 
     fun setReviewThumbnailUI(thumbnails: List<Thumbnails>,
@@ -141,43 +116,6 @@ class MoreReviewsAdapter(val context: Context,
         }
     }
 
-    private fun setRatingDistributionUI(ratingDistribution: List<RatingDistribution>,
-                                        reviewCount: Int,
-                                        itemView: View) {
-        itemView.apply {
-            for (rating in ratingDistribution) {
-                when (rating.ratingValue) {
-                    1 -> {
-                        progressbar_1.progress =
-                                Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_1_starRating_count.text = rating.count.toString()
-                    }
-                    2 -> {
-                        progressbar_2.progress =
-                                Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_2_starRating_count.text = rating.count.toString()
-                    }
-                    3 -> {
-                        progressbar_3.progress =
-                                Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_3_starRating_count.text = rating.count.toString()
-                    }
-                    4 -> {
-                        progressbar_4.progress =
-                                Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_4_starRating_count.text = rating.count.toString()
-
-                    }
-                    5 -> {
-                        progressbar_5.progress =
-                                Utils.calculatePercentage(rating.count, reviewCount)
-                        tv_5_starRating_count.text = rating.count.toString()
-                    }
-                }
-            }
-        }
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
             RecyclerView.ViewHolder {
         if (viewType == TYPE_ITEM) {
@@ -190,8 +128,9 @@ class MoreReviewsAdapter(val context: Context,
         return ReviewHeaderViewHolder(
                 LayoutInflater
                         .from(parent.context)
-                        .inflate(R.layout.header_more_review_recycler_view, parent, false))
+                        .inflate(R.layout.review_count_layout, parent, false))
     }
+
 
     object MoreReviewsComparator : DiffUtil.ItemCallback<Reviews>() {
 
@@ -218,4 +157,5 @@ class MoreReviewsAdapter(val context: Context,
     private fun isPositionHeader(position: Int): Boolean {
         return position == 0
     }
+
 }
