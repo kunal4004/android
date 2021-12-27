@@ -34,7 +34,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/two_hundred_and_fifty_dp"
                 android:scaleType="fitXY"
-                android:layout_marginTop="@dimen/twenty_five_dp"
                 android:src="@drawable/icon_confirmation_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

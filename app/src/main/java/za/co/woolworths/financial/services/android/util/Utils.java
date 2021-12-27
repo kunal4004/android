@@ -95,6 +95,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.absa.openbankingapi.DecryptionFailureException;
@@ -668,16 +669,20 @@ public class Utils {
     }
 
     public static String getUniqueDeviceID() {
-        String deviceID = null;
-        if (deviceID == null) {
-            deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
-            if (deviceID == null) {
-                deviceID = FirebaseInstallations.getInstance().getId().getResult().toString();
-                sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
-            }
+        AtomicReference<String> deviceID = new AtomicReference<>(getSessionDaoValue(SessionDao.KEY.DEVICE_ID));
+        if (deviceID.get() == null) {
+            FirebaseInstallations.getInstance().getId().addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    deviceID.set(task.getResult());
+                    sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID.get());
+                }
+                else if(!task.isSuccessful()){
+                    FirebaseManager.logException("Utils.getUniqueDeviceID() task failed");
+                }
+            });
         }
 
-        return deviceID;
+        return deviceID.get();
     }
 
     public static void disableEnableChildViews(View view, boolean enabled) {

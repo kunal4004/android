@@ -29,11 +29,11 @@ import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.DEEP_LINK_REQUEST_CODE
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.Companion.SHARE_LINK_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.TAG
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory.Companion.showItemsLimitToastOnAddToCart
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.isDeliveryOptionClickAndCollect
@@ -114,8 +114,11 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
             }
             val arguments = HashMap<String, String>()
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.PRODUCT_ID] = productId
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] = FirebaseManagerAnalyticsProperties.ACTION_PDP_DEEPLINK
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE_DP_LNK, arguments, this)
+            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE] =
+                FirebaseManagerAnalyticsProperties.ACTION_PDP_DEEPLINK
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_PDP_NATIVE_SHARE_DP_LNK,
+                arguments,
+                this)
 
 
             setupViewModel()
@@ -180,10 +183,11 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
     private fun goToProductDetailsActivity(bundle: Bundle?) {
         if (productDetailsprogressBar.isVisible)
             productDetailsprogressBar.visibility = View.GONE
-        val intent = Intent(this, ProductDetailsActivity::class.java)
-        intent.putExtras(bundle!!)
-        startActivityForResult(intent, deepLinkRequestCode)
-        overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+        val productDetailsFragmentNew = newInstance()
+        productDetailsFragmentNew.arguments = bundle
+        Utils.updateStatusBarBackground(this)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.content_frame, productDetailsFragmentNew, TAG).commit()
     }
 
     override fun onSuccess(bundle: Bundle) {
