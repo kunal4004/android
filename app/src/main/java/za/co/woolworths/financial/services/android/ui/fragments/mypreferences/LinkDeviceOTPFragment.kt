@@ -587,6 +587,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     PersonalLoanFragment.VIEW_PL_STATEMENT_DETAIL -> {
                                                         showPersonalLoanViewStatementScreen()
                                                     }
+                                                    PersonalLoanFragment.PL_PMA_DETAIL -> {
+                                                        showPersonalLoanPMAScreen()
+                                                    }
                                                     else -> {
                                                         goToProduct()
                                                     }
@@ -670,6 +673,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun showPersonalLoanViewStatementScreen(){
         PersonalLoanFragment.SHOW_VIEW_PL_STATEMENT_SCREEN = true
         PersonalLoanFragment.VIEW_PL_STATEMENT_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showPersonalLoanPMAScreen(){
+        PersonalLoanFragment.SHOW_PL_PMA_SCREEN = true
+        PersonalLoanFragment.PL_PMA_DETAIL = false
         activity?.finish()
     }
 

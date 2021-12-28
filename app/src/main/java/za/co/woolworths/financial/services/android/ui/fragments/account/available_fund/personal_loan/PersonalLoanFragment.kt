@@ -39,6 +39,8 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
     companion object {
         var SHOW_VIEW_PL_STATEMENT_SCREEN = false
         var VIEW_PL_STATEMENT_DETAIL = false
+        var SHOW_PL_PMA_SCREEN = false
+        var PL_PMA_DETAIL = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -120,7 +122,13 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
     override fun onClick(view: View?) {
         KotlinUtils.avoidDoubleClicks(view)
         when (view?.id) {
-            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap()
+            R.id.incPayMyAccountButton -> {
+                KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.PERSONAL_LOAN, {
+                    PL_PMA_DETAIL = true
+                },{
+                    onPayMyAccountButtonTap()
+                })
+            }
 
             R.id.incRecentTransactionButton -> {
                 activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS, this) }
@@ -176,6 +184,10 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
             SHOW_VIEW_PL_STATEMENT_SCREEN = false
             activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS, this) }
             navigateToStatementActivity()
+        }
+        else if(SHOW_PL_PMA_SCREEN) {
+            SHOW_PL_PMA_SCREEN = false
+            onPayMyAccountButtonTap()
         }
     }
 }
