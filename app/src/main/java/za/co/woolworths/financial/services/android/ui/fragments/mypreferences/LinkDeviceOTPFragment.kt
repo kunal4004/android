@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.ui.activities.credit_card_del
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
@@ -580,6 +581,17 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     }
                                                 }
                                             }
+                                            ApplyNowState.PERSONAL_LOAN -> {
+                                                MyAccountsFragment.updateLinkedDevices()
+                                                when {
+                                                    PersonalLoanFragment.VIEW_PL_STATEMENT_DETAIL -> {
+                                                        showPersonalLoanViewStatementScreen()
+                                                    }
+                                                    else -> {
+                                                        goToProduct()
+                                                    }
+                                                }
+                                            }
 
                                             else -> goToProduct()
                                         }
@@ -652,6 +664,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun showActivateVirtualTempCardScreen(){
         StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
         StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
+        activity?.finish()
+    }
+
+    private fun showPersonalLoanViewStatementScreen(){
+        PersonalLoanFragment.SHOW_VIEW_PL_STATEMENT_SCREEN = true
+        PersonalLoanFragment.VIEW_PL_STATEMENT_DETAIL = false
         activity?.finish()
     }
 
