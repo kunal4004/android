@@ -128,12 +128,17 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallbac
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
+import android.widget.Toast
+
+
+
 
 @AndroidEntryPoint
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
     MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
      VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener,VtoTryAgainListener ,
-    ReviewThumbnailAdapter.ThumbnailClickListener {
+    ReviewThumbnailAdapter.ThumbnailClickListener,View.OnTouchListener,
+    ViewTreeObserver.OnScrollChangedListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -203,6 +208,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isTakePicture: Boolean = false
     private var isPickedImageFromLiveCamera: Boolean = false
     private var takenOriginalPicture : Bitmap? = null
+    private var isRnRAPICalled = false
 
 
     @OpenTermAndLighting
@@ -288,13 +294,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgDownloadVTO?.setOnClickListener(this)
         imgVTOSplit?.setOnClickListener(this)
         captureImage?.setOnClickListener(this)
+        scrollView.setOnTouchListener(this)
+        scrollView.viewTreeObserver.addOnScrollChangedListener(this)
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
         cameraSurfaceView.setOnTouchListener { _, event ->
             pinchZoomOnVtoLiveCamera(event)
             true
         }
-
+        hideRatingAndReview()
     }
 
     private fun pinchZoomOnVtoLiveCamera(event: MotionEvent?) {
@@ -752,8 +760,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showErrorWhileLoadingProductDetails()
         }
 
-        if (productDetails.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
-            productDetailsPresenter?.loadRatingNReview(productDetails.productId,1,0)
+        /*if (productDetails.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+            productDetailsPresenter?.loadRatingNReview(productDetails.productId,1,0)*/
     }
 
     override fun onProductDetailedFailed(response: Response, httpCode: Int) {
@@ -1030,6 +1038,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         reviewDetailsInformation.visibility = View.GONE
         customerReview.visibility = View.GONE
         rlViewMoreReview.visibility = View.GONE
+    }
+
+    private fun showRatingAndReview(){
+        headerCustomerReview.visibility = View.VISIBLE
+        reviewDetailsInformation.visibility = View.VISIBLE
+        customerReview.visibility = View.VISIBLE
+        rlViewMoreReview.visibility = View.VISIBLE
     }
 
     private fun setReviewUI(ratingNReviewResponse: RatingReviewResponse){
@@ -2406,7 +2421,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData) {
+        hideProgressBar()
         if(ratingNReview.data.isNotEmpty()) {
+            showRatingAndReview()
             setReviewUI(ratingNReview.data[0])
             ratingReviewResponse = ratingNReview.data[0]
         }else
@@ -3034,6 +3051,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun handleException(e: Any?) {
         FirebaseManager.logException(e)
+    }
+
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        return false
+    }
+
+    override fun onScrollChanged() {
+        if (!scrollView.canScrollVertically(1) && !isRnRAPICalled) {
+            if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+                productDetails?.productId?.let {
+                    productDetailsPresenter?.loadRatingNReview(it,1,0)
+                isRnRAPICalled = true
+                showProgressBar()
+                }
+        }
     }
 
 }
