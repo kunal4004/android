@@ -75,6 +75,7 @@ class RatingAndReviewUtil {
                 rootView.addView(tvAdditionalFieldLabel)
                 rootView.addView(ivCircle)
                 rootView.addView(tvAdditionalFieldValue)
+                llAdditionalFields.removeAllViews()
                 llAdditionalFields.addView(rootView)
             }
         }
