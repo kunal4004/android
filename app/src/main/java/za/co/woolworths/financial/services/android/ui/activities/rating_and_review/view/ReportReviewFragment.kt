@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_report_review.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ReportReviewsAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick, TextWatcher {
+class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
 
     companion object {
         fun newInstance() = ReportReviewFragment()
@@ -56,7 +54,6 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick, T
         recyler_report.setLayoutManager(llm)
         reportReviewsAdapter = ReportReviewsAdapter(reportReviewList, this)
         recyler_report.setAdapter(reportReviewsAdapter)
-        edt_txt_feedback?.addTextChangedListener(this)
         btn_submit_report.setOnClickListener {
             openReportScreenFragment()
         }
@@ -81,36 +78,11 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick, T
         }
 
         if (reportReviewsAdapter.getAllCheckBoxCount() != 0) {
-            if (edt_txt_feedback?.isVisible == true) {
-                if (edt_txt_feedback?.text.toString().isEmpty()) {
-                    btn_submit_report.setBackgroundColor(resources.getColor(R.color.gray))
-                    btn_submit_report.isEnabled = false
-                }
-            } else {
-                btn_submit_report.setBackgroundColor(resources.getColor(R.color.black))
-                btn_submit_report.isEnabled = true
-            }
-        } else {
-            btn_submit_report.setBackgroundColor(resources.getColor(R.color.gray))
-            btn_submit_report.isEnabled = false
-        }
-    }
-
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        // no  need to implement
-    }
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        // no  need to implement
-    }
-
-    override fun afterTextChanged(s: Editable?) {
-        if (s.toString().isEmpty()) {
-            btn_submit_report.setBackgroundColor(resources.getColor(R.color.gray))
-            btn_submit_report.isEnabled = false
-        } else {
             btn_submit_report.setBackgroundColor(resources.getColor(R.color.black))
             btn_submit_report.isEnabled = true
+        } else {
+            btn_submit_report.setBackgroundColor(resources.getColor(R.color.gray))
+            btn_submit_report.isEnabled = false
         }
     }
 }
