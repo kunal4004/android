@@ -76,6 +76,7 @@ class KotlinUtils {
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
         const val REVIEW_DATA = "reviewData"
+        const val PROD_ID = "prod_id"
         const val REVIEW_REPORT: String = "reviewReport"
 
         fun highlightTextInDesc(

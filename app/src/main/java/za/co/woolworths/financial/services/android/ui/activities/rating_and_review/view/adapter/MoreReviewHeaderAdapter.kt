@@ -15,13 +15,22 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
 import za.co.woolworths.financial.services.android.util.Utils
 
-class MoreReviewHeaderAdapter(val reviewStatistics: ReviewStatistics,
-                              val sortAndRefineListener: SortAndRefineListener)
+class MoreReviewHeaderAdapter(var reviewStatistics: List<ReviewStatistics>,
+                              val sortAndRefineListener: SortAndRefineListener,
+                              var totalPage: Int)
     : RecyclerView.Adapter<MoreReviewHeaderAdapter.HeaderViewHolder>() {
 
     interface SortAndRefineListener {
         fun openRefineDrawer()
         fun openSortDrawer()
+    }
+
+    fun setReviewStatics(reviewStatisticsList: List<ReviewStatistics>) {
+        this.reviewStatistics = reviewStatisticsList
+    }
+
+    fun setReviewTotalCounts(totalPage: Int){
+        this.totalPage = totalPage
     }
 
     inner class HeaderViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -33,8 +42,14 @@ class MoreReviewHeaderAdapter(val reviewStatistics: ReviewStatistics,
                 sort_and_refine.visibility = View.VISIBLE
                 refineProducts.setOnClickListener({ sortAndRefineListener.openRefineDrawer() })
                 sortProducts.setOnClickListener( { sortAndRefineListener.openSortDrawer() })
+                review_count?.apply {
+                    tv_review_count.text = totalPage.toString()
+                }
 
-                reviewStatistics.apply {
+                if (reviewStatistics.isEmpty()) {
+                    return
+                }
+                reviewStatistics[0].apply {
                     val recommend= recommendedPercentage.split("%")
                     if (recommend.size == 2) {
                         tvRecommendPercent.text = "${recommend[0]}% "

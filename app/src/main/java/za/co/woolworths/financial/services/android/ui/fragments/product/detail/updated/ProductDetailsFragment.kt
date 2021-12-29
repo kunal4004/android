@@ -209,6 +209,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isPickedImageFromLiveCamera: Boolean = false
     private var takenOriginalPicture : Bitmap? = null
     private var isRnRAPICalled = false
+    private var prodId: String = "-1"
 
 
     @OpenTermAndLighting
@@ -362,7 +363,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.btViewMoreReview->navigateToMoreReviewsScreen()
             R.id.tvTotalReviews->navigateToMoreReviewsScreen()
             R.id.tvReport->navigateToReportReviewScreen()
-
         }
     }
 
@@ -511,7 +511,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun navigateToMoreReviewsScreen() {
-        ScreenManager.presentRatingAndReviewDetail(activity, ratingReviewResponse)
+        ScreenManager.presentRatingAndReviewDetail(activity, prodId)
     }
 
     private fun showRatingDetailsDailog() {
@@ -985,6 +985,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
+                prodId = it.productId
                 if(it.reviewCount<=0) {
                     tvTotalReviews.setClickable(false)
                 }

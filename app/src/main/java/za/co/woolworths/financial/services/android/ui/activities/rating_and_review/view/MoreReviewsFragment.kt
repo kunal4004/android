@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,8 +33,9 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewHeaderAdapter
-import java.util.ArrayList
+import kotlin.collections.ArrayList
 
 class MoreReviewsFragment : Fragment(),
         MoreReviewsAdapter.ReviewItemClickListener,
@@ -45,22 +45,20 @@ class MoreReviewsFragment : Fragment(),
     private var onSortRefineFragmentListener: OnSortRefineFragmentListener? = null
     private var sortString: String? = null
     private var refinementString: String? = null
-    private var reportOptionsList: List<String> = listOf()
+    private lateinit var reviewStatistics: ReviewStatistics
+    private var reviewStatisticsList: MutableList<ReviewStatistics> = mutableListOf<ReviewStatistics>()
 
     companion object {
         fun newInstance() = MoreReviewsFragment()
     }
 
     private lateinit var moreReviewViewModel: RatingAndReviewViewModel
-    private lateinit var ratingAndResponse: RatingReviewResponse
 
     var reportReviewFragment: ReportReviewFragment? = null
 
     var reviewDetailsFragment: ReviewDetailsFragment? = null
 
     private var productId: String = "-1"
-
-    private var totalPages: Int = -1
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -76,17 +74,12 @@ class MoreReviewsFragment : Fragment(),
             activity?.onBackPressed()
         }
         arguments?.apply {
-            ratingAndResponse = Utils.jsonStringToObject(
-                    getString(KotlinUtils.REVIEW_DATA),
-                    RatingReviewResponse::class.java
-            ) as RatingReviewResponse
 
-            productId = ratingAndResponse.reviews.get(0).productId
-            reportOptionsList = ratingAndResponse.reportReviewOptions
+            productId = getString(KotlinUtils.PROD_ID, "-1")
             setupViewModel()
-            setReviewsList(null, null, reportOptionsList)
+            setReviewsList(null, null)
             btnRetry?.setOnClickListener {
-                setReviewsList(null, null, reportOptionsList)
+                setReviewsList(null, null)
             }
         }
     }
@@ -100,26 +93,30 @@ class MoreReviewsFragment : Fragment(),
 
     private fun setReviewsList(
             sort: String?,
-            refinements: String?,
-            reportReviewOptions: List<String>?
+            refinements: String?
     ) {
+
+        if (productId == "-1"){
+            return
+        }
 
         val moreReviewsAdapter = MoreReviewsAdapter(
                 requireContext(),
                 this,
-                reportReviewOptions,
-                0
+                listOf<String>()
         )
 
-        val loadStateAdapter =  moreReviewsAdapter.withLoadStateFooter(
+        val loadStateAdapter = moreReviewsAdapter.withLoadStateFooter(
                 footer = MoreReviewLoadStateAdapter({
                     moreReviewsAdapter.retry()
                 }, this@MoreReviewsFragment)
         )
 
         val headerAdapter = MoreReviewHeaderAdapter(
-                ratingAndResponse.reviewStatistics,
-                this)
+                listOf(),
+                this,
+                0)
+
         val concatAdapter = ConcatAdapter(headerAdapter, moreReviewsAdapter, loadStateAdapter)
 
         rv_more_reviews.apply {
@@ -132,13 +129,16 @@ class MoreReviewsFragment : Fragment(),
                     productId,
                     sort, refinements
             ).collectLatest { pagedData ->
-                moreReviewViewModel.getRatingReviewResponseLiveData().observe(
-                        requireActivity(), {
-                    totalPages = it.totalResults
-                    moreReviewsAdapter.setTotalPages(totalPages)
-                })
+                moreReviewViewModel
+                        .getRatingReviewResponseLastestData().observe(viewLifecycleOwner,
+                                {
+                            reviewStatisticsList.add(it.reviewStatistics)
+                            headerAdapter.setReviewTotalCounts(it.totalResults)
+                            moreReviewsAdapter.setReviewOptionsList(it.reportReviewOptions)
+                            headerAdapter.setReviewStatics(reviewStatisticsList)
+                            headerAdapter.notifyDataSetChanged()
+                        })
                 moreReviewsAdapter.submitData(lifecycle, pagedData)
-                moreReviewsAdapter.notifyDataSetChanged()
             }
         }
 
@@ -255,13 +255,13 @@ class MoreReviewsFragment : Fragment(),
     fun onSortOptionSelected(sortOption: SortOption) {
         sortString = sortOption.sortOption
         onSortRefineFragmentListener?.closeDrawer()
-        setReviewsList(sortString, refinementString, reportOptionsList)
+        setReviewsList(sortString, refinementString)
     }
 
     fun onRefineOptionSelected(refinements: String?) {
         if (refinementString != refinements) {
             refinementString = refinements
-            setReviewsList(sortString, refinementString, reportOptionsList)
+            setReviewsList(sortString, refinementString)
         }
         onSortRefineFragmentListener?.closeDrawer()
     }
@@ -270,7 +270,7 @@ class MoreReviewsFragment : Fragment(),
         val actionTextColor = ContextCompat.getColor(requireContext(), R.color.white)
         Snackbar.make(more_review_layout, R.string.failed_more_reviews, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.retry_txt, {
-                    setReviewsList(null, null, reportOptionsList)
+                    setReviewsList(null, null)
                 }).setActionTextColor(actionTextColor)
                 .show()
     }
