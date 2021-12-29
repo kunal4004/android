@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -329,6 +330,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         expireInfo?.setOnClickListener(this)
     }
 
+    @DelicateCoroutinesApi
     private fun populateView() {
         GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
             mStoreCard?.apply {
@@ -361,10 +363,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                         cardStatus?.text = getString(R.string.active)
                     }
                 }
-            }
 
-            uniqueIdsForCardDetails()
-            initTemporaryFreezeCard()
+                uniqueIdsForCardDetails()
+                initTemporaryFreezeCard()
+            }
         }
     }
 
