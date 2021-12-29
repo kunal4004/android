@@ -13,8 +13,7 @@
         app:layout_constraintEnd_toStartOf="@+id/tv_reviews_found"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="@dimen/twenty_five_dp"
-        android:text="7"/>
+        android:layout_marginTop="@dimen/twenty_five_dp" />
     <TextView
         android:id="@+id/tv_reviews_found"
         android:layout_width="wrap_content"
@@ -24,7 +23,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_review_count"
         android:layout_marginTop="@dimen/twenty_five_dp"
-        android:text="REVIEWS FOUND"
         android:alpha=".3"
         android:letterSpacing="@integer/point_one"
         android:layout_marginStart="@dimen/five_dp"/>

@@ -19,9 +19,6 @@ import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
 import android.view.*
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -82,7 +79,6 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.Quantity
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 import kotlin.collections.ArrayList
-import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
@@ -120,6 +116,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonitor
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import android.graphics.Bitmap
+import android.widget.*
 import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
@@ -128,9 +125,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallbac
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
-import android.widget.Toast
-
-
 
 
 @AndroidEntryPoint
@@ -2430,7 +2424,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showRatingAndReview()
             setReviewUI(ratingNReview.data[0])
             ratingReviewResponse = ratingNReview.data[0]
-        }else
+            scrollView.post {
+                scrollView.fullScroll(View.FOCUS_DOWN)
+            }
+        } else
             hideRatingAndReview()
     }
 

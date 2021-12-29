@@ -44,6 +44,7 @@ class MoreReviewHeaderAdapter(var reviewStatistics: List<ReviewStatistics>,
                 sortProducts.setOnClickListener( { sortAndRefineListener.openSortDrawer() })
                 review_count?.apply {
                     tv_review_count.text = totalPage.toString()
+                    tv_reviews_found.text = resources.getQuantityString(R.plurals.review_found, totalPage)
                 }
 
                 if (reviewStatistics.isEmpty()) {
