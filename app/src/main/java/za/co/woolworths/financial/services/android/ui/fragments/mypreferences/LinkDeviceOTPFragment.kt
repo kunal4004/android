@@ -555,7 +555,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                 //check if should activate credit card or should schedule delivery
                                                 activateCreditCardOrScheduleCardDelivery()
                                             }*/
-                                            ApplyNowState.STORE_CARD -> {
+                                            ApplyNowState.STORE_CARD,
+                                            ApplyNowState.PERSONAL_LOAN -> {
                                                 MyAccountsFragment.updateLinkedDevices()
                                                 when {
                                                     MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
@@ -576,19 +577,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
                                                         showActivateVirtualTempCardScreen()
                                                     }
-                                                    else -> {
-                                                        goToProduct()
-                                                    }
-                                                }
-                                            }
-                                            ApplyNowState.PERSONAL_LOAN -> {
-                                                MyAccountsFragment.updateLinkedDevices()
-                                                when {
-                                                    PersonalLoanFragment.VIEW_PL_STATEMENT_DETAIL -> {
-                                                        showPersonalLoanViewStatementScreen()
-                                                    }
-                                                    PersonalLoanFragment.PL_PMA_DETAIL -> {
-                                                        showPersonalLoanPMAScreen()
+
+                                                    PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL -> {
+                                                        showPersonalLoanWithdrawFundsScreen()
                                                     }
                                                     else -> {
                                                         goToProduct()
@@ -670,15 +661,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         activity?.finish()
     }
 
-    private fun showPersonalLoanViewStatementScreen(){
-        PersonalLoanFragment.SHOW_VIEW_PL_STATEMENT_SCREEN = true
-        PersonalLoanFragment.VIEW_PL_STATEMENT_DETAIL = false
-        activity?.finish()
-    }
-
-    private fun showPersonalLoanPMAScreen(){
-        PersonalLoanFragment.SHOW_PL_PMA_SCREEN = true
-        PersonalLoanFragment.PL_PMA_DETAIL = false
+    private fun showPersonalLoanWithdrawFundsScreen(){
+        PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN = true
+        PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL = false
         activity?.finish()
     }
 

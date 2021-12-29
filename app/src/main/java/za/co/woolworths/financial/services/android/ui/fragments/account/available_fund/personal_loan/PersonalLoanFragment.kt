@@ -37,10 +37,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 
     companion object {
-        var SHOW_VIEW_PL_STATEMENT_SCREEN = false
-        var VIEW_PL_STATEMENT_DETAIL = false
-        var SHOW_PL_PMA_SCREEN = false
-        var PL_PMA_DETAIL = false
+        var SHOW_PL_WITHDRAW_FUNDS_SCREEN = false
+        var PL_WITHDRAW_FUNDS_DETAIL = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -122,25 +120,15 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
     override fun onClick(view: View?) {
         KotlinUtils.avoidDoubleClicks(view)
         when (view?.id) {
-            R.id.incPayMyAccountButton -> {
-                KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.PERSONAL_LOAN, {
-                    PL_PMA_DETAIL = true
-                },{
-                    onPayMyAccountButtonTap()
-                })
-            }
+            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap()
 
             R.id.incRecentTransactionButton -> {
                 activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS, this) }
                 navigateToRecentTransactionActivity(AccountsProductGroupCode.PERSONAL_LOAN.groupCode)
             }
             R.id.incViewStatementButton -> {
-                KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.PERSONAL_LOAN, {
-                    VIEW_PL_STATEMENT_DETAIL = true
-                },{
-                    activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS, this) }
-                    navigateToStatementActivity()
-                })
+                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS, this) }
+                navigateToStatementActivity()
             }
         }
     }
@@ -175,19 +163,6 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                         queryPaymentMethod()
                 }
             }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if(SHOW_VIEW_PL_STATEMENT_SCREEN) {
-            SHOW_VIEW_PL_STATEMENT_SCREEN = false
-            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS, this) }
-            navigateToStatementActivity()
-        }
-        else if(SHOW_PL_PMA_SCREEN) {
-            SHOW_PL_PMA_SCREEN = false
-            onPayMyAccountButtonTap()
         }
     }
 }
