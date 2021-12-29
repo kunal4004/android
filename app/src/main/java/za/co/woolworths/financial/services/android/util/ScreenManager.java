@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
 
@@ -167,10 +166,10 @@ public class ScreenManager {
     }
 
     public static void presentProductDetails(Activity activity, Bundle bundle) {
-        Intent intent = new Intent(activity, ProductDetailsActivity.class);
+        /*Intent intent = new Intent(activity, ProductDetailsActivity.class);
         intent.putExtras(bundle);
         activity.startActivityForResult(intent, PDP_REQUEST_CODE);
-        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);*/
     }
 
     public static void presentShoppingCart(Activity activity) {
