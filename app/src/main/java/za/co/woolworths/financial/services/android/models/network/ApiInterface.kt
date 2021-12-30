@@ -1224,7 +1224,7 @@ interface ApiInterface {
     ):Call<GenericResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("https://9b732904-0c2c-4df4-9433-deca2c487e03.mock.pstmn.io/wfs/app/v4/accounts/collections/checkEligibility")
+    @GET("https://b69f9bea-5fed-4a56-adf7-cadf2c278710.mock.pstmn.io/wfs/app/v4/accounts/collections/checkEligibility")
     fun getEligibilityForTakeUpPlan(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
