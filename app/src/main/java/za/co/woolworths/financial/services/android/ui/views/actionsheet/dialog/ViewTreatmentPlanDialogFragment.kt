@@ -154,7 +154,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
                     ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE ->
                         bindString(R.string.remove_block_on_collection_dialog_title)
 
-                    else -> bindString(R.string.view_treatment_plan_description)
+                    else -> bindString(R.string.payment_overdue_label)
                 }
         }
     }
