@@ -106,18 +106,17 @@ class MoreReviewsFragment : Fragment(),
                 listOf<String>()
         )
 
-        val loadStateAdapter = moreReviewsAdapter.withLoadStateFooter(
-                footer = MoreReviewLoadStateAdapter({
-                    moreReviewsAdapter.retry()
-                }, this@MoreReviewsFragment)
-        )
-
         val headerAdapter = MoreReviewHeaderAdapter(
                 listOf(),
                 this,
                 0)
 
-        val concatAdapter = ConcatAdapter(headerAdapter, moreReviewsAdapter, loadStateAdapter)
+        val footerLoadStateAdapter = moreReviewsAdapter.withLoadStateFooter(
+                footer = MoreReviewLoadStateAdapter({
+                    moreReviewsAdapter.retry()
+                }, this@MoreReviewsFragment)
+        )
+        val concatAdapter = ConcatAdapter(headerAdapter, footerLoadStateAdapter)
 
         rv_more_reviews.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -138,7 +137,8 @@ class MoreReviewsFragment : Fragment(),
                             headerAdapter.setReviewStatics(reviewStatisticsList)
                             headerAdapter.notifyDataSetChanged()
                         })
-                moreReviewsAdapter.submitData(lifecycle, pagedData)
+                moreReviewsAdapter.snapshot().count()
+                moreReviewsAdapter.submitData(pagedData)
             }
         }
 

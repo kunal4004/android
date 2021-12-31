@@ -10,9 +10,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_cart.view.*
 
-import kotlinx.android.synthetic.main.review_count_layout.view.*
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.android.synthetic.main.review_row_layout.view.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.Reviews
@@ -92,7 +90,6 @@ class MoreReviewsAdapter(var context: Context,
     }
 
     override fun onBindViewHolder(holder: ReviewsViewHolder, position: Int) {
-        Log.e("onBindViewHolder", "called")
         holder.bindView(getItem(position))
     }
 
@@ -119,5 +116,9 @@ class MoreReviewsAdapter(var context: Context,
     override fun thumbnailClicked() {
         reviewThumbnailAdapter.setDataList(thumbnailFullList)
         reviewThumbnailAdapter.notifyDataSetChanged()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 }
