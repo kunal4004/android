@@ -35,6 +35,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLo
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.location.*
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 class StoreCardOptionsFragment : AccountsOptionFragment() {
 
@@ -300,11 +302,13 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                     navigateToGetStoreCards()
                 }
             }
+            VoiceOfCustomerManager.showVocSurveyIfNeeded(context, VocTriggerEvent.MYACCOUNTS_BLOCKCARD_CONFIRM)
         }
         //Activate VTC journey when successfully activated
         if (resultCode == ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE) {
             navigateToGetStoreCards()
             //ICR Journey success and When Get replacement card email confirmation is success and result ok
+            VoiceOfCustomerManager.showVocSurveyIfNeeded(context, VocTriggerEvent.MYACCOUNTS_ICR_LINK_CONFIRM)
         } else if (requestCode == MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD && resultCode == AppCompatActivity.RESULT_OK) {
             navigateToGetStoreCards()
         }
