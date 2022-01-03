@@ -34,6 +34,8 @@ import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewHeaderAdapter
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import kotlin.collections.ArrayList
 
 class MoreReviewsFragment : Fragment(),
@@ -171,14 +173,18 @@ class MoreReviewsFragment : Fragment(),
     }
 
     override fun openReportScreen(reportReviewOptions: List<String>?) {
-        val bundle = Bundle()
-        bundle.putStringArrayList(
-                KotlinUtils.REVIEW_REPORT,
-                reportReviewOptions as ArrayList<String>
-        )
-        reportReviewFragment = ReportReviewFragment.newInstance()
-        reportReviewFragment?.arguments = bundle
-        navigateToNextScreen(reportReviewFragment)
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
+            val bundle = Bundle()
+            bundle.putStringArrayList(
+                    KotlinUtils.REVIEW_REPORT,
+                    reportReviewOptions as ArrayList<String>
+            )
+            reportReviewFragment = ReportReviewFragment.newInstance()
+            reportReviewFragment?.arguments = bundle
+            navigateToNextScreen(reportReviewFragment)
+        }
     }
 
     fun navigateToNextScreen(fragment: Fragment?) {

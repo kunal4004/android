@@ -26,6 +26,8 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ProductReviewViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.SkinProfileAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.ArrayList
 
@@ -113,20 +115,24 @@ class ReviewDetailsFragment : Fragment() {
     }
 
     private fun openReportScreen(reportReviewOptions: List<String>) {
-        val bundle = Bundle()
-        bundle.putStringArrayList(
-                KotlinUtils.REVIEW_REPORT,
-                reportReviewOptions as ArrayList<String>
-        )
-        reportReviewFragment = ReportReviewFragment.newInstance()
-        reportReviewFragment?.arguments = bundle
-        activity?.apply {
-            reportReviewFragment?.let {
-                val fragmentManager = supportFragmentManager
-                val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-                fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
-                fragmentTransaction.addToBackStack(null)
-                fragmentTransaction.commit()
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
+            val bundle = Bundle()
+            bundle.putStringArrayList(
+                    KotlinUtils.REVIEW_REPORT,
+                    reportReviewOptions as ArrayList<String>
+            )
+            reportReviewFragment = ReportReviewFragment.newInstance()
+            reportReviewFragment?.arguments = bundle
+            activity?.apply {
+                reportReviewFragment?.let {
+                    val fragmentManager = supportFragmentManager
+                    val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+                    fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
+                    fragmentTransaction.addToBackStack(null)
+                    fragmentTransaction.commit()
+                }
             }
         }
     }
