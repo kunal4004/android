@@ -1365,8 +1365,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public void onToastButtonClicked(@Nullable JsonElement jsonElement) {
         if (mNavController != null && mNavController.getCurrentFrag() instanceof CartFragment) {
             NavigateToShoppingList.Companion navigateTo = NavigateToShoppingList.Companion;
-            if (jsonElement != null)
+            if (jsonElement != null) {
+                //Navigate to shop tab, select My list tab and open shopping list
+                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                if (getCurrentFragment() instanceof ShopFragment) {
+                    ShopFragment shopFragment = (ShopFragment) getCurrentFragment();
+                    shopFragment.navigateToMyListFragment();
+                }
                 navigateTo.navigateToShoppingListOnToastClicked(this, jsonElement);
+            }
             return;
         }
         switchToShoppingListTab(jsonElement);

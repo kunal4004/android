@@ -344,6 +344,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         btnEditCart.setText(R.string.edit);
         pbRemoveAllItem = toolbar.findViewById(R.id.pbRemoveAllItem);
         btnClearCart = toolbar.findViewById(R.id.btnClearCart);
+
+        btnClearCart.setVisibility(View.GONE);
+        pbRemoveAllItem.setVisibility(View.GONE);
         btnEditCart.setOnClickListener(this);
         btnClearCart.setOnClickListener(this);
     }
@@ -594,6 +597,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     @Override
     public void onOpenProductDetail(CommerceItem commerceItem) {
+        if (!(getActivity() instanceof BottomNavigationActivity)) {
+            return;
+        }
+        // Move to shop tab.
+        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+        bottomNavigationActivity.getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+
         ProductDetails productDetails = new ProductDetails();
         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
         productDetails.externalImageRefV2 = commerceItemInfo.externalImageRefV2;
@@ -793,7 +803,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     cartItems.add(cartItemGroupUpdated);
             }
 
-
             if (updatedCommerceItem != null) {
                 ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
                 for (CartItemGroup cartItemGroup : cartItems) {
@@ -866,6 +875,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     cartProductAdapter.notifyAdapter(currentCartItemGroup, orderSummary, voucherDetails);
                     fadeCheckoutButton(false);
                 }
+            }
+            if (productCountMap != null && productCountMap.getTotalProductCount() > 0) {
+                QueryBadgeCounter.getInstance().setCartCount(productCountMap.getTotalProductCount());
             }
         } else {
             cartProductAdapter.clear();
