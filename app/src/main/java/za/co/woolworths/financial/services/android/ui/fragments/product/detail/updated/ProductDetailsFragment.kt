@@ -2213,7 +2213,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if(RatingAndReviewUtil.isSuccessFullyReported) {
             tvReport?.text = getString(R.string.reported)
-            tvReport?.setTextColor(resources.getColor(R.color.red))
+            tvReport?.setTextColor(Color.RED)
             RatingAndReviewUtil.isSuccessFullyReported = false
         }
     }

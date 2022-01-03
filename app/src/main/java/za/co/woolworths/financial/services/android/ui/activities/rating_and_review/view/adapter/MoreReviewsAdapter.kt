@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Paint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +20,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.ReviewThumbnailAd
 
 class MoreReviewsAdapter(var context: Context,
                          val reviewItemClickListener: ReviewItemClickListener,
-                         var reportReviewOptions: List<String>?) : PagingDataAdapter<Reviews,
+                         var reportReviewOptions: List<String>?,
+                         var reportPosiionList: MutableList<Int>) : PagingDataAdapter<Reviews,
         MoreReviewsAdapter.ReviewsViewHolder>(MoreReviewsComparator),
         ReviewThumbnailAdapter.ThumbnailClickListener {
 
@@ -38,7 +39,7 @@ class MoreReviewsAdapter(var context: Context,
     }
 
     inner class ReviewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindView(review: Reviews?) {
+        fun bindView(review: Reviews?, position: Int) {
             itemView.apply {
                 review?.apply {
                     tvName.text = userNickname
@@ -62,8 +63,13 @@ class MoreReviewsAdapter(var context: Context,
                     tvSkinProfile.paintFlags = Paint.UNDERLINE_TEXT_FLAG
 
                     reviewHelpfulReport.apply {
+                        if (reportPosiionList.contains(position) && RatingAndReviewUtil.isSuccessFullyReported) {
+                            tvReport.setTextColor(Color.RED)
+                            RatingAndReviewUtil.isSuccessFullyReported = false
+                        }
                         tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                         tvReport.setOnClickListener {
+                            reportPosiionList.add(position)
                             reviewItemClickListener.openReportScreen(reportReviewOptions)
                         }
                     }
@@ -90,7 +96,7 @@ class MoreReviewsAdapter(var context: Context,
     }
 
     override fun onBindViewHolder(holder: ReviewsViewHolder, position: Int) {
-        holder.bindView(getItem(position))
+        holder.bindView(getItem(position), position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):

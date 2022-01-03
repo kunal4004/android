@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
@@ -58,6 +57,8 @@ class MoreReviewsFragment : Fragment(),
 
     var reviewDetailsFragment: ReviewDetailsFragment? = null
 
+    private var reportPosiionList = mutableListOf<Int>()
+
     private var productId: String = "-1"
 
     override fun onCreateView(
@@ -72,6 +73,8 @@ class MoreReviewsFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
         toolbar_more_review.btn_back.setOnClickListener {
             activity?.onBackPressed()
+            reportPosiionList.clear()
+            RatingAndReviewUtil.isSuccessFullyReported = false
         }
         arguments?.apply {
 
@@ -103,7 +106,8 @@ class MoreReviewsFragment : Fragment(),
         val moreReviewsAdapter = MoreReviewsAdapter(
                 requireContext(),
                 this,
-                listOf<String>()
+                listOf<String>(),
+                reportPosiionList
         )
 
         val headerAdapter = MoreReviewHeaderAdapter(
@@ -273,5 +277,10 @@ class MoreReviewsFragment : Fragment(),
                     setReviewsList(null, null)
                 }).setActionTextColor(actionTextColor)
                 .show()
+    }
+
+    fun onbackPressed() {
+        RatingAndReviewUtil.isSuccessFullyReported = false
+        activity?.onBackPressed()
     }
 }

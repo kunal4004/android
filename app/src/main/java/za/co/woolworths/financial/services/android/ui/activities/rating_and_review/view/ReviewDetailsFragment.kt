@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -84,6 +85,11 @@ class ReviewDetailsFragment : Fragment() {
             rating_bar.rating = rating
             tv_skin_label.text = title
             skin_detail.text = reviewText
+            if (RatingAndReviewUtil.isSuccessFullyReported) {
+                tvReport.setTextColor(Color.RED)
+                RatingAndReviewUtil.isSuccessFullyReported = false
+            }
+
             tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
             setVerifiedBuyers(isVerifiedBuyer)
             setSkinProfielLayout(contextDataValue, tagDimensions)
@@ -107,19 +113,21 @@ class ReviewDetailsFragment : Fragment() {
     }
 
     private fun openReportScreen(reportReviewOptions: List<String>) {
-        activity?.apply {
-            val bundle = Bundle()
-            bundle.putStringArrayList(
+        val bundle = Bundle()
+        bundle.putStringArrayList(
                 KotlinUtils.REVIEW_REPORT,
                 reportReviewOptions as ArrayList<String>
-            )
-            reportReviewFragment = ReportReviewFragment.newInstance()
-            reportReviewFragment?.arguments = bundle
-            val fragmentManager = getSupportFragmentManager()
-            val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
-            fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.commit()
+        )
+        reportReviewFragment = ReportReviewFragment.newInstance()
+        reportReviewFragment?.arguments = bundle
+        activity?.apply {
+            reportReviewFragment?.let {
+                val fragmentManager = supportFragmentManager
+                val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commit()
+            }
         }
     }
 
