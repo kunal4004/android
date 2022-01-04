@@ -208,6 +208,15 @@
                     app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2" />
 
                 <include
+                    android:id="@+id/lowStockSingleProduct"
+                    layout="@layout/low_stock_product_details"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@id/left_guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2"/>
+
+                <include
                     android:id="@+id/freeGiftWithPurchaseLayout"
                     layout="@layout/product_details_gift_with_purchase"
                     android:layout_width="match_parent"
