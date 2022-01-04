@@ -89,6 +89,7 @@ class ReviewDetailsFragment : Fragment() {
             skin_detail.text = reviewText
             if (RatingAndReviewUtil.isSuccessFullyReported) {
                 tvReport.setTextColor(Color.RED)
+                tvReport.text = getString(R.string.reported)
                 RatingAndReviewUtil.isSuccessFullyReported = false
             }
 

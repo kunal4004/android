@@ -65,6 +65,7 @@ class MoreReviewsAdapter(var context: Context,
                     reviewHelpfulReport.apply {
                         if (reportPosiionList.contains(position) && RatingAndReviewUtil.isSuccessFullyReported) {
                             tvReport.setTextColor(Color.RED)
+                            tvReport.setText(resources.getString(R.string.reported))
                             RatingAndReviewUtil.isSuccessFullyReported = false
                         }
                         tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
