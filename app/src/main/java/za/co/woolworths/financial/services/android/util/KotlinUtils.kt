@@ -24,6 +24,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
@@ -35,6 +36,7 @@ import com.awfs.coordination.R
 import com.google.common.reflect.TypeToken
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -845,6 +847,22 @@ class KotlinUtils {
             else{
                 elseJob()
             }
+        }
+
+        fun lowercaseEditText(editText: EditText){
+            editText.filters = arrayOf<InputFilter>(
+                object : InputFilter.AllCaps() {
+                    override fun filter(
+                        source: CharSequence,
+                        start: Int,
+                        end: Int,
+                        dest: Spanned?,
+                        dstart: Int,
+                        dend: Int ): CharSequence {
+                        return source.toString().lowercase()
+                    }
+                }
+            )
         }
     }
 

@@ -193,6 +193,12 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
         didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         didNotReceiveOTPTextView?.setOnClickListener(this)
 
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt1)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt2)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt3)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt4)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt5)
+
         linkDeviceOTPEdtTxt1?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2) { validateNextButton() })
         linkDeviceOTPEdtTxt2?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3) { validateNextButton() })
         linkDeviceOTPEdtTxt3?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4) { validateNextButton() })
