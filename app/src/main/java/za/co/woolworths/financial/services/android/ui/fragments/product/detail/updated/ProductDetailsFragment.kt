@@ -682,9 +682,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         } else {
             showErrorWhileLoadingProductDetails()
         }
-        if(!hasColor && !hasSize && productDetails.lowStockIndicator > productDetails.otherSkus[0].quantity){
-            showLowStockForSingleProduct()
-        }
     }
 
     override fun onProductDetailedFailed(response: Response, httpCode: Int) {
@@ -2930,15 +2927,5 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
     }
-
-    /**
-     * Show low stock for single product
-     * This Method used for show low stock if size and color not available
-     * And low stock indicator greater then product quantity
-     */
-    private fun showLowStockForSingleProduct() {
-        lowStockSingleProduct?.visibility = View.VISIBLE
-    }
-
 }
 
