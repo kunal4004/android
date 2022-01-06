@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <TextView
+        android:id="@+id/tv_review_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/futura_semi_bold_black_12_text_style"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_reviews_found"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/twenty_five_dp" />
+    <TextView
+        android:id="@+id/tv_reviews_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/futura_medium_black_12_text_style"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_review_count"
+        android:layout_marginTop="@dimen/twenty_five_dp"
+        android:alpha=".3"
+        android:letterSpacing="@integer/point_one"
+        android:layout_marginStart="@dimen/five_dp"/>
+
+    <View
+        android:background="@color/layout_background_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_reviews_found"
+        android:layout_marginTop="@dimen/twenty_two_dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/one_dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

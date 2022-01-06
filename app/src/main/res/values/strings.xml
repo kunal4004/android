@@ -2407,6 +2407,10 @@
         <item quantity="one">Customer Review (%d)</item>
         <item quantity="other">Customer Reviews (%d)</item>
     </plurals>
+    <plurals name="review_found">
+        <item quantity="one">REVIEW FOUND </item>
+        <item quantity="other">REVIEWS FOUND </item>
+    </plurals>
     <plurals name="more_review">
         <item quantity="one">%d MORE REVIEW</item>
         <item quantity="other">%d MORE REVIEWS</item>

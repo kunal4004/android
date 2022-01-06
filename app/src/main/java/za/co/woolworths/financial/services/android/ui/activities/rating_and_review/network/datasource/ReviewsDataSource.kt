@@ -10,7 +10,8 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 class ReviewsDataSource(
     val reviewApiHelper: RatingAndReviewApiHelper,
     val prodId: String, val sort: String?, val refinement: String?,
-    var ratingAndResponseLiveData: MutableLiveData<RatingReviewResponse>
+    var ratingAndResponseLiveData: MutableLiveData<RatingReviewResponse>,
+    var ratingAndResponseLiveDataOne: MutableLiveData<RatingReviewResponse>
 ) :
     PagingSource<Int, Reviews>() {
 
@@ -20,6 +21,7 @@ class ReviewsDataSource(
             val response = reviewApiHelper.getMoreReviews(prodId, position, sort, refinement)
             val responseData = response.data[0]
             ratingAndResponseLiveData.postValue(responseData)
+            ratingAndResponseLiveDataOne.value = responseData
             val reviews = response.data[0].reviews
             val nextKey = if (reviews.isEmpty()) {
                 null

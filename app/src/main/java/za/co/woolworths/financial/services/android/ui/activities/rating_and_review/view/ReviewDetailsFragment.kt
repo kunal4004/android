@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,6 +26,8 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.ProductReviewViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.SkinProfileAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.ArrayList
 
@@ -84,6 +87,12 @@ class ReviewDetailsFragment : Fragment() {
             rating_bar.rating = rating
             tv_skin_label.text = title
             skin_detail.text = reviewText
+            if (RatingAndReviewUtil.isSuccessFullyReported) {
+                tvReport.setTextColor(Color.RED)
+                tvReport.text = getString(R.string.reported)
+                RatingAndReviewUtil.isSuccessFullyReported = false
+            }
+
             tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
             setVerifiedBuyers(isVerifiedBuyer)
             setSkinProfielLayout(contextDataValue, tagDimensions)
@@ -107,19 +116,25 @@ class ReviewDetailsFragment : Fragment() {
     }
 
     private fun openReportScreen(reportReviewOptions: List<String>) {
-        activity?.apply {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
             val bundle = Bundle()
             bundle.putStringArrayList(
-                KotlinUtils.REVIEW_REPORT,
-                reportReviewOptions as ArrayList<String>
+                    KotlinUtils.REVIEW_REPORT,
+                    reportReviewOptions as ArrayList<String>
             )
             reportReviewFragment = ReportReviewFragment.newInstance()
             reportReviewFragment?.arguments = bundle
-            val fragmentManager = getSupportFragmentManager()
-            val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
-            fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.commit()
+            activity?.apply {
+                reportReviewFragment?.let {
+                    val fragmentManager = supportFragmentManager
+                    val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+                    fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
+                    fragmentTransaction.addToBackStack(null)
+                    fragmentTransaction.commit()
+                }
+            }
         }
     }
 
