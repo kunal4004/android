@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -378,8 +379,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                         return;
                     }
                     // Go to Web checkout journey if...
-                    if (WoolworthsApplication.getNativeCheckout() != null
-                            && !WoolworthsApplication.getNativeCheckout().isNativeCheckoutEnabled()) {
+                    if (AppConfigSingleton.INSTANCE.getNativeCheckout() != null
+                            && !AppConfigSingleton.INSTANCE.getNativeCheckout().isNativeCheckoutEnabled()) {
                         Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
                         getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
                         checkOutActivity.overridePendingTransition(0, 0);
@@ -1050,9 +1051,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             cartResponse.voucherDetails = data.voucherDetails;
             cartResponse.productCountMap = data.productCountMap;// set delivery location
             if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
-                Province province = new Province();
-                province.name = data.provinceName;
-                province.id = data.provinceId;
+                Province province = new Province(data.provinceId, data.provinceName);
                 if (cartResponse.orderSummary.store != null) {
                     Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, null, cartResponse.orderSummary.store));
                 } else if (cartResponse.orderSummary.suburb != null) {
@@ -1248,7 +1247,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     break;
                 case REQUEST_SUBURB_CHANGE:
                     loadShoppingCartAndSetDeliveryLocation();
-                    reloadFragment();
                     break;
                 case REDEEM_VOUCHERS_REQUEST_CODE:
                 case APPLY_PROMO_CODE_REQUEST_CODE:
@@ -1306,13 +1304,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }
         if (currentStoreId == null && currentSuburbId == null) {
             //Fresh install with no location selection.
-        } else if (currentSuburbId == null && !(currentStoreId == localStoreId)) {
+        } else if (currentSuburbId == null && !(currentStoreId.equals(localStoreId))) {
             localStoreId = currentStoreId;
             localSuburbId = null;
             reloadFragment();
             return;
 
-        } else if (currentStoreId == null && !(localSuburbId == currentSuburbId)) {
+        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
             localSuburbId = currentSuburbId;
             localStoreId = null;
             reloadFragment();
