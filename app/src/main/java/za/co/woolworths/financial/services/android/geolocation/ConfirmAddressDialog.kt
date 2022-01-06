@@ -1,0 +1,118 @@
+package za.co.woolworths.financial.services.android.geolocation
+
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import com.awfs.coordination.R
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import kotlinx.android.synthetic.main.confirm_address_bottom_sheet_dialog.*
+import kotlinx.android.synthetic.main.current_location_row_layout.*
+import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
+import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.network.OneAppService.getSavedAddresses
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
+import java.util.*
+
+class ConfirmAddressDialog : WBottomSheetDialogFragment() {
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    protected var mLastLocation: Location? = null
+
+    private var mLatitudeLabel: String? = null
+    private var mLongitudeLabel: String? = null
+    companion object {
+        var dialogInstance = ConfirmAddressDialog()
+        fun newInstance() = dialogInstance
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+        if (checkPermissions()) {
+            getLastLocation()
+        } else {
+            inCurrentLocation.visibility = View.GONE
+        }
+
+  /*      fusedLocationClient.getCurrentLocation()
+            .addOnSuccessListener { location : Location? ->
+                // Got last known location. In some rare situations this can be null.
+                tvCurrentLocation.text = location.toString()
+                Toast.makeText(activity, location.toString(),Toast.LENGTH_LONG).show()
+            }*/
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.confirm_address_bottom_sheet_dialog, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        inCurrentLocation.setOnClickListener(View.OnClickListener { Toast.makeText(activity, "clicked",Toast.LENGTH_LONG).show() })
+
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLastLocation() {
+        fusedLocationClient.lastLocation
+            .addOnCompleteListener(activity as Activity) { task ->
+                if (task.isSuccessful) {
+                    mLastLocation = task.result
+                    val addresses =Geocoder(activity, Locale.getDefault()).getFromLocation(mLastLocation!!.latitude,mLastLocation!!.longitude,1)
+                    tvCurrentLocation.text = addresses[0].getAddressLine(0)
+                } else {
+                    Log.w("TAG", "getLastLocation:exception", task.exception)
+                    inCurrentLocation.visibility = View.GONE
+                }
+            }
+    }
+
+    private fun checkPermissions(): Boolean {
+        val permissionState = activity?.let {
+            ActivityCompat.checkSelfPermission(
+                it,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+        return permissionState == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun callSavedAddress() {
+        val savedAddressCall = getSavedAddresses()
+        savedAddressCall.enqueue(
+            object : IResponseListener<SavedAddressResponse?> {
+                override fun onSuccess(response: SavedAddressResponse?) {
+                    when (response!!.httpCode) {
+                        AppConstant.HTTP_OK -> {
+
+                        }
+                        else -> {
+
+                        }
+                    }
+                }
+
+                override fun onFailure(error: Throwable?) {
+
+                }
+            }.let {
+                CompletionHandler<SavedAddressResponse>(
+                    it!!, SavedAddressResponse::class.java
+                )
+            }
+        )
+    }
+}
