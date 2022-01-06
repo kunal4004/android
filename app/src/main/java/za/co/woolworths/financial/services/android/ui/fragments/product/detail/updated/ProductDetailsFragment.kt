@@ -111,7 +111,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-@AndroidEntryPoint
+
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
     MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
     ILocationProvider, View.OnClickListener,

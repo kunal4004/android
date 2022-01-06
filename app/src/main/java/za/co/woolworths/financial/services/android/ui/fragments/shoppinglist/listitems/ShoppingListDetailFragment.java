@@ -536,7 +536,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         Bundle bundle = new Bundle();
         bundle.putString("strProductList", strProductList);
         bundle.putString("strProductCategory", productName);
-        ScreenManager.presentProductDetails(getActivity(), bundle);
+        ScreenManager.presentProductDetails(getFragmentManager(), R.id.relEmptyStateHandler, bundle);
     }
 
 

@@ -375,12 +375,12 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     @Override
     public void onFoodTypeSelect(ProductList productList) {
-        ScreenManager.presentProductDetails(getActivity(), mSearchText, productList);
+        ScreenManager.presentProductDetails(getFragmentManager(), R.id.productList, mSearchText, productList);
     }
 
     @Override
     public void onClothingTypeSelect(ProductList productList) {
-        ScreenManager.presentProductDetails(getActivity(), mSearchText, productList);
+        ScreenManager.presentProductDetails(getFragmentManager(), R.id.productList, mSearchText, productList);
     }
 
     @Override

@@ -179,7 +179,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick, Cancel
         val bundle = Bundle()
         bundle.putString("strProductList", strProductList)
         bundle.putString("strProductCategory", "")
-        ScreenManager.presentProductDetails(activity, bundle)
+        ScreenManager.presentProductDetails(fragmentManager, R.id.orderDetailsFrameLayout, bundle)
     }
 
 
