@@ -496,8 +496,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun retrieveTokenAndCallLinkDevice() {
         if (TextUtils.isEmpty(Utils.getToken())) {
-            if (Utils.isGooglePlayServicesAvailable()) {
-
+            if (Utils.isGooglePlayServicesAvailable() ||
+                Utils.isHuaweiMobileServicesAvailable()) {
                 FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         task.result.token.let {
@@ -801,22 +801,25 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         if (latitude == null || longitude == null) {
             return location
         }
-        val gcd = Geocoder(context, Locale.getDefault())
-        val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
-        if (addresses.isNotEmpty()) {
-            location =
-                    if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
-                        for (address in addresses) {
-                            if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
-                                return address.locality + ", " + address.countryName
-                            } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
-                                return address.subLocality + ", " + address.countryName
-                            }
+        try{
+            val gcd = Geocoder(context, Locale.getDefault())
+            val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
+            if (addresses.isNotEmpty()) {
+                location = if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
+                    for (address in addresses) {
+                        if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
+                            address.locality + ", " + address.countryName
+                        } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
+                            address.subLocality + ", " + address.countryName
                         }
-                        return addresses[0].countryName
-                    } else
-                        return addresses[0].locality + ", " + addresses[0].countryName
-
+                    }
+                    addresses[0].countryName
+                } else
+                    addresses[0].locality + ", " + addresses[0].countryName
+            }
+        }
+        catch(e: Exception){
+            FirebaseManager.logException(e)
         }
         return location
     }
