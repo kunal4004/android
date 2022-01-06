@@ -564,6 +564,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     MyCardDetailFragment.BLOCK_CARD_DETAIL -> {
                                                         showBlockStoreCardScreen()
                                                     }
+                                                    MyCardDetailFragment.PAY_WITH_CARD_DETAIL -> {
+                                                        showPayWithCardScreen()
+                                                    }
                                                     StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL -> {
                                                         showGetReplacementStoreCardScreen()
                                                     }
@@ -626,6 +629,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun showBlockStoreCardScreen(){
         MyCardDetailFragment.SHOW_BLOCK_CARD_SCREEN = true
         MyCardDetailFragment.BLOCK_CARD_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showPayWithCardScreen(){
+        MyCardDetailFragment.SHOW_PAY_WITH_CARD_SCREEN = true
+        MyCardDetailFragment.PAY_WITH_CARD_DETAIL = false
         activity?.finish()
     }
 

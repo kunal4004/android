@@ -71,8 +71,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     companion object {
         var SHOW_TEMPORARY_FREEZE_DIALOG = false
         var SHOW_BLOCK_CARD_SCREEN = false
+        var SHOW_PAY_WITH_CARD_SCREEN = false
         var FREEZE_CARD_DETAIL = false
         var BLOCK_CARD_DETAIL = false
+        var PAY_WITH_CARD_DETAIL = false
 
         fun newInstance(storeCardDetail: String?, shouldActivateUnblockCardOnLanding: Boolean) = MyCardDetailFragment().withArgs {
             putString(STORE_CARD_DETAIL, storeCardDetail)
@@ -169,6 +171,11 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         else if(SHOW_BLOCK_CARD_SCREEN){
             SHOW_BLOCK_CARD_SCREEN = false
             activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
+        }
+        else if(SHOW_PAY_WITH_CARD_SCREEN){
+            SHOW_PAY_WITH_CARD_SCREEN = false
+            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
+            initPayWithCard()
         }
     }
 
@@ -393,8 +400,12 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 }
             }
             R.id.payWithCard -> {
-                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
-                initPayWithCard()
+                KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+                    PAY_WITH_CARD_DETAIL = true
+                },{
+                    activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
+                    initPayWithCard()
+                })
             }
             R.id.expireInfo -> {
                 if (isApiCallInProgress())
