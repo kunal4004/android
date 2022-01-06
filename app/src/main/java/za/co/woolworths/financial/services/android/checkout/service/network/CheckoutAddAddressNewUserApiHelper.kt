@@ -6,10 +6,7 @@ import retrofit2.Response
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
-import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
+import za.co.woolworths.financial.services.android.models.network.*
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
@@ -136,6 +133,24 @@ class CheckoutAddAddressNewUserApiHelper : RetrofitConfig() {
 
         }, ShippingDetailsResponse::class.java))
         return shippingDetailsResp
+    }
+
+    fun getStorePickupInfo(body: StorePickupInfoBody): LiveData<Any> {
+        val storePickupInfoResp = MutableLiveData<Any>()
+        OneAppService.getStorePickupInfo(body).enqueue(CompletionHandler(object :
+            IResponseListener<ConfirmDeliveryAddressResponse> {
+            override fun onSuccess(storePickupInfoResponse: ConfirmDeliveryAddressResponse?) {
+                storePickupInfoResp.value = storePickupInfoResponse ?: null
+            }
+
+            override fun onFailure(error: Throwable?) {
+                if (error != null) {
+                    storePickupInfoResp.value = error!!
+                }
+            }
+
+        }, ConfirmDeliveryAddressResponse::class.java))
+        return storePickupInfoResp
     }
 
     fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): LiveData<Any> {

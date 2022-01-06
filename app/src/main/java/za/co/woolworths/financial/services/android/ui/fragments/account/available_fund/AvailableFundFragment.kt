@@ -27,11 +27,12 @@ import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
-import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
@@ -376,7 +377,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
-        val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
+        val payMyAccountOption: ConfigPayMyAccount? = AppConfigSingleton.mPayMyAccount
         val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         val payUMethodType = payMyAccountViewModel.getCardDetail()?.payuMethodType
         when {
