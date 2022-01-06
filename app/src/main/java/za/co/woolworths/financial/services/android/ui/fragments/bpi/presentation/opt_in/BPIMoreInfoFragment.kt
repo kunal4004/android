@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebSettings
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_more_info_fragment.*
@@ -63,6 +64,9 @@ class BPIMoreInfoFragment : Fragment()  {
         bpiMoreInfoWebView?.apply {
             with(settings) {
                 javaScriptEnabled = true
+                allowContentAccess = true
+                domStorageEnabled = true
+                cacheMode = WebSettings.LOAD_NO_CACHE
             }
 
             webViewClient = object : android.webkit.WebViewClient() {

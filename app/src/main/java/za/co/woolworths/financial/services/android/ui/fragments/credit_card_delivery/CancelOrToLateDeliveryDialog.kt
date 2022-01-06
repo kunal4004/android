@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_cancel_delivery_confirmation_dialog.*
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity.DeliveryStatus
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -53,7 +54,7 @@ class CancelOrToLateDeliveryDialog : WBottomSheetDialogFragment(), View.OnClickL
             R.id.callCallCenter -> {
                 dismiss()
                 activity?.apply {
-                    Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber)
+                    Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber)
                 }
             }
         }
