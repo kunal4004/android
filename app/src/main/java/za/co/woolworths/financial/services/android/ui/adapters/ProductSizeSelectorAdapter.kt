@@ -1,19 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import android.graphics.Color
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_size_selector_list_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsContract
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.PRODUCT_LOW_STOCK_TEXT_COLOR
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.PRODUCT_SIZE_TEXT_COLOR
-import java.util.*
 
 class ProductSizeSelectorAdapter(
+    val context: Context,
     val dataList: ArrayList<OtherSkus>,
     var lowStock: Int,
     var listener: ProductDetailsContract.ProductDetailsView
@@ -50,15 +49,16 @@ class ProductSizeSelectorAdapter(
                 itemView.size.text = size
                 when {
                     quantity == 0 -> {
-                        itemView.size.setTextColor(Color.parseColor(PRODUCT_SIZE_TEXT_COLOR))
+                        itemView.size.setTextColor(ContextCompat.getColor(context, R.color.black))
                         itemView.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_no_stock_size_selected_background else R.drawable.product_no_stock_size_un_selected_background)
                     }
                     lowStock > quantity && quantity != -1 && selectedSize?.sku.equals(otherSku.sku) -> {
-                        itemView.size.setTextColor(Color.parseColor(PRODUCT_LOW_STOCK_TEXT_COLOR))
+                        itemView.size.setTextColor(ContextCompat.getColor(context,
+                            R.color.low_stock_indicator))
                         itemView.size.setBackgroundResource(R.drawable.ic_rectangle_low_stock)
                     }
                     else -> {
-                        itemView.size.setTextColor(Color.parseColor(PRODUCT_SIZE_TEXT_COLOR))
+                        itemView.size.setTextColor(ContextCompat.getColor(context, R.color.black))
                         itemView.size.setBackgroundResource(if (selectedSize?.sku.equals(otherSku.sku)) R.drawable.product_available_size_selected_background else R.drawable.product_available_size_un_selected_background)
                     }
                 }

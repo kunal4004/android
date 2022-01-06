@@ -806,7 +806,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSize() {
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         productSizeSelectorAdapter =
-            ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!,
+            ProductSizeSelectorAdapter(requireActivity(),otherSKUsByGroupKey[getSelectedGroupKey()]!!,
                 productDetails?.lowStockIndicator ?: 0, this).apply {
                 sizeSelectorRecycleView.adapter = this
             }

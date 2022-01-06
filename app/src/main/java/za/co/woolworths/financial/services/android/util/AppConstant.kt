@@ -65,8 +65,7 @@ class AppConstant {
 
         const val ALPHA_1F: Float = 1.0F
         const val ALPHA_POINT_3F: Float = 0.3F
-        const val PRODUCT_SIZE_TEXT_COLOR = "#000000"
-        const val PRODUCT_LOW_STOCK_TEXT_COLOR = "#FCA933"
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
