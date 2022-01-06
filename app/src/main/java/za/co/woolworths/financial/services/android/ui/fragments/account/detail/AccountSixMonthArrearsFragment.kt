@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.account_cart_item.*
 import kotlinx.android.synthetic.main.account_detail_header_fragment.*
 import kotlinx.android.synthetic.main.account_six_month_arrears_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -60,16 +61,16 @@ class AccountSixMonthArrearsFragment : Fragment() {
                     FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD,
                     arguments,
                     this)
-                when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
+                when (AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.renderMode){
                     AvailableFundFragment.NATIVE_BROWSER ->
                         KotlinUtils.openUrlInPhoneBrowser(
-                            WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.collectionsUrl, this)
+                            AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsUrl, this)
 
                     else ->
                         KotlinUtils.openLinkInInternalWebView(this,
-                            WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.collectionsUrl,
+                            AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsUrl,
                             true,
-                            WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.exitUrl)
+                            AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.exitUrl)
                 }
             }
         }

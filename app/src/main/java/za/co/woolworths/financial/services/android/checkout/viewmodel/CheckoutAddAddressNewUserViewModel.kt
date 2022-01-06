@@ -10,6 +10,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Conf
 import za.co.woolworths.financial.services.android.checkout.service.network.ShippingDetailsBody
 import za.co.woolworths.financial.services.android.checkout.utils.NativeCheckoutResource
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
+import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 
 /**
  * Created by Kunal Uttarwar on 04/06/21.
@@ -77,5 +78,9 @@ class CheckoutAddAddressNewUserViewModel(private val checkoutAddAddressNewUserIn
 
     fun setConfirmSelection(confirmSelectionRequestBody: ConfirmSelectionRequestBody): LiveData<Any>{
         return checkoutAddAddressNewUserInteractor.setConfirmSelection(confirmSelectionRequestBody)
+    }
+
+    fun getStorePickupInfo(body: StorePickupInfoBody): LiveData<Any> {
+        return checkoutAddAddressNewUserInteractor.getStorePickupInfo(body)
     }
 }

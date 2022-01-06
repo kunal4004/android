@@ -22,6 +22,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.LoginRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -69,7 +70,7 @@ public class AbsaLoginRequest {
 			FirebaseManager.Companion.logException(e);
 		}
 
-		new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, (loginResponse, cookies) -> {
+		new AbsaBankingOpenApiRequest<>(AppConfigSingleton.INSTANCE.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, (loginResponse, cookies) -> {
 			final String nonce = loginResponse.getNonce();
 			final String resultMessage = loginResponse.getResultMessage();
 			String statusCode = "0";
