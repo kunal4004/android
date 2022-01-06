@@ -138,9 +138,9 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		});
 	}
 
-	public void openProductDetailFragment(String productName, ProductDetails productList) {
+	public void openProductDetailFragment(String productName, ProductDetails productDetails) {
 		Gson gson = new Gson();
-		String strProductList = gson.toJson(productList);
+		String strProductList = gson.toJson(productDetails);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
