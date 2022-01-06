@@ -8,7 +8,6 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_reviewer_info_details.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
 
-
 class MoreReviewActivity : AppCompatActivity(),
         MoreReviewsFragment.OnSortRefineFragmentListener {
 

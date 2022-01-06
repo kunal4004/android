@@ -27,10 +27,10 @@ class ReportSuccessFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         RatingAndReviewUtil.isSuccessFullyReported = true
         btn_close.setOnClickListener {
-            activity?.finish()
+            activity?.onBackPressed()
         }
         btn_got_it.setOnClickListener {
-            activity?.finish()
+            activity?.onBackPressed()
         }
     }
 }

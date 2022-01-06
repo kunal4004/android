@@ -15,6 +15,7 @@ class RatingAndReviewViewModel(
 ) : ViewModel() {
 
     private var ratingReviewResponseLiveData = MutableLiveData<RatingReviewResponse>()
+    private var ratingReviewResponseLatestLiveData = MutableLiveData<RatingReviewResponse>()
 
     companion object {
         const val PAGE_SIZE =  10
@@ -23,10 +24,12 @@ class RatingAndReviewViewModel(
     fun getReviewDataSource(prodId: String, sort: String?, refinement: String?) =
             Pager(PagingConfig(pageSize = PAGE_SIZE,
             enablePlaceholders = false)) {
-        ReviewsDataSource(reviewApiHelper, prodId, sort, refinement, ratingReviewResponseLiveData)
+        ReviewsDataSource(reviewApiHelper, prodId, sort, refinement, ratingReviewResponseLiveData, ratingReviewResponseLatestLiveData)
     }.flow.cachedIn(viewModelScope)
 
     fun getRatingReviewResponseLiveData() = ratingReviewResponseLiveData
+
+    fun getRatingReviewResponseLastestData() = ratingReviewResponseLatestLiveData
 
 }
 

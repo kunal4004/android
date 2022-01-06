@@ -19,9 +19,6 @@ import android.os.Bundle
 import android.text.Html
 import android.text.TextUtils
 import android.view.*
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -82,7 +79,6 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.Quantity
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 import kotlin.collections.ArrayList
-import android.widget.LinearLayout
 import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
@@ -120,6 +116,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonitor
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import android.graphics.Bitmap
+import android.widget.*
 import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
@@ -129,11 +126,13 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 
+
 @AndroidEntryPoint
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
     MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
      VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener,VtoTryAgainListener ,
-    ReviewThumbnailAdapter.ThumbnailClickListener {
+    ReviewThumbnailAdapter.ThumbnailClickListener,View.OnTouchListener,
+    ViewTreeObserver.OnScrollChangedListener {
 
     private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
@@ -203,6 +202,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isTakePicture: Boolean = false
     private var isPickedImageFromLiveCamera: Boolean = false
     private var takenOriginalPicture : Bitmap? = null
+    private var isRnRAPICalled = false
+    private var prodId: String = "-1"
 
 
     @OpenTermAndLighting
@@ -288,13 +289,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgDownloadVTO?.setOnClickListener(this)
         imgVTOSplit?.setOnClickListener(this)
         captureImage?.setOnClickListener(this)
+        scrollView.setOnTouchListener(this)
+        scrollView.viewTreeObserver.addOnScrollChangedListener(this)
         isOutOfStockFragmentAdded = false
         configureDefaultUI()
         cameraSurfaceView.setOnTouchListener { _, event ->
             pinchZoomOnVtoLiveCamera(event)
             true
         }
-
+        hideRatingAndReview()
     }
 
     private fun pinchZoomOnVtoLiveCamera(event: MotionEvent?) {
@@ -354,7 +357,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.btViewMoreReview->navigateToMoreReviewsScreen()
             R.id.tvTotalReviews->navigateToMoreReviewsScreen()
             R.id.tvReport->navigateToReportReviewScreen()
-
         }
     }
 
@@ -503,7 +505,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun navigateToMoreReviewsScreen() {
-        ScreenManager.presentRatingAndReviewDetail(activity, ratingReviewResponse)
+        ScreenManager.presentRatingAndReviewDetail(activity, prodId)
     }
 
     private fun showRatingDetailsDailog() {
@@ -752,8 +754,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             showErrorWhileLoadingProductDetails()
         }
 
-        if (productDetails.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
-            productDetailsPresenter?.loadRatingNReview(productDetails.productId,1,0)
+        /*if (productDetails.isRnREnabled && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+            productDetailsPresenter?.loadRatingNReview(productDetails.productId,1,0)*/
     }
 
     override fun onProductDetailedFailed(response: Response, httpCode: Int) {
@@ -977,6 +979,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, it.reviewCount, it.reviewCount)
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
+                prodId = it.productId
                 if(it.reviewCount<=0) {
                     tvTotalReviews.setClickable(false)
                 }
@@ -1033,6 +1036,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         reviewDetailsInformation.visibility = View.GONE
         customerReview.visibility = View.GONE
         rlViewMoreReview.visibility = View.GONE
+    }
+
+    private fun showRatingAndReview(){
+        headerCustomerReview.visibility = View.VISIBLE
+        reviewDetailsInformation.visibility = View.VISIBLE
+        customerReview.visibility = View.VISIBLE
+        rlViewMoreReview.visibility = View.VISIBLE
     }
 
     private fun setReviewUI(ratingNReviewResponse: RatingReviewResponse){
@@ -2203,7 +2213,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if(RatingAndReviewUtil.isSuccessFullyReported) {
             tvReport?.text = getString(R.string.reported)
-            tvReport?.setTextColor(resources.getColor(R.color.red))
+            tvReport?.setTextColor(Color.RED)
             RatingAndReviewUtil.isSuccessFullyReported = false
         }
     }
@@ -2409,10 +2419,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onGetRatingNReviewSuccess(ratingNReview: RatingAndReviewData) {
+        hideProgressBar()
         if(ratingNReview.data.isNotEmpty()) {
+            showRatingAndReview()
             setReviewUI(ratingNReview.data[0])
             ratingReviewResponse = ratingNReview.data[0]
-        }else
+            scrollView.post {
+                scrollView.fullScroll(View.FOCUS_DOWN)
+            }
+        } else
             hideRatingAndReview()
     }
 
@@ -3037,6 +3052,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun handleException(e: Any?) {
         FirebaseManager.logException(e)
+    }
+
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        return false
+    }
+
+    override fun onScrollChanged() {
+        if (!scrollView.canScrollVertically(1) && !isRnRAPICalled) {
+            if (productDetails?.isRnREnabled == true && RatingAndReviewUtil.isRatingAndReviewConfigavailbel())
+                productDetails?.productId?.let {
+                    productDetailsPresenter?.loadRatingNReview(it,1,0)
+                isRnRAPICalled = true
+                showProgressBar()
+                }
+        }
     }
 
 }

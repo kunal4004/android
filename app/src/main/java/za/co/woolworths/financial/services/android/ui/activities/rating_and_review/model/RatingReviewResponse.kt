@@ -8,7 +8,7 @@ data class RatingReviewResponse (
 		@SerializedName("offset") val offset : Int,
 		@SerializedName("totalResults") val totalResults : Int,
 		@SerializedName("reviews") val reviews : List<Reviews>,
-		@SerializedName("reviewStatistics") val reviewStatistics : ReviewStatistics,
+		@SerializedName("reviewStatistics") var reviewStatistics : ReviewStatistics,
 		@SerializedName("sortOptions") val sortOptions : MutableList<SortOption>,
 		@SerializedName("refinements") val refinements : MutableList<Refinements>,
 		@SerializedName("reportReviewOptions") val reportReviewOptions : List<String>,
