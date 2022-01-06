@@ -23,10 +23,10 @@ import kotlinx.android.synthetic.main.remove_block_dc_fragment.incViewStatementB
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
@@ -186,7 +186,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
-        val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
+        val payMyAccountOption: ConfigPayMyAccount? = AppConfigSingleton.mPayMyAccount
         val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         val payUMethodType = payMyAccountViewModel.getCardDetail()?.payuMethodType
         when {

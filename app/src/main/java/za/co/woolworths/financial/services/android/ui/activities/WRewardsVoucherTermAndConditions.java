@@ -9,6 +9,7 @@ import android.view.View;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -34,7 +35,7 @@ public class WRewardsVoucherTermAndConditions extends AppCompatActivity {
 		viewGeneralTermsAndCondtions.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsTCLink());
+				Utils.openLinkInInternalWebView(AppConfigSingleton.INSTANCE.getWrewardsTCLink());
 			}
 		});
 	}
