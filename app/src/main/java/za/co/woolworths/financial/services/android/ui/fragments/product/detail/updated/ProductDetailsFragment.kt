@@ -27,10 +27,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.*
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
@@ -80,6 +77,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.*
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
@@ -1340,16 +1338,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse) {
         activity?.apply {
-            addItemToCartResponse.data?.let {
-                if (it.size > 0) {
-                    val intent = Intent()
-                    intent.apply {
-                        putExtra("addedToCartMessage", it[0].message)
-                        putExtra("ItemsCount", getSelectedQuantity())
-                        putExtra("ProductCountMap", Utils.toJson(it[0].productCountMap))
+            if (this is BottomNavigationActivity) {
+                addItemToCartResponse.data?.let {
+                    if (it.size > 0) {
+                        val intent = Intent()
+                        intent.apply {
+                            putExtra("addedToCartMessage", it[0].message)
+                            putExtra("ItemsCount", getSelectedQuantity())
+                            putExtra("ProductCountMap", Utils.toJson(it[0].productCountMap))
+                        }
+                        onActivityResult(ADD_TO_CART_SUCCESS_RESULT,
+                            ADD_TO_CART_SUCCESS_RESULT,
+                            intent)
+                        //setResult(RESULT_OK, intent)
+                        //onBackPressed()
                     }
-                    setResult(RESULT_OK, intent)
-                    onBackPressed()
                 }
             }
         }
