@@ -29,12 +29,13 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ACTION_LOWER_CASE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.activationInitiated
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
-import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -562,7 +563,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     private fun initCreditCardActivation() {
-        WoolworthsApplication.getCreditCardActivation()?.apply {
+        AppConfigSingleton.creditCardActivation?.apply {
             if (isEnabled) {
                 executeCreditCardTokenService()
             }
@@ -638,7 +639,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private fun isPLCInGoodStanding(): Boolean {
         var isEnable = false
         if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
-            val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
+            val cardTypes: List<ConfigCreditCardDeliveryCardTypes> = AppConfigSingleton.creditCardDelivery?.cardTypes ?: arrayListOf()
             for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
                 if (binNumber.equals(mCardPresenterImpl?.getAccount()?.accountNumberBin, ignoreCase = true)
                         && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {

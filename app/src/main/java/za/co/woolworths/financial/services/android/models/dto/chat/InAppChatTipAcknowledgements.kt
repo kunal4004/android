@@ -1,4 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto.chat
 
-data class InAppChatTipAcknowledgements(var accountsLanding: Boolean = false, var storeCard: StoreCard, var creditCard: CreditCard, var personalLoan: PersonalLoan, var isWhatsAppOnBoardingScreenVisible: Boolean = false)
+import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigChatEnabledForProductFeatures
+
+data class InAppChatTipAcknowledgements(var accountsLanding: Boolean = false, var storeCard: ConfigChatEnabledForProductFeatures, var creditCard: ConfigChatEnabledForProductFeatures, var personalLoan: ConfigChatEnabledForProductFeatures, var isWhatsAppOnBoardingScreenVisible: Boolean = false)
 
