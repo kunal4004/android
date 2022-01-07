@@ -80,6 +80,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private var mConnectionBroadCast: BroadcastReceiver? = null
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
+    private var otpSMSNumber: String? = null
     private var retryApiCall: String? = null
     private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
@@ -272,7 +273,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     v.isEnabled = false
                     Handler().postDelayed({ v.isEnabled = true }, AppConstant.DELAY_1000_MS)
                     view?.findNavController()?.navigate(R.id.action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
-                            ResendOTPBottomSheetFragment.OTP_NUMBER to otpNumber
+                            ResendOTPBottomSheetFragment.OTP_SMS_NUMBER to otpSMSNumber
                     ))
                 }
             }
@@ -371,7 +372,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                         linkDeviceOTPScreen?.visibility = View.VISIBLE
                         retrieveOTPResponse.otpSentTo?.let {
                             if (otpMethod.equals(OTPMethodType.SMS.name, true)) {
-                                otpNumber = it
+                                otpSMSNumber = it
                             }
                             enterOTPSubtitle?.text = activity?.resources?.getString(R.string.sent_otp_desc, it)
                             Handler().postDelayed({
