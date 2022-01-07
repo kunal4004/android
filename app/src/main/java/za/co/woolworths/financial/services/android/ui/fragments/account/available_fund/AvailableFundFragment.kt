@@ -276,7 +276,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         if (fragmentAlreadyAdded()) return
         if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
         try {
-            val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
+            val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.credit_card_statement_unavailable)?.let { AccountsErrorHandlerFragment.newInstance(it) }
             activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName) }
         } catch (ex: IllegalStateException) {
             FirebaseManager.logException(ex)
