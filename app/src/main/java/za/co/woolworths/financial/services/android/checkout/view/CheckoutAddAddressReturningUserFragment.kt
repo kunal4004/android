@@ -49,9 +49,10 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Shoppin
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
-import za.co.woolworths.financial.services.android.models.dto.ShoppingBagsOptions
+import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.ConfirmDeliveryAddressBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_TYPE_EMPTY_CART
@@ -268,7 +269,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
             edtTxtGiftInstructions?.visibility =
                 if (isChecked) VISIBLE else GONE
         }
-        if (WoolworthsApplication.getNativeCheckout()?.currentShoppingBag?.isEnabled == true) {
+        if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags.visibility = VISIBLE
             txtNeedBags.visibility = VISIBLE
             newShoppingBagsLayout.visibility = GONE
@@ -282,7 +283,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                         activity)
                 }
             }
-        } else if (WoolworthsApplication.getNativeCheckout()?.newShoppingBag?.isEnabled == true) {
+        } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
             switchNeedBags.visibility = GONE
             txtNeedBags.visibility = GONE
             newShoppingBagsLayout.visibility = VISIBLE
@@ -292,7 +293,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
 
     private fun addShoppingBagsRadioButtons() {
         txtNewShoppingBagsSubDesc.visibility = VISIBLE
-        val newShoppingBags = WoolworthsApplication.getNativeCheckout()?.newShoppingBag
+        val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
         txtNewShoppingBagsDesc.text = newShoppingBags?.title
         txtNewShoppingBagsSubDesc.text = newShoppingBags?.description
 
@@ -681,7 +682,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     private fun showDeliverySlotSelectionView() {
-
+        nativeCheckoutFoodSubstitutionLayout.visibility = VISIBLE // by default it is visible.
         if (FOOD.type == selectedSlotResponseFood?.fulfillmentTypes?.join) {
             //Only for Food
             foodType = ONLY_FOOD
@@ -715,6 +716,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         } else {
             // for Other
             if (selectedSlotResponseFood?.requiredToDisplayODD == true) {
+                nativeCheckoutFoodSubstitutionLayout.visibility =
+                    GONE // if FBH then hide this layout.
                 initializeDeliveryTypeSelectionView(
                     selectedSlotResponseFood,
                     ONLY_OTHER
@@ -1065,7 +1068,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
         body.apply {
             requestFrom = "express"
             shipToAddressName = savedAddress?.defaultAddressNickname
-            substituesAllowed = selectedFoodSubstitution.rgb
+            substituesAllowed =
+                if (nativeCheckoutFoodSubstitutionLayout.visibility == VISIBLE) selectedFoodSubstitution.rgb else null
             plasticBags = switchNeedBags?.isChecked ?: false
             shoppingBagType = selectedShoppingBagType
             giftNoteSelected = switchGiftInstructions?.isChecked ?: false
@@ -1109,6 +1113,7 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                 }
             }
             else -> {
+                otherType = type
                 gridLayoutDeliveryOptions.visibility = GONE
                 expandableGrid.gridOnClickListner(
                     type,
@@ -1122,8 +1127,8 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
     }
 
     override fun selectedShoppingBagType(
-        shoppingBagsOptionsList: ShoppingBagsOptions,
-        position: Int,
+        shoppingBagsOptionsList: ConfigShoppingBagsOptions,
+        position: Int
     ) {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_SHOPPING_BAGS_INFO,
             hashMapOf(
