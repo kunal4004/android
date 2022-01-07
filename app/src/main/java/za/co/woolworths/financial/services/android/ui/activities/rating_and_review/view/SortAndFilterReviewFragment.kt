@@ -85,7 +85,7 @@ class SortAndFilterReviewFragment : Fragment(),
                 )
             }
         } else {
-            toolbarTitle?.text = getString(R.string.refine)
+            toolbarTitle?.text = getString(R.string.filter)
             btSeeResult?.visibility = View.VISIBLE
             tvClearFilter?.visibility = View.VISIBLE
             rvSortOptions?.layoutManager =

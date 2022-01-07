@@ -5,7 +5,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sixty_dp"
+        android:layout_height="@dimen/sixty_four_dp"
         android:background="@drawable/refine_item_background">
 
         <CheckBox
