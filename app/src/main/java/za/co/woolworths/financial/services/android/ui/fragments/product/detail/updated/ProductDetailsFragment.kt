@@ -805,7 +805,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSize() {
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         productSizeSelectorAdapter =
-            ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
+            ProductSizeSelectorAdapter(requireActivity(),otherSKUsByGroupKey[getSelectedGroupKey()]!!,
+                productDetails?.lowStockIndicator ?: 0, this).apply {
                 sizeSelectorRecycleView.adapter = this
             }
 
@@ -977,7 +978,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onSizeSelection(selectedSku: OtherSkus) {
         setSelectedSku(selectedSku)
-        showSelectedSize()
+        showSelectedSize(selectedSku)
         updateUIForSelectedSKU(getSelectedSku())
     }
 
@@ -995,6 +996,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
         if (!isFeature && isVtoImage) {
             applyVtoEffectOnImage()
+        }
+        if (productDetails?.lowStockIndicator ?: 0 > getSelectedSku()?.quantity ?: 0
+            && !hasSize && getSelectedSku()?.quantity != -1
+        ) {
+            showLowStockForSelectedColor()
+            colorPlaceholder.text = ""
+        } else {
+            hideLowStockFromSelectedColor()
+            colorPlaceholder.text = getString(R.string.selected_colour)
         }
     }
 
@@ -1102,7 +1112,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     updateUIForSelectedSKU(getSelectedSku())
                 }
             }
-            showSelectedSize()
+            showSelectedSize(selectedSku)
 
         }
 
@@ -1797,7 +1807,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSelectedColor() {
         activity?.apply {
             getSelectedGroupKey()?.let {
-                colorPlaceholder.text = getString(R.string.selected_colour)
                 colorPlaceholder.setTextColor(ContextCompat.getColor(this, R.color.black))
                 selectedColor.text = " - $it"
             }
@@ -1805,10 +1814,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showSelectedSize() {
+    private fun showSelectedSize(selectedSku: OtherSkus?) {
         getSelectedSku().let {
-            selectedSizePlaceholder.text =
-                getString(if (it != null) R.string.product_placeholder_selected_size else R.string.product_placeholder_select_size)
+            if (productDetails?.lowStockIndicator ?: 0 > selectedSku?.quantity ?: 0 && selectedSku?.quantity != 0
+                && selectedSku?.quantity != -1
+            ) {
+                showLowStockForSelectedSize()
+                selectedSizePlaceholder.text = ""
+            } else {
+                hideLowStockForSize()
+                selectedSizePlaceholder.text =
+                    getString(if (it != null) R.string.product_placeholder_selected_size else R.string.product_placeholder_select_size)
+            }
             selectedSize.text = if (it != null) " - ${it.size}" else ""
             activity?.apply {
                 if (it != null)
@@ -2803,5 +2820,111 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         FirebaseManager.logException(e)
     }
 
+    /**
+     * Show low stock for selected size
+     * This method used for show low stock indicator when user select size or product have single size
+     * lowStockThreshold > quantity
+     */
+    private fun showLowStockForSelectedSize() {
+        if (hasColor) {
+            hideLowStockFromSelectedColor()
+        }
+        (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.startToEnd = R.id.layoutLowStockIndicator
+            it.topToTop = R.id.layoutLowStockIndicator
+            it.bottomToBottom = R.id.layoutLowStockIndicator
+            layoutLowStockIndicator?.visibility = View.VISIBLE
+            selectedSizePlaceholder?.visibility = View.GONE
+            selectedSize?.layoutParams = it
+
+        }
+        (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.layoutLowStockIndicator
+            sizeSelectorRecycleView?.layoutParams = it
+        }
+        (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToTop = R.id.layoutLowStockIndicator
+            it.bottomToBottom = R.id.layoutLowStockIndicator
+            sizeGuide?.layoutParams = it
+        }
+    }
+
+    /**
+     *  This method used to Hide low stock indicator when
+     *  use selected size have not low stock
+     *  not have lowStockThreshold > quantity
+     */
+    private fun hideLowStockForSize(){
+        (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.startToEnd = R.id.selectedSizePlaceholder
+            it.topToTop = R.id.selectedSizePlaceholder
+            it.bottomToBottom = R.id.selectedSizePlaceholder
+            selectedSize?.layoutParams = it
+            layoutLowStockIndicator?.visibility = View.GONE
+            selectedSizePlaceholder?.visibility = View.VISIBLE
+        }
+        (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.selectedSizePlaceholder
+            sizeSelectorRecycleView?.layoutParams = it
+        }
+        (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToTop = R.id.selectedSizePlaceholder
+            it.bottomToBottom = R.id.selectedSizePlaceholder
+            sizeGuide?.layoutParams = it
+        }
+
+    }
+
+
+    /**
+     * Show low stock for selected color
+     * This method used for show low stock when selected color have
+     * lowStockThreshold > quantity
+     */
+    private fun showLowStockForSelectedColor() {
+        (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.startToEnd = R.id.layoutLowStockColor
+            it.topToTop = R.id.layoutLowStockColor
+            it.bottomToBottom = R.id.layoutLowStockColor
+            selectedColor?.layoutParams = it
+            layoutLowStockColor?.visibility = View.VISIBLE
+            colorPlaceholder?.visibility = View.GONE
+        }
+        (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.layoutLowStockColor
+            colorSelectorRecycleView?.layoutParams = it
+        }
+        (moreColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToTop = R.id.layoutLowStockColor
+            it.bottomToBottom = R.id.layoutLowStockColor
+            moreColor?.layoutParams = it
+        }
+    }
+
+    /**
+     * Hide low stock from selected color
+     * This method used hide low stock when selected color have not
+     * not have lowStockThreshold > quantity
+     */
+    private fun hideLowStockFromSelectedColor(){
+        (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.startToEnd = R.id.colorPlaceholder
+            it.topToTop = R.id.colorPlaceholder
+            it.bottomToBottom = R.id.colorPlaceholder
+            selectedColor?.layoutParams = it
+            layoutLowStockColor?.visibility = View.GONE
+            colorPlaceholder?.visibility = View.VISIBLE
+        }
+        (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.selectedColor
+            colorSelectorRecycleView?.layoutParams = it
+        }
+        (moreColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToTop = R.id.selectedColor
+            it.bottomToBottom = R.id.selectedColor
+            moreColor?.layoutParams = it
+        }
+
+    }
 }
 

@@ -65,6 +65,7 @@ class AppConstant {
 
         const val ALPHA_1F: Float = 1.0F
         const val ALPHA_POINT_3F: Float = 0.3F
+
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }
