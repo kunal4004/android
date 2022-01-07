@@ -279,6 +279,10 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 						case 440:
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, sendUserStatementResponse.response.stsParams, getActivity());
 							break;
+						case 403:
+							hideKeyboard();
+							Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, sendUserStatementResponse.response.desc);
+							break;
 						default:
 							break;
 					}
