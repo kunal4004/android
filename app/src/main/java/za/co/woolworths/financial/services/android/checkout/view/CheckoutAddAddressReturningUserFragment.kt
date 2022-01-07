@@ -723,6 +723,10 @@ class CheckoutAddAddressReturningUserFragment : CheckoutAddressManagementBaseFra
                     ONLY_OTHER
                 )
             }
+            // When the basket is FBH then no need to show shopping/plastic bags.
+            switchNeedBags.visibility = GONE
+            txtNeedBags.visibility = GONE
+            newShoppingBagsLayout.visibility = GONE
         }
     }
 
