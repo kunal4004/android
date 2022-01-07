@@ -111,7 +111,6 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonito
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import android.graphics.Bitmap
 import androidx.fragment.app.activityViewModels
-import kotlinx.android.synthetic.main.low_stock_indicator.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
