@@ -18,6 +18,7 @@ import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_deeplink_pdp.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap
@@ -123,7 +124,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
 
             setupViewModel()
             init()
-            val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
+            val defaultLocation = AppConfigSingleton.quickShopDefaultValues
             if (defaultLocation == null)
                 getConfig(productId)
             else

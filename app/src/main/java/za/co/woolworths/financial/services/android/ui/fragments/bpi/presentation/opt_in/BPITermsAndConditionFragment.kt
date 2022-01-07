@@ -9,6 +9,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
@@ -174,6 +175,10 @@ class BPITermsAndConditionFragment : Fragment()  {
         bpiTermsConditionsWebView?.apply {
             with(settings) {
                 javaScriptEnabled = true
+                allowContentAccess = true
+                domStorageEnabled = true
+                cacheMode = WebSettings.LOAD_NO_CACHE
+                mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
             }
 
             webViewClient = object : android.webkit.WebViewClient() {

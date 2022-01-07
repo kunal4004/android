@@ -43,11 +43,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
-import za.co.woolworths.financial.services.android.models.dto.MaritalStatus;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.app_config.credit_limit_increase.ConfigMaritalStatus;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
@@ -77,7 +77,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private static final int INCREASE_PROGRESS_BY = 100;
 	private static final int SLIDE_ANIM_DURATION = 1500;
 	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
-	private MaritalStatus maritalStatus;
+	private ConfigMaritalStatus maritalStatus;
 	private WTextView tvCurrentCreditLimitAmount, tvNewCreditLimitAmount, tvAdditionalCreditLimitAmount, tvCalculatingYourOffer, tvLoadTime, tvSlideToEditSeekInfo, tvSlideToEditAmount;
 	private ProgressBar cpCurrentCreditLimit, cpAdditionalCreditLimit, cpNewCreditAmount;
 	private LinearLayout llSlideToEditContainer, llNextButtonLayout;
@@ -651,7 +651,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	public CreateOfferRequest createOffer
-			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail, MaritalStatus maritalStatus) {
+			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail, ConfigMaritalStatus maritalStatus) {
 		return new CreateOfferRequest(
 				WoolworthsApplication.getProductOfferingId(),
 				roundOffCentValues(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
