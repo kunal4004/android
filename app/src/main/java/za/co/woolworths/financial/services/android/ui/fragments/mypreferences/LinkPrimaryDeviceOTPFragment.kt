@@ -64,6 +64,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
     private var newPrimaryDevice: UserDevice? = null
     private var oldPrimaryDevice: UserDevice? = null
     private var otpNumber: String? = null
+    private var otpSMSNumber: String? = null
     private var retryApiCall: String? = null
     private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
@@ -255,7 +256,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                     v.isEnabled = false
                     Handler().postDelayed({ v.isEnabled = true }, AppConstant.DELAY_1000_MS)
                     view?.findNavController()?.navigate(R.id.action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
-                            ResendOTPBottomSheetFragment.OTP_NUMBER to otpNumber
+                            ResendOTPBottomSheetFragment.OTP_SMS_NUMBER to otpSMSNumber
                     ))
                 }
             }
@@ -356,7 +357,7 @@ class LinkPrimaryDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkCh
                         unlinkDeviceOTPScreenConstraintLayout?.visibility = View.VISIBLE
                         retrieveOTPResponse.otpSentTo?.let {
                             if (otpMethod.equals(OTPMethodType.SMS.name, true)) {
-                                otpNumber = it
+                                otpSMSNumber = it
                             }
                             enterOTPSubtitle?.text = activity?.resources?.getString(R.string.sent_otp_desc, it)
                             Handler().postDelayed({

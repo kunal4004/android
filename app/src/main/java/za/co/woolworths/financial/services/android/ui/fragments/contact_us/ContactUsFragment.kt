@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 
-
 class ContactUsFragment : Fragment(), View.OnClickListener {
 
     private var mBottomNavigator: BottomNavigator? = null

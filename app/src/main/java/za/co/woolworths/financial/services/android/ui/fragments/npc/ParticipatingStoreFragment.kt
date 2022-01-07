@@ -27,6 +27,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.participating_store_fragment.*
 import kotlinx.android.synthetic.main.select_store_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.activities.card.SelectStoreActivity
@@ -85,7 +86,7 @@ class ParticipatingStoreFragment : Fragment() {
 
         //Fetch message from config and display geofencing toast
         val isInGeoFence = arguments?.getBoolean(GEOFENCE_ENABLED, false)
-        val geofenceMessage = WoolworthsApplication.getInstantCardReplacement()?.geofencing?.outOfRangeMessages
+        val geofenceMessage = AppConfigSingleton.instantCardReplacement?.geofencing?.outOfRangeMessages
         geofenceMessage?.let {
             val participatingStoreDescription = highlightTextInDesc(context, SpannableString(if (isInGeoFence == true) it.inRange else it.outOfRange), "here", true)
             tvStoreContactInfo?.apply {

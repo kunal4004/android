@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_wrewards_bottom_sheet.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -67,7 +68,7 @@ class WrewardsBottomSheetFragment(activity: FragmentActivity?) : WBottomSheetDia
                 ), activity)
                 dismissAllowingStateLoss()
                 AnimationUtilExtension.animateViewPushDown(v)
-                Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsLink())
+                Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsLink)
             }
             R.id.addItNowButton -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_ALREADY_HAVE_WREWARD, hashMapOf(

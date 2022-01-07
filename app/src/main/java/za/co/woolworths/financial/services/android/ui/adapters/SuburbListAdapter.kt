@@ -13,7 +13,11 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 import za.co.woolworths.financial.services.android.util.DeliveryType
 
-class SuburbListAdapter(private var suburbList: ArrayList<Suburb>, var listener: ISuburbSelector, var deliveryType: DeliveryType?) : RecyclerView.Adapter<SuburbListAdapter.SuburbViewHolder>(), Filterable {
+class SuburbListAdapter(
+    private var suburbList: ArrayList<Suburb>,
+    var listener: ISuburbSelector,
+    var deliveryType: DeliveryType?,
+) : RecyclerView.Adapter<SuburbListAdapter.SuburbViewHolder>(), Filterable {
 
     var checkedItemPosition = -1
     var suburbFilterList = ArrayList<Suburb>()
@@ -23,7 +27,8 @@ class SuburbListAdapter(private var suburbList: ArrayList<Suburb>, var listener:
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SuburbViewHolder {
-        return SuburbViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.province_and_suburb_list_item, parent, false))
+        return SuburbViewHolder(LayoutInflater.from(parent.context)
+            .inflate(R.layout.province_and_suburb_list_item, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -38,20 +43,26 @@ class SuburbListAdapter(private var suburbList: ArrayList<Suburb>, var listener:
     inner class SuburbViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItem(position: Int) {
             itemView.apply {
-                suburbFilterList[position].let {
-                    name.text = it.name
-                    selector.isChecked = checkedItemPosition == position
+                if (suburbFilterList.size > position) {
+                    suburbFilterList[position].let {
+                        name.text = it.name
+                        selector.isChecked = checkedItemPosition == position
 
-                    when (deliveryType) {
-                        DeliveryType.DELIVERY -> {
-                            name.paintFlags = if (!it.suburbDeliverable) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
-                            name.setTextColor(if (!it.suburbDeliverable) bindColor(R.color.black_50) else bindColor(R.color.black60))
-                            itemView.alpha = if (!it.suburbDeliverable) 0.5f else 1f
-                        }
-                        DeliveryType.STORE_PICKUP -> {
-                            name.paintFlags = if (!it.storeDeliverable) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
-                            name.setTextColor(if (!it.storeDeliverable) bindColor(R.color.black_50) else bindColor(R.color.black60))
-                            itemView.alpha = if (!it.storeDeliverable) 0.5f else 1f
+                        when (deliveryType) {
+                            DeliveryType.DELIVERY -> {
+                                name.paintFlags =
+                                    if (!it.suburbDeliverable) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
+                                name.setTextColor(if (!it.suburbDeliverable) bindColor(R.color.black_50) else bindColor(
+                                    R.color.black60))
+                                itemView.alpha = if (!it.suburbDeliverable) 0.5f else 1f
+                            }
+                            DeliveryType.STORE_PICKUP -> {
+                                name.paintFlags =
+                                    if (!it.storeDeliverable) Paint.STRIKE_THRU_TEXT_FLAG else Paint.ANTI_ALIAS_FLAG
+                                name.setTextColor(if (!it.storeDeliverable) bindColor(R.color.black_50) else bindColor(
+                                    R.color.black60))
+                                itemView.alpha = if (!it.storeDeliverable) 0.5f else 1f
+                            }
                         }
                     }
                 }
