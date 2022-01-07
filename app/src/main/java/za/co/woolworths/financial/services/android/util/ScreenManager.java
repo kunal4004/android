@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 
 import android.app.Activity;
@@ -186,7 +187,9 @@ public class ScreenManager {
     }
 
     public static void presentShoppingCart(Activity activity) {
-        //TODO: Nav stack change
+        if (activity instanceof BottomNavigationActivity){
+            ((BottomNavigationActivity)activity).navigateToTabIndex(INDEX_CART, null);
+        }
         /*Intent openCartActivity = new Intent(activity, CartActivity.class);
         activity.startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
         activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);*/

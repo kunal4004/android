@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQ
 import za.co.woolworths.financial.services.android.ui.activities.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
@@ -234,10 +235,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (activity as? BottomNavigationActivity)?.apply {
-            hideBottomNavigationMenu()
-            hideToolbar()
-        }
+        setUpToolBar()
     }
 
     override fun onDetach() {
@@ -263,7 +261,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         moreColor?.setOnClickListener(this)
         imgCloseVTO?.setOnClickListener(this)
         imgVTORefresh?.setOnClickListener(this)
-        closePage?.setOnClickListener(this)
+        openCart?.setOnClickListener(this)
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
         imgVTOOpen?.setOnClickListener(this)
@@ -280,6 +278,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             true
         }
 
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            setUpToolBar()
+        }
+    }
+
+    private fun setUpToolBar() {
+        (activity as? BottomNavigationActivity)?.apply {
+            showToolbar()
+            showBackNavigationIcon(true)
+            setToolbarBackgroundDrawable(R.drawable.appbar_background)
+            setTitle("")
+            toolbar?.setNavigationOnClickListener { popFragment() }
+            hideBottomNavigationMenu()
+            hideToolbar()
+        }
     }
 
     private fun pinchZoomOnVtoLiveCamera(event: MotionEvent?) {
@@ -327,7 +344,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.imgVTOOpen -> vtoOptionSelectBottomDialog.showBottomSheetDialog(this@ProductDetailsFragment,
                 requireActivity(),
                 false)
-            R.id.closePage -> closeScreen()
+            R.id.openCart -> openCart()
             R.id.imgCloseVTO -> closeVto()
             R.id.imgVTORefresh -> clearEffect()
             R.id.retakeCamera -> reOpenCamera()
@@ -464,7 +481,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             txtCountCameraCaptureImage?.visibility = View.GONE
             share?.visibility = View.VISIBLE
             productImagesViewPagerIndicator?.visibility = View.VISIBLE
-            closePage?.visibility = View.VISIBLE
+            openCart?.visibility = View.VISIBLE
             productImagesViewPager?.visibility = View.VISIBLE
             imgVTOOpen?.visibility = View.VISIBLE
             if (null != makeupCamera) {
@@ -478,12 +495,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
 
-    private fun closeScreen() {
-        activity?.apply {
-            setResult(RESULT_CANCELED)
-            onBackPressed()
-
-        }
+    private fun openCart() {
+        (activity as? BottomNavigationActivity)?.navigateToTabIndex(INDEX_CART, null)
     }
 
     private fun onQuantitySelector() {
@@ -2071,7 +2084,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productLayout?.contentDescription = getString(R.string.pdp_layout)
             productImagesViewPagerIndicator?.contentDescription =
                 getString(R.string.store_card_image)
-            closePage?.contentDescription = getString(R.string.pdp_layout)
+            openCart?.contentDescription = getString(R.string.pdp_layout)
             productName?.contentDescription = getString(R.string.pdp_textViewProductName)
             priceLayout?.contentDescription = getString(R.string.pdp_textViewPrice)
             colorPlaceholder?.contentDescription = getString(R.string.pdp_textViewColourPlaceHolder)
@@ -2332,7 +2345,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 vtoLayout?.visibility = View.GONE
                 share?.visibility = View.VISIBLE
                 productImagesViewPagerIndicator?.visibility = View.VISIBLE
-                closePage?.visibility = View.VISIBLE
+                openCart?.visibility = View.VISIBLE
                 productImagesViewPager?.visibility = View.VISIBLE
                 imgVTOOpen?.visibility = View.VISIBLE
             }
@@ -2373,7 +2386,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         vtoLayout?.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
-        closePage?.visibility = View.GONE
+        openCart?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         imgDownloadVTO?.visibility = View.GONE
         imgVTOOpen?.visibility = View.GONE
@@ -2578,7 +2591,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         vtoLayout?.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
-        closePage?.visibility = View.GONE
+        openCart?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         captureImage?.visibility = View.GONE
         imgVTOSplit?.visibility = View.GONE

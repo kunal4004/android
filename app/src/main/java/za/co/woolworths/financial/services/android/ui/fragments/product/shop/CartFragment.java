@@ -334,6 +334,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         btnGoToProduct.setOnClickListener(this);
     }
 
+    private void initializeBottomTab(){
+        if(getActivity() instanceof BottomNavigationActivity){
+            ((BottomNavigationActivity) getActivity()).showBottomNavigationMenu();
+            ((BottomNavigationActivity) getActivity()).showToolbar();
+        }
+    }
+
     private void setupToolbar() {
         Utils.updateStatusBarBackground(getActivity());
         if (getView() == null) {
@@ -350,6 +357,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         pbRemoveAllItem.setVisibility(View.GONE);
         btnEditCart.setOnClickListener(this);
         btnClearCart.setOnClickListener(this);
+
+        if(getActivity() instanceof BottomNavigationActivity){
+            ((BottomNavigationActivity) getActivity()).hideToolbar();
+        }
     }
 
     /****
@@ -1445,6 +1456,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void reloadFragment() {
         //Reload screen
         setupToolbar();
+        initializeBottomTab();
         initializeLoggedInUserCartUI();
         loadShoppingCart(false);
     }
