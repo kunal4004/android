@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
-import kotlinx.android.synthetic.main.order_details_activity.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IPresentOrderDetailInterface
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
