@@ -6,8 +6,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.Companion.POST_ADD_TO_SHOPPING_LIST
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ScreenManager
 
 class NavigateToShoppingList {
@@ -58,7 +58,7 @@ class NavigateToShoppingList {
                 val intentAddToList = Intent(this, AddToShoppingListActivity::class.java)
                 intentAddToList.putExtra("addToListRequest", Gson().toJson(addToListRequest))
                 intentAddToList.putExtra("shouldDisplayCreateList", navigateToCreateList)
-                intentAddToList.putExtra(OrderDetailsActivity.ORDER_ID, orderId ?: "")
+                intentAddToList.putExtra(AppConstant.ORDER_ID, orderId ?: "")
                 startActivityForResult(intentAddToList, AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE)
                 overridePendingTransition(0, 0)
             }

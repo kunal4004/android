@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +22,8 @@ import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActiv
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.Companion.PAGE_TITLE
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.BottomActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.TaxInvoiceAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import java.io.UnsupportedEncodingException
@@ -60,6 +63,9 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
     }
 
     private fun initView() {
+        (activity as? BottomNavigationActivity)?.let {
+            it.bottomNavigationById.visibility = View.INVISIBLE
+        }
         taxInvoiceList.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
         taxInvoiceList.adapter = TaxInvoiceAdapter(taxNoteNumbers, this)
     }

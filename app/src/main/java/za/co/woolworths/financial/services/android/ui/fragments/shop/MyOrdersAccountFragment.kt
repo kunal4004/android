@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +20,6 @@ import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.Companion.RESULT_CODE_MY_ACCOUNT_FRAGMENT
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -235,11 +233,19 @@ class MyOrdersAccountFragment : Fragment(), IPresentOrderDetailInterface {
 
     override fun presentOrderDetailsPage(item: Order) {
         activity?.apply {
-            val intent = Intent(this, OrderDetailsActivity::class.java)
-            intent.putExtra("order", Utils.toJson(item))
-            intent.putExtra(OrderDetailsActivity.NAVIGATED_FROM_MY_ACCOUNTS, true)
-            activity?.startActivityForResult(intent, OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE)
-            activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+//            val intent = Intent(this, OrderDetailsActivity::class.java)
+//            intent.putExtra("order", Utils.toJson(item))
+//            intent.putExtra(OrderDetailsActivity.NAVIGATED_FROM_MY_ACCOUNTS, true)
+//            activity?.startActivityForResult(intent, OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE)
+//            activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+
+            val orderItenm = Utils.toJson(item)
+            val order = Utils.jsonStringToObject(orderItenm, Order::class.java) as? Order
+            order?.let {
+                (activity as? BottomNavigationActivity)?.pushFragment(
+                        OrderDetailsFragment.getInstance(order, true)
+                )
+            }
         }
     }
 }

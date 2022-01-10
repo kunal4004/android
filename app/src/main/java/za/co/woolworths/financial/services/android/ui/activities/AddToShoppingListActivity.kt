@@ -10,12 +10,12 @@ import android.view.animation.TranslateAnimation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_to_shopping_list_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.ANIM_DOWN_DURATION
-import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateShoppingListFragment
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
@@ -36,7 +36,8 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
             Utils.updateStatusBarBackground(this)
             val addToListRequestBundle: String? = intent?.getStringExtra("addToListRequest")
             val shouldDisplayCreateList: Boolean? = intent?.getBooleanExtra("shouldDisplayCreateList", false)
-            val orderId = intent?.getStringExtra(ORDER_ID)
+            val orderId = intent?.getStringExtra(
+                    ORDER_ID)
 
             if (shouldDisplayCreateList!!) {
                 addFragment(
