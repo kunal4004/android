@@ -54,7 +54,7 @@ class AbsaSecurityCheckSuccessfulFragment : Fragment() {
 
     private fun navigateToFiveDigitOtpNumber() {
         CoroutineScope(Dispatchers.IO).launch {
-            delay(TimeUnit.SECONDS.toMillis(AppConstant.DELAY_3_S))
+            delay(AppConstant.DELAY_3000_MS)
             withContext(Dispatchers.Main) {
                 replaceFragment(
                     fragment = AbsaFiveDigitCodeFragment.newInstance(mAliasId, mCreditCardToken),
