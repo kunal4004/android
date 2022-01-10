@@ -57,8 +57,6 @@
             android:layout_marginBottom="@dimen/fourteen_dp"
             android:text="@string/retry" />
 
-
-
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"

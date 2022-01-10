@@ -82,5 +82,4 @@ class AbsaSecurityCheckSuccessfulFragment : Fragment() {
             stopSpinning()
         }
     }
-
 }
