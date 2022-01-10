@@ -31,6 +31,7 @@ import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -104,7 +105,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
     }
 
     public AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, String body, boolean isBodyEncryptionRequired, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
-        this(Method.POST, WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/wfsMobileRegistration", clazz, headers, body, isBodyEncryptionRequired, listener, errorListener);
+        this(Method.POST, AppConfigSingleton.INSTANCE.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/wfsMobileRegistration", clazz, headers, body, isBodyEncryptionRequired, listener, errorListener);
     }
 
     public AbsaBankingOpenApiRequest(String url, Class<T> clazz, Map<String, String> headers, String body, boolean isBodyEncryptionRequired, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
