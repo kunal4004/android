@@ -1,16 +1,25 @@
 package za.co.woolworths.financial.services.android.util;
 
+import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
+import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -22,11 +31,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
-
-import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
-import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 
 /**
  * Created by eesajacobs on 2016/11/30.
@@ -39,7 +44,7 @@ public class ScreenManager {
     public static final int SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE = 2330;
 
     public static void presentSSOSignin(Activity activity) {
-        if(activity!=null) {
+        if (activity != null) {
             Intent intent = new Intent(activity, SSOActivity.class);
             intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
             intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
@@ -101,7 +106,7 @@ public class ScreenManager {
         HashMap<String, String> params = new HashMap<String, String>();
         try {
             params.put("id_token_hint", SessionUtilities.getInstance().getSessionToken());
-            params.put("post_logout_redirect_uri", WoolworthsApplication.getSsoRedirectURILogout());
+            params.put("post_logout_redirect_uri", AppConfigSingleton.INSTANCE.getSsoRedirectURILogout());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,7 +161,7 @@ public class ScreenManager {
     }
 
     public static void presentSSOSignin(Activity activity, int requestCode) {
-        if(activity!=null) {
+        if (activity != null) {
             Intent intent = new Intent(activity, SSOActivity.class);
             intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
             intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
@@ -167,11 +172,18 @@ public class ScreenManager {
         }
     }
 
-    public static void presentProductDetails(Activity activity, Bundle bundle) {
-//        Intent intent = new Intent(activity, ProductDetailsActivity.class);
-//        intent.putExtras(bundle);
-//        activity.startActivityForResult(intent, PDP_REQUEST_CODE);
-//        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+    public static void presentProductDetails(FragmentManager fragmentManager, int layoutId, Bundle bundle) {
+        /*Intent intent = new Intent(activity, ProductDetailsActivity.class);
+        intent.putExtras(bundle);
+        activity.startActivityForResult(intent, PDP_REQUEST_CODE);
+        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);*/
+
+        Fragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
+        productDetailsFragmentNew.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(layoutId, productDetailsFragmentNew);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     public static void presentShoppingCart(Activity activity) {
@@ -208,13 +220,13 @@ public class ScreenManager {
 
     }
 
-    public static void presentProductDetails(Activity activity, String productName, ProductList productList) {
+    public static void presentProductDetails(FragmentManager fragmentManager, int layoutId, String productName, ProductList productList) {
         Gson gson = new Gson();
         String strProductList = gson.toJson(productList);
         Bundle bundle = new Bundle();
         bundle.putString("strProductList", strProductList);
         bundle.putString("strProductCategory", productName);
-        presentProductDetails(activity, bundle);
+        presentProductDetails(fragmentManager, layoutId, bundle);
     }
 
     public static void presentWhatsAppChatToUsActivity(Activity activity, String featureName, String appScreen) {

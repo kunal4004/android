@@ -144,7 +144,7 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		ScreenManager.presentProductDetails(BottomActivity.this,bundle);
+		ScreenManager.presentProductDetails(getSupportFragmentManager(), getLayoutResourceId(), bundle);
 	}
 
 	public void scrollableViewHelper(NestedScrollView nsv) {
@@ -250,6 +250,7 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		// redirects to utils
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
 

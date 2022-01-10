@@ -30,7 +30,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.Currency;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
@@ -68,7 +66,6 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.MODAL_LAYOUT.BIOMETRICS_SECURITY_INFO;
 
@@ -551,7 +548,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                 ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
                 if (shoppingDeliveryLocation != null) {
                     if (shoppingDeliveryLocation.suburb != null || shoppingDeliveryLocation.store!=null) {
-                        tvLocation.setText(shoppingDeliveryLocation.storePickup ? shoppingDeliveryLocation.store.getName() : shoppingDeliveryLocation.suburb.name + ", " + shoppingDeliveryLocation.province.name);
+                        tvLocation.setText(shoppingDeliveryLocation.storePickup ? shoppingDeliveryLocation.store.getName() : shoppingDeliveryLocation.suburb.name + ", " + shoppingDeliveryLocation.province.getName());
                     }
                 }
                 break;
