@@ -15,7 +15,6 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.activity_bottom_navigation.*
 import kotlinx.android.synthetic.main.my_account_activity.*
-import kotlinx.android.synthetic.main.order_details_activity.*
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
