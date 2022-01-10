@@ -262,6 +262,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgCloseVTO?.setOnClickListener(this)
         imgVTORefresh?.setOnClickListener(this)
         openCart?.setOnClickListener(this)
+        backArrow?.setOnClickListener(this)
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
         imgVTOOpen?.setOnClickListener(this)
@@ -289,11 +290,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun setUpToolBar() {
         (activity as? BottomNavigationActivity)?.apply {
-            showToolbar()
-            showBackNavigationIcon(true)
-            setToolbarBackgroundDrawable(R.drawable.appbar_background)
-            setTitle("")
-            toolbar?.setNavigationOnClickListener { popFragment() }
             hideBottomNavigationMenu()
             hideToolbar()
         }
@@ -345,6 +341,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 requireActivity(),
                 false)
             R.id.openCart -> openCart()
+            R.id.backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
             R.id.imgCloseVTO -> closeVto()
             R.id.imgVTORefresh -> clearEffect()
             R.id.retakeCamera -> reOpenCamera()
@@ -482,6 +479,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             share?.visibility = View.VISIBLE
             productImagesViewPagerIndicator?.visibility = View.VISIBLE
             openCart?.visibility = View.VISIBLE
+            backArrow?.visibility = View.VISIBLE
             productImagesViewPager?.visibility = View.VISIBLE
             imgVTOOpen?.visibility = View.VISIBLE
             if (null != makeupCamera) {
@@ -2346,6 +2344,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 share?.visibility = View.VISIBLE
                 productImagesViewPagerIndicator?.visibility = View.VISIBLE
                 openCart?.visibility = View.VISIBLE
+                backArrow?.visibility = View.VISIBLE
                 productImagesViewPager?.visibility = View.VISIBLE
                 imgVTOOpen?.visibility = View.VISIBLE
             }
@@ -2387,6 +2386,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
         openCart?.visibility = View.GONE
+        backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         imgDownloadVTO?.visibility = View.GONE
         imgVTOOpen?.visibility = View.GONE
@@ -2592,6 +2592,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
         openCart?.visibility = View.GONE
+        backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         captureImage?.visibility = View.GONE
         imgVTOSplit?.visibility = View.GONE

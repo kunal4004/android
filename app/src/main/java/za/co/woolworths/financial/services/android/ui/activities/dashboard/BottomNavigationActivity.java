@@ -58,7 +58,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +73,6 @@ import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -110,8 +111,6 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
-import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
-import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.DeepLinkingUtils;
@@ -303,7 +302,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
         mToastUtils = new ToastUtils(BottomNavigationActivity.this);
         mToastUtils.setActivity(BottomNavigationActivity.this);
-        mToastUtils.setView(getBottomNavigationById());
         mToastUtils.setGravity(Gravity.BOTTOM);
         mToastUtils.setCurrentState(TAG);
         mToastUtils.setCartText(cartText);
@@ -670,7 +668,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     };
 
     private void replaceAccountIcon(@NonNull MenuItem item) {
-        if(accountNavigationView != null){
+        if (accountNavigationView != null) {
             if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
                     && item.getItemId() != R.id.navigate_to_account) {
                 accountNavigationView.removeView(notificationBadgeOne);
@@ -686,8 +684,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             } else {
                 accountNavigationView.removeView(notificationBadgeOne);
             }
-        }
-        else {
+        } else {
             FirebaseManager.logException("accountNavigationView is null");
         }
     }

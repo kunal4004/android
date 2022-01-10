@@ -338,6 +338,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         if(getActivity() instanceof BottomNavigationActivity){
             ((BottomNavigationActivity) getActivity()).showBottomNavigationMenu();
             ((BottomNavigationActivity) getActivity()).showToolbar();
+            ((BottomNavigationActivity) getActivity()).setToolbarTitle("");
         }
     }
 
