@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.*
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
@@ -80,16 +81,16 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                                 FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD,
                                 arguments,
                                 this)
-                            when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
+                            when (AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.renderMode){
                                 NATIVE_BROWSER ->
                                     KotlinUtils.openUrlInPhoneBrowser(
-                                    WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.collectionsUrl, this)
+                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsUrl, this)
 
                                 else ->
                                 KotlinUtils.openLinkInInternalWebView(activity,
-                                    WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.collectionsUrl,
+                                    AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsUrl,
                                     true,
-                                    WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.exitUrl
+                                    AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
                                 )
                             }
                         }

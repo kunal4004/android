@@ -20,6 +20,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -38,7 +39,7 @@ public class AbsaContentEncryptionRequest {
         try {
             this.deviceId = Utils.getAbsaUniqueDeviceID();
             byte[] seed = SessionKey.generateKey(SessionKey.OUTPUT_KEY_LENGTH).getEncoded();
-            this.contentEncryptionSeed = new AsymmetricCryptoHelper().encryptSymmetricKey(seed, WoolworthsApplication.getAbsaBankingOpenApiServices().getContentEncryptionPublicKey());
+            this.contentEncryptionSeed = new AsymmetricCryptoHelper().encryptSymmetricKey(seed, AppConfigSingleton.INSTANCE.getAbsaBankingOpenApiServices().getContentEncryptionPublicKey());
             derivedSeed = Cryptography.PasswordBasedKeyDerivationFunction2(deviceId, seed, 1000, 256);
         } catch (UnsupportedEncodingException | KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
             FirebaseManager.Companion.logException(e);
@@ -57,7 +58,7 @@ public class AbsaContentEncryptionRequest {
             FirebaseManager.Companion.logException(e);
         }
 
-        new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
+        new AbsaBankingOpenApiRequest<>(AppConfigSingleton.INSTANCE.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
 
             @Override
             public void onResponse(CEKDResponse response, List<HttpCookie> cookies) {

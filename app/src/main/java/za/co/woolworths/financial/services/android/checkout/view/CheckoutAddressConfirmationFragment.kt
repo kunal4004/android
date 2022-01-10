@@ -34,8 +34,8 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -316,7 +316,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         bundle.apply {
             putString(
                 "ProvinceList",
-                Utils.toJson(WoolworthsApplication.getNativeCheckout()?.regions)
+                Utils.toJson(AppConfigSingleton.nativeCheckout?.regions)
             )
         }
         navController?.navigate(
@@ -877,12 +877,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun getProvinceName(provinceId: String?): String {
         val provinceList =
-            WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>
-        if (!provinceId.isNullOrEmpty()) {
+            AppConfigSingleton.nativeCheckout?.regions as? MutableList<Province>
+        if (!provinceId.isNullOrEmpty() && !provinceList.isNullOrEmpty()) {
             for (provinces in provinceList) {
                 if (provinceId == provinces.id) {
                     // province id is matching with the province list from config.
-                    return provinces.name
+                    return provinces.name ?: ""
                 }
             }
         }
