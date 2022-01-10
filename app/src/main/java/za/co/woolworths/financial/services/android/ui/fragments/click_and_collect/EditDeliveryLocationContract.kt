@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.click_and_collect
 
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
-import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts
 import za.co.woolworths.financial.services.android.util.DeliveryType
 
 interface EditDeliveryLocationContract {

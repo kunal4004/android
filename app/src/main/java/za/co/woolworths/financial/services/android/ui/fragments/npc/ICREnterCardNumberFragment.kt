@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.link_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
@@ -22,7 +23,7 @@ import za.co.woolworths.financial.services.android.util.*
 class ICREnterCardNumberFragment : MyCardExtension() {
 
     private var shouldDisableUINavigation = false
-    private val mMCSInstantStoreCard = WoolworthsApplication.getInstantCardReplacement()
+    private val mMCSInstantStoreCard = AppConfigSingleton.instantCardReplacement
 
     companion object {
         fun newInstance() = ICREnterCardNumberFragment()
