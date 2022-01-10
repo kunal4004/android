@@ -95,11 +95,13 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -669,16 +671,20 @@ public class Utils {
     }
 
     public static String getUniqueDeviceID() {
-        String deviceID = null;
-        if (deviceID == null) {
-            deviceID = getSessionDaoValue(SessionDao.KEY.DEVICE_ID);
-            if (deviceID == null) {
-                deviceID = FirebaseInstallations.getInstance().getId().getResult().toString();
-                sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID);
-            }
+        AtomicReference<String> deviceID = new AtomicReference<>(getSessionDaoValue(SessionDao.KEY.DEVICE_ID));
+        if (deviceID.get() == null) {
+            FirebaseInstallations.getInstance().getId().addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    deviceID.set(task.getResult());
+                    sessionDaoSave(SessionDao.KEY.DEVICE_ID, deviceID.get());
+                }
+                else if(!task.isSuccessful()){
+                    FirebaseManager.logException("Utils.getUniqueDeviceID() task failed");
+                }
+            });
         }
 
-        return deviceID;
+        return deviceID.get();
     }
 
     public static void disableEnableChildViews(View view, boolean enabled) {
@@ -1432,16 +1438,14 @@ public class Utils {
         }
     }
 
-    public static int getMinimumSupportedAppBuildNumber(Integer  minimumSupportedAppBuildNumber) {
-        return minimumSupportedAppBuildNumber;
-    }
-
     public static Integer getAppBuildNumber() {
         return BuildConfig.VERSION_CODE;
     }
 
-    public static Boolean isFeatureEnabled(Integer  minimumSupportedAppBuildNumber) {
-        return (getAppBuildNumber() >= getMinimumSupportedAppBuildNumber(minimumSupportedAppBuildNumber));
+    public static Boolean isFeatureEnabled(Integer minimumSupportedAppBuildNumber) {
+        // if minimumSupportedAppBuildNumber is not present in AppConfig, then we consider the feature to be disabled
+        if (minimumSupportedAppBuildNumber == null) return false;
+        return getAppBuildNumber() >= minimumSupportedAppBuildNumber;
     }
 
     public static boolean checkForBinarySu() {
@@ -1553,8 +1557,8 @@ public class Utils {
     }
 
     public static Boolean isCreditCardActivationEndpointAvailable() {
-        String startTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
-        String endTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
+        String startTime = AppConfigSingleton.INSTANCE.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
+        String endTime = AppConfigSingleton.INSTANCE.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
         Calendar now = Calendar.getInstance();
         int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
         int minute = now.get(Calendar.MINUTE);

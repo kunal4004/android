@@ -12,10 +12,12 @@ import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -70,8 +72,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     companion object {
         var SHOW_TEMPORARY_FREEZE_DIALOG = false
         var SHOW_BLOCK_CARD_SCREEN = false
+        var SHOW_PAY_WITH_CARD_SCREEN = false
         var FREEZE_CARD_DETAIL = false
         var BLOCK_CARD_DETAIL = false
+        var PAY_WITH_CARD_DETAIL = false
 
         fun newInstance(storeCardDetail: String?, shouldActivateUnblockCardOnLanding: Boolean) = MyCardDetailFragment().withArgs {
             putString(STORE_CARD_DETAIL, storeCardDetail)
@@ -168,6 +172,11 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         else if(SHOW_BLOCK_CARD_SCREEN){
             SHOW_BLOCK_CARD_SCREEN = false
             activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
+        }
+        else if(SHOW_PAY_WITH_CARD_SCREEN){
+            SHOW_PAY_WITH_CARD_SCREEN = false
+            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
+            initPayWithCard()
         }
     }
 
@@ -322,6 +331,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         expireInfo?.setOnClickListener(this)
     }
 
+    @DelicateCoroutinesApi
     private fun populateView() {
         GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
             mStoreCard?.apply {
@@ -354,10 +364,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                         cardStatus?.text = getString(R.string.active)
                     }
                 }
-            }
 
-            uniqueIdsForCardDetails()
-            initTemporaryFreezeCard()
+                uniqueIdsForCardDetails()
+                initTemporaryFreezeCard()
+            }
         }
     }
 
@@ -392,8 +402,12 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 }
             }
             R.id.payWithCard -> {
-                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
-                initPayWithCard()
+                KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
+                    PAY_WITH_CARD_DETAIL = true
+                },{
+                    activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_PAY, this) }
+                    initPayWithCard()
+                })
             }
             R.id.expireInfo -> {
                 if (isApiCallInProgress())
@@ -520,7 +534,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     private fun isUserGotVirtualCard(storeCardsData: StoreCardsData?): Boolean {
         // virtual card should not be blocked.
-        return (storeCardsData?.virtualCard != null && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true && !TemporaryFreezeStoreCard.PERMANENT.equals(storeCardsData?.virtualCard?.blockType, ignoreCase = true))
+        return (storeCardsData?.virtualCard != null && AppConfigSingleton.virtualTempCard?.isEnabled == true && !TemporaryFreezeStoreCard.PERMANENT.equals(storeCardsData?.virtualCard?.blockType, ignoreCase = true))
     }
 
     private fun isApiCallInProgress(): Boolean {

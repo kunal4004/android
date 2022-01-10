@@ -12,7 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.contact_us_financial_services.callUsLinearLayoutContainer
 import kotlinx.android.synthetic.main.contact_us_detail_fragment.*
 import kotlinx.android.synthetic.main.contact_us_detail_fragment.contactFinancialServicesEmailLinearLayout
-import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUsOptions
+import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUsOptions
 import za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
@@ -23,7 +23,7 @@ class ContactUsCallCenterDetailFragment : Fragment() {
 
     companion object {
         private const val CONTACT_US_DETAIL = "CONTACT_US_DETAIL"
-        fun newInstance(contactUsOptions: ContactUsOptions) = ContactUsCallCenterDetailFragment().apply {
+        fun newInstance(contactUsOptions: ConfigContactUsOptions) = ContactUsCallCenterDetailFragment().apply {
             arguments = Bundle(1).apply {
                 putSerializable(CONTACT_US_DETAIL, contactUsOptions)
             }
@@ -31,7 +31,7 @@ class ContactUsCallCenterDetailFragment : Fragment() {
     }
 
     private var mBottomNavigator: BottomNavigator? = null
-    private var mContactUsDetail: ContactUsOptions? = null
+    private var mContactUsDetail: ConfigContactUsOptions? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -42,7 +42,7 @@ class ContactUsCallCenterDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
-            mContactUsDetail = getSerializable(CONTACT_US_DETAIL) as? ContactUsOptions
+            mContactUsDetail = getSerializable(CONTACT_US_DETAIL) as? ConfigContactUsOptions
         }
     }
 

@@ -281,7 +281,7 @@ public class ViewDragHelper {
          * the view is already captured; this indicates that a new pointer is trying to take
          * control of the view.</p>
          *
-         * <p>If this method returns true, a call to {@link #onViewCaptured(View, int)}
+         * <p>If this method returns true, a call to {@link #onViewCaptured(android.view.View, int)}
          * will follow if the capture is successful.</p>
          *
          * @param child Child the user is attempting to capture
@@ -481,7 +481,7 @@ public class ViewDragHelper {
 
     /**
      * Capture a specific child view for dragging within the parent. The callback will be notified
-     * but {@link Callback#tryCaptureView(View, int)} will not be asked permission to
+     * but {@link Callback#tryCaptureView(android.view.View, int)} will not be asked permission to
      * capture this view.
      *
      * @param childView Child view to capture
@@ -523,7 +523,7 @@ public class ViewDragHelper {
 
     /**
      * The result of a call to this method is equivalent to
-     * {@link #processTouchEvent(MotionEvent)} receiving an ACTION_CANCEL event.
+     * {@link #processTouchEvent(android.view.MotionEvent)} receiving an ACTION_CANCEL event.
      */
     public void cancel() {
         mActivePointerId = INVALID_POINTER;
@@ -536,7 +536,7 @@ public class ViewDragHelper {
     }
 
     /**
-     * {@link #cancel()}, but also abort all motion in spinner_progress_black and snap to the end of any
+     * {@link #cancel()}, but also abort all motion in progress and snap to the end of any
      * animation.
      */
     public void abort() {
@@ -559,7 +559,7 @@ public class ViewDragHelper {
      * returns false there is no further work to do to complete the movement.
      *
      * <p>This operation does not count as a capture event, though {@link #getCapturedView()}
-     * will still report the sliding view while the slide is in spinner_progress_black.</p>
+     * will still report the sliding view while the slide is in progress.</p>
      *
      * @param child Child view to capture and animate
      * @param finalLeft Final left position of child
@@ -738,9 +738,9 @@ public class ViewDragHelper {
      *
      * @param deferCallbacks true if state callbacks should be deferred via posted message.
      *                       Set this to true if you are calling this method from
-     *                       {@link View#computeScroll()} or similar methods
+     *                       {@link android.view.View#computeScroll()} or similar methods
      *                       invoked as part of layout or drawing.
-     * @return true if settle is still in spinner_progress_black
+     * @return true if settle is still in progress
      */
     public boolean continueSettling(boolean deferCallbacks) {
         // Make sure, there is a captured view
@@ -893,8 +893,8 @@ public class ViewDragHelper {
      * of the ViewDragHelper's knowledge).
      *
      * <p>The state used to report this information is populated by the methods
-     * {@link #shouldInterceptTouchEvent(MotionEvent)} or
-     * {@link #processTouchEvent(MotionEvent)}. If one of these methods has not
+     * {@link #shouldInterceptTouchEvent(android.view.MotionEvent)} or
+     * {@link #processTouchEvent(android.view.MotionEvent)}. If one of these methods has not
      * been called for all relevant MotionEvents to track, the information reported
      * by this method may be stale or incorrect.</p>
      *
@@ -940,7 +940,7 @@ public class ViewDragHelper {
     /**
      * Tests scrollability within child views of v given a delta of dx.
      *
-     * @param v View to search_layout_row for horizontal scrollability
+     * @param v View to test for horizontal scrollability
      * @param checkV Whether the view v passed should itself be checked for scrollability (true),
      *               or just its children (false).
      * @param dx Delta scrolled in pixels along the X axis
@@ -1312,8 +1312,8 @@ public class ViewDragHelper {
      * the required slop threshold.
      *
      * <p>This depends on internal state populated by
-     * {@link #shouldInterceptTouchEvent(MotionEvent)} or
-     * {@link #processTouchEvent(MotionEvent)}. You should only rely on
+     * {@link #shouldInterceptTouchEvent(android.view.MotionEvent)} or
+     * {@link #processTouchEvent(android.view.MotionEvent)}. You should only rely on
      * the results of this method after all currently available touch data
      * has been provided to one of these two methods.</p>
      *
@@ -1336,8 +1336,8 @@ public class ViewDragHelper {
      * the required slop threshold.
      *
      * <p>This depends on internal state populated by
-     * {@link #shouldInterceptTouchEvent(MotionEvent)} or
-     * {@link #processTouchEvent(MotionEvent)}. You should only rely on
+     * {@link #shouldInterceptTouchEvent(android.view.MotionEvent)} or
+     * {@link #processTouchEvent(android.view.MotionEvent)}. You should only rely on
      * the results of this method after all currently available touch data
      * has been provided to one of these two methods.</p>
      *
@@ -1442,8 +1442,8 @@ public class ViewDragHelper {
      * parent view's coordinate system. If there is no captured view this method
      * will return false.
      *
-     * @param x X position to search_layout_row in the parent's coordinate system
-     * @param y Y position to search_layout_row in the parent's coordinate system
+     * @param x X position to test in the parent's coordinate system
+     * @param y Y position to test in the parent's coordinate system
      * @return true if the captured view is under the given point, false otherwise
      */
     public boolean isCapturedViewUnder(int x, int y) {
@@ -1454,9 +1454,9 @@ public class ViewDragHelper {
      * Determine if the supplied view is under the given point in the
      * parent view's coordinate system.
      *
-     * @param view Child view of the parent to hit search_layout_row
-     * @param x X position to search_layout_row in the parent's coordinate system
-     * @param y Y position to search_layout_row in the parent's coordinate system
+     * @param view Child view of the parent to hit test
+     * @param x X position to test in the parent's coordinate system
+     * @param y Y position to test in the parent's coordinate system
      * @return true if the supplied view is under the given point, false otherwise
      */
     public boolean isViewUnder(View view, int x, int y) {
@@ -1473,8 +1473,8 @@ public class ViewDragHelper {
      * Find the topmost child under the given point within the parent view's coordinate system.
      * The child order is determined using {@link Callback#getOrderedChildIndex(int)}.
      *
-     * @param x X position to search_layout_row in the parent's coordinate system
-     * @param y Y position to search_layout_row in the parent's coordinate system
+     * @param x X position to test in the parent's coordinate system
+     * @param y Y position to test in the parent's coordinate system
      * @return The topmost child view under (x, y) or null if none found.
      */
     public View findTopChildUnder(int x, int y) {

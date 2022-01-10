@@ -8,7 +8,7 @@ interface ScreenBrightnessInterface {
     fun setBrightnessModeManual()
     fun getScreenBrightness(): Int
     fun registerContentObserverForBrightness()
-    fun unRegisterContentObserverForBrightness()
+    fun unregisterContentObserverForBrightness()
     fun initBrightnessChangeListener(onBrightnessChangeResult: (Int) -> Unit)
     fun appContext(): Context?
     fun convertBrightnessLevelFromPercent(percent: Int): Int
