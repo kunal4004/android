@@ -7,6 +7,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -22,7 +23,7 @@ abstract class WTodayExtension : Fragment() {
     companion object {
         const val SCROLL_UP_ANIM_DURATION: Long = 300
         const val TAG: String = "WTodayFragment"
-        var wTodayUrl: String = WoolworthsApplication.getWwTodayURI() ?: ""
+        var wTodayUrl: String = AppConfigSingleton.wwTodayURI ?: ""
     }
 
     abstract fun progressBarVisibility(isDisplayed: Boolean)
