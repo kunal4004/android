@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_schedule_delivery_fai
 import kotlinx.android.synthetic.main.credit_card_delivery_schedule_delivery_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.processingLayout
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
@@ -118,7 +119,7 @@ class CreditCardDeliveryScheduleDeliveryFragment : CreditCardDeliveryBaseFragmen
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.retryScheduleDeliveryBtn -> retryScheduleDelivery()
-            R.id.callCourierPartner -> activity?.apply { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
+            R.id.callCourierPartner -> activity?.apply { Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber) }
         }
     }
 

@@ -51,6 +51,7 @@ class AppConstant {
         const val VTO_COLOR_NOT_MATCH = "color_not_match"
         const val VTO_COLOR_LIVE_CAMERA = "color_match"
         const val VTO = "Virtual Try On"
+        const val SDK_INIT_FAIL = "sdk_init_fail"
 
         //Absa cookie content
         const val ABSA_COOKIE_WFPT = "wfpt"

@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_fail
 import kotlinx.android.synthetic.main.credit_card_delivery_validate_address_request_layout.*
 import kotlinx.android.synthetic.main.npc_processing_request_layout.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -79,7 +80,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
                 activity?.onBackPressed()
             }
             R.id.contactCourier, R.id.callCourierPartner -> {
-                activity?.apply { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
+                activity?.apply { Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber) }
             }
             R.id.retryOnValidateAddressFailure, R.id.retryOnInvalidAddress -> {
                 activity?.apply {
