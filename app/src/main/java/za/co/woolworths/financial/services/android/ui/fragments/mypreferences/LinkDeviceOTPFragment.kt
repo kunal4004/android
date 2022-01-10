@@ -41,13 +41,14 @@ import kotlinx.android.synthetic.main.layout_sending_otp_request.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
@@ -65,6 +66,7 @@ import za.co.woolworths.financial.services.android.ui.activities.credit_card_del
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
@@ -79,6 +81,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private var mConnectionBroadCast: BroadcastReceiver? = null
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
+    private var otpSMSNumber: String? = null
     private var retryApiCall: String? = null
     private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
@@ -271,7 +274,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     v.isEnabled = false
                     Handler().postDelayed({ v.isEnabled = true }, AppConstant.DELAY_1000_MS)
                     view?.findNavController()?.navigate(R.id.action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
-                            ResendOTPBottomSheetFragment.OTP_NUMBER to otpNumber
+                            ResendOTPBottomSheetFragment.OTP_SMS_NUMBER to otpSMSNumber
                     ))
                 }
             }
@@ -370,7 +373,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                         linkDeviceOTPScreen?.visibility = View.VISIBLE
                         retrieveOTPResponse.otpSentTo?.let {
                             if (otpMethod.equals(OTPMethodType.SMS.name, true)) {
-                                otpNumber = it
+                                otpSMSNumber = it
                             }
                             enterOTPSubtitle?.text = activity?.resources?.getString(R.string.sent_otp_desc, it)
                             Handler().postDelayed({
@@ -556,7 +559,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                 //check if should activate credit card or should schedule delivery
                                                 activateCreditCardOrScheduleCardDelivery()
                                             }*/
-                                            ApplyNowState.STORE_CARD -> {
+                                            ApplyNowState.STORE_CARD,
+                                            ApplyNowState.PERSONAL_LOAN -> {
                                                 MyAccountsFragment.updateLinkedDevices()
                                                 when {
                                                     MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
@@ -576,6 +580,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     }
                                                     StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
                                                         showActivateVirtualTempCardScreen()
+                                                    }
+
+                                                    PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL -> {
+                                                        showPersonalLoanWithdrawFundsScreen()
                                                     }
                                                     else -> {
                                                         goToProduct()
@@ -657,6 +665,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         activity?.finish()
     }
 
+    private fun showPersonalLoanWithdrawFundsScreen(){
+        PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN = true
+        PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL = false
+        activity?.finish()
+    }
+
     private fun activateCreditCardOrScheduleCardDelivery() {
         activity?.apply {
             OneAppService.getCreditCardToken()
@@ -734,7 +748,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun isPLCInGoodStanding(): Boolean {
         var isEnable = false
         if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
-            val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
+            val cardTypes: List<ConfigCreditCardDeliveryCardTypes> = AppConfigSingleton.creditCardDelivery?.cardTypes ?: arrayListOf()
             for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
                 if (binNumber.equals(getAccount()?.accountNumberBin, ignoreCase = true)
                     && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
