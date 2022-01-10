@@ -12,11 +12,11 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomS
 
 class ResendOTPBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
-    private var otpNumber: String? = null
+    private var otpSMSNumber: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-           otpNumber = it[OTP_NUMBER] as? String
+           otpSMSNumber = it[OTP_SMS_NUMBER] as? String
         }
     }
 
@@ -29,7 +29,7 @@ class ResendOTPBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        context?.let {resendSMSto.text =  it.getString(R.string.resend_sms_to, otpNumber)}
+        context?.let {resendSMSto.text =  it.getString(R.string.resend_sms_to, otpSMSNumber)}
         resendSMSto.setOnClickListener(this)
         resendEmailOTP.setOnClickListener(this)
         resendCallCenter.setOnClickListener(this)
@@ -37,7 +37,7 @@ class ResendOTPBottomSheetFragment : WBottomSheetDialogFragment(), View.OnClickL
     }
 
     companion object {
-        const val OTP_NUMBER = "otpNumber"
+        const val OTP_SMS_NUMBER = "otpSMSNumber"
     }
 
     override fun onClick(v: View?) {
