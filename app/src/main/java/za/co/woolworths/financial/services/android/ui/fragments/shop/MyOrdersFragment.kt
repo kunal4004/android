@@ -254,11 +254,5 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
                     OrderDetailsFragment.getInstance(order)
             )
         }
-
-
-//        val intent = Intent(context, OrderDetailsActivity::class.java)
-//        intent.putExtra("order", Utils.toJson(item))
-//        activity?.startActivityForResult(intent, OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE)
-//        activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
     }
 }

@@ -233,14 +233,8 @@ class MyOrdersAccountFragment : Fragment(), IPresentOrderDetailInterface {
 
     override fun presentOrderDetailsPage(item: Order) {
         activity?.apply {
-//            val intent = Intent(this, OrderDetailsActivity::class.java)
-//            intent.putExtra("order", Utils.toJson(item))
-//            intent.putExtra(OrderDetailsActivity.NAVIGATED_FROM_MY_ACCOUNTS, true)
-//            activity?.startActivityForResult(intent, OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE)
-//            activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-
-            val orderItenm = Utils.toJson(item)
-            val order = Utils.jsonStringToObject(orderItenm, Order::class.java) as? Order
+            val orderItem = Utils.toJson(item)
+            val order = Utils.jsonStringToObject(orderItem, Order::class.java) as? Order
             order?.let {
                 (activity as? BottomNavigationActivity)?.pushFragment(
                         OrderDetailsFragment.getInstance(order, true)

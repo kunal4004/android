@@ -442,7 +442,6 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             }
             440 -> {
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, addItemToCartResponse.response.stsParams, requireActivity())
-                //finish()
             }
 
         }
@@ -450,11 +449,6 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-//        if (context is FragmentsEventsListner) {
-//            listener = context
-//        } else {
-//            throw ClassCastException("$context must implement FragmentsEventsListner.")
-//        }
     }
 
     override fun openSetSuburbProcess() {

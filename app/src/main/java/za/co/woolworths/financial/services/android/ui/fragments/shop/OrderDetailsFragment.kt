@@ -222,7 +222,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                 TaxInvoiceLIstFragment.getInstance(
                         order?.orderId!!, order?.taxNoteNumbers!!)
         )
-        //listener.openTaxInvoices()
     }
 
     fun triggerFirebaseEvent(properties: String) {

@@ -36,8 +36,7 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
             Utils.updateStatusBarBackground(this)
             val addToListRequestBundle: String? = intent?.getStringExtra("addToListRequest")
             val shouldDisplayCreateList: Boolean? = intent?.getBooleanExtra("shouldDisplayCreateList", false)
-            val orderId = intent?.getStringExtra(
-                    ORDER_ID)
+            val orderId = intent?.getStringExtra(ORDER_ID)
 
             if (shouldDisplayCreateList!!) {
                 addFragment(

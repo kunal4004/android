@@ -63,7 +63,6 @@ class CancelOrderConfirmationDialogFragment : WBottomSheetDialogFragment() {
 
 
     fun triggerFirebaseEvent(properties: String) {
-        // this  can be moved to calling places
         val arguments = HashMap<String, String>()
         arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = properties
         Utils.triggerFireBaseEvents(if (isNavigatedFromMyAccounts) FirebaseManagerAnalyticsProperties.Acc_My_Orders_Cancel_Order else FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER, arguments, requireActivity())
