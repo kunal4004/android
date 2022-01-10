@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.apply_now
 
 import android.app.Activity
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
-import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigApplyNowLinks
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountSection
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
@@ -22,5 +22,5 @@ class ViewApplicationStatusImpl(private val accountsResponse: AccountsResponse?)
         KotlinUtils.openUrlInPhoneBrowser(applyNowLinkUrl, activity)
     }
 
-    override fun getApplyNowLink(): ApplyNowLinks? = WoolworthsApplication.getApplyNowLink()
+    override fun getApplyNowLink(): ConfigApplyNowLinks? = AppConfigSingleton.applyNowLink
 }
