@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentTransaction
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.error_message_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -45,6 +46,7 @@ class ErrorMessageDialogWithTitleFragment : WBottomSheetDialogFragment(), View.O
         if (message?.isNotEmpty() == true)
             tvErrorDescription?.text = message
         btnDismissDialog?.setOnClickListener(this)
+        incSwipeCloseIndicator?.visibility = if (isCancelable) View.VISIBLE else View.INVISIBLE
     }
 
     override fun onClick(view: View) {

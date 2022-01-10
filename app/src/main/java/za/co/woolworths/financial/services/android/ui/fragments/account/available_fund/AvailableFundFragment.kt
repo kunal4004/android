@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
@@ -276,8 +277,11 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         if (fragmentAlreadyAdded()) return
         if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
         try {
-            val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.credit_card_statement_unavailable)?.let { AccountsErrorHandlerFragment.newInstance(it) }
-            activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName) }
+            activity?.apply {
+                val dialog = resources?.getString(R.string.credit_card_statement_unavailable)?.let { ErrorMessageDialogWithTitleFragment.newInstance(it, false) }
+                dialog?.isCancelable = false
+                dialog?.show(supportFragmentManager.beginTransaction(), ErrorMessageDialogWithTitleFragment::class.java.simpleName)
+            }
         } catch (ex: IllegalStateException) {
             FirebaseManager.logException(ex)
         }
