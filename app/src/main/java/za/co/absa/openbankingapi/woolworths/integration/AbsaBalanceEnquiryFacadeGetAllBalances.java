@@ -10,6 +10,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.AbsaBalanceEnquiryRe
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
@@ -38,7 +39,7 @@ public class AbsaBalanceEnquiryFacadeGetAllBalances {
             FirebaseManager.Companion.logException(e);
         }
 
-        new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/BalanceEnquiryFacadeGetAllBalances.exp", AbsaBalanceEnquiryResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<AbsaBalanceEnquiryResponse>() {
+        new AbsaBankingOpenApiRequest<>(AppConfigSingleton.INSTANCE.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/BalanceEnquiryFacadeGetAllBalances.exp", AbsaBalanceEnquiryResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<AbsaBalanceEnquiryResponse>() {
             @Override
             public void onResponse(AbsaBalanceEnquiryResponse response, List<HttpCookie> cookies) {
 
