@@ -63,9 +63,6 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
     }
 
     private fun initView() {
-        (activity as? BottomNavigationActivity)?.let {
-            it.bottomNavigationById.visibility = View.INVISIBLE
-        }
         taxInvoiceList.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
         taxInvoiceList.adapter = TaxInvoiceAdapter(taxNoteNumbers, this)
     }

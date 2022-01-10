@@ -33,6 +33,8 @@ import za.co.woolworths.financial.services.android.ui.activities.CancelOrderProg
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.AppConstant
