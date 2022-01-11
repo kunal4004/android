@@ -36,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -1629,7 +1630,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     .setAction(this)
                     .setShapePadding(24)
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                    .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+                    .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
             CartActivity.walkThroughPromtView.show(fragmentActivity);
         }
 
@@ -1691,7 +1692,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                     .setAction(this)
                     .setShouldRender(false)
                     .setArrowPosition(WMaterialShowcaseView.Arrow.NONE)
-                    .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+                    .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
             CartActivity.walkThroughPromtView.show(fragmentActivity);
         }
     }

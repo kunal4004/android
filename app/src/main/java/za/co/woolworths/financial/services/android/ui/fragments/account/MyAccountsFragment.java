@@ -1748,7 +1748,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                             .setImage(R.drawable.tips_tricks_ic_my_accounts)
                             .setAction(listener)
                             .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                            .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+                            .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
                 }
                 getBottomNavigationActivity().walkThroughPromtView.show(activity);
             }

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -406,7 +407,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 					.setAction(this)
 					.setShapePadding(24)
 					.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_CENTER)
-					.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+					.setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
 			getBottomNavigationActivity().walkThroughPromtView.show(fragmentActivity);
 		}
 	}
