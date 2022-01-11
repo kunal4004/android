@@ -479,12 +479,14 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun callLinkingDeviceAPI() {
 
-        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            sendinOTPLayout?.visibility = View.GONE
-            linkDeviceOTPScreen?.visibility = View.VISIBLE
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            retryApiCall = RETRY_LINK_DEVICE
-            return
+        NetworkManager.getInstance()?.let {
+            if (!it.isConnectedToNetwork(activity)) {
+                sendinOTPLayout?.visibility = View.GONE
+                linkDeviceOTPScreen?.visibility = View.VISIBLE
+                enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+                retryApiCall = RETRY_LINK_DEVICE
+                return
+            }
         }
 
         showLinkingDeviceProcessing()
@@ -537,7 +539,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 sendinOTPLayout?.visibility = View.GONE
                 when (response?.httpCode) {
                     AppConstant.HTTP_OK_201.toString() -> {
-                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), this) }
+                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
+                            hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), this) }
 
                         if (!isAdded) {
                             return
@@ -613,7 +617,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             }
                         }
                     else -> response?.response?.desc?.let { desc ->
-                        showValidateOTPError(getString(R.string.icr_wrong_otp_error))
+                        activity?.let { showValidateOTPError(it.getString(R.string.icr_wrong_otp_error)) }
                         Handler().postDelayed({
                             linkDeviceOTPEdtTxt5.requestFocus()
                             val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
