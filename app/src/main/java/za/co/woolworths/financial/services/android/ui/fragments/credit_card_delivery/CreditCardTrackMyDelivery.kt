@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_track_my_delivery.*
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -55,7 +56,7 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.trackMyDelivery -> {
-                KotlinUtils.openUrlInPhoneBrowser(WoolworthsApplication.getCreditCardDelivery().deliveryTrackingUrl, activity)
+                KotlinUtils.openUrlInPhoneBrowser(AppConfigSingleton.creditCardDelivery?.deliveryTrackingUrl, activity)
             }
             R.id.referenceNumberText -> {
                 val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

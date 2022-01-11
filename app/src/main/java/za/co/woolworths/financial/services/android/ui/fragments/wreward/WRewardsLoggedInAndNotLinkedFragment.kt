@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.wrewards_loggedout_loggedin_notlinked.scro
 import kotlinx.android.synthetic.main.wrewards_loggedout_loggedin_notlinked.tabIndicator
 import kotlinx.android.synthetic.main.wrewards_loggedout_loggedin_notlinked.vpJoinRewardInfo
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -28,7 +29,7 @@ class WRewardsLoggedInAndNotLinkedFragment : WRewardOnBoardingFragment() {
         hideToolbar()
         underlineText(tvRewardLinkAccount)
         setUpPager(vpJoinRewardInfo, tabIndicator)
-        applyForWRewards?.setOnClickListener {  Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsLink()) }
+        applyForWRewards?.setOnClickListener {  Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsLink) }
         tvRewardLinkAccount?.setOnClickListener { activity?.let { activity -> ScreenManager.presentSSOLinkAccounts(activity) }; }
         uniqueIdsForWRewardsLoggedInNotLinkAutomation()
     }

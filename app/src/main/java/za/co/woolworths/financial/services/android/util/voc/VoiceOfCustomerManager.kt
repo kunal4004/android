@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util.voc
 import android.content.Context
 import android.content.Intent
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetails
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsResponse
@@ -19,10 +20,10 @@ class VoiceOfCustomerManager {
             if (triggerEvent == null) return
 
             // Check minimum app version support
-            if (!Utils.isFeatureEnabled(WoolworthsApplication.getCustomerFeedback().minimumSupportedAppBuildNumber)) return
+            if (!Utils.isFeatureEnabled(AppConfigSingleton.customerFeedback?.minimumSupportedAppBuildNumber)) return
 
             // Check for allowed trigger events
-            val allowedTriggerEvents = WoolworthsApplication.getCustomerFeedback().triggerEvents ?: return
+            val allowedTriggerEvents = AppConfigSingleton.customerFeedback?.triggerEvents ?: return
             if (!allowedTriggerEvents.contains(triggerEvent.value)) return
 
             val getVocSurveyRequest = OneAppService.getVocSurvey(triggerEvent)

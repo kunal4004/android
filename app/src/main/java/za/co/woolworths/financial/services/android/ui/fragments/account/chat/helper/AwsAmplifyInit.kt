@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -33,7 +34,7 @@ class AmplifyInit {
                     val context = WoolworthsApplication.getAppContext()
                     val awsConfigurationJSONObject =
                         KotlinUtils.getJSONFileFromRAWResFolder(context, R.raw.awsconfiguration)
-                    val inAppChat = WoolworthsApplication.getInAppChat()
+                    val inAppChat = AppConfigSingleton.inAppChat
                     val auth = awsConfigurationJSONObject
                         .getJSONObject("auth")
                         .getJSONObject("plugins")
@@ -41,8 +42,8 @@ class AmplifyInit {
                         .getJSONObject("CognitoUserPool")
                         .getJSONObject("Default")
 
-                    auth.put("PoolId", inAppChat.userPoolId)
-                    auth.put("AppClientId", inAppChat.userPoolWebClientId)
+                    auth.put("PoolId", inAppChat?.userPoolId)
+                    auth.put("AppClientId", inAppChat?.userPoolWebClientId)
 
                     val api = awsConfigurationJSONObject
                         .getJSONObject("api")
@@ -50,7 +51,7 @@ class AmplifyInit {
                         .getJSONObject("awsAPIPlugin")
                         .getJSONObject("api")
 
-                    api.put("endpoint", inAppChat.apiURI)
+                    api.put("endpoint", inAppChat?.apiURI)
 
                     val awsConfiguration = AmplifyConfiguration
                         .builder(awsConfigurationJSONObject)

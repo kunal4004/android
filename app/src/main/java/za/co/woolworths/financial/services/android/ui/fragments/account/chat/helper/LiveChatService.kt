@@ -72,6 +72,7 @@ class LiveChatService : LifecycleService() {
         ConnectivityLiveData.observe(this, { isConnected ->
             when (isConnected
                     && ChatAWSAmplify.isLiveChatBackgroundServiceRunning
+                    && WoolworthsApplication.getInstance().currentActivity != null
                     && WoolworthsApplication.getInstance().currentActivity::class != WChatActivity::class) {
 
                 true -> {
