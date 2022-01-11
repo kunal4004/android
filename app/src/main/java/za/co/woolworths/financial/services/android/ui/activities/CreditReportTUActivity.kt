@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_credit_report_tu.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.adapters.CreditReportTUAdapter
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -67,6 +68,6 @@ class CreditReportTUActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(view: View?) {
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CREDIT_REPORT_CREDITVIEW_COMPLETE, this)
-        openUrlInPhoneBrowser(WoolworthsApplication.getCreditView()?.transUnionLink, this)
+        openUrlInPhoneBrowser(AppConfigSingleton.creditView?.transUnionLink, this)
     }
 }

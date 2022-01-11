@@ -186,7 +186,12 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
                 initLocationCheck()
             }
         }
-        activity?.registerReceiver(broadcastCall, IntentFilter("broadcastCall"))
+
+        try {
+            activity?.registerReceiver(broadcastCall, IntentFilter("broadcastCall"))
+        } catch (ex: Exception) {
+            FirebaseManager.logException(ex)
+        }
 
         if (activity is MyAccountActivity) {
             (activity as? MyAccountActivity?)?.supportActionBar?.show()
@@ -610,7 +615,6 @@ class StoresNearbyFragment1 : Fragment(), OnMapReadyCallback, ViewPager.OnPageCh
     override fun onDetach() {
         super.onDetach()
         mBottomNavigator?.removeToolbar()
-        unregisterReceiver()
     }
 
     override fun onDestroy() {

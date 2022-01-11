@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp
 
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.util.DateTimeUtils
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp
+import za.co.woolworths.financial.services.android.models.dto.app_config.whatsapp.ConfigWhatsApp
 
 import java.util.*
 
@@ -15,10 +15,10 @@ class WhatsAppChatToUs {
         const val FEATURE_WHATSAPP = "WhatsApp"
     }
 
-    private var whatsAppConfig: WhatsApp? = null
+    private var whatsAppConfig: ConfigWhatsApp? = null
 
     init {
-        whatsAppConfig = WoolworthsApplication.getWhatsAppConfig()
+        whatsAppConfig = AppConfigSingleton.whatsApp
     }
 
     // Get hour in 24 hour format
