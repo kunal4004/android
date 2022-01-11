@@ -1346,7 +1346,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     mAccountsHashMap = accountsHashMap;
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyPaymentDueDate(accountsHashMap);
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyForDebitOrder(accountsHashMap);
-                    if (forceNetworkUpdate || ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null) {
+                    if (forceNetworkUpdate ||
+                            ((activity instanceof BottomNavigationActivity) &&
+                                    ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null)) {
                         setAccountResponse(activity, mAccountResponse);
                     } else {
                         if (activity instanceof BottomNavigationActivity) {
