@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 
+import android.content.Context
 import android.content.Intent
 import android.opengl.Visibility
 import android.os.Bundle
@@ -48,6 +49,21 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
             putString(ORDER_ID, orderId)
         }
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (activity as? BottomNavigationActivity)?.apply {
+            hideBottomNavigationMenu()
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        (activity as? BottomNavigationActivity)?.apply {
+            showBottomNavigationMenu()
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
