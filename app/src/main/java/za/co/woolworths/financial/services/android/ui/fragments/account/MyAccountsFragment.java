@@ -1677,7 +1677,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     public void showFeatureWalkthroughPrompts() {
-        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             isPromptsShown = true;
             showFeatureWalkthroughAccounts(unavailableAccounts);
         }
@@ -1741,18 +1741,20 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
                 FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
                 FragmentActivity fragmentActivity = getActivity();
-                if(fragmentActivity != null){
-                    getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.ACCOUNTS)
-                            .setTarget(target)
-                            .setTitle(R.string.tips_tricks_view_your_accounts)
-                            .setDescription(R.string.tips_tricks_desc_my_accounts)
-                            .setActionText(finalActionText)
-                            .setImage(R.drawable.tips_tricks_ic_my_accounts)
-                            .setAction(listener)
-                            .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                            .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
+                if (getBottomNavigationActivity() != null) {
+                    if (fragmentActivity != null) {
+                        getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.ACCOUNTS)
+                                .setTarget(target)
+                                .setTitle(R.string.tips_tricks_view_your_accounts)
+                                .setDescription(R.string.tips_tricks_desc_my_accounts)
+                                .setActionText(finalActionText)
+                                .setImage(R.drawable.tips_tricks_ic_my_accounts)
+                                .setAction(listener)
+                                .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                                .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
+                    }
+                    getBottomNavigationActivity().walkThroughPromtView.show(activity);
                 }
-                getBottomNavigationActivity().walkThroughPromtView.show(activity);
             }
         }.execute();
 
