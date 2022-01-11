@@ -473,12 +473,14 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun callLinkingDeviceAPI() {
 
-        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            sendinOTPLayout?.visibility = View.GONE
-            linkDeviceOTPScreen?.visibility = View.VISIBLE
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            retryApiCall = RETRY_LINK_DEVICE
-            return
+        NetworkManager.getInstance()?.let {
+            if (!it.isConnectedToNetwork(activity)) {
+                sendinOTPLayout?.visibility = View.GONE
+                linkDeviceOTPScreen?.visibility = View.VISIBLE
+                enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+                retryApiCall = RETRY_LINK_DEVICE
+                return
+            }
         }
 
         showLinkingDeviceProcessing()
