@@ -38,7 +38,6 @@
         android:layout_marginTop="@dimen/four_dp"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"
-        android:text="28 Eastlake hgsg hgjshg jgsjg gsj hs hhsai isihu iushi s hius  "
         android:textColor="@color/gray"
         app:layout_constraintEnd_toStartOf="@+id/ivArrow"
         app:layout_constraintHorizontal_bias="0.0"

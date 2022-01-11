@@ -24,8 +24,12 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getSavedAddresses
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
 class ConfirmAddressDialog : WBottomSheetDialogFragment() {
@@ -34,6 +38,7 @@ class ConfirmAddressDialog : WBottomSheetDialogFragment() {
 
     private var mLatitudeLabel: String? = null
     private var mLongitudeLabel: String? = null
+
     companion object {
         var dialogInstance = ConfirmAddressDialog()
         fun newInstance() = dialogInstance
@@ -45,24 +50,41 @@ class ConfirmAddressDialog : WBottomSheetDialogFragment() {
         if (checkPermissions()) {
             getLastLocation()
         } else {
-            inCurrentLocation.visibility = View.GONE
+            hideCurrentLocation()
         }
 
-  /*      fusedLocationClient.getCurrentLocation()
-            .addOnSuccessListener { location : Location? ->
-                // Got last known location. In some rare situations this can be null.
-                tvCurrentLocation.text = location.toString()
-                Toast.makeText(activity, location.toString(),Toast.LENGTH_LONG).show()
-            }*/
+        /*      fusedLocationClient.getCurrentLocation()
+                  .addOnSuccessListener { location : Location? ->
+                      // Got last known location. In some rare situations this can be null.
+                      tvCurrentLocation.text = location.toString()
+                      Toast.makeText(activity, location.toString(),Toast.LENGTH_LONG).show()
+                  }*/
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.confirm_address_bottom_sheet_dialog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        inCurrentLocation.setOnClickListener(View.OnClickListener { Toast.makeText(activity, "clicked",Toast.LENGTH_LONG).show() })
+        inCurrentLocation.setOnClickListener(View.OnClickListener {
+            Toast.makeText(
+                activity,
+                "clicked",
+                Toast.LENGTH_LONG
+            ).show()
+        })
+        inSavedAddress.setOnClickListener(View.OnClickListener {
+            if (SessionUtilities.getInstance().isUserAuthenticated) {
+
+            } else {
+                ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            }
+        })
 
     }
 
@@ -72,11 +94,18 @@ class ConfirmAddressDialog : WBottomSheetDialogFragment() {
             .addOnCompleteListener(activity as Activity) { task ->
                 if (task.isSuccessful) {
                     mLastLocation = task.result
-                    val addresses =Geocoder(activity, Locale.getDefault()).getFromLocation(mLastLocation!!.latitude,mLastLocation!!.longitude,1)
-                    tvCurrentLocation.text = addresses[0].getAddressLine(0)
+                    if (mLastLocation != null) {
+                        val addresses = Geocoder(
+                            activity,
+                            Locale.getDefault()
+                        ).getFromLocation(mLastLocation!!.latitude, mLastLocation!!.longitude, 1)
+                        tvCurrentLocation.text = addresses[0].getAddressLine(0)
+                    } else {
+                        hideCurrentLocation()
+                    }
                 } else {
                     Log.w("TAG", "getLastLocation:exception", task.exception)
-                    inCurrentLocation.visibility = View.GONE
+                    hideCurrentLocation()
                 }
             }
     }
@@ -85,34 +114,16 @@ class ConfirmAddressDialog : WBottomSheetDialogFragment() {
         val permissionState = activity?.let {
             ActivityCompat.checkSelfPermission(
                 it,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
         }
         return permissionState == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun callSavedAddress() {
-        val savedAddressCall = getSavedAddresses()
-        savedAddressCall.enqueue(
-            object : IResponseListener<SavedAddressResponse?> {
-                override fun onSuccess(response: SavedAddressResponse?) {
-                    when (response!!.httpCode) {
-                        AppConstant.HTTP_OK -> {
-
-                        }
-                        else -> {
-
-                        }
-                    }
-                }
-
-                override fun onFailure(error: Throwable?) {
-
-                }
-            }.let {
-                CompletionHandler<SavedAddressResponse>(
-                    it!!, SavedAddressResponse::class.java
-                )
-            }
-        )
+    private fun hideCurrentLocation() {
+        inCurrentLocation.visibility = View.GONE
+        currentLocDiv.visibility = View.GONE
     }
+
+
 }
