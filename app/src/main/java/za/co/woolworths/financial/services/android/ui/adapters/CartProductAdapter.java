@@ -246,6 +246,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 });
 
                 productHolder.swipeLayout.setOnClickListener(view -> onItemClick.onOpenProductDetail(commerceItem));
+                if (commerceItem.lowStockThreshold > commerceItemInfo.quantity) {
+                    showLowStockIndicator(productHolder);
+                }
                 mItemManger.bindView(productHolder.itemView, position);
                 break;
 
@@ -361,6 +364,15 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             default:
                 break;
         }
+    }
+
+    /**
+     * This method used to show low stock indicator
+     * When lowStockThreshold > quantity
+     * @param productHolder
+     */
+    private void showLowStockIndicator(ProductHolder productHolder) {
+        productHolder.cartLowStock.setVisibility(View.VISIBLE);
     }
 
     private String getSizeColor(CommerceItemInfo commerceItemInfo) {
@@ -570,6 +582,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private ImageView btnDelete;
         private ProgressBar pbDelete;
         private RelativeLayout rlDelete;
+        private View cartLowStock;
 
         public ProductHolder(View view) {
             super(view);
@@ -593,6 +606,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             btnDelete = view.findViewById(R.id.btnDelete);
             rlDelete = view.findViewById(R.id.rlDelete);
             pbDelete = view.findViewById(R.id.pbDelete);
+            cartLowStock = view.findViewById(R.id.cartLowStock);
         }
     }
 
