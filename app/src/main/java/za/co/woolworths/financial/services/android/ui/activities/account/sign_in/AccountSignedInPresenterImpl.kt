@@ -74,7 +74,8 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
-        return accountsResponse.accountList?.filter { account -> account?.productGroupCode == getProductCode(mApplyNowState) }?.get(0)
+        return accountsResponse.accountList?.firstOrNull { account ->
+            account?.productGroupCode == getProductCode(mApplyNowState) }
     }
 
     @Throws(RuntimeException::class)

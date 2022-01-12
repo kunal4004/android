@@ -33,10 +33,7 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
-import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
-import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
-import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
+import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
@@ -53,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
@@ -149,6 +147,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     tvIncreaseLimitDescription?.visibility = GONE
                     getUserCLIOfferActive()
                 }
+            }
+        }
+
+        if(PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN){
+            PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN = false
+            mCardPresenterImpl?.apply {
+                cancelRequest()
+                navigateToLoanWithdrawalActivity()
             }
         }
     }
@@ -255,8 +261,12 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 }
 
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
-                    cancelRequest()
-                    navigateToLoanWithdrawalActivity()
+                    KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.PERSONAL_LOAN, {
+                        PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL = true
+                    },{
+                        cancelRequest()
+                        navigateToLoanWithdrawalActivity()
+                    })
                 }
                 R.id.viewPaymentOptions -> {
                     mCardPresenterImpl?.navigateToPaymentOptionActivity()
