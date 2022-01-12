@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.hel
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.model.SendMessageResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_TOAST
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView.Companion.LIVE_CHAT_UNREAD_MESSAGE_COUNT_PACKAGE
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.ReceiverManager
 import za.co.woolworths.financial.services.android.util.ScreenManager
 
@@ -400,7 +401,12 @@ class ToastFactory {
             }
             popupWindow.isFocusable = false
             GlobalScope.doAfterDelay(POPUP_3000_DELAY_MILLIS) {
-                popupWindow.dismiss() // dismiss the window
+                try{
+                    popupWindow.dismiss() // dismiss the window
+                }
+                catch (e: Exception){
+                    FirebaseManager.logException("popupWindow already dismissed : $e")
+                }
             }
 
             popupWindow.showAtLocation(
