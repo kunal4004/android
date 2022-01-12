@@ -1346,7 +1346,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     mAccountsHashMap = accountsHashMap;
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyPaymentDueDate(accountsHashMap);
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyForDebitOrder(accountsHashMap);
-                    if (forceNetworkUpdate || ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null) {
+                    if (forceNetworkUpdate ||
+                            ((activity instanceof BottomNavigationActivity) &&
+                                    ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null)) {
                         setAccountResponse(activity, mAccountResponse);
                     } else {
                         if (activity instanceof BottomNavigationActivity) {
@@ -1738,15 +1740,18 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 Activity activity = getActivity();
                 if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
                 FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
-                getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
-                        .setTarget(target)
-                        .setTitle(R.string.tips_tricks_view_your_accounts)
-                        .setDescription(R.string.tips_tricks_desc_my_accounts)
-                        .setActionText(finalActionText)
-                        .setImage(R.drawable.tips_tricks_ic_my_accounts)
-                        .setAction(listener)
-                        .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                        .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+                FragmentActivity fragmentActivity = getActivity();
+                if(fragmentActivity != null){
+                    getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.ACCOUNTS)
+                            .setTarget(target)
+                            .setTitle(R.string.tips_tricks_view_your_accounts)
+                            .setDescription(R.string.tips_tricks_desc_my_accounts)
+                            .setActionText(finalActionText)
+                            .setImage(R.drawable.tips_tricks_ic_my_accounts)
+                            .setAction(listener)
+                            .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                            .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
+                }
                 getBottomNavigationActivity().walkThroughPromtView.show(activity);
             }
         }.execute();

@@ -810,15 +810,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun showFeatureWalkThrough() {
         if (!isAdded || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.refineProducts)
             return
-        (activity as? BottomNavigationActivity)?.apply {
+        (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
-            if (currentFragment !is ProductListingFragment) return
+            if (it.currentFragment !is ProductListingFragment) return
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
                 this.javaClass.canonicalName
             )
-            walkThroughPromtView =
-                WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.REFINE)
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.REFINE)
                     .setTarget(refineDownArrow)
                     .setTitle(R.string.walkthrough_refine_title)
                     .setDescription(R.string.walkthrough_refine_desc)
@@ -828,9 +828,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     .setAction(this@ProductListingFragment)
                     .setAsNewFeature()
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
-                    .setMaskColour(ContextCompat.getColor(this, R.color.semi_transparent_black))
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
                     .build()
-            walkThroughPromtView.show(this)
+            it.walkThroughPromtView.show(it)
         }
     }
 

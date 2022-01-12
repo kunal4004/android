@@ -75,6 +75,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.huawei.hms.api.HuaweiApiAvailability;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1585,6 +1586,10 @@ public class Utils {
 
     public static Boolean isGooglePlayServicesAvailable() {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
+    }
+
+    public static Boolean isHuaweiMobileServicesAvailable() {
+        return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 
    public static String formatAnalyticsButtonText(String btnName){

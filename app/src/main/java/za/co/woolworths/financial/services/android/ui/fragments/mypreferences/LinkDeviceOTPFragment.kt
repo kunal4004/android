@@ -209,6 +209,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         didNotReceiveOTPTextView?.setOnClickListener(this)
 
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt1)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt2)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt3)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt4)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt5)
+
         linkDeviceOTPEdtTxt1?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2) { validateNextButton() })
         linkDeviceOTPEdtTxt2?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3) { validateNextButton() })
         linkDeviceOTPEdtTxt3?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4) { validateNextButton() })
@@ -473,12 +479,14 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun callLinkingDeviceAPI() {
 
-        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            sendinOTPLayout?.visibility = View.GONE
-            linkDeviceOTPScreen?.visibility = View.VISIBLE
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            retryApiCall = RETRY_LINK_DEVICE
-            return
+        NetworkManager.getInstance()?.let {
+            if (!it.isConnectedToNetwork(activity)) {
+                sendinOTPLayout?.visibility = View.GONE
+                linkDeviceOTPScreen?.visibility = View.VISIBLE
+                enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+                retryApiCall = RETRY_LINK_DEVICE
+                return
+            }
         }
 
         showLinkingDeviceProcessing()
@@ -493,8 +501,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun retrieveTokenAndCallLinkDevice() {
         if (TextUtils.isEmpty(Utils.getToken())) {
-            if (Utils.isGooglePlayServicesAvailable()) {
-
+            if (Utils.isGooglePlayServicesAvailable() ||
+                Utils.isHuaweiMobileServicesAvailable()) {
                 FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         task.result.token.let {
@@ -531,7 +539,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 sendinOTPLayout?.visibility = View.GONE
                 when (response?.httpCode) {
                     AppConstant.HTTP_OK_201.toString() -> {
-                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), this) }
+                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
+                            hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), this) }
 
                         if (!isAdded) {
                             return
@@ -607,7 +617,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             }
                         }
                     else -> response?.response?.desc?.let { desc ->
-                        showValidateOTPError(getString(R.string.icr_wrong_otp_error))
+                        activity?.let { showValidateOTPError(it.getString(R.string.icr_wrong_otp_error)) }
                         Handler().postDelayed({
                             linkDeviceOTPEdtTxt5.requestFocus()
                             val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
@@ -809,22 +819,25 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         if (latitude == null || longitude == null) {
             return location
         }
-        val gcd = Geocoder(context, Locale.getDefault())
-        val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
-        if (addresses.isNotEmpty()) {
-            location =
-                    if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
-                        for (address in addresses) {
-                            if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
-                                return address.locality + ", " + address.countryName
-                            } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
-                                return address.subLocality + ", " + address.countryName
-                            }
+        try{
+            val gcd = Geocoder(context, Locale.getDefault())
+            val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
+            if (addresses.isNotEmpty()) {
+                location = if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
+                    for (address in addresses) {
+                        if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
+                            address.locality + ", " + address.countryName
+                        } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
+                            address.subLocality + ", " + address.countryName
                         }
-                        return addresses[0].countryName
-                    } else
-                        return addresses[0].locality + ", " + addresses[0].countryName
-
+                    }
+                    addresses[0].countryName
+                } else
+                    addresses[0].locality + ", " + addresses[0].countryName
+            }
+        }
+        catch(e: Exception){
+            FirebaseManager.logException(e)
         }
         return location
     }
