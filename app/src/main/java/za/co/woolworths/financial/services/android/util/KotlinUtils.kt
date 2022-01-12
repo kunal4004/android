@@ -852,7 +852,10 @@ class KotlinUtils {
             if (MyAccountsFragment.verifyAppInstanceId() &&
                 Utils.isGooglePlayServicesAvailable() &&
                 (state == ApplyNowState.STORE_CARD ||
-                state == ApplyNowState.PERSONAL_LOAN)) {
+                state == ApplyNowState.PERSONAL_LOAN ||
+                state == ApplyNowState.GOLD_CREDIT_CARD ||
+                state == ApplyNowState.BLACK_CREDIT_CARD ||
+                state == ApplyNowState.SILVER_CREDIT_CARD)) {
                 doJob()
                 activity?.let {
                     val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)

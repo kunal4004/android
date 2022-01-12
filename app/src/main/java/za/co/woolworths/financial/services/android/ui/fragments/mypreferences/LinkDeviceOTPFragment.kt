@@ -55,10 +55,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
-import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
-import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
-import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity
+import za.co.woolworths.financial.services.android.ui.activities.*
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
@@ -559,17 +556,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             mApplyNowState?.let {
                                 activity?.apply {
                                     if (this is LinkDeviceConfirmationActivity) {
+                                        MyAccountsFragment.updateLinkedDevices()
                                         when (mApplyNowState) {
-                                            //TODO: WOP-12578, WOP-12589 // credit card will be done after personal loan
-                                            /**ApplyNowState.BLACK_CREDIT_CARD,
-                                            ApplyNowState.GOLD_CREDIT_CARD,
-                                            ApplyNowState.SILVER_CREDIT_CARD -> {
-                                                //check if should activate credit card or should schedule delivery
-                                                activateCreditCardOrScheduleCardDelivery()
-                                            }*/
                                             ApplyNowState.STORE_CARD,
                                             ApplyNowState.PERSONAL_LOAN -> {
-                                                MyAccountsFragment.updateLinkedDevices()
                                                 when {
                                                     MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
                                                         showFreezeStoreCardDialog()
@@ -596,6 +586,22 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     else -> {
                                                         goToProduct()
                                                     }
+                                                }
+                                            }
+
+                                            ApplyNowState.SILVER_CREDIT_CARD,
+                                            ApplyNowState.BLACK_CREDIT_CARD,
+                                            ApplyNowState.GOLD_CREDIT_CARD -> {
+                                                when {
+                                                    AbsaStatementsActivity.VIEW_ABSA_CC_STATEMENT_DETAIL -> {
+                                                        showViewAbsaCCStatementScreen()
+                                                    }
+
+                                                    //TODO: WOP-12578, WOP-12589
+                                                    /**
+                                                    //check if should activate credit card or should schedule delivery
+                                                    activateCreditCardOrScheduleCardDelivery()
+                                                     * */
                                                 }
                                             }
 
@@ -676,6 +682,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private fun showPersonalLoanWithdrawFundsScreen(){
         PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN = true
         PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL = false
+        activity?.finish()
+    }
+
+    private fun showViewAbsaCCStatementScreen(){
+        AbsaStatementsActivity.SHOW_VIEW_ABSA_CC_STATEMENT_SCREEN = true
+        AbsaStatementsActivity.VIEW_ABSA_CC_STATEMENT_DETAIL = false
         activity?.finish()
     }
 
