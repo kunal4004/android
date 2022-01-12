@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.presentEditDeliveryLocationActivity
@@ -355,8 +356,12 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
             )
         }
         view?.let {
-            Navigation.findNavController(it)
-                .navigate(R.id.action_myPreferencesFragment_to_navigation)
+            try{
+                Navigation.findNavController(it)
+                    .navigate(R.id.action_myPreferencesFragment_to_navigation)
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+            }
         }
     }
 
