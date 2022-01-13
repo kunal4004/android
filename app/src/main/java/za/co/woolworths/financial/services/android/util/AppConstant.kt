@@ -66,6 +66,15 @@ class AppConstant {
 
         const val ALPHA_1F: Float = 1.0F
         const val ALPHA_POINT_3F: Float = 0.3F
+
+
+        //order details
+        const val TAG_ORDER_DETAILS_FRAGMENT: String = "OrderDetailsFragment"
+        const val TAG_ORDER_TO_CART_FRAGMENT: String = "OrderToCartFragment"
+        const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
+        const val ORDER_ID: String = "ORDER_ID"
+        const val REQUEST_CODE_ORDER_DETAILS_PAGE = 1989
+        const val NAVIGATED_FROM_MY_ACCOUNTS = "NAVIGATED_FROM_MY_ACCOUNTS"
     }
 
     enum class DashDetailsViewType(val value: Int) { HEADER_TITLE(0), APP_FEATURE_LIST(1), TERMS_AND_CONDITION(2) }

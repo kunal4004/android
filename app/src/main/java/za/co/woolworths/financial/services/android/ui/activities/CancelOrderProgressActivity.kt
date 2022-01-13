@@ -7,6 +7,7 @@ import kotlinx.android.synthetic.main.cancel_order_progress_activity.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CancelOrderProgressActivity : AppCompatActivity() {
@@ -22,7 +23,7 @@ class CancelOrderProgressActivity : AppCompatActivity() {
         configureActionBar()
         intent?.extras?.apply {
             orderId = getString(CancelOrderProgressFragment.ORDER_ID, "")
-            isNavigatedFromMyAccounts = getBoolean(OrderDetailsActivity.NAVIGATED_FROM_MY_ACCOUNTS, false)
+            isNavigatedFromMyAccounts = getBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, false)
         }
         addFragment(
                 fragment = CancelOrderProgressFragment.getInstance(orderId),
