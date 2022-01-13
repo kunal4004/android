@@ -850,12 +850,8 @@ class KotlinUtils {
             elseJob: () -> Unit
         ) {
             if (MyAccountsFragment.verifyAppInstanceId() &&
-                Utils.isGooglePlayServicesAvailable() &&
-                (state == ApplyNowState.STORE_CARD ||
-                state == ApplyNowState.PERSONAL_LOAN ||
-                state == ApplyNowState.GOLD_CREDIT_CARD ||
-                state == ApplyNowState.BLACK_CREDIT_CARD ||
-                state == ApplyNowState.SILVER_CREDIT_CARD)) {
+                (Utils.isGooglePlayServicesAvailable() ||
+                        Utils.isHuaweiMobileServicesAvailable())) {
                 doJob()
                 activity?.let {
                     val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
