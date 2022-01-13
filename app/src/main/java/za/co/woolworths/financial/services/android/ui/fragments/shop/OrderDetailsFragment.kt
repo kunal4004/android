@@ -206,7 +206,10 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         val bundle = Bundle()
         bundle.putString("strProductList", strProductList)
         bundle.putString("strProductCategory", "")
-        ScreenManager.presentProductDetails(fragmentManager, R.id.orderDetailsFrameLayout, bundle)
+
+        val fragment =  ProductDetailsFragment();
+        fragment.arguments = bundle
+        (activity as? BottomNavigationActivity)?.pushFragment(fragment)
     }
 
     override fun onAttach(context: Context) {
