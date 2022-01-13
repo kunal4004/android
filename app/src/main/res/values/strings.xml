@@ -2380,7 +2380,7 @@
     <string name="bpi_opt_in_text">opt in</string>
     <string name="bpi_opt_in_for_balance_protection_insurance">Opt in for Balance Protection Insurance</string>
     <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br/> cancel within the first 31 days after which you have<br/> received the policy terms and conditions,<br/> we will reverse any premiums paid,<br/> provided have not claimed.</string>
-    <string name="bpi_confirm_opt_in_desc2">Should you require more information; need to<br/> submit a claim; log a complaint; wish to cancel or<br/> have not received your policy wording within 30<br/> days please contact Woolworth Financial Services<br/> on 0861502020</string>
+    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br/> submit a claim, log a complaint, wish to cancel or<br/> have not received your policy wording within 30<br/> days, please contact Woolworth Financial Services<br/> on 0861502020</string>
     <string name="bpi_confirm_opt_in_desc_call_services">0861502020</string>
     <string name="bpi_email_me_a_copy">Email me a copy</string>
     <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>
