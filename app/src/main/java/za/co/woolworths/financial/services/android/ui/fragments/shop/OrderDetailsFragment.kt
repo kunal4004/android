@@ -214,7 +214,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is BottomNavigationActivity) {
+        if (context is BottomNavigator) {
             mBottomNavigator = context
         }
     }
@@ -247,7 +247,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER
                 && resultCode == CancelOrderProgressFragment.RESULT_CODE_CANCEL_ORDER_SUCCESS) {
-           // activity?.setResult(CancelOrderProgressFragment.RESULT_CODE_CANCEL_ORDER_SUCCESS)
             activity?.onBackPressed()
             // move back to shop fragment and reload my order tab
             (activity as? BottomNavigationActivity)?.apply {
