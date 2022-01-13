@@ -1146,10 +1146,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     public static boolean verifyAppInstanceId() {
         boolean isLinked = false;
-        for (UserDevice device : deviceList) {
-            if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
-                isLinked = true;
-                break;
+        if (deviceList != null && !deviceList.isEmpty()) {
+            for (UserDevice device : deviceList) {
+                if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
+                    isLinked = true;
+                    break;
+                }
             }
         }
         return !isLinked;
