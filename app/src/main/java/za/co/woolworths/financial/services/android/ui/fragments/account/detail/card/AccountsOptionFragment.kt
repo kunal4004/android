@@ -75,10 +75,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var state: ApplyNowState? = null
-    private var takeUpIntegrationJwt: String? = null
-    private var takeUpProduct: String? = null
+    private var eligibilityPlan: EligibilityPlan? = null
     private var c2id: String? = null
-    private var takeUpFunction: String? = null
 
     companion object {
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
@@ -673,19 +671,17 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     fun showSetUpPaymentPlanButton(state: ApplyNowState,
-                                   takeUpIntegrationJwt: String?,
-                                   takeUpProduct: String?,
-                                   takeUpFunction: String?) {
+                                   eligibilityPlan: EligibilityPlan?) {
         setUpPaymentPlanGroup?.visibility = VISIBLE
+        setUpPaymentPlanTextView?.text = eligibilityPlan?.displayText
+
         this.state = state
-        this.takeUpIntegrationJwt = takeUpIntegrationJwt
-        this.takeUpProduct = takeUpProduct
+        this.eligibilityPlan = eligibilityPlan
         val splitToken = OneAppService.getSessionToken().split(".")
         if(splitToken.size > 1){
             val decodedBytes = Base64.decode(splitToken[1])
             this.c2id = Base64.encode((JsonParser.parseString(String(decodedBytes)).asJsonObject["C2Id"].asString).toByteArray())
         }
-        this.takeUpFunction = takeUpFunction
     }
 
     private fun openSetupPaymentPlanPage() {
@@ -716,12 +712,28 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             }
         }
 
+        //TODO: newPlan => "TmV3UGxhbg==" get from configs
+        //TODO: existingPlan => get encoded value of "ExistingPlan" from configs
+
+        val functionCode: String? = when(eligibilityPlan?.actionText) {
+            ActionText.TAKE_UP_TREATMENT_PLAN.value -> "TmV3UGxhbg=="
+            ActionText.VIEW_TREATMENT_PLAN.value -> "RXhpc3RpbmdQbGFu"
+            else -> null
+        }
+
+        val product: String? = when (eligibilityPlan?.productGroupCode) {
+            ProductGroupCode.CC -> "CreditCard"
+            ProductGroupCode.PL -> "PersonalLoan"
+            ProductGroupCode.SC -> "StoreCard"
+            else -> null
+        }
+
         //TODO: Take up treatment plan - do not use hardcoded url
         val url = "https://dev.woolworths.wfs.co.za/CustomerCollections/interauth?" +
-                "Token=" + takeUpIntegrationJwt + "&" +
-                "Product=" + takeUpProduct + "&" +
+                "Token=" + eligibilityPlan?.appGuid + "&" +
+                "Product=" + product + "&" +
                 "C2ID=" + c2id + "&" +
-                "Function=" + takeUpFunction
+                "Function=" + functionCode
 
         when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
             AvailableFundFragment.NATIVE_BROWSER ->

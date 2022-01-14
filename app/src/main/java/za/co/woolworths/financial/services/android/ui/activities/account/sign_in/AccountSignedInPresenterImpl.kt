@@ -114,35 +114,22 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     private fun checkEligibility(state: ApplyNowState){
-        OneAppService.getEligibilityForTakeUpPlan()
-            .enqueue(CompletionHandler(object : IResponseListener<EligibilityTakeUpPlanResponse> {
-                override fun onSuccess(response: EligibilityTakeUpPlanResponse?) {
-                    if (response != null && response.httpCode == HTTP_OK) {
-                        val integrationJwt = response.integrationJwt
-                        val takeUpProduct: String = when (state) {
-                            ApplyNowState.BLACK_CREDIT_CARD,
-                            ApplyNowState.GOLD_CREDIT_CARD,
-                            ApplyNowState.SILVER_CREDIT_CARD -> "CreditCard"
-                            ApplyNowState.PERSONAL_LOAN -> "PersonalLoan"
-                            ApplyNowState.STORE_CARD -> "StoreCard"
-                        }
-                        val plan: ProductTakeUpPlan? = when (state) {
-                            ApplyNowState.BLACK_CREDIT_CARD,
-                            ApplyNowState.GOLD_CREDIT_CARD,
-                            ApplyNowState.SILVER_CREDIT_CARD ->
-                                response.eligibilityPlans.find {
-                                        productTakeUpPlan -> productTakeUpPlan.productGroupCode == ProductGroupCode.CC }
+        val productGroupCode: ProductGroupCode = when (state) {
+            ApplyNowState.BLACK_CREDIT_CARD,
+            ApplyNowState.GOLD_CREDIT_CARD,
+            ApplyNowState.SILVER_CREDIT_CARD -> ProductGroupCode.CC
+            ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
+            ApplyNowState.STORE_CARD -> ProductGroupCode.SC
+        }
 
-                            ApplyNowState.PERSONAL_LOAN -> response.eligibilityPlans.find {
-                                    productTakeUpPlan -> productTakeUpPlan.productGroupCode == ProductGroupCode.PL }
-
-                            ApplyNowState.STORE_CARD -> response.eligibilityPlans.find {
-                                    productTakeUpPlan -> productTakeUpPlan.productGroupCode == ProductGroupCode.SC }
-                        }
-                        if(plan != null){
-                            if(!plan.hasPlan && plan.isEligible) { //For personal loan and store card
-                                //TODO: Take up treatment plan "TmV3UGxhbg==" get from configs
-                                mainView?.showSetUpPaymentPlanButton(state, integrationJwt, takeUpProduct,"TmV3UGxhbg==" )
+        OneAppService.getEligibility(productGroupCode)
+            .enqueue(CompletionHandler(object : IResponseListener<EligibilityPlanResponse> {
+                override fun onSuccess(response: EligibilityPlanResponse?) {
+                    if (response != null &&
+                        response.httpCode == HTTP_OK) {
+                            when (response.eligibilityPlan.actionText) {
+                            ActionText.TAKE_UP_TREATMENT_PLAN.value -> { //For personal loan and store card
+                                mainView?.showSetUpPaymentPlanButton(state, response.eligibilityPlan)
 
                                 val account = getAccount()
                                 account?.apply {
@@ -156,15 +143,13 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                                     mainView?.showViewTreatmentPlan(
                                                         state,
                                                         ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE,
-                                                        takeUpProduct,
-                                                        integrationJwt)!!
+                                                        response.eligibilityPlan)!!
 
                                                 ApplyNowState.STORE_CARD ->
                                                     mainView?.showViewTreatmentPlan(
                                                         state,
                                                         ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE,
-                                                        takeUpProduct,
-                                                        integrationJwt)!!
+                                                        response.eligibilityPlan)!!
                                             }
                                         }
                                         productOfferingStatus.equals(
@@ -176,25 +161,22 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                                     mainView?.showViewTreatmentPlan(
                                                         state,
                                                         ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE,
-                                                        takeUpProduct,
-                                                        integrationJwt)!!
+                                                        response.eligibilityPlan)!!
 
                                                 ApplyNowState.STORE_CARD ->
                                                     mainView?.showViewTreatmentPlan(
                                                         state,
                                                         ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE,
-                                                        takeUpProduct,
-                                                        integrationJwt)!!
+                                                        response.eligibilityPlan)!!
                                             }
                                         }
                                     }
                                 }
                             }
-                            else if(plan.hasPlan){
+                            ActionText.VIEW_TREATMENT_PLAN.value -> {
                                 mainView?.showViewTreatmentPlan(
                                     state,
                                     ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
-                                    null,
                                     null)!!
                             }
                         }
@@ -202,7 +184,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 }
                 override fun onFailure(error: Throwable?) {
                     //Show nothing
-                } }, EligibilityTakeUpPlanResponse::class.java))
+                } }, EligibilityPlanResponse::class.java))
     }
 
     override fun showProductOfferOutstanding(state: ApplyNowState) {
@@ -262,7 +244,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                     mainView?.showViewTreatmentPlan(
                                         state,
                                         ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
-                                        null,
                                         null)!!
                                 } else{
                                     mainView?.removeBlocksWhenChargedOff(supported)!!
@@ -274,7 +255,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                     mainView?.showViewTreatmentPlan(
                                         state,
                                         ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.CC_ACTIVE,
-                                        null,
                                         null)!!
                                 }
                                 else{
@@ -282,7 +262,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                     mainView?.showViewTreatmentPlan(
                                         state,
                                         ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
-                                        null,
                                         null)!!
                                 }
                             }
@@ -290,7 +269,6 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                 mainView?.showViewTreatmentPlan(
                                     state,
                                     ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
-                                    null,
                                     null)!!
                             }
                         }

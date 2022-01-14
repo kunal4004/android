@@ -14,6 +14,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -29,8 +30,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     private val mClassName = ViewTreatmentPlanDialogFragment::class.java.simpleName
     private var dialogButtonType: ViewTreatmentPlanDialogButtonType? = null
     private var state: ApplyNowState? = null
-    private var eligibilityIntegrationJwt: String? = null
-    private var takeUpProduct: String? = null
+    private var eligibilityPlan: EligibilityPlan? = null
 
     companion object {
         enum class ViewTreatmentPlanDialogButtonType {
@@ -45,8 +45,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         const val CANNOT_AFFORD_PAYMENT_BUTTON = "cannotAffordPaymentButton"
         const val PLAN_BUTTON_TYPE = "buttonType"
         const val APPLY_NOW_STATE = "state"
-        const val ELIGIBILITY_INTEGRATION_JWT = "eligibilityIntegrationJwt"
-        const val TAKE_UP_PRODUCT = "takeUpProduct"
+        const val ELIGIBILITY_PLAN = "eligibilityPlan"
 
     }
 
@@ -66,8 +65,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         dialogButtonType = arguments?.getSerializable(PLAN_BUTTON_TYPE) as? ViewTreatmentPlanDialogButtonType
         state = arguments?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState
-        eligibilityIntegrationJwt = arguments?.getString(ELIGIBILITY_INTEGRATION_JWT)
-        takeUpProduct = arguments?.getString(TAKE_UP_PRODUCT)
+        eligibilityPlan = arguments?.getSerializable(ELIGIBILITY_PLAN) as EligibilityPlan?
 
         mainButton?.apply {
             text = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE ||
@@ -207,8 +205,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
                 dismiss()
                 setFragmentResult(mClassName, bundleOf(mClassName to CANNOT_AFFORD_PAYMENT_BUTTON,
-                    ELIGIBILITY_INTEGRATION_JWT to eligibilityIntegrationJwt,
-                    TAKE_UP_PRODUCT to takeUpProduct))
+                    ELIGIBILITY_PLAN to eligibilityPlan))
             }
 
             R.id.closeIconImageButton -> dismiss()

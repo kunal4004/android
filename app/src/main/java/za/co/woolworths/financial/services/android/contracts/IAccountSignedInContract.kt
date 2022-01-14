@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
@@ -22,14 +23,11 @@ interface IAccountSignedInContract {
         fun removeBlocksOnCollectionCustomer()
         fun showViewTreatmentPlan(state: ApplyNowState,
                                   dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType,
-                                  takeUpProduct: String?,
-                                  integrationJwt:String?)
+                                  eligibilityPlan: EligibilityPlan?)
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
         fun showSetUpPaymentPlanButton(state: ApplyNowState,
-                                       takeUpIntegrationJwt: String?,
-                                       takeUpProduct: String?,
-                                       takeUpFunction: String?)
+                                       eligibilityPlan: EligibilityPlan?)
     }
 
     interface MyAccountPresenter {

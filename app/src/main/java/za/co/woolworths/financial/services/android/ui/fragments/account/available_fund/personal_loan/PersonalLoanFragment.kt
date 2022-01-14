@@ -108,8 +108,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                     }
                     CANNOT_AFFORD_PAYMENT_BUTTON -> {
                         val intent = Intent(context, GetAPaymentPlanActivity::class.java)
-                        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_INTEGRATION_JWT, bundle.getString(ViewTreatmentPlanDialogFragment.ELIGIBILITY_INTEGRATION_JWT))
-                        intent.putExtra(ViewTreatmentPlanDialogFragment.TAKE_UP_PRODUCT, bundle.getString(ViewTreatmentPlanDialogFragment.TAKE_UP_PRODUCT))
+                        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN))
                         startActivity(intent)
                         activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
                     }

@@ -683,11 +683,12 @@ object OneAppService : RetrofitConfig() {
         )
     }
 
-    fun getEligibilityForTakeUpPlan(): Call<EligibilityTakeUpPlanResponse> {
-        return mApiInterface.getEligibilityForTakeUpPlan(
+    fun getEligibility(productGroupCode: ProductGroupCode): Call<EligibilityPlanResponse> {
+        return mApiInterface.getEligibility(
             "",
             "",
             getSessionToken(),
+            productGroupCode.value,
             getDeviceIdentityToken())
     }
 }
