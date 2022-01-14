@@ -15,6 +15,7 @@ android {
     def fix = "0"
     def jobNumber = 14489
 
+
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
