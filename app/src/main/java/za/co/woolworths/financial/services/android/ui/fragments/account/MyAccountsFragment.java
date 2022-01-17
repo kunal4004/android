@@ -463,7 +463,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 onDeepLinkedProductTap(linkedPersonalCardView, applyPersonalCardView);
                 break;
         }
-        setArguments(null);
+        try{
+            setArguments(null);
+        }
+        catch (Exception e) {
+            FirebaseManager.logException(e);
+        }
         deepLinkParams = null;
     }
 
