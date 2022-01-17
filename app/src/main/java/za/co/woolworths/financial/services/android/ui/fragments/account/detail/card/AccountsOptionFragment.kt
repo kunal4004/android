@@ -76,7 +76,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var state: ApplyNowState? = null
     private var eligibilityPlan: EligibilityPlan? = null
-    private var c2id: String? = null
 
     companion object {
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
@@ -677,11 +676,15 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
         this.state = state
         this.eligibilityPlan = eligibilityPlan
-        val splitToken = OneAppService.getSessionToken().split(".")
-        if(splitToken.size > 1){
-            val decodedBytes = Base64.decode(splitToken[1])
-            this.c2id = Base64.encode((JsonParser.parseString(String(decodedBytes)).asJsonObject["C2Id"].asString).toByteArray())
-        }
+    }
+
+    fun showViewTreatmentPlanButton(state: ApplyNowState,
+                                   eligibilityPlan: EligibilityPlan?) {
+        viewTreatmentPlanGroup?.visibility = VISIBLE
+        viewTreatmentPlanTextView?.text = eligibilityPlan?.displayText
+
+        this.state = state
+        this.eligibilityPlan = eligibilityPlan
     }
 
     private fun openSetupPaymentPlanPage() {
@@ -712,28 +715,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             }
         }
 
-        //TODO: newPlan => "TmV3UGxhbg==" get from configs
-        //TODO: existingPlan => get encoded value of "ExistingPlan" from configs
-
-        val functionCode: String? = when(eligibilityPlan?.actionText) {
-            ActionText.TAKE_UP_TREATMENT_PLAN.value -> "TmV3UGxhbg=="
-            ActionText.VIEW_TREATMENT_PLAN.value -> "RXhpc3RpbmdQbGFu"
-            else -> null
-        }
-
-        val product: String? = when (eligibilityPlan?.productGroupCode) {
-            ProductGroupCode.CC -> "CreditCard"
-            ProductGroupCode.PL -> "PersonalLoan"
-            ProductGroupCode.SC -> "StoreCard"
-            else -> null
-        }
-
         //TODO: Take up treatment plan - do not use hardcoded url
-        val url = "https://dev.woolworths.wfs.co.za/CustomerCollections/interauth?" +
-                "Token=" + eligibilityPlan?.appGuid + "&" +
-                "Product=" + product + "&" +
-                "C2ID=" + c2id + "&" +
-                "Function=" + functionCode
+        val url = "https://dev.woolworths.wfs.co.za/IntegrationLanding/Entry.aspx?appguid=" + eligibilityPlan?.appGuid
 
         when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
             AvailableFundFragment.NATIVE_BROWSER ->

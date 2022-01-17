@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -98,10 +99,13 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
 
         cannotAffordPaymentButton?.apply {
-            visibility = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE ||
-                dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE ||
-                dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE ||
-                dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE)
+            visibility = if(
+                ((dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE ||
+                        dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE)
+                        && eligibilityPlan?.productGroupCode == ProductGroupCode.PL) ||
+                ((dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE ||
+                        dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE)
+                        && eligibilityPlan?.productGroupCode == ProductGroupCode.SC))
                     View.VISIBLE else View.GONE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)

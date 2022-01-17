@@ -18,8 +18,6 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class GetAPaymentPlanActivity : AppCompatActivity(), View.OnClickListener {
     private var eligibilityPlan: EligibilityPlan? = null
-    private var c2id: String? = null
-    private var functionCode: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,37 +26,13 @@ class GetAPaymentPlanActivity : AppCompatActivity(), View.OnClickListener {
         viewPlanOptionsButton?.setOnClickListener(this)
 
         eligibilityPlan = intent.getSerializableExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN) as EligibilityPlan?
-
-        functionCode = when(eligibilityPlan?.actionText) {
-            ActionText.TAKE_UP_TREATMENT_PLAN.value -> "TmV3UGxhbg=="
-            ActionText.VIEW_TREATMENT_PLAN.value -> "RXhpc3RpbmdQbGFu"
-            else -> null
-        }
-
-        val splitToken = OneAppService.getSessionToken().split(".")
-        if(splitToken.size > 1){
-            val decodedBytes = Base64.decode(splitToken[1])
-            c2id = Base64.encode((JsonParser.parseString(String(decodedBytes)).asJsonObject["C2Id"].asString).toByteArray())
-        }
     }
 
         override fun onClick(v: View?) {
             when(v?.id){
             R.id.viewPlanOptionsButton -> {
                 //TODO: Take up treatment plan - do not use hardcoded url
-
-                val product: String? = when (eligibilityPlan?.productGroupCode?.value) {
-                    ProductGroupCode.CC.value -> "CreditCard"
-                    ProductGroupCode.PL.value -> "PersonalLoan"
-                    ProductGroupCode.SC.value -> "StoreCard"
-                    else -> null
-                }
-
-                val url = "https://dev.woolworths.wfs.co.za/CustomerCollections/interauth?" +
-                        "Token=" + eligibilityPlan?.appGuid + "&" +
-                        "Product=" + product + "&" +
-                        "C2ID=" + c2id + "&" +
-                        "Function=" + functionCode
+                val url = "https://dev.woolworths.wfs.co.za/IntegrationLanding/Entry.aspx?appguid=" + eligibilityPlan?.appGuid
 
                 when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
                     AvailableFundFragment.NATIVE_BROWSER ->

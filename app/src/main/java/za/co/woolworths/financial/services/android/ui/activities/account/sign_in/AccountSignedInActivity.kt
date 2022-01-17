@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.contracts.IAccountSignedInCon
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
@@ -345,10 +346,15 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         showChatToCollectionAgent()
     }
 
-    override fun showSetUpPaymentPlanButton(state: ApplyNowState, eligibilityPlan: EligibilityPlan?) {
+    override fun showPlanButton(state: ApplyNowState, eligibilityPlan: EligibilityPlan?) {
         val fragment = mAccountOptionsNavHost?.childFragmentManager?.primaryNavigationFragment
         if (fragment is AccountsOptionFragment) {
-            fragment.showSetUpPaymentPlanButton(state, eligibilityPlan)
+            if(eligibilityPlan?.actionText == ActionText.TAKE_UP_TREATMENT_PLAN.value){
+                fragment.showSetUpPaymentPlanButton(state, eligibilityPlan)
+            }
+            else if(eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value){
+                fragment.showViewTreatmentPlanButton(state, eligibilityPlan)
+            }
         }
     }
 }

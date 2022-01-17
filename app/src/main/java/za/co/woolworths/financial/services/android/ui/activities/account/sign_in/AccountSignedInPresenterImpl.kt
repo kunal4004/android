@@ -125,59 +125,61 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         OneAppService.getEligibility(productGroupCode)
             .enqueue(CompletionHandler(object : IResponseListener<EligibilityPlanResponse> {
                 override fun onSuccess(response: EligibilityPlanResponse?) {
-                    if (response != null &&
-                        response.httpCode == HTTP_OK) {
+                    if (response != null && response.httpCode == HTTP_OK) {
+                        val eligibleState = when (response.eligibilityPlan.productGroupCode) {
+                            ProductGroupCode.SC -> ApplyNowState.STORE_CARD
+                            ProductGroupCode.CC -> ApplyNowState.GOLD_CREDIT_CARD
+                            ProductGroupCode.PL -> ApplyNowState.PERSONAL_LOAN
+                        }
+
+                        if(state == eligibleState){
                             when (response.eligibilityPlan.actionText) {
-                            ActionText.TAKE_UP_TREATMENT_PLAN.value -> { //For personal loan and store card
-                                mainView?.showSetUpPaymentPlanButton(state, response.eligibilityPlan)
+                                ActionText.TAKE_UP_TREATMENT_PLAN.value -> { //For personal loan and store card
+                                    mainView?.showPlanButton(state, response.eligibilityPlan)
 
-                                val account = getAccount()
-                                account?.apply {
-                                    when {
-                                        productOfferingStatus.equals(
-                                            Utils.ACCOUNT_CHARGED_OFF,
-                                            ignoreCase = true
-                                        ) -> {
-                                            when (state){
-                                                ApplyNowState.PERSONAL_LOAN ->
-                                                    mainView?.showViewTreatmentPlan(
-                                                        state,
-                                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE,
-                                                        response.eligibilityPlan)!!
+                                    val account = getAccount()
+                                    account?.apply {
+                                        when {
+                                            productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
+                                                when (state){
+                                                    ApplyNowState.PERSONAL_LOAN ->
+                                                        mainView?.showViewTreatmentPlan(
+                                                            state,
+                                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE,
+                                                            response.eligibilityPlan)!!
 
-                                                ApplyNowState.STORE_CARD ->
-                                                    mainView?.showViewTreatmentPlan(
-                                                        state,
-                                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE,
-                                                        response.eligibilityPlan)!!
+                                                    ApplyNowState.STORE_CARD ->
+                                                        mainView?.showViewTreatmentPlan(
+                                                            state,
+                                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE,
+                                                            response.eligibilityPlan)!!
+                                                }
                                             }
-                                        }
-                                        productOfferingStatus.equals(
-                                            Utils.ACCOUNT_ACTIVE,
-                                            ignoreCase = true
-                                        ) -> {
-                                            when (state){
-                                                ApplyNowState.PERSONAL_LOAN ->
-                                                    mainView?.showViewTreatmentPlan(
-                                                        state,
-                                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE,
-                                                        response.eligibilityPlan)!!
+                                            productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
+                                                when (state){
+                                                    ApplyNowState.PERSONAL_LOAN ->
+                                                        mainView?.showViewTreatmentPlan(
+                                                            state,
+                                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE,
+                                                            response.eligibilityPlan)!!
 
-                                                ApplyNowState.STORE_CARD ->
-                                                    mainView?.showViewTreatmentPlan(
-                                                        state,
-                                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE,
-                                                        response.eligibilityPlan)!!
+                                                    ApplyNowState.STORE_CARD ->
+                                                        mainView?.showViewTreatmentPlan(
+                                                            state,
+                                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE,
+                                                            response.eligibilityPlan)!!
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
-                            ActionText.VIEW_TREATMENT_PLAN.value -> {
-                                mainView?.showViewTreatmentPlan(
-                                    state,
-                                    ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
-                                    null)!!
+                                ActionText.VIEW_TREATMENT_PLAN.value -> {
+                                    mainView?.showPlanButton(state, response.eligibilityPlan)
+                                    mainView?.showViewTreatmentPlan(
+                                        state,
+                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
+                                        null)!!
+                                }
                             }
                         }
                     }

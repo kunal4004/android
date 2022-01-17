@@ -26,7 +26,7 @@ interface IAccountSignedInContract {
                                   eligibilityPlan: EligibilityPlan?)
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
-        fun showSetUpPaymentPlanButton(state: ApplyNowState,
+        fun showPlanButton(state: ApplyNowState,
                                        eligibilityPlan: EligibilityPlan?)
     }
 
