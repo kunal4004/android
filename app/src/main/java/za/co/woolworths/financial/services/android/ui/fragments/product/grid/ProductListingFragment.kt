@@ -158,6 +158,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         (activity as? BottomNavigationActivity)?.apply {
             showToolbar()
             showBackNavigationIcon(true)
+            showBottomNavigationMenu()
             setToolbarBackgroundDrawable(R.drawable.appbar_background)
 
             toolbar?.setNavigationOnClickListener { popFragment() }
@@ -665,6 +666,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 true -> lockDrawerFragment()
                 else -> {
                     showToolbar()
+                    showBottomNavigationMenu()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
                     if (!localProductBody.isEmpty() && isBackPressed) {

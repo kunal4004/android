@@ -15,6 +15,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.text.Html
 import android.text.TextUtils
 import android.view.*
@@ -99,6 +100,7 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_200_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SDK_INIT_FAIL
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
@@ -239,14 +241,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         setUpToolBar()
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        (activity as? BottomNavigationActivity)?.apply {
-            showBottomNavigationMenu()
-            showToolbar()
-        }
-    }
-
     private fun initViews() {
         addToCartAction?.setOnClickListener(this)
         quantitySelector?.setOnClickListener(this)
@@ -292,7 +286,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun setUpToolBar() {
         (activity as? BottomNavigationActivity)?.apply {
             hideBottomNavigationMenu()
-            hideToolbar()
+            Handler().postDelayed({ hideToolbar() }, DELAY_200_MS)
         }
     }
 

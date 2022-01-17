@@ -36,10 +36,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -98,7 +96,6 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
-import za.co.woolworths.financial.services.android.ui.activities.BottomActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -339,7 +336,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private void initializeBottomTab(){
         if(getActivity() instanceof BottomNavigationActivity){
             ((BottomNavigationActivity) getActivity()).showBottomNavigationMenu();
-            ((BottomNavigationActivity) getActivity()).showToolbar();
+            ((BottomNavigationActivity) getActivity()).hideToolbar();
             ((BottomNavigationActivity) getActivity()).setToolbarTitle("");
         }
     }
