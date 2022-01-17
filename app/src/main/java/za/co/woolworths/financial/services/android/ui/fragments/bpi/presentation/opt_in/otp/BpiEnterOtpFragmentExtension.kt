@@ -18,7 +18,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextW
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-open class BPIEnterOTPFragmentExtension : Fragment() {
+open class BpiEnterOtpFragmentExtension : Fragment() {
     fun setupInputListeners() {
 
         KotlinUtils.lowercaseEditText(edtVerificationCode1)

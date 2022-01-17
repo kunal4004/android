@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation
 import za.co.woolworths.financial.services.android.ui.fragments.otp.ResendOTPDialogFragment
 
 
-class BpiEnterOtpFragment : BPIEnterOTPFragmentExtension(),
+class BpiEnterOtpFragment : BpiEnterOtpFragmentExtension(),
     ResendOTPDialogFragment.IResendOTPOptionSelection {
 
     private var navController: NavController? = null
