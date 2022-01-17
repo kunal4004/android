@@ -110,6 +110,8 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonito
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import android.graphics.Bitmap
 import androidx.fragment.app.activityViewModels
+import kotlinx.android.synthetic.main.low_stock_product_details.*
+import kotlinx.android.synthetic.main.low_stock_product_details.view.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQuickShopDefaultValues
@@ -1007,7 +1009,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             applyVtoEffectOnImage()
         }
         if (productDetails?.lowStockIndicator ?: 0 > getSelectedSku()?.quantity ?: 0
-            && !hasSize && getSelectedSku()?.quantity != -1
+            && !hasSize && getSelectedSku()?.quantity != -1 && AppConfigSingleton.lowStock?.isEnabled == true
         ) {
             showLowStockForSelectedColor()
             colorPlaceholder.text = ""
@@ -1828,7 +1830,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSelectedSize(selectedSku: OtherSkus?) {
         getSelectedSku().let {
             if (productDetails?.lowStockIndicator ?: 0 > selectedSku?.quantity ?: 0 && selectedSku?.quantity != 0
-                && selectedSku?.quantity != -1
+                && selectedSku?.quantity != -1 && AppConfigSingleton.lowStock?.isEnabled == true
             ) {
                 showLowStockForSelectedSize()
                 selectedSizePlaceholder.text = ""
@@ -2870,7 +2872,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             layoutLowStockIndicator?.visibility = View.VISIBLE
             selectedSizePlaceholder?.visibility = View.GONE
             selectedSize?.layoutParams = it
-
+            var lowStockText = AppConfigSingleton.lowStock?.lowStockCopy
+            layoutLowStockIndicator?.txtLowStockIndicator?.text = lowStockText
         }
         (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.layoutLowStockIndicator
@@ -2922,6 +2925,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             it.bottomToBottom = R.id.layoutLowStockColor
             selectedColor?.layoutParams = it
             layoutLowStockColor?.visibility = View.VISIBLE
+            var lowStockText = AppConfigSingleton.lowStock?.lowStockCopy
+            txtLowStockIndicator?.text = lowStockText
             colorPlaceholder?.visibility = View.GONE
         }
         (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
