@@ -75,6 +75,7 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductSearchTypeAndTerm;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -97,7 +98,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
@@ -534,6 +534,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     .allowStateLoss(true)
                     .build();
 
+            if (mNavController.getCurrentFrag() instanceof ProductDetailsFragment) {
+                ProductDetails productDetails = ((ProductDetailsFragment) mNavController.getCurrentFrag()).getProductDetails();
+                Bundle arguments = fragment.getArguments();
+                ProductDetails newProductDetails = (ProductDetails) Utils.jsonStringToObject(arguments.getString("strProductList"), ProductDetails.class);
+
+                if (productDetails != null && productDetails.productId.equals(newProductDetails.productId)) {
+                    // when we open same PDP then instead of new PDP it will open existing PDP.
+                    mNavController.popFragment();
+                    mNavController.pushFragment(fragment, ft);
+                    return;
+                }
+            }
             mNavController.pushFragment(fragment, ft);
         }
     }

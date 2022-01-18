@@ -100,7 +100,7 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
-import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_200_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_300_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SDK_INIT_FAIL
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
@@ -123,7 +123,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener {
 
-    private var productDetails: ProductDetails? = null
+    var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
     private var mFetchFromJson: Boolean = false
     private var defaultProductResponse: String? = null
@@ -278,6 +278,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        updateAddToCartButtonForSelectedSKU()
         if (!hidden) {
             setUpToolBar()
         }
@@ -286,7 +287,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun setUpToolBar() {
         (activity as? BottomNavigationActivity)?.apply {
             hideBottomNavigationMenu()
-            Handler().postDelayed({ hideToolbar() }, DELAY_200_MS)
+            Handler().postDelayed({ hideToolbar() }, DELAY_300_MS)
         }
     }
 
