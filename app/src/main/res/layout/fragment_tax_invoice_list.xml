@@ -1,17 +1,76 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/thirty_two_dp"
-    android:paddingRight="@dimen/thirty_two_dp"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/OrderDetailsActivityStyle">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/mToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/appbar_background"
+            android:gravity="center"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/OrderDetailsActivityStyle"
+            app:theme="@style/OrderDetailsActivityStyle">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingRight="@dimen/sixteen_dp">
+
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/back24" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/toolbarText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.2"
+                    android:singleLine="true"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:WTextView_font="medium_bold" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvSelectAll"
+                    style="@style/toolbar_menu_text_style"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/select_all"
+                    android:textColor="@drawable/refine_toolbar_menu_text_color"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_below="@+id/appbar"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/thirty_two_dp"
+        android:paddingRight="@dimen/thirty_two_dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/my_orders_textview_style_1"

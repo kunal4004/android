@@ -194,20 +194,34 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     }
 
     override fun onOpenProductDetail(commerceItem: CommerceItem) {
-        val productList = ProductDetails()
+
+        // Move to shop tab.
+        if (!(getActivity() is BottomNavigationActivity)) {
+            return;
+        }
+        val bottomNavigationActivity = activity as BottomNavigationActivity?
+        bottomNavigationActivity!!.bottomNavigationById.currentItem = BottomNavigationActivity.INDEX_PRODUCT
+        val productDetails = ProductDetails()
+
         val commerceItemInfo = commerceItem.commerceItemInfo
-        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2
-        productList.productName = commerceItemInfo.productDisplayName
-        productList.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
-        productList.productId = commerceItemInfo.productId
-        productList.sku = commerceItemInfo.catalogRefId
+        productDetails.externalImageRefV2 = commerceItemInfo.externalImageRefV2
+        productDetails.productName = commerceItemInfo.productDisplayName
+        productDetails.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
+        productDetails.productId = commerceItemInfo.productId
+        productDetails.sku = commerceItemInfo.catalogRefId
+        openProductDetailFragment("", productDetails)
+    }
+
+    fun openProductDetailFragment(productName: String?, productDetails: ProductDetails?) {
+        if (activity !is BottomNavigationActivity || !isAdded) {
+            return
+        }
+        val fragment = ProductDetailsFragment()
         val gson = Gson()
-        val strProductList = gson.toJson(productList)
+        val strProductList = gson.toJson(productDetails)
         val bundle = Bundle()
         bundle.putString("strProductList", strProductList)
-        bundle.putString("strProductCategory", "")
-
-        val fragment =  ProductDetailsFragment();
+        bundle.putString("strProductCategory", productName)
         fragment.arguments = bundle
         (activity as? BottomNavigationActivity)?.pushFragment(fragment)
     }
