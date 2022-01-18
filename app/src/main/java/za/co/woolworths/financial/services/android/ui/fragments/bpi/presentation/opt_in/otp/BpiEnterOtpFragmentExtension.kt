@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.otp
+package za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp
 
 import android.app.Activity
 import android.content.Context
@@ -6,8 +6,10 @@ import android.text.InputType
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.FOCUS_DOWN
+import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
@@ -16,7 +18,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextW
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-open class EnterOTPFragmentExtension : Fragment() {
+open class BpiEnterOtpFragmentExtension : Fragment() {
     fun setupInputListeners() {
 
         KotlinUtils.lowercaseEditText(edtVerificationCode1)
@@ -106,6 +108,17 @@ open class EnterOTPFragmentExtension : Fragment() {
 
     }
 
+    fun setOnFocusChangeListener(editTextView: EditText?) {
+        editTextView?.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus && otpErrorTextView?.visibility == VISIBLE) {
+                clearOTP()
+                setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
+                otpErrorTextView?.visibility = View.GONE
+                requestEditTextFocus()
+            }
+        }
+    }
+
 
     private fun validateVerificationCode() {
         when ((edtVerificationCode1?.length() == 1)
@@ -124,12 +137,7 @@ open class EnterOTPFragmentExtension : Fragment() {
                 buttonNext?.isFocusable = true
             }
         }
-        if (otpErrorTextView?.visibility == View.VISIBLE) {
-            clearOTP()
-            setOtpErrorBackground(R.drawable.otp_box_background_focus_selector)
-        }
 
-        otpErrorTextView?.visibility = View.GONE
     }
 
     fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
@@ -147,6 +155,16 @@ open class EnterOTPFragmentExtension : Fragment() {
         activity?.apply { KeyboardUtil.hideSoftKeyboard(this) }
     }
 
+    fun requestEditTextFocus() {
+        (activity as? AppCompatActivity)?.let { activity ->
+            edtVerificationCode1?.apply {
+                requestFocus()
+                showSoftKeyboard(activity, this)
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            }
+        }
+    }
+
     fun clearOTP() {
         edtVerificationCode1?.text?.clear()
         edtVerificationCode2?.text?.clear()
@@ -154,6 +172,16 @@ open class EnterOTPFragmentExtension : Fragment() {
         edtVerificationCode4?.text?.clear()
         edtVerificationCode5?.text?.clear()
     }
+
+
+    fun removeFocus() {
+        edtVerificationCode1?.clearFocus()
+        edtVerificationCode2?.clearFocus()
+        edtVerificationCode3?.clearFocus()
+        edtVerificationCode4?.clearFocus()
+        edtVerificationCode5?.clearFocus()
+    }
+
 
     fun setOtpErrorBackground(drawableId: Int) {
         context?.let { context ->
