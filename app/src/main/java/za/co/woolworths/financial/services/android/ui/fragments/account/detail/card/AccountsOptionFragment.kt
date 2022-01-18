@@ -76,7 +76,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         var CREDIT_CARD_ACTIVATION_DETAIL = false
         var SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
         var CREDIT_CARD_SHECULE_OR_MANAGE = false
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -573,24 +572,24 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         activity?.apply {
             val intent = Intent(this, CreditCardDeliveryActivity::class.java)
             val mBundle = Bundle()
-            mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
+            mBundle.putString(BundleKeysConstants.ENVELOPE_NUMBER, cardWithPLCState?.envelopeNumber)
             mBundle.putString(
-                "accountBinNumber",
+                BundleKeysConstants.ACCOUNTBI_NNUMBER,
                 mCardPresenterImpl?.getAccount()?.accountNumberBin
             )
             mBundle.putString(
-                "StatusResponse",
+                BundleKeysConstants.STATUS_RESPONSE,
                 Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse)
             )
             mBundle.putString(
-                "productOfferingId",
+                BundleKeysConstants.PRODUCT_OFFERINGID,
                 mCardPresenterImpl?.getAccount()?.productOfferingId.toString()
             )
             mBundle.putSerializable(
                 AccountSignedInPresenterImpl.APPLY_NOW_STATE,
                 mCardPresenterImpl?.mApplyNowAccountKeyPair?.first
             )
-            intent.putExtra("bundle", mBundle)
+            intent.putExtra(BundleKeysConstants.BUNDLE, mBundle)
             startActivity(intent)
         }
     }
