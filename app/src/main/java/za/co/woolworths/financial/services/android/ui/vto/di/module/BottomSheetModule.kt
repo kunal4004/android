@@ -24,5 +24,8 @@ abstract class BottomSheetModule {
     @Binds
     abstract fun bindErrorBottomSheet(vTOErrorSettingBottomSheetDialog: VTOErrorSettingBottomSheetDialog): VtoErrorBottomSheetDialog
 
+    @Binds
+    abstract fun bindSavedPhotoToast(vtoSavedPhotoToastImpl: VtoSavedPhotoToastImpl): VtoSavedPhotoToast
+
 
 }
