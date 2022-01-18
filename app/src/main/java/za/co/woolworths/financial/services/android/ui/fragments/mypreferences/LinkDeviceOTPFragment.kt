@@ -583,6 +583,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     AccountsOptionFragment.CREDIT_CARD_ACTIVATION_DETAIL -> {
                                                         activateCreditCard()
                                                     }
+                                                    AccountsOptionFragment.CREDIT_CARD_SHECULE_OR_MANAGE -> {
+                                                        scheduleOrManageCC()
+                                                    }
                                                 }
                                             }
 
@@ -677,7 +680,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         AccountsOptionFragment.CREDIT_CARD_ACTIVATION_DETAIL = false
         activity?.finish()
     }
-
+    private fun scheduleOrManageCC() {
+        AccountsOptionFragment.SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = true
+        AccountsOptionFragment.CREDIT_CARD_SHECULE_OR_MANAGE = false
+        activity?.finish()
+    }
     private fun goToProduct() {
         val intent = Intent()
         intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)

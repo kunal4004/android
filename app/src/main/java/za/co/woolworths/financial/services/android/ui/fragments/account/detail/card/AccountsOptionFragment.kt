@@ -74,6 +74,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
         var SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
         var CREDIT_CARD_ACTIVATION_DETAIL = false
+        var SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
+        var CREDIT_CARD_SHECULE_OR_MANAGE = false
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -166,6 +169,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 navigateToCreditCardActivation()
             else
                 showCreditCardActivationUnavailableDialog()
+        }else if (SHOW_CREDIT_CARD_SHECULE_OR_MANAGE){
+            SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
+            navigateToScheduleOrManage()
         }
     }
 
@@ -291,16 +297,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
                 }
                 R.id.scheduleOrManageCreditCardDelivery -> {
-                    activity?.apply {
-                        val intent = Intent(this, CreditCardDeliveryActivity::class.java)
-                        val mBundle = Bundle()
-                        mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
-                        mBundle.putString("accountBinNumber", mCardPresenterImpl?.getAccount()?.accountNumberBin)
-                        mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse))
-                        mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
-                        mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mCardPresenterImpl?.mApplyNowAccountKeyPair?.first)
-                        intent.putExtra("bundle", mBundle)
-                        startActivity(intent)
+                    handleScheduleDeliveryCreditCard {
+                        if (!MyAccountsFragment.verifyAppInstanceId())
+                            navigateToScheduleOrManage()
                     }
                 }
             }
@@ -323,7 +322,18 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             doCreditActivation()
         }
     }
-
+    private fun handleScheduleDeliveryCreditCard(doScheduleOrManage: () -> Unit) {
+        KotlinUtils.linkDeviceIfNecessary(activity,
+            ApplyNowState.valueOf(
+                mCardPresenterImpl?.mApplyNowAccountKeyPair?.first.toString()
+            ),
+            {
+                CREDIT_CARD_SHECULE_OR_MANAGE = true
+            },
+            {
+                doScheduleOrManage()
+            })
+    }
     private fun AccountCardDetailPresenterImpl.cancelRequest() {
         cancelRetrofitRequest(mOfferActiveCall)
         cancelRetrofitRequest(mStoreCardCall)
@@ -559,6 +569,31 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         }
     }
 
+    private fun navigateToScheduleOrManage() {
+        activity?.apply {
+            val intent = Intent(this, CreditCardDeliveryActivity::class.java)
+            val mBundle = Bundle()
+            mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
+            mBundle.putString(
+                "accountBinNumber",
+                mCardPresenterImpl?.getAccount()?.accountNumberBin
+            )
+            mBundle.putString(
+                "StatusResponse",
+                Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse)
+            )
+            mBundle.putString(
+                "productOfferingId",
+                mCardPresenterImpl?.getAccount()?.productOfferingId.toString()
+            )
+            mBundle.putSerializable(
+                AccountSignedInPresenterImpl.APPLY_NOW_STATE,
+                mCardPresenterImpl?.mApplyNowAccountKeyPair?.first
+            )
+            intent.putExtra("bundle", mBundle)
+            startActivity(intent)
+        }
+    }
     private fun showCreditCardActivationUnavailableDialog() {
         activity?.supportFragmentManager?.let { CreditCardActivationAvailabilityDialogFragment.newInstance(mCardPresenterImpl?.getAccount()?.accountNumberBin).show(it, CreditCardActivationAvailabilityDialogFragment::class.java.simpleName) }
     }
