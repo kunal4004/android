@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDev
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.repository.AppStateRepository
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
@@ -194,7 +195,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         retryLinkDeviceLinearLayout?.visibility = View.GONE
                         val isDeviceIdentityIdPresent = verifyDeviceIdentityId(response?.userDevices)
                         deviceList = response?.userDevices
-                        MyAccountsFragment.deviceList = deviceList
+                        AppStateRepository().saveLinkedDevices(deviceList)
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
                     }
                     else -> {
