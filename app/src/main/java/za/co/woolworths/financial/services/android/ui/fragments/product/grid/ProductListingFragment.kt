@@ -43,15 +43,13 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
@@ -142,13 +140,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             localProductBody.add(localBody)
             setProductBody()
             isReloadNeeded = true
+            isBackPressed = false
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.grid_layout, container, false)
     }
@@ -172,7 +171,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             localSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
             localStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
             imgInfo?.setOnClickListener {
-                vtoBottomSheetDialog.showBottomSheetDialog(this@ProductListingFragment,requireActivity(),true)
+                vtoBottomSheetDialog.showBottomSheetDialog(this@ProductListingFragment,
+                    requireActivity(),
+                    true)
 
             }
 
@@ -262,14 +263,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         showVtoBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
-            
+
             mProductList = ArrayList()
         response.history?.apply {
             if (!categoryDimensions?.isNullOrEmpty()) {
                 mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
             } else if (searchCrumbs?.isNullOrEmpty() == false) {
                 searchCrumbs?.let {
-                    mSubCategoryName = it.get(it.size -1).terms
+                    mSubCategoryName = it.get(it.size - 1).terms
                 }
             }
         }
@@ -457,7 +458,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
         }
         mProductAdapter = null
-        mProductAdapter = activity?.let { ProductListingAdapter(this@ProductListingFragment, mProductList, it) }
+        mProductAdapter =
+            activity?.let { ProductListingAdapter(this@ProductListingFragment, mProductList, it) }
         productsRecyclerView?.apply {
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
@@ -633,7 +635,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
                 R.id.refineProducts -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED, activity)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED,
+                        activity)
                     /*val intent = Intent(activity, ProductsRefineActivity::class.java)
                     intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
                     intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(productRequestBody))
@@ -645,7 +648,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
                 R.id.sortProducts -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED, activity)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED,
+                        activity)
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
                 }
                 else -> return
@@ -689,14 +693,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (sortOptionDialog != null && sortOptionDialog?.isShowing == true) {
             sortOptionDialog?.dismiss()
             val arguments = HashMap<String, String>()
-            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] = sortOption.label
-            activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments, this) }
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] =
                 sortOption.label
-            activity?.apply {  Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED,
-                arguments,this
-            )}
+            activity?.apply {
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED,
+                    arguments, this
+                )
+            }
             updateProductRequestBodyForSort(sortOption.sortOption)
             reloadProductsWithSortAndFilter()
         }
@@ -788,7 +792,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             DeliveryType.DELIVERY_LIQUOR
                         )
                     }
-                } else if(resultCode == RESULT_OK){
+                } else if (resultCode == RESULT_OK) {
                     AppConfigSingleton.isProductItemForLiquorInventoryPending = true
                 }
             }
@@ -806,15 +810,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun showFeatureWalkThrough() {
         if (!isAdded || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.refineProducts)
             return
-        (activity as? BottomNavigationActivity)?.apply {
+        (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
-            if (currentFragment !is ProductListingFragment) return
+            if (it.currentFragment !is ProductListingFragment) return
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
                 this.javaClass.canonicalName
             )
-            walkThroughPromtView =
-                WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.REFINE)
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.REFINE)
                     .setTarget(refineDownArrow)
                     .setTitle(R.string.walkthrough_refine_title)
                     .setDescription(R.string.walkthrough_refine_desc)
@@ -824,9 +828,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     .setAction(this@ProductListingFragment)
                     .setAsNewFeature()
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
-                    .setMaskColour(ContextCompat.getColor(this, R.color.semi_transparent_black))
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
                     .build()
-            walkThroughPromtView.show(this)
+            it.walkThroughPromtView.show(it)
         }
     }
 
@@ -874,7 +878,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
         addItemToCart: AddItemToCart?,
-        productList: ProductList
+        productList: ProductList,
     ) {
         this.mFulfilmentTypeId = fulfilmentTypeId
         if (incCenteredProgress?.visibility == VISIBLE) return // ensure one api runs at a time
@@ -890,7 +894,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             return
         }
 
-        if(productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
+        if (productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()) {
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
             AppConfigSingleton.productItemForLiquorInventory = productList
@@ -1130,9 +1134,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun openCartActivity() {
-        activity?.apply {
-            startActivityForResult(Intent(this, CartActivity::class.java), OPEN_CART_REQUEST)
-            overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay)
+        (activity as? BottomNavigationActivity)?.apply {
+            bottomNavigationById?.currentItem = INDEX_CART
         }
     }
 
@@ -1261,7 +1264,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         fun newInstance(
             searchType: ProductsRequestParams.SearchType?,
             sub_category_name: String?,
-            searchTerm: String?
+            searchTerm: String?,
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
@@ -1273,7 +1276,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             sub_category_name: String?,
             searchTerm: String?,
             navigationState: String?,
-            sortOption: String
+            sortOption: String,
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)

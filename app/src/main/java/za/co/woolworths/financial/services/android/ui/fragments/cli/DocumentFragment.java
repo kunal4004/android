@@ -156,7 +156,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.document_fragment, container, false);
         deaBankList = new DeaBanks();
-        mCliStepIndicatorListener.onStepSelected(4);
+        if(mCliStepIndicatorListener != null){
+            mCliStepIndicatorListener.onStepSelected(4);
+        }
         return view;
     }
 

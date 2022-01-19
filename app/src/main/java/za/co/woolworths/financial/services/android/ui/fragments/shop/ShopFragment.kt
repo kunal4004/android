@@ -6,6 +6,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import android.view.LayoutInflater
@@ -21,7 +22,6 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
-import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -32,6 +32,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.Departments
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.REQUEST_CODE_ORDER_DETAILS_PAGE
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils
 import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
@@ -140,6 +142,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
                 refreshViewPagerFragment(false)
+                Handler().postDelayed({
+                    hideToolbar()
+                }, AppConstant.DELAY_1000_MS)
             }
         }
 
@@ -203,6 +208,12 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
                 refreshViewPagerFragment(true)
             }
         }
+
+        if(requestCode == CancelOrderProgressFragment.REQUEST_CODE_CANCEL_ORDER
+                && resultCode == CancelOrderProgressFragment.RESULT_CODE_CANCEL_ORDER_SUCCESS){
+            refreshViewPagerFragment(true)
+        }
+
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             refreshViewPagerFragment(true)
         }

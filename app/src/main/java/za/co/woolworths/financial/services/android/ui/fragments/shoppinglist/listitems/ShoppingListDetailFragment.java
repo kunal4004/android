@@ -54,7 +54,6 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.item_limits.ProductCountMap;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -83,11 +82,13 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_417;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
 
@@ -1066,12 +1067,12 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onToastButtonClicked(JsonElement jsonElement) {
+        //Nav stack change since not using Cart activity anymore
+        // Pass back result to BottomNavigation activity.
         Activity activity = getActivity();
         if (activity != null) {
-            Intent openCartActivity = new Intent(activity, CartActivity.class);
-            startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
-            activity.overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
-            activity.finish();
+            activity.setResult(RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS);
+            activity.finishActivity(SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE);
             activity.overridePendingTransition(0, 0);
         }
     }

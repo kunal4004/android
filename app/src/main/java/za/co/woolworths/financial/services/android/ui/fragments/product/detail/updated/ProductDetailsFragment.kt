@@ -27,10 +27,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.*
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
@@ -38,6 +35,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.perfectcorp.perfectlib.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
@@ -62,6 +60,7 @@ import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQ
 import za.co.woolworths.financial.services.android.ui.activities.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductInformationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
@@ -80,6 +79,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Pro
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ColourSizeVariants
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.*
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
@@ -112,7 +112,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-
+@AndroidEntryPoint
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView,
     MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback,
     ILocationProvider, View.OnClickListener,
@@ -236,10 +236,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (activity as? BottomNavigationActivity)?.apply {
-            hideBottomNavigationMenu()
-            hideToolbar()
-        }
+        setUpToolBar()
     }
 
     override fun onDetach() {
@@ -265,7 +262,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         moreColor?.setOnClickListener(this)
         imgCloseVTO?.setOnClickListener(this)
         imgVTORefresh?.setOnClickListener(this)
-        closePage?.setOnClickListener(this)
+        openCart?.setOnClickListener(this)
+        backArrow?.setOnClickListener(this)
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
         imgVTOOpen?.setOnClickListener(this)
@@ -282,6 +280,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             true
         }
 
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            setUpToolBar()
+        }
+    }
+
+    private fun setUpToolBar() {
+        (activity as? BottomNavigationActivity)?.apply {
+            hideBottomNavigationMenu()
+            hideToolbar()
+        }
     }
 
     private fun pinchZoomOnVtoLiveCamera(event: MotionEvent?) {
@@ -329,7 +341,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.imgVTOOpen -> vtoOptionSelectBottomDialog.showBottomSheetDialog(this@ProductDetailsFragment,
                 requireActivity(),
                 false)
-            R.id.closePage -> closeScreen()
+            R.id.openCart -> openCart()
+            R.id.backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
             R.id.imgCloseVTO -> closeVto()
             R.id.imgVTORefresh -> clearEffect()
             R.id.retakeCamera -> reOpenCamera()
@@ -466,7 +479,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             txtCountCameraCaptureImage?.visibility = View.GONE
             share?.visibility = View.VISIBLE
             productImagesViewPagerIndicator?.visibility = View.VISIBLE
-            closePage?.visibility = View.VISIBLE
+            openCart?.visibility = View.VISIBLE
+            backArrow?.visibility = View.VISIBLE
             productImagesViewPager?.visibility = View.VISIBLE
             imgVTOOpen?.visibility = View.VISIBLE
             if (null != makeupCamera) {
@@ -480,12 +494,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
 
-    private fun closeScreen() {
-        activity?.apply {
-            setResult(RESULT_CANCELED)
-            onBackPressed()
-
-        }
+    private fun openCart() {
+        (activity as? BottomNavigationActivity)?.navigateToTabIndex(INDEX_CART, null)
     }
 
     private fun onQuantitySelector() {
@@ -1340,16 +1350,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse) {
         activity?.apply {
-            addItemToCartResponse.data?.let {
-                if (it.size > 0) {
-                    val intent = Intent()
-                    intent.apply {
-                        putExtra("addedToCartMessage", it[0].message)
-                        putExtra("ItemsCount", getSelectedQuantity())
-                        putExtra("ProductCountMap", Utils.toJson(it[0].productCountMap))
+            if (this is BottomNavigationActivity) {
+                addItemToCartResponse.data?.let {
+                    if (it.size > 0) {
+                        val intent = Intent()
+                        intent.apply {
+                            putExtra("addedToCartMessage", it[0].message)
+                            putExtra("ItemsCount", getSelectedQuantity())
+                            putExtra("ProductCountMap", Utils.toJson(it[0].productCountMap))
+                        }
+                        onActivityResult(ADD_TO_CART_SUCCESS_RESULT,
+                            ADD_TO_CART_SUCCESS_RESULT,
+                            intent)
+                        //setResult(RESULT_OK, intent)
+                        //onBackPressed()
                     }
-                    setResult(RESULT_OK, intent)
-                    onBackPressed()
                 }
             }
         }
@@ -1762,10 +1777,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showVtoTryItOnHint() {
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.isTryItOn)
             return
-        (requireActivity() as? BottomNavigationActivity)?.apply {
+        (requireActivity() as? BottomNavigationActivity)?.let {
 
-            walkThroughPromtView =
-                WMaterialShowcaseView.Builder(requireActivity(),
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it,
                     WMaterialShowcaseView.Feature.VTO_TRY_IT,
                     true)
                     .setTarget(imgVTOOpen)
@@ -1776,10 +1791,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     .setAction(this@ProductDetailsFragment)
                     .hideFeatureTutorialsText()
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                    .setMaskColour(ContextCompat.getColor(requireActivity(),
+                    .setMaskColour(ContextCompat.getColor(it,
                         R.color.semi_transparent_black))
                     .build()
-            walkThroughPromtView?.show(requireActivity())
+            it.walkThroughPromtView?.show(it)
         }
 
     }
@@ -2068,7 +2083,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             productLayout?.contentDescription = getString(R.string.pdp_layout)
             productImagesViewPagerIndicator?.contentDescription =
                 getString(R.string.store_card_image)
-            closePage?.contentDescription = getString(R.string.pdp_layout)
+            openCart?.contentDescription = getString(R.string.pdp_layout)
             productName?.contentDescription = getString(R.string.pdp_textViewProductName)
             priceLayout?.contentDescription = getString(R.string.pdp_textViewPrice)
             colorPlaceholder?.contentDescription = getString(R.string.pdp_textViewColourPlaceHolder)
@@ -2329,7 +2344,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 vtoLayout?.visibility = View.GONE
                 share?.visibility = View.VISIBLE
                 productImagesViewPagerIndicator?.visibility = View.VISIBLE
-                closePage?.visibility = View.VISIBLE
+                openCart?.visibility = View.VISIBLE
+                backArrow?.visibility = View.VISIBLE
                 productImagesViewPager?.visibility = View.VISIBLE
                 imgVTOOpen?.visibility = View.VISIBLE
             }
@@ -2370,7 +2386,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         vtoLayout?.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
-        closePage?.visibility = View.GONE
+        openCart?.visibility = View.GONE
+        backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         imgDownloadVTO?.visibility = View.GONE
         imgVTOOpen?.visibility = View.GONE
@@ -2575,7 +2592,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         vtoLayout?.visibility = View.VISIBLE
         share?.visibility = View.GONE
         productImagesViewPagerIndicator?.visibility = View.GONE
-        closePage?.visibility = View.GONE
+        openCart?.visibility = View.GONE
+        backArrow?.visibility = View.GONE
         productImagesViewPager?.visibility = View.GONE
         captureImage?.visibility = View.GONE
         imgVTOSplit?.visibility = View.GONE

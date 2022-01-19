@@ -29,7 +29,6 @@ import za.co.woolworths.financial.services.android.startup.utils.ConfigResource
 import za.co.woolworths.financial.services.android.startup.view.StartupActivity
 import za.co.woolworths.financial.services.android.startup.viewmodel.StartupViewModel
 import za.co.woolworths.financial.services.android.startup.viewmodel.ViewModelFactory
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.ProductDetailsExtension
@@ -310,7 +309,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
         message: String?,
         cartText: String?,
         productCountMap: ProductCountMap?,
-        noOfItems: Int,
+        noOfItems: Int
     ) {
         if (productCountMap != null && isDeliveryOptionClickAndCollect() && productCountMap.quantityLimit!!.foodLayoutColour != null) {
             showItemsLimitToastOnAddToCart(
@@ -347,13 +346,14 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
                     ScreenManager.presentSSOSignin(this@ProductDetailsDeepLinkActivity)
                 } else {
-                    val openCartActivity =
+                    //TODO: Nav stack change. Cart Activity removed find another way.
+                    /*val openCartActivity =
                         Intent(this@ProductDetailsDeepLinkActivity, CartActivity::class.java)
                     startActivityForResult(
                         openCartActivity,
                         BottomNavigationActivity.OPEN_CART_REQUEST
                     )
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)*/
                 }
             }
         }

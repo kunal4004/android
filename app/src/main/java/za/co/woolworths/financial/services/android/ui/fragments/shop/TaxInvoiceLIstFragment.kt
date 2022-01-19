@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 
+import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +23,8 @@ import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActiv
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.Companion.PAGE_TITLE
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.BottomActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.TaxInvoiceAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import java.io.UnsupportedEncodingException
@@ -45,6 +49,21 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
             putString(ORDER_ID, orderId)
         }
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (activity as? BottomNavigationActivity)?.apply {
+            hideBottomNavigationMenu()
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        (activity as? BottomNavigationActivity)?.apply {
+            showBottomNavigationMenu()
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

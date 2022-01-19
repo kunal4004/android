@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 
 import android.app.Activity;
@@ -24,7 +25,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -188,9 +188,12 @@ public class ScreenManager {
     }
 
     public static void presentShoppingCart(Activity activity) {
-        Intent openCartActivity = new Intent(activity, CartActivity.class);
+        if (activity instanceof BottomNavigationActivity){
+            ((BottomNavigationActivity)activity).navigateToTabIndex(INDEX_CART, null);
+        }
+        /*Intent openCartActivity = new Intent(activity, CartActivity.class);
         activity.startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
-        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);*/
     }
 
     public static void presentShoppingListDetailActivity(Activity activity, String listId, String listName) {
