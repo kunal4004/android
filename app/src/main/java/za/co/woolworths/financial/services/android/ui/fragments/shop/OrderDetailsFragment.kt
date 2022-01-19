@@ -203,15 +203,15 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         }
         val bottomNavigationActivity = activity as BottomNavigationActivity?
         bottomNavigationActivity!!.bottomNavigationById.currentItem = BottomNavigationActivity.INDEX_PRODUCT
+        val productDetails = ProductDetails()
 
-        val productList = ProductDetails()
         val commerceItemInfo = commerceItem.commerceItemInfo
-        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2
-        productList.productName = commerceItemInfo.productDisplayName
-        productList.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
-        productList.productId = commerceItemInfo.productId
-        productList.sku = commerceItemInfo.catalogRefId
-        openProductDetailFragment("", productList)
+        productDetails.externalImageRefV2 = commerceItemInfo.externalImageRefV2
+        productDetails.productName = commerceItemInfo.productDisplayName
+        productDetails.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
+        productDetails.productId = commerceItemInfo.productId
+        productDetails.sku = commerceItemInfo.catalogRefId
+        openProductDetailFragment("", productDetails)
     }
 
     fun openProductDetailFragment(productName: String?, productDetails: ProductDetails?) {
