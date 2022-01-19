@@ -577,9 +577,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 BundleKeysConstants.ACCOUNTBI_NNUMBER,
                 mCardPresenterImpl?.getAccount()?.accountNumberBin
             )
-            mBundle.putString(
+            mBundle.putParcelable(
                 BundleKeysConstants.STATUS_RESPONSE,
-                Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse)
+                creditCardDeliveryStatusResponse?.statusResponse
             )
             mBundle.putString(
                 BundleKeysConstants.PRODUCT_OFFERINGID,
