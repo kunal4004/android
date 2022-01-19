@@ -9,13 +9,14 @@ enum class ProductGroupCode(val value: String) {
 }
 
 enum class ActionText(val value: String) {
-    VIEW_TREATMENT_PLAN("viewTreatmentPlan"),
-    TAKE_UP_TREATMENT_PLAN("takeUpTreatmentPlan")
+    VIEW_TREATMENT_PLAN("collectionsViewExistingPlan"),
+    TAKE_UP_TREATMENT_PLAN("collectionsStartNewPlan")
 }
 
 class EligibilityPlan(
     val planType: String,
     val appGuid: String,
+    val appGuidExpiryDate: String,
     val productGroupCode: ProductGroupCode,
     val actionText: String,
     val displayText: String

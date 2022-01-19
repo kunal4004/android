@@ -30,14 +30,11 @@ class AccountSixMonthArrearsFragment : Fragment() {
     private var mApplyNowAccountKeyPair: Pair<Int, Int>? = null
     private var isViewTreatmentPlanSupported: Boolean = false
 
-    companion object {
-        const val IS_VIEW_TREATMENT_PLAN = "IS_VIEW_TREATMENT_PLAN"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE,"")
-        isViewTreatmentPlanSupported = arguments?.getBoolean(IS_VIEW_TREATMENT_PLAN,false) ?: false
+        isViewTreatmentPlanSupported = Utils.getAppBuildNumber() >=
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber ?: 999
         mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
     }
 
@@ -99,9 +96,12 @@ class AccountSixMonthArrearsFragment : Fragment() {
         mApplyNowAccountKeyPair?.first?.let { resourceId -> cardDetailImageView?.setImageResource(resourceId) }
         mApplyNowAccountKeyPair?.second?.let { resourceId ->
             toolbarTitleTextView?.text = bindString(resourceId)
-            if(isViewTreatmentPlanSupported && (resourceId == R.string.blackCreditCard_title ||
-                        resourceId == R.string.goldCreditCard_title ||
-                        resourceId == R.string.silverCreditCard_title)){
+
+            if(isViewTreatmentPlanSupported &&
+                (bindString(resourceId) == bindString(R.string.blackCreditCard_title) ||
+                        bindString(resourceId) == bindString(R.string.goldCreditCard_title) ||
+                        bindString(resourceId) == bindString(R.string.silverCreditCard_title))){
+
                 arrearsDescTextView?.text = bindString(R.string.account_arrears_cc_description)
                 callTheCallCenterButton?.visibility = GONE
                 viewTreatmentPlansButton?.visibility = VISIBLE

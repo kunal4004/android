@@ -159,17 +159,14 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         this.mAccountHelpInformation = informationModelAccount
     }
 
-    override fun showViewTreatmentPlan(state: ApplyNowState,
-                                       dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType,
-                                       eligibilityPlan: EligibilityPlan?){
+    override fun showViewTreatmentPlan(state: ApplyNowState, eligibilityPlan: EligibilityPlan?){
         val bundle = Bundle()
-        bundle.putSerializable(ViewTreatmentPlanDialogFragment.PLAN_BUTTON_TYPE, dialogButtonType)
         bundle.putSerializable(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE, state)
         bundle.putSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, eligibilityPlan)
         mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment, bundle)
     }
 
-    override fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean) {
+    override fun removeBlocksWhenChargedOff() {
         availableFundFragmentFrameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
         removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
@@ -183,7 +180,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 else -> {
                     val bundle = Bundle()
                     bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(getSixMonthOutstandingTitleAndCardResource()))
-                    bundle.putBoolean(AccountSixMonthArrearsFragment.IS_VIEW_TREATMENT_PLAN, isViewTreatmentPlanActive)
                     navigationController?.navigate(R.id.accountInDelinquencyFragment, bundle)
                 }
             }

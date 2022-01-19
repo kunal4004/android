@@ -14,8 +14,8 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
+import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
-import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -29,25 +29,16 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var showChatBubbleInterface: IShowChatBubble? = null
     private val mClassName = ViewTreatmentPlanDialogFragment::class.java.simpleName
-    private var dialogButtonType: ViewTreatmentPlanDialogButtonType? = null
     private var state: ApplyNowState? = null
     private var eligibilityPlan: EligibilityPlan? = null
 
     companion object {
-        enum class ViewTreatmentPlanDialogButtonType {
-            CC_ACTIVE,
-            PL_ACTIVE_ELIGIBLE,
-            PL_CHARGED_OFF_ELIGIBLE,
-            SC_ACTIVE_ELIGIBLE,
-            SC_CHARGED_OFF_ELIGIBLE,
-            PL_SC_NORMAL }
         const val VIEW_PAYMENT_PLAN_BUTTON = "viewPaymentPlanButton"
         const val MAKE_A_PAYMENT_BUTTON = "makeAPaymentButton"
         const val CANNOT_AFFORD_PAYMENT_BUTTON = "cannotAffordPaymentButton"
         const val PLAN_BUTTON_TYPE = "buttonType"
         const val APPLY_NOW_STATE = "state"
         const val ELIGIBILITY_PLAN = "eligibilityPlan"
-
     }
 
     override fun onAttach(context: Context) {
@@ -64,15 +55,11 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dialogButtonType = arguments?.getSerializable(PLAN_BUTTON_TYPE) as? ViewTreatmentPlanDialogButtonType
         state = arguments?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState
         eligibilityPlan = arguments?.getSerializable(ELIGIBILITY_PLAN) as EligibilityPlan?
 
         mainButton?.apply {
-            text = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE ||
-                dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE ||
-                dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE ||
-                dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE)
+            text = if(eligibilityPlan?.actionText == ActionText.TAKE_UP_TREATMENT_PLAN.value)
                 bindString(R.string.make_payment_now_button_label)
             else bindString(R.string.view_payment_plan_button_label)
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
@@ -86,26 +73,28 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         makePaymentButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL) View.VISIBLE else View.GONE
+            visibility = if(eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value &&
+                (state == ApplyNowState.PERSONAL_LOAN ||
+                        state == ApplyNowState.STORE_CARD))
+            View.VISIBLE else View.GONE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
         viewPaymentOptionsButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.CC_ACTIVE) View.VISIBLE else View.GONE
+            visibility = if(eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value &&
+                (state == ApplyNowState.GOLD_CREDIT_CARD ||
+                        state == ApplyNowState.BLACK_CREDIT_CARD ||
+                        state == ApplyNowState.SILVER_CREDIT_CARD))
+                    View.VISIBLE else View.GONE
+
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
         cannotAffordPaymentButton?.apply {
-            visibility = if(
-                ((dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE ||
-                        dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE)
-                        && eligibilityPlan?.productGroupCode == ProductGroupCode.PL) ||
-                ((dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE ||
-                        dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE)
-                        && eligibilityPlan?.productGroupCode == ProductGroupCode.SC))
+            visibility = if(eligibilityPlan?.actionText == ActionText.TAKE_UP_TREATMENT_PLAN.value)
                     View.VISIBLE else View.GONE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
@@ -113,51 +102,44 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         viewTreatmentPlanDescriptionTextView?.apply {
             text =
-                when(dialogButtonType) {
-                    ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE -> {
-                        payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
-                            activity?.resources?.getString(
-                                R.string.treatment_plan_eligible_active_description_pl,
-                                Utils.removeNegativeSymbol(
-                                    CurrencyFormatter.formatAmountToRandAndCent(
-                                        totalAmountDue
+                when(eligibilityPlan?.actionText) {
+                    ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
+                        when(state){
+                            ApplyNowState.PERSONAL_LOAN ->
+                                payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                                    activity?.resources?.getString(
+                                        R.string.take_up_treatment_plan_description_pl,
+                                        Utils.removeNegativeSymbol(
+                                            CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)
+                                        )
                                     )
-                                )
-                            )
+                                }
+
+                            ApplyNowState.STORE_CARD ->
+                                payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                                    activity?.resources?.getString(
+                                        R.string.take_up_treatment_plan_description_sc,
+                                        Utils.removeNegativeSymbol(
+                                            CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)
+                                        )
+                                    )
+                                }
+
+                            else -> {
+                                //TODO: Dimitri
+                                "See invision for credit card description msg and update in code"
+                            }
                         }
                     }
-                    ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE -> {
-                        payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
-                            activity?.resources?.getString(
-                                R.string.treatment_plan_eligible_active_description_sc,
-                                Utils.removeNegativeSymbol(
-                                    CurrencyFormatter.formatAmountToRandAndCent(
-                                        totalAmountDue
-                                    )
-                                )
-                            )
-                        }
-                    }
-                    ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE -> bindString(R.string.treatment_plan_eligible_charged_off_description_pl)
 
-                    ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE -> bindString(R.string.treatment_plan_eligible_charged_off_description_sc)
+                    ActionText.VIEW_TREATMENT_PLAN.value -> bindString(R.string.view_treatment_plan_description)
 
-                    else -> bindString(R.string.view_treatment_plan_description)
+                    else -> ""
                 }
         }
 
         viewTreatmentPlanTitleTextView?.apply {
-            text =
-                when(dialogButtonType) {
-                    ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE,
-                    ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE ->
-                        bindString(R.string.payment_overdue_label)
-                    ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE,
-                    ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE ->
-                        bindString(R.string.remove_block_on_collection_dialog_title)
-
-                    else -> bindString(R.string.payment_overdue_label)
-                }
+            text = bindString(R.string.payment_overdue_label)
         }
     }
 
@@ -166,10 +148,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
             R.id.mainButton -> {
                 dismiss()
-                if(dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE ||
-                    dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE ||
-                    dialogButtonType ===  ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE ||
-                    dialogButtonType ===  ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE)
+                if(eligibilityPlan?.actionText == ActionText.TAKE_UP_TREATMENT_PLAN.value)
                     setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
                 else setFragmentResult(mClassName, bundleOf(mClassName to VIEW_PAYMENT_PLAN_BUTTON))
             }

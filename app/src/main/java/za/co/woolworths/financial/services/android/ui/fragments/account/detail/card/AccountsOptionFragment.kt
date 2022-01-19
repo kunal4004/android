@@ -103,6 +103,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         withdrawCashView?.setOnClickListener(this)
         viewPaymentOptions?.setOnClickListener(this)
         setUpPaymentPlanOptions?.setOnClickListener(this)
+        viewTreatmentPlanOptions?.setOnClickListener(this)
         activateCreditCard?.setOnClickListener(this)
         scheduleOrManageCreditCardDelivery?.setOnClickListener(this)
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
@@ -270,6 +271,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 }
                 R.id.setUpPaymentPlanOptions -> {
                     openSetupPaymentPlanPage()
+                }
+                R.id.viewTreatmentPlanOptions -> {
+                    openViewTreatmentPlanPage()
                 }
                 R.id.activateCreditCard -> {
                     if (Utils.isCreditCardActivationEndpointAvailable())
@@ -689,6 +693,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
 
     private fun openSetupPaymentPlanPage() {
         val arguments = HashMap<String, String>()
+        var collectionsUrl: String? = ""
+        var exitUrl: String? = ""
         when(state){
             ApplyNowState.STORE_CARD -> {
                 arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC_ACTION
@@ -696,6 +702,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC,
                     arguments,
                     activity)
+                collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                exitUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.exitUrl
             }
             ApplyNowState.PERSONAL_LOAN -> {
                 arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL_ACTION
@@ -703,6 +711,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL,
                     arguments,
                     activity)
+                collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl
+                exitUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.exitUrl
             }
             ApplyNowState.SILVER_CREDIT_CARD,
             ApplyNowState.GOLD_CREDIT_CARD,
@@ -712,13 +722,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_CC,
                     arguments,
                     activity)
+                collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl
+                exitUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
             }
         }
 
-        //TODO: Take up treatment plan - do not use hardcoded url
-        val url = "https://dev.woolworths.wfs.co.za/IntegrationLanding/Entry.aspx?appguid=" + eligibilityPlan?.appGuid
+        val url = collectionsUrl + eligibilityPlan?.appGuid
 
-        when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
+        when (WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.renderMode){
             AvailableFundFragment.NATIVE_BROWSER ->
                 KotlinUtils.openUrlInPhoneBrowser(url, activity)
 
@@ -726,8 +737,57 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 KotlinUtils.openLinkInInternalWebView(activity,
                     url,
                     true,
-                    WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.storeCard?.exitUrl
+                    exitUrl
                 )
+        }
+    }
+
+    private fun openViewTreatmentPlanPage(){
+        val arguments = HashMap<String, String>()
+        var collectionsUrl: String? = ""
+        var exitUrl: String? = ""
+        when(state){
+            ApplyNowState.STORE_CARD -> {
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD_ACTION
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD,
+                    arguments,
+                    activity)
+                collectionsUrl = WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.collectionsUrl
+                exitUrl = WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.exitUrl
+            }
+            ApplyNowState.PERSONAL_LOAN -> {
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
+                    arguments,
+                    activity)
+                collectionsUrl = WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl
+                exitUrl = WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.exitUrl
+            }
+            ApplyNowState.SILVER_CREDIT_CARD,
+            ApplyNowState.GOLD_CREDIT_CARD,
+            ApplyNowState.BLACK_CREDIT_CARD, -> {
+                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD_ACTION
+                Utils.triggerFireBaseEvents(
+                    FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD,
+                    arguments,
+                    activity)
+                collectionsUrl = WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.collectionsUrl
+                exitUrl = WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.exitUrl
+            }
+        }
+
+        when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
+            AvailableFundFragment.NATIVE_BROWSER ->
+                KotlinUtils.openUrlInPhoneBrowser(
+                    collectionsUrl, activity)
+
+            else ->
+                KotlinUtils.openLinkInInternalWebView(activity,
+                    collectionsUrl,
+                    true,
+                    exitUrl)
         }
     }
 }

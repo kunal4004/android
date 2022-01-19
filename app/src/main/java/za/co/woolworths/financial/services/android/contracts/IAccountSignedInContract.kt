@@ -19,15 +19,12 @@ interface IAccountSignedInContract {
         fun showAccountInArrears(account: Account)
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
-        fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean)
+        fun removeBlocksWhenChargedOff()
         fun removeBlocksOnCollectionCustomer()
-        fun showViewTreatmentPlan(state: ApplyNowState,
-                                  dialogButtonType: ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType,
-                                  eligibilityPlan: EligibilityPlan?)
+        fun showViewTreatmentPlan(state: ApplyNowState, eligibilityPlan: EligibilityPlan?)
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
-        fun showPlanButton(state: ApplyNowState,
-                                       eligibilityPlan: EligibilityPlan?)
+        fun showPlanButton(state: ApplyNowState, eligibilityPlan: EligibilityPlan?)
     }
 
     interface MyAccountPresenter {

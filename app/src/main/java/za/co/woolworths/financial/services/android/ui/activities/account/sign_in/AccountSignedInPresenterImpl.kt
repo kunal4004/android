@@ -73,7 +73,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        accountInfo?.first?.let { showProductOfferOutstanding(it) }
+        showProductOfferOutstanding(accountInfo.first)
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -113,98 +113,8 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-    private fun checkEligibility(state: ApplyNowState){
-        val productGroupCode: ProductGroupCode = when (state) {
-            ApplyNowState.BLACK_CREDIT_CARD,
-            ApplyNowState.GOLD_CREDIT_CARD,
-            ApplyNowState.SILVER_CREDIT_CARD -> ProductGroupCode.CC
-            ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
-            ApplyNowState.STORE_CARD -> ProductGroupCode.SC
-        }
-
-        OneAppService.getEligibility(productGroupCode)
-            .enqueue(CompletionHandler(object : IResponseListener<EligibilityPlanResponse> {
-                override fun onSuccess(response: EligibilityPlanResponse?) {
-                    if (response != null && response.httpCode == HTTP_OK) {
-                        val eligibleState = when (response.eligibilityPlan.productGroupCode) {
-                            ProductGroupCode.SC -> ApplyNowState.STORE_CARD
-                            ProductGroupCode.CC -> ApplyNowState.GOLD_CREDIT_CARD
-                            ProductGroupCode.PL -> ApplyNowState.PERSONAL_LOAN
-                        }
-
-                        if(state == eligibleState){
-                            when (response.eligibilityPlan.actionText) {
-                                ActionText.TAKE_UP_TREATMENT_PLAN.value -> { //For personal loan and store card
-                                    mainView?.showPlanButton(state, response.eligibilityPlan)
-
-                                    val account = getAccount()
-                                    account?.apply {
-                                        when {
-                                            productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
-                                                when (state){
-                                                    ApplyNowState.PERSONAL_LOAN ->
-                                                        mainView?.showViewTreatmentPlan(
-                                                            state,
-                                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_CHARGED_OFF_ELIGIBLE,
-                                                            response.eligibilityPlan)!!
-
-                                                    ApplyNowState.STORE_CARD ->
-                                                        mainView?.showViewTreatmentPlan(
-                                                            state,
-                                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_CHARGED_OFF_ELIGIBLE,
-                                                            response.eligibilityPlan)!!
-                                                }
-                                            }
-                                            productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
-                                                when (state){
-                                                    ApplyNowState.PERSONAL_LOAN ->
-                                                        mainView?.showViewTreatmentPlan(
-                                                            state,
-                                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_ACTIVE_ELIGIBLE,
-                                                            response.eligibilityPlan)!!
-
-                                                    ApplyNowState.STORE_CARD ->
-                                                        mainView?.showViewTreatmentPlan(
-                                                            state,
-                                                            ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.SC_ACTIVE_ELIGIBLE,
-                                                            response.eligibilityPlan)!!
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                ActionText.VIEW_TREATMENT_PLAN.value -> {
-                                    mainView?.showPlanButton(state, response.eligibilityPlan)
-                                    mainView?.showViewTreatmentPlan(
-                                        state,
-                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
-                                        null)!!
-                                }
-                            }
-                        }
-                    }
-                }
-                override fun onFailure(error: Throwable?) {
-                    //Show nothing
-                } }, EligibilityPlanResponse::class.java))
-    }
-
-    override fun showProductOfferOutstanding(state: ApplyNowState) {
-        val supported = when(state) {
-            ApplyNowState.PERSONAL_LOAN -> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber!!
-            }
-            ApplyNowState.STORE_CARD -> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumSupportedAppBuildNumber!!
-            }
-            ApplyNowState.GOLD_CREDIT_CARD,
-            ApplyNowState.BLACK_CREDIT_CARD,
-            ApplyNowState.SILVER_CREDIT_CARD-> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber ?: 999
-            }
-        }
-
-        val minimumDelinquencyCycle = when(state){
+    private fun checkEligibility(state: ApplyNowState, showExistingPopup: () -> Unit){
+        val minimumViewTreatmentDelinquencyCycle = when(state){
             ApplyNowState.PERSONAL_LOAN -> {
                 WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumDelinquencyCycle!!
             }
@@ -217,78 +127,148 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                 WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumDelinquencyCycle ?: 999
             }
         }
-
-        val isCreditCard = when(state){
-            ApplyNowState.PERSONAL_LOAN,
-            ApplyNowState.STORE_CARD-> {
-                false
+        val minimumTakeUpTreatmentDelinquencyCycle = when(state){
+            ApplyNowState.PERSONAL_LOAN -> {
+                WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.minimumDelinquencyCycle!!
+            }
+            ApplyNowState.STORE_CARD -> {
+                WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.minimumDelinquencyCycle!!
             }
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
             ApplyNowState.SILVER_CREDIT_CARD-> {
-                true
+                WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.minimumDelinquencyCycle ?: 999
             }
         }
+        val viewTreatmentPlanSupported = when(state) {
+            ApplyNowState.PERSONAL_LOAN -> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber!!
+            }
+            ApplyNowState.STORE_CARD -> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumSupportedAppBuildNumber!!
+            }
+            ApplyNowState.GOLD_CREDIT_CARD,
+            ApplyNowState.BLACK_CREDIT_CARD,
+            ApplyNowState.SILVER_CREDIT_CARD-> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber ?: 999
+            }
+        }
+        val takeUpTreatmentPlanSupported = when(state) {
+            ApplyNowState.PERSONAL_LOAN -> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber!!
+            }
+            ApplyNowState.STORE_CARD -> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.minimumSupportedAppBuildNumber!!
+            }
+            ApplyNowState.GOLD_CREDIT_CARD,
+            ApplyNowState.BLACK_CREDIT_CARD,
+            ApplyNowState.SILVER_CREDIT_CARD-> {
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.minimumSupportedAppBuildNumber ?: 999
+            }
+        }
+        val productGroupCode: ProductGroupCode = when (state) {
+            ApplyNowState.BLACK_CREDIT_CARD,
+            ApplyNowState.GOLD_CREDIT_CARD,
+            ApplyNowState.SILVER_CREDIT_CARD -> ProductGroupCode.CC
+            ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
+            ApplyNowState.STORE_CARD -> ProductGroupCode.SC
+        }
+        val account = getAccount()
 
+        account?.apply {
+            OneAppService.getEligibility(productGroupCode)
+                .enqueue(CompletionHandler(object : IResponseListener<EligibilityPlanResponse> {
+                    override fun onSuccess(response: EligibilityPlanResponse?) {
+                        if (response != null && response.httpCode == HTTP_OK) {
+                            val eligibleState = when (state) {
+                                ApplyNowState.STORE_CARD -> ProductGroupCode.SC
+                                ApplyNowState.GOLD_CREDIT_CARD,
+                                ApplyNowState.BLACK_CREDIT_CARD,
+                                ApplyNowState.SILVER_CREDIT_CARD -> ProductGroupCode.CC
+                                ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
+                            }
+
+                            if(response.eligibilityPlan.productGroupCode == eligibleState){
+                                when (response.eligibilityPlan.actionText) {
+                                    ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
+                                        if(delinquencyCycle >= minimumTakeUpTreatmentDelinquencyCycle &&
+                                            takeUpTreatmentPlanSupported){
+                                            mainView?.showPlanButton(state, response.eligibilityPlan)
+                                            mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                                        }
+                                        else{
+                                            showExistingPopup()
+                                        }
+                                    }
+                                    ActionText.VIEW_TREATMENT_PLAN.value -> {
+                                        if(delinquencyCycle >= minimumViewTreatmentDelinquencyCycle && viewTreatmentPlanSupported) {
+                                            mainView?.showPlanButton(state, response.eligibilityPlan)
+
+                                            when (state){
+                                                ApplyNowState.PERSONAL_LOAN,
+                                                ApplyNowState.STORE_CARD ->
+                                                    mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+
+                                                ApplyNowState.GOLD_CREDIT_CARD,
+                                                ApplyNowState.BLACK_CREDIT_CARD,
+                                                ApplyNowState.SILVER_CREDIT_CARD -> {
+                                                    when {
+                                                        productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
+                                                            mainView?.removeBlocksWhenChargedOff()!!
+                                                        }
+                                                        productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
+                                                            //display treatment plan popup with view payment options for CC
+                                                            mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            showExistingPopup()
+                                        }
+                                    }
+
+                                    else -> {
+                                        //do nothing
+                                        //actionText == null => display no popup
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    override fun onFailure(error: Throwable?) {
+                        //Show nothing
+                    } }, EligibilityPlanResponse::class.java))
+
+        }
+
+    }
+
+    override fun showProductOfferOutstanding(state: ApplyNowState) {
         val account = getAccount()
         account?.apply {
             return when {
-                !productOfferingGoodStanding && supported &&
-                        delinquencyCycle>=minimumDelinquencyCycle -> {
-                    if(state == ApplyNowState.PERSONAL_LOAN ||
-                        state == ApplyNowState.STORE_CARD){
-                        checkEligibility(state)
-                    }else{
-                        when {
-                            productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
-                                if(!isCreditCard){
-                                    mainView?.removeBlocksWhenChargedOff(supported)
-                                    mainView?.showViewTreatmentPlan(
-                                        state,
-                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
-                                        null)!!
-                                } else{
-                                    mainView?.removeBlocksWhenChargedOff(supported)!!
-                                }
-                            }
-                            productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
-                                if (isCreditCard){
-                                    //display treatment plan popup with view payment options for CC
-                                    mainView?.showViewTreatmentPlan(
-                                        state,
-                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.CC_ACTIVE,
-                                        null)!!
-                                }
-                                else{
-                                    //display treatment plan popup with make a payment for PL and SC
-                                    mainView?.showViewTreatmentPlan(
-                                        state,
-                                        ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
-                                        null)!!
-                                }
-                            }
-                            else -> {
-                                mainView?.showViewTreatmentPlan(
-                                    state,
-                                    ViewTreatmentPlanDialogFragment.Companion.ViewTreatmentPlanDialogButtonType.PL_SC_NORMAL,
-                                    null)!!
-                            }
+                !productOfferingGoodStanding -> {
+                    checkEligibility(state) {
+                        //show existing popup when
+                        // !productOfferingGoodStanding &&
+                        // (viewTreatment || takeUpTreatment) is turned off in configs
+
+                        if(productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
+                            // account is in arrears for more than 6 months
+                            mainView?.removeBlocksOnCollectionCustomer()!!
+                        } else {
+                            // account is in arrears
+                            mainView?.showAccountInArrears(account)
+                            mainView?.showAccountHelp(getCardProductInformation(true))!!
                         }
                     }
                 }
                 else -> {
-                    if(!productOfferingGoodStanding &&
-                        productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)){
-                        // account is in arrears for more than 6 months
-                        mainView?.removeBlocksOnCollectionCustomer()!!
-                    } else if(!productOfferingGoodStanding) { // account is in arrears
-                        mainView?.showAccountInArrears(account)
-                        mainView?.showAccountHelp(getCardProductInformation(true))!!
-                    } else{
-                        //when productOfferingGoodStanding == true
-                        mainView?.hideAccountInArrears(account)
-                        mainView?.showAccountHelp(getCardProductInformation(false))!!
-                    }
+                    //when productOfferingGoodStanding == true
+                    mainView?.hideAccountInArrears(account)
+                    mainView?.showAccountHelp(getCardProductInformation(false))!!
                 }
             }
         }

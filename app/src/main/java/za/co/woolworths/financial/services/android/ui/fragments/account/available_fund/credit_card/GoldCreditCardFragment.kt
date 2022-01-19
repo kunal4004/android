@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.credit_card
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.Navigation
@@ -10,6 +11,7 @@ import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
@@ -66,6 +68,14 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                             }
                         }
                     }
+
+                    ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON -> {
+                        val intent = Intent(context, GetAPaymentPlanActivity::class.java)
+                        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN))
+                        startActivity(intent)
+                        activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
+                    }
+
                     ViewTreatmentPlanDialogFragment.MAKE_A_PAYMENT_BUTTON -> navigateToPayMyAccountActivity()
                 }
             }

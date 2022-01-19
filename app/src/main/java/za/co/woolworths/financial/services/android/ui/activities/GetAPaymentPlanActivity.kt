@@ -4,14 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
-import com.google.gson.JsonParser
-import com.huawei.hms.support.log.common.Base64
 import kotlinx.android.synthetic.main.view_get_payment_plan_activity.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.ActionText
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -23,6 +19,8 @@ class GetAPaymentPlanActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.view_get_payment_plan_activity)
 
+        //TODO: Dimitri : update R.layout.view_get_payment_plan_activity
+
         viewPlanOptionsButton?.setOnClickListener(this)
 
         eligibilityPlan = intent.getSerializableExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN) as EligibilityPlan?
@@ -31,10 +29,30 @@ class GetAPaymentPlanActivity : AppCompatActivity(), View.OnClickListener {
         override fun onClick(v: View?) {
             when(v?.id){
             R.id.viewPlanOptionsButton -> {
-                //TODO: Take up treatment plan - do not use hardcoded url
-                val url = "https://dev.woolworths.wfs.co.za/IntegrationLanding/Entry.aspx?appguid=" + eligibilityPlan?.appGuid
 
-                when (WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.renderMode){
+                var collectionsUrl: String? = ""
+                var exitUrl: String? = ""
+
+                when(eligibilityPlan?.productGroupCode){
+                    ProductGroupCode.SC -> {
+                        collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                        exitUrl = WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.exitUrl
+                    }
+
+                    ProductGroupCode.PL -> {
+                        collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                        exitUrl = WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.exitUrl
+                    }
+
+                    ProductGroupCode.CC -> {
+                        collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                        exitUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
+                    }
+                }
+
+                val url = collectionsUrl + eligibilityPlan?.appGuid
+
+                when (WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.renderMode){
                     AvailableFundFragment.NATIVE_BROWSER ->
                         KotlinUtils.openUrlInPhoneBrowser(url, this)
 
@@ -42,7 +60,7 @@ class GetAPaymentPlanActivity : AppCompatActivity(), View.OnClickListener {
                         KotlinUtils.openLinkInInternalWebView(this,
                             url,
                             true,
-                            WoolworthsApplication.getAccountOptions()?.takeUpTreatmentPlanJourney?.storeCard?.exitUrl
+                            exitUrl
                         )
                 }
             }
