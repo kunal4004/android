@@ -206,7 +206,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             }
             bundle?.putString("RecipientDetails", Utils.toJson(recipientDetails))
             statusResponse?.recipientDetails = recipientDetails
-            bundle?.putString(BundleKeysConstants.STATUS_RESPONSE, Utils.toJson(statusResponse))
+            bundle?.putParcelable(BundleKeysConstants.STATUS_RESPONSE, statusResponse)
             if (isEditRecipient) {
                 updateRecipientDetails()
             } else {

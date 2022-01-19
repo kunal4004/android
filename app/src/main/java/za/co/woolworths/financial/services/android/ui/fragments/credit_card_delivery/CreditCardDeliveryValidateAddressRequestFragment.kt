@@ -50,7 +50,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString(BundleKeysConstants.STATUS_RESPONSE), StatusResponse::class.java) as StatusResponse?
+            statusResponse = getParcelable(BundleKeysConstants.STATUS_RESPONSE)
         }
         confirmAddress?.setOnClickListener(this)
         editAddress?.setOnClickListener(this)
@@ -115,7 +115,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
                         scheduleDeliveryRequest.addressDetails?.x = it.x
                         scheduleDeliveryRequest.addressDetails?.y = it.y
                         bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
-                        bundle?.putString(BundleKeysConstants.STATUS_RESPONSE, Utils.toJson(statusResponse))
+                        bundle?.putParcelable(BundleKeysConstants.STATUS_RESPONSE, statusResponse)
                     }
                 }
             }
