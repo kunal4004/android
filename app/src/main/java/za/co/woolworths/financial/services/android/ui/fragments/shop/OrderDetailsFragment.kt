@@ -46,6 +46,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     companion object {
          val ARG_PARAM = "order"
+         val STR_PRODUCT_CATEGORY = "strProductCategory"
+         val STR_PRODUCT_LIST= "strProductList"
         fun getInstance(order: Order, isNaviagtedFromMyAccount: Boolean = false) = OrderDetailsFragment().withArgs {
             putString(ARG_PARAM, Utils.toJson(order))
             putBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNaviagtedFromMyAccount)
@@ -220,8 +222,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         val gson = Gson()
         val strProductList = gson.toJson(productDetails)
         val bundle = Bundle()
-        bundle.putString("strProductList", strProductList)
-        bundle.putString("strProductCategory", productName)
+        bundle.putString(STR_PRODUCT_LIST, strProductList)
+        bundle.putString(STR_PRODUCT_CATEGORY, productName)
         fragment.arguments = bundle
         (activity as? BottomNavigationActivity)?.pushFragment(fragment)
     }
