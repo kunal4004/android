@@ -41,8 +41,12 @@ import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -69,11 +73,14 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
+import java.net.SocketException
+import java.net.UnknownHostException
 import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.CoroutineContext
 
 class KotlinUtils {
     companion object {
@@ -898,6 +905,21 @@ class KotlinUtils {
                 }
             )
         }
-    }
 
+        fun coroutineContextWithExceptionHandler(): CoroutineContext {
+            return (Dispatchers.IO + CoroutineExceptionHandler{ _, throwable ->
+                if (throwable is SocketException) {
+                    //TODO::very bad internet
+                }
+
+                if (throwable is HttpException) {
+                    //TODO::parse error body message
+                }
+
+                if (throwable is UnknownHostException) {
+                    //TODO::probably no internet or base url is wrong
+                }
+            })
+        }
+    }
 }
