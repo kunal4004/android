@@ -630,7 +630,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         if (!(getActivity() instanceof BottomNavigationActivity) || !isAdded()) {
             return;
         }
-        ProductDetailsFragment fragment = new ProductDetailsFragment();
+        ProductDetailsFragment fragment = ProductDetailsFragment.Companion.newInstance();
         Gson gson = new Gson();
         String strProductList = gson.toJson(productDetails);
         Bundle bundle = new Bundle();
