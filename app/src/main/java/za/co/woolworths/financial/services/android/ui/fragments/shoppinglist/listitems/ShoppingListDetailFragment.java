@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.awfs.coordination.R;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
@@ -56,6 +57,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
@@ -89,37 +91,37 @@ import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
 
-    private final int DELIVERY_LOCATION_REQUEST = 2;
-    public static final int ADD_TO_CART_SUCCESS_RESULT = 2000;
-    private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 2011;
-    private int DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222;
     public final static int QUANTITY_CHANGED_FROM_LIST = 2010;
-    private int REQUEST_SUBURB_CHANGE = 12345;
+    public final static int ADD_TO_CART_SUCCESS_RESULT = 2000;
+    private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 2011;
+    private final int DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222;
+    private final int REQUEST_SUBURB_CHANGE = 12345;
+    private final int DELIVERY_LOCATION_REQUEST = 2;
 
-    private String listName;
-    private String listId;
-    private List<ShoppingListItem> mShoppingListItems;
-    private ShoppingListItemsAdapter shoppingListItemsAdapter;
-    private boolean isMenuItemReadyToShow = false;
     private ErrorHandlerView mErrorHandlerView;
+    private RecyclerView rcvShoppingListItems;
+    private ProgressBar loadingBar, pbLoadingIndicator;
+    private RelativeLayout rlCheckOut;
+    private WButton btnCheckOut;
+    private LinearLayout rlEmptyView;
+    private TextView selectDeselectAllTextView;
+
+    private boolean openFromMyList,
+            addedToCart,
+            errorMessageWasPopUp;
+    private boolean internetConnectionWasLost = false,
+            isMenuItemReadyToShow = false;
+    private Integer mDeliveryResultCode;
+    private String listName, listId;
+    private List<String> matchesFullFillmentTypeKey;
+    private List<ShoppingListItem> mShoppingListItems;
+    private ArrayList<FulfillmentStoreMap> fulfillmentStoreMapArrayList;
+
+    private ShoppingListItemsAdapter shoppingListItemsAdapter;
     private BroadcastReceiver mConnectionBroadcast;
     private Call<AddItemToCartResponse> mPostAddToCart;
     private Call<SkusInventoryForStoreResponse> mGetInventorySkusForStore;
-    private ArrayList<FulfillmentStoreMap> fulfillmentStoreMapArrayList;
-    private boolean errorMessageWasPopUp;
     private ShoppingListItem mOpenShoppingListItem;
-    private Integer mDeliveryResultCode;
-    private boolean addedToCart;
-    private boolean internetConnectionWasLost = false;
-    private RecyclerView rcvShoppingListItems;
-    private ProgressBar loadingBar;
-    private RelativeLayout rlCheckOut;
-    private ProgressBar pbLoadingIndicator;
-    private WButton btnCheckOut;
-    private LinearLayout rlEmptyView;
-    private boolean openFromMyList;
-    private List<String> matchesFullFillmentTypeKey;
-    private TextView selectDeselectAllTextView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -143,7 +145,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         super.onViewCreated(view, savedInstanceState);
         initViewAndEvent(view);
         initGetShoppingListItems();
-        selectDeselectAllTextView.setOnClickListener(this);
+        if (getActivity() instanceof ShoppingListDetailActivity) {
+            selectDeselectAllTextView.setOnClickListener(this);
+        }
     }
 
     private void initViewAndEvent(View view) {
@@ -156,9 +160,18 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         pbLoadingIndicator = view.findViewById(R.id.pbLoadingIndicator);
         btnCheckOut = view.findViewById(R.id.btnCheckOut);
         rlEmptyView = view.findViewById(R.id.rlEmptyListView);
+
         Activity activity = getActivity();
-        if (activity != null)
+        AppBarLayout appbar = view.findViewById(R.id.appbar);
+        if (activity instanceof ShoppingListDetailActivity) {
             selectDeselectAllTextView = activity.findViewById(R.id.selectDeselectAllTextView);
+            appbar.setVisibility(GONE);
+        } else if (activity instanceof BottomNavigationActivity) {
+            appbar.setVisibility(VISIBLE);
+            ((BottomNavigationActivity) activity).hideToolbar();
+            selectDeselectAllTextView = view.findViewById(R.id.selectDeselectAllTextView);
+        }
+
         initList(rcvShoppingListItems);
         setScrollListener(rcvShoppingListItems);
 
@@ -547,8 +560,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         rlEmptyView.setVisibility(GONE);
         rcvShoppingListItems.setVisibility(GONE);
         loadingBar.setVisibility(VISIBLE);
-        ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
-
+        if (activity instanceof ShoppingListDetailActivity) {
+            ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
+        }
 
         Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.getShoppingListItems(listId);
         shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingListItemsResponse>() {
@@ -597,10 +611,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         Activity activity = getActivity();
         if (activity == null) return;
-        ShoppingListDetailActivity shoppingListActivity = ((ShoppingListDetailActivity) activity);
         if (isMenuItemReadyToShow) {
             selectDeselectAllTextView.setVisibility(VISIBLE);
-            shoppingListActivity.editButtonVisibility(true);
+            if (activity instanceof ShoppingListDetailActivity) {
+                ShoppingListDetailActivity shoppingListActivity = ((ShoppingListDetailActivity) activity);
+                shoppingListActivity.editButtonVisibility(true);
+            } else if (activity instanceof BottomNavigationActivity) {
+                View view = getView();
+                if (view == null) {
+                    return;
+                }
+                TextView editButton = view.findViewById(R.id.btnBack);
+                editButton.setVisibility(VISIBLE);
+            }
         } else {
             selectDeselectAllTextView.setVisibility(GONE);
             editButtonVisibility();
@@ -874,7 +897,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
 
         if (requestCode == REQUEST_SUBURB_CHANGE) {
-                initGetShoppingListItems();
+            initGetShoppingListItems();
         }
 
         if (requestCode == QUANTITY_CHANGED_FROM_LIST) {
@@ -1111,11 +1134,16 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private void editButtonVisibility() {
         Activity activity = getActivity();
         if (activity == null) return;
-        ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
         if (shoppingListItemsAdapter.getItemCount() >= 2) {
-            shoppingListDetailActivity.editButtonVisibility(true);
+            if (activity instanceof ShoppingListDetailActivity) {
+                ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
+                shoppingListDetailActivity.editButtonVisibility(true);
+            }
         } else {
-            shoppingListDetailActivity.editButtonVisibility(false);
+            if (activity instanceof ShoppingListDetailActivity) {
+                ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
+                shoppingListDetailActivity.editButtonVisibility(false);
+            }
         }
     }
 
