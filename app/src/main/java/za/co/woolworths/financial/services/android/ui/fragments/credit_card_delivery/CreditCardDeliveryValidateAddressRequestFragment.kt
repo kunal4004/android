@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -49,7 +50,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
+            statusResponse = Utils.jsonStringToObject(getString(BundleKeysConstants.STATUS_RESPONSE), StatusResponse::class.java) as StatusResponse?
         }
         confirmAddress?.setOnClickListener(this)
         editAddress?.setOnClickListener(this)
@@ -114,7 +115,7 @@ class CreditCardDeliveryValidateAddressRequestFragment : CreditCardDeliveryBaseF
                         scheduleDeliveryRequest.addressDetails?.x = it.x
                         scheduleDeliveryRequest.addressDetails?.y = it.y
                         bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
-                        bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
+                        bundle?.putString(BundleKeysConstants.STATUS_RESPONSE, Utils.toJson(statusResponse))
                     }
                 }
             }

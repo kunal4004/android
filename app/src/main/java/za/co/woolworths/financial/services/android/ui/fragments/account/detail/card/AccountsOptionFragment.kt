@@ -561,7 +561,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             val mIntent = Intent(this, CreditCardActivationActivity::class.java)
             val mBundle = Bundle()
             mBundle.putString("absaCardToken", cardWithPLCState?.absaCardToken)
-            mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
+            mBundle.putString(BundleKeysConstants.PRODUCT_OFFERINGID, mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
             mIntent.putExtra("bundle", mBundle)
             startActivityForResult(mIntent, REQUEST_CREDIT_CARD_ACTIVATION)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)

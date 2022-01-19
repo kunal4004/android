@@ -27,7 +27,7 @@ open class CreditCardDeliveryBaseFragment : Fragment() {
                 scheduleDeliveryRequest = Utils.jsonStringToObject(getString("ScheduleDeliveryRequest"), ScheduleDeliveryRequest::class.java) as ScheduleDeliveryRequest
             }
             if (containsKey(BundleKeysConstants.STATUS_RESPONSE)) {
-                statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse
+                statusResponse = Utils.jsonStringToObject(getString(BundleKeysConstants.STATUS_RESPONSE), StatusResponse::class.java) as StatusResponse
             }
         }
     }

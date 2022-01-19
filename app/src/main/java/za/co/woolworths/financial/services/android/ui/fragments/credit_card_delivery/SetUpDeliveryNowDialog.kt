@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -27,7 +28,7 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
 
     constructor(bundle: Bundle, mSetUpDeliveryListner: ISetUpDeliveryNowLIstner?) : this() {
         bundle.apply {
-            accountBinNumber = getString("accountBinNumber")
+            accountBinNumber = getString(BundleKeysConstants.ACCOUNTBI_NNUMBER)
         }
         this.mSetUpDeliveryListner = mSetUpDeliveryListner
     }

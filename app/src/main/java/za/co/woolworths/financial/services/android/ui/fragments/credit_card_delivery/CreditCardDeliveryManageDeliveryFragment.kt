@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_manage_delivery.deliv
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -79,7 +80,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
 
     private fun init() {
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
+            statusResponse = Utils.jsonStringToObject(getString(BundleKeysConstants.STATUS_RESPONSE), StatusResponse::class.java) as StatusResponse?
         }
         editAddress?.setOnClickListener(this)
         cancelDelivery?.setOnClickListener(this)

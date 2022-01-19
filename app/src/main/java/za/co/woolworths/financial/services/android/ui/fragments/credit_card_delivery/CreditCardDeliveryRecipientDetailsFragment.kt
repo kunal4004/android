@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -205,7 +206,7 @@ class CreditCardDeliveryRecipientDetailsFragment : CreditCardDeliveryBaseFragmen
             }
             bundle?.putString("RecipientDetails", Utils.toJson(recipientDetails))
             statusResponse?.recipientDetails = recipientDetails
-            bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
+            bundle?.putString(BundleKeysConstants.STATUS_RESPONSE, Utils.toJson(statusResponse))
             if (isEditRecipient) {
                 updateRecipientDetails()
             } else {

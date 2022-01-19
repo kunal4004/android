@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.credit_card_delivery_recipient_address_lay
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.*
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(), View.OnClickListener {
@@ -131,7 +132,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
             statusResponse?.recipientDetails = recipientDetails
 
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
-            bundle?.putString("StatusResponse", Utils.toJson(statusResponse))
+            bundle?.putString(BundleKeysConstants.STATUS_RESPONSE, Utils.toJson(statusResponse))
             bundle?.putBoolean("isEditRecipient", isEditRecipient)
             navController?.navigate(R.id.action_to_creditCardDeliveryValidateAddressRequestFragment, bundleOf("bundle" to bundle))
 

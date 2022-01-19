@@ -2039,7 +2039,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
             mSetUpDeliveryListner = (ApplyNowState) -> redirectToCreditCardActivity(creditCardDeliveryStatusResponse, applyNowState);
             Bundle bundle = new Bundle();
-            bundle.putString("accountBinNumber", accountNumberBin);
+            bundle.putString(BundleKeysConstants.ACCOUNTBI_NNUMBER, accountNumberBin);
             SetUpDeliveryNowDialog setUpDeliveryNowDialog = new SetUpDeliveryNowDialog(bundle, mSetUpDeliveryListner);
             Activity activity = getActivity();
             if (activity == null)
