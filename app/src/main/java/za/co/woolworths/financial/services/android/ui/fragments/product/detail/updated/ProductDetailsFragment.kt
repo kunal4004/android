@@ -989,14 +989,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateAuxiliaryImages(imagesList: List<String>) {
-        activity?.apply {
-                ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
-                    productImagesViewPager?.let { pager ->
-                        pager.adapter = this
-                        productImagesViewPagerIndicator.setViewPager(pager)
-                        //updatePagerItems(imagesList)
-                    }
-                }
+        ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
+            productImagesViewPager?.let { pager ->
+                pager.adapter = this
+                productImagesViewPagerIndicator.setViewPager(pager)
+            }
         }
     }
 
@@ -1872,29 +1869,27 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateStockAvailabilityLocation() {
-        activity?.apply {
-            getDeliveryLocation()?.let {
-                when (it) {
-                    is ShoppingDeliveryLocation -> {
-                        when (it.storePickup) {
-                            true -> {
-                                currentDeliveryLocation.text =
-                                    resources?.getString(R.string.store) + it.store?.name
-                                defaultLocationPlaceholder.text =
-                                    getString(R.string.collecting_from) + " "
-                            }
-                            else -> {
-                                currentDeliveryLocation.text =
-                                    it.suburb?.name + "," + it.province?.name
-                                defaultLocationPlaceholder.text =
-                                    getString(R.string.delivering_to_pdp)
-                            }
+        getDeliveryLocation()?.let {
+            when (it) {
+                is ShoppingDeliveryLocation -> {
+                    when (it.storePickup) {
+                        true -> {
+                            currentDeliveryLocation?.text =
+                                resources?.getString(R.string.store) + it.store?.name
+                            defaultLocationPlaceholder?.text =
+                                getString(R.string.collecting_from) + " "
+                        }
+                        else -> {
+                            currentDeliveryLocation?.text =
+                                it.suburb?.name + "," + it.province?.name
+                            defaultLocationPlaceholder?.text =
+                                getString(R.string.delivering_to_pdp)
                         }
                     }
-                    is ConfigQuickShopDefaultValues -> {
-                        currentDeliveryLocation.text = it.suburb.name
-                        defaultLocationPlaceholder.text = getString(R.string.set_to_default)
-                    }
+                }
+                is ConfigQuickShopDefaultValues -> {
+                    currentDeliveryLocation?.text = it.suburb.name
+                    defaultLocationPlaceholder?.text = getString(R.string.set_to_default)
                 }
             }
         }
