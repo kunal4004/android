@@ -247,8 +247,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 });
 
                 productHolder.swipeLayout.setOnClickListener(view -> onItemClick.onOpenProductDetail(commerceItem));
-                if (commerceItem.lowStockThreshold > commerceItem.quantityInStock && commerceItem.quantityInStock != -1
-                        && commerceItem.quantityInStock !=0 && AppConfigSingleton.INSTANCE.getLowStock().isEnabled()) {
+                if (commerceItem.lowStockThreshold > commerceItem.quantityInStock
+                        && commerceItem.quantityInStock > 0 && AppConfigSingleton.INSTANCE.getLowStock().isEnabled()) {
                     showLowStockIndicator(productHolder);
                 }
                 mItemManger.bindView(productHolder.itemView, position);
@@ -375,8 +375,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
      */
     private void showLowStockIndicator(ProductHolder productHolder) {
         productHolder.cartLowStock.setVisibility(View.VISIBLE);
-        String lowStockText = AppConfigSingleton.INSTANCE.getLowStock().getLowStockCopy();
-        productHolder.txtCartLowStock.setText(lowStockText);
+        productHolder.txtCartLowStock.setText(AppConfigSingleton.INSTANCE.getLowStock().getLowStockCopy());
 
     }
 
