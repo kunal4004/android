@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.awfs.coordination.R
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.common_toolbar.view.*
 import kotlinx.android.synthetic.main.fragment_more_reviews.*
+import kotlinx.android.synthetic.main.fragment_report_review.*
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,7 +33,9 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewHeaderAdapter
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -172,7 +176,7 @@ class MoreReviewsFragment : Fragment(),
         viewSkinProfileDialog(reviews)
     }
 
-    override fun openReportScreen(reportReviewOptions: List<String>?) {
+    override fun openReportScreen(reviews: Reviews, reportReviewOptions: List<String>?) {
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity)
         } else {
@@ -180,6 +184,10 @@ class MoreReviewsFragment : Fragment(),
             bundle.putStringArrayList(
                     KotlinUtils.REVIEW_REPORT,
                     reportReviewOptions as ArrayList<String>
+            )
+            bundle.putSerializable(
+                KotlinUtils.REVIEW_DATA,
+                reviews
             )
             reportReviewFragment = ReportReviewFragment.newInstance()
             reportReviewFragment?.arguments = bundle
@@ -210,6 +218,28 @@ class MoreReviewsFragment : Fragment(),
         reviewDetailsFragment = ReviewDetailsFragment.newInstance()
         reviewDetailsFragment?.arguments = bundle
         navigateToNextScreen(reviewDetailsFragment)
+    }
+
+    override fun reviewHelpfulClicked(review: Reviews) {
+        lifecycleScope.launch {
+            try {
+                val response = moreReviewViewModel.reviewFeedback(
+                    ReviewFeedback(
+                        review.id.toString(),
+                        SessionUtilities.getInstance().jwt.AtgId.asString,
+                        KotlinUtils.REWIEW,
+                        KotlinUtils.HELPFULNESS,
+                        KotlinUtils.POSITIVE,
+                        null
+                    )
+                )
+                if (response.httpCode == 200)
+                    Log.d("Response",response.toString())
+            } catch (e: HttpException) {
+                e.printStackTrace()
+            }
+
+        }
     }
 
     private fun viewSkinProfileDialog(reviews: Reviews) {

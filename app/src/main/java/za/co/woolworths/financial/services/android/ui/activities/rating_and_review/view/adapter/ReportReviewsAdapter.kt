@@ -13,7 +13,6 @@ class ReportReviewsAdapter (
         RecyclerView.Adapter<ReportReviewsAdapter.ViewHolder>() {
 
     private var count = 0
-
    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bindItems(reportReview: String) {
             itemView.checkBox.text = reportReview
@@ -46,6 +45,9 @@ class ReportReviewsAdapter (
 
     fun getAllCheckBoxCount() = count
 
+    fun getSelectedCheckbox(){
+
+    }
 
     interface ReportItemClick {
         fun reportItemClicked(reportItem: String, isChecked: Boolean)

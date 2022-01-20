@@ -24,6 +24,9 @@ class RatingAndReviewUtil {
         var isComingFromMoreReview:Boolean = false
 
         var isSuccessFullyReported:Boolean = false
+        var likedReviews: MutableList<String> = mutableListOf()
+        var reportedReviews: MutableList<String> = mutableListOf()
+
 
         fun isRatingAndReviewConfigavailbel () = Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.ratingsAndReviews?.minimumSupportedAppBuildNumber  )
             ?: false

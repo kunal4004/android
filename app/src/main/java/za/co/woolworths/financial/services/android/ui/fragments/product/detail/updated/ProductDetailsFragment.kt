@@ -116,10 +116,15 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.listene
 import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonitor
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.*
 import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.*
+import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.apihelper.RatingAndReviewApiHelper
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModel
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.viewmodel.RatingAndReviewViewModelFactory
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
@@ -204,7 +209,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var takenOriginalPicture : Bitmap? = null
     private var isRnRAPICalled = false
     private var prodId: String = "-1"
-
+    private lateinit var moreReviewViewModel: RatingAndReviewViewModel
 
     @OpenTermAndLighting
     @Inject
@@ -289,6 +294,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgDownloadVTO?.setOnClickListener(this)
         imgVTOSplit?.setOnClickListener(this)
         captureImage?.setOnClickListener(this)
+        iv_like.setOnClickListener(this)
         scrollView.setOnTouchListener(this)
         scrollView.viewTreeObserver.addOnScrollChangedListener(this)
         isOutOfStockFragmentAdded = false
@@ -298,6 +304,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             true
         }
         hideRatingAndReview()
+        setupViewModel()
+    }
+
+    private fun setupViewModel() {
+        moreReviewViewModel = ViewModelProvider(
+            this,
+            RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
+        ).get(RatingAndReviewViewModel::class.java)
     }
 
     private fun pinchZoomOnVtoLiveCamera(event: MotionEvent?) {
@@ -357,6 +371,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.btViewMoreReview->navigateToMoreReviewsScreen()
             R.id.tvTotalReviews->navigateToMoreReviewsScreen()
             R.id.tvReport->navigateToReportReviewScreen()
+            R.id.iv_like->likeButtonClicked()
         }
     }
 
@@ -500,7 +515,36 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             ScreenManager.presentSSOSignin(activity)
         } else {
             ScreenManager.presentReportReview(activity,
-                    ratingReviewResponse.reportReviewOptions as ArrayList<String>?)
+                    ratingReviewResponse.reportReviewOptions as ArrayList<String>?, ratingReviewResponse.reviews[0])
+        }
+    }
+
+    private fun likeButtonClicked() {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        } else {
+            lifecycleScope.launch {
+                showProgressBar()
+                try {
+                    val response = moreReviewViewModel.reviewFeedback(
+                        ReviewFeedback(
+                            ratingReviewResponse.reviews[0].id.toString(),
+                            SessionUtilities.getInstance().jwt.AtgId.asString,
+                            KotlinUtils.REWIEW,
+                            KotlinUtils.HELPFULNESS,
+                            KotlinUtils.POSITIVE,
+                            null
+                        )
+                    )
+                    hideProgressBar()
+                    if (response.httpCode == 200)
+                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                    hideProgressBar()
+                }
+
+            }
         }
     }
 
@@ -1080,6 +1124,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     tvCustomerReview.text = reviewText
                     tvReviewPostedOn.text = syndicatedSource
                     tvDate.text = submissionTime
+                    tvLikes.text = totalPositiveFeedbackCount.toString()
                     setReviewAdditionalFields(additionalFields)
                     setSecondaryRatingsUI(secondaryRatings)
                     setReviewThumbnailUI(photos.thumbnails)

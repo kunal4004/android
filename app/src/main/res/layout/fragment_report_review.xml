@@ -30,7 +30,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/twenty_sp"
             app:layout_constraintStart_toStartOf="parent"
-             app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
         <TextView
             android:id="@+id/review_sub_label"
@@ -70,8 +70,8 @@
             android:background="@drawable/edt_feedback"
             android:gravity="top|start"
             android:hint="@string/hint_reason"
-            android:inputType="textAutoComplete"
             android:imeOptions="actionDone"
+            android:inputType="textAutoComplete"
             android:padding="@dimen/eight_dp"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
@@ -87,13 +87,27 @@
             android:layout_marginEnd="@dimen/twenty_four_dp"
             android:layout_marginBottom="8dp"
             android:background="@color/gray"
-            android:fontFamily="@font/futura_semi_bold_ttf"
             android:enabled="false"
+            android:fontFamily="@font/futura_semi_bold_ttf"
             android:text="@string/submit_report"
             android:textAllCaps="true"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/twenty_nine_dp"
+            android:layout_height="@dimen/twenty_nine_dp"
+            android:elevation="@dimen/two_dp"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

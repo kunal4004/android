@@ -78,6 +78,9 @@ class KotlinUtils {
         const val REVIEW_DATA = "reviewData"
         const val PROD_ID = "prod_id"
         const val REVIEW_REPORT: String = "reviewReport"
+        const val REWIEW = "review"
+        const val HELPFULNESS = "helpfulness"
+        const val POSITIVE = "Positive"
 
         fun highlightTextInDesc(
                 context: Context?,
