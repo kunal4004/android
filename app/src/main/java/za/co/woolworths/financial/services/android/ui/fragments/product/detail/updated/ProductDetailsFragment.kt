@@ -115,7 +115,7 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQuickShopDefaultValues
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
-import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoSavedPhotoToast
+import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
@@ -202,7 +202,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
     @Inject
-    lateinit var vtoSavedPhotoToast: VtoSavedPhotoToast
+    lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
 
     companion object {
         const val INDEX_STORE_FINDER = 1
@@ -331,7 +331,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun savePhoto(bitmap: Bitmap) {
         ImageResultContract.saveImageToStorage(requireContext(),bitmap)
-        vtoSavedPhotoToast.showSavedPhotoToast(requireActivity())
+        vtoSavedPhotoToast.showMessage(requireActivity(),getString(R.string.saved_to_photos),250)
     }
 
     private fun captureImageFromVtoLiveCamera() {
