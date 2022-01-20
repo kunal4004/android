@@ -612,9 +612,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         if (!(getActivity() instanceof BottomNavigationActivity)) {
             return;
         }
-        // Move to shop tab.
-        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
-        bottomNavigationActivity.getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
 
         ProductDetails productDetails = new ProductDetails();
         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
@@ -639,6 +636,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         fragment.setArguments(bundle);
 
         BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+        // Move to shop tab first.
+        bottomNavigationActivity.getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
         bottomNavigationActivity.pushFragment(fragment);
     }
 

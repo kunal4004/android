@@ -540,7 +540,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 ProductDetails newProductDetails = (ProductDetails) Utils.jsonStringToObject(arguments.getString("strProductList"), ProductDetails.class);
 
                 if (productDetails != null && productDetails.productId.equals(newProductDetails.productId)) {
-                    // when we open same PDP then instead of new PDP it will open existing PDP.
+                    // when we open same PDP then instead of new PDP it will close existing PDP and opens up new same PDP.
                     mNavController.popFragment();
                     mNavController.pushFragment(fragment, ft);
                     return;

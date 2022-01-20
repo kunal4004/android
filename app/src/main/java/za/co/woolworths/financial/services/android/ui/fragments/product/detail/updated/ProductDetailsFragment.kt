@@ -995,8 +995,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     productImagesViewPager?.let { pager ->
                         pager.adapter = this
                         productImagesViewPagerIndicator.setViewPager(pager)
+                        //updatePagerItems(imagesList)
                     }
-                    //updatePagerItems(imagesList)
                 }
         }
     }
@@ -2070,7 +2070,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (childFragmentManager.backStackEntryCount > 0) {
                 childFragmentManager.popBackStack()
             } else
-                activity?.finish()
+                activity?.onBackPressed()
         } else if (productDetails?.otherSkus.isNullOrEmpty())
             activity?.onBackPressed()
     }

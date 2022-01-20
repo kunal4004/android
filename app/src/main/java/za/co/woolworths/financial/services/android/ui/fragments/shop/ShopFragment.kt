@@ -141,6 +141,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             (activity as?  BottomNavigationActivity)?.apply {
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
+                showBottomNavigationMenu()
                 refreshViewPagerFragment(false)
                 Handler().postDelayed({
                     hideToolbar()
