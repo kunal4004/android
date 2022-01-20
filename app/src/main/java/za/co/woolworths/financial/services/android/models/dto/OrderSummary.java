@@ -1,5 +1,8 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.JsonElement;
 
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.DiscountDetails;
@@ -8,7 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
  * Created by W7099877 on 2018/02/08.
  */
 
-public class OrderSummary {
+public class OrderSummary implements Parcelable {
 
 	public int totalItemsCount;
 	public double total;
@@ -23,6 +26,48 @@ public class OrderSummary {
 	public JsonElement deliveryDates;
 	public DiscountDetails discountDetails;
 	public Store store;
+
+	protected OrderSummary(Parcel in) {
+		totalItemsCount = in.readInt();
+		total = in.readDouble();
+		estimatedDelivery = in.readDouble();
+		basketTotal = in.readDouble();
+		shippingAdjusted = in.readByte() != 0;
+		savedAmount = in.readDouble();
+		totalStaffDiscount = in.readDouble();
+		state = in.readString();
+		submittedDate = in.readString();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(totalItemsCount);
+		dest.writeDouble(total);
+		dest.writeDouble(estimatedDelivery);
+		dest.writeDouble(basketTotal);
+		dest.writeByte((byte) (shippingAdjusted ? 1 : 0));
+		dest.writeDouble(savedAmount);
+		dest.writeDouble(totalStaffDiscount);
+		dest.writeString(state);
+		dest.writeString(submittedDate);
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	public static final Creator<OrderSummary> CREATOR = new Creator<OrderSummary>() {
+		@Override
+		public OrderSummary createFromParcel(Parcel in) {
+			return new OrderSummary(in);
+		}
+
+		@Override
+		public OrderSummary[] newArray(int size) {
+			return new OrderSummary[size];
+		}
+	};
 
 	public int getTotalItemsCount() {
 		return totalItemsCount;

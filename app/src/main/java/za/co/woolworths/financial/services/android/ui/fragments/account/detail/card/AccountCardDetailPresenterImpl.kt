@@ -14,13 +14,12 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.analytic.FirebaseCreditLimitIncreaseEvent
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.Card
-import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
-import za.co.woolworths.financial.services.android.models.dto.OfferActive
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -60,8 +59,19 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return getAccount()?.insuranceCovered ?: false
     }
 
-    override fun setBalanceProtectionInsuranceState() {
-        mainView?.setBalanceProtectionInsuranceState(balanceProtectionInsuranceIsCovered(getAccount()))
+
+    override fun getBpiInsuranceApplication(): BpiInsuranceApplication? {
+        return getAccount()?.bpiInsuranceApplication
+    }
+
+    override fun showBalanceProtectionInsuranceLead() {
+        val balanceProtectionInsurance = getBpiInsuranceApplication()
+        val account = getAccount()
+        if (balanceProtectionInsurance != null)
+            mainView?.showBalanceProtectionInsuranceLead(balanceProtectionInsurance)
+        else
+            mainView?.showBalanceProtectionInsurance(account?.insuranceCovered)
+
     }
 
     override fun getAppCompatActivity(): AppCompatActivity? = WoolworthsApplication.getInstance()?.currentActivity as? AppCompatActivity
@@ -235,7 +245,8 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     }
 
     override fun navigateToBalanceProtectionInsurance() {
-        mainView?.navigateToBalanceProtectionInsurance(convertAccountObjectToJsonString())
+        val bpiInsuranceApplication : BpiInsuranceApplication? = getBpiInsuranceApplication()
+        mainView?.navigateToBalanceProtectionInsuranceApplication(convertAccountObjectToJsonString(), bpiInsuranceApplication?.status)
     }
 
     override fun cliProductOfferingGoodStanding() = getAccount()?.productOfferingGoodStanding
@@ -299,7 +310,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
 
     override fun isVirtualCardEnabled(): Boolean {
         val response = getStoreCardResponse()
-        return response?.storeCardsData?.generateVirtualCard == true && WoolworthsApplication.getVirtualTempCard()?.isEnabled ?: false
+        return response?.storeCardsData?.generateVirtualCard == true && AppConfigSingleton.virtualTempCard?.isEnabled ?: false
     }
 
     override fun isVirtualCardObjectNotNull(): Boolean {
@@ -339,7 +350,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         }
         val primaryCard = storeCardsData.primaryCards.get(PRIMARY_CARD_POSITION)
         val blockType = primaryCard.blockType?.toLowerCase(Locale.getDefault())
-        return !storeCardsData?.generateVirtualCard && WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true
+        return !storeCardsData?.generateVirtualCard && AppConfigSingleton.instantCardReplacement?.isEnabled == true
                 && TemporaryFreezeStoreCard.PERMANENT.equals(blockType, ignoreCase = true)
     }
 
@@ -350,14 +361,14 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         //Conditions to Activate VTC
         //generateVirtualCard = true && vtc enabled from config.
         return (storeCardsData.generateVirtualCard
-                && WoolworthsApplication.getVirtualTempCard()?.isEnabled == true)
+                && AppConfigSingleton.virtualTempCard?.isEnabled == true)
     }
 
     override fun isTemporaryCardEnabled(): Boolean {
         val response = getStoreCardResponse()
         if (response?.storeCardsData?.virtualCard != null
-                && response?.storeCardsData?.virtualCard?.number != null
-                && (TemporaryFreezeStoreCard.TEMPORARY.equals(response?.storeCardsData?.virtualCard?.blockType, ignoreCase = true))) {
+                && response.storeCardsData?.virtualCard?.number != null
+                && (!TemporaryFreezeStoreCard.PERMANENT.equals(response.storeCardsData?.virtualCard?.blockType, ignoreCase = true))) {
             return true
         }
         return false
@@ -373,11 +384,19 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         if (response?.storeCardsData?.generateVirtualCard == false
                 && !TextUtils.isEmpty(primaryCard?.blockType)
                 && TemporaryFreezeStoreCard.PERMANENT.equals(primaryCard?.blockType, ignoreCase = true)
-                && WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
+                && AppConfigSingleton.instantCardReplacement?.isEnabled == true) {
             return true
         }
         return false
     }
 
+    fun refreshAccount(account: Account?) {
+        val balanceProtectionInsurance = account?.bpiInsuranceApplication
+        if (balanceProtectionInsurance != null)
+            mainView?.showBalanceProtectionInsuranceLead(balanceProtectionInsurance)
+        else
+            mainView?.showBalanceProtectionInsurance(account?.insuranceCovered)
+
+    }
 
 }

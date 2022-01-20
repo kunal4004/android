@@ -136,6 +136,12 @@
     <color name="color_333333">#333333</color>
     <color name="color_f1f1f1">#F1F1F1</color>
     <color name="color_808080">#808080</color>
+    <color name="checkout_delivering_title">#444444</color>
+    <color name="checkout_delivering_title_background">#F3F3F3</color>
+    <color name="non_editable_edit_text_text_color">#666666</color>
+    <color name="non_editable_button_bg">#E0E0E0</color>
+    <color name="shimmer_view_background">#F3F3F3</color>
+    <color name="selected_address_background_color">#EDF4FB</color>
 
     <color name="color_primary">#212121</color>
     <color name="color_primary_dark">@android:color/black</color>
@@ -144,6 +150,16 @@
     <color name="color_app_info">#999999</color>
     <color name="color_666666">#666666</color>
     <color name="color_E5E5E5">#E5E5E5</color>
+    <color name="vto_description_text_color">#444444</color>
+    <color name="vto_select_option_bg_color">#99000000</color>
 
+    <color name="color_444444">#444444</color>
+    <color name="search_store_color">#999999</color>
+    <color name="light_green">#D7F0E1</color>
+    <color name="dark_green">#4ABB77</color>
+    <color name="light_blue">#4284C3</color>
+    <color name="grid_border_color">#C2C2C2</color>
+    <color name="color_D0021B">#D0021B</color>
     <color name="desc_color_code">#757575</color>
+
 </resources>

@@ -1,5 +1,15 @@
 package za.co.woolworths.financial.services.android.util;
 
+import static android.Manifest.permission_group.STORAGE;
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
+import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
+import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
+import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,16 +29,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -47,6 +47,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
@@ -91,6 +100,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -117,16 +127,6 @@ import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
 import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
-
-import static android.Manifest.permission_group.STORAGE;
-import static android.graphics.Color.BLACK;
-import static android.graphics.Color.WHITE;
-import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.DELIVERY_OPTION;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.FCM_TOKEN;
-import static za.co.woolworths.financial.services.android.models.dao.SessionDao.KEY.IN_APP_REVIEW;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
-import static za.co.woolworths.financial.services.android.util.RequestInAppReviewKt.requestInAppReview;
 
 public class Utils {
 
@@ -1022,9 +1022,7 @@ public class Utils {
         return new Gson().toJson(jsonObject);
     }
 
-    public static String getExternalImageRef() {
-        return KotlinUtils.productImageUrlPrefix;
-    }
+
 
 
     public static Object jsonStringToObject(String value, Class cl) {
@@ -1235,6 +1233,9 @@ public class Utils {
             case CREDIT_SCORE:
                 appInstanceObject.featureWalkThrough.creditScore = true;
                 break;
+            case VTO_TRY_IT:
+                appInstanceObject.featureWalkThrough.isTryItOn = true;
+                break;
             default:
                 break;
         }
@@ -1432,16 +1433,14 @@ public class Utils {
         }
     }
 
-    public static int getMinimumSupportedAppBuildNumber(Integer  minimumSupportedAppBuildNumber) {
-        return minimumSupportedAppBuildNumber;
-    }
-
     public static Integer getAppBuildNumber() {
         return BuildConfig.VERSION_CODE;
     }
 
-    public static Boolean isFeatureEnabled(Integer  minimumSupportedAppBuildNumber) {
-        return (getAppBuildNumber() >= getMinimumSupportedAppBuildNumber(minimumSupportedAppBuildNumber));
+    public static Boolean isFeatureEnabled(Integer minimumSupportedAppBuildNumber) {
+        // if minimumSupportedAppBuildNumber is not present in AppConfig, then we consider the feature to be disabled
+        if (minimumSupportedAppBuildNumber == null) return false;
+        return getAppBuildNumber() >= minimumSupportedAppBuildNumber;
     }
 
     public static boolean checkForBinarySu() {
@@ -1553,8 +1552,8 @@ public class Utils {
     }
 
     public static Boolean isCreditCardActivationEndpointAvailable() {
-        String startTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
-        String endTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
+        String startTime = AppConfigSingleton.INSTANCE.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
+        String endTime = AppConfigSingleton.INSTANCE.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
         Calendar now = Calendar.getInstance();
         int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
         int minute = now.get(Calendar.MINUTE);
@@ -1597,7 +1596,7 @@ public class Utils {
 
     public static void setToken(String value) {
         try {
-            if(TextUtils.isEmpty(value)){
+            if (TextUtils.isEmpty(value)) {
                 return;
             }
             String firstTime = Utils.getSessionDaoValue(FCM_TOKEN);
@@ -1632,4 +1631,9 @@ public class Utils {
     public static Boolean isGooglePlayServicesAvailable() {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
+
+   public static String formatAnalyticsButtonText(String btnName){
+       String  btnText =  btnName.replaceAll("[^a-zA-Z0-9\\s]", "").trim();
+       return btnText.replace(" ", "_").toLowerCase();
+   }
 }

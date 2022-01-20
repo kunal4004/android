@@ -28,12 +28,13 @@ import kotlinx.android.synthetic.main.pma_pay_by_debit_order_item.*
 import kotlinx.android.synthetic.main.pma_personal_loan_electronic_fund_transfer.*
 import kotlinx.android.synthetic.main.pma_whatsapp_chat_with_us.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs
@@ -54,7 +55,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
     private var navController: NavController? = null
     private var layout: View? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-    private var payMyAccountOption: PayMyAccount? = null
+    private var payMyAccountOption: ConfigPayMyAccount? = null
     private var isQueryPayUPaymentMethodComplete: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,7 +72,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
             payMyAccountPresenter = getPayMyAccountPresenter()
             configureToolbar("")
             displayToolbarDivider(false)
-            payMyAccountOption = WoolworthsApplication.getPayMyAccountOption()
+            payMyAccountOption = AppConfigSingleton.mPayMyAccount
             createCardOption()
             onRetry()
         }
@@ -115,9 +116,7 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
 
     private fun createCardOption() {
         when (payMyAccountPresenter?.getPayMyAccountSection()) {
-            ApplyNowState.SILVER_CREDIT_CARD, ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD -> {
-                hidePaymentMethod()
-            }
+
             ApplyNowState.STORE_CARD -> {
                 incAtAnyAbsaBranchButton?.visibility = VISIBLE
                 byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_transfer_store_card_desc)
@@ -128,6 +127,19 @@ class CreditAndDebitCardPaymentsFragment : Fragment(), View.OnClickListener {
                 incByElectronicFundTransferEFTButton?.visibility = GONE
                 incPersonalLoanElectronicFundTransfer?.visibility = VISIBLE
                 byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_trasfer_personal_loan_desc)
+            }
+            else -> {
+                incSetupMyDebitOrder?.visibility = GONE
+                incAtAnyAbsaBranchButton?.visibility = VISIBLE
+                byElectronicFundTransferDescTextView?.text = bindString(R.string.by_electronic_fund_transfer_store_card_desc)
+
+                // Hide debit and credit card payment item  when  ABSA cards is null or empty
+                if (payMyAccountViewModel.getAccount()?.cards?.isEmpty() == true) {
+                    incDebitCardButton?.visibility = GONE
+                    easilyPayYourWooliesAccountTextView?.visibility = GONE
+                    payYourWooliesAccountTextView?.visibility = GONE
+                    incCreditCardButton?.visibility = GONE
+                }
             }
         }
 

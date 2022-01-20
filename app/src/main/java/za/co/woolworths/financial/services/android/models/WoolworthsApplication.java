@@ -33,6 +33,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.JsonElement;
+import com.perfectcorp.perfectlib.SkuHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,116 +45,55 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import dagger.hilt.android.HiltAndroidApp;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
-import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
-import za.co.woolworths.financial.services.android.models.dto.AccountOptions;
-import za.co.woolworths.financial.services.android.models.dto.ApplyNowLinks;
-import za.co.woolworths.financial.services.android.models.dto.ClickAndCollect;
-import za.co.woolworths.financial.services.android.models.dto.CreditCardActivation;
-import za.co.woolworths.financial.services.android.models.dto.CreditLimitIncrease;
-import za.co.woolworths.financial.services.android.models.dto.CreditView;
-import za.co.woolworths.financial.services.android.models.dto.CustomerFeedback;
-import za.co.woolworths.financial.services.android.models.dto.DashConfig;
-import za.co.woolworths.financial.services.android.models.dto.InAppReview;
-import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
-import za.co.woolworths.financial.services.android.models.dto.Liquor;
-import za.co.woolworths.financial.services.android.models.dto.PayMyAccount;
-import za.co.woolworths.financial.services.android.models.dto.ProductDetailsPage;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.Sts;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
-import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes;
 import za.co.woolworths.financial.services.android.models.dto.ValidatedSuburbProducts;
-import za.co.woolworths.financial.services.android.models.dto.ViewTreatmentPlan;
-import za.co.woolworths.financial.services.android.models.dto.VirtualTempCard;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.chat.amplify.InAppChat;
-import za.co.woolworths.financial.services.android.models.dto.contact_us.ContactUs;
-import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
-import za.co.woolworths.financial.services.android.models.dto.whatsapp.WhatsApp;
+import za.co.woolworths.financial.services.android.models.dto.bpi.BalanceProtectionInsurance;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatAWSAmplify;
+import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback;
+import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility;
 import za.co.woolworths.financial.services.android.util.ConnectivityLiveData;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService.CHANNEL_ID;
 
+@HiltAndroidApp
 public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
     private static Context context;
     private static Context mContextApplication;
-    @Nullable
-    private static WhatsApp whatsApp;
-    @NonNull
-    private static List<ContactUs> mContactUs;
-    @Nullable
-    private static PayMyAccount mPayMyAccount;
-    private static InAppChat inAppChat;
-    private static Boolean isProductItemForLiquorInventoryPending = false;
-    private static ProductList productItemForLiquorInventory = null;
     private UserManager mUserManager;
     private Tracker mTracker;
-    private static ApplyNowLinks applyNowLink;
-    private static String registrationTCLink;
-    private static String faqLink;
-    private static String wrewardsLink;
-    private static String rewardingLink;
-    private static String howToSaveLink;
-    private static String wrewardsTCLink;
-    private static String cartCheckoutLink;
+
     private static String cartCheckoutLinkWithParams;
-    private static JsonElement storeCardBlockReasons;
-    private static String authenticVersionReleaseNote;
+
     private Set<Class<Activity>> visibleActivities = new HashSet<>();
 
     private WGlobalState mWGlobalState;
 
-    private static String ssoRedirectURI;
-    private static String stsURI;
-    private static String ssoRedirectURILogout;
-    private static String ssoUpdateDetailsRedirectUri;
-    private static String wwTodayURI;
     private static String creditCardType;
     private boolean isOther = false;
     private static int productOfferingId;
-    private static String authenticVersionStamp = "";
 
     private boolean shouldDisplayServerMessage = true;
     public UpdateBankDetail updateBankDetail;
 
     private RxBus bus;
     private static boolean isApplicationInForeground = false;
-    private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
-    private static QuickShopDefaultValues quickShopDefaultValues;
-    @Nullable
-    private static InstantCardReplacement instantCardReplacement;
-    private static VirtualTempCard virtualTempCard;
-    private static ArrayList<String> whitelistedDomainsForQRScanner;
-    private static Sts stsValues;
-    private static CreditCardActivation creditCardActivation;
-    private static ClickAndCollect clickAndCollect;
-    private static UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes;
-    private static CreditCardDelivery creditCardDelivery;
-    private static CustomerFeedback customerFeedback;
 
     private Activity mCurrentActivity = null;
 
     private static ValidatedSuburbProducts validatedSuburbProducts;
 
-    private static ProductDetailsPage productDetailsPage;
-
-    private static CreditView creditView;
-    private DashConfig dashConfig;
-    private CreditLimitIncrease creditLimitIncrease;
-    private static boolean isBadgesRequired;
-    private static InAppReview inAppReview;
-    private static Liquor liquor;
-    private static AccountOptions accountOptions;
 
     public static String getApiId() {
         PackageInfo packageInfo = null;
@@ -181,101 +121,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return packageInfo.versionName;
     }
 
-    public static String getRegistrationTCLink() {
-        return registrationTCLink;
-    }
-
-    public static String getFaqLink() {
-        return faqLink;
-    }
-
-    public static String getHowToSaveLink() {
-        return howToSaveLink;
-    }
-
-    public static String getRewardingLink() {
-        return rewardingLink;
-    }
-
-    public static String getWrewardsLink() {
-        return wrewardsLink;
-    }
-
-    public static String getWrewardsTCLink() {
-        return wrewardsTCLink;
-    }
-
-    public static void setFaqLink(String faqLink) {
-        WoolworthsApplication.faqLink = faqLink;
-    }
-
-    public static void setHowToSaveLink(String howToSaveLink) {
-        WoolworthsApplication.howToSaveLink = howToSaveLink;
-    }
-
-    public static void setRegistrationTCLink(String registrationTCLink) {
-        WoolworthsApplication.registrationTCLink = registrationTCLink;
-    }
-
-    public static void setRewardingLink(String rewardingLink) {
-        WoolworthsApplication.rewardingLink = rewardingLink;
-    }
-
-    public static void setWrewardsLink(String wrewardsLink) {
-        WoolworthsApplication.wrewardsLink = wrewardsLink;
-    }
-
-    public static void setWrewardsTCLink(String wrewardsTCLink) {
-        WoolworthsApplication.wrewardsTCLink = wrewardsTCLink;
-    }
-
-    @Nullable
-    public static ApplyNowLinks getApplyNowLink() {
-        return applyNowLink;
-    }
-
-    public static void setApplyNowLink(@Nullable ApplyNowLinks applyNowLink) {
-        WoolworthsApplication.applyNowLink = applyNowLink;
-    }
-
-    public static String getSsoRedirectURI() {
-        return ssoRedirectURI;
-    }
-
-    public static void setSsoRedirectURI(String ssoRedirectURI) {
-        WoolworthsApplication.ssoRedirectURI = ssoRedirectURI;
-    }
-
-    public static String getSsoRedirectURILogout() {
-        return ssoRedirectURILogout;
-    }
-
-    public static void setSsoRedirectURILogout(String ssoRedirectURILogout) {
-        WoolworthsApplication.ssoRedirectURILogout = ssoRedirectURILogout;
-    }
-
-    public static String getWwTodayURI() {
-        return wwTodayURI;
-    }
-
-    public static void setWwTodayURI(String wwTodayURI) {
-        WoolworthsApplication.wwTodayURI = wwTodayURI;
-    }
-
     public static String getCreditCardType() {
         return creditCardType;
     }
 
     public static void setCreditCardType(String creditCardType) {
         WoolworthsApplication.creditCardType = creditCardType;
-    }
-
-    public static String getStsURI() {
-        return stsURI;
-    }
-
-    public static void setStsURI(String stsURI) {
-        WoolworthsApplication.stsURI = stsURI;
     }
 
     public static final String TAG = WoolworthsApplication.class.getSimpleName();
@@ -324,6 +175,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
         );
         getTracker();
         bus = new RxBus();
+        vtoSyncServer();
+
     }
 
     //#region ShowServerMessage
@@ -336,10 +189,9 @@ public class WoolworthsApplication extends Application implements Application.Ac
             Log.e(TAG, e.getMessage());
         }
         String hashB64 = Base64.encodeToString(hash, Base64.NO_WRAP);
-        if (!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)) {
+        if (!AppConfigSingleton.INSTANCE.getAuthenticVersionStamp().isEmpty() && !hashB64.equals(AppConfigSingleton.INSTANCE.getAuthenticVersionStamp())) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(getString(R.string.update_title));
-            builder.setMessage(TextUtils.isEmpty(getAuthenticVersionReleaseNote()) ? getString(R.string.update_desc) : getAuthenticVersionReleaseNote());
             builder.setCancelable(false);
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
@@ -456,14 +308,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return mWGlobalState;
     }
 
-    public static String getSsoUpdateDetailsRedirectUri() {
-        return ssoUpdateDetailsRedirectUri;
-    }
-
-    public static void setSsoUpdateDetailsRedirectUri(String pSsoUpdateDetailsRedirectUri) {
-        ssoUpdateDetailsRedirectUri = pSsoUpdateDetailsRedirectUri;
-    }
-
     public RxBus bus() {
         return bus;
     }
@@ -472,33 +316,8 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return mInstance;
     }
 
-    public static void setCartCheckoutLink(String link) {
-        cartCheckoutLink = link;
-    }
-
-    public static String getCartCheckoutLink() {
-        return cartCheckoutLink;
-    }
-
-    public static String getAuthenticVersionStamp() {
-        return authenticVersionStamp;
-    }
-
-    public static void setAuthenticVersionStamp(String authenticVersionStamp) {
-        WoolworthsApplication.authenticVersionStamp = authenticVersionStamp;
-    }
-
     public static boolean isApplicationInForeground() {
         return isApplicationInForeground;
-    }
-
-
-    public static void setStoreCardBlockReasons(JsonElement storeCardBlockReason) {
-        WoolworthsApplication.storeCardBlockReasons = storeCardBlockReason;
-    }
-
-    public JsonElement getStoreCardBlockReasons() {
-        return storeCardBlockReasons;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -511,31 +330,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         isApplicationInForeground = false;
     }
 
-    public static AbsaBankingOpenApiServices getAbsaBankingOpenApiServices() {
-        return absaBankingOpenApiServices;
-    }
-
-    public static void setAbsaBankingOpenApiServices(AbsaBankingOpenApiServices absaBankingOpenApiServices) {
-        WoolworthsApplication.absaBankingOpenApiServices = absaBankingOpenApiServices;
-    }
-
-    public static void setAuthenticVersionReleaseNote(String authenticVersionReleaseNote) {
-        WoolworthsApplication.authenticVersionReleaseNote = authenticVersionReleaseNote;
-    }
-
-    public static String getAuthenticVersionReleaseNote() {
-        return authenticVersionReleaseNote;
-    }
-
-    public static void setQuickShopDefaultValues(QuickShopDefaultValues quickShopDefaultValues) {
-        WoolworthsApplication.quickShopDefaultValues = quickShopDefaultValues;
-    }
-
-    @Nullable
-    public static QuickShopDefaultValues getQuickShopDefaultValues() {
-        return quickShopDefaultValues;
-    }
-
     public Activity getCurrentActivity() {
         return mCurrentActivity;
     }
@@ -544,157 +338,12 @@ public class WoolworthsApplication extends Application implements Application.Ac
         this.mCurrentActivity = mCurrentActivity;
     }
 
-    public static void setInstantCardReplacement(@Nullable InstantCardReplacement instantCardReplacement) {
-        WoolworthsApplication.instantCardReplacement = instantCardReplacement;
-    }
-
-    @Nullable
-    public static InstantCardReplacement getInstantCardReplacement() {
-        return instantCardReplacement;
-    }
-
-    public static VirtualTempCard getVirtualTempCard() {
-        return virtualTempCard != null ? virtualTempCard : new VirtualTempCard();
-    }
-
-    public static void setVirtualTempCard(VirtualTempCard virtualTempCard) {
-        WoolworthsApplication.virtualTempCard = virtualTempCard;
-    }
-
-    @NonNull
-    public static ArrayList<String> getWhitelistedDomainsForQRScanner() {
-        return whitelistedDomainsForQRScanner;
-    }
-
-    public static void setWhitelistedDomainsForQRScanner(ArrayList<String> whitelistedDomainsForQRScanner) {
-        WoolworthsApplication.whitelistedDomainsForQRScanner = whitelistedDomainsForQRScanner.isEmpty() ? new ArrayList<>(0) : whitelistedDomainsForQRScanner;
-    }
-
-    @NonNull
-    public static Sts getStsValues() {
-        return stsValues != null ? stsValues : new Sts();
-    }
-
-    public static void setStsValues(Sts stsValues) {
-        WoolworthsApplication.stsValues = stsValues;
-    }
-
-    @Nullable
-    public static CreditCardActivation getCreditCardActivation() {
-        return creditCardActivation;
-    }
-
-    public static void setCreditCardActivation(@Nullable CreditCardActivation creditCardActivation) {
-        WoolworthsApplication.creditCardActivation = creditCardActivation;
-    }
-
-    public static void setWhatsAppConfig(@Nullable WhatsApp whatsApp) {
-        WoolworthsApplication.whatsApp = whatsApp;
-    }
-
-    @Nullable
-    public static WhatsApp getWhatsAppConfig() {
-        return whatsApp;
-    }
-
-    public static void setContactUsDetails(@NotNull List<ContactUs> contactUs) {
-        mContactUs = contactUs;
-    }
-
-    public static List<ContactUs> getContactUs() {
-        return mContactUs;
-    }
-
-    @Nullable
-    public static ClickAndCollect getClickAndCollect() {
-        return clickAndCollect;
-    }
-
-    public static void setPayMyAccountOption(@Nullable PayMyAccount payMyAccount) {
-        mPayMyAccount = payMyAccount;
-    }
-
-    @Nullable
-    public static PayMyAccount getPayMyAccountOption() {
-        return mPayMyAccount;
-    }
-
-    public static void setClickAndCollect(ClickAndCollect clickAndCollect) {
-        WoolworthsApplication.clickAndCollect = clickAndCollect;
-    }
-
-    public static void setInAppChat(@Nullable InAppChat inAppChat) {
-        WoolworthsApplication.inAppChat = inAppChat;
-    }
-
-    public static InAppChat getInAppChat() {
-        return inAppChat;
-    }
-
     public static ValidatedSuburbProducts getValidatedSuburbProducts() {
         return validatedSuburbProducts;
     }
 
     public static void setValidatedSuburbProducts(ValidatedSuburbProducts validatedSuburbProducts) {
         WoolworthsApplication.validatedSuburbProducts = validatedSuburbProducts;
-    }
-
-    @Nullable
-    public static ProductDetailsPage getProductDetailsPage() {
-        return productDetailsPage;
-    }
-
-    public static void setProductDetailsPage(ProductDetailsPage productDetailsPage) {
-        WoolworthsApplication.productDetailsPage = productDetailsPage;
-    }
-
-    public static CreditCardDelivery getCreditCardDelivery() {
-        return creditCardDelivery;
-    }
-
-    public static void setCreditCardDelivery(CreditCardDelivery creditCardDelivery) {
-        WoolworthsApplication.creditCardDelivery = creditCardDelivery;
-    }
-
-    public static CustomerFeedback getCustomerFeedback() {
-        return customerFeedback != null ? customerFeedback : new CustomerFeedback();
-    }
-
-    public static void setCustomerFeedback(CustomerFeedback customerFeedback) {
-        WoolworthsApplication.customerFeedback = customerFeedback;
-    }
-
-    @Nullable
-    public static CreditView getCreditView() {
-        return creditView;
-    }
-
-    public static void setCreditView(CreditView creditView) {
-        WoolworthsApplication.creditView = creditView;
-    }
-
-    public void setDashConfig(DashConfig dashConfig) {
-        this.dashConfig = dashConfig;
-    }
-
-    public DashConfig getDashConfig() {
-        return dashConfig;
-    }
-
-    public static UserPropertiesForDelinquentCodes getFirebaseUserPropertiesForDelinquentProductGroupCodes() {
-        return firebaseUserPropertiesForDelinquentProductGroupCodes;
-    }
-
-    public static void setFirebaseUserPropertiesForDelinquentProductGroupCodes(UserPropertiesForDelinquentCodes firebaseUserPropertiesForDelinquentProductGroupCodes) {
-        WoolworthsApplication.firebaseUserPropertiesForDelinquentProductGroupCodes = firebaseUserPropertiesForDelinquentProductGroupCodes;
-    }
-
-    public CreditLimitIncrease getCreditLimitIncrease() {
-        return creditLimitIncrease;
-    }
-
-    public void setCreditLimitsIncrease(CreditLimitIncrease creditLimitIncrease) {
-        this.creditLimitIncrease = creditLimitIncrease;
     }
 
     public boolean isAnyActivityVisible() {
@@ -711,46 +360,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
         mContextApplication = context;
     }
 
-    public static boolean isIsBadgesRequired() {
-        return isBadgesRequired;
-    }
-
-    public static void setIsBadgesRequired(boolean isBadgesRequired) {
-        WoolworthsApplication.isBadgesRequired = isBadgesRequired;
-    }
-
-    public static InAppReview getInAppReview() {
-        return inAppReview;
-    }
-
-    public static void setInAppReview(InAppReview inAppReview) {
-        WoolworthsApplication.inAppReview = inAppReview;
-    }
-
-    public static Liquor getLiquor() {
-        return liquor;
-    }
-
-    public static void setLiquor(Liquor liquor) {
-        WoolworthsApplication.liquor = liquor;
-    }
-
-    public static void setProductItemForInventory(ProductList productList) {
-        productItemForLiquorInventory = productList;
-    }
-
-    public static void setCallForLiquorInventory(Boolean isPending) {
-        isProductItemForLiquorInventoryPending = isPending;
-    }
-
-    public static Boolean isProductItemForLiquorInvetoryPending() {
-        return isProductItemForLiquorInventoryPending;
-    }
-
-    public static ProductList getProductItemForInventory() {
-        return productItemForLiquorInventory;
-    }
-
     public static void setCartCheckoutLinkWithParams(String cartCheckoutLinkWithParams) {
         WoolworthsApplication.cartCheckoutLinkWithParams = cartCheckoutLinkWithParams;
     }
@@ -759,11 +368,70 @@ public class WoolworthsApplication extends Application implements Application.Ac
         return cartCheckoutLinkWithParams;
     }
 
-    public static void setAccountOptions(@Nullable AccountOptions accountOptions) {
-        WoolworthsApplication.accountOptions = accountOptions;
+    /**
+     *  This method used for check PF crop SDK for (VTO) sync server
+     *  When user come first time or when update available
+     */
+    private void vtoSyncServer() {
+        SdkUtility.initSdk(this, new PfSDKInitialCallback() {
+            @Override
+            public void onInitialized() {
+                checkVtoUpdate();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                FirebaseManager.logException(throwable);
+            }
+        });
     }
 
-    public static AccountOptions getAccountOptions() {
-        return accountOptions;
+    /**
+     * This method check if SDK update update available or not for syncServer
+     */
+    private void checkVtoUpdate() {
+        SkuHandler skuHandler = SkuHandler.getInstance();
+        if (skuHandler == null) {
+            return;
+        }
+        skuHandler.checkNeedToUpdate(new SkuHandler.CheckNeedToUpdateCallback() {
+            @Override
+            public void onSuccess(boolean needUpdate) {
+                if (needUpdate) {
+                    callVtoSyncServer(skuHandler);
+                }
+            }
+            @Override
+            public void onFailure(Throwable throwable) {
+                FirebaseManager.logException(throwable);
+            }
+        });
+    }
+
+    /**
+     * This method call when update available/getting true
+     * @param skuHandler
+     */
+    private void callVtoSyncServer(SkuHandler skuHandler) {
+
+        skuHandler.syncServer(new SkuHandler.SyncServerCallback() {
+            @Override
+            public void progress(double progress) {
+                //sync SDK in background. when update needed.
+                // later may be required show on UI
+            }
+
+            @Override
+            public void onSuccess() {
+                //Do Nothing
+                // required later update UI.
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                FirebaseManager.logException(throwable);
+            }
+        });
+
     }
 }

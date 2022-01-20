@@ -14,7 +14,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
@@ -25,11 +27,12 @@ import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
-import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
@@ -37,10 +40,16 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+
+import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
+import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
@@ -153,7 +162,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                 startProgress()
 
                 val cardInfo = payMyAccountViewModel.getCardDetail()
-                val account = mAvailableFundPresenter?.getAccountDetail()
+                val account = mAvailableFundPresenter.getAccountDetail()
                 val amountEntered = account?.second?.amountOverdue?.let { amountDue -> Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amountDue)) }
                 val payUMethodType = PayMyAccountViewModel.PAYUMethodType.CREATE_USER
                 val paymentMethodList = cardInfo?.paymentMethodList
@@ -368,7 +377,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
-        val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
+        val payMyAccountOption: ConfigPayMyAccount? = AppConfigSingleton.mPayMyAccount
         val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         val payUMethodType = payMyAccountViewModel.getCardDetail()?.payuMethodType
         when {
@@ -404,6 +413,80 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                             if (isProductInGoodStanding())
                                 view?.performClick()
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    fun onPayMyAccountButtonTap(eventName: String?, directions: NavDirections?) {
+        if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
+
+        payMyAccountViewModel.apply {
+            //Redirect to payment options when  ABSA cards array is empty for credit card products
+            if (getProductGroupCode().equals(AccountsProductGroupCode.CREDIT_CARD.groupCode, ignoreCase = true)) {
+                if (getAccount()?.cards?.isEmpty() == true) {
+                    ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail())
+                    return
+                }
+            }
+
+            payMyAccountPresenter.apply {
+                triggerFirebaseEvent(eventName, activity)
+                resetAmountEnteredToDefault()
+                when (isPaymentMethodOfTypeError()) {
+                    true -> {
+                        when (navController.currentDestination?.id) {
+                            R.id.storeCardFragment,
+                            R.id.blackCreditCardFragment,
+                            R.id.goldCreditCardFragment,
+                            R.id.silverCreditCardFragment,
+                            R.id.personalLoanFragment -> {
+                                try {
+                                    navController.navigate(R.id.payMyAccountRetryErrorFragment)
+                                } catch (ex: IllegalStateException) {
+                                    FirebaseManager.logException(ex)
+                                }
+                            }
+                        }
+                    }
+                    false -> {
+                        openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(activity)
+                        {
+                            try {
+                                directions?.let { navigateSafelyWithNavController(it) }
+                            } catch (ex: IllegalStateException) {
+                                FirebaseManager.logException(ex)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    fun accountInArrearsResultListener(onPayMyAccountButtonTap: () -> Unit) {
+        setFragmentResultListener(AccountInArrearsDialogFragment::class.java.simpleName) { _, bundle ->
+            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                when (bundle.getString(
+                    AccountInArrearsDialogFragment::class.java.simpleName,
+                    "N/A"
+                )) {
+                    ARREARS_PAY_NOW_BUTTON -> onPayMyAccountButtonTap()
+                    ARREARS_CHAT_TO_US_BUTTON -> {
+                        val chatBubble =
+                            payMyAccountViewModel.getApplyNowState()?.let { applyNowState ->
+                                ChatFloatingActionButtonBubbleView(
+                                    activity = activity as? AccountSignedInActivity,
+                                    applyNowState = applyNowState,
+                                    vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
+                                )
+                            }
+                        chatBubble?.navigateToChatActivity(
+                            activity,
+                            payMyAccountViewModel.getCardDetail()?.account?.second
+                        )
                     }
                 }
             }

@@ -28,8 +28,8 @@ class NavGraphRouterImpl : NavigationGraphRouterInterface {
         navHost?.navController?.navigate(destinationId,bundle)
     }
 
-    override fun navigateToPreviousFragment() {
-        navHost?.navController?.popBackStack()
+    override fun navigateToPreviousFragment(): Boolean {
+        return navHost?.navController?.popBackStack() ?: false
     }
 
 }

@@ -22,8 +22,10 @@ import kotlinx.android.synthetic.main.edit_delivery_location_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.provinceName
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.storeName
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity.Companion.IS_LIQUOR
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -113,7 +115,7 @@ class EditDeliveryLocationFragment : Fragment(),
         tvSelectedProvince?.keyListener = null
         tvSelectedSuburb?.keyListener = null
         delivery?.setOnClickListener(this)
-        WoolworthsApplication.getClickAndCollect()?.maxItemsAllowedText?.let {
+        AppConfigSingleton.clickAndCollect?.maxItemsAllowedText?.let {
             maxItemsInfoMessage?.text = it
         }
         setDeliveryOption(deliveryType)
@@ -121,7 +123,7 @@ class EditDeliveryLocationFragment : Fragment(),
             clickAndCollect?.setOnClickListener(this)
             setUsersCurrentDeliveryDetails()
         } else if (isLiquor) {
-            selectedProvince = WoolworthsApplication.getLiquor()?.regions?.get(0)
+            selectedProvince = AppConfigSingleton.liquor?.regions?.get(0)
             onProvinceSelected(selectedProvince)
             // Liquor is only available with Delivery
             disableClickAndCollect()
@@ -134,7 +136,7 @@ class EditDeliveryLocationFragment : Fragment(),
         // If there is only one region in config
         // change background of province to grey
         context?.let {
-            when (WoolworthsApplication.getLiquor()?.regions?.size) {
+            when (AppConfigSingleton.liquor?.regions?.size) {
                 1 -> {
                     selectProvince?.background = ContextCompat.getDrawable(it, R.drawable.input_box_inactive_bg)
                     tvSelectedProvince?.setBackgroundColor(
@@ -246,7 +248,7 @@ class EditDeliveryLocationFragment : Fragment(),
             var suburbsList = suburbs
             if (isLiquor)
                 suburbsList =
-                    WoolworthsApplication.getLiquor().suburbs.flatMap { sub -> suburbs.filter { it.id == sub } }
+                    AppConfigSingleton.liquor?.suburbs?.flatMap { sub -> suburbs.filter { it.id == sub } } ?: arrayListOf()
             navigateToSuburbSelection(suburbsList)
         }
     }
@@ -264,8 +266,8 @@ class EditDeliveryLocationFragment : Fragment(),
     }
 
     override fun getProvinces() {
-        if (isLiquor && WoolworthsApplication.getLiquor()?.regions?.size ?: 0 > 1) {
-            WoolworthsApplication.getLiquor()?.regions?.let { navigateToProvinceSelection(it) }
+        if (isLiquor && AppConfigSingleton.liquor?.regions?.size ?: 0 > 1) {
+            AppConfigSingleton.liquor?.regions?.let { navigateToProvinceSelection(it) }
             return
         }
         if (progressGetSuburb?.visibility == View.VISIBLE || isLiquor) return
@@ -317,6 +319,18 @@ class EditDeliveryLocationFragment : Fragment(),
             }
     }
 
+    private fun showSuburbFailureErrorDialog(desc: String?) {
+        val dialog =
+            ErrorDialogFragment.newInstance(desc ?: bindString(R.string.general_error_desc))
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
+            ?.let { fragmentTransaction ->
+                dialog.show(
+                    fragmentTransaction,
+                    ErrorDialogFragment::class.java.simpleName
+                )
+            }
+    }
+
     override fun onSetSuburbSuccess() {
         hideSetSuburbProgressBar()
         when (deliveryType) {
@@ -338,26 +352,28 @@ class EditDeliveryLocationFragment : Fragment(),
                         it.storeAddress?.address1
                     )
                 }
-                Utils.savePreferredDeliveryLocation(
-                    ShoppingDeliveryLocation(
-                        selectedProvince,
-                        null,
-                        store
+                selectedProvince?.let { selectedProvince ->
+                    Utils.savePreferredDeliveryLocation(
+                        ShoppingDeliveryLocation(
+                            selectedProvince,
+                            null,
+                            store
+                        )
                     )
-                )
+                }
             }
         }
         navigateToSuburbConfirmationFragment()
     }
 
-    override fun onSetSuburbFailure() {
+    override fun onSetSuburbFailure(desc: String?) {
         hideSetSuburbProgressBar()
-        showErrorDialog()
+        showSuburbFailureErrorDialog(desc)
     }
 
     private fun onProvinceSelected(province: Province?) {
         this.selectedProvince = province
-        if (!isLiquor || WoolworthsApplication.getLiquor()?.regions?.size ?: 0 > 1)
+        if (!isLiquor || AppConfigSingleton.liquor?.regions?.size ?: 0 > 1)
             resetSuburbSelection()
         tvSelectedProvince?.setText(province?.name)
         tvSelectedProvince?.dismissDropDown()

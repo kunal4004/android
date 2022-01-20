@@ -13,7 +13,7 @@ open class CompletionHandler<T>(private val requestListener: IResponseListener<T
     override fun onResponse(call: Call<T>, response: Response<T>?) {
         this.requestListener?.apply {
             response?.apply {
-                if (displayMaintenanceScreenIfNeeded(this)) return
+                if (displayMaintenanceScreenIfNeeded(call.request().url.toString(),this)) return
                 when (isSuccessful) {
                     true -> onSuccess(body())
                     else -> errorBody()?.apply {
@@ -36,9 +36,9 @@ open class CompletionHandler<T>(private val requestListener: IResponseListener<T
     override fun onFailure(call: Call<T>, throwable: Throwable) {
         if (!call.isCanceled) {
             this.requestListener?.onFailure(throwable)
-            RetrofitException(throwable).show()
+            RetrofitException(call.request().url.toString(), throwable).show()
         }
     }
 
-    private fun displayMaintenanceScreenIfNeeded(response: Response<T>): Boolean = RetrofitException(response.code()).show()
+    private fun displayMaintenanceScreenIfNeeded(url:String, response: Response<T>): Boolean = RetrofitException(url, response.code()).show()
 }

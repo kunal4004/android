@@ -2,17 +2,20 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.availab
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.Navigation
 import androidx.fragment.app.setFragmentResultListener
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
+
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -24,15 +27,21 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         availableFundBackground?.setBackgroundResource(R.drawable.gold_credit_card_background)
 
+        navController = Navigation.findNavController(view)
+
         initShimmer()
         stopProgress()
 
-        incViewStatementButton?.visibility = if (WoolworthsApplication.getAbsaBankingOpenApiServices()?.isEnabled == true) View.VISIBLE else View.GONE
+        incViewStatementButton?.visibility = if (AppConfigSingleton.absaBankingOpenApiServices?.isEnabled == true) View.VISIBLE else View.GONE
         incRecentTransactionButton?.setOnClickListener(this)
         incPayMyAccountButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
 
         navigateToDeepLinkView()
+
+        accountInArrearsResultListener {
+            onPayMyAccountButtonTap()
+        }
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
@@ -45,16 +54,16 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                                 FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD,
                                 arguments,
                                 this)
-                            when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
+                            when (AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.renderMode){
                                 NATIVE_BROWSER ->
                                     KotlinUtils.openUrlInPhoneBrowser(
-                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.collectionsUrl, this)
+                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsUrl, this)
 
                                 else ->
                                     KotlinUtils.openLinkInInternalWebView(activity,
-                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.collectionsUrl,
+                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsUrl,
                                         true,
-                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.exitUrl)
+                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.exitUrl)
                             }
                         }
                     }
@@ -72,11 +81,17 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                     navigateToRecentTransactionActivity(AccountsProductGroupCode.CREDIT_CARD.groupCode)
                 }
             }
-            R.id.incPayMyAccountButton -> {
-                activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC, this) }
-                navigateToPayMyAccountActivity()
-            }
+            R.id.incPayMyAccountButton -> onPayMyAccountButtonTap()
+
             R.id.incViewStatementButton -> navigateToABSAStatementActivity()
         }
     }
-}
+
+    private fun onPayMyAccountButtonTap() {
+        onPayMyAccountButtonTap(
+            FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_CC,
+            GoldCreditCardFragmentDirections.actionGoldCreditCardFragmentToEnterPaymentAmountDetailFragment())
+
+    }
+
+    }

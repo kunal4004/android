@@ -7,6 +7,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
@@ -15,10 +16,14 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDeta
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_OPT_IN
+import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity.Companion.BPI_PRODUCT_GROUP_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIOverviewOverviewImpl.Companion.ACCOUNT_INFO
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtension
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
+import java.util.HashMap
 
 class MyAccountsScreenNavigator {
 
@@ -55,7 +60,11 @@ class MyAccountsScreenNavigator {
             }
         }
 
-        fun navigateToBalanceProtectionInsurance(activity: Activity?, accountInfo: String?, accounts: Account?) {
+        fun navigateToBalanceProtectionInsurance(
+            activity: Activity?,
+            accountInfo: String?,
+            accounts: Account?,
+            bpiInsuranceStatus: BpiInsuranceApplicationStatusType?) {
             activity?.apply {
 
                 val productGroupCode = when (accounts?.productGroupCode) {
@@ -67,8 +76,37 @@ class MyAccountsScreenNavigator {
 
                 productGroupCode?.let { Utils.triggerFireBaseEvents(it, this) }
                 val navigateToBalanceProtectionInsurance = Intent(this, BalanceProtectionInsuranceActivity::class.java)
+                bpiInsuranceStatus?.let { status ->
+                    if(status == BpiInsuranceApplicationStatusType.NOT_OPTED_IN){
+                        var bpiTaggingEventCode: String? = null
+                        val arguments: MutableMap<String, String> = HashMap()
+
+                        when (accounts?.productGroupCode) {
+                            AccountsProductGroupCode.CREDIT_CARD.groupCode -> {
+                                bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.CC_BPI_OPT_IN_START
+                                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.CC_BPI_OPT_IN_START_VALUE
+                            }
+                            AccountsProductGroupCode.STORE_CARD.groupCode -> {
+                                bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.SC_BPI_OPT_IN_START
+                                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.SC_BPI_OPT_IN_START_VALUE
+                            }
+                            AccountsProductGroupCode.PERSONAL_LOAN.groupCode -> {
+                                bpiTaggingEventCode = FirebaseManagerAnalyticsProperties.PL_BPI_OPT_IN_START
+                                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] =
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.PL_BPI_OPT_IN_START_VALUE
+                            }
+                        }
+
+                        bpiTaggingEventCode?.let { Utils.triggerFireBaseEvents(it, arguments, this) }
+
+                        navigateToBalanceProtectionInsurance.putExtra(BPI_OPT_IN, true)
+                        navigateToBalanceProtectionInsurance.putExtra(BPI_PRODUCT_GROUP_CODE, accounts?.productGroupCode)
+                    }
+                }
                 navigateToBalanceProtectionInsurance.putExtra(ACCOUNT_INFO, accountInfo)
-                startActivity(navigateToBalanceProtectionInsurance)
+                startActivityForResult(navigateToBalanceProtectionInsurance, AppConstant.BALANCE_PROTECTION_INSURANCE_REQUEST_CODE)
                 overridePendingTransition(0, 0)
             }
         }

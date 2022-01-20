@@ -43,11 +43,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
-import za.co.woolworths.financial.services.android.models.dto.MaritalStatus;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.app_config.credit_limit_increase.ConfigMaritalStatus;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
@@ -77,7 +77,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private static final int INCREASE_PROGRESS_BY = 100;
 	private static final int SLIDE_ANIM_DURATION = 1500;
 	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
-	private MaritalStatus maritalStatus;
+	private ConfigMaritalStatus maritalStatus;
 	private WTextView tvCurrentCreditLimitAmount, tvNewCreditLimitAmount, tvAdditionalCreditLimitAmount, tvCalculatingYourOffer, tvLoadTime, tvSlideToEditSeekInfo, tvSlideToEditAmount;
 	private ProgressBar cpCurrentCreditLimit, cpAdditionalCreditLimit, cpNewCreditAmount;
 	private LinearLayout llSlideToEditContainer, llNextButtonLayout;
@@ -221,23 +221,38 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
-				openCreditLimitDecreaseFragmentDialog(mNewCLIAmount);
+				if(mCreditRequestMax > mCurrentCredit){
+					openCreditLimitDecreaseFragmentDialog(mNewCLIAmount);
+				}
 			}
 
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
+				if(mCreditRequestMax < mCurrentCredit){
+					String amount = formatAmount(mCreditRequestMax);
+					tvSlideToEditAmount.setText(amount);
+					tvCurrentCreditLimitAmount.setText(formatAmount(currentCredit - INCREASE_PROGRESS_BY));
+					tvNewCreditLimitAmount.setText(amount);
+					mGlobalState.setCreditLimit(amount);
+					tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+				}
 			}
 
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				progress = progress / INCREASE_PROGRESS_BY;
-				progress = progress * INCREASE_PROGRESS_BY;
-				mNewCLIAmount = mCurrentCredit + progress;
-				tvSlideToEditAmount.setText(formatAmount(mNewCLIAmount));
-				String amount = tvSlideToEditAmount.getText().toString();
-				tvNewCreditLimitAmount.setText(amount);
-				mGlobalState.setCreditLimit(amount);
-				tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(currentCredit, tvNewCreditLimitAmount.getText().toString())));
+				if(mCreditRequestMax <= mCurrentCredit){
+					seekBar.setProgress(0);
+				}
+				else{
+					progress = progress / INCREASE_PROGRESS_BY;
+					progress = progress * INCREASE_PROGRESS_BY;
+					mNewCLIAmount = mCurrentCredit + progress;
+					tvSlideToEditAmount.setText(formatAmount(mNewCLIAmount));
+					String amount = tvSlideToEditAmount.getText().toString();
+					tvNewCreditLimitAmount.setText(amount);
+					mGlobalState.setCreditLimit(amount);
+					tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(currentCredit, tvNewCreditLimitAmount.getText().toString())));
+				}
 			}
 		});
 	}
@@ -636,7 +651,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	public CreateOfferRequest createOffer
-			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail, MaritalStatus maritalStatus) {
+			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail, ConfigMaritalStatus maritalStatus) {
 		return new CreateOfferRequest(
 				WoolworthsApplication.getProductOfferingId(),
 				roundOffCentValues(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
@@ -667,14 +682,26 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						mCreditRequestMax = offer.creditRequestMax;
 						int mDifferenceCreditLimit = (mCreditRequestMax - mCurrentCredit);
 						mCLiId = mObjOffer.cliId;
-						sbSlideAmount.setMax(mDifferenceCreditLimit);
-						sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
-						animSeekBarToMaximum();
-						tvCurrentCreditLimitAmount.setText(formatAmount(currentCredit - INCREASE_PROGRESS_BY));
-						tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
-						tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(currentCredit, tvNewCreditLimitAmount.getText().toString())));
-						int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-						mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
+						if(mCreditRequestMax <= mCurrentCredit){
+							sbSlideAmount.setMax(0);
+							String amount = formatAmount(0);
+							tvSlideToEditAmount.setText(amount);
+							tvCurrentCreditLimitAmount.setText(amount);
+							tvNewCreditLimitAmount.setText(amount);
+							mGlobalState.setCreditLimit(amount);
+							tvAdditionalCreditLimitAmount.setText(amount);
+						}
+						else{
+							tvCurrentCreditLimitAmount.setText(formatAmount(currentCredit - INCREASE_PROGRESS_BY));
+							sbSlideAmount.setMax(mDifferenceCreditLimit);
+							sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
+							animSeekBarToMaximum();
+							tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
+							tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(currentCredit, tvNewCreditLimitAmount.getText().toString())));
+							int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
+							mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
+
+						}
 						onLoadComplete();
 					} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_decline))) {
 						declineMessage();
