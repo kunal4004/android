@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.checkout.interactor.CheckoutA
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.*
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddAddressReturningUserFragment.FulfillmentsType.*
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutReturningUserCollectionFragment.Companion.KEY_IS_WHO_IS_COLLECTING
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutStoreSelectionAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
@@ -36,10 +37,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.Store
-import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigSuburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
-import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbListAdapter
@@ -241,7 +239,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun setConfirmSelection() {
         selectedSuburb.storeAddress.suburbId?.let { storeId ->
             loadingProgressBar.visibility = View.VISIBLE
-            activity?.getWindow()?.setFlags(
+            activity?.window?.setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
@@ -253,7 +251,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             )
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
-                    activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
                         is ConfirmSelectionResponse -> {
                             when (response.httpCode) {
@@ -279,18 +277,15 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     Utils.savePreferredDeliveryLocation(
                                         shoppingDeliveryLocation
                                     )
-                                    if (isDeliverySelected == false) {
-                                        val openCheckOutActivity =
-                                            Intent(context, CartCheckoutActivity::class.java)
-                                        openCheckOutActivity.putExtra(
-                                            CheckOutFragment.IS_NATIVE_CHECKOUT,
-                                            true
-                                        )
-                                        activity?.startActivityForResult(
-                                            openCheckOutActivity,
-                                            CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
-                                        )
-                                        activity?.overridePendingTransition(0, 0)
+                                    if (isDeliverySelected != null && !isDeliverySelected!!) {
+                                        // check if it's from collection Change Fullfilments or delivery Change Fullfilments. if collection then nav up else who is collecting.
+                                        if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
+                                                KEY_IS_WHO_IS_COLLECTING
+                                            ) == true
+                                        ) {
+                                            navController?.navigateUp()
+                                        } else
+                                            navController?.navigate(R.id.checkoutWhoIsCollectingFragment)
                                     }
                                 }
                                 else -> {
@@ -463,7 +458,13 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun initView() {
         selectedProvince = Utils.getPreferredDeliveryLocation().province
-        if (isDeliverySelected == null) {
+        if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
+                KEY_IS_WHO_IS_COLLECTING
+            ) == true
+        ){
+            isDeliverySelected = false
+        }
+        else if (isDeliverySelected == null) {
             if (baseFragBundle?.containsKey(IS_DELIVERY) == true)
                 isDeliverySelected = baseFragBundle?.getBoolean(IS_DELIVERY)
         }
@@ -606,7 +607,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         val rowHeight = 65
         val totalRemovalHeight =
-            if (isConfirmDeliveryResponse) 405 else 315
+            if (isConfirmDeliveryResponse) 405 else 370
         val recyclerViewSpace =
             displayMetrics.heightPixels - KotlinUtils.dpToPxConverter(totalRemovalHeight)
         val totalRowHeight = KotlinUtils.dpToPxConverter(rowHeight * size)
@@ -645,7 +646,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             clickNCollectTitleLayout.visibility = View.VISIBLE
             addressConfirmationClicknCollect.visibility = View.VISIBLE
             showStoreList()
-        } else if (!localSuburbId.equals(suburbId)) { //equals means only tab change happens. No suburb changed.
+        } else if (localSuburbId != suburbId) { //equals means only tab change happens. No suburb changed.
             localSuburbId = suburbId
             localSuburbId.let { it ->
                 checkoutAddAddressNewUserViewModel.validateSelectedSuburb(it, false)
@@ -879,7 +880,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             AppConfigSingleton.nativeCheckout?.regions as? MutableList<Province>
         if (!provinceId.isNullOrEmpty() && !provinceList.isNullOrEmpty()) {
             for (provinces in provinceList) {
-                if (provinceId.equals(provinces.id)) {
+                if (provinceId == provinces.id) {
                     // province id is matching with the province list from config.
                     return provinces.name ?: ""
                 }
@@ -904,14 +905,14 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     private fun callChangeAddressApi() {
         selectedAddress?.nickname?.let { nickname ->
             loadingProgressBar.visibility = View.VISIBLE
-            activity?.getWindow()?.setFlags(
+            activity?.window?.setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
             checkoutAddAddressNewUserViewModel.changeAddress(nickname)
                 .observe(viewLifecycleOwner, { response ->
                     loadingProgressBar.visibility = View.GONE
-                    activity?.getWindow()?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     when (response) {
                         is ChangeAddressResponse -> {
                             when (response.httpCode) {

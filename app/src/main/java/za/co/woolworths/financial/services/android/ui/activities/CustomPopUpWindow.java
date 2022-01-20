@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,6 +59,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailS
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -1022,6 +1024,34 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
         }
     }
 
+    private void exitAnimationWhenError(String errorMessage) {// close first popup then show error popup
+        if (!viewWasClicked) { // prevent more than one click
+            viewWasClicked = true;
+            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+            animation.setFillAfter(true);
+            animation.setDuration(ANIM_DOWN_DURATION);
+            animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    dismissLayout();
+                    new Handler().postDelayed(() -> {
+                        Utils.displayValidationMessage(CustomPopUpWindow.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, errorMessage);
+                    } ,AppConstant.DELAY_500_MS);
+                    }
+            });
+            mRelRootContainer.startAnimation(animation);
+        }
+    }
+
     private String getText(String text) {
         return TextUtils.isEmpty(text) ? "" : text;
     }
@@ -1042,6 +1072,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                             break;
                         case 440:
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, CustomPopUpWindow.this);
+                            break;
+                        case 403:
+                            exitAnimationWhenError(statementResponse.response.desc);
                             break;
                         default:
                             break;

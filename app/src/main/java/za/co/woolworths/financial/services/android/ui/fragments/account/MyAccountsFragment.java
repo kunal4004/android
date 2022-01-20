@@ -92,6 +92,7 @@ import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAll
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.models.repository.AppStateRepository;
 import za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
@@ -214,7 +215,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private LinearLayout retryStoreCardLinearLayout;
     private LinearLayout retryCreditCardLinearLayout;
     private LinearLayout retryPersonalLoanLinearLayout;
-    public static ArrayList<UserDevice> deviceList;
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
     private ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement;
@@ -392,9 +392,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (mUpdateMyAccount != null) {
                 mUpdateMyAccount.enableSwipeToRefreshAccount(false);
                 mUpdateMyAccount.swipeToRefreshAccount(false);
-                imRefreshAccount.setEnabled(false);
+                refreshAccount(false);
             } else {
-                imRefreshAccount.setEnabled(true);
+                refreshAccount(true);
             }
         }
 
@@ -411,6 +411,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
         uniqueIdentifiersForAccount();
 
+    }
+
+    private void refreshAccount(boolean state) {
+        if (imRefreshAccount != null)
+            imRefreshAccount.setEnabled(state);
     }
 
     private void callLinkedDevicesAPI(Boolean isForced) {
@@ -430,7 +435,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                         @Override
                         public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
-                            deviceList = response.getUserDevices();
+                            new AppStateRepository().saveLinkedDevices(response.getUserDevices());
                         }
                     }, ViewAllLinkedDeviceResponse.class));
                 }
@@ -458,7 +463,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 onDeepLinkedProductTap(linkedPersonalCardView, applyPersonalCardView);
                 break;
         }
-        setArguments(null);
+        try{
+            setArguments(null);
+        }
+        catch (Exception e) {
+            FirebaseManager.logException(e);
+        }
         deepLinkParams = null;
     }
 
@@ -485,7 +495,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void initialize() {
         this.mAccountResponse = null;
-        this.deviceList = new ArrayList(0);
+        new AppStateRepository().saveLinkedDevices(new ArrayList(0));
         this.hideAllLayers();
         this.mAccountsHashMap.clear();
         this.unavailableAccounts.clear();
@@ -498,7 +508,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (SessionUtilities.getInstance().isC2User()) {
                 mUpdateMyAccount.enableSwipeToRefreshAccount(true);
                 if (imRefreshAccount != null)
-                    imRefreshAccount.setEnabled(true);
+                    refreshAccount(true);
                 this.loadAccounts(false);
             } else {
                 this.configureSignInNoC2ID();
@@ -727,7 +737,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (mUpdateMyAccount != null)
             mUpdateMyAccount.enableSwipeToRefreshAccount(false);
         imRefreshAccount.setVisibility(View.GONE);
-        imRefreshAccount.setEnabled(false);
+        refreshAccount(false);
     }
 
     private void configureSignInNoC2ID() {
@@ -1010,7 +1020,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             case R.id.rlMyPreferences:
                 Intent myPreferences = new Intent(getActivity(), MyPreferencesActivity.class);
                 myPreferences.putExtra(IS_NON_WFS_USER, unavailableAccounts != null && unavailableAccounts.size() == 3);
-                myPreferences.putExtra(MyPreferencesFragment.DEVICE_LIST, deviceList);
+                myPreferences.putExtra(MyPreferencesFragment.DEVICE_LIST, new AppStateRepository().getLinkedDevices());
                 activity.startActivityForResult(myPreferences, RESULT_CODE_DEVICE_LINKED);
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
@@ -1127,7 +1137,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 @Override
                 public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
                     if(response !=null && response.getUserDevices() != null ){
-                        deviceList = response.getUserDevices();
+                        new AppStateRepository().saveLinkedDevices(response.getUserDevices());
                     }
                 }}, ViewAllLinkedDeviceResponse.class)
             );
@@ -1136,10 +1146,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     public static boolean verifyAppInstanceId() {
         boolean isLinked = false;
-        for (UserDevice device : deviceList) {
-            if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
-                isLinked = true;
-                break;
+        UserDevice[] deviceList = new AppStateRepository().getLinkedDevices();
+        if (deviceList != null && deviceList.length > 0) {
+            for (UserDevice device : deviceList) {
+                if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
+                    isLinked = true;
+                    break;
+                }
             }
         }
         return !isLinked;
@@ -1341,7 +1354,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     mAccountsHashMap = accountsHashMap;
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyPaymentDueDate(accountsHashMap);
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyForDebitOrder(accountsHashMap);
-                    if (forceNetworkUpdate || ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null) {
+                    if (forceNetworkUpdate ||
+                            ((activity instanceof BottomNavigationActivity) &&
+                                    ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null)) {
                         setAccountResponse(activity, mAccountResponse);
                     } else {
                         if (activity instanceof BottomNavigationActivity) {
@@ -1389,7 +1404,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                         configureView();
                         mUpdateMyAccount.enableSwipeToRefreshAccount(true);
                         mUpdateMyAccount.swipeToRefreshAccount(true);
-                        imRefreshAccount.setEnabled(true);
+                        refreshAccount(true);
                         Utils.alertErrorMessage(activity, mAccountResponse.response.desc);
                     }
                     break;
@@ -1706,27 +1721,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
         if (getActivity() == null || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
             return;
-        View viewToScrollUp = null;
         String actionText = getActivity().getResources().getString(R.string.tips_tricks_go_to_accounts);
         if (unavailableAccounts.size() == 3) {
-            viewToScrollUp = imgStoreCardApplyNow;
             actionText = getActivity().getResources().getString(R.string.walkthrough_account_action_no_products);
-        } else {
-            if (!unavailableAccounts.contains(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
-                viewToScrollUp = imgStoreCardContainer;
-            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())) {
-                viewToScrollUp = imgCreditCard;
-            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
-                viewToScrollUp = imgPersonalLoanCardContainer;
-            }
         }
-        final View finalTarget1 = viewToScrollUp;
-        mScrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                ObjectAnimator.ofInt(mScrollView, "scrollY", finalTarget1.getBottom()).setDuration(300).start();
-            }
-        });
 
         promptsActionListener = 1;
         final View target = getTargetView(unavailableAccounts);
@@ -1750,15 +1748,18 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 Activity activity = getActivity();
                 if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
                 FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
-                getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
-                        .setTarget(target)
-                        .setTitle(R.string.tips_tricks_view_your_accounts)
-                        .setDescription(R.string.tips_tricks_desc_my_accounts)
-                        .setActionText(finalActionText)
-                        .setImage(R.drawable.tips_tricks_ic_my_accounts)
-                        .setAction(listener)
-                        .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                        .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+                FragmentActivity fragmentActivity = getActivity();
+                if(fragmentActivity != null){
+                    getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.ACCOUNTS)
+                            .setTarget(target)
+                            .setTitle(R.string.tips_tricks_view_your_accounts)
+                            .setDescription(R.string.tips_tricks_desc_my_accounts)
+                            .setActionText(finalActionText)
+                            .setImage(R.drawable.tips_tricks_ic_my_accounts)
+                            .setAction(listener)
+                            .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                            .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
+                }
                 getBottomNavigationActivity().walkThroughPromtView.show(activity);
             }
         }.execute();
