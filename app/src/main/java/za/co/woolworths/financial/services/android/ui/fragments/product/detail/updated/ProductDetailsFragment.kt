@@ -128,7 +128,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var mFetchFromJson: Boolean = false
     private var defaultProductResponse: String? = null
     private var auxiliaryImages: MutableList<String> = ArrayList()
-    private var productViewPagerAdapter: ProductViewPagerAdapter? = null
     private var productDetailsPresenter: ProductDetailsContract.ProductDetailsPresenter? = null
     private var storeIdForInventory: String? = ""
     private var otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>> = hashMapOf()
@@ -278,9 +277,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        initViews()
-        updateAddToCartButtonForSelectedSKU()
         if (!hidden) {
+            initViews()
+            updateAddToCartButtonForSelectedSKU()
+            configureDefaultUI()
             setUpToolBar()
         }
     }
@@ -990,7 +990,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateAuxiliaryImages(imagesList: List<String>) {
         activity?.apply {
-            productViewPagerAdapter =
                 ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
                     productImagesViewPager?.let { pager ->
                         pager.adapter = this
