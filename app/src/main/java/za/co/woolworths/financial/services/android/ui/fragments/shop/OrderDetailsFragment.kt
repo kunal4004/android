@@ -33,6 +33,8 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.STR_PRODUCT_CATEGORY
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.STR_PRODUCT_LIST
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
@@ -46,8 +48,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     companion object {
          val ARG_PARAM = "order"
-         val STR_PRODUCT_CATEGORY = "strProductCategory"
-         val STR_PRODUCT_LIST= "strProductList"
+
         fun getInstance(order: Order, isNaviagtedFromMyAccount: Boolean = false) = OrderDetailsFragment().withArgs {
             putString(ARG_PARAM, Utils.toJson(order))
             putBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNaviagtedFromMyAccount)
@@ -201,8 +202,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         if (!(getActivity() is BottomNavigationActivity)) {
             return;
         }
-        val bottomNavigationActivity = activity as BottomNavigationActivity?
-        bottomNavigationActivity!!.bottomNavigationById.currentItem = BottomNavigationActivity.INDEX_PRODUCT
+        val bottomNavigationActivity = activity as BottomNavigationActivity
+        bottomNavigationActivity.bottomNavigationById.currentItem = BottomNavigationActivity.INDEX_PRODUCT
         val productDetails = ProductDetails()
 
         val commerceItemInfo = commerceItem.commerceItemInfo
@@ -218,7 +219,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         if (activity !is BottomNavigationActivity || !isAdded) {
             return
         }
-        val fragment = ProductDetailsFragment()
+        val fragment = ProductDetailsFragment.newInstance()
         val gson = Gson()
         val strProductList = gson.toJson(productDetails)
         val bundle = Bundle()

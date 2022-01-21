@@ -209,6 +209,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         fun newInstance() = ProductDetailsFragment()
         const val REQUEST_PERMISSION_MEDIA = 100
 
+        val STR_PRODUCT_CATEGORY = "strProductCategory"
+        val STR_PRODUCT_LIST= "strProductList"
+
     }
 
 
