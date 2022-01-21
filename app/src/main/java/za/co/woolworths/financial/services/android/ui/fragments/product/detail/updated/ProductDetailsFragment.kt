@@ -231,8 +231,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         super.onViewCreated(view, savedInstanceState)
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         initViews()
-        isOutOfStockFragmentAdded = false
-        configureDefaultUI()
         setUniqueIds()
 
     }
@@ -268,6 +266,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgDownloadVTO?.setOnClickListener(this)
         imgVTOSplit?.setOnClickListener(this)
         captureImage?.setOnClickListener(this)
+        isOutOfStockFragmentAdded = false
+        configureDefaultUI()
         cameraSurfaceView.setOnTouchListener { _, event ->
             pinchZoomOnVtoLiveCamera(event)
             true
