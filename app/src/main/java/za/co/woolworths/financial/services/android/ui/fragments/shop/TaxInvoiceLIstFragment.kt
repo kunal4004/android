@@ -79,6 +79,11 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
     }
 
     private fun initView() {
+        val orderText = getString(R.string.order_page_title_prefix).plus(orderId)
+        btnBack.setOnClickListener {
+            activity?.onBackPressed()
+        }
+        toolbarText.setText(orderText)
         taxInvoiceList.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
         taxInvoiceList.adapter = TaxInvoiceAdapter(taxNoteNumbers, this)
     }
