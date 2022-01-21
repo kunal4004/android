@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -76,6 +77,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.tooltip.LetterSpacingTextView;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
@@ -146,9 +148,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         super.onViewCreated(view, savedInstanceState);
         initViewAndEvent(view);
         initGetShoppingListItems();
-        if (getActivity() instanceof ShoppingListDetailActivity) {
-            selectDeselectAllTextView.setOnClickListener(this);
-        }
+        selectDeselectAllTextView.setOnClickListener(this);
     }
 
     private void initViewAndEvent(View view) {
@@ -171,6 +171,12 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             appbar.setVisibility(VISIBLE);
             ((BottomNavigationActivity) activity).hideToolbar();
             selectDeselectAllTextView = view.findViewById(R.id.selectDeselectAllTextView);
+            TextView shoppingListTitleTextView = view.findViewById(R.id.shoppingListTitleTextView);
+            shoppingListTitleTextView.setText(listName);
+            TextView editButton = view.findViewById(R.id.editShoppingListItemTextView);
+            editButton.setOnClickListener(this);
+            ImageView backButton = view.findViewById(R.id.btnBack);
+            backButton.setOnClickListener(v -> activity.onBackPressed());
         }
 
         initList(rcvShoppingListItems);
@@ -306,6 +312,16 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.editShoppingListItemTextView:
+                Activity activity = getActivity();
+                if (activity == null || !(view instanceof TextView)) {
+                    return;
+                }
+                TextView editBtnTextView = (TextView) view;
+                String editButtonText = editBtnTextView.getText().toString().equalsIgnoreCase(getString(R.string.edit)) ? getString(R.string.done) : getString(R.string.edit);
+                editBtnTextView.setText(editButtonText);
+                toggleEditButton(editButtonText);
+                break;
             case R.id.selectDeselectAllTextView:
                 onOptionsItemSelected();
                 break;
@@ -618,11 +634,12 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 ShoppingListDetailActivity shoppingListActivity = ((ShoppingListDetailActivity) activity);
                 shoppingListActivity.editButtonVisibility(true);
             } else if (activity instanceof BottomNavigationActivity) {
+                selectDeselectAllTextView.setVisibility(VISIBLE);
                 View view = getView();
                 if (view == null) {
                     return;
                 }
-                TextView editButton = view.findViewById(R.id.btnBack);
+                TextView editButton = view.findViewById(R.id.editShoppingListItemTextView);
                 editButton.setVisibility(VISIBLE);
             }
         } else {
@@ -1139,11 +1156,18 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             if (activity instanceof ShoppingListDetailActivity) {
                 ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
                 shoppingListDetailActivity.editButtonVisibility(true);
+            } else if (activity instanceof BottomNavigationActivity && getView() != null) {
+                TextView editBtnTextView = getView().findViewById(R.id.editShoppingListItemTextView);
+                editBtnTextView.setVisibility(VISIBLE);
+                editBtnTextView.setOnClickListener(this);
             }
         } else {
             if (activity instanceof ShoppingListDetailActivity) {
                 ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
                 shoppingListDetailActivity.editButtonVisibility(false);
+            } else if (activity instanceof BottomNavigationActivity && getView() != null) {
+                TextView editBtnTextView = getView().findViewById(R.id.editShoppingListItemTextView);
+                editBtnTextView.setVisibility(GONE);
             }
         }
     }
@@ -1166,5 +1190,15 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             totalQuantity = totalQuantity + item.getQuantity();
         }
         return totalQuantity;
+    }
+
+    @Override
+    public void onDestroy() {
+        Activity activity = getActivity();
+        if (!(activity instanceof BottomNavigationActivity)) {
+            return;
+        }
+        ((BottomNavigationActivity) activity).showToolbar();
+        super.onDestroy();
     }
 }
