@@ -33,6 +33,8 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.STR_PRODUCT_CATEGORY
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.STR_PRODUCT_LIST
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
@@ -46,6 +48,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     companion object {
          val ARG_PARAM = "order"
+
         fun getInstance(order: Order, isNaviagtedFromMyAccount: Boolean = false) = OrderDetailsFragment().withArgs {
             putString(ARG_PARAM, Utils.toJson(order))
             putBoolean(AppConstant.NAVIGATED_FROM_MY_ACCOUNTS, isNaviagtedFromMyAccount)
@@ -194,20 +197,34 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     }
 
     override fun onOpenProductDetail(commerceItem: CommerceItem) {
-        val productList = ProductDetails()
-        val commerceItemInfo = commerceItem.commerceItemInfo
-        productList.externalImageRefV2 = commerceItemInfo.externalImageRefV2
-        productList.productName = commerceItemInfo.productDisplayName
-        productList.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
-        productList.productId = commerceItemInfo.productId
-        productList.sku = commerceItemInfo.catalogRefId
-        val gson = Gson()
-        val strProductList = gson.toJson(productList)
-        val bundle = Bundle()
-        bundle.putString("strProductList", strProductList)
-        bundle.putString("strProductCategory", "")
 
-        val fragment =  ProductDetailsFragment();
+        // Move to shop tab.
+        if (!(getActivity() is BottomNavigationActivity)) {
+            return;
+        }
+        val bottomNavigationActivity = activity as BottomNavigationActivity
+        bottomNavigationActivity.bottomNavigationById.currentItem = BottomNavigationActivity.INDEX_PRODUCT
+        val productDetails = ProductDetails()
+
+        val commerceItemInfo = commerceItem.commerceItemInfo
+        productDetails.externalImageRefV2 = commerceItemInfo.externalImageRefV2
+        productDetails.productName = commerceItemInfo.productDisplayName
+        productDetails.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
+        productDetails.productId = commerceItemInfo.productId
+        productDetails.sku = commerceItemInfo.catalogRefId
+        openProductDetailFragment("", productDetails)
+    }
+
+    fun openProductDetailFragment(productName: String?, productDetails: ProductDetails?) {
+        if (activity !is BottomNavigationActivity || !isAdded) {
+            return
+        }
+        val fragment = ProductDetailsFragment.newInstance()
+        val gson = Gson()
+        val strProductList = gson.toJson(productDetails)
+        val bundle = Bundle()
+        bundle.putString(STR_PRODUCT_LIST, strProductList)
+        bundle.putString(STR_PRODUCT_CATEGORY, productName)
         fragment.arguments = bundle
         (activity as? BottomNavigationActivity)?.pushFragment(fragment)
     }
