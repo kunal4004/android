@@ -474,9 +474,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
         // Present toast on BottomNavigationMenu if shopping list detail was opened from my list
         if (openFromMyList) {
-            activity.setResult(RESULT_OK, resultIntent);
-            activity.finish();
-            activity.overridePendingTransition(0, 0);
+            if (activity instanceof ShoppingListDetailActivity) {
+                activity.setResult(RESULT_OK, resultIntent);
+                activity.finish();
+                activity.overridePendingTransition(0, 0);
+            } else if (activity instanceof BottomNavigationActivity) {
+                activity.onBackPressed();
+                BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
+                if (addItemToCartResponse.data.size() > 0) {
+                    String itemAddToCartMessage = addItemToCartResponse.data.get(0).message;
+                    ProductCountMap productCountMap = addItemToCartResponse.data.get(0).productCountMap;
+                    bottomNavigationActivity.setToast(itemAddToCartMessage, "", productCountMap, size);
+                }
+            }
         } else {
             // else display shopping list toast
             if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
@@ -1172,7 +1182,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
     }
 
-
     @Override
     public void onConfirmLocation() {
         addItemsToCart();
@@ -1196,6 +1205,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void onDestroy() {
         Activity activity = getActivity();
         if (!(activity instanceof BottomNavigationActivity)) {
+            super.onDestroy();
             return;
         }
         ((BottomNavigationActivity) activity).showToolbar();
