@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -95,14 +96,11 @@ class ReviewDetailsFragment : Fragment() {
     private fun showProgressBar() {
         progressBar.visibility = View.VISIBLE
         apiCallInProgress = true
-        /*activity?.window?.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)*/
     }
 
     private fun hideProgressBar() {
         progressBar.visibility = View.GONE
         apiCallInProgress = false
-        /*activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)*/
     }
 
     private fun setDefaultUi(reviewData: Reviews?, reportReviewOptions: List<String>) {
@@ -115,13 +113,17 @@ class ReviewDetailsFragment : Fragment() {
             skin_detail.text = reviewText
             tvLikes.text = totalPositiveFeedbackCount.toString()
 
-            if (RatingAndReviewUtil.isSuccessFullyReported) {
+            if (RatingAndReviewUtil.reportedReviews.contains(id.toString())) {
                 tvReport.setTextColor(Color.RED)
                 tvReport.text = getString(R.string.reported)
                 RatingAndReviewUtil.isSuccessFullyReported = false
             }
 
             tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
+
+            if (RatingAndReviewUtil.likedReviews.contains(id.toString())){
+                iv_like.setImageResource(R.drawable.iv_like_selected)
+            }
             setVerifiedBuyers(isVerifiedBuyer)
             setSkinProfielLayout(contextDataValue, tagDimensions)
             RatingAndReviewUtil.setReviewAdditionalFields(
@@ -202,11 +204,17 @@ class ReviewDetailsFragment : Fragment() {
                         )
                     )
                     hideProgressBar()
-                    if (response.httpCode == 200)
+                    if (response.httpCode == 200) {
+                        RatingAndReviewUtil.likedReviews.add(reviews.id.toString())
                         iv_like.setImageResource(R.drawable.iv_like_selected)
+                    }
                 } catch (e: HttpException) {
                     e.printStackTrace()
                     hideProgressBar()
+                    if (e.code() == 502) {
+                        RatingAndReviewUtil.likedReviews.add(reviews.id.toString())
+                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                    }
                 }
 
             }

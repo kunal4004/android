@@ -60,7 +60,7 @@ class MoreReviewsAdapter(
                     tvReviewPostedOn.text = syndicatedSource
                     tvDate.text = submissionTime
                     tvLikes.text = totalPositiveFeedbackCount.toString()
-                    if (isRecommended)
+                    if (RatingAndReviewUtil.likedReviews.contains(review.id.toString()))
                         iv_like.setImageResource(R.drawable.iv_like_selected)
                     else
                         iv_like.setImageResource(R.drawable.iv_like)
@@ -79,8 +79,7 @@ class MoreReviewsAdapter(
                     tvSkinProfile.paintFlags = Paint.UNDERLINE_TEXT_FLAG
 
                     reviewHelpfulReport.apply {
-                        //if (reportPosiionList.contains(position) && RatingAndReviewUtil.isSuccessFullyReported) {
-                        if(isReported){
+                        if(RatingAndReviewUtil.reportedReviews.contains(review.id.toString())){
                             tvReport.setTextColor(Color.RED)
                             tvReport.setText(resources.getString(R.string.reported))
                             RatingAndReviewUtil.isSuccessFullyReported = false

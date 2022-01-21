@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
@@ -52,7 +53,7 @@ class MoreReviewsFragment : Fragment(),
     private var refinementString: String? = null
     private lateinit var reviewStatistics: ReviewStatistics
     private var reviewStatisticsList: MutableList<ReviewStatistics> = mutableListOf<ReviewStatistics>()
-
+    private var moreReviewsAdapter: MoreReviewsAdapter? = null
     companion object {
         fun newInstance() = MoreReviewsFragment()
     }
@@ -109,7 +110,7 @@ class MoreReviewsFragment : Fragment(),
             return
         }
 
-        val moreReviewsAdapter = MoreReviewsAdapter(
+         moreReviewsAdapter = MoreReviewsAdapter(
                 requireContext(),
                 this,
                 listOf<String>(),
@@ -121,9 +122,9 @@ class MoreReviewsFragment : Fragment(),
                 this,
                 0)
 
-        val footerLoadStateAdapter = moreReviewsAdapter.withLoadStateFooter(
+        val footerLoadStateAdapter = moreReviewsAdapter?.withLoadStateFooter(
                 footer = MoreReviewLoadStateAdapter({
-                    moreReviewsAdapter.retry()
+                    moreReviewsAdapter?.retry()
                 }, this@MoreReviewsFragment)
         )
         val concatAdapter = ConcatAdapter(headerAdapter, footerLoadStateAdapter)
@@ -143,16 +144,15 @@ class MoreReviewsFragment : Fragment(),
                                 {
                             reviewStatisticsList.add(it.reviewStatistics)
                             headerAdapter.setReviewTotalCounts(it.totalResults)
-                            moreReviewsAdapter.setReviewOptionsList(it.reportReviewOptions)
+                            moreReviewsAdapter?.setReviewOptionsList(it.reportReviewOptions)
                             headerAdapter.setReviewStatics(reviewStatisticsList)
                             headerAdapter.notifyDataSetChanged()
                         })
-                moreReviewsAdapter.snapshot().count()
-                moreReviewsAdapter.submitData(pagedData)
+                moreReviewsAdapter?.submitData(pagedData)
             }
         }
 
-        moreReviewsAdapter.addLoadStateListener {
+        moreReviewsAdapter?.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
             } else {
@@ -223,6 +223,7 @@ class MoreReviewsFragment : Fragment(),
     override fun reviewHelpfulClicked(review: Reviews) {
         lifecycleScope.launch {
             try {
+                progress_bar.visibility = View.VISIBLE
                 val response = moreReviewViewModel.reviewFeedback(
                     ReviewFeedback(
                         review.id.toString(),
@@ -233,12 +234,19 @@ class MoreReviewsFragment : Fragment(),
                         null
                     )
                 )
-                if (response.httpCode == 200)
-                    Log.d("Response",response.toString())
+                progress_bar.visibility = View.GONE
+                if (response.httpCode == 200) {
+                    RatingAndReviewUtil.likedReviews.add(review.id.toString())
+                    moreReviewsAdapter?.notifyDataSetChanged()
+                }
             } catch (e: HttpException) {
                 e.printStackTrace()
+                progress_bar.visibility = View.GONE
+                if(e.code()==502){
+                    RatingAndReviewUtil.likedReviews.add(review.id.toString())
+                    moreReviewsAdapter?.notifyDataSetChanged()
+                }
             }
-
         }
     }
 

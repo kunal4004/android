@@ -119,6 +119,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import android.widget.*
 import androidx.fragment.app.activityViewModels
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.*
@@ -176,7 +177,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private lateinit var  reviewThumbnailAdapter: ReviewThumbnailAdapter
     private lateinit var secondaryRatingAdapter: SecondaryRatingAdapter
     private var thumbnailFullList = listOf<Thumbnails>()
-    private lateinit var ratingReviewResponse: RatingReviewResponse
+    private  var ratingReviewResponse: RatingReviewResponse? = null
     private val permissionViewModel: PermissionViewModel by viewModels()
     private var isFromFile = false
     private var liveCamera: Boolean = false
@@ -255,7 +256,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         mFuseLocationAPISingleton = FuseLocationAPISingleton
         initViews()
         setUniqueIds()
-
     }
 
     private fun initViews() {
@@ -305,6 +305,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
         hideRatingAndReview()
         setupViewModel()
+        updateReportLikeStatus()
     }
 
     private fun setupViewModel() {
@@ -312,6 +313,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             this,
             RatingAndReviewViewModelFactory(RatingAndReviewApiHelper())
         ).get(RatingAndReviewViewModel::class.java)
+    }
+
+    private fun updateReportLikeStatus(){
+        ratingReviewResponse?.reviews?.get(0).let {
+            if(RatingAndReviewUtil.likedReviews.contains(it?.id.toString())){
+                iv_like.setImageResource(R.drawable.iv_like_selected)
+            }
+            if (RatingAndReviewUtil.reportedReviews.contains(it?.id.toString())){
+                tvReport.setTextColor(Color.RED)
+                tvReport.text = resources.getString(R.string.reported)
+                tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            }
+        }
     }
 
     private fun pinchZoomOnVtoLiveCamera(event: MotionEvent?) {
@@ -515,7 +529,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             ScreenManager.presentSSOSignin(activity)
         } else {
             ScreenManager.presentReportReview(activity,
-                    ratingReviewResponse.reportReviewOptions as ArrayList<String>?, ratingReviewResponse.reviews[0])
+                    ratingReviewResponse?.reportReviewOptions as ArrayList<String>?,
+                ratingReviewResponse?.reviews?.get(0)
+            )
         }
     }
 
@@ -528,7 +544,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 try {
                     val response = moreReviewViewModel.reviewFeedback(
                         ReviewFeedback(
-                            ratingReviewResponse.reviews[0].id.toString(),
+                            ratingReviewResponse?.reviews?.get(0)?.id.toString(),
                             SessionUtilities.getInstance().jwt.AtgId.asString,
                             KotlinUtils.REWIEW,
                             KotlinUtils.HELPFULNESS,
@@ -537,11 +553,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         )
                     )
                     hideProgressBar()
-                    if (response.httpCode == 200)
+                    if (response.httpCode == 200) {
                         iv_like.setImageResource(R.drawable.iv_like_selected)
+                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
+                    }
                 } catch (e: HttpException) {
                     e.printStackTrace()
                     hideProgressBar()
+                    if (e.code() == 502) {
+                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
+                    }
                 }
 
             }
@@ -553,11 +575,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun showRatingDetailsDailog() {
-        val dialog = RatingDetailDialog(ratingReviewResponse)
+        val dialog = ratingReviewResponse?.let { RatingDetailDialog(it) }
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
                 .let { fragmentTransaction ->
-                    dialog.show(
+                    dialog?.show(
                         fragmentTransaction,
                         RatingDetailDialog::class.java.simpleName
                     )
@@ -565,11 +587,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
     private fun viewSkinProfileDialog() {
-        val dialog = SkinProfileDialog(ratingReviewResponse.reviews[0])
+        val dialog = ratingReviewResponse?.reviews?.get(0)?.let { SkinProfileDialog(it) }
         activity?.apply {
             this@ProductDetailsFragment.childFragmentManager.beginTransaction()
                 .let { fragmentTransaction ->
-                    dialog.show(
+                    dialog?.show(
                         fragmentTransaction,
                         SkinProfileDialog::class.java.simpleName
                     )
@@ -1130,6 +1152,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     setReviewThumbnailUI(photos.thumbnails)
                     if(contextDataValue.isEmpty() && tagDimensions.isEmpty()){
                         tvSkinProfile.visibility = View.GONE
+                    }
+                    if(RatingAndReviewUtil.likedReviews.contains(id.toString())){
+                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                    }
+
+                    if (RatingAndReviewUtil.reportedReviews.contains(id.toString())){
+                        tvReport.setTextColor(Color.RED)
+                        tvReport.setText(resources.getString(R.string.reported))
+                        tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
                 }
             }else{
@@ -2261,6 +2292,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             tvReport?.setTextColor(Color.RED)
             RatingAndReviewUtil.isSuccessFullyReported = false
         }
+        updateReportLikeStatus()
     }
 
     private fun isAllProductsOutOfStock(): Boolean {

@@ -124,12 +124,13 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
                         )
                         if (response.httpCode == 200) {
                         openReportScreenFragment()
-                        review.isReported = true
+                        RatingAndReviewUtil.reportedReviews.add(review.id.toString())
                         hideProgressBar()
                         }
                     } catch (e: HttpException) {
                         e.printStackTrace()
                         hideProgressBar()
+                        RatingAndReviewUtil.reportedReviews.add(review.id.toString())
                         openReportScreenFragment()
                     }
                     reportReviewsAdapter.getAllCheckBoxCount()
