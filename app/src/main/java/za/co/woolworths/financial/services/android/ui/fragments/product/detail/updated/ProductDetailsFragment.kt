@@ -278,9 +278,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            initViews()
             updateAddToCartButtonForSelectedSKU()
-            configureDefaultUI()
             setUpToolBar()
         }
     }
