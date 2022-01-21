@@ -210,8 +210,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         fun newInstance() = ProductDetailsFragment()
         const val REQUEST_PERMISSION_MEDIA = 100
 
-        val STR_PRODUCT_CATEGORY = "strProductCategory"
-        val STR_PRODUCT_LIST= "strProductList"
+        const val STR_PRODUCT_CATEGORY = "strProductCategory"
+        const val STR_PRODUCT_LIST= "strProductList"
 
     }
 
@@ -220,10 +220,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         super.onCreate(savedInstanceState)
         arguments?.apply {
             productDetails = Utils.jsonStringToObject(
-                getString("strProductList"),
+                getString(STR_PRODUCT_LIST),
                 ProductDetails::class.java
             ) as ProductDetails
-            subCategoryTitle = getString("strProductCategory")
+            subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
         }
