@@ -211,10 +211,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val REQUEST_PERMISSION_MEDIA = 100
 
         const val STR_PRODUCT_CATEGORY = "strProductCategory"
-        const val STR_PRODUCT_LIST= "strProductList"
-
+        const val STR_PRODUCT_LIST = "strProductList"
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -907,13 +905,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         loadPromotionalImages()
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
-            productIngredientsInformation.visibility = View.VISIBLE
+            productIngredientsInformation?.visibility = View.VISIBLE
         if (this.productDetails?.nutritionalInformationDetails != null)
-            nutritionalInformation.visibility = View.VISIBLE
+            nutritionalInformation?.visibility = View.VISIBLE
         if (!this.productDetails?.dietary.isNullOrEmpty())
-            dietaryInformation.visibility = View.VISIBLE
+            dietaryInformation?.visibility = View.VISIBLE
         if (!this.productDetails?.allergens.isNullOrEmpty())
-            allergensInformation.visibility = View.VISIBLE
+            allergensInformation?.visibility = View.VISIBLE
 
 
         productDetails?.let {
@@ -926,15 +924,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 it.priceType,
                 it.kilogramPrice
             )
-            brandName.apply {
+            brandName?.apply {
                 if (!it.brandText.isNullOrEmpty()) {
                     text = it.brandText
                     visibility = View.VISIBLE
                 }
             }
             if (!it.freeGiftText.isNullOrEmpty()) {
-                freeGiftText.text = it.freeGiftText
-                freeGiftWithPurchaseLayout.visibility = View.VISIBLE
+                freeGiftText?.text = it.freeGiftText
+                freeGiftWithPurchaseLayout?.visibility = View.VISIBLE
             }
             if (productDetails?.promotionsList?.isEmpty() == false) {
                 productDetails?.promotionsList?.forEachIndexed { i, it ->
