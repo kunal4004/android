@@ -32,13 +32,15 @@ open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeE
         start()
         handler = Handler(looper)
         handler?.post {
-            val appInstance = (WoolworthsApplication.getInstance()?.currentActivity as? FragmentActivity) ?: return@post
-            val fragment = appInstance.supportFragmentManager.findFragmentByTag(ErrorMessageDialogWithTitleFragment::class.java.simpleName)
-            val socketTimeoutExceptionDialog = ErrorMessageDialogWithTitleFragment.newInstance()
-            if ((fragment is ErrorMessageDialogWithTitleFragment) || ((!appInstance.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)))) return@post
             try {
+                val appInstance = (WoolworthsApplication.getInstance()?.currentActivity as? FragmentActivity) ?: return@post
+                val fragment = appInstance.supportFragmentManager.findFragmentByTag(ErrorMessageDialogWithTitleFragment::class.java.simpleName)
+                val socketTimeoutExceptionDialog = ErrorMessageDialogWithTitleFragment.newInstance()
+                if ((fragment is ErrorMessageDialogWithTitleFragment) || ((!appInstance.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)))) return@post
                 socketTimeoutExceptionDialog.show(appInstance.supportFragmentManager.beginTransaction(), ErrorMessageDialogWithTitleFragment::class.java.simpleName)
             } catch (ex: IllegalStateException) {
+                FirebaseManager.logException(ex)
+            } catch (ex: ConcurrentModificationException) {
                 FirebaseManager.logException(ex)
             }
             quit()
