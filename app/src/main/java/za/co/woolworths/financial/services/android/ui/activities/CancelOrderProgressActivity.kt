@@ -19,7 +19,7 @@ class CancelOrderProgressActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.cancel_order_progress_activity)
         Utils.updateStatusBarBackground(this)
-        Utils.setAsVirtualTemporaryStoreCardPopupShown(true)
+        Utils.updateUserVirtualTempCardState(true)
         configureActionBar()
         intent?.extras?.apply {
             orderId = getString(CancelOrderProgressFragment.ORDER_ID, "")
