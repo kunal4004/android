@@ -13,7 +13,6 @@
         android:lineSpacingExtra="@dimen/eight_sp"
         android:minWidth="@dimen/eighty_dp"
         android:minHeight="@dimen/twenty_dp"
-        android:text="@string/low_stock"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/ten_sp"
