@@ -49,6 +49,7 @@ import kotlinx.android.synthetic.main.select_vto_option.*
 import kotlinx.android.synthetic.main.select_vto_option.view.*
 import kotlinx.android.synthetic.main.vto_imageview_fragment.*
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -198,6 +199,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
+    @Inject
+    lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
 
     companion object {
         const val INDEX_STORE_FINDER = 1
@@ -210,7 +213,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val REQUEST_PERMISSION_MEDIA = 100
 
         val STR_PRODUCT_CATEGORY = "strProductCategory"
-        val STR_PRODUCT_LIST= "strProductList"
+        val STR_PRODUCT_LIST = "strProductList"
 
     }
 
@@ -352,13 +355,17 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.changeImage -> pickPhotoLauncher.launch("image/*")
             R.id.changeImageFiles -> pickPhotoFromFile.launch("image/*")
             R.id.imgDownloadVTO -> saveVtoApplyImage?.let {
-                ImageResultContract.saveImageToStorage(requireContext(),
-                    saveVtoApplyImage!!)
+                savePhoto(it)
             }
             R.id.imgVTOSplit -> compareWithLiveCamera()
             R.id.captureImage -> captureImageFromVtoLiveCamera()
 
         }
+    }
+
+    private fun savePhoto(bitmap: Bitmap) {
+        ImageResultContract.saveImageToStorage(requireContext(), bitmap)
+        vtoSavedPhotoToast.showMessage(requireActivity(), getString(R.string.saved_to_photos), 250)
     }
 
     private fun captureImageFromVtoLiveCamera() {
