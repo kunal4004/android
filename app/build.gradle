@@ -273,6 +273,10 @@ dependencies {
     testImplementation "org.powermock:powermock-api-mockito2:2.0.2"
     testImplementation "org.powermock:powermock-module-junit4:2.0.2"
 
+    //scalable size unit
+    implementation 'com.intuit.ssp:ssp-android:1.0.5'
+    implementation 'com.intuit.sdp:sdp-android:1.0.5'
+
     testImplementation 'junit:junit:4.13'
     testImplementation "org.mockito:mockito-core:3.4.6"
     testImplementation "org.mockito:mockito-inline:2.21.0"
