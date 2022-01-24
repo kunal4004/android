@@ -199,6 +199,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+
     @Inject
     lateinit var vtoSavedPhotoToast: SingleMessageCommonToast
 
@@ -355,8 +356,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun savePhoto(bitmap: Bitmap) {
-        ImageResultContract.saveImageToStorage(requireContext(),bitmap)
-        vtoSavedPhotoToast.showMessage(requireActivity(),getString(R.string.saved_to_photos),250)
+        ImageResultContract.saveImageToStorage(requireContext(), bitmap)
+        vtoSavedPhotoToast.showMessage(requireActivity(), getString(R.string.saved_to_photos), 250)
     }
 
     private fun captureImageFromVtoLiveCamera() {
