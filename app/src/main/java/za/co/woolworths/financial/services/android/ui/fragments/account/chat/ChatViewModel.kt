@@ -55,33 +55,6 @@ class ChatViewModel : ViewModel() {
 
     fun isCreditCardAccount(): Boolean = liveChatDBRepository.isCreditCardAccount()
 
-    fun getServiceUnavailableMessage(): Pair<SendEmailIntentInfo, String> {
-        val inAppChatMessage = AppConfigSingleton.inAppChat
-        return when (getSessionType()) {
-            SessionType.Collections -> {
-                val collections = inAppChatMessage?.collections
-                val emailAddress = collections?.emailAddress ?: ""
-                val subjectLine = collections?.emailSubjectLine ?: ""
-                val serviceUnavailable =
-                    collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
-                        ?: ""
-
-                Pair(SendEmailIntentInfo(emailAddress, subjectLine), serviceUnavailable)
-            }
-            SessionType.CustomerService -> {
-                val customerService = inAppChatMessage?.customerService
-                val emailAddress = customerService?.emailAddress ?: ""
-                val subjectLine = customerService?.emailSubjectLine ?: ""
-                val serviceUnavailable =
-                    customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
-                        ?: ""
-
-                Pair(SendEmailIntentInfo(emailAddress, subjectLine), serviceUnavailable)
-            }
-            SessionType.Fraud -> Pair(SendEmailIntentInfo(), "")
-        }
-    }
-
     private fun getSessionType(): SessionType {
         return liveChatDBRepository.getSessionType()
     }
@@ -118,7 +91,7 @@ class ChatViewModel : ViewModel() {
                 var offlineMessageTemplate =
                     collections?.offlineMessageTemplate?.replace("{{emailAddress}}", emailAddress)
                 offlineMessageTemplate =
-                    offlineMessageTemplate?.replace("{{emailAddress}}", emailAddress)
+                    offlineMessageTemplate?.replace("{{emailAddress}}", emailAddress) ?: ""
                 val spannableOfflineMessageTemplate = SpannableString(offlineMessageTemplate)
                 spannableOfflineMessageTemplate.setSpan(
                     object : ClickableSpan() {
