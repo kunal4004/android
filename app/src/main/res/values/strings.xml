@@ -1303,6 +1303,7 @@
     <string name="treatment_plan_eligible_charged_off_description_pl">Your account is being managed by our collection partners</string>
     <string name="take_up_treatment_plan_description_pl">Your personal loan has an amount of R%1$s outstanding, and has therefore been temporarily deactivated. Please pay the overdue amount to reactivate your loan.</string>
     <string name="take_up_treatment_plan_description_sc">Your store card has an amount of R%1$s outstanding, and has therefore been temporarily deactivated. To start shopping again, please pay the overdue amount.</string>
+    <string name="take_up_treatment_plan_description_cc">add cc text with # R%1$s .</string>
     <string name="treatment_plan_eligible_charged_off_description_sc">Your account is being managed by our collection partners</string>
     <string name="view_payment_plan_button_label">View payment plan</string>
     <string name="view_payment_plans_button_label">View payment plans</string>
@@ -2379,4 +2380,14 @@
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
+    <string name="get_payment_plan_title">Get a Payment Plan</string>
+    <string name="get_payment_plan_desc">By signing up for a repayment plan, you secure the use of your facility for some point in the future. Once you have successfully completed your repayment plan, you will be able to utilise your facility again.</string>
+    <string name="get_a_payment_plan_1">Pay smaller instalments over a chosen period.</string>
+    <string name="get_a_payment_plan_2">Make payments on the Woolies app.</string>
+    <string name="get_a_payment_plan_3">Track your payment plan history and schedule.</string>
+    <string name="get_a_payment_plan_4">Simple and easy to manage from the palm of your hand.</string>
+    <string name="treatment_plan_desc_1">Pay smaller instalments over a chosen period.</string>
+    <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
+    <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
+    <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
 </resources>

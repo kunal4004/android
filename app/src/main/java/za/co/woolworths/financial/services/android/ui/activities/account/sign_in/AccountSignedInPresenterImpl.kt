@@ -116,10 +116,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     private fun checkEligibility(state: ApplyNowState, showExistingPopup: () -> Unit){
         val minimumViewTreatmentDelinquencyCycle = when(state){
             ApplyNowState.PERSONAL_LOAN -> {
-                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumDelinquencyCycle ?: 999
             }
             ApplyNowState.STORE_CARD -> {
-                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumDelinquencyCycle ?: 999
             }
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
@@ -129,10 +129,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
         val minimumTakeUpTreatmentDelinquencyCycle = when(state){
             ApplyNowState.PERSONAL_LOAN -> {
-                WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.minimumDelinquencyCycle ?: 999
             }
             ApplyNowState.STORE_CARD -> {
-                WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.minimumDelinquencyCycle!!
+                WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.minimumDelinquencyCycle ?: 999
             }
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
@@ -142,10 +142,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
         val viewTreatmentPlanSupported = when(state) {
             ApplyNowState.PERSONAL_LOAN -> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber!!
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber ?: 999
             }
             ApplyNowState.STORE_CARD -> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumSupportedAppBuildNumber!!
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.minimumSupportedAppBuildNumber ?: 999
             }
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
@@ -155,10 +155,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
         val takeUpTreatmentPlanSupported = when(state) {
             ApplyNowState.PERSONAL_LOAN -> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber!!
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.minimumSupportedAppBuildNumber ?: 999
             }
             ApplyNowState.STORE_CARD -> {
-                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.minimumSupportedAppBuildNumber!!
+                Utils.getAppBuildNumber() >= WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.minimumSupportedAppBuildNumber ?: 999
             }
             ApplyNowState.GOLD_CREDIT_CARD,
             ApplyNowState.BLACK_CREDIT_CARD,
@@ -179,59 +179,61 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
             OneAppService.getEligibility(productGroupCode)
                 .enqueue(CompletionHandler(object : IResponseListener<EligibilityPlanResponse> {
                     override fun onSuccess(response: EligibilityPlanResponse?) {
-                        if (response != null && response.httpCode == HTTP_OK) {
-                            val eligibleState = when (state) {
-                                ApplyNowState.STORE_CARD -> ProductGroupCode.SC
-                                ApplyNowState.GOLD_CREDIT_CARD,
-                                ApplyNowState.BLACK_CREDIT_CARD,
-                                ApplyNowState.SILVER_CREDIT_CARD -> ProductGroupCode.CC
-                                ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
-                            }
+                        when(response?.httpCode){
+                            HTTP_OK -> {
+                                val eligibleState = when (state) {
+                                    ApplyNowState.STORE_CARD -> ProductGroupCode.SC
+                                    ApplyNowState.GOLD_CREDIT_CARD,
+                                    ApplyNowState.BLACK_CREDIT_CARD,
+                                    ApplyNowState.SILVER_CREDIT_CARD -> ProductGroupCode.CC
+                                    ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
+                                }
 
-                            if(response.eligibilityPlan.productGroupCode == eligibleState){
-                                when (response.eligibilityPlan.actionText) {
-                                    ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
-                                        if(delinquencyCycle >= minimumTakeUpTreatmentDelinquencyCycle &&
-                                            takeUpTreatmentPlanSupported){
-                                            mainView?.showPlanButton(state, response.eligibilityPlan)
-                                            mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                                if(response.eligibilityPlan?.productGroupCode == eligibleState){
+                                    when (response.eligibilityPlan.actionText) {
+                                        ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
+                                            if(delinquencyCycle >= minimumTakeUpTreatmentDelinquencyCycle &&
+                                                takeUpTreatmentPlanSupported){
+                                                mainView?.showPlanButton(state, response.eligibilityPlan)
+                                                mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                                            }
+                                            else{
+                                                showExistingPopup()
+                                            }
                                         }
-                                        else{
-                                            showExistingPopup()
-                                        }
-                                    }
-                                    ActionText.VIEW_TREATMENT_PLAN.value -> {
-                                        if(delinquencyCycle >= minimumViewTreatmentDelinquencyCycle && viewTreatmentPlanSupported) {
-                                            mainView?.showPlanButton(state, response.eligibilityPlan)
+                                        ActionText.VIEW_TREATMENT_PLAN.value -> {
+                                            if(delinquencyCycle >= minimumViewTreatmentDelinquencyCycle && viewTreatmentPlanSupported) {
+                                                mainView?.showPlanButton(state, response.eligibilityPlan)
 
-                                            when (state){
-                                                ApplyNowState.PERSONAL_LOAN,
-                                                ApplyNowState.STORE_CARD ->
-                                                    mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                                                when (state){
+                                                    ApplyNowState.PERSONAL_LOAN,
+                                                    ApplyNowState.STORE_CARD ->
+                                                        mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
 
-                                                ApplyNowState.GOLD_CREDIT_CARD,
-                                                ApplyNowState.BLACK_CREDIT_CARD,
-                                                ApplyNowState.SILVER_CREDIT_CARD -> {
-                                                    when {
-                                                        productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
-                                                            mainView?.removeBlocksWhenChargedOff()!!
-                                                        }
-                                                        productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
-                                                            //display treatment plan popup with view payment options for CC
-                                                            mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                                                    ApplyNowState.GOLD_CREDIT_CARD,
+                                                    ApplyNowState.BLACK_CREDIT_CARD,
+                                                    ApplyNowState.SILVER_CREDIT_CARD -> {
+                                                        when {
+                                                            productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true) -> {
+                                                                mainView?.removeBlocksWhenChargedOff()!!
+                                                            }
+                                                            productOfferingStatus.equals(Utils.ACCOUNT_ACTIVE, ignoreCase = true) -> {
+                                                                //display treatment plan popup with view payment options for CC
+                                                                mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
+                                            else{
+                                                showExistingPopup()
+                                            }
                                         }
-                                        else{
-                                            showExistingPopup()
-                                        }
-                                    }
 
-                                    else -> {
-                                        //do nothing
-                                        //actionText == null => display no popup
+                                        else -> {
+                                            //do nothing
+                                            //actionText == null => display no popup
+                                        }
                                     }
                                 }
                             }

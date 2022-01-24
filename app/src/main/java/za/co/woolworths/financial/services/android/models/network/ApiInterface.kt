@@ -1224,12 +1224,12 @@ interface ApiInterface {
     ):Call<GenericResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("https://d0e0f0f1-07ac-4290-8d18-51ade5ee2661.mock.pstmn.io/wfs/app/v4/accounts/collections/checkEligibility")
+    @GET("wfs/app/v4/accounts/collections/checkEligibility")
     fun getEligibility(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
-        @Header("productGroupCode") productGroupCode: String,
+        @Query("productGroupCode") productGroupCode: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<EligibilityPlanResponse>
 }

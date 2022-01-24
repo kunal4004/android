@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="@dimen/twenty_four_dp"
+        android:paddingTop="@dimen/twenty_four_dp"
+        android:paddingEnd="@dimen/twenty_four_dp"
+        android:paddingBottom="@dimen/twenty_four_dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:text="@string/get_payment_plan_title"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+                app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/descTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/thirty_two_dp"
+                android:fontFamily="@font/myriad_pro_regular_otf"
+                android:lineSpacingExtra="1.5dp"
+                android:lineSpacingMultiplier="1.5"
+                android:text="@string/get_payment_plan_desc"
+                android:textColor="@color/checkout_delivering_title"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+                app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+
+            <ImageView
+                android:id="@+id/treatmentPlanImageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/thirty_two_dp"
+                android:src="@drawable/android_personal_loan"
+                app:layout_constraintEnd_toStartOf="@+id/endMarginGuideline"
+                app:layout_constraintStart_toStartOf="@+id/startMarginGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/descTextView"
+                tools:srcCompat="@drawable/android_personal_loan" />
+
+            <LinearLayout
+                android:id="@+id/treatmentPlanDetailsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/eight_dp"
+                android:orientation="vertical">
+
+                <LinearLayout style="@style/style_margin_layout">
+
+                    <ImageView
+                        style="@style/style_image"
+                        app:srcCompat="@drawable/icon_tick" />
+
+                    <TextView
+                        style="@style/TextDesc"
+                        android:text="@string/treatment_plan_desc_1" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/style_margin_layout">
+
+                    <ImageView
+                        style="@style/style_image"
+                        app:srcCompat="@drawable/icon_tick" />
+
+                    <TextView
+                        style="@style/TextDesc"
+                        android:text="@string/treatment_plan_desc_2" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/style_margin_layout">
+
+                    <ImageView
+                        style="@style/style_image"
+                        app:srcCompat="@drawable/icon_tick" />
+
+                    <TextView
+                        style="@style/TextDesc"
+                        android:text="@string/treatment_plan_desc_3" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/style_margin_layout">
+
+                    <ImageView
+                        style="@style/style_image"
+                        app:srcCompat="@drawable/icon_tick" />
+
+                    <TextView
+                        style="@style/TextDesc"
+                        android:text="@string/treatment_plan_desc_4" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/eighty_dp" />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/viewPlanOptionsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/thirty_six_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.02"
+        android:stateListAnimator="@null"
+        android:text="@string/view_plan_options_button_label"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</FrameLayout>
+
