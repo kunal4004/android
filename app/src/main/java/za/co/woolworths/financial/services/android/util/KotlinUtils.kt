@@ -209,8 +209,8 @@ class KotlinUtils {
                     startB + (fraction * (endB - startB)).toInt()
         }
 
-        fun roundCornerDrawable(view: View, color: String?) {
-            if (TextUtils.isEmpty(color)) return
+        fun roundCornerDrawable(view: View?, color: String?) {
+            if (view == null || TextUtils.isEmpty(color)) return
             val paddingDp: Float = (12 * view.context.resources.displayMetrics.density)
             val shape = GradientDrawable()
             shape.shape = GradientDrawable.RECTANGLE
