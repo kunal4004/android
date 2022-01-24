@@ -2352,6 +2352,7 @@
     <string name="actual_size">Actual Size</string>
     <string name="vto_color_selected_error">Oh no! That colour is unavailable to try on.</string>
     <string name="vto_try_it_on_tips">Try It On Tips</string>
+    <string name="saved_to_photos">Saved To Photos</string>
 
     <string name="blackCreditCard_title">Black Credit Card</string>
     <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
