@@ -15,6 +15,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.text.Html
 import android.text.TextUtils
 import android.view.*
@@ -100,6 +101,7 @@ import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1000_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_300_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SDK_INIT_FAIL
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
@@ -122,12 +124,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
     VtoSelectOptionListener, WMaterialShowcaseView.IWalkthroughActionListener, VtoTryAgainListener {
 
-    private var productDetails: ProductDetails? = null
+    var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
     private var mFetchFromJson: Boolean = false
     private var defaultProductResponse: String? = null
     private var auxiliaryImages: MutableList<String> = ArrayList()
-    private var productViewPagerAdapter: ProductViewPagerAdapter? = null
     private var productDetailsPresenter: ProductDetailsContract.ProductDetailsPresenter? = null
     private var storeIdForInventory: String? = ""
     private var otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>> = hashMapOf()
@@ -212,20 +213,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         fun newInstance() = ProductDetailsFragment()
         const val REQUEST_PERMISSION_MEDIA = 100
 
-        val STR_PRODUCT_CATEGORY = "strProductCategory"
-        val STR_PRODUCT_LIST = "strProductList"
-
+        const val STR_PRODUCT_CATEGORY = "strProductCategory"
+        const val STR_PRODUCT_LIST = "strProductList"
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.apply {
             productDetails = Utils.jsonStringToObject(
-                getString("strProductList"),
+                getString(STR_PRODUCT_LIST),
                 ProductDetails::class.java
             ) as ProductDetails
-            subCategoryTitle = getString("strProductCategory")
+            subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
         }
@@ -243,14 +242,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onAttach(context: Context) {
         super.onAttach(context)
         setUpToolBar()
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        (activity as? BottomNavigationActivity)?.apply {
-            showBottomNavigationMenu()
-            showToolbar()
-        }
     }
 
     private fun initViews() {
@@ -291,6 +282,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
+            updateAddToCartButtonForSelectedSKU()
             setUpToolBar()
         }
     }
@@ -298,7 +290,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun setUpToolBar() {
         (activity as? BottomNavigationActivity)?.apply {
             hideBottomNavigationMenu()
-            hideToolbar()
+            Handler().postDelayed({ hideToolbar() }, DELAY_300_MS)
         }
     }
 
@@ -920,13 +912,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         loadPromotionalImages()
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
-            productIngredientsInformation.visibility = View.VISIBLE
+            productIngredientsInformation?.visibility = View.VISIBLE
         if (this.productDetails?.nutritionalInformationDetails != null)
-            nutritionalInformation.visibility = View.VISIBLE
+            nutritionalInformation?.visibility = View.VISIBLE
         if (!this.productDetails?.dietary.isNullOrEmpty())
-            dietaryInformation.visibility = View.VISIBLE
+            dietaryInformation?.visibility = View.VISIBLE
         if (!this.productDetails?.allergens.isNullOrEmpty())
-            allergensInformation.visibility = View.VISIBLE
+            allergensInformation?.visibility = View.VISIBLE
 
 
         productDetails?.let {
@@ -939,15 +931,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 it.priceType,
                 it.kilogramPrice
             )
-            brandName.apply {
+            brandName?.apply {
                 if (!it.brandText.isNullOrEmpty()) {
                     text = it.brandText
                     visibility = View.VISIBLE
                 }
             }
             if (!it.freeGiftText.isNullOrEmpty()) {
-                freeGiftText.text = it.freeGiftText
-                freeGiftWithPurchaseLayout.visibility = View.VISIBLE
+                freeGiftText?.text = it.freeGiftText
+                freeGiftWithPurchaseLayout?.visibility = View.VISIBLE
             }
             if (productDetails?.promotionsList?.isEmpty() == false) {
                 productDetails?.promotionsList?.forEachIndexed { i, it ->
@@ -1003,14 +995,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateAuxiliaryImages(imagesList: List<String>) {
-        activity?.apply {
-            productViewPagerAdapter =
-                ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
-                    productImagesViewPager?.let { pager ->
-                        pager.adapter = this
-                        productImagesViewPagerIndicator.setViewPager(pager)
-                    }
-                }
+        ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
+            productImagesViewPager?.let { pager ->
+                pager.adapter = this
+                productImagesViewPagerIndicator.setViewPager(pager)
+            }
         }
     }
 
@@ -1886,29 +1875,27 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateStockAvailabilityLocation() {
-        activity?.apply {
-            getDeliveryLocation()?.let {
-                when (it) {
-                    is ShoppingDeliveryLocation -> {
-                        when (it.storePickup) {
-                            true -> {
-                                currentDeliveryLocation.text =
-                                    resources?.getString(R.string.store) + it.store?.name
-                                defaultLocationPlaceholder.text =
-                                    getString(R.string.collecting_from) + " "
-                            }
-                            else -> {
-                                currentDeliveryLocation.text =
-                                    it.suburb?.name + "," + it.province?.name
-                                defaultLocationPlaceholder.text =
-                                    getString(R.string.delivering_to_pdp)
-                            }
+        getDeliveryLocation()?.let {
+            when (it) {
+                is ShoppingDeliveryLocation -> {
+                    when (it.storePickup) {
+                        true -> {
+                            currentDeliveryLocation?.text =
+                                resources?.getString(R.string.store) + it.store?.name
+                            defaultLocationPlaceholder?.text =
+                                getString(R.string.collecting_from) + " "
+                        }
+                        else -> {
+                            currentDeliveryLocation?.text =
+                                it.suburb?.name + "," + it.province?.name
+                            defaultLocationPlaceholder?.text =
+                                getString(R.string.delivering_to_pdp)
                         }
                     }
-                    is ConfigQuickShopDefaultValues -> {
-                        currentDeliveryLocation.text = it.suburb.name
-                        defaultLocationPlaceholder.text = getString(R.string.set_to_default)
-                    }
+                }
+                is ConfigQuickShopDefaultValues -> {
+                    currentDeliveryLocation?.text = it.suburb.name
+                    defaultLocationPlaceholder?.text = getString(R.string.set_to_default)
                 }
             }
         }
@@ -2083,7 +2070,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (childFragmentManager.backStackEntryCount > 0) {
                 childFragmentManager.popBackStack()
             } else
-                activity?.finish()
+                activity?.onBackPressed()
         } else if (productDetails?.otherSkus.isNullOrEmpty())
             activity?.onBackPressed()
     }
