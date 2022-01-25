@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.awfs.coordination.R;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
@@ -55,6 +57,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
@@ -74,6 +77,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.tooltip.LetterSpacingTextView;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
@@ -90,37 +94,37 @@ import static za.co.woolworths.financial.services.android.util.ScreenManager.SHO
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
 
-    private final int DELIVERY_LOCATION_REQUEST = 2;
-    public static final int ADD_TO_CART_SUCCESS_RESULT = 2000;
-    private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 2011;
-    private int DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222;
     public final static int QUANTITY_CHANGED_FROM_LIST = 2010;
-    private int REQUEST_SUBURB_CHANGE = 12345;
+    public final static int ADD_TO_CART_SUCCESS_RESULT = 2000;
+    private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 2011;
+    private final int DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222;
+    private final int REQUEST_SUBURB_CHANGE = 12345;
+    private final int DELIVERY_LOCATION_REQUEST = 2;
 
-    private String listName;
-    private String listId;
-    private List<ShoppingListItem> mShoppingListItems;
-    private ShoppingListItemsAdapter shoppingListItemsAdapter;
-    private boolean isMenuItemReadyToShow = false;
     private ErrorHandlerView mErrorHandlerView;
+    private RecyclerView rcvShoppingListItems;
+    private ProgressBar loadingBar, pbLoadingIndicator;
+    private RelativeLayout rlCheckOut;
+    private WButton btnCheckOut;
+    private LinearLayout rlEmptyView;
+    private TextView selectDeselectAllTextView;
+
+    private boolean openFromMyList,
+            addedToCart,
+            errorMessageWasPopUp;
+    private boolean internetConnectionWasLost = false,
+            isMenuItemReadyToShow = false;
+    private Integer mDeliveryResultCode;
+    private String listName, listId;
+    private List<String> matchesFullFillmentTypeKey;
+    private List<ShoppingListItem> mShoppingListItems;
+    private ArrayList<FulfillmentStoreMap> fulfillmentStoreMapArrayList;
+
+    private ShoppingListItemsAdapter shoppingListItemsAdapter;
     private BroadcastReceiver mConnectionBroadcast;
     private Call<AddItemToCartResponse> mPostAddToCart;
     private Call<SkusInventoryForStoreResponse> mGetInventorySkusForStore;
-    private ArrayList<FulfillmentStoreMap> fulfillmentStoreMapArrayList;
-    private boolean errorMessageWasPopUp;
     private ShoppingListItem mOpenShoppingListItem;
-    private Integer mDeliveryResultCode;
-    private boolean addedToCart;
-    private boolean internetConnectionWasLost = false;
-    private RecyclerView rcvShoppingListItems;
-    private ProgressBar loadingBar;
-    private RelativeLayout rlCheckOut;
-    private ProgressBar pbLoadingIndicator;
-    private WButton btnCheckOut;
-    private LinearLayout rlEmptyView;
-    private boolean openFromMyList;
-    private List<String> matchesFullFillmentTypeKey;
-    private TextView selectDeselectAllTextView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -157,9 +161,24 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         pbLoadingIndicator = view.findViewById(R.id.pbLoadingIndicator);
         btnCheckOut = view.findViewById(R.id.btnCheckOut);
         rlEmptyView = view.findViewById(R.id.rlEmptyListView);
+
         Activity activity = getActivity();
-        if (activity != null)
+        AppBarLayout appbar = view.findViewById(R.id.appbar);
+        if (activity instanceof ShoppingListDetailActivity) {
             selectDeselectAllTextView = activity.findViewById(R.id.selectDeselectAllTextView);
+            appbar.setVisibility(GONE);
+        } else if (activity instanceof BottomNavigationActivity) {
+            appbar.setVisibility(VISIBLE);
+            ((BottomNavigationActivity) activity).hideToolbar();
+            selectDeselectAllTextView = view.findViewById(R.id.selectDeselectAllTextView);
+            TextView shoppingListTitleTextView = view.findViewById(R.id.shoppingListTitleTextView);
+            shoppingListTitleTextView.setText(listName);
+            TextView editButton = view.findViewById(R.id.editShoppingListItemTextView);
+            editButton.setOnClickListener(this);
+            ImageView backButton = view.findViewById(R.id.btnBack);
+            backButton.setOnClickListener(v -> activity.onBackPressed());
+        }
+
         initList(rcvShoppingListItems);
         setScrollListener(rcvShoppingListItems);
 
@@ -293,6 +312,16 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.editShoppingListItemTextView:
+                Activity activity = getActivity();
+                if (activity == null || !(view instanceof TextView)) {
+                    return;
+                }
+                TextView editBtnTextView = (TextView) view;
+                String editButtonText = editBtnTextView.getText().toString().equalsIgnoreCase(getString(R.string.edit)) ? getString(R.string.done) : getString(R.string.edit);
+                editBtnTextView.setText(editButtonText);
+                toggleEditButton(editButtonText);
+                break;
             case R.id.selectDeselectAllTextView:
                 onOptionsItemSelected();
                 break;
@@ -445,9 +474,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
         // Present toast on BottomNavigationMenu if shopping list detail was opened from my list
         if (openFromMyList) {
-            activity.setResult(RESULT_OK, resultIntent);
-            activity.finish();
-            activity.overridePendingTransition(0, 0);
+            if (activity instanceof ShoppingListDetailActivity) {
+                activity.setResult(RESULT_OK, resultIntent);
+                activity.finish();
+                activity.overridePendingTransition(0, 0);
+            } else if (activity instanceof BottomNavigationActivity) {
+                activity.onBackPressed();
+                BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
+                if (addItemToCartResponse.data.size() > 0) {
+                    String itemAddToCartMessage = addItemToCartResponse.data.get(0).message;
+                    ProductCountMap productCountMap = addItemToCartResponse.data.get(0).productCountMap;
+                    bottomNavigationActivity.setToast(itemAddToCartMessage, "", productCountMap, size);
+                }
+            }
         } else {
             // else display shopping list toast
             if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
@@ -548,8 +587,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         rlEmptyView.setVisibility(GONE);
         rcvShoppingListItems.setVisibility(GONE);
         loadingBar.setVisibility(VISIBLE);
-        ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
-
+        if (activity instanceof ShoppingListDetailActivity) {
+            ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
+        }
 
         Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.getShoppingListItems(listId);
         shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingListItemsResponse>() {
@@ -598,10 +638,20 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         Activity activity = getActivity();
         if (activity == null) return;
-        ShoppingListDetailActivity shoppingListActivity = ((ShoppingListDetailActivity) activity);
         if (isMenuItemReadyToShow) {
             selectDeselectAllTextView.setVisibility(VISIBLE);
-            shoppingListActivity.editButtonVisibility(true);
+            if (activity instanceof ShoppingListDetailActivity) {
+                ShoppingListDetailActivity shoppingListActivity = ((ShoppingListDetailActivity) activity);
+                shoppingListActivity.editButtonVisibility(true);
+            } else if (activity instanceof BottomNavigationActivity) {
+                selectDeselectAllTextView.setVisibility(VISIBLE);
+                View view = getView();
+                if (view == null) {
+                    return;
+                }
+                TextView editButton = view.findViewById(R.id.editShoppingListItemTextView);
+                editButton.setVisibility(VISIBLE);
+            }
         } else {
             selectDeselectAllTextView.setVisibility(GONE);
             editButtonVisibility();
@@ -875,7 +925,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
 
         if (requestCode == REQUEST_SUBURB_CHANGE) {
-                initGetShoppingListItems();
+            initGetShoppingListItems();
         }
 
         if (requestCode == QUANTITY_CHANGED_FROM_LIST) {
@@ -1112,14 +1162,25 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private void editButtonVisibility() {
         Activity activity = getActivity();
         if (activity == null) return;
-        ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
         if (shoppingListItemsAdapter.getItemCount() >= 2) {
-            shoppingListDetailActivity.editButtonVisibility(true);
+            if (activity instanceof ShoppingListDetailActivity) {
+                ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
+                shoppingListDetailActivity.editButtonVisibility(true);
+            } else if (activity instanceof BottomNavigationActivity && getView() != null) {
+                TextView editBtnTextView = getView().findViewById(R.id.editShoppingListItemTextView);
+                editBtnTextView.setVisibility(VISIBLE);
+                editBtnTextView.setOnClickListener(this);
+            }
         } else {
-            shoppingListDetailActivity.editButtonVisibility(false);
+            if (activity instanceof ShoppingListDetailActivity) {
+                ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
+                shoppingListDetailActivity.editButtonVisibility(false);
+            } else if (activity instanceof BottomNavigationActivity && getView() != null) {
+                TextView editBtnTextView = getView().findViewById(R.id.editShoppingListItemTextView);
+                editBtnTextView.setVisibility(GONE);
+            }
         }
     }
-
 
     @Override
     public void onConfirmLocation() {
@@ -1138,5 +1199,16 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             totalQuantity = totalQuantity + item.getQuantity();
         }
         return totalQuantity;
+    }
+
+    @Override
+    public void onDestroy() {
+        Activity activity = getActivity();
+        if (!(activity instanceof BottomNavigationActivity)) {
+            super.onDestroy();
+            return;
+        }
+        ((BottomNavigationActivity) activity).showToolbar();
+        super.onDestroy();
     }
 }

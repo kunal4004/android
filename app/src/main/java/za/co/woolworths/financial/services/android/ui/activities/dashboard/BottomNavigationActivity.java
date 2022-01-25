@@ -11,6 +11,8 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
@@ -75,6 +77,7 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductSearchTypeAndTerm;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -97,7 +100,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.CancelOrderProgressFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
@@ -486,8 +488,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Gson gson = new Gson();
         String strProductList = gson.toJson(productList);
         Bundle bundle = new Bundle();
-        bundle.putString("strProductList", strProductList);
-        bundle.putString("strProductCategory", productName);
+        bundle.putString(STR_PRODUCT_LIST, strProductList);
+        bundle.putString(STR_PRODUCT_CATEGORY, productName);
         ProductDetailsFragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
         productDetailsFragmentNew.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
@@ -534,6 +536,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     .allowStateLoss(true)
                     .build();
 
+            if (mNavController.getCurrentFrag() instanceof ProductDetailsFragment) {
+                ProductDetails productDetails = ((ProductDetailsFragment) mNavController.getCurrentFrag()).getProductDetails();
+                Bundle arguments = fragment.getArguments();
+                ProductDetails newProductDetails = (ProductDetails) Utils.jsonStringToObject(arguments.getString(STR_PRODUCT_LIST), ProductDetails.class);
+
+                if (productDetails != null && productDetails.productId.equals(newProductDetails.productId)) {
+                    // when we open same PDP then instead of new PDP it will close existing PDP and opens up new same PDP.
+                    mNavController.popFragment();
+                    mNavController.pushFragment(fragment, ft);
+                    return;
+                }
+            }
             mNavController.pushFragment(fragment, ft);
         }
     }
