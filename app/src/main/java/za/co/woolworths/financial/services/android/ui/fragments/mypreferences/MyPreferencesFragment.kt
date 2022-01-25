@@ -412,7 +412,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     fun setUserAuthentication(isAuthenticated: Boolean) {
         AuthenticateUtils.getInstance(activity).setUserAuthenticate(if (isAuthenticated) SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON else SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF)
-        auSwitch.isChecked = isAuthenticated
+        auSwitch?.isChecked = isAuthenticated
     }
 
     fun openDeviceSecuritySettings() {

@@ -9,7 +9,7 @@ data class ConfigInAppChat(
         val apiURI: String,
         val userPoolId: String,
         val userPoolWebClientId: String,
-        val collections: ConfigCollections,
+        var collections: ConfigCollections?=null,
         val customerService: ConfigCustomerService,
         var liveChatEnabled: ConfigLiveChatEnabled? = null,
         val tradingHours: MutableList<ConfigTradingHours>,

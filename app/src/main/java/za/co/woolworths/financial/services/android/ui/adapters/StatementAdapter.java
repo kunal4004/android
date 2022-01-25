@@ -81,13 +81,13 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 
 	private void onClickListener(final StatementViewHolder holder) {
 		holder.itemView.setOnClickListener(v -> {
-			if (!viewClicked()) {  // disable click
+			if (!viewClicked() || statementListener == null) {  // disable click & handle null listener
 				return;
 			}
 			statementListener.onItemClicked(v, holder.getAdapterPosition());
 		});
 		holder.tvViewStatement.setOnClickListener(v -> {
-			if (!viewClicked()) {  // disable click
+			if (!viewClicked() || statementListener == null) {  // disable click & handle null listener
 				return;
 			}
 			int position = holder.getAdapterPosition();
