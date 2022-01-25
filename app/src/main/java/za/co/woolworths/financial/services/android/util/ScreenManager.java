@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBo
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
 
 /**
  * Created by eesajacobs on 2016/11/30.
@@ -205,13 +206,25 @@ public class ScreenManager {
     }
 
     public static void presentShoppingListDetailActivity(Activity activity, String listId, String listName, boolean openFromMyList) {
-        Intent openShoppingListDetailActivity = new Intent(activity, ShoppingListDetailActivity.class);
+        /*Intent openShoppingListDetailActivity = new Intent(activity, ShoppingListDetailActivity.class);
         openShoppingListDetailActivity.putExtra("listId", listId);
         openShoppingListDetailActivity.putExtra("listName", listName);
         openShoppingListDetailActivity.putExtra("openFromMyList", openFromMyList);
         activity.startActivityForResult(openShoppingListDetailActivity, SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+*/
+        if (!(activity instanceof BottomNavigationActivity)) {
+            return;
+        }
 
+        Bundle bundle = new Bundle();
+        bundle.putString("listId", listId);
+        bundle.putString("listName", listName);
+        bundle.putBoolean("openFromMyList", openFromMyList);
+        ShoppingListDetailFragment shoppingListDetailFragment = new ShoppingListDetailFragment();
+        shoppingListDetailFragment.setArguments(bundle);
+        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+        bottomNavigationActivity.pushFragment(shoppingListDetailFragment);
     }
 
     public static void presentShoppingListSearchResult(Activity activity, String searchTerm, String listId) {
