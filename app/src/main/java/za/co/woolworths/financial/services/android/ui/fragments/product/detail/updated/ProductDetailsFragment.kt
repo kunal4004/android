@@ -233,6 +233,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val HTTP_CODE_502 = 502
         fun newInstance() = ProductDetailsFragment()
         const val REQUEST_PERMISSION_MEDIA = 100
+        const val ZERO_REVIEWS = "0 Reviews"
 
     }
 
@@ -316,14 +317,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun updateReportLikeStatus(){
-        ratingReviewResponse?.reviews?.get(0).let {
-            if(RatingAndReviewUtil.likedReviews.contains(it?.id.toString())){
-                iv_like.setImageResource(R.drawable.iv_like_selected)
-            }
-            if (RatingAndReviewUtil.reportedReviews.contains(it?.id.toString())){
-                tvReport.setTextColor(Color.RED)
-                tvReport.text = resources.getString(R.string.reported)
-                tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        if(ratingReviewResponse?.reviews?.isNotEmpty() == true) {
+            ratingReviewResponse?.reviews?.get(0)?.let {
+                if (RatingAndReviewUtil.likedReviews.contains(it.id.toString())) {
+                    iv_like.setImageResource(R.drawable.iv_like_selected)
+                }
+                if (RatingAndReviewUtil.reportedReviews.contains(it.id.toString())) {
+                    tvReport.setTextColor(Color.RED)
+                    tvReport.text = resources.getString(R.string.reported)
+                    tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+                }
             }
         }
     }
@@ -383,7 +386,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.tvRatingDetails -> showRatingDetailsDailog()
             R.id.tvSkinProfile->viewSkinProfileDialog()
             R.id.btViewMoreReview->navigateToMoreReviewsScreen()
-            R.id.tvTotalReviews->navigateToMoreReviewsScreen()
+            R.id.tvTotalReviews->{ if(tvTotalReviews.text != ZERO_REVIEWS) navigateToMoreReviewsScreen()}
             R.id.tvReport->navigateToReportReviewScreen()
             R.id.iv_like->likeButtonClicked()
         }
@@ -1046,9 +1049,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ratingBarTop.visibility = View.VISIBLE
                 tvTotalReviews.visibility = View.VISIBLE
                 prodId = it.productId
-                if(it.reviewCount<=0) {
-                    tvTotalReviews.setClickable(false)
-                }
                 tvTotalReviews.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             }else{
                 hideRatingAndReview()
@@ -1115,6 +1115,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         ratingNReviewResponse.apply {
             reviewStatistics.apply {
                 ratingBar.rating = averageRating
+                ratingBarTop.rating = averageRating
                 tvCustomerReviewCount.text = resources.getQuantityString(R.plurals.customer_review, reviewCount, reviewCount)
                 val recommend= recommendedPercentage.split("%")
                 if (recommend.size == 2) {
@@ -1126,6 +1127,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 else {
                     btViewMoreReview.visibility = View.GONE
                 }
+                tvTotalReviews.text = resources.getQuantityString(R.plurals.no_review, reviewCount, reviewCount)
             }
             tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             tvSkinProfile.paintFlags = Paint.UNDERLINE_TEXT_FLAG
