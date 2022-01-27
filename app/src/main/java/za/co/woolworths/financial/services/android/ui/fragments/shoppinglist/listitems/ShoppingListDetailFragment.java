@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.li
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS;
@@ -160,7 +161,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             appbar.setVisibility(VISIBLE);
             BottomNavigationActivity activity = ((BottomNavigationActivity) getActivity());
             activity.hideToolbar();
-            activity.showToolbar();
             activity.showBackNavigationIcon(true);
             activity.setToolbarBackgroundDrawable(R.drawable.appbar_background);
             ImageView backButton = view.findViewById(R.id.btnBack);
@@ -926,6 +926,14 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             ToastFactory.Companion.buildShoppingListFromSearchResultToast(getActivity(), rlCheckOut, listName, count);
             initGetShoppingListItems();
             return;
+        }
+
+        if ((requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)
+                || (requestCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)) {
+            getActivity().setResult(ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE, data);
+            getActivity().onBackPressed();
+            return;
+            // response from search product from shopping list
         }
 
         if (requestCode == DELIVERY_LOCATION_REQUEST && resultCode == RESULT_OK) { // on suburb selection successful
