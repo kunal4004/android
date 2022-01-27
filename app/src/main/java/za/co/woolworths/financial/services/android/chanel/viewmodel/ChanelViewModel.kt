@@ -6,16 +6,22 @@ import kotlinx.coroutines.Dispatchers
 import za.co.woolworths.financial.services.android.chanel.services.repository.ChanelRepository
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelResource
 
-class ChanelViewModel(private val chanelRepository: ChanelRepository): ViewModel() {
+class ChanelViewModel(private val chanelRepository: ChanelRepository) : ViewModel() {
 
-    fun getChanelResposne() = liveData(Dispatchers.IO) {
+    fun getChanelResposne(
+        searchTerm: String,
+        searhType: String,
+        filterContent: Boolean
+    ) = liveData(Dispatchers.IO) {
         emit(ChanelResource.loading(data = null))
         try {
-            // this values are added for testing purpose.
-            // later this will be removed once view part is added
-            emit(ChanelResource.success(data = chanelRepository.getChanelBannerData(
-                "chanel", "navigate", false
-            )))
+            emit(
+                ChanelResource.success(
+                    data = chanelRepository.getChanelBannerData(
+                        searchTerm, searhType, filterContent
+                    )
+                )
+            )
         } catch (exception: Exception) {
             emit(ChanelResource.error(data = null, msg = exception.toString()))
         }
