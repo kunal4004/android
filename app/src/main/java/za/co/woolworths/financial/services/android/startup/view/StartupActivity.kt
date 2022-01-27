@@ -145,6 +145,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun setDataOnUI(configData: ConfigData?, isComingFromSuccess: Boolean) {
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITH_CTA)
         progress_bar?.visibility = View.GONE
         first_btn?.visibility = View.VISIBLE
         second_btn?.visibility = View.VISIBLE
@@ -391,6 +392,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun presentNextScreenOrServerMessage() {
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITHOUT_CTA)
         showNonVideoViewWithoutErrorLayout()
         presentNextScreen()
     }
