@@ -1,5 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems;
 
+import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS;
+import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_417;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
+import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -59,10 +72,10 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -73,24 +86,9 @@ import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PostItemToCart;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.tooltip.LetterSpacingTextView;
-
-import static android.app.Activity.RESULT_OK;
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS;
-import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_417;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_SESSION_TIMEOUT_440;
-import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
-import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface, IOnConfirmDeliveryLocationActionListener {
 
@@ -108,6 +106,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private WButton btnCheckOut;
     private LinearLayout rlEmptyView;
     private TextView selectDeselectAllTextView;
+    private TextView editShoppingListItemTextView;
 
     private boolean openFromMyList,
             addedToCart,
@@ -135,7 +134,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             listId = argument.getString("listId");
             listName = argument.getString("listName");
             openFromMyList = argument.getBoolean("openFromMyList", false);
-        }
+        } else
+            listName = "";
+        Utils.updateStatusBarBackground(getActivity());
     }
 
     @Override
@@ -146,13 +147,33 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setUpToolbar(listName, view);
         initViewAndEvent(view);
         initGetShoppingListItems();
-        selectDeselectAllTextView.setOnClickListener(this);
+    }
+
+    private void setUpToolbar(String listName, View view) {
+        AppBarLayout appbar = view.findViewById(R.id.appbar);
+        TextView shoppingListTitleTextView = view.findViewById(R.id.shoppingListTitleTextView);
+        shoppingListTitleTextView.setText(listName);
+        if (getActivity() instanceof BottomNavigationActivity) {
+            appbar.setVisibility(VISIBLE);
+            BottomNavigationActivity activity = ((BottomNavigationActivity) getActivity());
+            activity.hideToolbar();
+            activity.showToolbar();
+            activity.showBackNavigationIcon(true);
+            activity.setToolbarBackgroundDrawable(R.drawable.appbar_background);
+            ImageView backButton = view.findViewById(R.id.btnBack);
+            backButton.setOnClickListener(v -> activity.onBackPressed());
+            activity.toolbar().setNavigationOnClickListener(v -> activity.popFragment());
+            activity.setTitle(listName);
+        }
     }
 
     private void initViewAndEvent(View view) {
         fulfillmentStoreMapArrayList = new ArrayList<>();
+        selectDeselectAllTextView = view.findViewById(R.id.selectDeselectAllTextView);
+        selectDeselectAllTextView.setOnClickListener(this);
         RelativeLayout rlNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
         rcvShoppingListItems = view.findViewById(R.id.rcvShoppingListItems);
         WTextView textProductSearch = view.findViewById(R.id.textProductSearch);
@@ -161,23 +182,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         pbLoadingIndicator = view.findViewById(R.id.pbLoadingIndicator);
         btnCheckOut = view.findViewById(R.id.btnCheckOut);
         rlEmptyView = view.findViewById(R.id.rlEmptyListView);
-
-        Activity activity = getActivity();
-        AppBarLayout appbar = view.findViewById(R.id.appbar);
-        if (activity instanceof ShoppingListDetailActivity) {
-            selectDeselectAllTextView = activity.findViewById(R.id.selectDeselectAllTextView);
-            appbar.setVisibility(GONE);
-        } else if (activity instanceof BottomNavigationActivity) {
-            appbar.setVisibility(VISIBLE);
-            ((BottomNavigationActivity) activity).hideToolbar();
-            selectDeselectAllTextView = view.findViewById(R.id.selectDeselectAllTextView);
-            TextView shoppingListTitleTextView = view.findViewById(R.id.shoppingListTitleTextView);
-            shoppingListTitleTextView.setText(listName);
-            TextView editButton = view.findViewById(R.id.editShoppingListItemTextView);
-            editButton.setOnClickListener(this);
-            ImageView backButton = view.findViewById(R.id.btnBack);
-            backButton.setOnClickListener(v -> activity.onBackPressed());
-        }
 
         initList(rcvShoppingListItems);
         setScrollListener(rcvShoppingListItems);
@@ -188,6 +192,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
         mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
         mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+        editShoppingListItemTextView = view.findViewById(R.id.editShoppingListItemTextView);
+        editButtonVisibility();
         view.findViewById(R.id.btnRetry).setOnClickListener(this);
         EmptyCartView emptyCartView = new EmptyCartView(view, this);
         emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.emptyshoppinglist);
@@ -420,7 +426,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 Activity activity = getActivity();
                 if (activity != null) {
                     activity.invalidateOptionsMenu();
-                    ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
+                    if (activity instanceof BottomNavigationActivity) {
+                        activity.setTitle(getString(R.string.edit));
+                    }
                 }
                 rlCheckOut.setVisibility(GONE);
             }
@@ -474,11 +482,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
         // Present toast on BottomNavigationMenu if shopping list detail was opened from my list
         if (openFromMyList) {
-            if (activity instanceof ShoppingListDetailActivity) {
-                activity.setResult(RESULT_OK, resultIntent);
-                activity.finish();
-                activity.overridePendingTransition(0, 0);
-            } else if (activity instanceof BottomNavigationActivity) {
+            if (activity instanceof BottomNavigationActivity) {
                 activity.onBackPressed();
                 BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
                 if (addItemToCartResponse.data.size() > 0) {
@@ -570,12 +574,20 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void openProductDetailFragment(String productName, ProductList productList) {
-        Gson gson = new Gson();
-        String strProductList = gson.toJson(productList);
-        Bundle bundle = new Bundle();
-        bundle.putString("strProductList", strProductList);
-        bundle.putString("strProductCategory", productName);
-        ScreenManager.presentProductDetails(getFragmentManager(), R.id.relEmptyStateHandler, bundle);
+        if (getActivity() instanceof BottomNavigationActivity) {
+            ProductDetailsFragment fragment = ProductDetailsFragment.Companion.newInstance();
+            Gson gson = new Gson();
+            String strProductList = gson.toJson(productList);
+            Bundle bundle = new Bundle();
+            bundle.putString("strProductList", strProductList);
+            bundle.putString("strProductCategory", productName);
+            fragment.setArguments(bundle);
+            BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+            // Move to shop tab first.
+            bottomNavigationActivity.getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+            bottomNavigationActivity.pushFragment(fragment);
+        } else
+            return;
     }
 
 
@@ -587,8 +599,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         rlEmptyView.setVisibility(GONE);
         rcvShoppingListItems.setVisibility(GONE);
         loadingBar.setVisibility(VISIBLE);
-        if (activity instanceof ShoppingListDetailActivity) {
-            ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
+        if (activity instanceof BottomNavigationActivity) {
+            activity.setTitle(getString(R.string.edit));
         }
 
         Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.getShoppingListItems(listId);
@@ -640,17 +652,13 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         if (activity == null) return;
         if (isMenuItemReadyToShow) {
             selectDeselectAllTextView.setVisibility(VISIBLE);
-            if (activity instanceof ShoppingListDetailActivity) {
-                ShoppingListDetailActivity shoppingListActivity = ((ShoppingListDetailActivity) activity);
-                shoppingListActivity.editButtonVisibility(true);
-            } else if (activity instanceof BottomNavigationActivity) {
+            if (activity instanceof BottomNavigationActivity) {
                 selectDeselectAllTextView.setVisibility(VISIBLE);
                 View view = getView();
                 if (view == null) {
                     return;
                 }
-                TextView editButton = view.findViewById(R.id.editShoppingListItemTextView);
-                editButton.setVisibility(VISIBLE);
+                editShoppingListItemTextView.setVisibility(VISIBLE);
             }
         } else {
             selectDeselectAllTextView.setVisibility(GONE);
@@ -1162,22 +1170,12 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private void editButtonVisibility() {
         Activity activity = getActivity();
         if (activity == null) return;
-        if (shoppingListItemsAdapter.getItemCount() >= 2) {
-            if (activity instanceof ShoppingListDetailActivity) {
-                ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
-                shoppingListDetailActivity.editButtonVisibility(true);
-            } else if (activity instanceof BottomNavigationActivity && getView() != null) {
-                TextView editBtnTextView = getView().findViewById(R.id.editShoppingListItemTextView);
-                editBtnTextView.setVisibility(VISIBLE);
-                editBtnTextView.setOnClickListener(this);
-            }
-        } else {
-            if (activity instanceof ShoppingListDetailActivity) {
-                ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
-                shoppingListDetailActivity.editButtonVisibility(false);
-            } else if (activity instanceof BottomNavigationActivity && getView() != null) {
-                TextView editBtnTextView = getView().findViewById(R.id.editShoppingListItemTextView);
-                editBtnTextView.setVisibility(GONE);
+        if (getView() != null) {
+            if (shoppingListItemsAdapter != null && shoppingListItemsAdapter.getItemCount() >= 2) {
+                editShoppingListItemTextView.setVisibility(VISIBLE);
+                editShoppingListItemTextView.setOnClickListener(this);
+            } else {
+                editShoppingListItemTextView.setVisibility(GONE);
             }
         }
     }
@@ -1204,11 +1202,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     @Override
     public void onDestroy() {
         Activity activity = getActivity();
-        if (!(activity instanceof BottomNavigationActivity)) {
-            super.onDestroy();
-            return;
+        if (activity instanceof BottomNavigationActivity) {
+            ((BottomNavigationActivity) activity).showToolbar();
         }
-        ((BottomNavigationActivity) activity).showToolbar();
         super.onDestroy();
     }
 }

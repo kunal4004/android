@@ -29,7 +29,7 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.updateStatusBarBackground(this);
+        /*Utils.updateStatusBarBackground(this);
         setContentView(R.layout.shopping_list_detail_activity);
         Bundle bundle = getIntent().getExtras();
         String listId = "", listName = "";
@@ -43,12 +43,12 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
         setUpToolbar(listName);
 
         editShoppingListItemTextView = findViewById(R.id.editShoppingListItemTextView);
-        editShoppingListItemTextView.setOnClickListener(this);
+        editShoppingListItemTextView.setOnClickListener(this);*/
 
-        initFragment(listId, listName, openFromMyList);
+        //initFragment(listId, listName, openFromMyList);
     }
 
-    private void retrieveBundle() {
+    /*private void retrieveBundle() {
         ImageView btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,9 +56,9 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
                 onBackPressed();
             }
         });
-    }
+    }*/
 
-    private void setUpToolbar(String listName) {
+    /*private void setUpToolbar(String listName) {
         Toolbar shoppingToolbar = findViewById(R.id.mToolbar);
         TextView shoppingListTitleTextView = findViewById(R.id.shoppingListTitleTextView);
         shoppingListTitleTextView.setText(listName);
@@ -69,9 +69,9 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
             actionBar.setDisplayUseLogoEnabled(false);
             actionBar.setHomeAsUpIndicator(R.drawable.back24);
         }
-    }
+    }*/
 
-    private void initFragment(String listId, String listName, boolean openFromMyList) {
+    /*private void initFragment(String listId, String listName, boolean openFromMyList) {
         ShoppingListDetailFragment shoppingListDetailFragment = new ShoppingListDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("listId", listId);
@@ -84,13 +84,13 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
                         ShoppingListDetailFragment.class.getSimpleName())
                 .disallowAddToBackStack()
                 .commit();
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         finish();
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -114,7 +114,7 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.editShoppingListItemTextView) {
+       /* if (view.getId() == R.id.editShoppingListItemTextView) {
             if (getSupportFragmentManager() == null) return;
             String editButtonText = editShoppingListItemTextView.getText().toString().equalsIgnoreCase(getString(R.string.edit)) ? getString(R.string.done) : getString(R.string.edit);
             editShoppingListItemTextView.setText(editButtonText);
@@ -122,14 +122,14 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
             if (currentFragment instanceof ShoppingListDetailFragment) {
                 ((ShoppingListDetailFragment) currentFragment).toggleEditButton(editButtonText);
             }
-        }
+        }*/
     }
 
     public void editButtonVisibility(boolean isVisible) {
         editShoppingListItemTextView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
-    public void setToolbarText(String name){
+    /*public void setToolbarText(String name){
         editShoppingListItemTextView.setText(name);
-    }
+    }*/
 }
