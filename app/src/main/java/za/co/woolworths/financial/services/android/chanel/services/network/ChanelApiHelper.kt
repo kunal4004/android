@@ -9,7 +9,7 @@ class ChanelApiHelper : RetrofitConfig() {
     suspend fun getBanners(
         searchTerm: String,
         searchType: String,
-        resposneType: String,
+        resposneType: String = "detail",
         pageOffset: Int = 0,
         pageSize: Int = 60,
         filterContent: Boolean

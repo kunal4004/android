@@ -6,6 +6,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
+import za.co.woolworths.financial.services.android.chanel.model.ChanelResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -1243,6 +1244,6 @@ interface ApiInterface {
         @Query("pageOffset") pageOffset: Int,
         @Query("pageSize") pageSize: Int,
         @Query("filterContent") filterContent: Boolean,
-    ):ChangeAddressResponse
+    ):ChanelResponse
 
 }
