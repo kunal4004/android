@@ -1232,4 +1232,17 @@ interface ApiInterface {
         @Path("insuranceType") insuranceType: String,
         @Body insuranceTypeOptInBody: InsuranceTypeOptInBody
     ):Call<GenericResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600")
+    @GET("wfs/app/v4/searchSortAndFilterV2")
+    suspend fun getChanelResponse(
+
+        @Query("searchTerm") searchTerm: String,
+        @Query("searchType") searchType: String,
+        @Query("responseType") responseType: String,
+        @Query("pageOffset") pageOffset: Int,
+        @Query("pageSize") pageSize: Int,
+        @Query("filterContent") filterContent: Boolean,
+    ):ChangeAddressResponse
+
 }
