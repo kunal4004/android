@@ -9,8 +9,8 @@ import za.co.woolworths.financial.services.android.chanel.utils.ChanelResource
 class ChanelViewModel(private val chanelRepository: ChanelRepository) : ViewModel() {
 
     fun getChanelResposne(
-        searchTerm: String,
-        searhType: String,
+        searchTerm: String?,
+        searhType: String?,
         filterContent: Boolean
     ) = liveData(Dispatchers.IO) {
         emit(ChanelResource.loading(data = null))
@@ -18,7 +18,7 @@ class ChanelViewModel(private val chanelRepository: ChanelRepository) : ViewMode
             emit(
                 ChanelResource.success(
                     data = chanelRepository.getChanelBannerData(
-                        searchTerm, searhType, filterContent
+                        searchTerm!!, searhType!!, filterContent
                     )
                 )
             )
