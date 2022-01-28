@@ -8,6 +8,7 @@ import android.animation.ObjectAnimator
 import kotlinx.android.synthetic.main.wreward_logout_fragment.*
 import kotlinx.android.synthetic.main.wreward_sign_out_content.*
 import android.view.*
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator
@@ -45,7 +46,7 @@ class WRewardsLoggedOutFragment : WRewardOnBoardingFragment(), View.OnClickListe
     override fun onClick(view: View?) {
         activity?.apply {
             when (view?.id) {
-                R.id.applyForWRewards -> Utils.openLinkInInternalWebView( WoolworthsApplication.getWrewardsLink())
+                R.id.applyForWRewards -> Utils.openLinkInInternalWebView( AppConfigSingleton.wrewardsLink)
                 R.id.tvSignIn -> {
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSIGNIN, this)
                     ScreenManager.presentSSOSignin(this)

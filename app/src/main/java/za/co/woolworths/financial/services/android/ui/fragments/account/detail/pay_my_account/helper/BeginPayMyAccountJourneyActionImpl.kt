@@ -1,8 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper
 
 import android.app.Activity
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.util.ActivityIntentNavigationManager
 import za.co.woolworths.financial.services.android.util.Utils
@@ -16,7 +17,7 @@ class BeginPayMyAccountJourneyActionImpl(
     }
 
     override fun isPayMyAccountFeatureEnabled(): Boolean {
-        val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
+        val payMyAccountOption: ConfigPayMyAccount? = AppConfigSingleton.mPayMyAccount
         return payMyAccountOption?.isFeatureEnabled() ?: false
     }
 

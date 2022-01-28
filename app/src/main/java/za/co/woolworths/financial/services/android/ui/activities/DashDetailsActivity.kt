@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_dash_details.*
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -78,9 +79,9 @@ class DashDetailsActivity : AppCompatActivity(), View.OnClickListener {
         try {
             KotlinUtils.openUrlInPhoneBrowser(wooliesAppLink,this)
         } catch (e: ActivityNotFoundException) {
-            KotlinUtils.openUrlInPhoneBrowser(AppConstant.PLAY_STORE_URL + WoolworthsApplication.getInstance().dashConfig?.appURI,this)
+            KotlinUtils.openUrlInPhoneBrowser(AppConstant.PLAY_STORE_URL + AppConfigSingleton.dashConfig?.appURI,this)
         } catch (e: PackageManager.NameNotFoundException) {
-            KotlinUtils.openUrlInPhoneBrowser(AppConstant.PLAY_STORE_URL + WoolworthsApplication.getInstance().dashConfig?.appURI,this)
+            KotlinUtils.openUrlInPhoneBrowser(AppConstant.PLAY_STORE_URL + AppConfigSingleton.dashConfig?.appURI,this)
         }
     }
 }

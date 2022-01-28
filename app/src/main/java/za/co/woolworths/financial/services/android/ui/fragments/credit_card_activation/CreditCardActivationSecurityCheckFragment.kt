@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.credit_card_activation_security_check_frag
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ACTION_LOWER_CASE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.activationRequested
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -48,7 +49,7 @@ class CreditCardActivationSecurityCheckFragment : Fragment(), View.OnClickListen
         when (v?.id) {
             R.id.activateCardButton -> {
                 activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_MY_CARD, hashMapOf(Pair(ACTION_LOWER_CASE, activationRequested)), this) }
-                navController?.navigate(if (WoolworthsApplication.getCreditCardActivation() != null && WoolworthsApplication.getCreditCardActivation()!!.otpEnabledForCreditCardActivation)
+                navController?.navigate(if (AppConfigSingleton.creditCardActivation != null && AppConfigSingleton.creditCardActivation!!.otpEnabledForCreditCardActivation)
                     R.id.action_to_RetrieveOTPFragment
                 else
                     R.id.action_to_creditCardActivationProgressFragment, bundleOf("bundle" to bundle))
