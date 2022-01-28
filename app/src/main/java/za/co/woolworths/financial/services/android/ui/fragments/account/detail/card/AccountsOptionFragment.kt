@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
@@ -288,10 +289,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         cancelRetrofitRequest(mStoreCardCall)
     }
 
-    fun navigateToGetStoreCards() {
+    fun navigateToGetStoreCards(vocTriggerEvent: VocTriggerEvent? = null) {
         activity?.apply {
             if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-                mCardPresenterImpl?.getAccountStoreCardCards()
+                mCardPresenterImpl?.getAccountStoreCardCards(vocTriggerEvent)
             } else {
                 ErrorHandlerView(this).showToast()
             }

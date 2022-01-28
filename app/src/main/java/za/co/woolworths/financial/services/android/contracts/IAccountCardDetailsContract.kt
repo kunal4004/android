@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.CreditLimitIncreaseStatus
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 interface IAccountCardDetailsContract {
 
@@ -45,7 +46,7 @@ interface IAccountCardDetailsContract {
         fun onGetCreditCardDeliveryStatusFailure()
         fun showGetCreditCardDeliveryStatus(deliveryStatus: DeliveryStatus)
         fun showOnStoreCardFailure(error: Throwable?) {}
-        fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse) {}
+        fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse, vocTriggerEvent: VocTriggerEvent?) {}
         fun showUnBlockStoreCardCardDialog() {}
         fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse, requestUnblockStoreCardCall: Boolean = false)
         fun showBalanceProtectionInsurance(insuranceCovered: Boolean?)
@@ -65,10 +66,10 @@ interface IAccountCardDetailsContract {
         fun isDebitOrderActive(): Int?
         fun convertAccountObjectToJsonString(): String?
         fun handleUnknownHttpResponse(description: String?)
-        fun getAccountStoreCardCards()
+        fun getAccountStoreCardCards(vocTriggerEvent: VocTriggerEvent?)
         fun getUserCLIOfferActive()
         fun getStoreCardResponse(): StoreCardsResponse?
-        fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse)
+        fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse, vocTriggerEvent: VocTriggerEvent?)
         fun navigateToGetTemporaryStoreCardPopupActivity()
         fun navigateToMyCardDetailActivity(shouldStartWithUnblockStoreCardCall: Boolean = false)
         fun getOfferActive(): OfferActive?

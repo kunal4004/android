@@ -138,14 +138,19 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     }
 
 
-    override fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse) {
-        super.handleStoreCardCardsSuccess(storeCardResponse)
+    override fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse, vocTriggerEvent: VocTriggerEvent?) {
+        super.handleStoreCardCardsSuccess(storeCardResponse, vocTriggerEvent)
         hideStoreCardProgress()
         accountStoreCardCallWasCompleted = true
 
         when (storeCardResponse.httpCode) {
             200 -> {
-                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) { setStoreCardTag() }
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                    setStoreCardTag()
+                    vocTriggerEvent?.let {
+                        VoiceOfCustomerManager.showVocSurveyIfNeeded(context, it)
+                    }
+                }
             }
             440 -> activity?.let {
                 SessionUtilities.getInstance().setSessionState(
@@ -163,7 +168,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     }
 
     private fun setStoreCardTag() {
-
         when {
             // Activate Virtual Temporary card
             (mCardPresenterImpl?.isActivateVirtualTempCard() == true) -> {
@@ -299,16 +303,14 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 val shouldRefreshCardDetails =
                     getBooleanExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, false)
                 if (shouldRefreshCardDetails) {
-                    navigateToGetStoreCards()
+                    navigateToGetStoreCards(VocTriggerEvent.MYACCOUNTS_BLOCKCARD_CONFIRM)
                 }
             }
-            VoiceOfCustomerManager.showVocSurveyIfNeeded(context, VocTriggerEvent.MYACCOUNTS_BLOCKCARD_CONFIRM)
         }
         //Activate VTC journey when successfully activated
         if (resultCode == ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE) {
-            navigateToGetStoreCards()
             //ICR Journey success and When Get replacement card email confirmation is success and result ok
-            VoiceOfCustomerManager.showVocSurveyIfNeeded(context, VocTriggerEvent.MYACCOUNTS_ICR_LINK_CONFIRM)
+            navigateToGetStoreCards(VocTriggerEvent.MYACCOUNTS_ICR_LINK_CONFIRM)
         } else if (requestCode == MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD && resultCode == AppCompatActivity.RESULT_OK) {
             navigateToGetStoreCards()
         }

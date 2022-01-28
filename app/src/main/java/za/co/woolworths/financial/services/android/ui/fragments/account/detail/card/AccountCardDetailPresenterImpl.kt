@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.C
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.util.*
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {
@@ -89,7 +90,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     override fun convertAccountObjectToJsonString(): String? = Gson().toJson(getAccount())
 
     @SuppressLint("DefaultLocale")
-    override fun getAccountStoreCardCards() {
+    override fun getAccountStoreCardCards(vocTriggerEvent: VocTriggerEvent?) {
         val account = getAccount()
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
@@ -102,7 +103,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                     mainView?.hideStoreCardProgress()
                     if (WoolworthsApplication.getInstance()?.currentActivity !is AccountSignedInActivity) return
                     when (httpCode) {
-                        200 -> handleStoreCardSuccessResponse(this)
+                        200 -> handleStoreCardSuccessResponse(this, vocTriggerEvent)
                         440 -> this.response?.stsParams?.let { stsParams ->
                             mainView?.handleSessionTimeOut(stsParams)
                         }
@@ -215,9 +216,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         mainView?.handleUnknownHttpCode(message)
     }
 
-    override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse) {
+    override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse, vocTriggerEvent: VocTriggerEvent?) {
         this.mStoreCardResponse = storeCardResponse
-        mainView?.handleStoreCardCardsSuccess(storeCardResponse)
+        mainView?.handleStoreCardCardsSuccess(storeCardResponse, vocTriggerEvent)
     }
 
     override fun navigateToTemporaryStoreCard() {
