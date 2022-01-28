@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +52,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -100,6 +104,8 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     private ProgressBar pbLoadingIndicator;
     private RecyclerView rclProductList;
     public static final int ADDED_TO_SHOPPING_LIST_RESULT_CODE = 1312;
+    public static final int PRODUCT_DETAILS_FROM_MY_LIST_SEARCH = 7657;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,7 +219,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
             productList.add(0, headerProduct);
         }
 
-        mProductAdapter = new SearchResultShopAdapter(getActivity(),mProductList, this);
+        mProductAdapter = new SearchResultShopAdapter(getActivity(), mProductList, this);
         mRecyclerViewLayoutManager = new LinearLayoutManager(getActivity());
         rclProductList.setLayoutManager(mRecyclerViewLayoutManager);
         rclProductList.setNestedScrollingEnabled(false);
@@ -375,12 +381,12 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     @Override
     public void onFoodTypeSelect(ProductList productList) {
-        ScreenManager.presentProductDetails(getFragmentManager(), R.id.productList, mSearchText, productList);
+        openProductDetailsFragment(productList);
     }
 
     @Override
     public void onClothingTypeSelect(ProductList productList) {
-        ScreenManager.presentProductDetails(getFragmentManager(), R.id.productList, mSearchText, productList);
+        openProductDetailsFragment(productList);
     }
 
     @Override
@@ -419,6 +425,20 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         addToListLoadFail = false;
         pbLoadingIndicator.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         btnCheckOut.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+    }
+
+    private void openProductDetailsFragment(ProductList productList) {
+        if (getActivity() instanceof ShoppingListSearchResultActivity) {
+            Gson gson = new Gson();
+            String strProductList = gson.toJson(productList);
+            Intent intent = new Intent();
+            intent.putExtra("productName", mSearchText);
+            intent.putExtra("productList", strProductList);
+            getActivity().setResult(PRODUCT_DETAILS_FROM_MY_LIST_SEARCH, intent);
+            getActivity().finish();
+        } else {
+            ScreenManager.presentProductDetails(getActivity(), mSearchText, productList);
+        }
     }
 
     public void onAddToListLoadComplete() {
@@ -705,7 +725,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         onLoadStart(getLoadMoreData());
         setProductIsLoading(true);
 
-        Call<ProductView> productListCall =  OneAppService.INSTANCE.getProducts(requestParams);
+        Call<ProductView> productListCall = OneAppService.INSTANCE.getProducts(requestParams);
         productListCall.enqueue(new CompletionHandler<>(new IResponseListener<ProductView>() {
             @Override
             public void onSuccess(ProductView productView) {
@@ -746,7 +766,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
                     });
                 }
             }
-        },ProductView.class));
+        }, ProductView.class));
 
         return productListCall;
     }
@@ -754,7 +774,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     public Call<ShoppingListItemsResponse> addToList(List<AddToListRequest> addToListRequest, String listId) {
         onAddToListLoad(true);
 
-        Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.addToList(addToListRequest,listId);
+        Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.addToList(addToListRequest, listId);
         shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new IResponseListener<ShoppingListItemsResponse>() {
             @Override
             public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
@@ -779,9 +799,9 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
                 if (error == null) return;
                 onAddToListFailure(error.getMessage());
             }
-        },ShoppingListItemsResponse.class));
+        }, ShoppingListItemsResponse.class));
 
-            return shoppingListItemsResponseCall;
+        return shoppingListItemsResponseCall;
     }
 
     public boolean getLoadMoreData() {
@@ -927,7 +947,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     }
 
     public Call<ProductDetailResponse> getProductDetail(ProductRequest productRequest) {
-       Call<ProductDetailResponse> productDetailRequest = OneAppService.INSTANCE.productDetail(productRequest.getProductId(), productRequest.getSkuId());
+        Call<ProductDetailResponse> productDetailRequest = OneAppService.INSTANCE.productDetail(productRequest.getProductId(), productRequest.getSkuId());
         productDetailRequest.enqueue(new CompletionHandler<>(new IResponseListener<ProductDetailResponse>() {
             @Override
             public void onSuccess(ProductDetailResponse productDetailResponse) {
@@ -947,12 +967,12 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
             @Override
             public void onFailure(Throwable error) {
-                if (error== null) return;
+                if (error == null) return;
                 onLoadDetailFailure(error.getMessage());
             }
-        },ProductDetailResponse.class));
+        }, ProductDetailResponse.class));
 
-       return productDetailRequest;
+        return productDetailRequest;
     }
 
     @Override

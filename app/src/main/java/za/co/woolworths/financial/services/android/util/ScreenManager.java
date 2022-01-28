@@ -245,13 +245,10 @@ public class ScreenManager {
 
     }
 
-    public static void presentProductDetails(FragmentManager fragmentManager, int layoutId, String productName, ProductList productList) {
-        Gson gson = new Gson();
-        String strProductList = gson.toJson(productList);
-        Bundle bundle = new Bundle();
-        bundle.putString("strProductList", strProductList);
-        bundle.putString("strProductCategory", productName);
-        presentProductDetails(fragmentManager, layoutId, bundle);
+    public static void presentProductDetails(Activity activity, String productName, ProductList productList) {
+        if (activity instanceof BottomNavigationActivity){
+            ((BottomNavigationActivity)activity).openProductDetailFragment(productName,productList);
+        }
     }
 
     public static void presentWhatsAppChatToUsActivity(Activity activity, String featureName, String appScreen) {
