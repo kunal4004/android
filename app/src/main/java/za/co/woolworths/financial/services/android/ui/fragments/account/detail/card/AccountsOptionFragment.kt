@@ -300,10 +300,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         cancelRetrofitRequest(mStoreCardCall)
     }
 
-    fun navigateToGetStoreCards(vocTriggerEvent: VocTriggerEvent? = null) {
+    fun navigateToGetStoreCards() {
         activity?.apply {
             if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-                mCardPresenterImpl?.getAccountStoreCardCards(vocTriggerEvent)
+                mCardPresenterImpl?.getAccountStoreCardCards()
             } else {
                 ErrorHandlerView(this).showToast()
             }

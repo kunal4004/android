@@ -46,7 +46,7 @@ interface IAccountCardDetailsContract {
         fun onGetCreditCardDeliveryStatusFailure()
         fun showGetCreditCardDeliveryStatus(deliveryStatus: DeliveryStatus)
         fun showOnStoreCardFailure(error: Throwable?) {}
-        fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse, vocTriggerEvent: VocTriggerEvent?) {}
+        fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse) {}
         fun showUnBlockStoreCardCardDialog() {}
         fun navigateToMyCardDetailActivity(storeCardResponse: StoreCardsResponse, requestUnblockStoreCardCall: Boolean = false)
         fun showBalanceProtectionInsurance(insuranceCovered: Boolean?)
@@ -66,10 +66,10 @@ interface IAccountCardDetailsContract {
         fun isDebitOrderActive(): Int?
         fun convertAccountObjectToJsonString(): String?
         fun handleUnknownHttpResponse(description: String?)
-        fun getAccountStoreCardCards(vocTriggerEvent: VocTriggerEvent?)
+        fun getAccountStoreCardCards()
         fun getUserCLIOfferActive()
         fun getStoreCardResponse(): StoreCardsResponse?
-        fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse, vocTriggerEvent: VocTriggerEvent?)
+        fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse)
         fun navigateToGetTemporaryStoreCardPopupActivity()
         fun navigateToMyCardDetailActivity(shouldStartWithUnblockStoreCardCall: Boolean = false)
         fun getOfferActive(): OfferActive?

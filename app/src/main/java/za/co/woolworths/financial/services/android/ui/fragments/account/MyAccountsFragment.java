@@ -2072,7 +2072,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-    public void handleStoreCardCardsSuccess(@NotNull StoreCardsResponse storeCardResponse, @Nullable VocTriggerEvent vocTriggerEvent) {
+    public void handleStoreCardCardsSuccess(@NotNull StoreCardsResponse storeCardResponse) {
 
     }
 

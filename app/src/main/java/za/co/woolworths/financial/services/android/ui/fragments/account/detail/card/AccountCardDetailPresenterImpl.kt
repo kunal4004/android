@@ -91,7 +91,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
     override fun convertAccountObjectToJsonString(): String? = Gson().toJson(getAccount())
 
     @SuppressLint("DefaultLocale")
-    override fun getAccountStoreCardCards(vocTriggerEvent: VocTriggerEvent?) {
+    override fun getAccountStoreCardCards() {
         val account = getAccount()
         //store card api is disabled for Credit Card group code
         val productGroupCode = account?.productGroupCode?.toLowerCase()
@@ -104,7 +104,7 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
                     mainView?.hideStoreCardProgress()
                     if (WoolworthsApplication.getInstance()?.currentActivity !is AccountSignedInActivity) return
                     when (httpCode) {
-                        200 -> handleStoreCardSuccessResponse(this, vocTriggerEvent)
+                        200 -> handleStoreCardSuccessResponse(this)
                         440 -> this.response?.stsParams?.let { stsParams ->
                             mainView?.handleSessionTimeOut(stsParams)
                         }
@@ -217,9 +217,9 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         mainView?.handleUnknownHttpCode(message)
     }
 
-    override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse, vocTriggerEvent: VocTriggerEvent?) {
+    override fun handleStoreCardSuccessResponse(storeCardResponse: StoreCardsResponse) {
         this.mStoreCardResponse = storeCardResponse
-        mainView?.handleStoreCardCardsSuccess(storeCardResponse, vocTriggerEvent)
+        mainView?.handleStoreCardCardsSuccess(storeCardResponse)
     }
 
     override fun navigateToTemporaryStoreCard() {

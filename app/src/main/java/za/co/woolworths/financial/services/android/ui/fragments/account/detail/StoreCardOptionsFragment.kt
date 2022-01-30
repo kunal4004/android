@@ -138,8 +138,8 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     }
 
 
-    override fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse, vocTriggerEvent: VocTriggerEvent?) {
-        super.handleStoreCardCardsSuccess(storeCardResponse, vocTriggerEvent)
+    override fun handleStoreCardCardsSuccess(storeCardResponse: StoreCardsResponse) {
+        super.handleStoreCardCardsSuccess(storeCardResponse)
         hideStoreCardProgress()
         accountStoreCardCallWasCompleted = true
 
@@ -147,9 +147,7 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             200 -> {
                 GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
                     setStoreCardTag()
-                    vocTriggerEvent?.let {
-                        VoiceOfCustomerManager.showVocSurveyIfNeeded(context, it)
-                    }
+                    VoiceOfCustomerManager.showPendingSurveyIfNeeded(context)
                 }
             }
             440 -> activity?.let {
@@ -303,14 +301,16 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 val shouldRefreshCardDetails =
                     getBooleanExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, false)
                 if (shouldRefreshCardDetails) {
-                    navigateToGetStoreCards(VocTriggerEvent.MYACCOUNTS_BLOCKCARD_CONFIRM)
+                    VoiceOfCustomerManager.pendingTriggerEvent = VocTriggerEvent.MYACCOUNTS_BLOCKCARD_CONFIRM
+                    navigateToGetStoreCards()
                 }
             }
         }
         //Activate VTC journey when successfully activated
         if (resultCode == ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE) {
             //ICR Journey success and When Get replacement card email confirmation is success and result ok
-            navigateToGetStoreCards(VocTriggerEvent.MYACCOUNTS_ICR_LINK_CONFIRM)
+            VoiceOfCustomerManager.pendingTriggerEvent = VocTriggerEvent.MYACCOUNTS_ICR_LINK_CONFIRM
+            navigateToGetStoreCards()
         } else if (requestCode == MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD && resultCode == AppCompatActivity.RESULT_OK) {
             navigateToGetStoreCards()
         }
