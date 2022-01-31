@@ -22,6 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:src="@drawable/ic_caret_black"
         android:id="@+id/img_view_next"
         android:layout_width="@dimen/twenty_four_dp"
         android:layout_height="@dimen/twenty_four_dp"
@@ -30,6 +31,5 @@
         android:layout_marginBottom="@dimen/eighteen_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

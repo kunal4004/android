@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     card_view:cardBackgroundColor="#F2F2F2"
     card_view:cardCornerRadius="10dp"
-    card_view:cardElevation="10dp"
+    card_view:cardElevation="20dp"
     app:cardUseCompatPadding="true">
 
     <include

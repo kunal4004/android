@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.chanel.views
 
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,15 +18,13 @@ import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.viewmodel.ChanelViewModel
 import za.co.woolworths.financial.services.android.chanel.viewmodel.ChanelViewModelFactory
 import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
-import za.co.woolworths.financial.services.android.contracts.IProductListing
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
-
-class BrandLandingFragment: Fragment(), IProductListing {
+class BrandLandingFragment: Fragment(), NavigationClickListener {
 
     private lateinit var chanelViewModel: ChanelViewModel
     private var searchTerm: String? = null
@@ -85,8 +82,7 @@ class BrandLandingFragment: Fragment(), IProductListing {
 
     private fun setupChanelReyclerView(chanelResponse: ChanelResponse?) {
         val adapter = BrandLandingAdapter(context,
-            chanelResponse?.dynamicBanners as List<DynamicBanner>, this
-        )
+            chanelResponse?.dynamicBanners as List<DynamicBanner>, this)
 
         rv_chanel.layoutManager = LinearLayoutManager(requireContext())
         rv_chanel.adapter = adapter
@@ -99,26 +95,11 @@ class BrandLandingFragment: Fragment(), IProductListing {
         ).get(ChanelViewModel::class.java)
     }
 
-    override fun openProductDetailView(productList: ProductList) {
+    override fun openProductDetailsView(productList: ProductList) {
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(searchTerm, productList)
     }
 
-    override fun queryInventoryForStore(
-        fulfilmentTypeId: String,
-        addItemToCart: AddItemToCart?,
-        productList: ProductList
-    ) {
-
-    }
-
-    override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
-
-    }
-
-    override fun queryStoreFinderProductByFusedLocation(location: Location?) {
-
-    }
-
-    override fun showLiquorDialog() {
+    override fun openCategoryListView() {
 
     }
 }

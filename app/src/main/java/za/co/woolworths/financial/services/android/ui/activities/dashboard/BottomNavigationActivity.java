@@ -72,6 +72,7 @@ import java.util.Set;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.chanel.views.BrandLandingFragment;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
@@ -235,7 +236,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (object instanceof LoadState) {
                 String searchProduct = ((LoadState) object).getSearchProduct();
                 if (!TextUtils.isEmpty((searchProduct))) {
-                    pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
+                  //  pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
+                    pushFragment(BrandLandingFragment.Companion.newInstance("chanel", ProductsRequestParams.SearchType.SEARCH, false));
                 }
             } else if (object instanceof CartSummaryResponse) {
                 // product item successfully added to cart
