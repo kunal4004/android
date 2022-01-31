@@ -126,8 +126,14 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
                                 }
 
                             else -> {
-                                //TODO: Dimitri
-                                "See invision for credit card description msg and update in code"
+                                payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                                    activity?.resources?.getString(
+                                        R.string.take_up_treatment_plan_description_cc,
+                                        Utils.removeNegativeSymbol(
+                                            CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)
+                                        )
+                                    )
+                                }
                             }
                         }
                     }
