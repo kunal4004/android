@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.chanel.views
 
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,17 +8,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.fragment_brand_landing.*
+import za.co.woolworths.financial.services.android.chanel.model.ChanelResponse
+import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
 import za.co.woolworths.financial.services.android.chanel.services.network.ChanelApiHelper
 import za.co.woolworths.financial.services.android.chanel.services.repository.ChanelRepository
 import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.chanel.viewmodel.ChanelViewModel
 import za.co.woolworths.financial.services.android.chanel.viewmodel.ChanelViewModelFactory
+import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
+import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
+import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
-class BrandLandingFragment: Fragment() {
+
+class BrandLandingFragment: Fragment(), IProductListing {
 
     private lateinit var chanelViewModel: ChanelViewModel
     private var searchTerm: String? = null
@@ -59,7 +69,7 @@ class BrandLandingFragment: Fragment() {
             viewLifecycleOwner, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
-                       Log.e("SUCCESS:", it.data.toString())
+                      setupChanelReyclerView(it.data)
                     }
                     ResponseStatus.LOADING -> {
                         Log.e("LOADING:", "CALLED")
@@ -73,6 +83,15 @@ class BrandLandingFragment: Fragment() {
         )
     }
 
+    private fun setupChanelReyclerView(chanelResponse: ChanelResponse?) {
+        val adapter = BrandLandingAdapter(context,
+            chanelResponse?.dynamicBanners as List<DynamicBanner>, this
+        )
+
+        rv_chanel.layoutManager = LinearLayoutManager(requireContext())
+        rv_chanel.adapter = adapter
+    }
+
     private fun setupChanelViewModel() {
         chanelViewModel = ViewModelProvider(
             this,
@@ -80,4 +99,26 @@ class BrandLandingFragment: Fragment() {
         ).get(ChanelViewModel::class.java)
     }
 
+    override fun openProductDetailView(productList: ProductList) {
+    }
+
+    override fun queryInventoryForStore(
+        fulfilmentTypeId: String,
+        addItemToCart: AddItemToCart?,
+        productList: ProductList
+    ) {
+
+    }
+
+    override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
+
+    }
+
+    override fun queryStoreFinderProductByFusedLocation(location: Location?) {
+
+    }
+
+    override fun showLiquorDialog() {
+
+    }
 }
