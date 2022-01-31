@@ -233,5 +233,6 @@
     <dimen name="product_close_image_size">35sp</dimen>
     <dimen name="vto_count_txt_size">90sp</dimen>
     <dimen name="vto_preview_size">380dp</dimen>
+    <dimen name="one_fifty_six">156dp</dimen>
 </resources>
 
