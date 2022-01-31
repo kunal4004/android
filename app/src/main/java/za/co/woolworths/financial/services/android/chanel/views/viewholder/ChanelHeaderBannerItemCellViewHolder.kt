@@ -6,6 +6,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.chanel_products_horizontal_item_cell.view.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
+import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.chanel.views.NavigationClickListener
 
@@ -29,6 +30,7 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
+            itemView.imQuickShopAddToCartIcon.visibility = View.GONE
             setOnClickListener(NavigationClickListener, this)
         }
     }

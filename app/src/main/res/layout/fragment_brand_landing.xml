@@ -25,4 +25,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
 
+    <include
+        android:id="@+id/incCenteredProgress"
+        layout="@layout/progress_layout"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

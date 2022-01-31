@@ -66,13 +66,14 @@ class BrandLandingFragment: Fragment(), NavigationClickListener {
             viewLifecycleOwner, {
                 when (it.responseStatus) {
                     ResponseStatus.SUCCESS -> {
+                      incCenteredProgress.visibility = View.GONE
                       setupChanelReyclerView(it.data)
                     }
                     ResponseStatus.LOADING -> {
-                        Log.e("LOADING:", "CALLED")
-
+                        incCenteredProgress.visibility = View.VISIBLE
                     }
                     ResponseStatus.ERROR -> {
+                        incCenteredProgress.visibility = View.GONE
                         Log.e("ERROR:", it.data.toString())
                     }
                 }
