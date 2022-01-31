@@ -10,8 +10,8 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
-import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_cart_item.*
@@ -20,6 +20,8 @@ import kotlinx.android.synthetic.main.account_six_month_arrears_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOffering
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -27,14 +29,13 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class AccountSixMonthArrearsFragment : Fragment() {
 
+    private var mProductOffering: ProductOffering? = null
     private var mApplyNowAccountKeyPair: Pair<Int, Int>? = null
-    private var isViewTreatmentPlanSupported: Boolean = false
+    private val myAccountsRemoteApiViewModel: MyAccountsRemoteApiViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE,"")
-        isViewTreatmentPlanSupported = Utils.getAppBuildNumber() >=
-                WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.creditCard?.minimumSupportedAppBuildNumber ?: 999
         mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
     }
 
@@ -44,9 +45,9 @@ class AccountSixMonthArrearsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mProductOffering = myAccountsRemoteApiViewModel.getProductOffering()
         hideCardTextViews()
         setTitleAndCardTypeAndButton()
-
         callTheCallCenterButton?.setOnClickListener { Utils.makeCall("0861502020") }
         callTheCallCenterUnderlinedButton?.setOnClickListener { Utils.makeCall("0861502020") }
         viewTreatmentPlansButton?.setOnClickListener {
@@ -97,10 +98,7 @@ class AccountSixMonthArrearsFragment : Fragment() {
         mApplyNowAccountKeyPair?.second?.let { resourceId ->
             toolbarTitleTextView?.text = bindString(resourceId)
 
-            if(isViewTreatmentPlanSupported &&
-                (bindString(resourceId) == bindString(R.string.blackCreditCard_title) ||
-                        bindString(resourceId) == bindString(R.string.goldCreditCard_title) ||
-                        bindString(resourceId) == bindString(R.string.silverCreditCard_title))){
+            if(mProductOffering?.isViewTreatmentPlanSupported() == true){
 
                 arrearsDescTextView?.text = bindString(R.string.account_arrears_cc_description)
                 callTheCallCenterButton?.visibility = GONE

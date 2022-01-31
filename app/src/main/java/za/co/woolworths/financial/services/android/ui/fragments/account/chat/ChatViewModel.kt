@@ -115,10 +115,8 @@ class ChatViewModel : ViewModel() {
                 val collections = inAppChat.collections
                 val emailAddress = collections.emailAddress
 
-                var offlineMessageTemplate =
-                    collections.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
-                offlineMessageTemplate =
-                    offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                var offlineMessageTemplate = collections.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                offlineMessageTemplate = offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
                 val spannableOfflineMessageTemplate = SpannableString(offlineMessageTemplate)
                 spannableOfflineMessageTemplate.setSpan(
                     object : ClickableSpan() {

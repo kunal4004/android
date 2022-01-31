@@ -1,18 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
 import android.os.Bundle
-import android.view.View
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.balance_protection_insurance_activity.*
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
-import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
-import za.co.woolworths.financial.services.android.util.KotlinUtils
 
-class GetAPaymentPlanActivity : AppCompatActivity(), View.OnClickListener {
+class GetAPaymentPlanActivity : AppCompatActivity(){
 
     private var eligibilityPlan: EligibilityPlan? = null
 
@@ -20,56 +17,11 @@ class GetAPaymentPlanActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.view_get_payment_plan_activity)
         actionBar()
-        eligibilityPlan = intent.getSerializableExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN) as EligibilityPlan?
+        eligibilityPlan = intent.getSerializableExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN) as? EligibilityPlan
 
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.viewPlanOptionsButton -> {
-
-                var collectionsUrl: String? = ""
-                var exitUrl: String? = ""
-
-                when (eligibilityPlan?.productGroupCode) {
-                    ProductGroupCode.SC -> {
-                        collectionsUrl =
-                            WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl =
-                            WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.exitUrl
-                    }
-
-                    ProductGroupCode.PL -> {
-                        collectionsUrl =
-                            WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl =
-                            WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.exitUrl
-                    }
-
-                    ProductGroupCode.CC -> {
-                        collectionsUrl =
-                            WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl =
-                            WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
-                    }
-                }
-
-                val url = collectionsUrl + eligibilityPlan?.appGuid
-
-                when (WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.renderMode) {
-                    AvailableFundFragment.NATIVE_BROWSER ->
-                        KotlinUtils.openUrlInPhoneBrowser(url, this)
-
-                    else ->
-                        KotlinUtils.openLinkInInternalWebView(
-                            this,
-                            url,
-                            true,
-                            exitUrl
-                        )
-                }
-            }
-        }
+        //Setup the navGraph for this activity
+        val myNavHostFragment: NavHostFragment? = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as? NavHostFragment
+        myNavHostFragment?.navController?.setGraph(R.navigation.nav_wfs_get_treatement_plan, intent.extras)
     }
 
     fun actionBar() {
@@ -82,4 +34,10 @@ class GetAPaymentPlanActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            android.R.id.home -> onBackPressed()
+        }
+        return super.onOptionsItemSelected(menuItem)
+    }
 }

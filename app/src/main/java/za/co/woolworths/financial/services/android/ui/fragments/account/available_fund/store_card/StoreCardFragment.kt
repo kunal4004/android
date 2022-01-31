@@ -41,10 +41,10 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         navController = Navigation.findNavController(view)
         availableFundBackground?.setBackgroundResource(R.drawable.store_card_background)
 
-        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner, {
+        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
             isQueryPayUPaymentMethodComplete = false
             queryPaymentMethod()
-        })
+        }
 
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
@@ -152,7 +152,6 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         navigateToPayMyAccount {
             try {
                 navigateSafelyWithNavController(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
-
             } catch (ex: IllegalStateException) {
                 FirebaseManager.logException(ex)
             }

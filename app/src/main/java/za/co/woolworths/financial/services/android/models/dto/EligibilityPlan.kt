@@ -14,10 +14,10 @@ enum class ActionText(val value: String) {
 }
 
 class EligibilityPlan(
-    val planType: String,
-    val appGuid: String,
-    val appGuidExpiryDate: String,
-    val productGroupCode: ProductGroupCode,
-    val actionText: String,
-    val displayText: String
+    val planType: String?,
+    val appGuid: String?,
+    val appGuidExpiryDate: String?,
+    val productGroupCode: ProductGroupCode?,
+    val actionText: String?,
+    val displayText: String?
     ) : Serializable

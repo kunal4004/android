@@ -6,21 +6,22 @@
     android:background="@color/default_background">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container_view"
+        android:id="@+id/fragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/white"
         android:tag="bpiFragmentContainerViewTag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/appbar_background"
+        android:background="@color/white"
         android:theme="@style/ChatActivityStyle"
         app:elevation="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -38,12 +39,5 @@
             app:popupTheme="@style/bpi_menu_item_style" />
 
     </com.google.android.material.appbar.AppBarLayout>
-
-    <View
-        android:id="@+id/horizontalDivider"
-        android:layout_width="match_parent"
-        android:layout_height="0.8dp"
-        android:background="@color/dark_divider"
-        app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

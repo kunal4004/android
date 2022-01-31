@@ -9,7 +9,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import java.io.Serializable
 
 interface IAccountSignedInContract {
@@ -32,10 +32,12 @@ interface IAccountSignedInContract {
         fun getAccountBundle(bundle: Bundle?): Serializable?
         fun onDestroy()
         fun getAppCompatActivity(): AppCompatActivity?
-        fun setAvailableFundBundleInfo(navDetailController: NavController?)
         fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>?
         fun getToolbarTitle(state: ApplyNowState): String?
-        fun showProductOfferOutstanding(state: ApplyNowState)
+        fun showProductOfferOutstanding(
+            state: ApplyNowState,
+            myAccountsViewModel: MyAccountsRemoteApiViewModel
+        )
         fun setAccountCardDetailInfo(navDetailController: NavController?)
         fun setAccountSixMonthInArrears(navDetailController: NavController?)
         fun getSixMonthOutstandingTitleAndCardResource(): Pair<Int, Int>
@@ -47,6 +49,10 @@ interface IAccountSignedInContract {
         fun getDeepLinkData(): JsonObject?
         fun deleteDeepLinkData()
         fun isProductInGoodStanding():Boolean
+        fun setAvailableFundBundleInfo(
+            navDetailController: NavController?,
+            myAccountsViewModel: MyAccountsRemoteApiViewModel
+        )
     }
 
     interface MyAccountModel {

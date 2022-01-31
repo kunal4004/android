@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -1232,4 +1233,16 @@ interface ApiInterface {
         @Query("productGroupCode") productGroupCode: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): Call<EligibilityPlanResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/accounts/collections/checkEligibility")
+    suspend fun fetchCollectionCheckEligibility(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Query("productGroupCode") productGroupCode: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): EligibilityPlanResponse
 }
+
