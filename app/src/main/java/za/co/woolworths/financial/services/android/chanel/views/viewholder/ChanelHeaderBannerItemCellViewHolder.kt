@@ -4,10 +4,8 @@ import android.text.Html
 import android.text.TextUtils
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.chanel_products_horizontal_item_cell.view.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
-import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.chanel.views.NavigationClickListener
 
@@ -26,12 +24,11 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
             setProductImage(this)
             setPromotionalImage(promotionImages,virtualTryOn)
             setProductName(this)
-            setBrandText(this, null, null)
+            setBrandText(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
-            quickShopAddToCartSwitch(this)
             setOnClickListener(NavigationClickListener, this)
         }
     }
@@ -63,26 +60,9 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
         tvProductName?.text = productList?.productName ?: ""
     }
 
-    private fun setBrandText(productList: ProductList?, nextProduct: ProductList?, previousProduct: ProductList?) = with(itemView) {
+    private fun setBrandText(productList: ProductList?) = with(itemView) {
         brandName?.text = productList?.brandText ?: ""
-        previousProduct?.let {
-            if (productList?.brandText.isNullOrEmpty() && it.brandText.isNullOrEmpty()) {
-                brandName?.visibility = View.GONE
-            } else {
-                brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) View.GONE else View.VISIBLE
-                brandNameFakeView?.visibility = if (productList?.brandText.isNullOrEmpty()) View.VISIBLE else View.GONE
-            }
-        }
-        nextProduct?.let {
-            if (productList?.brandText.isNullOrEmpty() && it.brandText.isNullOrEmpty()) {
-                brandName?.visibility = View.GONE
-            } else {
-                brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) View.GONE else View.VISIBLE
-                brandNameFakeView?.visibility = if (productList?.brandText.isNullOrEmpty()) View.VISIBLE else View.GONE
-            }
-        }
     }
-
 
     private fun setPromotionalText(productList: ProductList?) = with(itemView) {
         if (productList?.promotionsList?.isEmpty() == false) {
@@ -126,17 +106,6 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
         } else {
             productVariantTextView?.visibility = View.GONE
             productVariantTextView?.text = ""
-        }
-    }
-
-    private fun quickShopAddToCartSwitch(productList: ProductList?) {
-        with(itemView) {
-            context?.apply {
-                productList?.apply {
-                    row_layout.imQuickShopAddToCartIcon?.visibility = if (productType.equals(getString(
-                            R.string.food_product_type), ignoreCase = true)) View.VISIBLE else View.GONE
-                }
-            }
         }
     }
 
