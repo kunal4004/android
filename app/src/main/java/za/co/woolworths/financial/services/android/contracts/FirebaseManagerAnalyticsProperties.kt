@@ -86,7 +86,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val MY_ACCOUNTS_VTC_GET = "myaccounts_vtc_get"
         const val MY_ACCOUNTS_VTC_PAY = "myaccounts_vtc_pay"
         const val MY_ACCOUNTS_VTC_VIEWCARDNUMBERS = "vtc_viewcardnumbers"
-        const val MY_ACCOUNTS_VTC_HOW_TO = "my_accounts_vtc_howto"
+        const val MY_ACCOUNTS_VTC_HOW_TO = "myaccounts_vtc_howto"
 
         const val MYACCOUNTS_ICR_GET_CARD = "myaccounts_icr_get_card"
         const val MYACCOUNTS_ICR_STORES = "myaccounts_icr_stores"
