@@ -172,9 +172,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             localSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
             localStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
             imgInfo?.setOnClickListener {
-                vtoBottomSheetDialog.showBottomSheetDialog(this@ProductListingFragment,
+                vtoBottomSheetDialog.showBottomSheetDialog(
+                    this@ProductListingFragment,
                     requireActivity(),
-                    true)
+                    true
+                )
 
             }
 
@@ -559,11 +561,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun startProductRequest() {
         activity?.let { activity ->
-            if (mSearchTerm?.isEmpty() == true) {
-                executeLoadProduct(activity, productRequestBody)
-            } else {
-                executeLoadProduct(activity, productRequestBody)
-            }
+            executeLoadProduct(activity, productRequestBody)
         }
     }
 
@@ -636,8 +634,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
                 R.id.refineProducts -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED,
-                        activity)
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED,
+                        activity
+                    )
                     /*val intent = Intent(activity, ProductsRefineActivity::class.java)
                     intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
                     intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(productRequestBody))
@@ -649,8 +649,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
                 R.id.sortProducts -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED,
-                        activity)
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED,
+                        activity
+                    )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
                 }
                 else -> return

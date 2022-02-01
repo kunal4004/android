@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
-import android.graphics.Color
 import android.text.Html
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -16,7 +14,6 @@ import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.ui.vto.utils.VirtualTryOnUtil
@@ -33,6 +30,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             setPromotionalImage(promotionImages,virtualTryOn)
             setProductName(this)
             setBrandText(this, nextProduct, previousProduct)
+            setBrandHeaderDescriptionText(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
@@ -114,6 +112,15 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
                 brandName?.visibility = if (productList?.brandText.isNullOrEmpty()) GONE else VISIBLE
                 brandNameFakeView?.visibility = if (productList?.brandText.isNullOrEmpty()) VISIBLE else GONE
             }
+        }
+    }
+
+    private fun setBrandHeaderDescriptionText(productList: ProductList?) = with(itemView) {
+        if(TextUtils.isEmpty(productList?.brandHeaderDescription)){
+            tvRangeName?.visibility = GONE
+        } else {
+            tvRangeName?.visibility = VISIBLE
+            tvRangeName?.text = productList?.brandHeaderDescription
         }
     }
 
