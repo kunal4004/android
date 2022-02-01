@@ -68,6 +68,7 @@ object AppConfigSingleton {
     var deviceSecurity: ConfigDeviceSecurity? = null
     var balanceProtectionInsurance: ConfigBalanceProtectionInsurance? = null
     var virtualTryOn: ConfigVirtualTryOn? = null
+    var brandLandingPage: BrandLandingPage? = null
     var logPublicKey: String? = null
     var authenticVersionStamp: String? = ""
 
@@ -201,6 +202,11 @@ object AppConfigSingleton {
             appConfig.virtualTryOn?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 virtualTryOn = this
+            }
+
+            appConfig.brandLandingPage?.apply {
+                minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
+                brandLandingPage = this
             }
         }
     }
