@@ -4,10 +4,11 @@ import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_EXPECTATION_FAILED_417;
 import static za.co.woolworths.financial.services.android.util.AppConstant.HTTP_OK;
@@ -151,6 +152,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         setUpToolbar(listName, view);
         initViewAndEvent(view);
         initGetShoppingListItems();
+        addFragmentListner();
     }
 
     private void setUpToolbar(String listName, View view) {
@@ -579,12 +581,10 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             Gson gson = new Gson();
             String strProductList = gson.toJson(productList);
             Bundle bundle = new Bundle();
-            bundle.putString("strProductList", strProductList);
-            bundle.putString("strProductCategory", productName);
+            bundle.putString(STR_PRODUCT_LIST, strProductList);
+            bundle.putString(STR_PRODUCT_CATEGORY, productName);
             fragment.setArguments(bundle);
             BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
-            // Move to shop tab first.
-            bottomNavigationActivity.getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
             bottomNavigationActivity.pushFragment(fragment);
         } else
             return;
@@ -615,6 +615,16 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
             }
         }, ShoppingListItemsResponse.class));
+    }
+
+    private void addFragmentListner() {
+        getActivity().getSupportFragmentManager().setFragmentResultListener(String.valueOf(ADDED_TO_SHOPPING_LIST_RESULT_CODE), getActivity(), (requestKey, result) -> {
+            if (result.containsKey("listItems")) {
+                int count = result.getInt("listItems", 0);
+                ToastFactory.Companion.buildShoppingListFromSearchResultToast(getActivity(), rlCheckOut, listName, count);
+            }
+            initGetShoppingListItems();
+        });
     }
 
     @Override

@@ -1,27 +1,37 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search;
 
+import static android.view.View.VISIBLE;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.CLOSE_ICON_TAPPED_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.SELECTED_SHOPPING_LIST_ITEM_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.INDEX_SEARCH_FROM_LIST;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.awfs.coordination.R;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -52,11 +62,12 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.util.AppConstant;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -64,11 +75,6 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.CLOSE_ICON_TAPPED_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.SELECTED_SHOPPING_LIST_ITEM_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.INDEX_ADD_TO_SHOPPING_LIST;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.INDEX_SEARCH_FROM_LIST;
 
 public class SearchResultFragment extends Fragment implements SearchResultNavigator, View.OnClickListener, NetworkChangeListener {
 
@@ -104,6 +110,8 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     private ProgressBar pbLoadingIndicator;
     private RecyclerView rclProductList;
     public static final int ADDED_TO_SHOPPING_LIST_RESULT_CODE = 1312;
+    public static final int SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE = 2012;
+
     public static final int PRODUCT_DETAILS_FROM_MY_LIST_SEARCH = 7657;
 
     @Override
@@ -114,7 +122,10 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         if (bundle != null) {
             mSearchText = bundle.getString("searchTerm");
             mListId = bundle.getString("listID");
+        } else {
+            mSearchText = "";
         }
+        Utils.updateStatusBarBackground(getActivity());
         setProductBody();
     }
 
@@ -128,12 +139,30 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         super.onViewCreated(view, savedInstanceState);
         ViewCompat.setTranslationZ(getView(), 100.f);
         initUI(view);
+        setUpToolbar(view);
         mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
         mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
         startProductRequest();
         btnRetry.setOnClickListener(this);
         setUpAddToListButton();
         connectionBroadcast();
+    }
+
+    private void setUpToolbar(View view) {
+        AppBarLayout appbar = view.findViewById(R.id.appbar);
+        TextView shoppingListTitleTextView = view.findViewById(R.id.shoppingListTitleTextView);
+        shoppingListTitleTextView.setText(mSearchText);
+        if (getActivity() instanceof BottomNavigationActivity) {
+            appbar.setVisibility(VISIBLE);
+            BottomNavigationActivity activity = ((BottomNavigationActivity) getActivity());
+            activity.hideToolbar();
+            activity.showBackNavigationIcon(true);
+            activity.setToolbarBackgroundDrawable(R.drawable.appbar_background);
+            ImageView backButton = view.findViewById(R.id.btnBack);
+            backButton.setOnClickListener(v -> activity.onBackPressed());
+            activity.toolbar().setNavigationOnClickListener(v -> activity.popFragment());
+            activity.setTitle(mSearchText);
+        }
     }
 
     private void initUI(View view) {
@@ -318,7 +347,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     public void onLoadStart(boolean isLoadMore) {
         setIsLoading(true);
         if (!isLoadMore) {
-            mProgressLimitStart.setVisibility(View.VISIBLE);
+            mProgressLimitStart.setVisibility(VISIBLE);
         }
     }
 
@@ -381,12 +410,16 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     @Override
     public void onFoodTypeSelect(ProductList productList) {
-        openProductDetailsFragment(productList);
+        Gson gson = new Gson();
+        String strProductList = gson.toJson(productList);
+        ScreenManager.openProductDetailFragment(getActivity(), mSearchText, strProductList);
     }
 
     @Override
     public void onClothingTypeSelect(ProductList productList) {
-        openProductDetailsFragment(productList);
+        Gson gson = new Gson();
+        String strProductList = gson.toJson(productList);
+        ScreenManager.openProductDetailFragment(getActivity(), mSearchText, strProductList);
     }
 
     @Override
@@ -423,34 +456,26 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     @Override
     public void onAddToListLoad(boolean isLoading) {
         addToListLoadFail = false;
-        pbLoadingIndicator.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        btnCheckOut.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-    }
-
-    private void openProductDetailsFragment(ProductList productList) {
-        if (getActivity() instanceof ShoppingListSearchResultActivity) {
-            Gson gson = new Gson();
-            String strProductList = gson.toJson(productList);
-            Intent intent = new Intent();
-            intent.putExtra("productName", mSearchText);
-            intent.putExtra("productList", strProductList);
-            getActivity().setResult(PRODUCT_DETAILS_FROM_MY_LIST_SEARCH, intent);
-            getActivity().finish();
-        } else {
-            ScreenManager.presentProductDetails(getActivity(), mSearchText, productList);
-        }
+        pbLoadingIndicator.setVisibility(isLoading ? VISIBLE : View.GONE);
+        btnCheckOut.setVisibility(isLoading ? View.GONE : VISIBLE);
     }
 
     public void onAddToListLoadComplete() {
         addToListLoadFail = false;
         pbLoadingIndicator.setVisibility(View.GONE);
-        btnCheckOut.setVisibility(View.VISIBLE);
-        Intent addedToListIntent = new Intent();
-        addedToListIntent.putExtra("listItems", mAddToListSize);
+        btnCheckOut.setVisibility(VISIBLE);
+        Bundle addedToListIntent = new Bundle();
+        addedToListIntent.putInt("listItems", mAddToListSize);
         Activity activity = getActivity();
         if (activity != null) {
-            activity.setResult(ADDED_TO_SHOPPING_LIST_RESULT_CODE, addedToListIntent);
-            activity.onBackPressed();
+            if ((activity instanceof BottomNavigationActivity)) {
+                Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    // Send back the result to ShoppingListDetailFragment to update current shopping list. Delay added to show toast message.
+                    ((BottomNavigationActivity) activity).getSupportFragmentManager().setFragmentResult(String.valueOf(ADDED_TO_SHOPPING_LIST_RESULT_CODE), addedToListIntent);
+                }, AppConstant.DELAY_200_MS);
+                activity.onBackPressed();
+            }
         }
     }
 
@@ -653,7 +678,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     }
 
     public void toggleAddToListBtn(boolean enable) {
-        rlAddToList.setVisibility(enable ? View.VISIBLE : View.GONE);
+        rlAddToList.setVisibility(enable ? VISIBLE : View.GONE);
         btnCheckOut.setEnabled(enable);
     }
 
@@ -994,6 +1019,10 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
                 default:
                     break;
             }
+        }
+        if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
+            getActivity().setResult(ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE, data);
+            getActivity().onBackPressed();
         }
     }
 }
