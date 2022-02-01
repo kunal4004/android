@@ -47,7 +47,7 @@ class BrandLandingFragment: Fragment() {
         arguments?.apply {
             searchType = getString(ChanelUtils.SEARCH_TYPE, "")
             searchTerm = getString(ChanelUtils.SEARCH_TERM, "")
-            filterContent = getBoolean(ChanelUtils.FILTER_CONTENT, false)
+            filterContent = getBoolean(ChanelUtils.FILTER_CONTENT, true)
         }
         setupChanelViewModel()
         fetchData()
