@@ -14,5 +14,8 @@ enum class VocTriggerEvent(val value: String) {
     CHAT_CC_MYACCOUNTS("cc_myaccounts_chat_online"),
     CHAT_CC_TRANSACTION("cc_transaction_chat_online"),
     CHAT_CC_STATEMENT("cc_statement_chat_online"),
-    CHAT_CC_PAYMENTOPTIONS("cc_paymentoptions_chat_online");
+    CHAT_CC_PAYMENTOPTIONS("cc_paymentoptions_chat_online"),
+
+    MYACCOUNTS_ICR_LINK_CONFIRM("myaccounts_icr_link_confirm"),
+    MYACCOUNTS_BLOCKCARD_CONFIRM("myaccounts_blockcard_confirm");
 }

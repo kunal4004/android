@@ -78,7 +78,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
 import za.co.woolworths.financial.services.android.ui.vto.utils.PermissionUtil
-import kotlinx.android.synthetic.main.vto_imageview_fragment.*
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity
@@ -110,6 +109,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.camera.CameraMonito
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_LIVE_CAMERA
 import android.graphics.Bitmap
 import androidx.fragment.app.activityViewModels
+import kotlinx.android.synthetic.main.vto_layout.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigQuickShopDefaultValues
