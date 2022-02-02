@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDev
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAllLinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.models.repository.AppStateRepository
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
@@ -114,8 +115,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         arguments?.apply {
             isNonWFSUser = getBoolean(IS_NON_WFS_USER)
             val list = getSerializable(DEVICE_LIST)
-            if (list is ArrayList<*> && list.isNotEmpty()) {
-                deviceList = list as ArrayList<UserDevice>
+            if (list is Array<*> && list.isNotEmpty()) {
+                list.forEach {
+                    deviceList?.add(it as UserDevice)
+                }
             }
         }
     }
@@ -194,7 +197,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                         retryLinkDeviceLinearLayout?.visibility = View.GONE
                         val isDeviceIdentityIdPresent = verifyDeviceIdentityId(response?.userDevices)
                         deviceList = response?.userDevices
-                        MyAccountsFragment.deviceList = deviceList
+                        AppStateRepository().saveLinkedDevices(deviceList)
                         updateLinkedDeviceView(isDeviceIdentityIdPresent)
                     }
                     else -> {
@@ -411,7 +414,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     fun setUserAuthentication(isAuthenticated: Boolean) {
         AuthenticateUtils.getInstance(activity).setUserAuthenticate(if (isAuthenticated) SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON else SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF)
-        auSwitch.isChecked = isAuthenticated
+        auSwitch?.isChecked = isAuthenticated
     }
 
     fun openDeviceSecuritySettings() {
