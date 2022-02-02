@@ -65,9 +65,8 @@ abstract class ConnectionBroadcastReceiver : BroadcastReceiver() {
         }
     }
 
-    override fun onReceive(context: Context, intent: Intent) {
-        val hasConnection =
-            !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
+    override fun onReceive(context: Context?, intent: Intent?) {
+        val hasConnection = intent?.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false) != true
         onConnectionChanged(hasConnection)
     }
 
