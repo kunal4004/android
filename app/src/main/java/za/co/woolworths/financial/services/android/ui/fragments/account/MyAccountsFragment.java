@@ -527,7 +527,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         super.onResume();
         Activity activity = getActivity();
         if (activity == null) return;
-        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
+        Utils.setScreenName( FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
         isActivityInForeground = true;
         if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
             messageCounterRequest();

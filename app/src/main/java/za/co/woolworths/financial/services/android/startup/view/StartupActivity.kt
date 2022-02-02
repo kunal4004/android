@@ -145,6 +145,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     private fun setDataOnUI(configData: ConfigData?, isComingFromSuccess: Boolean) {
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITH_CTA)
         progress_bar?.visibility = View.GONE
         first_btn?.visibility = View.VISIBLE
         second_btn?.visibility = View.VISIBLE
@@ -281,6 +282,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun showNonVideoViewWithErrorLayout() {
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP_API_ERROR)
         runOnUiThread {
             progressBar?.visibility = View.GONE
             splashNoVideoView?.visibility = View.GONE
@@ -390,6 +392,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun presentNextScreenOrServerMessage() {
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.SPLASH_WITHOUT_CTA)
         showNonVideoViewWithoutErrorLayout()
         presentNextScreen()
     }
@@ -447,7 +450,6 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
             )
         ) {
             Utils.setScreenName(
-                this,
                 FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP
             )
             val rootedDeviceInfoFragment = newInstance(getString(R.string.rooted_phone_desc))
@@ -486,7 +488,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
 
     override fun onResume() {
         super.onResume()
-        Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP)
+        Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP)
         NotificationUtils.clearNotifications(this@StartupActivity)
     }
 
