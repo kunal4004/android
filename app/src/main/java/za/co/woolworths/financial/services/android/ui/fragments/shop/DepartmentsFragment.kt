@@ -256,13 +256,15 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
         }*/
 
-        activity?.apply {
+       /* activity?.apply {
             if (!ConfirmAddressDialog.dialogInstance.isVisible)
                 ConfirmAddressDialog.newInstance().show(
                     this@DepartmentsFragment.childFragmentManager,
                     ConfirmAddressDialog::class.java.simpleName
                 )
-        }
+        }*/
+
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressDialog.newInstance())
     }
 
 

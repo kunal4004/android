@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -32,7 +33,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
-class ConfirmAddressDialog : WBottomSheetDialogFragment() {
+class ConfirmAddressDialog : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     protected var mLastLocation: Location? = null
 
@@ -52,13 +53,6 @@ class ConfirmAddressDialog : WBottomSheetDialogFragment() {
         } else {
             hideCurrentLocation()
         }
-
-        /*      fusedLocationClient.getCurrentLocation()
-                  .addOnSuccessListener { location : Location? ->
-                      // Got last known location. In some rare situations this can be null.
-                      tvCurrentLocation.text = location.toString()
-                      Toast.makeText(activity, location.toString(),Toast.LENGTH_LONG).show()
-                  }*/
     }
 
     override fun onCreateView(
