@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.chanel_products_horizontal_item_cell.view.
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
-import za.co.woolworths.financial.services.android.chanel.views.NavigationClickListener
+import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager
 class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
 
-    fun setProductItem(productList: ProductList, NavigationClickListener: NavigationClickListener) {
+    fun setProductItem(productList: ProductList, ChanelNavigationClickListener: ChanelNavigationClickListener) {
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages,virtualTryOn)
@@ -31,7 +31,7 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
             itemView.imQuickShopAddToCartIcon.visibility = View.GONE
-            setOnClickListener(NavigationClickListener, this)
+            setOnClickListener(ChanelNavigationClickListener, this)
         }
     }
 
@@ -111,9 +111,9 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
         }
     }
 
-    private fun setOnClickListener(navigationClickListener: NavigationClickListener,
+    private fun setOnClickListener(chanelNavigationClickListener: ChanelNavigationClickListener,
                                    productList: ProductList) {
-        itemView.setOnClickListener { navigationClickListener.openProductDetailsView(productList) }
+        itemView.setOnClickListener { chanelNavigationClickListener.openProductDetailsView(productList) }
     }
 
 }

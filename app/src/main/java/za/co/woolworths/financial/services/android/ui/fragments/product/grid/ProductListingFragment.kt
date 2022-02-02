@@ -24,7 +24,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_brand_landing.*
+import kotlinx.android.synthetic.main.fragment_brand_landing.view.*
 import kotlinx.android.synthetic.main.grid_layout.*
+import kotlinx.android.synthetic.main.grid_layout.incCenteredProgress
 import kotlinx.android.synthetic.main.grid_layout.incNoConnectionHandler
 import kotlinx.android.synthetic.main.grid_layout.sortAndRefineLayout
 import kotlinx.android.synthetic.main.grid_layout.vtoTryItOnBanner
@@ -33,6 +36,9 @@ import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.search_result_fragment.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
+import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
+import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
+import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -87,7 +93,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
     WMaterialShowcaseView.IWalkthroughActionListener,
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
-    IOnConfirmDeliveryLocationActionListener {
+    IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
     private var menuActionSearch: MenuItem? = null
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
@@ -263,6 +269,12 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
+
+        if (response.isBanners) {
+            onChanelSuccess(response)
+            return
+        }
+        plp_relativeLayout?.visibility = View.VISIBLE
         showVtoBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
@@ -332,6 +344,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
         }
         mProductAdapter?.notifyDataSetChanged()
+    }
+
+    private fun onChanelSuccess(response: ProductView) {
+        chanel_layout?.visibility = VISIBLE
+        plp_relativeLayout?.visibility = GONE
+        val brnadLandingAdapter = BrandLandingAdapter(
+            requireContext(),
+            response.dynamicBanners as List<DynamicBanner>, this
+        )
+        val layoutManager = LinearLayoutManager(requireContext())
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        chanel_layout?.rv_chanel?.layoutManager = layoutManager
+        chanel_layout?.rv_chanel?.setHasFixedSize(true)
+        chanel_layout?.rv_chanel?.adapter = brnadLandingAdapter
     }
 
     override fun showLiquorDialog() {
@@ -1380,6 +1406,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 SET_DELIVERY_LOCATION_REQUEST_CODE
             )
         }
+    }
+
+    override fun openProductDetailsView(productList: ProductList) {
+
+    }
+
+    override fun openCategoryListView() {
+
     }
 
 }

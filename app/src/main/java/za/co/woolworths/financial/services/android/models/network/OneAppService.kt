@@ -42,6 +42,12 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.URLEncoder
+import android.text.TextUtils
+
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+
+
+
 
 object OneAppService : RetrofitConfig() {
 
@@ -274,20 +280,23 @@ object OneAppService : RetrofitConfig() {
             request)
     }
 
+
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val loc = getMyLocation()
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
+
+        /*todo need to add dynamically add filtercontent value */
 
         return if (Utils.isLocationEnabled(appContext())) {
             mApiInterface.getProducts("", "",  "",
                 "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
                 requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
-                requestParams.refinement, suburbId = suburbId, storeId = storeId)
+                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = false)
         } else {
             mApiInterface.getProductsWithoutLocation("", "", getSessionToken(),
                 getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value,
                 requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId,
-                storeId = storeId)
+                storeId = storeId, filterContent =  false)
         }
     }
 

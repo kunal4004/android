@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/chanellayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/grey_background_color"
-    android:layout_marginTop="?attr/actionBarSize"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -20,7 +21,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_chanel"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/zero_dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

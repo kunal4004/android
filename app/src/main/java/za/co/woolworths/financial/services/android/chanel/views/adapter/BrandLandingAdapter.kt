@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
-import za.co.woolworths.financial.services.android.chanel.views.NavigationClickListener
+import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelAppBannerViewHolder
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelCategoryNavigationViewHolder
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelHeaderBannerViewHolder
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelLogoViewHolder
 
-class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner>, val navigationClickListener: NavigationClickListener) :
+class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner>, val chanelNavigationClickListener: ChanelNavigationClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -55,7 +55,7 @@ class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner>, 
         } else if (holder is ChanelCategoryNavigationViewHolder) {
             holder.bind(position, list, context)
         } else if (holder is ChanelHeaderBannerViewHolder) {
-            holder.bind(position, list, context, navigationClickListener)
+            holder.bind(position, list, context, chanelNavigationClickListener)
         }
     }
 

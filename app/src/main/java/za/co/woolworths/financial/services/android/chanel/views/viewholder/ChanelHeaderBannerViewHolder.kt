@@ -9,15 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 
 import kotlinx.android.synthetic.main.chanel_header_banner_view.view.*
 import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
-import za.co.woolworths.financial.services.android.chanel.views.NavigationClickListener
+import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.adapter.ChanelHeaderBannerAdapter
 
 
 class ChanelHeaderBannerViewHolder(itemView: View, val parent: ViewGroup) :
     RecyclerView.ViewHolder(itemView) {
 
-    fun bind(position: Int, list: List<DynamicBanner>, context: Context?, navigationClickListener: NavigationClickListener) {
-        val adapter = ChanelHeaderBannerAdapter(context, list.get(position).products,  navigationClickListener)
+    fun bind(position: Int, list: List<DynamicBanner>, context: Context?, chanelNavigationClickListener: ChanelNavigationClickListener) {
+        val adapter = ChanelHeaderBannerAdapter(context, list.get(position).products,  chanelNavigationClickListener)
 
         val layoutManager = LinearLayoutManager(context,
             LinearLayoutManager.HORIZONTAL,false)

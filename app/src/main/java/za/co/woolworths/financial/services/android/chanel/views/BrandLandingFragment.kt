@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_brand_landing.*
 import kotlinx.android.synthetic.main.fragment_brand_landing.incCenteredProgress
-import kotlinx.android.synthetic.main.fragment_brand_landing.view.*
 import za.co.woolworths.financial.services.android.chanel.model.ChanelResponse
 import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
 import za.co.woolworths.financial.services.android.chanel.services.network.ChanelApiHelper
@@ -29,7 +28,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
-class BrandLandingFragment : Fragment(), NavigationClickListener {
+class BrandLandingFragment : Fragment(), ChanelNavigationClickListener {
 
     private lateinit var chanelViewModel: ChanelViewModel
     private var searchTerm: String? = null

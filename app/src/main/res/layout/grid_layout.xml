@@ -7,7 +7,13 @@
     android:clickable="true"
     android:focusable="true">
 
+    <include
+        android:visibility="gone"
+        android:id="@+id/chanel_layout"
+        layout="@layout/fragment_brand_landing"/>
+
     <RelativeLayout
+        android:id="@+id/plp_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/default_background"

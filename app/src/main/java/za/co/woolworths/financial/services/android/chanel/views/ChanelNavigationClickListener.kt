@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.chanel.views
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 
-interface NavigationClickListener {
+interface ChanelNavigationClickListener {
     fun openProductDetailsView(productList: ProductList)
     fun openCategoryListView()
 }
