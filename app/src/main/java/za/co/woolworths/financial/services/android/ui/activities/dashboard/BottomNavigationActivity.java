@@ -16,6 +16,9 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_NAME;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_SEARCH_TERM;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.AppConstant.REQUEST_CODE_ORDER_DETAILS_PAGE;
@@ -991,8 +994,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (resultCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE){
                     SearchResultFragment searchResultFragment = new SearchResultFragment();
                     Bundle bundle = new Bundle();
-                    bundle.putString("searchTerm", data.getStringExtra("listName"));
-                    bundle.putString("listID", data.getStringExtra("listId"));
+                    bundle.putString(MY_LIST_SEARCH_TERM, data.getStringExtra(MY_LIST_LIST_NAME));
+                    bundle.putString(MY_LIST_LIST_ID, data.getStringExtra(MY_LIST_LIST_ID));
                     searchResultFragment.setArguments(bundle);
                     pushFragment(searchResultFragment);
                     break;

@@ -104,7 +104,7 @@
                         android:text="@string/toolbar_layout"
                         android:textAllCaps="true"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/twelve_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/selectButtonGuideline"
                         app:layout_constraintStart_toStartOf="@+id/editButtonGuideline"
