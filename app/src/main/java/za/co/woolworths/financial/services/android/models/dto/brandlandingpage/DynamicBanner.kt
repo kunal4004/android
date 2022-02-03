@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.chanel.model
+package za.co.woolworths.financial.services.android.models.dto.brandlandingpage
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 

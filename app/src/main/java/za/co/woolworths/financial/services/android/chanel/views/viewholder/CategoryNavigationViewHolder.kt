@@ -4,7 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
 import kotlinx.android.synthetic.main.chanel_catagories_navigation_item.view.*
-import za.co.woolworths.financial.services.android.chanel.model.Navigation
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 
 class CategoryNavigationViewHolder(

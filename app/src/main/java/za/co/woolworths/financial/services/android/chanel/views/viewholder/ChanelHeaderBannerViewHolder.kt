@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 import kotlinx.android.synthetic.main.chanel_header_banner_view.view.*
-import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.adapter.ChanelHeaderBannerAdapter
 
