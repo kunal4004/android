@@ -115,8 +115,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         arguments?.apply {
             isNonWFSUser = getBoolean(IS_NON_WFS_USER)
             val list = getSerializable(DEVICE_LIST)
-            if (list is ArrayList<*> && list.isNotEmpty()) {
-                deviceList = list as ArrayList<UserDevice>
+            if (list is Array<*> && list.isNotEmpty()) {
+                list.forEach {
+                    deviceList?.add(it as UserDevice)
+                }
             }
         }
     }
