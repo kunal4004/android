@@ -24,7 +24,6 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_products"
-        android:background="@color/grey_background_color"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/twenty_four_dp"

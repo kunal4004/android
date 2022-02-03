@@ -6,14 +6,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.chanel.model.Navigation
+import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.CategoryNavigationViewHolder
 
-class CategoryNavigationAdapter(val context: Context?, val list: List<Navigation>) :
+class CategoryNavigationAdapter(
+    val context: Context?,
+    val list: List<Navigation>,
+    val chanelNavigationClickListener: ChanelNavigationClickListener
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return CategoryNavigationViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.chanel_catagories_navigation_item, parent, false)
+            LayoutInflater.from(context).inflate(R.layout.chanel_catagories_navigation_item, parent, false),
+            chanelNavigationClickListener
         )
     }
 

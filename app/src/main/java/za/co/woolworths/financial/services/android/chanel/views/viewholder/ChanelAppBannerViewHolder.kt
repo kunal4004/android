@@ -8,7 +8,7 @@ import za.co.woolworths.financial.services.android.util.ImageManager
 
 class ChanelAppBannerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(position: Int, list: List<DynamicBanner>) {
-        ImageManager.setPicture(itemView.img_view_banner, list.get(position).externalImageRefV2.toString())
+    fun bind(position: Int, list: List<DynamicBanner?>) {
+        ImageManager.setPicture(itemView.img_view_banner, list.get(position)?.externalImageRefV2.toString())
     }
 }

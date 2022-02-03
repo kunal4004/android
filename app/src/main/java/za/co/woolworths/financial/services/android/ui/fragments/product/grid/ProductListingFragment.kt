@@ -37,6 +37,7 @@ import kotlinx.android.synthetic.main.search_result_fragment.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
 import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
+import za.co.woolworths.financial.services.android.chanel.model.Navigation
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -67,6 +68,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawer
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -95,6 +97,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
+    private var toolbarTitleText: String? = null
     private var menuActionSearch: MenuItem? = null
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
@@ -172,6 +175,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mErrorHandlerView = ErrorHandlerView(this, no_connection_layout)
             mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
 
+            toolbarTitleText =
+                if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
             setTitle()
             startProductRequest()
             setUniqueIds()
@@ -265,13 +270,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if ((activity as? BottomNavigationActivity)?.currentFragment !is ProductListingFragment) {
             return
         }
-        (activity as? BottomNavigationActivity)?.setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
+
+        (activity as? BottomNavigationActivity)?.setTitle(toolbarTitleText)
     }
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
 
         if (response.isBanners) {
-            onChanelSuccess(response)
+            if (!response.dynamicBanners.isNullOrEmpty()) {
+                onChanelSuccess(response)
+            }
             return
         }
         plp_relativeLayout?.visibility = View.VISIBLE
@@ -349,15 +357,18 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun onChanelSuccess(response: ProductView) {
         chanel_layout?.visibility = VISIBLE
         plp_relativeLayout?.visibility = GONE
-        val brnadLandingAdapter = BrandLandingAdapter(
+        val brandLandingAdapter = BrandLandingAdapter(
             requireContext(),
-            response.dynamicBanners as List<DynamicBanner>, this
+            response.dynamicBanners as List<DynamicBanner?>, this
         )
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         chanel_layout?.rv_chanel?.layoutManager = layoutManager
         chanel_layout?.rv_chanel?.setHasFixedSize(true)
-        chanel_layout?.rv_chanel?.adapter = brnadLandingAdapter
+        chanel_layout?.rv_chanel?.adapter = brandLandingAdapter
+
+        toolbarTitleText = response?.pageHeading ?: mSearchTerm
+        setTitle()
     }
 
     override fun showLiquorDialog() {
@@ -402,8 +413,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun getCategoryNameAndSetTitle() {
-        if (!mSubCategoryName.isNullOrEmpty())
+        if (!mSubCategoryName.isNullOrEmpty()) {
+            toolbarTitleText = mSubCategoryName
             setTitle()
+        }
     }
 
     override fun unhandledResponseCode(response: Response) {
@@ -681,6 +694,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
                 }
+
                 else -> return
             }
         }
@@ -697,6 +711,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showBottomNavigationMenu()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
+                    setTitle()
+
                     if (!localProductBody.isEmpty() && isBackPressed) {
                         localProductBody.removeLast()
                         isBackPressed = false
@@ -902,7 +918,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun openProductDetailView(productList: ProductList) {
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList)
-
     }
 
     override fun queryInventoryForStore(
@@ -1408,12 +1423,21 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun openProductDetailsView(productList: ProductList) {
-
+    override fun openProductDetailsView(productList: ProductList?) {
+        // From Chanel Category click
+        productList?.let { openProductDetailView(it) }
     }
 
-    override fun openCategoryListView() {
-
+    override fun openCategoryListView(navigation: Navigation?) {
+        // From Chanel Category click
+        (activity as? BottomNavigationActivity)?.apply {
+            pushFragment(
+                newInstance(
+                    ProductsRequestParams.SearchType.NAVIGATE,
+                    "",
+                    navigation?.navigationState
+                )
+            )
+        }
     }
-
 }

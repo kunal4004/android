@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
 
 class ChanelLogoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(position: Int, list: List<DynamicBanner>) {
-        itemView.tv_logo_name.text = list.get(position).label
+    fun bind(position: Int, list: List<DynamicBanner?>) {
+        itemView.tv_logo_name.text = list.get(position)?.label
     }
 }

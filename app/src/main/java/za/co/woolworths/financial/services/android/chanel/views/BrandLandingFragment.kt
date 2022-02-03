@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_brand_landing.*
 import kotlinx.android.synthetic.main.fragment_brand_landing.incCenteredProgress
 import za.co.woolworths.financial.services.android.chanel.model.ChanelResponse
 import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
+import za.co.woolworths.financial.services.android.chanel.model.Navigation
 import za.co.woolworths.financial.services.android.chanel.services.network.ChanelApiHelper
 import za.co.woolworths.financial.services.android.chanel.services.repository.ChanelRepository
 import za.co.woolworths.financial.services.android.chanel.utils.FILTER_CONTENT
@@ -143,11 +144,11 @@ class BrandLandingFragment : Fragment(), ChanelNavigationClickListener {
         ).get(ChanelViewModel::class.java)
     }
 
-    override fun openProductDetailsView(productList: ProductList) {
+    override fun openProductDetailsView(productList: ProductList?) {
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(searchTerm, productList)
     }
 
-    override fun openCategoryListView() {
+    override fun openCategoryListView(navigation: Navigation?) {
 
     }
 

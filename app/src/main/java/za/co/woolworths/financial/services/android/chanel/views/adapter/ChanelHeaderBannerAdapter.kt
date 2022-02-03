@@ -21,8 +21,11 @@ class ChanelHeaderBannerAdapter (val context: Context?,
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if(position >= list.size || position < 0){
+            return
+        }
         if (holder is ChanelHeaderBannerItemCellViewHolder) {
-            holder.setProductItem(list.get(position), chanelNavigationClickListener)
+            holder.setProductItem(list[position], chanelNavigationClickListener)
         }
     }
 
