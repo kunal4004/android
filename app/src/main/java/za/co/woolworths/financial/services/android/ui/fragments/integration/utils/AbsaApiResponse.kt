@@ -100,9 +100,14 @@ class AbsaApiResponse<W: Any>(isResponseBodyEncrypted: Boolean = false, resultFr
     }
 
     override fun handleAbsaStatusCode(payload: String?): AbsaResultWrapper? {
-        val response = Gson().fromJson(payload,typeParameterClass.java)
-       with(response) {
-            return when(this) {
+        val response: W?
+        try {
+            response = Gson().fromJson(payload, typeParameterClass.java)
+        } catch (e: JSONException) {
+            return null
+        }
+        with(response) {
+            return when (this) {
                 is CekdResponseProperty -> AbsaResultWrapper.Section.Cekd.StatusCodeValid(this)
 
                 is ValidateCardAndPinResponseProperty -> {
