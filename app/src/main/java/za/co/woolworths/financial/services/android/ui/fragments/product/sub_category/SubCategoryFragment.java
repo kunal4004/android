@@ -198,23 +198,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
     @Override
     public void onChildItemClicked(SubCategory subCategory) {
         //Navigate to product grid
-        if (isCategoryPresentInConfig(subCategory.categoryName)){
-            pushFragment(BrandLandingFragment.Companion.newInstance(subCategory.categoryName, ProductsRequestParams.SearchType.NAVIGATE, false));
-        } else
-            pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE, subCategory.categoryName, subCategory.dimValId));
-    }
-
-    private boolean isCategoryPresentInConfig(String categoryName) {
-        BrandLandingPage brandLandingPage = AppConfigSingleton.INSTANCE.getBrandLandingPage();
-        if (brandLandingPage == null || !brandLandingPage.isEnabled()) {
-            return false;
-        }
-        for (String categoryNameFromList : brandLandingPage.getCategoryName()) {
-            if (!TextUtils.isEmpty(categoryName) && categoryName.equalsIgnoreCase(categoryNameFromList)) {
-                return true;
-            }
-        }
-        return false;
+        pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE, subCategory.categoryName, subCategory.dimValId));
     }
 
     @Override
