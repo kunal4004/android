@@ -12,6 +12,8 @@ class RecyclerViewViewHolderHeader(parent: ViewGroup) : RecyclerViewViewHolder(
     LayoutInflater.from(parent.context).inflate(R.layout.item_found_layout, parent, false)
 ) {
     fun setNumberOfItems(activity: FragmentActivity?, productList: ProductList?) {
+
+        /*todo  need to add condition here to show chanel banner*/
         itemView?.chanel_logo_header?.tv_logo_name?.text = "CHANEL"
         when (productList?.numberOfItems) {
             1 -> productList?.numberOfItems?.toString()?.let { numberOfItems ->
