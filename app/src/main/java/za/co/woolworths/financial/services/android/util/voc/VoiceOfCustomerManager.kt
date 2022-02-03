@@ -16,6 +16,15 @@ import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 class VoiceOfCustomerManager {
     companion object {
+        var pendingTriggerEvent: VocTriggerEvent? = null
+
+        fun showPendingSurveyIfNeeded(context: Context?) {
+            pendingTriggerEvent?.let {
+                showVocSurveyIfNeeded(context, it)
+                pendingTriggerEvent = null
+            }
+        }
+
         fun showVocSurveyIfNeeded(context: Context?, triggerEvent: VocTriggerEvent? = null) {
             if (triggerEvent == null) return
 
