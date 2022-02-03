@@ -46,7 +46,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-    override fun getAccountBundle(bundle: Bundle?): Pair<ApplyNowState?, AccountsResponse?>? {
+    override fun getAccountBundle(bundle: Bundle?): Pair<ApplyNowState?, AccountsResponse?> {
         mApplyNowState = bundle?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState ?: ApplyNowState.STORE_CARD
         val accountResponseString = bundle?.getString(MY_ACCOUNT_RESPONSE, "")
         mDeepLinkingData = bundle?.getString(DEEP_LINKING_PARAMS, "")
@@ -117,10 +117,8 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val productOffering = ProductOffering(account)
         val eligibleState = when (state) {
             ApplyNowState.STORE_CARD -> ProductGroupCode.SC
-            ApplyNowState.GOLD_CREDIT_CARD,
-            ApplyNowState.BLACK_CREDIT_CARD,
-            ApplyNowState.SILVER_CREDIT_CARD -> ProductGroupCode.CC
             ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
+            else -> ProductGroupCode.CC
         }
 
         if (response.eligibilityPlan?.productGroupCode == eligibleState) {
@@ -184,9 +182,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                             val productGroupCode = productGroupCode() ?: return@state
                                 myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(productGroupCode, { eligibilityPlanResponse ->
                                              checkEligibility(eligibilityPlanResponse, state)
-                                }, {
-
-                                })
+                                }, {})
                             }
                     }
                 }

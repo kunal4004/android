@@ -65,10 +65,8 @@ class GetAPaymentPlanFragment : Fragment() {
                     }
 
                     ProductGroupCode.CC -> {
-                        collectionsUrl =
-                            WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl =
-                            WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
+                        collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                        exitUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                     }
                 }
 

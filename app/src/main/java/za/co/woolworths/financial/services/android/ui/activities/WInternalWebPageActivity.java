@@ -319,6 +319,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void finishActivity() {
+		setResult(RESULT_CANCELED);
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
