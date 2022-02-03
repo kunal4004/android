@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyAccountsRemoteApiViewModel  @Inject constructor(private val iTreatmentPlanDataSource: ITreatmentPlanDataSource): ViewModel() {
 
-     var account: Account? = null
+    var account: Account? = null
     fun getProductOffering() = ProductOffering(account = account)
     fun getState() = AccountsProductGroupCode.getEnum(account?.productGroupCode)
     fun fetchCheckEligibilityTreatmentPlan(productGroupCode: String, successHandler: (EligibilityPlanResponse) -> Unit, failureHandler: (String) -> Unit) {

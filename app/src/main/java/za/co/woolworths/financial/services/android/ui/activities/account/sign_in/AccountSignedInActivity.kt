@@ -17,7 +17,6 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import com.google.android.gms.analytics.ecommerce.Product
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,7 +71,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
     private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
     private val myAccountsRemoteApiViewModel: MyAccountsRemoteApiViewModel by viewModels()
-
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {

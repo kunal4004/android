@@ -15,8 +15,6 @@ import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
-import com.google.gson.JsonParser
-import com.huawei.hms.support.log.common.Base64
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -44,12 +42,13 @@ import za.co.woolworths.financial.services.android.models.dto.account.CreditCard
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
-import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
+import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
@@ -62,6 +61,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -692,54 +692,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     private fun openSetupPaymentPlanPage() {
-        val arguments = HashMap<String, String>()
-        var collectionsUrl: String? = ""
-        var exitUrl: String? = ""
-        when(state){
-            ApplyNowState.STORE_CARD -> {
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC_ACTION
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC,
-                    arguments,
-                    activity)
-                collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                exitUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.exitUrl
-            }
-            ApplyNowState.PERSONAL_LOAN -> {
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL_ACTION
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL,
-                    arguments,
-                    activity)
-                collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.collectionsUrl
-                exitUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.personalLoan?.exitUrl
-            }
-            ApplyNowState.SILVER_CREDIT_CARD,
-            ApplyNowState.GOLD_CREDIT_CARD,
-            ApplyNowState.BLACK_CREDIT_CARD, -> {
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_CC_ACTION
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_CC,
-                    arguments,
-                    activity)
-                collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.collectionsUrl
-                exitUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
-            }
-        }
-
-        val url = collectionsUrl + eligibilityPlan?.appGuid
-
-        when (WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.renderMode){
-            AvailableFundFragment.NATIVE_BROWSER ->
-                KotlinUtils.openUrlInPhoneBrowser(url, activity)
-
-            else ->
-                KotlinUtils.openLinkInInternalWebView(activity,
-                    url,
-                    true,
-                    exitUrl
-                )
-        }
+        val intent = Intent(context, GetAPaymentPlanActivity::class.java)
+        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, eligibilityPlan)
+        startActivity(intent)
+        activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
     }
 
     private fun openViewTreatmentPlanPage(){
