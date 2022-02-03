@@ -69,7 +69,6 @@ public class ProductListingExtensionFragment extends Fragment {
         retrieveProduct.enqueue(new CompletionHandler<>(new IResponseListener<ProductView>() {
             @Override
             public void onSuccess(ProductView productView) {
-                setProductIsLoading(false);
                 if (productView.httpCode == 200) {
                     List<ProductList> productLists = productView.products;
                     if (productLists != null || productView.isBanners) {
@@ -85,11 +84,11 @@ public class ProductListingExtensionFragment extends Fragment {
                         getNavigator().unhandledResponseCode(productView.response);
                     }
                 }
+                setProductIsLoading(false);
             }
 
             @Override
             public void onFailure(final Throwable error) {
-                setProductIsLoading(false);
                 if (activity == null) return;
                 activity.runOnUiThread(() -> {
                     getNavigator().failureResponseHandler(error.toString());
