@@ -5,14 +5,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelAppBannerViewHolder
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelCategoryNavigationViewHolder
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelHeaderBannerViewHolder
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelLogoViewHolder
 
-class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner>, val chanelNavigationClickListener: ChanelNavigationClickListener) :
+class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner?>, val chanelNavigationClickListener: ChanelNavigationClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -37,7 +37,8 @@ class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner>, 
             )
         } else if (viewType == VIEW_TYPE_NAVIGATION) {
             return ChanelCategoryNavigationViewHolder(
-                LayoutInflater.from(context).inflate(R.layout.chanel_category_navigation_view, parent, false)
+                LayoutInflater.from(context).inflate(R.layout.chanel_category_navigation_view, parent, false),
+                chanelNavigationClickListener
             )
         }
         return ChanelHeaderBannerViewHolder(
@@ -65,11 +66,11 @@ class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner>, 
 
     override fun getItemViewType(position: Int): Int {
 
-        if (list.get(position).name.equals(LOGO)) {
+        if (list.get(position)?.name.equals(LOGO)) {
             return VIEW_TYPE_LOGO
-        } else if (list.get(position).name.equals(APP_BANNER)) {
+        } else if (list.get(position)?.name.equals(APP_BANNER)) {
             return VIEW_TYPE_APP_BANNER
-        } else if (list.get(position).name.equals(NAVIGATION)) {
+        } else if (list.get(position)?.name.equals(NAVIGATION)) {
             return VIEW_TYPE_NAVIGATION
         } else
             return VIEW_TYPE_HEADER_BANNER

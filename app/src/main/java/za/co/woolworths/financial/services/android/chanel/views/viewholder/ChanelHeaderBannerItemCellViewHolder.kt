@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.chanel.views.viewholder
 import android.text.Html
 import android.text.TextUtils
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.chanel_products_horizontal_item_cell.view.*
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
@@ -20,18 +22,28 @@ import za.co.woolworths.financial.services.android.util.ImageManager
 class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
 
-    fun setProductItem(productList: ProductList, ChanelNavigationClickListener: ChanelNavigationClickListener) {
+    fun setProductItem(productList: ProductList, chanelNavigationClickListener: ChanelNavigationClickListener) {
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages,virtualTryOn)
             setProductName(this)
             setBrandText(this)
+            setBrandHeaderDescriptionText(this)
             setPromotionalText(this)
             val priceItem = PriceItem()
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
             itemView.imQuickShopAddToCartIcon.visibility = View.GONE
-            setOnClickListener(ChanelNavigationClickListener, this)
+            setOnClickListener(chanelNavigationClickListener, this)
+        }
+    }
+
+    private fun setBrandHeaderDescriptionText(productList: ProductList?) = with(itemView) {
+        if(TextUtils.isEmpty(productList?.brandHeaderDescription)){
+            tvRangeName?.visibility = GONE
+        } else {
+            tvRangeName?.visibility = VISIBLE
+            tvRangeName?.text = productList?.brandHeaderDescription
         }
     }
 

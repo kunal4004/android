@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.chanel.model.DynamicBanner;
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner;
 
 public class ProductView {
 

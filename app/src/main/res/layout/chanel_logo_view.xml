@@ -17,6 +17,7 @@
         android:fontFamily="@font/futura_bold"
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_four_sp"
+        android:letterSpacing="0.15"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

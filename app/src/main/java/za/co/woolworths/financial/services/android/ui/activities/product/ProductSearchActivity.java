@@ -130,10 +130,7 @@ public class ProductSearchActivity extends AppCompatActivity
 
 	private void searchProduct(String searchProductBrand) {
 		if (searchProductBrand.length() > 2) {
-			if (searchProductBrand.toLowerCase().contains(SEARCH_VALUE_CHANEL)) {
-				ChanelMessageDialogFragment.Companion.newInstance().show(getSupportFragmentManager(), ChanelMessageDialogFragment.class.getSimpleName());
-			} else {
-				SearchHistory search = new SearchHistory();
+			   SearchHistory search = new SearchHistory();
 				search.searchedValue = searchProductBrand;
 				saveRecentSearch(search);
 				if (TextUtils.isEmpty(mSearchTextHint)) {
@@ -146,7 +143,6 @@ public class ProductSearchActivity extends AppCompatActivity
 				} else {
 					ScreenManager.presentShoppingListSearchResult(this, search.searchedValue, mListID);
 				}
-			}
 		}
 	}
 
