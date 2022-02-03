@@ -7,11 +7,6 @@
     android:clickable="true"
     android:focusable="true">
 
-    <include
-        android:visibility="gone"
-        android:id="@+id/chanel_layout"
-        layout="@layout/fragment_brand_landing"/>
-
     <RelativeLayout
         android:id="@+id/plp_relativeLayout"
         android:layout_width="match_parent"
@@ -69,6 +64,12 @@
             android:background="@color/recent_search_bg" />
 
     </RelativeLayout>
+
+    <include
+        android:visibility="gone"
+        android:id="@+id/chanel_layout"
+        layout="@layout/fragment_brand_landing"/>
+
 
     <include
         android:id="@+id/incNoConnectionHandler"

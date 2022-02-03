@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
 import android.app.Activity;
 import android.util.Log;
+
 import androidx.fragment.app.Fragment;
 
 import java.util.List;
@@ -64,10 +65,11 @@ public class ProductListingExtensionFragment extends Fragment {
     public void executeLoadProduct(final Activity activity, ProductsRequestParams requestParams) {
         getNavigator().onLoadStart(getLoadMoreData());
         setProductIsLoading(true);
-        retrieveProduct =  OneAppService.INSTANCE.getProducts(requestParams);
+        retrieveProduct = OneAppService.INSTANCE.getProducts(requestParams);
         retrieveProduct.enqueue(new CompletionHandler<>(new IResponseListener<ProductView>() {
             @Override
             public void onSuccess(ProductView productView) {
+                setProductIsLoading(false);
                 if (productView.httpCode == 200) {
                     List<ProductList> productLists = productView.products;
                     if (productLists != null || productView.isBanners) {
@@ -83,19 +85,19 @@ public class ProductListingExtensionFragment extends Fragment {
                         getNavigator().unhandledResponseCode(productView.response);
                     }
                 }
-                setProductIsLoading(false);
             }
 
             @Override
             public void onFailure(final Throwable error) {
+                setProductIsLoading(false);
                 if (activity == null) return;
                 activity.runOnUiThread(() -> {
                     getNavigator().failureResponseHandler(error.toString());
                     getNavigator().onLoadComplete(getLoadMoreData());
                     setProductIsLoading(false);
                 });
-                }
-        },ProductView.class));
+            }
+        }, ProductView.class));
     }
 
     public Call<ProductView> getLoadProductRequest() {
@@ -113,7 +115,7 @@ public class ProductListingExtensionFragment extends Fragment {
 
     private void numItemsInTotal(ProductView productView) {
         PagingResponse pagingResponse = productView.pagingResponse;
-        if(pagingResponse == null){
+        if (pagingResponse == null) {
             return;
         }
         if (pagingResponse.numItemsInTotal != null && productView.pagingResponse.pageOffset != null) {
@@ -148,7 +150,7 @@ public class ProductListingExtensionFragment extends Fragment {
         return productIsLoading;
     }
 
-    public void updateProductRequestBodyForRefinement(String navigationState){
+    public void updateProductRequestBodyForRefinement(String navigationState) {
         this.pageOffset = 0;
         this.loadMoreData = false;
         this.mIsLoading = false;
@@ -159,7 +161,7 @@ public class ProductListingExtensionFragment extends Fragment {
 
     }
 
-    public void updateProductRequestBodyForSort(String sortOption){
+    public void updateProductRequestBodyForSort(String sortOption) {
         this.pageOffset = 0;
         this.loadMoreData = false;
         this.mIsLoading = false;
