@@ -4,47 +4,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/default_background"
-    android:contentDescription="@string/plp_viewGroupItemsFound"
-    android:paddingTop="18dp"
-    android:paddingBottom="24dp">
+    android:contentDescription="@string/plp_viewGroupItemsFound">
 
-    <TextView
-        android:id="@+id/tvNumberOfItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:letterSpacing="0.2"
-        android:paddingStart="10dp"
-        android:paddingEnd="6dp"
-        android:text="0"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        android:contentDescription="@string/plp_itemNumber"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <include
+        android:id="@+id/chanel_logo_header"
+        layout="@layout/chanel_logo_view"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tvFoundItem"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnusedAttribute" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/tvFoundItem"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/futura_medium_ttf"
-        android:letterSpacing="0.15"
-        android:contentDescription="@string/plp_testViewItemFound"
-        android:text="@string/product_item_found"
-        android:textAllCaps="true"
-        android:textColor="@color/black_desc_opacity"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/default_background"
+        android:paddingTop="18dp"
+        android:paddingBottom="24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/tvNumberOfItem"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnusedAttribute" />
+        app:layout_constraintTop_toBottomOf="@+id/chanel_logo_header">
+
+        <TextView
+            android:id="@+id/tvNumberOfItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/plp_itemNumber"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:letterSpacing="0.2"
+            android:paddingStart="10dp"
+            android:paddingEnd="6dp"
+            android:text="0"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tvFoundItem"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/tvFoundItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/plp_testViewItemFound"
+            android:fontFamily="@font/futura_medium_ttf"
+            android:letterSpacing="0.15"
+            android:text="@string/product_item_found"
+            android:textAllCaps="true"
+            android:textColor="@color/black_desc_opacity"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/tvNumberOfItem"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
