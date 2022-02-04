@@ -575,6 +575,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
             const val DEVICE_ROOTED_AT_STARTUP: String = "Block Rooted Device"
+            const val SSO_FORGOT_PASSWORD: String = "SSO Forgot Password"
         }
     }
 

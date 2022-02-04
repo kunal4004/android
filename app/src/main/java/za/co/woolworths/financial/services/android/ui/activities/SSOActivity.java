@@ -40,6 +40,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -123,6 +124,14 @@ public class SSOActivity extends WebViewActivity {
 		}
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 		showProfileProgressBar();
+
+       //Uri uri = getIntent().getData();
+		Uri uri = Uri.parse("https://www-win-qa.woolworths.co.za/forgot-password?id=MzY0OTgwNjE3&generatedKey=QlpRSm41MUxqVg==&source=oneapp");
+		if (uri != null) {
+			List<String> params = uri.getPathSegments();
+			String id = params.get(params.size() - 1);
+			//Toast.makeText(applicationContextthis, R.string.downloaing_text, Toast.LENGTH_LONG).show()
+		}
 	}
 
 	// Display progress bar as soon as user land on profile
@@ -270,7 +279,8 @@ public class SSOActivity extends WebViewActivity {
 		REGISTER("customerid/register/step1"),
 		LOGOUT("customerid/connect/endsession"),
 		UPDATE_PASSWORD("customerid/userdetails/password"),
-		UPDATE_PROFILE("customerid/userdetails");
+		UPDATE_PROFILE("customerid/userdetails"),
+		FORGOT_PASSWORD("");
 
 		private final String path;
 
@@ -354,6 +364,10 @@ public class SSOActivity extends WebViewActivity {
 
 			case LOGOUT:
 				redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURILogout();
+				break;
+
+			case FORGOT_PASSWORD:
+				redirectURIString = AppConfigSingleton.INSTANCE.getSsoUpdateDetailsRedirectUri();
 				break;
 
 			default:
@@ -470,6 +484,7 @@ public class SSOActivity extends WebViewActivity {
 			return super.shouldInterceptRequest(view, request);
 		}
 
+		// callback code
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
@@ -715,6 +730,9 @@ public class SSOActivity extends WebViewActivity {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PASSWORD_CHANGE);
 		} else if(path == Path.UPDATE_PROFILE) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PROFILE_INFO);
+		}
+		else if(path == Path.FORGOT_PASSWORD) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_FORGOT_PASSWORD);
 		}
 	}
 
