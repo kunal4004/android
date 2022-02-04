@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.util;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,19 +17,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
 
@@ -170,12 +169,20 @@ public class ScreenManager {
         }
     }
 
-    public static void presentProductDetails(FragmentManager fragmentManager, int layoutId, Bundle bundle) {
-        /*Intent intent = new Intent(activity, ProductDetailsActivity.class);
-        intent.putExtras(bundle);
-        activity.startActivityForResult(intent, PDP_REQUEST_CODE);
-        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);*/
+    public static void openProductDetailFragment(Activity activity, String productName, String strProductList) {
+        if (!(activity instanceof BottomNavigationActivity)) {
+            return;
+        }
+        ProductDetailsFragment fragment = ProductDetailsFragment.Companion.newInstance();
+        Utils.updateStatusBarBackground(activity);
+        Bundle bundle = new Bundle();
+        bundle.putString(STR_PRODUCT_LIST, strProductList);
+        bundle.putString(STR_PRODUCT_CATEGORY, productName);
+        fragment.setArguments(bundle);
+        ((BottomNavigationActivity) activity).pushFragment(fragment);
+    }
 
+    public static void presentProductDetails(FragmentManager fragmentManager, int layoutId, Bundle bundle) {
         Fragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
         productDetailsFragmentNew.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -185,8 +192,8 @@ public class ScreenManager {
     }
 
     public static void presentShoppingCart(Activity activity) {
-        if (activity instanceof BottomNavigationActivity){
-            ((BottomNavigationActivity)activity).navigateToTabIndex(INDEX_CART, null);
+        if (activity instanceof BottomNavigationActivity) {
+            ((BottomNavigationActivity) activity).navigateToTabIndex(INDEX_CART, null);
         }
         /*Intent openCartActivity = new Intent(activity, CartActivity.class);
         activity.startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
@@ -194,16 +201,9 @@ public class ScreenManager {
     }
 
     public static void presentShoppingListDetailActivity(Activity activity, String listId, String listName) {
-        /*Intent openShoppingListDetailActivity = new Intent(activity, ShoppingListDetailActivity.class);
-        openShoppingListDetailActivity.putExtra("listId", listId);
-        openShoppingListDetailActivity.putExtra("listName", listName);
-        activity.startActivityForResult(openShoppingListDetailActivity, SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE);
-        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);*/
-
         if (!(activity instanceof BottomNavigationActivity)) {
             return;
         }
-
         Bundle bundle = new Bundle();
         bundle.putString("listId", listId);
         bundle.putString("listName", listName);
@@ -215,17 +215,9 @@ public class ScreenManager {
     }
 
     public static void presentShoppingListDetailActivity(Activity activity, String listId, String listName, boolean openFromMyList) {
-        /*Intent openShoppingListDetailActivity = new Intent(activity, ShoppingListDetailActivity.class);
-        openShoppingListDetailActivity.putExtra("listId", listId);
-        openShoppingListDetailActivity.putExtra("listName", listName);
-        openShoppingListDetailActivity.putExtra("openFromMyList", openFromMyList);
-        activity.startActivityForResult(openShoppingListDetailActivity, SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE);
-        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-*/
         if (!(activity instanceof BottomNavigationActivity)) {
             return;
         }
-
         Bundle bundle = new Bundle();
         bundle.putString("listId", listId);
         bundle.putString("listName", listName);
@@ -234,24 +226,6 @@ public class ScreenManager {
         shoppingListDetailFragment.setArguments(bundle);
         BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
         bottomNavigationActivity.pushFragment(shoppingListDetailFragment);
-    }
-
-    public static void presentShoppingListSearchResult(Activity activity, String searchTerm, String listId) {
-        Intent openShoppingListSearchResultActivity = new Intent(activity, ShoppingListSearchResultActivity.class);
-        openShoppingListSearchResultActivity.putExtra("searchTerm", searchTerm);
-        openShoppingListSearchResultActivity.putExtra("listID", listId);
-        activity.startActivityForResult(openShoppingListSearchResultActivity, ShoppingListSearchResultActivity.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE);
-        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-
-    }
-
-    public static void presentProductDetails(FragmentManager fragmentManager, int layoutId, String productName, ProductList productList) {
-        Gson gson = new Gson();
-        String strProductList = gson.toJson(productList);
-        Bundle bundle = new Bundle();
-        bundle.putString("strProductList", strProductList);
-        bundle.putString("strProductCategory", productName);
-        presentProductDetails(fragmentManager, layoutId, bundle);
     }
 
     public static void presentWhatsAppChatToUsActivity(Activity activity, String featureName, String appScreen) {
