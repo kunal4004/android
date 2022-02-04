@@ -158,6 +158,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public static final int SHARE_LINK_REQUEST_CODE = 321;
     public static final int RESULT_OK_OPEN_CART_FROM_SHOPPING_DETAILS = 3628;
     public static final int RESULT_OK_OPEN_CART = 3629;
+    public static final String KEY_PRODUCT_LIST = "productList";
+    public static final String KEY_PRODUCT_NAME = "productName";
 
     public final String TAG = this.getClass().getSimpleName();
     public AccountMasterCache mAccountMasterCache = AccountMasterCache.INSTANCE;
@@ -1053,9 +1055,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         if (resultCode == PRODUCT_DETAILS_FROM_MY_LIST_SEARCH) {
-            String productLIstStr = data.getStringExtra("productList");
+            String productLIstStr = data.getStringExtra(KEY_PRODUCT_LIST);
             ProductList productList = (ProductList) Utils.jsonStringToObject(productLIstStr, ProductList.class);
-            openProductDetailFragment(data.getStringExtra("productName"), productList);
+            openProductDetailFragment(data.getStringExtra(KEY_PRODUCT_NAME), productList);
         }
         if ((requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
             ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));

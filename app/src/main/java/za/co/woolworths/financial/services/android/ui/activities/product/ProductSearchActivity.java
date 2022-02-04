@@ -1,14 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.activities.product;
 
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_ID;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.MY_LIST_LIST_NAME;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.appcompat.widget.Toolbar;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -19,7 +21,11 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -36,14 +42,7 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ChanelMessageDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.PRODUCT_DETAILS_FROM_MY_LIST_SEARCH;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE;
 
 public class ProductSearchActivity extends AppCompatActivity
         implements View.OnClickListener, ChanelMessageDialogFragment.IChanelMessageDialogDismissListener {
@@ -65,21 +64,18 @@ public class ProductSearchActivity extends AppCompatActivity
         setActionBar();
         initUI();
         showRecentSearchHistoryView(true);
-        mEditSearchProduct.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    searchProduct(mEditSearchProduct.getText().toString());
-                    return true;
-                }
-                return false;
+        mEditSearchProduct.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                searchProduct(mEditSearchProduct.getText().toString());
+                return true;
             }
+            return false;
         });
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if (!TextUtils.isEmpty(bundle.getString("SEARCH_TEXT_HINT"))) {
-                mListID = bundle.getString("listID");
+                mListID = bundle.getString(MY_LIST_LIST_ID);
                 mSearchTextHint = getString(R.string.shopping_search_hint);
                 mEditSearchProduct.setHint(mSearchTextHint);
             }
@@ -147,8 +143,8 @@ public class ProductSearchActivity extends AppCompatActivity
                     overridePendingTransition(0, 0);
                 } else {
                     Intent intent = new Intent();
-                    intent.putExtra("listId", mListID);
-                    intent.putExtra("listName", search.searchedValue);
+                    intent.putExtra(MY_LIST_LIST_ID, mListID);
+                    intent.putExtra(MY_LIST_LIST_NAME, search.searchedValue);
                     setActivityResult(intent, PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE);
                 }
             }
@@ -182,6 +178,7 @@ public class ProductSearchActivity extends AppCompatActivity
             for (SearchHistory s : histories) {
                 if (s.searchedValue.equalsIgnoreCase(searchHistory.searchedValue)) {
                     isExist = true;
+                    break;
                 }
             }
             if (!isExist) {
