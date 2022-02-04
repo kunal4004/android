@@ -152,6 +152,7 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
                     when (httpCode) {
                         200 -> {
                             if (paymentSuccessful) {
+                                activity?.let { payMyAccountViewModel.triggerFirebaseEventForPaymentComplete(it) }
                                 stopSpinning(true)
                                 paymentValueTextView?.text = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(amount))
                                 updateUIOnSuccess()
@@ -217,7 +218,6 @@ class PMA3DSecureProcessRequestFragment : ProcessYourRequestFragment(), View.OnC
 
     private fun finishActivity() {
         activity?.apply {
-            payMyAccountViewModel.triggerFirebaseEventForPaymentComplete(this)
             setResult(PMA_TRANSACTION_COMPLETED_RESULT_CODE, Intent().putExtra(PayMyAccountActivity.PAYMENT_DETAIL_CARD_UPDATE, payMyAccountViewModel.getCardDetailInStringFormat()))
             finish()
             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)

@@ -358,14 +358,6 @@
             android:theme="@style/ABSAOnlineBankingToDeviceStyle"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ShoppingListDetailActivityStyle" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ShoppingListDetailActivityStyle" />
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle" />

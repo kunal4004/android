@@ -9,8 +9,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
@@ -108,7 +106,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.online_voucher_redemption.AvailableVouchersToRedeemInCart;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.cart.GiftWithPurchaseDialogDetailFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
@@ -335,8 +332,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         btnGoToProduct.setOnClickListener(this);
     }
 
-    private void initializeBottomTab(){
-        if(getActivity() instanceof BottomNavigationActivity){
+    private void initializeBottomTab() {
+        if (getActivity() instanceof BottomNavigationActivity) {
             ((BottomNavigationActivity) getActivity()).showBottomNavigationMenu();
             ((BottomNavigationActivity) getActivity()).hideToolbar();
             ((BottomNavigationActivity) getActivity()).setToolbarTitle("");
@@ -360,7 +357,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         btnEditCart.setOnClickListener(this);
         btnClearCart.setOnClickListener(this);
 
-        if(getActivity() instanceof BottomNavigationActivity){
+        if (getActivity() instanceof BottomNavigationActivity) {
             ((BottomNavigationActivity) getActivity()).hideToolbar();
         }
     }
@@ -622,25 +619,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         productDetails.fromPrice = (float) commerceItem.priceInfo.getAmount();
         productDetails.productId = commerceItemInfo.productId;
         productDetails.sku = commerceItemInfo.catalogRefId;
-        openProductDetailFragment("", productDetails);
-    }
-
-    public void openProductDetailFragment(String productName, ProductDetails productDetails) {
-        if (!(getActivity() instanceof BottomNavigationActivity) || !isAdded()) {
-            return;
-        }
-        ProductDetailsFragment fragment = ProductDetailsFragment.Companion.newInstance();
         Gson gson = new Gson();
         String strProductList = gson.toJson(productDetails);
-        Bundle bundle = new Bundle();
-        bundle.putString(STR_PRODUCT_LIST, strProductList);
-        bundle.putString(STR_PRODUCT_CATEGORY, productName);
-        fragment.setArguments(bundle);
-
-        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
-        // Move to shop tab first.
-        bottomNavigationActivity.getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-        bottomNavigationActivity.pushFragment(fragment);
+        if (getActivity() instanceof BottomNavigationActivity) {
+            // Move to shop tab first.
+            ((BottomNavigationActivity) getActivity()).getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+            ScreenManager.openProductDetailFragment(getActivity(), "", strProductList);
+        }
     }
 
     @Override
@@ -967,10 +952,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                             }
                             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
                             Suburb suburb = new Suburb();
-                            if (shoppingCartResponse.data[0].suburbId.contains("st"))
+                            if (shoppingCartResponse.data[0].suburbId.contains("st")) {
                                 suburb.id = shoppingCartResponse.data[0].suburbId.replace("st", "");
-                            else
+                                suburb.fulfillmentStores = shoppingCartResponse.data[0].orderSummary.store.getFulfillmentStores();
+                            } else {
                                 suburb.id = shoppingCartResponse.data[0].suburbId;
+                                suburb.fulfillmentStores = shoppingCartResponse.data[0].orderSummary.suburb.fulfillmentStores;
+                            }
                             suburb.name = shoppingCartResponse.data[0].suburbName;
                             Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(Utils.getPreferredDeliveryLocation().province, suburb, Utils.getPreferredDeliveryLocation().store));
                             setItemLimitsBanner();

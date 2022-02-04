@@ -1,33 +1,31 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
+import static za.co.woolworths.financial.services.android.util.Utils.sendBus;
+
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
-import static za.co.woolworths.financial.services.android.util.Utils.sendBus;
 
 public abstract class BottomActivity extends AppCompatActivity implements PermissionResultCallback {
 
@@ -136,15 +134,6 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 				}
 			}
 		});
-	}
-
-	public void openProductDetailFragment(String productName, ProductDetails productDetails) {
-		Gson gson = new Gson();
-		String strProductList = gson.toJson(productDetails);
-		Bundle bundle = new Bundle();
-		bundle.putString("strProductList", strProductList);
-		bundle.putString("strProductCategory", productName);
-		ScreenManager.presentProductDetails(getSupportFragmentManager(), getLayoutResourceId(), bundle);
 	}
 
 	public void scrollableViewHelper(NestedScrollView nsv) {
