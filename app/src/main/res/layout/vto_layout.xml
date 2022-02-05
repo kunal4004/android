@@ -72,10 +72,10 @@
         android:id="@+id/imgCloseVTO"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/acc_fifteen_dp"
+        android:padding="@dimen/twelve_dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_vto_back" />
+        app:srcCompat="@drawable/ic_back_with_circle" />
 
 
     <androidx.appcompat.widget.AppCompatImageView
