@@ -57,7 +57,7 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
             val response: StatusResponse? = statusResponse
             response?.slotDetails = slotDetails
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(request))
-            bundle?.putString(BundleKeysConstants.STATUS_RESPONSE, Utils.toJson(response))
+            bundle?.putParcelable(BundleKeysConstants.STATUS_RESPONSE, response)
 
             if (bundle?.containsKey("isEditRecipient") == true) {
                 if (bundle?.getBoolean("isEditRecipient") == true) {

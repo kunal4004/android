@@ -132,7 +132,7 @@ class CreditCardDeliveryAddressDetailsFragment : CreditCardDeliveryBaseFragment(
             statusResponse?.recipientDetails = recipientDetails
 
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(scheduleDeliveryRequest))
-            bundle?.putString(BundleKeysConstants.STATUS_RESPONSE, Utils.toJson(statusResponse))
+            bundle?.putParcelable(BundleKeysConstants.STATUS_RESPONSE, statusResponse)
             bundle?.putBoolean("isEditRecipient", isEditRecipient)
             navController?.navigate(R.id.action_to_creditCardDeliveryValidateAddressRequestFragment, bundleOf("bundle" to bundle))
 

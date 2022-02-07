@@ -1905,7 +1905,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Bundle mBundle = new Bundle();
         mBundle.putString(BundleKeysConstants.ENVELOPE_NUMBER, account.cards.get(0).envelopeNumber);
         mBundle.putString(BundleKeysConstants.ACCOUNTBI_NNUMBER, account.accountNumberBin);
-        mBundle.putString(BundleKeysConstants.STATUS_RESPONSE, Utils.toJson(creditCardDeliveryStatusResponse.getStatusResponse()));
+        mBundle.putParcelable(BundleKeysConstants.STATUS_RESPONSE, creditCardDeliveryStatusResponse.getStatusResponse());
         mBundle.putString(BundleKeysConstants.PRODUCT_OFFERINGID, String.valueOf(account.productOfferingId));
         mBundle.putBoolean("setUpDeliveryNowClicked", true);
         if (applyNowState != null)

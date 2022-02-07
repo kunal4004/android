@@ -80,7 +80,7 @@ class CreditCardDeliveryManageDeliveryFragment : Fragment(), View.OnClickListene
 
     private fun init() {
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString(BundleKeysConstants.STATUS_RESPONSE), StatusResponse::class.java) as StatusResponse?
+            statusResponse = getParcelable(BundleKeysConstants.STATUS_RESPONSE)
         }
         editAddress?.setOnClickListener(this)
         cancelDelivery?.setOnClickListener(this)

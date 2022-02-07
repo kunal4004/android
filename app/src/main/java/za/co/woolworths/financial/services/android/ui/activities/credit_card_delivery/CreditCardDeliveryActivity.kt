@@ -33,7 +33,7 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this, R.color.grey_bg)
         bundle = intent.getBundleExtra(BundleKeysConstants.BUNDLE)
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString(BundleKeysConstants.STATUS_RESPONSE), StatusResponse::class.java) as StatusResponse?
+            statusResponse = getParcelable(BundleKeysConstants.STATUS_RESPONSE) as StatusResponse?
             accountBinNumber = getString(BundleKeysConstants.ACCOUNTBI_NNUMBER)
             setUpDeliveryNowClicked = getBoolean("setUpDeliveryNowClicked", false);
             val applyNowState: ApplyNowState? = getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
