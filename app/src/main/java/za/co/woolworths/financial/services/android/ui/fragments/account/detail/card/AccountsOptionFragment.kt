@@ -69,9 +69,11 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private var cardWithPLCState: Card? = null
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-
     companion object {
+        const val PLC = "PLC"
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+        var SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
+        var CREDIT_CARD_ACTIVATION_DETAIL = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,6 +159,13 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 cancelRequest()
                 navigateToLoanWithdrawalActivity()
             }
+        }
+        else if (SHOW_CREDIT_CARD_ACTIVATION_SCREEN) {
+            SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
+            if (Utils.isCreditCardActivationEndpointAvailable())
+                navigateToCreditCardActivation()
+            else
+                showCreditCardActivationUnavailableDialog()
         }
     }
 
@@ -273,10 +282,13 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     mCardPresenterImpl?.navigateToPaymentOptionActivity()
                 }
                 R.id.activateCreditCard -> {
-                    if (Utils.isCreditCardActivationEndpointAvailable())
-                        navigateToCreditCardActivation()
-                    else
-                        showCreditCardActivationUnavailableDialog()
+                    handleActivateCreditCard {
+                        if (Utils.isCreditCardActivationEndpointAvailable())
+                            navigateToCreditCardActivation()
+                        else
+                            showCreditCardActivationUnavailableDialog()
+                    }
+
                 }
                 R.id.scheduleOrManageCreditCardDelivery -> {
                     activity?.apply {
@@ -292,6 +304,23 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     }
                 }
             }
+        }
+    }
+
+    private fun handleActivateCreditCard(doCreditActivation: () -> Unit) {
+        if(cardWithPLCState?.cardStatus.equals(PLC)){
+            KotlinUtils.linkDeviceIfNecessary(activity,
+                ApplyNowState.valueOf(
+                    mCardPresenterImpl?.mApplyNowAccountKeyPair?.first.toString()),
+                {
+                    CREDIT_CARD_ACTIVATION_DETAIL = true
+                },
+                {
+                    doCreditActivation()
+                })
+        }
+        else{
+            doCreditActivation()
         }
     }
 
