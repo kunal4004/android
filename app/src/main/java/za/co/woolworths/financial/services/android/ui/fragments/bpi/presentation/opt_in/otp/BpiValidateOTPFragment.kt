@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 
 class BpiValidateOTPFragment: Fragment() {
 
@@ -54,7 +55,7 @@ class BpiValidateOTPFragment: Fragment() {
         bundle?.apply {
             otpSentTo = getString("otpSentTo", "")
             otpValue = getString("otpValue", "")
-            productOfferingId = getString("productOfferingId", "")
+            productOfferingId = getString(BundleKeysConstants.PRODUCT_OFFERINGID, "")
             otpMethodType = OTPMethodType.valueOf(getString("otpMethodType", OTPMethodType.SMS.name))
         }
         bundle?.putString("screenType", BpiValidateOTPFragment::class.java.simpleName)

@@ -120,6 +120,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
@@ -1912,14 +1913,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Account account = mAccountResponse.accountList.get(0);
         Intent intent = new Intent(getContext(), CreditCardDeliveryActivity.class);
         Bundle mBundle = new Bundle();
-        mBundle.putString("envelopeNumber", account.cards.get(0).envelopeNumber);
-        mBundle.putString("accountBinNumber", account.accountNumberBin);
-        mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse.getStatusResponse()));
-        mBundle.putString("productOfferingId", String.valueOf(account.productOfferingId));
+        mBundle.putString(BundleKeysConstants.ENVELOPE_NUMBER, account.cards.get(0).envelopeNumber);
+        mBundle.putString(BundleKeysConstants.ACCOUNTBI_NNUMBER, account.accountNumberBin);
+        mBundle.putParcelable(BundleKeysConstants.STATUS_RESPONSE, creditCardDeliveryStatusResponse.getStatusResponse());
+        mBundle.putString(BundleKeysConstants.PRODUCT_OFFERINGID, String.valueOf(account.productOfferingId));
         mBundle.putBoolean("setUpDeliveryNowClicked", true);
         if (applyNowState != null)
             mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
-        intent.putExtra("bundle", mBundle);
+        intent.putExtra(BundleKeysConstants.BUNDLE, mBundle);
         startActivity(intent);
     }
 
@@ -2048,7 +2049,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
             mSetUpDeliveryListner = (ApplyNowState) -> redirectToCreditCardActivity(creditCardDeliveryStatusResponse, applyNowState);
             Bundle bundle = new Bundle();
-            bundle.putString("accountBinNumber", accountNumberBin);
+            bundle.putString(BundleKeysConstants.ACCOUNTBI_NNUMBER, accountNumberBin);
             SetUpDeliveryNowDialog setUpDeliveryNowDialog = new SetUpDeliveryNowDialog(bundle, mSetUpDeliveryListner);
             Activity activity = getActivity();
             if (activity == null)

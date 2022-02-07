@@ -99,6 +99,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private ApplyNowState applyNowState;
     public static boolean SHOW_VIEW_STATEMENT_SCREEN = false;
     public static boolean VIEW_STATEMENT_DETAIL = false;
+    public static boolean SEND_STATEMENT_SCREEN = false;
+    public static boolean SEND_STATEMENT_DETAIL = false;
 
     public StatementFragment() {
     }
@@ -271,8 +273,11 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         if (activity == null) return;
         switch (v.getId()) {
             case R.id.btnEmailStatement:
-                Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
-                break;
+                if (applyNowState == null && activity instanceof StatementActivity){
+                        applyNowState = ((StatementActivity) activity).getAccountWithApplyNowState().first;
+                }
+                displayValidationMessage();
+            break;
 
             case R.id.btnRetry:
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity))
@@ -284,6 +289,20 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         }
     }
 
+    public void displayValidationMessage() {
+            KotlinUtils.Companion.linkDeviceIfNecessary(
+                    getActivity(),
+                    applyNowState,
+                    () -> { SEND_STATEMENT_DETAIL = true;
+                        return null;
+                    },
+                    () -> {
+                        Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
+                        return null;
+                    }
+            );
+
+    }
     private void disableButton() {
         mBtnEmailStatement.setAlpha(1.0f);
         relNextButton.setAlpha(0.35f);
@@ -443,6 +462,9 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         if (SHOW_VIEW_STATEMENT_SCREEN) {
             SHOW_VIEW_STATEMENT_SCREEN = false;
             viewPdfStatement();
+        } else if (SEND_STATEMENT_SCREEN) {
+            SEND_STATEMENT_SCREEN = false;
+            Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
         }
     }
 
