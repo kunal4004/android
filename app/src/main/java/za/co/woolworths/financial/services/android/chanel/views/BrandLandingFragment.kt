@@ -45,9 +45,9 @@ class BrandLandingFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.apply {
-            searchType = getString(ChanelUtils.SEARCH_TYPE)
-            searchTerm = getString(ChanelUtils.SEARCH_TERM)
-            filterContent = getBoolean(ChanelUtils.FILTER_CONTENT)
+            searchType = getString(ChanelUtils.SEARCH_TYPE, "")
+            searchTerm = getString(ChanelUtils.SEARCH_TERM, "")
+            filterContent = getBoolean(ChanelUtils.FILTER_CONTENT, true)
         }
         setupChanelViewModel()
         fetchData()
