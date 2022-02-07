@@ -2292,7 +2292,7 @@
         <item quantity="one">%d Store near me</item>
         <item quantity="other">%d Stores near me</item>
     </plurals>
-
+    <string name="geoloc_confirm_address">confirm_address</string>
     <!--Native Checkout-->
     <string name="name_colon_text_view">Name: *</string>
     <string name="mobile_number_text_view">Mobile Number: *</string>
