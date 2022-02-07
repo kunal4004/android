@@ -835,10 +835,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                             }
                             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
                             Suburb suburb = new Suburb();
-                            if (shoppingCartResponse.data[0].suburbId.contains("st"))
+                            if (shoppingCartResponse.data[0].suburbId.contains("st")) {
                                 suburb.id = shoppingCartResponse.data[0].suburbId.replace("st", "");
-                            else
+                                suburb.fulfillmentStores = shoppingCartResponse.data[0].orderSummary.store.getFulfillmentStores();
+                            }
+                            else {
                                 suburb.id = shoppingCartResponse.data[0].suburbId;
+                                suburb.fulfillmentStores = shoppingCartResponse.data[0].orderSummary.suburb.fulfillmentStores;
+                            }
                             suburb.name = shoppingCartResponse.data[0].suburbName;
                             Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(Utils.getPreferredDeliveryLocation().province, suburb, Utils.getPreferredDeliveryLocation().store));
                             setItemLimitsBanner();
