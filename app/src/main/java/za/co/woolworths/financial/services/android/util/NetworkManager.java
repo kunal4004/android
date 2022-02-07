@@ -17,6 +17,9 @@ public class NetworkManager {
 
 
 	public boolean isConnectedToNetwork(Context context) {
+		if (context == null){
+			return false;
+		}
 		boolean haveConnectedWifi = false;
 		boolean haveConnectedMobile = false;
 
