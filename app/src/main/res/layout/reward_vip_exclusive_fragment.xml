@@ -13,7 +13,6 @@
         android:orientation="vertical">
 
         <TextView
-
             android:id="@+id/tvBirthdayVoucher3"
             style="@style/BenefitSubDescTextViewStyle"
             android:layout_width="0dp"
