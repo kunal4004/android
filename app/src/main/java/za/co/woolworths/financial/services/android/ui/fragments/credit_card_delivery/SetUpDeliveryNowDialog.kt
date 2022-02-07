@@ -76,11 +76,37 @@ class SetUpDeliveryNowDialog() : WBottomSheetDialogFragment(), View.OnClickListe
                 dismiss()
             }
             R.id.setUpDeliveryNow -> {
-                mFirebaseCreditCardDeliveryEvent?.forLoginCreditCardDelivery()
-                mSetUpDeliveryListner?.onSetUpDeliveryNowButtonClick(mApplyNowState)
-                dismiss()
+                handleScheduleDeliveryCreditCard {
+                    if (!MyAccountsFragment.verifyAppInstanceId())
+                        navigateToScheduleOrManage()
+                }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (AccountsOptionFragment.SHOW_CREDIT_CARD_SHECULE_OR_MANAGE){
+            AccountsOptionFragment.SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
+            navigateToScheduleOrManage()
+        }
+    }
+    private fun handleScheduleDeliveryCreditCard(doScheduleOrManage: () -> Unit) {
+        if (mApplyNowState != null){
+        KotlinUtils.linkDeviceIfNecessary(activity,
+            mApplyNowState!!,
+            {
+                AccountsOptionFragment.CREDIT_CARD_SHECULE_OR_MANAGE = true
+            },
+            {
+                doScheduleOrManage()
+            })
+        }
+    }
+    private fun navigateToScheduleOrManage() {
+        mFirebaseCreditCardDeliveryEvent?.forLoginCreditCardDelivery()
+        mSetUpDeliveryListner?.onSetUpDeliveryNowButtonClick(mApplyNowState)
+        dismiss()
     }
 
     private fun applyNowState(): ApplyNowState? {
