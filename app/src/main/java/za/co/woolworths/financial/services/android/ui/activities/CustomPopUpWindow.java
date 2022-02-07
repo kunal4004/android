@@ -1066,11 +1066,14 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                     Response response = statementResponse.response;
                     switch (statementResponse.httpCode) {
                         case 200:
+                            EmailStatementResponse emailResponse;
                             if (!statementResponse.data.isEmpty()) {
-                                List<EmailStatementResponse> data = statementResponse.data;
-                                EmailStatementResponse emailResponse = data.get(0);
-                                exitStatementConfirmAnimation(emailResponse);
+                                emailResponse = statementResponse.data.get(0);
+                            } else {
+                                emailResponse = new EmailStatementResponse();
+                                emailResponse.sent = false;
                             }
+                            exitStatementConfirmAnimation(emailResponse);
                             break;
                         case 440:
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, CustomPopUpWindow.this);

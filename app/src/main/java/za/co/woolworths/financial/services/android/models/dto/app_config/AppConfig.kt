@@ -44,5 +44,6 @@ data class AppConfig(
     var accountOptions: ConfigAccountOptions?,
     var deviceSecurity: ConfigDeviceSecurity?,
     var balanceProtectionInsurance: ConfigBalanceProtectionInsurance?,
-    var virtualTryOn: ConfigVirtualTryOn?
+    var virtualTryOn: ConfigVirtualTryOn?,
+    var brandLandingPage: BrandLandingPage?
 ) : Parcelable
