@@ -76,7 +76,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         var CREDIT_CARD_ACTIVATION_DETAIL = false
         var SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
         var CREDIT_CARD_SHECULE_OR_MANAGE = false
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -562,7 +561,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             val mIntent = Intent(this, CreditCardActivationActivity::class.java)
             val mBundle = Bundle()
             mBundle.putString("absaCardToken", cardWithPLCState?.absaCardToken)
-            mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
+            mBundle.putString(BundleKeysConstants.PRODUCT_OFFERINGID, mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
             mIntent.putExtra("bundle", mBundle)
             startActivityForResult(mIntent, REQUEST_CREDIT_CARD_ACTIVATION)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
@@ -573,24 +572,24 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         activity?.apply {
             val intent = Intent(this, CreditCardDeliveryActivity::class.java)
             val mBundle = Bundle()
-            mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
+            mBundle.putString(BundleKeysConstants.ENVELOPE_NUMBER, cardWithPLCState?.envelopeNumber)
             mBundle.putString(
-                "accountBinNumber",
+                BundleKeysConstants.ACCOUNTBI_NNUMBER,
                 mCardPresenterImpl?.getAccount()?.accountNumberBin
             )
-            mBundle.putString(
-                "StatusResponse",
-                Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse)
+            mBundle.putParcelable(
+                BundleKeysConstants.STATUS_RESPONSE,
+                creditCardDeliveryStatusResponse?.statusResponse
             )
             mBundle.putString(
-                "productOfferingId",
+                BundleKeysConstants.PRODUCT_OFFERINGID,
                 mCardPresenterImpl?.getAccount()?.productOfferingId.toString()
             )
             mBundle.putSerializable(
                 AccountSignedInPresenterImpl.APPLY_NOW_STATE,
                 mCardPresenterImpl?.mApplyNowAccountKeyPair?.first
             )
-            intent.putExtra("bundle", mBundle)
+            intent.putExtra(BundleKeysConstants.BUNDLE, mBundle)
             startActivity(intent)
         }
     }
