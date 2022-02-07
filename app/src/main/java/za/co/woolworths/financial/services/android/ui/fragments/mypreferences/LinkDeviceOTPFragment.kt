@@ -593,6 +593,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL -> {
                                                         showPersonalLoanWithdrawFundsScreen()
                                                     }
+                                                    StatementFragment.SEND_STATEMENT_DETAIL ->{
+                                                        sendStatementToEmailScreen()
+                                                    }
                                                     else -> {
                                                         goToProduct()
                                                     }
@@ -666,7 +669,11 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         StatementFragment.VIEW_STATEMENT_DETAIL = false
         activity?.finish()
     }
-
+    private fun sendStatementToEmailScreen(){
+        StatementFragment.SEND_STATEMENT_SCREEN = true
+        StatementFragment.SEND_STATEMENT_DETAIL = false
+        activity?.finish()
+    }
     private fun showActivateVirtualTempCardScreen(){
         StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
         StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
