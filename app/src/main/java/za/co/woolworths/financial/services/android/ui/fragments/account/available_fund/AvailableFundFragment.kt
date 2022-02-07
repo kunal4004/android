@@ -260,7 +260,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         activity?.let { activity -> ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail()) }
     }
 
-    override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {
+    override fun navigateToOnlineBankingActivity(creditCardNumber: String?, isRegistered: Boolean) {
         if (fragmentAlreadyAdded()) return
         activity?.apply {
             val openABSAOnlineBanking = Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)

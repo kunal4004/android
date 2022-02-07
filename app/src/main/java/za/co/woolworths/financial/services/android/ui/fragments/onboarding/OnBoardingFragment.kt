@@ -12,11 +12,13 @@ import com.awfs.coordination.R
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.on_boarding_fragment.onBoardingViewPager
 import kotlinx.android.synthetic.main.on_boarding_fragment.viewPagerIndicatorTabLayout
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IViewPagerSwipeListener
 import za.co.woolworths.financial.services.android.models.dto.OnBoardingModel
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.IOnBoardingContract
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingModelImpl
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingViewModelImpl
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 
 class OnBoardingFragment : Fragment(), IOnBoardingContract.View {
@@ -57,6 +59,7 @@ class OnBoardingFragment : Fragment(), IOnBoardingContract.View {
                 registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
+                        fireBaseScreensNames(position)
                         mViewPagerSwipeListener?.onPagerSwipe(position, onBoardingItemSize)
                     }
                 })
@@ -72,7 +75,16 @@ class OnBoardingFragment : Fragment(), IOnBoardingContract.View {
             }
         }
     }
-
+    fun fireBaseScreensNames(position: Int){
+        var screenName = when(position){
+            0 -> FirebaseManagerAnalyticsProperties.ScreenNames.ONBOARDING_ONE
+            1 -> FirebaseManagerAnalyticsProperties.ScreenNames.ONBOARDING_TWO
+            2 -> FirebaseManagerAnalyticsProperties.ScreenNames.ONBOARDING_THREE
+            3 -> FirebaseManagerAnalyticsProperties.ScreenNames.ONBOARDING_FOUR
+            else -> ""
+        }
+        Utils.setScreenName(screenName)
+    }
     companion object {
         const val ON_BOARDING_SCREEN_TYPE = "ON_BOARDING_SCREEN_TYPE"
     }
