@@ -7,13 +7,16 @@ import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.*
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ProductListingAdapter(private val navigator: IProductListing?, private val mProductListItems: List<ProductList>?, val activity: FragmentActivity?) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
+class ProductListingAdapter(
+    private val navigator: IProductListing?,
+    private val mProductListItems: List<ProductList>?,
+    val activity: FragmentActivity?
+) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewViewHolder {
         return when (ProductListingViewType.values()[viewType]) {
