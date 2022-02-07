@@ -260,13 +260,19 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     fun clearAllFlags(){
-        MyCardDetailFragment.FREEZE_CARD_DETAIL = false
-        MyCardDetailFragment.BLOCK_CARD_DETAIL = false
-        MyCardDetailFragment.PAY_WITH_CARD_DETAIL = false
-        StoreCardOptionsFragment.GET_REPLACEMENT_CARD_DETAIL = false
+        MyCardDetailFragment.apply {
+            FREEZE_CARD_DETAIL = false
+            BLOCK_CARD_DETAIL = false
+            PAY_WITH_CARD_DETAIL = false
+        }
+        StoreCardOptionsFragment.apply {
+            GET_REPLACEMENT_CARD_DETAIL = false
+            ACTIVATE_VIRTUAL_CARD_DETAIL = false
+        }
+        PersonalLoanFragment.apply{
+            PL_WITHDRAW_FUNDS_DETAIL = false
+        }
         StatementFragment.VIEW_STATEMENT_DETAIL = false
-        StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = false
-        PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL = false
         StatementFragment.SEND_STATEMENT_DETAIL = false
     }
     override fun onDestroy() {
