@@ -245,6 +245,10 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                         }
 
                     } else {
+                        if(response.errorBody() != null){
+                            FirebaseManager.Companion.setCrashlyticsString ("viewPdfStatement - 500 ResponseCode with errorBody ",response.errorBody().source().toString());
+                            FirebaseManager.Companion.logException(response.errorBody());
+                        }
                         Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, activity.getString(R.string.account_statement_error));
                     }
                 }
