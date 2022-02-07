@@ -269,8 +269,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         if (activity == null) return;
         switch (v.getId()) {
             case R.id.btnEmailStatement:
-                if (applyNowState == null){
-                    applyNowState = ((StatementActivity) activity).getAccountWithApplyNowState().first;
+                if (applyNowState == null && activity instanceof StatementActivity){
+                        applyNowState = ((StatementActivity) activity).getAccountWithApplyNowState().first;
                 }
                 displayValidationMessage();
             break;
