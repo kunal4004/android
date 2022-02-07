@@ -69,9 +69,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private var cardWithPLCState: Card? = null
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-    private val PLC = "PLC"
-
     companion object {
+        const val PLC = "PLC"
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
         var SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
         var CREDIT_CARD_ACTIVATION_DETAIL = false
