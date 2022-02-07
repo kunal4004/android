@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.helper.F
 import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
 import za.co.woolworths.financial.services.android.ui.fragments.integration.viewmodel.AbsaIntegrationViewModel
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.KotlinUtils.Companion.linkDeviceIfNecessary
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.util.*
 
@@ -48,6 +49,8 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     companion object {
         const val NONCE = "NONCE"
         const val E_SESSION_ID = "E_SESSION_ID"
+        var SHOW_VIEW_ABSA_CC_STATEMENT_SCREEN = false
+        var VIEW_ABSA_CC_STATEMENT_DETAIL = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -205,14 +208,28 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
 
     override fun onViewStatement(item: ArchivedStatement) {
         if (pbCircular.visibility != View.VISIBLE) {
-            KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_GET_STATEMENT, OneAppEvents.FeatureName.ABSA)
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_INDIVIDUAL_STATEMENT, this)
-            getIndividualStatement(item)
+            mViewArchivedStatement = item
+            linkDeviceIfNecessary(this, ApplyNowState.GOLD_CREDIT_CARD,
+                {
+                    VIEW_ABSA_CC_STATEMENT_DETAIL = true
+                }
+            ) {
+                getIndividualStatement(item)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (SHOW_VIEW_ABSA_CC_STATEMENT_SCREEN) {
+            SHOW_VIEW_ABSA_CC_STATEMENT_SCREEN = false
+            getIndividualStatement(mViewArchivedStatement)
         }
     }
 
     private fun getIndividualStatement(archivedStatement: ArchivedStatement) {
-        mViewArchivedStatement = archivedStatement
+        KotlinUtils.postOneAppEvent(OneAppEvents.AppScreen.ABSA_GET_STATEMENT, OneAppEvents.FeatureName.ABSA)
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_INDIVIDUAL_STATEMENT, this)
         mViewModel.fetchIndividualStatement(archivedStatement)
     }
 
