@@ -383,4 +383,12 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
             }
         }
     }
+
+    fun onTreatmentPlanStatusUpdateRequired() {
+        mAccountSignedInPresenter?.apply {
+            getMyAccountCardInfo()?.first?.let { applyNowState ->
+                showProductOfferOutstanding(applyNowState, myAccountsRemoteApiViewModel, false)
+            }
+        }
+    }
 }

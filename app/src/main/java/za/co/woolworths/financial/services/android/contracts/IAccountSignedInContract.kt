@@ -38,7 +38,8 @@ interface IAccountSignedInContract {
         fun getToolbarTitle(state: ApplyNowState): String?
         fun showProductOfferOutstanding(
             state: ApplyNowState,
-            myAccountsViewModel: MyAccountsRemoteApiViewModel
+            myAccountsViewModel: MyAccountsRemoteApiViewModel,
+            showPopupIfNeeded: Boolean
         )
         fun setAccountCardDetailInfo(navDetailController: NavController?)
         fun setAccountSixMonthInArrears(navDetailController: NavController?)

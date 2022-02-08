@@ -84,6 +84,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     companion object {
         const val PLC = "PLC"
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+        const val REQUEST_GET_PAYMENT_PLAN = 1984
         var SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
         var CREDIT_CARD_ACTIVATION_DETAIL = false
         var SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
@@ -631,14 +632,21 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     }
                 }
             }
-
             REQUEST_CREDIT_CARD_ACTIVATION -> {
                 if (resultCode == RESULT_OK) {
                     executeCreditCardTokenService()
                 }
             }
-
+            REQUEST_GET_PAYMENT_PLAN -> {
+                if (resultCode == RESULT_OK) {
+                    onTreatmentPlanStatusUpdateRequired()
+                }
+            }
         }
+    }
+
+    private fun onTreatmentPlanStatusUpdateRequired() {
+        (activity as? AccountSignedInActivity)?.let { it.onTreatmentPlanStatusUpdateRequired() }
     }
 
     private fun showAccount(accounts: Account?) {
@@ -772,7 +780,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private fun openSetupPaymentPlanPage() {
         val intent = Intent(context, GetAPaymentPlanActivity::class.java)
         intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, eligibilityPlan)
-        startActivity(intent)
+        startActivityForResult(intent, REQUEST_GET_PAYMENT_PLAN)
         activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
     }
 
