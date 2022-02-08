@@ -50,7 +50,7 @@ class WTransactionsActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.wtransactions_activity)
 
         intent?.extras?.apply {
-            productOfferingId = getString("productOfferingId")
+            productOfferingId = getString(BundleKeysConstants.PRODUCT_OFFERINGID)
             accountNumber = getString("accountNumber")
             chatAccountProductLandingPage = getString(ACCOUNTS)
             cardType = getString("cardType")

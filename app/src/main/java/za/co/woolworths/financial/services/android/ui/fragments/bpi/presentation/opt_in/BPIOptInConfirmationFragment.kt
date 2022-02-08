@@ -27,6 +27,7 @@ import java.util.HashMap
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.BpiEnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.viewmodel.BPIViewModel
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 
 class BPIOptInConfirmationFragment : Fragment() {
 
@@ -113,7 +114,7 @@ class BPIOptInConfirmationFragment : Fragment() {
             val bundle = Bundle()
             val productOfferingId = bpiViewModel?.mAccount?.productOfferingId?.toString() ?: ""
             bundle.putString("otpMethodType", OTPMethodType.SMS.name)
-            bundle.putString("productOfferingId", productOfferingId)
+            bundle.putString(BundleKeysConstants.PRODUCT_OFFERINGID, productOfferingId)
             view?.findNavController()?.navigate(R.id.action_BPIOptInConfirmationFragment_to_sendOtpFragment, bundleOf("bundle" to bundle))
         }
     }
