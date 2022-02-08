@@ -56,15 +56,18 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
         with(itemView) {
             measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
-            ImageManager.setPictureOverrideWidthHeight(row_layout.imReducedImage, imPromo?.reduced ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(row_layout.imFreeGiftImage, imPromo?.freeGift ?: "")
-            ImageManager.setPictureOverrideWidthHeight(row_layout.imSave, imPromo?.save ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(row_layout.imReward, imPromo?.wRewards ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(row_layout.imVitality, imPromo?.vitality ?: "")
-            ImageManager.setPictureWithoutPlaceHolder(row_layout.imNewImage, imPromo?.newImage ?: "")
-            if (VirtualTryOnUtil.isVtoConfigAvailable()) {
-                ImageManager.setPictureWithoutPlaceHolder(row_layout.imgTryItOn, virtualTryOn ?: "")
+            ImageManager.apply {
+                setPictureOverrideWidthHeight(row_layout.imReducedImage, imPromo?.reduced ?: "")
+                setPictureWithoutPlaceHolder(row_layout.imFreeGiftImage, imPromo?.freeGift ?: "")
+                setPictureOverrideWidthHeight(row_layout.imSave, imPromo?.save ?: "")
+                setPictureWithoutPlaceHolder(row_layout.imReward, imPromo?.wRewards ?: "")
+                setPictureWithoutPlaceHolder(row_layout.imVitality, imPromo?.vitality ?: "")
+                setPictureWithoutPlaceHolder(row_layout.imNewImage, imPromo?.newImage ?: "")
+                if (VirtualTryOnUtil.isVtoConfigAvailable()) {
+                    setPictureWithoutPlaceHolder(row_layout.imgTryItOn, virtualTryOn ?: "")
+                }
             }
+
         }
     }
 

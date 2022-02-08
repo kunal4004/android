@@ -46,9 +46,6 @@ import android.text.TextUtils
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 
-
-
-
 object OneAppService : RetrofitConfig() {
 
     var forceNetworkUpdate: Boolean = false
