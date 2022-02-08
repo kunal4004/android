@@ -547,6 +547,16 @@ interface ApiInterface {
     ): Call<ShippingDetailsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/cart/storePickupInfo")
+    fun getStorePickupInfo(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body body: StorePickupInfoBody
+    ): Call<ConfirmDeliveryAddressResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/location/confirmSelection")
     fun setConfirmSelection(
         @Header("userAgent") userAgent: String,

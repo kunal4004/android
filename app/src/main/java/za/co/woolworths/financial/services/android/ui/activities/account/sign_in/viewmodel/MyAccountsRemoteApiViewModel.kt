@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 import javax.inject.Inject
 
 @HiltViewModel
-class MyAccountsRemoteApiViewModel  @Inject constructor(private val iTreatmentPlanDataSource: ITreatmentPlanDataSource): ViewModel() {
+class MyAccountsRemoteApiViewModel @Inject constructor(private val iTreatmentPlanDataSource: ITreatmentPlanDataSource): ViewModel() {
 
     var account: Account? = null
     fun getProductOffering() = ProductOffering(account = account)

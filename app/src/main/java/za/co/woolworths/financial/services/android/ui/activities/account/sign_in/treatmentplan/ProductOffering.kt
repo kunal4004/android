@@ -1,9 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan
 
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.TreatmentPlan
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigShowTreatmentPlan
 import za.co.woolworths.financial.services.android.util.Utils
 
 sealed class AccountOfferingState {
@@ -25,15 +26,17 @@ interface IProductOffering {
 
 class ProductOffering(private val account: Account?) : IProductOffering {
 
-    override fun minimumViewTreatmentDelinquencyCycle(): Int? = getMinimumDelinquencyCycle(WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney)
+    val accountOptions = AppConfigSingleton.accountOptions
 
-    override fun minimumTakeUpTreatmentDelinquencyCycle(): Int? = getMinimumDelinquencyCycle(WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney)
+    override fun minimumViewTreatmentDelinquencyCycle(): Int? = getMinimumDelinquencyCycle(accountOptions?.showTreatmentPlanJourney)
 
-    override fun isViewTreatmentPlanSupported(): Boolean = (getAccountsDelinquencyCycle() >= minimumViewTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney)
+    override fun minimumTakeUpTreatmentDelinquencyCycle(): Int? = getMinimumDelinquencyCycle(accountOptions?.collectionsStartNewPlanJourney)
+
+    override fun isViewTreatmentPlanSupported(): Boolean = (getAccountsDelinquencyCycle() >= minimumViewTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(accountOptions?.showTreatmentPlanJourney)
 
     override fun isTakeUpTreatmentPlanSupported(): Boolean {
         return (getAccountsDelinquencyCycle() >= minimumTakeUpTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(
-            WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney
+            accountOptions?.collectionsStartNewPlanJourney
         )
     }
 
@@ -41,7 +44,7 @@ class ProductOffering(private val account: Account?) : IProductOffering {
 
     override fun getAccountsDelinquencyCycle(): Int = account?.delinquencyCycle ?: 999
 
-    private fun isTreatmentPlanSupported(treatmentPlan: TreatmentPlan?): Boolean {
+    private fun isTreatmentPlanSupported(treatmentPlan: ConfigShowTreatmentPlan?): Boolean {
         val appBuildNumber = Utils.getAppBuildNumber()
         return when (productGroupCode()) {
             productGroupCodeSc -> appBuildNumber >= treatmentPlan?.personalLoan?.minimumSupportedAppBuildNumber ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT
@@ -50,7 +53,7 @@ class ProductOffering(private val account: Account?) : IProductOffering {
         }
     }
 
-    private fun getMinimumDelinquencyCycle(treatmentPlan: TreatmentPlan?): Int? {
+    private fun getMinimumDelinquencyCycle(treatmentPlan: ConfigShowTreatmentPlan?): Int? {
         return when (productGroupCode()) {
             productGroupCodeSc -> treatmentPlan?.storeCard?.minimumDelinquencyCycle
             productGroupCodePl -> treatmentPlan?.personalLoan?.minimumDelinquencyCycle

@@ -461,7 +461,7 @@
     <string name="bottom_title_product">Shop</string>
     <string name="bottom_title_cart">My Cart</string>
     <string name="bottom_title_reward">WRewards</string>
-    <string name="bottom_title_account">Accounts</string>
+    <string name="bottom_title_account">My Accounts</string>
     <string name="lets_make_it_easy_for_you">Let us make it easy for you – we can request your electronic bank statement directly from your bank at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
     <string name="edit_quantity">edit your quantity</string>
@@ -702,7 +702,7 @@
     <string name="no_of_item">\u0020Item</string>
     <string name="toast_added_to_cart">ADDED TO CART</string>
     <string name="deselect">DESELECT</string>
-    <string name="card_number_not_found">Card number not found</string>
+    <string name="credit_card_statement_unavailable">Oops! Sorry, statements are currently unavailable</string>
     <string name="check_connection_status">Check your connection and try again.</string>
     <string name="general_error_desc">Oops, There seems to be a problem. Please try again later.</string>
     <string name="crashlytics_materialshowcase_key">materialshowcase_parent</string>
@@ -1271,7 +1271,7 @@
     <string name="withdrawal_options">Withdraw \nFunds</string>
 
     <string name="black_credit_card_available_fund_information_desc">Funds available for you to use.</string>
-    <string name="black_credit_card_current_balance_information_desc">Balance as at the current date</string>
+    <string name="black_credit_card_current_balance_information_desc">Balance as at the current date.</string>
     <string name="black_credit_card_credit_limit_information_desc">This is the total amount of credit offered to you by Woolies.</string>
     <string name="black_credit_card_total_amount_due_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
     <string name="black_credit_card_next_payment_due_desc">This is the date the Total Amount Due is to be paid by.</string>
@@ -2263,6 +2263,19 @@
     <string name="native_checkout_delivery_gift_instructions">Is this a Gift?</string>
     <string name="native_checkout_delivery_gift_instructions_hint">Please type gifting message here.</string>
 
+    <!-- Native Checkout : Collection -->
+    <string name="who_is_collecting">Who is Collecting?</string>
+    <string name="add_person">Add Person</string>
+    <string name="special_char_name_error_text">Only letters, numbers, or punctuation can be used here.</string>
+    <string name="vehicle_details_title">Vehicle Details</string>
+    <string name="my_vehicle_text">My Vehicle</string>
+    <string name="e_hailing_text">E-Hailing</string>
+    <string name="e_hailing_description">Select this option if you will be arriving to collect your order in an e-hailing vehicle (e.g. Uber, Bolt, Lyft).</string>
+    <string name="vehicle_colour">Vehicle Colour: *</string>
+    <string name="vehicle_model">Vehicle Model: *</string>
+    <string name="confirm_details">Confirm Details</string>
+    <string name="vehicle_registration">Vehicle Registration:</string>
+
     <!-- Native Checkout : Food Substitution    -->
     <string name="native_checkout_delivery_food_substitution_title">Food Substitutions</string>
     <string name="native_checkout_delivery_food_substitution_desc">If an item is out of stock, how should we handle substitutes for you? If no substitutes are found the difference is not charged.</string>
@@ -2348,6 +2361,7 @@
     <string name="actual_size">Actual Size</string>
     <string name="vto_color_selected_error">Oh no! That colour is unavailable to try on.</string>
     <string name="vto_try_it_on_tips">Try It On Tips</string>
+    <string name="saved_to_photos">Saved To Photos</string>
 
     <string name="blackCreditCard_title">Black Credit Card</string>
     <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
@@ -2357,6 +2371,15 @@
     <!--  No browser dialog  -->
     <string name="browser_not_found_title">Browser Not Found</string>
     <string name="browser_not_found_msg">To continue, please install a web browser.</string>
+
+    <string name="select_your_preferred_collection_time_error">Please select a collection timeslot.</string>
+
+    <string name="native_checkout_collecting_from">Collecting From</string>
+    <string name="collection_time_detail_title">When Would You Like To Collect?</string>
+    <string name="native_checkout_collection_date">Collection Date</string>
+    <string name="native_checkout_collection_timeslot">Collection Timeslot</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="confirm_date">CONFIRM DATE</string>
     <string name="bpi_opt_in_carousel_title_1">Death, permanent disability or critical illness cover</string>
     <string name="bpi_opt_in_carousel_title_2">Retrenchment Benefit</string>
     <string name="bpi_opt_in_carousel_title_3">Instant Cover</string>
@@ -2367,7 +2390,7 @@
     <string name="bpi_opt_in_text">opt in</string>
     <string name="bpi_opt_in_for_balance_protection_insurance">Opt in for Balance Protection Insurance</string>
     <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br/> cancel within the first 31 days after which you have<br/> received the policy terms and conditions,<br/> we will reverse any premiums paid,<br/> provided have not claimed.</string>
-    <string name="bpi_confirm_opt_in_desc2">Should you require more information; need to<br/> submit a claim; log a complaint; wish to cancel or<br/> have not received your policy wording within 30<br/> days please contact Woolworth Financial Services<br/> on 0861502020</string>
+    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br/> submit a claim, log a complaint, wish to cancel or<br/> have not received your policy wording within 30<br/> days, please contact Woolworth Financial Services<br/> on 0861502020</string>
     <string name="bpi_confirm_opt_in_desc_call_services">0861502020</string>
     <string name="bpi_email_me_a_copy">Email me a copy</string>
     <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>

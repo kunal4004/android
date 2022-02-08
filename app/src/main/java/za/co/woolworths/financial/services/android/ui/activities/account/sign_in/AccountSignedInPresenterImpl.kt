@@ -75,7 +75,8 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
-        return accountsResponse.accountList?.filter { account -> account?.productGroupCode == getProductCode(mApplyNowState) }?.get(0)
+        return accountsResponse.accountList?.firstOrNull { account ->
+            account?.productGroupCode == getProductCode(mApplyNowState) }
     }
 
     @Throws(RuntimeException::class)
@@ -183,8 +184,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                                 myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(productGroupCode, { eligibilityPlanResponse ->
                                              checkEligibility(eligibilityPlanResponse, state)
                                 }, {})
-                            }
-                    }
+                            } }
                 }
             }
         }
@@ -216,8 +216,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
     override fun isAccountInArrearsState(): Boolean {
         val account = getAccount()
         val productOfferingGoodStanding = account?.productOfferingGoodStanding ?: false
-        //  account?.productGroupCode?.toUpperCase() != CREDIT_CARD will hide payable now row for credit card options
-        return !productOfferingGoodStanding && account?.productGroupCode?.toUpperCase() != AccountsProductGroupCode.CREDIT_CARD.groupCode.toUpperCase()
+        return !productOfferingGoodStanding
     }
 
     override fun isAccountInDelinquencyMoreThan6Months(): Boolean {

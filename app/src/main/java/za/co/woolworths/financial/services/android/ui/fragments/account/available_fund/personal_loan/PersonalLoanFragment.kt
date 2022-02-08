@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
@@ -36,6 +36,11 @@ import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
+
+    companion object {
+        var SHOW_PL_WITHDRAW_FUNDS_SCREEN = false
+        var PL_WITHDRAW_FUNDS_DETAIL = false
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -93,16 +98,16 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                                 FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
                                 arguments,
                                 this)
-                            when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
+                            when (AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.renderMode){
                                 NATIVE_BROWSER ->
                                     KotlinUtils.openUrlInPhoneBrowser(
-                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl, this)
+                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl, this)
 
                                 else ->
                                     KotlinUtils.openLinkInInternalWebView(activity,
-                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl,
+                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl,
                                         true,
-                                        WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.exitUrl)
+                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl)
                             }
                         }
                     }

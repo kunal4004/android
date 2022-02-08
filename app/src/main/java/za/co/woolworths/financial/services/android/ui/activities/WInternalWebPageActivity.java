@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -154,11 +155,12 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 			@Override
 			public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-				if (handler != null){
-					handler.proceed();
-				} else {
-					super.onReceivedSslError(view, null, error);
-				}
+				final AlertDialog.Builder builder = new AlertDialog.Builder(WInternalWebPageActivity.this);
+				builder.setMessage(R.string.ssl_error);
+				builder.setPositiveButton("continue", (dialog, which) -> handler.proceed());
+				builder.setNegativeButton("cancel", (dialog, which) -> handler.cancel());
+				final AlertDialog dialog = builder.create();
+				dialog.show();
 			}
 
 			@Override

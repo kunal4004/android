@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -102,7 +103,7 @@ public class ScreenManager {
         HashMap<String, String> params = new HashMap<String, String>();
         try {
             params.put("id_token_hint", SessionUtilities.getInstance().getSessionToken());
-            params.put("post_logout_redirect_uri", WoolworthsApplication.getSsoRedirectURILogout());
+            params.put("post_logout_redirect_uri", AppConfigSingleton.INSTANCE.getSsoRedirectURILogout());
         } catch (Exception e) {
             e.printStackTrace();
         }

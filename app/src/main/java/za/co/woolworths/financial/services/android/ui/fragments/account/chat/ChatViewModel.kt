@@ -12,11 +12,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
+import za.co.woolworths.financial.services.android.models.dto.app_config.chat.ConfigTradingHours
 import za.co.woolworths.financial.services.android.models.dto.chat.amplify.SessionType
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity
@@ -55,33 +55,6 @@ class ChatViewModel : ViewModel() {
 
     fun isCreditCardAccount(): Boolean = liveChatDBRepository.isCreditCardAccount()
 
-    fun getServiceUnavailableMessage(): Pair<SendEmailIntentInfo, String> {
-        val inAppChatMessage = WoolworthsApplication.getInAppChat()
-        return when (getSessionType()) {
-            SessionType.Collections -> {
-                val collections = inAppChatMessage?.collections
-                val emailAddress = collections?.emailAddress ?: ""
-                val subjectLine = collections?.emailSubjectLine ?: ""
-                val serviceUnavailable =
-                    collections?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
-                        ?: ""
-
-                Pair(SendEmailIntentInfo(emailAddress, subjectLine), serviceUnavailable)
-            }
-            SessionType.CustomerService -> {
-                val customerService = inAppChatMessage?.customerService
-                val emailAddress = customerService?.emailAddress ?: ""
-                val subjectLine = customerService?.emailSubjectLine ?: ""
-                val serviceUnavailable =
-                    customerService?.serviceUnavailable?.replace("{{emailAddress}}", emailAddress)
-                        ?: ""
-
-                Pair(SendEmailIntentInfo(emailAddress, subjectLine), serviceUnavailable)
-            }
-            SessionType.Fraud -> Pair(SendEmailIntentInfo(), "")
-        }
-    }
-
     private fun getSessionType(): SessionType {
         return liveChatDBRepository.getSessionType()
     }
@@ -95,12 +68,12 @@ class ChatViewModel : ViewModel() {
         super.onCleared()
     }
 
-    private fun getTradingHours(): MutableList<TradingHours>? {
-        val inAppChat = WoolworthsApplication.getInAppChat()
+    private fun getTradingHours(): MutableList<ConfigTradingHours>? {
+        val inAppChat = AppConfigSingleton.inAppChat
         return when (getSessionType()) {
             SessionType.Collections -> inAppChat?.collections?.tradingHours
             SessionType.CustomerService -> inAppChat?.customerService?.tradingHours
-            else -> inAppChat.tradingHours
+            else -> inAppChat?.tradingHours
         }
     }
 
@@ -109,14 +82,16 @@ class ChatViewModel : ViewModel() {
     }
 
     fun offlineMessageTemplate(onClick: (Triple<String, String, String>) -> Unit): SpannableString {
-        val inAppChat = WoolworthsApplication.getInAppChat()
+        val inAppChat = AppConfigSingleton.inAppChat
         when (getSessionType()) {
             SessionType.Collections, SessionType.Fraud -> {
-                val collections = inAppChat.collections
-                val emailAddress = collections.emailAddress
+                val collections = inAppChat?.collections
+                val emailAddress = collections?.emailAddress ?: ""
 
-                var offlineMessageTemplate = collections.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
-                offlineMessageTemplate = offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                var offlineMessageTemplate =
+                    collections?.offlineMessageTemplate?.replace("{{emailAddress}}", emailAddress)
+                offlineMessageTemplate =
+                    offlineMessageTemplate?.replace("{{emailAddress}}", emailAddress) ?: ""
                 val spannableOfflineMessageTemplate = SpannableString(offlineMessageTemplate)
                 spannableOfflineMessageTemplate.setSpan(
                     object : ClickableSpan() {
@@ -126,8 +101,8 @@ class ChatViewModel : ViewModel() {
                         }
 
                         override fun onClick(textView: View) {
-                            val emailSubjectLine = collections.emailSubjectLine
-                            val emailMessage = collections.emailMessage
+                            val emailSubjectLine = collections?.emailSubjectLine ?: ""
+                            val emailMessage = collections?.emailMessage ?: ""
                             onClick(Triple(emailAddress, emailSubjectLine, emailMessage))
                         }
                     },
@@ -141,13 +116,13 @@ class ChatViewModel : ViewModel() {
             }
 
             SessionType.CustomerService -> {
-                val customerService = inAppChat.customerService
-                val emailAddress = customerService.emailAddress
+                val customerService = inAppChat?.customerService
+                val emailAddress = customerService?.emailAddress ?: ""
 
                 var offlineMessageTemplate =
-                    customerService.offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                    customerService?.offlineMessageTemplate?.replace("{{emailAddress}}", emailAddress)
                 offlineMessageTemplate =
-                    offlineMessageTemplate.replace("{{emailAddress}}", emailAddress)
+                    offlineMessageTemplate?.replace("{{emailAddress}}", emailAddress)
                 val spannableOfflineMessageTemplate = SpannableString(offlineMessageTemplate)
                 spannableOfflineMessageTemplate.setSpan(
                     object : ClickableSpan() {
@@ -157,8 +132,8 @@ class ChatViewModel : ViewModel() {
                         }
 
                         override fun onClick(textView: View) {
-                            val emailSubjectLine = customerService.emailSubjectLine
-                            val emailMessage = customerService.emailMessage
+                            val emailSubjectLine = customerService?.emailSubjectLine ?: ""
+                            val emailMessage = customerService?.emailMessage ?: ""
                             onClick(Triple(emailAddress, emailSubjectLine, emailMessage))
                         }
                     },

@@ -65,7 +65,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.ISetUpDeliveryNowLIstner;
-import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -84,6 +84,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuran
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState;
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.account.Products;
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse;
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus;
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice;
@@ -91,6 +92,7 @@ import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAll
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.models.repository.AppStateRepository;
 import za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
@@ -118,6 +120,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
@@ -213,7 +216,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private LinearLayout retryStoreCardLinearLayout;
     private LinearLayout retryCreditCardLinearLayout;
     private LinearLayout retryPersonalLoanLinearLayout;
-    public static ArrayList<UserDevice> deviceList;
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
     private ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement;
@@ -434,7 +436,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                         @Override
                         public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
-                            deviceList = response.getUserDevices();
+                            new AppStateRepository().saveLinkedDevices(response.getUserDevices());
                         }
                     }, ViewAllLinkedDeviceResponse.class));
                 }
@@ -462,7 +464,12 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 onDeepLinkedProductTap(linkedPersonalCardView, applyPersonalCardView);
                 break;
         }
-        setArguments(null);
+        try{
+            setArguments(null);
+        }
+        catch (Exception e) {
+            FirebaseManager.logException(e);
+        }
         deepLinkParams = null;
     }
 
@@ -489,7 +496,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void initialize() {
         this.mAccountResponse = null;
-        this.deviceList = new ArrayList(0);
+        new AppStateRepository().saveLinkedDevices(new ArrayList(0));
         this.hideAllLayers();
         this.mAccountsHashMap.clear();
         this.unavailableAccounts.clear();
@@ -521,7 +528,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         super.onResume();
         Activity activity = getActivity();
         if (activity == null) return;
-        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
+        Utils.setScreenName( FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
         isActivityInForeground = true;
         if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
             messageCounterRequest();
@@ -851,7 +858,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             showView(preferenceRelativeLayout);
             showView(appVersionNameInfoTextView);
             showView(loginUserOptionsLayout);
-            if (WoolworthsApplication.getCreditView() != null && WoolworthsApplication.getCreditView().isEnabled())
+            if (AppConfigSingleton.INSTANCE.getCreditView() != null && AppConfigSingleton.INSTANCE.getCreditView().isEnabled())
                 showView(creditReportView);
             mUpdateMyAccount.swipeToRefreshAccount(true);
             if (SessionUtilities.getInstance().isC2User())
@@ -1014,7 +1021,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             case R.id.rlMyPreferences:
                 Intent myPreferences = new Intent(getActivity(), MyPreferencesActivity.class);
                 myPreferences.putExtra(IS_NON_WFS_USER, unavailableAccounts != null && unavailableAccounts.size() == 3);
-                myPreferences.putExtra(MyPreferencesFragment.DEVICE_LIST, deviceList);
+                myPreferences.putExtra(MyPreferencesFragment.DEVICE_LIST, new AppStateRepository().getLinkedDevices());
                 activity.startActivityForResult(myPreferences, RESULT_CODE_DEVICE_LINKED);
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
@@ -1131,7 +1138,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 @Override
                 public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
                     if(response !=null && response.getUserDevices() != null ){
-                        deviceList = response.getUserDevices();
+                        new AppStateRepository().saveLinkedDevices(response.getUserDevices());
                     }
                 }}, ViewAllLinkedDeviceResponse.class)
             );
@@ -1140,10 +1147,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     public static boolean verifyAppInstanceId() {
         boolean isLinked = false;
-        for (UserDevice device : deviceList) {
-            if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
-                isLinked = true;
-                break;
+        UserDevice[] deviceList = new AppStateRepository().getLinkedDevices();
+        if (deviceList != null && deviceList.length > 0) {
+            for (UserDevice device : deviceList) {
+                if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
+                    isLinked = true;
+                    break;
+                }
             }
         }
         return !isLinked;
@@ -1345,7 +1355,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                     mAccountsHashMap = accountsHashMap;
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyPaymentDueDate(accountsHashMap);
                     FirebaseAnalyticsUserProperty.Companion.setUserPropertiesPreDelinquencyForDebitOrder(accountsHashMap);
-                    if (forceNetworkUpdate || ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null) {
+                    if (forceNetworkUpdate ||
+                            ((activity instanceof BottomNavigationActivity) &&
+                                    ((BottomNavigationActivity) activity).mAccountMasterCache.getAccountsResponse() == null)) {
                         setAccountResponse(activity, mAccountResponse);
                     } else {
                         if (activity instanceof BottomNavigationActivity) {
@@ -1674,7 +1686,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     public void showFeatureWalkthroughPrompts() {
-        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             isPromptsShown = true;
             showFeatureWalkthroughAccounts(unavailableAccounts);
         }
@@ -1686,9 +1698,9 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             if (account != null && account.cards != null) {
                 if (account.cards.get(0).cardStatus != null) {
                     if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null)) {
-                        List<CreditCardDeliveryCardTypes> cardTypes = WoolworthsApplication.getCreditCardDelivery().getCardTypes();
+                        List<ConfigCreditCardDeliveryCardTypes> cardTypes = AppConfigSingleton.INSTANCE.getCreditCardDelivery().getCardTypes();
                         if (cardTypes != null) {
-                            for (CreditCardDeliveryCardTypes ccdTypes : cardTypes) {
+                            for (ConfigCreditCardDeliveryCardTypes ccdTypes : cardTypes) {
                                 if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
                                         && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
                                     executeCreditCardDeliveryStatusService();
@@ -1710,27 +1722,10 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
         if (getActivity() == null || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
             return;
-        View viewToScrollUp = null;
         String actionText = getActivity().getResources().getString(R.string.tips_tricks_go_to_accounts);
         if (unavailableAccounts.size() == 3) {
-            viewToScrollUp = imgStoreCardApplyNow;
             actionText = getActivity().getResources().getString(R.string.walkthrough_account_action_no_products);
-        } else {
-            if (!unavailableAccounts.contains(AccountsProductGroupCode.STORE_CARD.getGroupCode())) {
-                viewToScrollUp = imgStoreCardContainer;
-            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.CREDIT_CARD.getGroupCode())) {
-                viewToScrollUp = imgCreditCard;
-            } else if (!unavailableAccounts.contains(AccountsProductGroupCode.PERSONAL_LOAN.getGroupCode())) {
-                viewToScrollUp = imgPersonalLoanCardContainer;
-            }
         }
-        final View finalTarget1 = viewToScrollUp;
-        mScrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                ObjectAnimator.ofInt(mScrollView, "scrollY", finalTarget1.getBottom()).setDuration(300).start();
-            }
-        });
 
         promptsActionListener = 1;
         final View target = getTargetView(unavailableAccounts);
@@ -1754,16 +1749,21 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 Activity activity = getActivity();
                 if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
                 FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
-                getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
-                        .setTarget(target)
-                        .setTitle(R.string.tips_tricks_view_your_accounts)
-                        .setDescription(R.string.tips_tricks_desc_my_accounts)
-                        .setActionText(finalActionText)
-                        .setImage(R.drawable.tips_tricks_ic_my_accounts)
-                        .setAction(listener)
-                        .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                        .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-                getBottomNavigationActivity().walkThroughPromtView.show(activity);
+                FragmentActivity fragmentActivity = getActivity();
+                if (getBottomNavigationActivity() != null) {
+                    if (fragmentActivity != null) {
+                        getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.ACCOUNTS)
+                                .setTarget(target)
+                                .setTitle(R.string.tips_tricks_view_your_accounts)
+                                .setDescription(R.string.tips_tricks_desc_my_accounts)
+                                .setActionText(finalActionText)
+                                .setImage(R.drawable.tips_tricks_ic_my_accounts)
+                                .setAction(listener)
+                                .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                                .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
+                    }
+                    getBottomNavigationActivity().walkThroughPromtView.show(activity);
+                }
             }
         }.execute();
 
@@ -1913,14 +1913,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Account account = mAccountResponse.accountList.get(0);
         Intent intent = new Intent(getContext(), CreditCardDeliveryActivity.class);
         Bundle mBundle = new Bundle();
-        mBundle.putString("envelopeNumber", account.cards.get(0).envelopeNumber);
-        mBundle.putString("accountBinNumber", account.accountNumberBin);
-        mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse.getStatusResponse()));
-        mBundle.putString("productOfferingId", String.valueOf(account.productOfferingId));
+        mBundle.putString(BundleKeysConstants.ENVELOPE_NUMBER, account.cards.get(0).envelopeNumber);
+        mBundle.putString(BundleKeysConstants.ACCOUNTBI_NNUMBER, account.accountNumberBin);
+        mBundle.putParcelable(BundleKeysConstants.STATUS_RESPONSE, creditCardDeliveryStatusResponse.getStatusResponse());
+        mBundle.putString(BundleKeysConstants.PRODUCT_OFFERINGID, String.valueOf(account.productOfferingId));
         mBundle.putBoolean("setUpDeliveryNowClicked", true);
         if (applyNowState != null)
             mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
-        intent.putExtra("bundle", mBundle);
+        intent.putExtra(BundleKeysConstants.BUNDLE, mBundle);
         startActivity(intent);
     }
 
@@ -2049,7 +2049,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
             mSetUpDeliveryListner = (ApplyNowState) -> redirectToCreditCardActivity(creditCardDeliveryStatusResponse, applyNowState);
             Bundle bundle = new Bundle();
-            bundle.putString("accountBinNumber", accountNumberBin);
+            bundle.putString(BundleKeysConstants.ACCOUNTBI_NNUMBER, accountNumberBin);
             SetUpDeliveryNowDialog setUpDeliveryNowDialog = new SetUpDeliveryNowDialog(bundle, mSetUpDeliveryListner);
             Activity activity = getActivity();
             if (activity == null)

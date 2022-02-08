@@ -86,7 +86,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val MY_ACCOUNTS_VTC_GET = "myaccounts_vtc_get"
         const val MY_ACCOUNTS_VTC_PAY = "myaccounts_vtc_pay"
         const val MY_ACCOUNTS_VTC_VIEWCARDNUMBERS = "vtc_viewcardnumbers"
-        const val MY_ACCOUNTS_VTC_HOW_TO = "my_accounts_vtc_howto"
+        const val MY_ACCOUNTS_VTC_HOW_TO = "myaccounts_vtc_howto"
 
         const val MYACCOUNTS_ICR_GET_CARD = "myaccounts_icr_get_card"
         const val MYACCOUNTS_ICR_STORES = "myaccounts_icr_stores"
@@ -232,6 +232,10 @@ open class FirebaseManagerAnalyticsProperties {
         const val CHECKOUT_REMOVE_UNSELLABLE_ITEMS = "chckout_rmve_itms"
         const val CHECKOUT_CANCEL_REMOVE_UNSELLABLE_ITEMS = "chckout_cncl_rmve_itms"
         const val CHECKOUT_CONTINUE_TO_PAYMENT = "chckout_cnt_to_pmnt"
+        const val CHECKOUT_COLLECTION_USER_EDIT = "clikcllct_edt_prsn"
+        const val CHECKOUT_COLLECTION_VECHILE_SELECT = "clikcllct_veh_det"
+        const val CHECKOUT_COLLECTION_TAXI_SELECT = "clikcllct_taxi"
+        const val CHECKOUT_COLLECTION_CONFIRM_DETAILS = "clikcllct_confrm"
 
         //PLDD
         const val personalLoanDrawdownStart = "pldd_start"
@@ -483,13 +487,31 @@ open class FirebaseManagerAnalyticsProperties {
             const val ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY_OPTION_PRE_VALUE2: String =
                 " delivery option"
 
+
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_EDIT_USER_DETAILS: String =
+                "Customer selected to edit (change details) of a collector"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_VEHICLE_SELECT: String =
+                "Customer selected to enter Vehicle details"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_TAXI_SELECT: String =
+                "Customer selected one of the Ride-along options"
+            const val ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CONFIRM_DETAILS: String =
+                "Customer confirms their added Click & Collect details"
+
         }
     }
 
     class ScreenNames {
         companion object {
-            const val STARTUP: String = "Startup"
-            const val WTODAY: String = "WToday"
+            const val STARTUP: String = "startup"
+            const val STARTUP_API_ERROR: String = "startup_api_error"
+            const val DEVICE_ROOTED_AT_STARTUP: String = "startup_jailbreak_error"
+            const val SPLASH_WITHOUT_CTA: String = "splash_without_cta"
+            const val SPLASH_WITH_CTA: String = "splash_with_cta"
+            const val ONBOARDING_ONE: String = "onboarding_one"
+            const val ONBOARDING_TWO: String = "onboarding_two"
+            const val ONBOARDING_THREE: String = "onboarding_three"
+            const val ONBOARDING_FOUR: String = "onboarding_four"
+            const val WTODAY: String = "wtoday_webview"
             const val SHOP_BARCODE: String = "Shop Barcode"
             const val SHOP_BARCODE_MANUAL: String = "Shop Barcode Manual"
             const val SHOP_MAIN_CATEGORIES: String = "Shop Main Categories"
@@ -505,7 +527,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val DELIVERY_LOCATION_SUBURB: String = "Delivery Location Suburb"
             const val CART_LIST: String = "Cart List"
             const val CART_CHECKOUT: String = "Cart Checkout"
-            const val MY_ACCOUNTS: String = "My Accounts"
+            const val MY_ACCOUNTS: String = "my_accounts"
             const val PREFERENCES: String = "Preferences"
             const val HELP_SECTION: String = "Help Section"
             const val FAQ_LIST: String = "FAQ List"
@@ -568,7 +590,6 @@ open class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_VOUCHERS_BARCODE: String = "WRewards Vouchers Barcode"
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
-            const val DEVICE_ROOTED_AT_STARTUP: String = "Block Rooted Device"
         }
     }
 

@@ -27,11 +27,12 @@ import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
-import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
@@ -259,7 +260,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         activity?.let { activity -> ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail()) }
     }
 
-    override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {
+    override fun navigateToOnlineBankingActivity(creditCardNumber: String?, isRegistered: Boolean) {
         if (fragmentAlreadyAdded()) return
         activity?.apply {
             val openABSAOnlineBanking = Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
@@ -275,7 +276,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         if (fragmentAlreadyAdded()) return
         if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
         try {
-            val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.card_number_not_found)?.let { AccountsErrorHandlerFragment.newInstance(it) }
+            val accountsErrorHandlerFragment = activity?.resources?.getString(R.string.credit_card_statement_unavailable)?.let { AccountsErrorHandlerFragment.newInstance(it) }
             activity?.supportFragmentManager?.let { supportFragmentManager -> accountsErrorHandlerFragment?.show(supportFragmentManager, AccountsErrorHandlerFragment::class.java.simpleName) }
         } catch (ex: IllegalStateException) {
             FirebaseManager.logException(ex)
@@ -333,7 +334,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         activity?.let { activity ->
             mAvailableFundPresenter?.getAccount()?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
-                intent.putExtra("productOfferingId", productOfferingId.toString())
+                intent.putExtra(BundleKeysConstants.PRODUCT_OFFERINGID, productOfferingId.toString())
                 if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true) {
                     intent.putExtra("accountNumber", accountNumber.toString())
                 }
@@ -376,7 +377,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
     }
 
     fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
-        val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
+        val payMyAccountOption: ConfigPayMyAccount? = AppConfigSingleton.mPayMyAccount
         val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         val payUMethodType = payMyAccountViewModel.getCardDetail()?.payuMethodType
         when {

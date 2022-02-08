@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.GetAPaymentPlanFragmentBinding
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
@@ -51,28 +51,28 @@ class GetAPaymentPlanFragment : Fragment() {
             setOnClickListener {
                 var collectionsUrl: String? = ""
                 var exitUrl: String? = ""
+                val accountOptions = AppConfigSingleton.accountOptions
 
                 when (mEligibilityPlan?.productGroupCode) {
                     ProductGroupCode.SC -> {
-                        collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl = WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.exitUrl
+                        collectionsUrl =accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                        exitUrl = accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
                     }
 
                     ProductGroupCode.PL -> {
-                        collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl =
-                            WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.personalLoan?.exitUrl
+                        collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                        exitUrl = accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
                     }
 
                     ProductGroupCode.CC -> {
-                        collectionsUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
-                        exitUrl = WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
+                        collectionsUrl = accountOptions?.collectionsStartNewPlanJourney?.storeCard?.collectionsUrl
+                        exitUrl = accountOptions?.collectionsStartNewPlanJourney?.creditCard?.exitUrl
                     }
                 }
 
                 val url = collectionsUrl + mEligibilityPlan?.appGuid
 
-                when (WoolworthsApplication.getAccountOptions()?.collectionsStartNewPlanJourney?.renderMode) {
+                when (accountOptions?.collectionsStartNewPlanJourney?.renderMode) {
                     AvailableFundFragment.NATIVE_BROWSER ->
                         KotlinUtils.openUrlInPhoneBrowser(url, activity)
 

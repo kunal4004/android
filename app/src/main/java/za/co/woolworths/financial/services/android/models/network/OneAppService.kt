@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
+import java.net.URLEncoder
 
 object OneAppService : RetrofitConfig() {
 
@@ -240,6 +241,11 @@ object OneAppService : RetrofitConfig() {
 
     fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
         return mApiInterface.getShippingDetails("", "", getSessionToken(),
+        getDeviceIdentityToken(), body)
+    }
+
+    fun getStorePickupInfo(body: StorePickupInfoBody): Call<ConfirmDeliveryAddressResponse> {
+        return mApiInterface.getStorePickupInfo("", "", getSessionToken(),
         getDeviceIdentityToken(), body)
     }
 
@@ -570,7 +576,7 @@ object OneAppService : RetrofitConfig() {
             "",
             "",
             getSessionToken(),
-            deviceName,
+            URLEncoder.encode(deviceName, "UTF-8"),
             body,
             otp,
             otpMethod)

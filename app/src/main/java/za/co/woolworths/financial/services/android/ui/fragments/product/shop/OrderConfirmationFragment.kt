@@ -7,6 +7,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.*
+import android.view.View.*
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,7 +44,7 @@ class OrderConfirmationFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_order_confirmation, container, false)
     }
@@ -109,92 +110,92 @@ class OrderConfirmationFragment : Fragment() {
 
     private fun setupDeliveryOrCollectionDetails(response: SubmittedOrderResponse?) {
         context?.let {
-            deliveryCollectionDetailsConstraintLayout.visibility = View.VISIBLE
+            deliveryCollectionDetailsConstraintLayout.visibility = VISIBLE
             if (response?.orderSummary?.store?.name != null) {
                 optionImage.background =
                     AppCompatResources.getDrawable(it, R.drawable.icon_collection_grey_bg)
-                optionTitle.text = it.getText(R.string.collecting_from)
-                deliveryTextView.text = it.getText(R.string.collection_semicolon)
-                optionLocation.text = response.orderSummary?.store?.name
+                optionTitle?.text = it.getText(R.string.collecting_from)
+                deliveryTextView?.text = it.getText(R.string.collection_semicolon)
+                optionLocation?.text = response.orderSummary?.store?.name
 
             } else {
-                optionImage.background =
+                optionImage?.background =
                     AppCompatResources.getDrawable(it, R.drawable.icon_delivery_grey_bg)
-                optionTitle.text = it.getText(R.string.delivering_to)
-                deliveryTextView.text = it.getText(R.string.delivery_semicolon)
-                optionLocation.text = response?.deliveryDetails?.shippingAddress?.address1
+                optionTitle?.text = it.getText(R.string.delivering_to)
+                deliveryTextView?.text = it.getText(R.string.delivery_semicolon)
+                optionLocation?.text = response?.deliveryDetails?.shippingAddress?.address1
             }
 
             if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
-                oneDeliveryLinearLayout.visibility = View.GONE
-                foodDeliveryLinearLayout.visibility = View.VISIBLE
-                otherDeliveryLinearLayout.visibility = View.VISIBLE
-                foodDeliveryDateTimeTextView.text = applyBoldBeforeComma(
+                oneDeliveryLinearLayout?.visibility = GONE
+                foodDeliveryLinearLayout?.visibility = VISIBLE
+                otherDeliveryLinearLayout?.visibility = VISIBLE
+                foodDeliveryDateTimeTextView?.text = applyBoldBeforeComma(
                     response
                         .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
                 )
-                otherDeliveryDateTimeTextView.text =
+                otherDeliveryDateTimeTextView?.text =
                     response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
             } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
-                oneDeliveryLinearLayout.visibility = View.VISIBLE
-                foodDeliveryLinearLayout.visibility = View.GONE
-                otherDeliveryLinearLayout.visibility = View.GONE
-                deliveryDateTimeTextView.text =
+                oneDeliveryLinearLayout?.visibility = VISIBLE
+                foodDeliveryLinearLayout?.visibility = GONE
+                otherDeliveryLinearLayout?.visibility = GONE
+                deliveryDateTimeTextView?.text =
                     response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
             }
         }
     }
 
     private fun setupOrderTotalDetails(response: SubmittedOrderResponse?) {
-        otherOrderDetailsConstraintLayout.visibility = View.VISIBLE
+        otherOrderDetailsConstraintLayout?.visibility = VISIBLE
 
-        orderTotalTextView.text = CurrencyFormatter
+        orderTotalTextView?.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.total)
 
-        yourCartTextView.text = CurrencyFormatter
+        yourCartTextView?.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.basketTotal)
 
         val otherDiscount = response?.orderSummary?.discountDetails?.otherDiscount
         if (otherDiscount != null && otherDiscount > 0) {
-            discountsTextView.text = "- ".plus(
+            discountsTextView?.text = "- ".plus(
                 CurrencyFormatter
                     .formatAmountToRandAndCentWithSpace(otherDiscount)
             )
         } else {
-            discountsLinearLayout.visibility = View.GONE
-            discountsSeparator.visibility = View.GONE
+            discountsLinearLayout?.visibility = GONE
+            discountsSeparator?.visibility = GONE
         }
 
         val companyDiscount = response?.orderSummary?.discountDetails?.companyDiscount
         if (companyDiscount != null && companyDiscount > 0) {
-            companyDiscountTextView.text = "- ".plus(
+            companyDiscountTextView?.text = "- ".plus(
                 CurrencyFormatter
                     .formatAmountToRandAndCentWithSpace(companyDiscount)
             )
         } else {
-            companyDiscountLinearLayout.visibility = View.GONE
-            companyDiscountSeparator.visibility = View.GONE
+            companyDiscountLinearLayout?.visibility = GONE
+            companyDiscountSeparator?.visibility = GONE
         }
 
         wRewardsVouchersLinearLayout?.visibility =
             if ((response?.orderSummary?.discountDetails?.voucherDiscount
                     ?: 0.0) > 0.0
-            ) View.VISIBLE else View.GONE
-        wRewardsVouchersTextView.text = CurrencyFormatter
+            ) VISIBLE else GONE
+        wRewardsVouchersTextView?.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.orderSummary?.discountDetails?.voucherDiscount)
 
         val totalDiscount = response?.orderSummary?.discountDetails?.totalDiscount
         if (totalDiscount != null && totalDiscount > 0) {
-            totalDiscountTextView.text = "- ".plus(
+            totalDiscountTextView?.text = "- ".plus(
                 CurrencyFormatter
                     .formatAmountToRandAndCentWithSpace(totalDiscount)
             )
         } else {
-            totalDiscountLinearLayout.visibility = View.GONE
-            totalDiscountSeparator.visibility = View.GONE
+            totalDiscountLinearLayout?.visibility = GONE
+            totalDiscountSeparator?.visibility = GONE
         }
 
-        deliveryFeeTextView.text = CurrencyFormatter
+        deliveryFeeTextView?.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(response?.deliveryDetails?.shippingAmount)
 
         // Commenting this Till Jan-2022 Release as per WOP-13825
@@ -205,37 +206,37 @@ class OrderConfirmationFragment : Fragment() {
                 setMissedRewardsSavings(response.orderSummary?.savedAmount!!.toDouble())
             }
         } else {*/
-            missedRewardsLinearLayout.visibility = View.GONE
+        missedRewardsLinearLayout?.visibility = GONE
         //}
     }
 
     private fun setupOrderDetailsBottomSheet(response: SubmittedOrderResponse?) {
         if (response?.orderSummary?.store?.name != null) {
-            deliveryLocationText.text = context?.getText(R.string.collection_location_semicolon)
-            deliveryOrderDetailsTextView.text = context?.getText(R.string.collection_semicolon)
+            deliveryLocationText?.text = context?.getText(R.string.collection_location_semicolon)
+            deliveryOrderDetailsTextView?.text = context?.getText(R.string.collection_semicolon)
         } else {
-            deliveryLocationText.text = context?.getText(R.string.delivery_location_semicolon)
-            deliveryOrderDetailsTextView.text = context?.getText(R.string.delivery_semicolon)
+            deliveryLocationText?.text = context?.getText(R.string.delivery_location_semicolon)
+            deliveryOrderDetailsTextView?.text = context?.getText(R.string.delivery_semicolon)
         }
-        bottomSheetScrollView.visibility = View.VISIBLE
-        orderStatusTextView.text = response?.orderSummary?.state
-        deliveryLocationTextView.text = optionLocation.text
+        bottomSheetScrollView?.visibility = VISIBLE
+        orderStatusTextView?.text = response?.orderSummary?.state
+        deliveryLocationTextView?.text = optionLocation.text
 
         if (response?.deliveryDetails?.deliveryInfos?.size == 2) {
-            oneDeliveryBottomSheetLinearLayout.visibility = View.GONE
-            foodDeliveryLinearLayout.visibility = View.VISIBLE
-            otherDeliveryBottomSheetLinearLayout.visibility = View.VISIBLE
-            foodDeliveryDateTimeBottomSheetTextView.text = applyBoldBeforeComma(
+            oneDeliveryBottomSheetLinearLayout?.visibility = GONE
+            foodDeliveryLinearLayout?.visibility = VISIBLE
+            otherDeliveryBottomSheetLinearLayout?.visibility = VISIBLE
+            foodDeliveryDateTimeBottomSheetTextView?.text = applyBoldBeforeComma(
                 response
                     .deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
             )
-            otherDeliveryDateTimeBottomSheetTextView.text =
+            otherDeliveryDateTimeBottomSheetTextView?.text =
                 response.deliveryDetails?.deliveryInfos?.get(1)?.deliveryDateAndTime
         } else if (response?.deliveryDetails?.deliveryInfos?.size == 1) {
-            oneDeliveryBottomSheetLinearLayout.visibility = View.VISIBLE
-            foodDeliveryBottomSheetLinearLayout.visibility = View.GONE
-            otherDeliveryBottomSheetLinearLayout.visibility = View.GONE
-            deliveryDateTimeBottomSheetTextView.text =
+            oneDeliveryBottomSheetLinearLayout?.visibility = VISIBLE
+            foodDeliveryBottomSheetLinearLayout?.visibility = GONE
+            otherDeliveryBottomSheetLinearLayout?.visibility = GONE
+            deliveryDateTimeBottomSheetTextView?.text =
                 response.deliveryDetails?.deliveryInfos?.get(0)?.deliveryDateAndTime
         }
 
@@ -296,23 +297,25 @@ class OrderConfirmationFragment : Fragment() {
         val other: Int = items?.other?.size ?: 0
         val food: Int = items?.food?.size ?: 0
         val number: Int = other.plus(food)
-        numberItemsTextView.text = if (number > 1)
+        numberItemsTextView?.text = if (number > 1)
             bindString(R.string.number_items, number.toString())
         else
             bindString(R.string.number_item, number.toString())
-        costItemsTextView.text = orderTotalTextView.text
+        costItemsTextView?.text = orderTotalTextView.text
     }
 
     private fun setMissedRewardsSavings(amount: Double) {
-        missedRewardsLinearLayout.visibility = View.VISIBLE
-        missedRewardsTextView.text = CurrencyFormatter
+        missedRewardsLinearLayout?.visibility = VISIBLE
+        missedRewardsTextView?.text = CurrencyFormatter
             .formatAmountToRandAndCentWithSpace(amount)
 
-        wrewardsIconImageView.setOnClickListener {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS, hashMapOf(
-                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING
-            ), activity)
+        wrewardsIconImageView?.setOnClickListener {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_MISSED_WREWARD_SAVINGS,
+                hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_WREWARDS_SAVING
+                ),
+                activity)
             val bottomSheetFragment = WrewardsBottomSheetFragment(activity)
 
             val bundle = Bundle()
