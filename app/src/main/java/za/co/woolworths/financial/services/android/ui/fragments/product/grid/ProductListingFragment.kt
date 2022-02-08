@@ -24,7 +24,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_brand_landing.*
+import kotlinx.android.synthetic.main.fragment_brand_landing.view.*
 import kotlinx.android.synthetic.main.grid_layout.*
+import kotlinx.android.synthetic.main.grid_layout.incCenteredProgress
 import kotlinx.android.synthetic.main.grid_layout.incNoConnectionHandler
 import kotlinx.android.synthetic.main.grid_layout.sortAndRefineLayout
 import kotlinx.android.synthetic.main.grid_layout.vtoTryItOnBanner
@@ -33,6 +36,10 @@ import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.search_result_fragment.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
+import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
+import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
+import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
@@ -87,8 +94,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected,
     WMaterialShowcaseView.IWalkthroughActionListener,
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
-    IOnConfirmDeliveryLocationActionListener {
+    IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
+    private var toolbarTitleText: String? = null
     private var menuActionSearch: MenuItem? = null
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
@@ -166,6 +174,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mErrorHandlerView = ErrorHandlerView(this, no_connection_layout)
             mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
 
+            toolbarTitleText =
+                if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
             setTitle()
             startProductRequest()
             setUniqueIds()
@@ -259,10 +269,19 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if ((activity as? BottomNavigationActivity)?.currentFragment !is ProductListingFragment) {
             return
         }
-        (activity as? BottomNavigationActivity)?.setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
+
+        (activity as? BottomNavigationActivity)?.setTitle(toolbarTitleText)
     }
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
+
+        if (response.isBanners) {
+            if (!response.dynamicBanners.isNullOrEmpty()) {
+                onChanelSuccess(response)
+            }
+            return
+        }
+        plp_relativeLayout?.visibility = View.VISIBLE
         showVtoBanner()
         val productLists = response.products
         if (mProductList?.isNullOrEmpty() == true)
@@ -334,6 +353,23 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         mProductAdapter?.notifyDataSetChanged()
     }
 
+    private fun onChanelSuccess(response: ProductView) {
+        chanel_layout?.visibility = VISIBLE
+        plp_relativeLayout?.visibility = GONE
+        val brandLandingAdapter = BrandLandingAdapter(
+            requireContext(),
+            response.dynamicBanners as List<DynamicBanner?>, this
+        )
+        val layoutManager = LinearLayoutManager(requireContext())
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        chanel_layout?.rv_chanel?.layoutManager = layoutManager
+        chanel_layout?.rv_chanel?.setHasFixedSize(true)
+        chanel_layout?.rv_chanel?.adapter = brandLandingAdapter
+
+        toolbarTitleText = response?.pageHeading ?: mSearchTerm
+        setTitle()
+    }
+
     override fun showLiquorDialog() {
 
         liquorDialog = activity?.let { activity -> Dialog(activity) }
@@ -376,8 +412,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun getCategoryNameAndSetTitle() {
-        if (!mSubCategoryName.isNullOrEmpty())
+        if (!mSubCategoryName.isNullOrEmpty()) {
+            toolbarTitleText = mSubCategoryName
             setTitle()
+        }
     }
 
     override fun unhandledResponseCode(response: Response) {
@@ -655,6 +693,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
                 }
+
                 else -> return
             }
         }
@@ -671,6 +710,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showBottomNavigationMenu()
                     showBackNavigationIcon(true)
                     setToolbarBackgroundDrawable(R.drawable.appbar_background)
+                    setTitle()
+
                     if (!localProductBody.isEmpty() && isBackPressed) {
                         localProductBody.removeLast()
                         isBackPressed = false
@@ -876,7 +917,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun openProductDetailView(productList: ProductList) {
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList)
-
     }
 
     override fun queryInventoryForStore(
@@ -1382,4 +1422,21 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
+    override fun openProductDetailsView(productList: ProductList?) {
+        // From Chanel Category click
+        productList?.let { openProductDetailView(it) }
+    }
+
+    override fun openCategoryListView(navigation: Navigation?) {
+        // From Chanel Category click
+        (activity as? BottomNavigationActivity)?.apply {
+            pushFragment(
+                newInstance(
+                    ProductsRequestParams.SearchType.NAVIGATE,
+                    "",
+                    navigation?.navigationState
+                )
+            )
+        }
+    }
 }

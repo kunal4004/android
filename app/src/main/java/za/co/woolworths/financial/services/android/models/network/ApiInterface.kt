@@ -6,7 +6,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
-import za.co.woolworths.financial.services.android.chanel.model.ChanelResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -754,7 +753,8 @@ interface ApiInterface {
             @Query("sortOption") sortOption: String,
             @Query("refinement") refinement: String,
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?): Call<ProductView>
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
     @GET("wfs/app/v4/searchSortAndFilterV2")
@@ -774,7 +774,8 @@ interface ApiInterface {
             @Header("longitude") longitude: String = "",
             @Header("latitude") latitude: String = "",
             @Query("suburbId") suburbId: String?,
-            @Query("storeId") storeId: String?): Call<ProductView>
+            @Query("storeId") storeId: String?,
+            @Query("filterContent") filterContent: Boolean?): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/cart/checkoutComplete")
@@ -1233,17 +1234,5 @@ interface ApiInterface {
         @Path("insuranceType") insuranceType: String,
         @Body insuranceTypeOptInBody: InsuranceTypeOptInBody
     ):Call<GenericResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600")
-    @GET("wfs/app/v4/searchSortAndFilterV2")
-    suspend fun getChanelResponse(
-
-        @Query("searchTerm") searchTerm: String,
-        @Query("searchType") searchType: String,
-        @Query("responseType") responseType: String,
-        @Query("pageOffset") pageOffset: Int,
-        @Query("pageSize") pageSize: Int,
-        @Query("filterContent") filterContent: Boolean,
-    ):ChanelResponse
 
 }

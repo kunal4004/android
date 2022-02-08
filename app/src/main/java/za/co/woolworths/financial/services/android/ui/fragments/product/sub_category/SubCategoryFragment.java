@@ -1,19 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.sub_category;
 
 import android.app.Activity;
-
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.text.TextUtils;
-import android.view.View;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -23,15 +20,11 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.chanel.views.BrandLandingFragment;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
-import za.co.woolworths.financial.services.android.models.dto.app_config.BrandLandingPage;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -44,8 +37,6 @@ import za.co.woolworths.financial.services.android.util.expand.ParentSubCategory
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryAdapter;
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryChild;
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryModel;
-
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 
 public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragmentBinding, SubCategoryViewModel> implements SubCategoryNavigator, View.OnClickListener {
 
@@ -324,6 +315,5 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
             }
         }
     }
-
 
 }
