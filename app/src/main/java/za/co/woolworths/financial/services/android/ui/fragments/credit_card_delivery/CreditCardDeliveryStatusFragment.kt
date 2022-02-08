@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.activities.credit_card_del
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -35,9 +36,9 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bundle = arguments?.getBundle("bundle")
+        bundle = arguments?.getBundle(BundleKeysConstants.BUNDLE)
         bundle?.apply {
-            accountBinNumber = getString("accountBinNumber")
+            accountBinNumber = getString(BundleKeysConstants.ACCOUNTBI_NNUMBER)
         }
     }
 

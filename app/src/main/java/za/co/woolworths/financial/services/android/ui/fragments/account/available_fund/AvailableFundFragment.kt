@@ -260,7 +260,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         activity?.let { activity -> ActivityIntentNavigationManager.presentPayMyAccountActivity(activity, payMyAccountViewModel.getCardDetail()) }
     }
 
-    override fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean) {
+    override fun navigateToOnlineBankingActivity(creditCardNumber: String?, isRegistered: Boolean) {
         if (fragmentAlreadyAdded()) return
         activity?.apply {
             val openABSAOnlineBanking = Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
@@ -334,7 +334,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         activity?.let { activity ->
             mAvailableFundPresenter?.getAccount()?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
-                intent.putExtra("productOfferingId", productOfferingId.toString())
+                intent.putExtra(BundleKeysConstants.PRODUCT_OFFERINGID, productOfferingId.toString())
                 if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true) {
                     intent.putExtra("accountNumber", accountNumber.toString())
                 }

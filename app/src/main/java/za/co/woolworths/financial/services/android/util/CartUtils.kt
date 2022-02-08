@@ -32,9 +32,11 @@ class CartUtils {
                     message.text = it.quantityLimit.foodLayoutMessage ?: ""
                     counter.text = it.totalProductCount.toString() + "/" + it.quantityLimit.foodMaximumQuantity?:""
                     if (it.quantityLimit.foodLayoutColour.isNotEmpty()) {
+                        banner.visibility = View.VISIBLE
                         banner.setBackgroundColor(Color.parseColor(it.quantityLimit.foodLayoutColour))
+                    } else {
+                        banner.visibility = View.GONE
                     }
-                    banner.visibility = View.VISIBLE
                 } else {
                     banner.visibility = View.GONE
                 }
