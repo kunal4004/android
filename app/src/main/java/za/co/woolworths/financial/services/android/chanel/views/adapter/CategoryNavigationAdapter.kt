@@ -12,7 +12,9 @@ import za.co.woolworths.financial.services.android.chanel.views.viewholder.Categ
 class CategoryNavigationAdapter(
     val context: Context?,
     val list: List<Navigation>,
-    val chanelNavigationClickListener: ChanelNavigationClickListener
+    val chanelNavigationClickListener: ChanelNavigationClickListener,
+    val bannerImage: String?,
+    val bannerLabel: String?
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -25,7 +27,7 @@ class CategoryNavigationAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CategoryNavigationViewHolder) {
-            holder.bind(position, list)
+            holder.bind(position, list, bannerImage, bannerLabel)
         }
     }
 
