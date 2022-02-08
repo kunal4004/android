@@ -326,7 +326,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 SessionExpiredUtilities.getInstance().showSessionExpireDialog(BottomNavigationActivity.this);
             }
            String changePassword = mBundle.getString(FORGOT_PASSWORD);
-            if(changePassword.equals(FORGOT_PASSWORD_VALUE)){
+            if(null!=changePassword && changePassword.equals(FORGOT_PASSWORD_VALUE)){
                 navigateMyAccountScreen();
             }
         }
