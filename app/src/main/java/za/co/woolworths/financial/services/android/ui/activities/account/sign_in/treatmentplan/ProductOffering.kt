@@ -33,7 +33,8 @@ class ProductOffering(private val account: Account?) : IProductOffering {
 
     override fun minimumTakeUpTreatmentDelinquencyCycle(): Int? = getMinimumDelinquencyCycle(accountOptions?.collectionsStartNewPlanJourney)
 
-    override fun isViewTreatmentPlanSupported(): Boolean = (getAccountsDelinquencyCycle() >= minimumViewTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(accountOptions?.showTreatmentPlanJourney)
+    override fun isViewTreatmentPlanSupported(): Boolean
+    = (getAccountsDelinquencyCycle() >= minimumViewTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(accountOptions?.showTreatmentPlanJourney)
 
     override fun isTakeUpTreatmentPlanJourneyEnabled(): Boolean {
         return (getAccountsDelinquencyCycle() >= minimumTakeUpTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(
@@ -69,7 +70,7 @@ class ProductOffering(private val account: Account?) : IProductOffering {
                 val isProductChargedOff = account?.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
                 when {
                     !isProductChargedOff && isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
-                    isViewTreatmentPlanSupported() -> if (isProductChargedOff) AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff else AccountOfferingState.MakeGetEligibilityCall
+                    isViewTreatmentPlanSupported() -> if (isProductChargedOff) AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff else AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig
                     else -> if (isProductChargedOff) AccountOfferingState.AccountIsChargedOff else AccountOfferingState.AccountIsInArrears
                 }
             }

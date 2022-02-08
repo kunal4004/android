@@ -1775,7 +1775,7 @@
     <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 5 business working days to reflect on your account.</string>
     <string name="back_to_my_account_button">back to my account</string>
     <string name="pma_save_card_pay_now_title">Payment Summary</string>
-    <string name="pay_now_button_label">Pay Now</string>
+    <string name="pay_now_button_label">Make a payment now</string>
     <string name="payment_method">Payment Method</string>
     <string name="add_card_label">add card</string>
     <string name="card_expired">Expired</string>

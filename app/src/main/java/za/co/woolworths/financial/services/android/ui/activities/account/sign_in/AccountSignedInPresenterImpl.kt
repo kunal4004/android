@@ -194,11 +194,13 @@ class AccountSignedInPresenterImpl(
             mainView?.apply {
                 state { status ->
                     when (status) {
+
                         AccountOfferingState.AccountInGoodStanding -> {
                             //when productOfferingGoodStanding == true
                             hideAccountInArrears(account)
                             showAccountHelp(getCardProductInformation(false))
                         }
+
                         AccountOfferingState.AccountIsInArrears -> showAccountInArrears(account)
 
                         AccountOfferingState.AccountIsChargedOff -> {
@@ -217,12 +219,9 @@ class AccountSignedInPresenterImpl(
 
                         AccountOfferingState.MakeGetEligibilityCall -> {
                             val productGroupCode = productGroupCode() ?: return@state
-                            myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(
-                                productGroupCode,
+                            myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(productGroupCode,
                                 { eligibilityPlanResponse -> checkEligibility(eligibilityPlanResponse, state) },
-                                {
-                                    showAccountInArrears(account)
-                                })
+                                { showAccountInArrears(account) })
                         }
                     }
                 }
