@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -118,6 +119,8 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE;
+import static za.co.woolworths.financial.services.android.ui.activities.SSOActivity.FORGOT_PASSWORD;
+import static za.co.woolworths.financial.services.android.ui.activities.SSOActivity.FORGOT_PASSWORD_VALUE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
@@ -321,6 +324,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (!TextUtils.isEmpty(mSessionExpiredAtTabSection)) {
                 getBottomNavigationById().setCurrentItem(Integer.parseInt(mSessionExpiredAtTabSection));
                 SessionExpiredUtilities.getInstance().showSessionExpireDialog(BottomNavigationActivity.this);
+            }
+           String changePassword = mBundle.getString(FORGOT_PASSWORD);
+            if(changePassword.equals(FORGOT_PASSWORD_VALUE)){
+                navigateMyAccountScreen();
             }
         }
         mBundle = null;
@@ -1467,5 +1474,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             shopFragment.refreshCategories();
         }
     }
+
+    private void navigateMyAccountScreen() {
+        getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+        switchTab(INDEX_ACCOUNT);
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(() -> {
+            ScreenManager.presentSSOSignin(this);
+        }, AppConstant.DELAY_500_MS);
+
+    }
+
 
 }

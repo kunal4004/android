@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.account
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +20,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class MyAccountActivity : AppCompatActivity() {
-
+    private var forgotPasswordUri: Uri? = null
     companion object {
         var mAccountMasterCache: AccountMasterCache? = AccountMasterCache
         private const val REQUEST_CODE_OPEN_STATEMENT = 3334
@@ -33,11 +34,16 @@ class MyAccountActivity : AppCompatActivity() {
         setContentView(R.layout.my_account_activity)
         Utils.updateStatusBarBackground(this)
         actionBar()
+
         if (savedInstanceState == null) {
             addFragment(
                     fragment = MyAccountsFragment(),
                     tag = MyAccountsFragment::class.java.simpleName,
                     containerViewId = R.id.accountContainerFrameLayout)
+        }
+        forgotPasswordUri = intent.data
+        if(null!= forgotPasswordUri){
+            getForgotPasswordLink(forgotPasswordUri.toString())
         }
     }
 
@@ -124,4 +130,9 @@ class MyAccountActivity : AppCompatActivity() {
     fun onSignedOut() {
         ScreenManager.presentSSOLogout(this@MyAccountActivity)
     }
+
+   private fun getForgotPasswordLink(forgotPasswordUri: String) {
+       ScreenManager.forgotPassword(this@MyAccountActivity,forgotPasswordUri)
+   }
+
 }

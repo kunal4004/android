@@ -40,7 +40,6 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -75,7 +75,8 @@ public class SSOActivity extends WebViewActivity {
 		NONCE_MISMATCH(5),
 		SUCCESS(6),
 		SIGNED_OUT(8),
-		CHANGE_PASSWORD(9);
+		CHANGE_PASSWORD(9),
+		FORGOT_PASSWORD(10);
 		private int result;
 
 		SSOActivityResult(int i) {
@@ -94,6 +95,9 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_PATH = "TAG_PATH";
 	public static final String TAG_JWT = "TAG_JWT";
 	public static final String TAG_SCOPE = "TAG_SCOPE";
+	public static final String TAG_PASSWORD = "TAG_PASSWORD";
+	public static final String FORGOT_PASSWORD = "FORGOT_PASSWORD";
+	public static final String FORGOT_PASSWORD_VALUE = "paasword";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 	//Default redirect url used by LOGIN AND LINK CARDS
 	private static String redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURI();
@@ -105,6 +109,7 @@ public class SSOActivity extends WebViewActivity {
 	private String state;
 	private final String nonce;
 	private String stsParams;
+	private String forgotPassword;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -124,14 +129,6 @@ public class SSOActivity extends WebViewActivity {
 		}
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 		showProfileProgressBar();
-
-       //Uri uri = getIntent().getData();
-		Uri uri = Uri.parse("https://www-win-qa.woolworths.co.za/forgot-password?id=MzY0OTgwNjE3&generatedKey=QlpRSm41MUxqVg==&source=oneapp");
-		if (uri != null) {
-			List<String> params = uri.getPathSegments();
-			String id = params.get(params.size() - 1);
-			//Toast.makeText(applicationContextthis, R.string.downloaing_text, Toast.LENGTH_LONG).show()
-		}
 	}
 
 	// Display progress bar as soon as user land on profile
@@ -169,10 +166,18 @@ public class SSOActivity extends WebViewActivity {
 								redirectURIString.concat(urlStateComponent))
 				);
 
-				if (invalidTitles.contains(title.toLowerCase()) || title.toLowerCase().endsWith(urlStateComponent)) {
+				if (invalidTitles.contains(title.toLowerCase()) || title.toLowerCase().endsWith(urlStateComponent) || SSOActivity.this.path == Path.FORGOT_PASSWORD) {
 					toolbarTextView.setText("");
 				} else
 					toolbarTextView.setText(title);
+
+				if(title.contains("login=true&source=oneapp")){
+					Intent i = new Intent(SSOActivity.this, BottomNavigationActivity.class);
+					i.putExtra(FORGOT_PASSWORD,FORGOT_PASSWORD_VALUE);
+					startActivity(i);
+					finish();
+					overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				}
 			}
 		});
 		retryConnect();
@@ -213,6 +218,7 @@ public class SSOActivity extends WebViewActivity {
 		this.extraQueryStringParams = (Map<String, String>) intent.getSerializableExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS);
 
 		String scope = bundle.getString(SSOActivity.TAG_SCOPE);
+		forgotPassword = bundle.getString(SSOActivity.TAG_PASSWORD);
 		String link = this.constructAndGetAuthorisationRequestURL(scope);
 
 		bundle.putString("title", "SIGN IN");
@@ -280,7 +286,7 @@ public class SSOActivity extends WebViewActivity {
 		LOGOUT("customerid/connect/endsession"),
 		UPDATE_PASSWORD("customerid/userdetails/password"),
 		UPDATE_PROFILE("customerid/userdetails"),
-		FORGOT_PASSWORD("");
+		FORGOT_PASSWORD("forgot-password");
 
 		private final String path;
 
@@ -367,8 +373,7 @@ public class SSOActivity extends WebViewActivity {
 				break;
 
 			case FORGOT_PASSWORD:
-				redirectURIString = AppConfigSingleton.INSTANCE.getSsoUpdateDetailsRedirectUri();
-				break;
+				return forgotPassword;
 
 			default:
 				break;
@@ -470,7 +475,7 @@ public class SSOActivity extends WebViewActivity {
 		@Nullable
 		@Override
 		public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-			
+
 			//fixes WOP-4401
 			extractFormDataOnUIThreadForLoginRegisterAndCloseSSOIfNeeded();
 			return super.shouldInterceptRequest(view, url);
@@ -484,7 +489,6 @@ public class SSOActivity extends WebViewActivity {
 			return super.shouldInterceptRequest(view, request);
 		}
 
-		// callback code
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
