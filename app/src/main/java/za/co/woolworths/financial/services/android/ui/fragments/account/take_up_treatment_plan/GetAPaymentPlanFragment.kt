@@ -47,6 +47,7 @@ class GetAPaymentPlanFragment : Fragment() {
                 binding.treatmentPlanImageView.setImageResource(R.drawable.image_treatement_plan_cc)
             }
         }
+
         with(binding.viewPlanOptionsButton) {
             setOnClickListener {
                 var collectionsUrl: String? = ""

@@ -22,7 +22,10 @@ import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
-class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContract.MyAccountView?, private var model: IAccountSignedInContract.MyAccountModel) : IAccountSignedInContract.MyAccountPresenter {
+class AccountSignedInPresenterImpl(
+    private var mainView: IAccountSignedInContract.MyAccountView?,
+    private var model: IAccountSignedInContract.MyAccountModel
+) : IAccountSignedInContract.MyAccountPresenter {
 
     private var mApplyNowState: ApplyNowState = ApplyNowState.STORE_CARD
     private var mAccountResponse: AccountsResponse? = null
@@ -54,7 +57,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         return Pair(mApplyNowState, mAccountResponse)
     }
 
-    override fun setAvailableFundBundleInfo(navDetailController: NavController?,myAccountsViewModel : MyAccountsRemoteApiViewModel) {
+    override fun setAvailableFundBundleInfo(
+        navDetailController: NavController?,
+        myAccountsViewModel: MyAccountsRemoteApiViewModel
+    ) {
         this.mProductGroupCode = getProductCode(mApplyNowState)
 
         val bundle = Bundle()
@@ -71,32 +77,44 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferOutstanding(accountInfo.first,myAccountsViewModel)
+        showProductOfferOutstanding(accountInfo.first, myAccountsViewModel)
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
-        return accountsResponse.accountList?.firstOrNull { account ->
-            account?.productGroupCode == getProductCode(mApplyNowState) }
+        return accountsResponse.accountList?.filter { account ->
+            account?.productGroupCode == getProductCode(
+                mApplyNowState
+            )
+        }?.get(0)
     }
 
     @Throws(RuntimeException::class)
     override fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>? {
         val account: Account? = getAccount()
-        account?.productOfferingId?.let { WoolworthsApplication.getInstance().setProductOfferingId(it) }
-
-        val productGroupInfo = when (account?.productGroupCode?.let { AccountsProductGroupCode.getEnum(it) }) {
-            AccountsProductGroupCode.STORE_CARD -> Pair(ApplyNowState.STORE_CARD, account)
-            AccountsProductGroupCode.CREDIT_CARD -> when (account.accountNumberBin) {
-                Utils.SILVER_CARD -> Pair(ApplyNowState.SILVER_CREDIT_CARD, account)
-                Utils.BLACK_CARD -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
-                Utils.GOLD_CARD -> Pair(ApplyNowState.GOLD_CREDIT_CARD, account)
-                else -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
-            }
-            AccountsProductGroupCode.PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
-            else -> null
+        account?.productOfferingId?.let {
+            WoolworthsApplication.getInstance().setProductOfferingId(it)
         }
 
-        productGroupInfo?.first?.let { getToolbarTitle(it)?.let { toolbarTitle -> mainView?.toolbarTitle(toolbarTitle) } }
+        val productGroupInfo =
+            when (account?.productGroupCode?.let { AccountsProductGroupCode.getEnum(it) }) {
+                AccountsProductGroupCode.STORE_CARD -> Pair(ApplyNowState.STORE_CARD, account)
+                AccountsProductGroupCode.CREDIT_CARD -> when (account.accountNumberBin) {
+                    Utils.SILVER_CARD -> Pair(ApplyNowState.SILVER_CREDIT_CARD, account)
+                    Utils.BLACK_CARD -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
+                    Utils.GOLD_CARD -> Pair(ApplyNowState.GOLD_CREDIT_CARD, account)
+                    else -> Pair(ApplyNowState.BLACK_CREDIT_CARD, account)
+                }
+                AccountsProductGroupCode.PERSONAL_LOAN -> Pair(ApplyNowState.PERSONAL_LOAN, account)
+                else -> null
+            }
+
+        productGroupInfo?.first?.let {
+            getToolbarTitle(it)?.let { toolbarTitle ->
+                mainView?.toolbarTitle(
+                    toolbarTitle
+                )
+            }
+        }
 
         return productGroupInfo
     }
@@ -112,7 +130,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         }
     }
 
-    private fun checkEligibility(response: EligibilityPlanResponse,state: ApplyNowState) {
+    private fun checkEligibility(response: EligibilityPlanResponse, state: ApplyNowState) {
 
         val account = getAccount()
         val productOffering = ProductOffering(account)
@@ -125,7 +143,7 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         if (response.eligibilityPlan?.productGroupCode == eligibleState) {
             when (response.eligibilityPlan.actionText) {
                 ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
-                    if (productOffering.isTakeUpTreatmentPlanSupported()) {
+                    if (productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
                     }
@@ -141,17 +159,25 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                             ApplyNowState.GOLD_CREDIT_CARD,
                             ApplyNowState.BLACK_CREDIT_CARD,
                             ApplyNowState.SILVER_CREDIT_CARD -> {
-                                        //display treatment plan popup with view payment options for CC
-                                        mainView?.showViewTreatmentPlan(
-                                            state,
-                                            response.eligibilityPlan
-                                        )
-                                }
+                                //display treatment plan popup with view payment options for CC
+                                mainView?.showViewTreatmentPlan(
+                                    state,
+                                    response.eligibilityPlan
+                                )
                             }
                         }
                     }
+                }
             }
+        }else {
+            showAccountInArrears(account)
         }
+    }
+
+    private fun showAccountInArrears(account: Account?) {
+        account ?: return
+        mainView?.showAccountInArrears(account)
+        mainView?.showAccountHelp(getCardProductInformation(true))
     }
 
 
@@ -169,22 +195,28 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
                             hideAccountInArrears(account)
                             showAccountHelp(getCardProductInformation(false))
                         }
-                        AccountOfferingState.AccountIsInArrears -> {
-                            showAccountInArrears(account)
-                            showAccountHelp(getCardProductInformation(true))
-                        }
+                        AccountOfferingState.AccountIsInArrears -> showAccountInArrears(account)
 
                         AccountOfferingState.AccountIsChargedOff -> {
                             // account is in arrears for more than 6 months
                             removeBlocksOnCollectionCustomer()
                         }
 
+                        AccountOfferingState.ShowViewTreatmentPlanPopupFromConfig -> {
+                            removeBlocksWhenChargedOff(true)
+                            showViewTreatmentPlan(true)
+                        }
+
                         AccountOfferingState.MakeGetEligibilityCall -> {
                             val productGroupCode = productGroupCode() ?: return@state
-                                myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(productGroupCode, { eligibilityPlanResponse ->
-                                             checkEligibility(eligibilityPlanResponse, state)
-                                }, {})
-                            } }
+                            myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(
+                                productGroupCode,
+                                { eligibilityPlanResponse -> checkEligibility(eligibilityPlanResponse, state) },
+                                {
+                                    showAccountInArrears(account)
+                                })
+                        }
+                    }
                 }
             }
         }
@@ -223,7 +255,10 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val accounts = getAccount()
         val productOfferingStatus = accounts?.productOfferingStatus
         val productOfferingGoodStanding = accounts?.productOfferingGoodStanding
-        return productOfferingGoodStanding == false && productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
+        return productOfferingGoodStanding == false && productOfferingStatus.equals(
+            Utils.ACCOUNT_CHARGED_OFF,
+            ignoreCase = true
+        )
     }
 
     override fun chatWithCollectionAgent() {
@@ -238,13 +273,15 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         mDeepLinkingData = null
     }
 
-    override fun isProductInGoodStanding(): Boolean  = getAccount()?.productOfferingGoodStanding == true
+    override fun isProductInGoodStanding(): Boolean =
+        getAccount()?.productOfferingGoodStanding == true
 
     fun getAccount(): Account? {
         return mAccountResponse?.let { account -> getAccount(account) }
     }
 
-    override fun getAppCompatActivity(): AppCompatActivity? = WoolworthsApplication.getInstance()?.currentActivity as? AppCompatActivity
+    override fun getAppCompatActivity(): AppCompatActivity? =
+        WoolworthsApplication.getInstance()?.currentActivity as? AppCompatActivity
 
     override fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)
 
@@ -285,10 +322,22 @@ class AccountSignedInPresenterImpl(private var mainView: IAccountSignedInContrac
         val accountInfo = getMyAccountCardInfo()
         return when (accountInfo?.first) {
             ApplyNowState.STORE_CARD -> Pair(R.drawable.w_store_card, R.string.store_card_title)
-            ApplyNowState.SILVER_CREDIT_CARD -> Pair(R.drawable.w_silver_credit_card, R.string.silver_credit_card_title)
-            ApplyNowState.BLACK_CREDIT_CARD -> Pair(R.drawable.w_black_credit_card, R.string.black_credit_card_title)
-            ApplyNowState.GOLD_CREDIT_CARD -> Pair(R.drawable.w_gold_credit_card, R.string.gold_credit_card_title)
-            ApplyNowState.PERSONAL_LOAN -> Pair(R.drawable.w_personal_loan_card, R.string.personal_loan_card_title)
+            ApplyNowState.SILVER_CREDIT_CARD -> Pair(
+                R.drawable.w_silver_credit_card,
+                R.string.silver_credit_card_title
+            )
+            ApplyNowState.BLACK_CREDIT_CARD -> Pair(
+                R.drawable.w_black_credit_card,
+                R.string.black_credit_card_title
+            )
+            ApplyNowState.GOLD_CREDIT_CARD -> Pair(
+                R.drawable.w_gold_credit_card,
+                R.string.gold_credit_card_title
+            )
+            ApplyNowState.PERSONAL_LOAN -> Pair(
+                R.drawable.w_personal_loan_card,
+                R.string.personal_loan_card_title
+            )
             else -> throw RuntimeException("SixMonthOutstanding Invalid  ApplyNowState ${accountInfo?.first}")
         }
     }

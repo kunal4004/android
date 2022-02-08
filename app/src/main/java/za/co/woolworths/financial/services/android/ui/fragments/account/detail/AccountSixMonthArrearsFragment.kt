@@ -10,8 +10,8 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
+import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.account_cart_item.*
@@ -21,8 +21,6 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOffering
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -30,13 +28,17 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class AccountSixMonthArrearsFragment : Fragment() {
 
-    private var mProductOffering: ProductOffering? = null
     private var mApplyNowAccountKeyPair: Pair<Int, Int>? = null
-    private val myAccountsRemoteApiViewModel: MyAccountsRemoteApiViewModel by activityViewModels()
+    private var isViewTreatmentPlanSupported: Boolean = false
+
+    companion object {
+        const val IS_VIEW_TREATMENT_PLAN = "IS_VIEW_TREATMENT_PLAN"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = arguments?.getString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE,"")
+        isViewTreatmentPlanSupported = arguments?.getBoolean(IS_VIEW_TREATMENT_PLAN,false) ?: false
         mApplyNowAccountKeyPair = Gson().fromJson(account, object : TypeToken<Pair<Int, Int>>() {}.type)
     }
 
@@ -46,9 +48,9 @@ class AccountSixMonthArrearsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mProductOffering = myAccountsRemoteApiViewModel.getProductOffering()
         hideCardTextViews()
         setTitleAndCardTypeAndButton()
+
         callTheCallCenterButton?.setOnClickListener { Utils.makeCall("0861502020") }
         callTheCallCenterUnderlinedButton?.setOnClickListener { Utils.makeCall("0861502020") }
         viewTreatmentPlansButton?.setOnClickListener {
@@ -98,9 +100,9 @@ class AccountSixMonthArrearsFragment : Fragment() {
         mApplyNowAccountKeyPair?.first?.let { resourceId -> cardDetailImageView?.setImageResource(resourceId) }
         mApplyNowAccountKeyPair?.second?.let { resourceId ->
             toolbarTitleTextView?.text = bindString(resourceId)
-
-            if(mProductOffering?.isViewTreatmentPlanSupported() == true){
-
+            if(isViewTreatmentPlanSupported && (resourceId == R.string.blackCreditCard_title ||
+                        resourceId == R.string.goldCreditCard_title ||
+                        resourceId == R.string.silverCreditCard_title)){
                 arrearsDescTextView?.text = bindString(R.string.account_arrears_cc_description)
                 callTheCallCenterButton?.visibility = GONE
                 viewTreatmentPlansButton?.visibility = VISIBLE

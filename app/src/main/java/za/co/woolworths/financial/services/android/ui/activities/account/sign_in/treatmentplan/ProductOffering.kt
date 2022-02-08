@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan
 
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigShowTreatmentPlan
@@ -9,9 +8,10 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 sealed class AccountOfferingState {
     object AccountInGoodStanding : AccountOfferingState() //when productOfferingGoodStanding == true
-    object AccountIsInArrears: AccountOfferingState()//account is in arrears
+    object AccountIsInArrears : AccountOfferingState()//account is in arrears
     object AccountIsChargedOff : AccountOfferingState() //account is in arrears for more than 6 months
     object MakeGetEligibilityCall : AccountOfferingState()
+    object ShowViewTreatmentPlanPopupFromConfig : AccountOfferingState()
 }
 
 interface IProductOffering {
@@ -19,9 +19,9 @@ interface IProductOffering {
     fun minimumViewTreatmentDelinquencyCycle(): Int?
     fun minimumTakeUpTreatmentDelinquencyCycle(): Int?
     fun isViewTreatmentPlanSupported(): Boolean?
-    fun isTakeUpTreatmentPlanSupported(): Boolean
+    fun isTakeUpTreatmentPlanJourneyEnabled(): Boolean
     fun productGroupCode(): String?
-    fun getAccountsDelinquencyCycle() : Int
+    fun getAccountsDelinquencyCycle(): Int
 }
 
 class ProductOffering(private val account: Account?) : IProductOffering {
@@ -34,7 +34,7 @@ class ProductOffering(private val account: Account?) : IProductOffering {
 
     override fun isViewTreatmentPlanSupported(): Boolean = (getAccountsDelinquencyCycle() >= minimumViewTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(accountOptions?.showTreatmentPlanJourney)
 
-    override fun isTakeUpTreatmentPlanSupported(): Boolean {
+    override fun isTakeUpTreatmentPlanJourneyEnabled(): Boolean {
         return (getAccountsDelinquencyCycle() >= minimumTakeUpTreatmentDelinquencyCycle() ?: MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT) && isTreatmentPlanSupported(
             accountOptions?.collectionsStartNewPlanJourney
         )
@@ -62,23 +62,24 @@ class ProductOffering(private val account: Account?) : IProductOffering {
     }
 
     override fun state(result: (AccountOfferingState) -> Unit) {
-        val isAccountProductOfferingGoodStanding = account?.productOfferingGoodStanding ?: false
-        val isAccountChargeOff = account?.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
-
-        val accountOfferingState = when (isAccountProductOfferingGoodStanding) {
+        val accountOfferingState = when (account?.productOfferingGoodStanding ?: false) {
             true -> AccountOfferingState.AccountInGoodStanding
-            false -> when (isAccountChargeOff) {
-                true -> AccountOfferingState.AccountIsChargedOff
-                false -> AccountOfferingState.MakeGetEligibilityCall
+            false -> {
+                val isProductChargedOff = account?.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
+                when {
+                    !isProductChargedOff && isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
+                    isViewTreatmentPlanSupported() -> AccountOfferingState.ShowViewTreatmentPlanPopupFromConfig
+                    else -> AccountOfferingState.AccountIsInArrears
+                }
             }
         }
-
         result(accountOfferingState)
     }
 
     companion object {
         const val MINIMUM_SUPPORTED_APP_BUILD_NUMBER_DEFAULT = 999
         val productGroupCodeSc: String = AccountsProductGroupCode.STORE_CARD.groupCode.lowercase()
-        val productGroupCodePl: String = AccountsProductGroupCode.PERSONAL_LOAN.groupCode.lowercase()
+        val productGroupCodePl: String =
+            AccountsProductGroupCode.PERSONAL_LOAN.groupCode.lowercase()
     }
 }

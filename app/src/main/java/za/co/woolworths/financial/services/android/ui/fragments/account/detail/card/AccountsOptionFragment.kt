@@ -642,7 +642,6 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     private fun showAccount(accounts: Account?) {
-        val applyNowState =  mCardPresenterImpl?.mApplyNowAccountKeyPair?.first
         mCardPresenterImpl?.refreshAccount(accounts)
     }
 
@@ -762,8 +761,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         this.eligibilityPlan = eligibilityPlan
     }
 
-    fun showViewTreatmentPlanButton(state: ApplyNowState,
-                                   eligibilityPlan: EligibilityPlan?) {
+    fun showViewTreatmentPlanButton(state: ApplyNowState, eligibilityPlan: EligibilityPlan?) {
         viewTreatmentPlanGroup?.visibility = VISIBLE
         viewTreatmentPlanTextView?.text = eligibilityPlan?.displayText
 
