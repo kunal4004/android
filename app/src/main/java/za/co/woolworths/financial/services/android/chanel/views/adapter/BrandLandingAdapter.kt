@@ -27,36 +27,45 @@ class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner?>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if (viewType == VIEW_TYPE_LOGO) {
-            return ChanelLogoViewHolder(
-                LayoutInflater.from(context).inflate(R.layout.chanel_logo_view, parent, false)
-            )
-        } else if (viewType == VIEW_TYPE_APP_BANNER) {
-            return ChanelAppBannerViewHolder(
-                LayoutInflater.from(context).inflate(R.layout.chanel_app_banner_view, parent, false)
-            )
-        } else if (viewType == VIEW_TYPE_NAVIGATION) {
-            return ChanelCategoryNavigationViewHolder(
-                LayoutInflater.from(context).inflate(R.layout.chanel_category_navigation_view, parent, false),
-                chanelNavigationClickListener
+        when (viewType) {
+            VIEW_TYPE_LOGO -> {
+                return ChanelLogoViewHolder(
+                    LayoutInflater.from(context).inflate(R.layout.chanel_logo_view, parent, false)
+                )
+            }
+            VIEW_TYPE_APP_BANNER -> {
+                return ChanelAppBannerViewHolder(
+                    LayoutInflater.from(context).inflate(R.layout.chanel_app_banner_view, parent, false)
+                )
+            }
+            VIEW_TYPE_NAVIGATION -> {
+                return ChanelCategoryNavigationViewHolder(
+                    LayoutInflater.from(context).inflate(R.layout.chanel_category_navigation_view, parent, false),
+                    chanelNavigationClickListener
+                )
+            }
+            else -> return ChanelHeaderBannerViewHolder(
+                LayoutInflater.from(context)
+                    .inflate(R.layout.chanel_header_banner_view, parent, false),
+                parent
             )
         }
-        return ChanelHeaderBannerViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.chanel_header_banner_view, parent, false), parent
-        )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is ChanelLogoViewHolder) {
-            holder.bind(position, list)
-        } else if (holder is ChanelAppBannerViewHolder) {
-            holder.bind(position, list)
-        } else if (holder is ChanelAppBannerViewHolder) {
-            holder.bind(position, list)
-        } else if (holder is ChanelCategoryNavigationViewHolder) {
-            holder.bind(position, list, context)
-        } else if (holder is ChanelHeaderBannerViewHolder) {
-            holder.bind(position, list, context, chanelNavigationClickListener)
+        when (holder) {
+            is ChanelLogoViewHolder -> {
+                holder.bind(position, list)
+            }
+            is ChanelAppBannerViewHolder -> {
+                holder.bind(position, list)
+            }
+            is ChanelCategoryNavigationViewHolder -> {
+                holder.bind(position, list, context)
+            }
+            is ChanelHeaderBannerViewHolder -> {
+                holder.bind(position, list, context, chanelNavigationClickListener)
+            }
         }
     }
 
@@ -66,13 +75,17 @@ class BrandLandingAdapter(val context: Context?, val list: List<DynamicBanner?>,
 
     override fun getItemViewType(position: Int): Int {
 
-        if (list.get(position)?.name.equals(LOGO)) {
-            return VIEW_TYPE_LOGO
-        } else if (list.get(position)?.name.equals(APP_BANNER)) {
-            return VIEW_TYPE_APP_BANNER
-        } else if (list.get(position)?.name.equals(NAVIGATION)) {
-            return VIEW_TYPE_NAVIGATION
-        } else
-            return VIEW_TYPE_HEADER_BANNER
+        return when {
+            list[position]?.name.equals(LOGO) -> {
+                VIEW_TYPE_LOGO
+            }
+            list[position]?.name.equals(APP_BANNER) -> {
+                VIEW_TYPE_APP_BANNER
+            }
+            list[position]?.name.equals(NAVIGATION) -> {
+                VIEW_TYPE_NAVIGATION
+            }
+            else -> VIEW_TYPE_HEADER_BANNER
+        }
     }
 }
