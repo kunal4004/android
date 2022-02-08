@@ -146,6 +146,8 @@ class AccountSignedInPresenterImpl(
                     if (productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
                         mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                    }else {
+                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                     }
                 }
                 ActionText.VIEW_TREATMENT_PLAN.value -> {
@@ -166,6 +168,8 @@ class AccountSignedInPresenterImpl(
                                 )
                             }
                         }
+                    }else {
+                        getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                     }
                 }
             }
@@ -202,8 +206,12 @@ class AccountSignedInPresenterImpl(
                             removeBlocksOnCollectionCustomer()
                         }
 
-                        AccountOfferingState.ShowViewTreatmentPlanPopupFromConfig -> {
+                        AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
                             removeBlocksWhenChargedOff(true)
+                            showViewTreatmentPlan(true)
+                        }
+
+                        AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {
                             showViewTreatmentPlan(true)
                         }
 

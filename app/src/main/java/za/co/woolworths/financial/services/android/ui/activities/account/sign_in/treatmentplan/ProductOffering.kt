@@ -11,7 +11,8 @@ sealed class AccountOfferingState {
     object AccountIsInArrears : AccountOfferingState()//account is in arrears
     object AccountIsChargedOff : AccountOfferingState() //account is in arrears for more than 6 months
     object MakeGetEligibilityCall : AccountOfferingState()
-    object ShowViewTreatmentPlanPopupFromConfig : AccountOfferingState()
+    object ShowViewTreatmentPlanPopupFromConfigForChargedOff : AccountOfferingState()
+    object ShowViewTreatmentPlanPopupInArrearsFromConfig : AccountOfferingState()
 }
 
 interface IProductOffering {
@@ -68,8 +69,8 @@ class ProductOffering(private val account: Account?) : IProductOffering {
                 val isProductChargedOff = account?.productOfferingStatus.equals(Utils.ACCOUNT_CHARGED_OFF, ignoreCase = true)
                 when {
                     !isProductChargedOff && isTakeUpTreatmentPlanJourneyEnabled() -> AccountOfferingState.MakeGetEligibilityCall
-                    isViewTreatmentPlanSupported() -> AccountOfferingState.ShowViewTreatmentPlanPopupFromConfig
-                    else -> AccountOfferingState.AccountIsInArrears
+                    isViewTreatmentPlanSupported() -> if (isProductChargedOff) AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff else AccountOfferingState.MakeGetEligibilityCall
+                    else -> if (isProductChargedOff) AccountOfferingState.AccountIsChargedOff else AccountOfferingState.AccountIsInArrears
                 }
             }
         }

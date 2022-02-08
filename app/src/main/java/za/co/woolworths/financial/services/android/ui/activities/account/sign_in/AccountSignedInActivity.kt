@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountSixMonthArrearsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ShowTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.BALANCE_PROTECTION_INSURANCE_REQUEST_CODE
@@ -356,8 +357,8 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
     override fun showViewTreatmentPlan(viewPaymentOptions: Boolean){
         val bundle = Bundle()
-        bundle.putBoolean(ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON, viewPaymentOptions)
-        mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment, bundle)
+        bundle.putBoolean(ShowTreatmentPlanDialogFragment.VIEW_PAYMENT_OPTIONS_VISIBILITY, viewPaymentOptions)
+        mAvailableFundsNavHost?.navController?.navigate(R.id.showTreatmentPlanDialogFragment, bundle)
     }
     private fun queryGetPaymentMethod() {
         val fragment = mAvailableFundsNavHost?.childFragmentManager?.primaryNavigationFragment
