@@ -9,7 +9,7 @@
     <View
         android:id="@+id/view_blp"
         android:layout_width="match_parent"
-        android:layout_height="8dp"
+        android:layout_height="@dimen/eight_dp"
         android:background="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
