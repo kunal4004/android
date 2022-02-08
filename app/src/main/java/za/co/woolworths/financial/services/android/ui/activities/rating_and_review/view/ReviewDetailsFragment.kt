@@ -47,6 +47,7 @@ class ReviewDetailsFragment : Fragment() {
     private lateinit var reviews: Reviews
     private lateinit var reportReviewOptions: List<String>
     private var apiCallInProgress = false
+
     companion object {
         fun newInstance() = ReviewDetailsFragment()
     }
@@ -71,14 +72,14 @@ class ReviewDetailsFragment : Fragment() {
         arguments?.apply {
             if (RatingAndReviewUtil.isComingFromMoreReview) {
                 RatingAndReviewUtil.isComingFromMoreReview = false
-                 reviews = getSerializable(KotlinUtils.REVIEW_DATA) as Reviews
-                 reportReviewOptions = getStringArrayList(KotlinUtils.REVIEW_REPORT)!!
+                reviews = getSerializable(KotlinUtils.REVIEW_DATA) as Reviews
+                reportReviewOptions = getStringArrayList(KotlinUtils.REVIEW_REPORT)!!
                 if (reportReviewOptions != null) {
                     setDefaultUi(reviews, reportReviewOptions as ArrayList<String>)
                     setProductImageViewPager(reviews.photos.normal)
                 }
             } else {
-                if(getString(KotlinUtils.REVIEW_DATA)!=null) {
+                if (getString(KotlinUtils.REVIEW_DATA) != null) {
                     val ratingAndResponseData = Utils.jsonStringToObject(
                         getString(KotlinUtils.REVIEW_DATA),
                         RatingReviewResponse::class.java
@@ -121,7 +122,7 @@ class ReviewDetailsFragment : Fragment() {
 
             tvReport.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG)
 
-            if (RatingAndReviewUtil.likedReviews.contains(id.toString())){
+            if (RatingAndReviewUtil.likedReviews.contains(id.toString())) {
                 iv_like.setImageResource(R.drawable.iv_like_selected)
             }
             setVerifiedBuyers(isVerifiedBuyer)
@@ -158,8 +159,8 @@ class ReviewDetailsFragment : Fragment() {
         } else {
             val bundle = Bundle()
             bundle.putStringArrayList(
-                    KotlinUtils.REVIEW_REPORT,
-                    reportReviewOptions as ArrayList<String>
+                KotlinUtils.REVIEW_REPORT,
+                reportReviewOptions as ArrayList<String>
             )
             bundle.putSerializable(
                 KotlinUtils.REVIEW_DATA,
@@ -170,7 +171,8 @@ class ReviewDetailsFragment : Fragment() {
             activity?.apply {
                 reportReviewFragment?.let {
                     val fragmentManager = supportFragmentManager
-                    val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+                    val fragmentTransaction: FragmentTransaction =
+                        fragmentManager.beginTransaction()
                     fragmentTransaction.replace(R.id.content_main_frame, reportReviewFragment!!)
                     fragmentTransaction.addToBackStack(null)
                     fragmentTransaction.commit()
@@ -211,9 +213,13 @@ class ReviewDetailsFragment : Fragment() {
                 } catch (e: HttpException) {
                     e.printStackTrace()
                     hideProgressBar()
-                    if (e.code() == 502) {
-                        RatingAndReviewUtil.likedReviews.add(reviews.id.toString())
-                        iv_like.setImageResource(R.drawable.iv_like_selected)
+                    if (e.code() != 502) {
+                        activity?.supportFragmentManager?.let { fragmentManager ->
+                            Utils.showGeneralErrorDialog(
+                                fragmentManager,
+                                getString(R.string.statement_send_email_false_desc)
+                            )
+                        }
                     }
                 }
 
@@ -222,8 +228,8 @@ class ReviewDetailsFragment : Fragment() {
     }
 
     private fun setSkinProfielLayout(
-            contextDataValue: List<SkinProfile>,
-            tagDimensions: List<SkinProfile>
+        contextDataValue: List<SkinProfile>,
+        tagDimensions: List<SkinProfile>
     ) {
         if (contextDataValue.isNotEmpty() || tagDimensions.isNotEmpty()) {
             skin_profile_layout.rv_skin_profile.visibility = View.VISIBLE

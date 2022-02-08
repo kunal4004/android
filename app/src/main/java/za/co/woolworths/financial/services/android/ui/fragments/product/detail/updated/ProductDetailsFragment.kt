@@ -563,9 +563,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 } catch (e: HttpException) {
                     e.printStackTrace()
                     hideProgressBar()
-                    if (e.code() == 502) {
-                        iv_like.setImageResource(R.drawable.iv_like_selected)
-                        RatingAndReviewUtil.likedReviews.add(ratingReviewResponse?.reviews?.get(0)?.id.toString())
+                    if (e.code() != 502) {
+                        activity?.supportFragmentManager?.let { fragmentManager ->
+                            Utils.showGeneralErrorDialog(
+                                fragmentManager,
+                                getString(R.string.statement_send_email_false_desc)
+                            )
+                        }
                     }
                 }
 
@@ -575,6 +579,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun navigateToMoreReviewsScreen() {
         ScreenManager.presentRatingAndReviewDetail(activity, prodId)
+        RatingAndReviewUtil.likedReviews.clear()
+        RatingAndReviewUtil.reportedReviews.clear()
     }
 
     private fun showRatingDetailsDailog() {
@@ -3144,6 +3150,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     productDetailsPresenter?.loadRatingNReview(it,1,0)
                 isRnRAPICalled = true
                 showProgressBar()
+                    RatingAndReviewUtil.reportedReviews.clear()
+                    RatingAndReviewUtil.likedReviews.clear()
                 }
         }
     }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.RatingReviewResponse
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.network.datasource.ReviewsDataSource

@@ -35,12 +35,14 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewHeaderAdapter
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import kotlin.collections.ArrayList
 
 class MoreReviewsFragment : Fragment(),
@@ -221,30 +223,35 @@ class MoreReviewsFragment : Fragment(),
     }
 
     override fun reviewHelpfulClicked(review: Reviews) {
-        lifecycleScope.launch {
-            try {
-                progress_bar.visibility = View.VISIBLE
-                val response = moreReviewViewModel.reviewFeedback(
-                    ReviewFeedback(
-                        review.id.toString(),
-                        SessionUtilities.getInstance().jwt.AtgId.asString,
-                        KotlinUtils.REWIEW,
-                        KotlinUtils.HELPFULNESS,
-                        KotlinUtils.POSITIVE,
-                        null
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        }else {
+            lifecycleScope.launch {
+                try {
+                    progress_bar.visibility = View.VISIBLE
+                    val response = moreReviewViewModel.reviewFeedback(
+                        ReviewFeedback(
+                            review.id.toString(),
+                            SessionUtilities.getInstance().jwt.AtgId.asString,
+                            KotlinUtils.REWIEW,
+                            KotlinUtils.HELPFULNESS,
+                            KotlinUtils.POSITIVE,
+                            null
+                        )
                     )
-                )
-                progress_bar.visibility = View.GONE
-                if (response.httpCode == 200) {
-                    RatingAndReviewUtil.likedReviews.add(review.id.toString())
-                    moreReviewsAdapter?.notifyDataSetChanged()
-                }
-            } catch (e: HttpException) {
-                e.printStackTrace()
-                progress_bar.visibility = View.GONE
-                if(e.code()==502){
-                    RatingAndReviewUtil.likedReviews.add(review.id.toString())
-                    moreReviewsAdapter?.notifyDataSetChanged()
+                    progress_bar.visibility = View.GONE
+                    if (response.httpCode == 200) {
+                        RatingAndReviewUtil.likedReviews.add(review.id.toString())
+                        moreReviewsAdapter?.notifyDataSetChanged()
+                    }
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                    progress_bar.visibility = View.GONE
+                    if (e.code() != 502) {
+                        activity?.supportFragmentManager?.let {
+                                fragmentManager -> Utils.showGeneralErrorDialog(fragmentManager, getString(R.string.statement_send_email_false_desc))
+                        }
+                    }
                 }
             }
         }
@@ -304,6 +311,8 @@ class MoreReviewsFragment : Fragment(),
         sortString = sortOption.sortOption
         onSortRefineFragmentListener?.closeDrawer()
         setReviewsList(sortString, refinementString)
+        RatingAndReviewUtil.likedReviews.clear()
+        RatingAndReviewUtil.reportedReviews.clear()
     }
 
     fun onRefineOptionSelected(refinements: String?) {
@@ -312,6 +321,8 @@ class MoreReviewsFragment : Fragment(),
             setReviewsList(sortString, refinementString)
         }
         onSortRefineFragmentListener?.closeDrawer()
+        RatingAndReviewUtil.likedReviews.clear()
+        RatingAndReviewUtil.reportedReviews.clear()
     }
 
     override fun showFooterErrorMessage() {

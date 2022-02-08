@@ -130,8 +130,11 @@ class ReportReviewFragment : Fragment(), ReportReviewsAdapter.ReportItemClick {
                     } catch (e: HttpException) {
                         e.printStackTrace()
                         hideProgressBar()
-                        RatingAndReviewUtil.reportedReviews.add(review.id.toString())
-                        openReportScreenFragment()
+                        if(e.code() == 502){
+                            tv_duplicate_report.visibility = View.VISIBLE
+                        }
+                       // RatingAndReviewUtil.reportedReviews.add(review.id.toString())
+
                     }
                     reportReviewsAdapter.getAllCheckBoxCount()
                 }
