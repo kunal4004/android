@@ -12,6 +12,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 import android.app.Activity;
@@ -1387,6 +1388,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 case RESULT_OK:
                     if (getActivity() != null) getActivity().onBackPressed();
                     break;
+            }
+        }
+
+        if (requestCode == CART_LAUNCH_VALUE && resultCode == SSOActivity.SSOActivityResult.STATE_MISMATCH.rawValue()) {
+            // login screen opens on cart and user closes it without login then move tab to last opened tab.
+            Activity activity = getActivity();
+            if (activity != null && activity instanceof BottomNavigationActivity) {
+                int previousTabIndex = ((BottomNavigationActivity) activity).getPreviousTabIndex();
+                ((BottomNavigationActivity) activity).getBottomNavigationById().setCurrentItem(previousTabIndex);
             }
         }
 
