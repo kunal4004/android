@@ -15,7 +15,10 @@ import za.co.woolworths.financial.services.android.util.Utils
 class ProductListingAdapter(
     private val navigator: IProductListing?,
     private val mProductListItems: List<ProductList>?,
-    val activity: FragmentActivity?
+    val activity: FragmentActivity?,
+    val mBannerLabel: String?,
+    val mBannerImage: String?,
+    val mIsComingFromBLP: Boolean
 ) : RecyclerView.Adapter<RecyclerViewViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewViewHolder {
@@ -31,9 +34,14 @@ class ProductListingAdapter(
             holder.itemView.invalidate()
             holder.itemView.requestLayout()
             when (productList.rowType) {
-                ProductListingViewType.HEADER -> (holder as? RecyclerViewViewHolderHeader)?.setNumberOfItems(
-                    activity, productList
-                )
+                ProductListingViewType.HEADER -> {
+                    (holder as? RecyclerViewViewHolderHeader)?.setNumberOfItems(
+                        activity, productList
+                    )
+                    (holder as? RecyclerViewViewHolderHeader)?.setChanelBanner(
+                        mBannerLabel, mBannerImage, mIsComingFromBLP
+                    )
+                }
                 ProductListingViewType.FOOTER -> (holder as? RecyclerViewViewHolderFooter)?.loadMoreProductProgressBarVisibility()
                 else -> (holder as? RecyclerViewViewHolderItems)?.let { view ->
                     navigator?.let {

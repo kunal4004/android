@@ -12,13 +12,13 @@ class CategoryNavigationViewHolder(
     val chanelNavigationClickListener: ChanelNavigationClickListener
 ) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(position: Int, list: List<Navigation>) {
+    fun bind(position: Int, list: List<Navigation>, bannerImage: String?, bannerLabel: String?) {
         if(position >= list.size || position < 0){
             return
         }
         itemView.rv_category_name.text = list[position].displayName
         itemView.setOnClickListener {
-            chanelNavigationClickListener.openCategoryListView(list[position])
+            chanelNavigationClickListener.clickCategoryListViewCell(list[position], bannerImage, bannerLabel, true)
         }
     }
 }

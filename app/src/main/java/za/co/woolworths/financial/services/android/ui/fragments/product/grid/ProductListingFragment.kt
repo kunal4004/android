@@ -114,6 +114,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mSearchType: ProductsRequestParams.SearchType? = null
     private var mSearchTerm: String? = null
     private var mNavigationState: String? = null
+    private var mBannerLabel: String? = null
+    private var mBannerImage: String? = null
+    private var mIsComingFromBLP: Boolean = false
     private var mSortOption: String = ""
     private var EDIT_LOCATION_LOGIN_REQUEST = 1919
     private var mFulfilmentTypeId: String? = null
@@ -136,6 +139,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 mSearchTerm = getString(SEARCH_TERM, "")
                 mNavigationState = getString(NAVIGATION_STATE, "")
                 mSortOption = getString(SORT_OPTION, "")
+                mBannerLabel = getString(CHANEL_BANNER_LABEL, "")
+                mBannerImage = getString(CHANEL_BANNER_IMAGE, "")
+                mIsComingFromBLP = getBoolean(CHAEL_IS_COMING_FROM_BLP, false)
             }
             val localBody: HashMap<String, Any> = HashMap()
             localBody.apply {
@@ -474,7 +480,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mProductList?.add(0, headerProduct)
         }
 
-        mProductAdapter = activity?.let { ProductListingAdapter(this, mProductList, it) }
+        mProductAdapter = activity?.let { ProductListingAdapter(this, mProductList, it, mBannerLabel, mBannerImage, mIsComingFromBLP) }
         val mRecyclerViewLayoutManager: GridLayoutManager?
         mRecyclerViewLayoutManager = GridLayoutManager(activity, 2)
         // Set up a GridLayoutManager to change the SpanSize of the header and footer
@@ -500,7 +506,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
         mProductAdapter = null
         mProductAdapter =
-            activity?.let { ProductListingAdapter(this@ProductListingFragment, mProductList, it) }
+            activity?.let { ProductListingAdapter(this@ProductListingFragment, mProductList, it, mBannerLabel, mBannerImage, mIsComingFromBLP) }
         productsRecyclerView?.apply {
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
@@ -1304,6 +1310,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
         private const val SORT_OPTION = "SORT_OPTION"
+        private const val CHANEL_BANNER_IMAGE = "BANNER_IMAGE"
+        private const val CHANEL_BANNER_LABEL = "BANNER_LABEL"
+        private const val CHAEL_IS_COMING_FROM_BLP = "IS_CMING_FROM_BLP"
 
         fun newInstance(
             searchType: ProductsRequestParams.SearchType?,
@@ -1313,6 +1322,22 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
+        }
+
+        fun newInstance(
+            searchType: ProductsRequestParams.SearchType?,
+            sub_category_name: String?,
+            searchTerm: String?,
+            chanelBannerImageUrl: String?,
+            chanelBannerImageLabel: String?,
+            isComingFrom: Boolean
+        ) = ProductListingFragment().withArgs {
+            putString(SEARCH_TYPE, searchType?.name)
+            putString(SUB_CATEGORY_NAME, sub_category_name)
+            putString(SEARCH_TERM, searchTerm)
+            putString(CHANEL_BANNER_LABEL, chanelBannerImageLabel)
+            putString(CHANEL_BANNER_IMAGE, chanelBannerImageUrl)
+            putBoolean(CHAEL_IS_COMING_FROM_BLP, isComingFrom)
         }
 
         fun newInstance(
@@ -1423,18 +1448,26 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun openProductDetailsView(productList: ProductList?) {
-        // From Chanel Category click
+        // From Chanel Horizontal Category click
         productList?.let { openProductDetailView(it) }
     }
 
-    override fun openCategoryListView(navigation: Navigation?) {
-        // From Chanel Category click
+    override fun clickCategoryListViewCell(
+        navigation: Navigation?,
+        bannerImage: String?,
+        bannerLabel: String?,
+        isComingFromBLP: Boolean
+    ) {
+        // From Chanel Vertical Category click
         (activity as? BottomNavigationActivity)?.apply {
             pushFragment(
                 newInstance(
                     ProductsRequestParams.SearchType.NAVIGATE,
                     "",
-                    navigation?.navigationState
+                    navigation?.navigationState,
+                    bannerImage,
+                    bannerLabel,
+                    isComingFromBLP
                 )
             )
         }

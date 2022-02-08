@@ -25,6 +25,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_plp_seperator" />
 
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/chanel_img_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chanel_logo_header"
+        tools:srcCompat="@tools:sample/avatars" />
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
@@ -34,7 +46,7 @@
         android:paddingBottom="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chanel_logo_header">
+        app:layout_constraintTop_toBottomOf="@+id/chanel_img_banner">
 
         <TextView
             android:id="@+id/tvNumberOfItem"

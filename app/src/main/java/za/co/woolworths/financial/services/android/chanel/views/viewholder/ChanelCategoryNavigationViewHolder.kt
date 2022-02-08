@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.chanel_category_navigation_view.view.*
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
+import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
 import za.co.woolworths.financial.services.android.chanel.views.adapter.CategoryNavigationAdapter
+import za.co.woolworths.financial.services.android.util.AppConstant
 
 class ChanelCategoryNavigationViewHolder(
     itemView: View,
@@ -19,9 +21,18 @@ class ChanelCategoryNavigationViewHolder(
         if(position >= list.size || position < 0){
             return
         }
+        var bannerLabel: String? = AppConstant.EMPTY_STRING;
+        var bannerImage: String? = AppConstant.EMPTY_STRING;
+
+        for (banner in list) {
+            if (banner?.name.equals(BrandLandingAdapter.LOGO, true)) {
+                bannerLabel = banner?.label
+                bannerImage = banner?.externalImageRefV2
+            }
+        }
 
         list[position]?.navigation?.let {
-            val adapter = CategoryNavigationAdapter(context, it, chanelNavigationClickListener)
+            val adapter = CategoryNavigationAdapter(context, it, chanelNavigationClickListener, bannerImage, bannerLabel)
             val itemDecor = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
 
             itemView.rv_category.layoutManager = LinearLayoutManager(context)
