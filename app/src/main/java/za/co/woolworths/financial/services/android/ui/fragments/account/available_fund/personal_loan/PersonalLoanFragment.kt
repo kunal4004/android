@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.credit_card.GoldCreditCardFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
@@ -127,22 +128,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
     private fun onPayMyAccountButtonTap() {
         onPayMyAccountButtonTap(
             FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL,
-            PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment()
-        )
-        if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
-
-        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_PL, this) }
-
-        if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
-            navController.navigate(R.id.payMyAccountRetryErrorFragment)
-            return
-        }
-
-        payMyAccountViewModel.resetAmountEnteredToDefault()
-
-        navigateToPayMyAccount {
-            navigateSafelyWithNavController(PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment())
-        }
+            PersonalLoanFragmentDirections.actionPersonalLoanFragmentToEnterPaymentAmountDetailFragment())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
