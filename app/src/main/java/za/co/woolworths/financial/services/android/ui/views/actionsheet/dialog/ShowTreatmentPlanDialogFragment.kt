@@ -75,12 +75,12 @@ class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
             R.id.mainButton -> {
                 dismiss()
-                setFragmentResult(mClassName, bundleOf(mClassName to VIEW_PAYMENT_PLAN_BUTTON))
+                setFragmentResult(mClassName, bundleOf(VIEW_PAYMENT_PLAN_BUTTON to VIEW_PAYMENT_PLAN_BUTTON))
             }
 
             R.id.makePaymentButton, R.id.viewPaymentOptionsButton -> {
                 dismiss()
-                setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
+                setFragmentResult(mClassName, bundleOf(MAKE_A_PAYMENT_BUTTON to MAKE_A_PAYMENT_BUTTON))
             }
 
             R.id.closeIconImageButton -> dismiss()
