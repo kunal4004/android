@@ -90,7 +90,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
-                val outSystemBuilder = OutSystemBuilder(activity, ProductGroupCode.PL, bundle)
+                val outSystemBuilder = OutSystemBuilder(activity, ProductGroupCode.PL, bundle = bundle)
                 when (outSystemBuilder.getBundleKey()) {
                     VIEW_PAYMENT_PLAN_BUTTON -> {
                         outSystemBuilder.build()

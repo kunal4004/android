@@ -312,7 +312,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	public void finishActivity() {
 		setResult(RESULT_OK);
 		finish();
-		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+		this.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 
 	@Override
@@ -325,12 +325,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	private void showAppBar() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				mAppbar.setVisibility(View.VISIBLE);
-			}
-		});
+		runOnUiThread(() -> mAppbar.setVisibility(View.VISIBLE));
 	}
 
 	private void hideAppBar() {

@@ -76,10 +76,9 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
-                val outSystemWebUrl = OutSystemBuilder(activity, ProductGroupCode.SC, bundle)
+                val outSystemWebUrl = OutSystemBuilder(activity, ProductGroupCode.SC, bundle = bundle)
                 when (outSystemWebUrl.getBundleKey()) {
                     VIEW_PAYMENT_PLAN_BUTTON -> outSystemWebUrl.build()
-
                     CANNOT_AFFORD_PAYMENT_BUTTON -> {
                         val intent = Intent(context, GetAPaymentPlanActivity::class.java)
                         intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN))

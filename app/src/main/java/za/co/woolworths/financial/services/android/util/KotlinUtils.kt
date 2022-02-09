@@ -834,13 +834,15 @@ class KotlinUtils {
         ) {
             activity?.apply {
                 val openInternalWebView = Intent(this, WInternalWebPageActivity::class.java)
-                openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 openInternalWebView.putExtra("externalLink", url)
                 if (treatmentPlan) {
                     openInternalWebView.putExtra(TREATMENT_PLAN, treatmentPlan)
                     openInternalWebView.putExtra(COLLECTIONS_EXIT_URL, collectionsExitUrl)
+                    startActivityForResult(openInternalWebView, RESULT_CODE_CLOSE_VIEW)
+                }else {
+                    openInternalWebView.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(openInternalWebView)
                 }
-                startActivityForResult(openInternalWebView,RESULT_CODE_CLOSE_VIEW)
             }
         }
 

@@ -19,12 +19,14 @@ interface IOutSystemWebUrl {
     fun renderMode(eligibilityPlan: EligibilityPlan?)
     fun getFirebaseAnalyticKey(): String
     fun getFirebaseAnalyticAction(): String
+
 }
 
 class OutSystemBuilder(
     private val activity: Activity?,
-    private val productGroupCode: ProductGroupCode,
-    private val bundle: Bundle
+    private val productGroupCode: ProductGroupCode? = null,
+    private val eligibilityPlan: EligibilityPlan? = null,
+    private val bundle: Bundle?  = null
 ) : IOutSystemWebUrl {
 
     override fun build() {
@@ -36,7 +38,7 @@ class OutSystemBuilder(
     }
 
     private fun getEligibilityPlan(): EligibilityPlan? =
-        bundle.getSerializable(ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON) as? EligibilityPlan
+        bundle?.getSerializable(ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON) as? EligibilityPlan ?: eligibilityPlan
 
     override fun getFirebaseAnalyticAction(): String = when (productGroupCode) {
         ProductGroupCode.SC -> FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD_ACTION
@@ -50,7 +52,7 @@ class OutSystemBuilder(
         else -> FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD
     }
 
-    override fun getBundleKey(): String = bundle.keySet()?.toList()?.get(0)?.toString() ?: ""
+    override fun getBundleKey(): String = bundle?.keySet()?.toList()?.get(0)?.toString() ?: ""
 
     override fun triggerAnalyticsProperties(key: String, action: String) {
         val arguments = HashMap<String, String>()

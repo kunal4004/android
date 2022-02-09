@@ -38,7 +38,6 @@ import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuran
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
-import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
@@ -50,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlan
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
@@ -777,52 +777,13 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     private fun openViewTreatmentPlanPage(){
-        val arguments = HashMap<String, String>()
-        var collectionsUrl: String? = ""
-        var exitUrl: String? = ""
-        when(state){
-            ApplyNowState.STORE_CARD -> {
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD_ACTION
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD,
-                    arguments,
-                    activity)
-                collectionsUrl = AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsUrl
-                exitUrl = AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
-            }
-            ApplyNowState.PERSONAL_LOAN -> {
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
-                    arguments,
-                    activity)
-                collectionsUrl = AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl
-                exitUrl = AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl
-            }
-            ApplyNowState.SILVER_CREDIT_CARD,
-            ApplyNowState.GOLD_CREDIT_CARD,
-            ApplyNowState.BLACK_CREDIT_CARD, -> {
-                arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD_ACTION
-                Utils.triggerFireBaseEvents(
-                    FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD,
-                    arguments,
-                    activity)
-                collectionsUrl =  AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsUrl
-                exitUrl = AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.exitUrl
-            }
+        val productGroupCode : ProductGroupCode = when(state){
+            ApplyNowState.STORE_CARD -> ProductGroupCode.SC
+            ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
+            else -> ProductGroupCode.CC
         }
-
-        when (AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.renderMode){
-            AvailableFundFragment.NATIVE_BROWSER ->
-                KotlinUtils.openUrlInPhoneBrowser(
-                    collectionsUrl, activity)
-
-            else ->
-                KotlinUtils.openLinkInInternalWebView(activity,
-                    collectionsUrl,
-                    true,
-                    exitUrl)
-        }
+        val outSystemBuilder = OutSystemBuilder(activity,productGroupCode, eligibilityPlan)
+        outSystemBuilder.build()
     }
 }
 

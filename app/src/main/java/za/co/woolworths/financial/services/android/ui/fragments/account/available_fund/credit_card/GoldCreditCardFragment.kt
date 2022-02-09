@@ -46,7 +46,7 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
-                val outSystemBuilder = OutSystemBuilder(activity, ProductGroupCode.CC, bundle)
+                val outSystemBuilder = OutSystemBuilder(activity, ProductGroupCode.CC, bundle = bundle)
                 when (outSystemBuilder.getBundleKey()) {
                     ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON -> outSystemBuilder.build()
 

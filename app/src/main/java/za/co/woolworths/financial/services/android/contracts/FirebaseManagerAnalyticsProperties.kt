@@ -333,9 +333,9 @@ open class FirebaseManagerAnalyticsProperties {
         const val TAKE_UP_TREATMENT_PLAN_PL = "pl_takeupplan"
         const val TAKE_UP_TREATMENT_PLAN_SC = "sc_takeupplan"
         const val TAKE_UP_TREATMENT_PLAN_CC = "cc_takeupplan"
-        const val TAKE_UP_TREATMENT_PLAN_PL_ACTION = "Personal Loan landing - Arrears popup - Cant Afford This Payment or Store Card landing - Set-up a Payment Plan"
-        const val TAKE_UP_TREATMENT_PLAN_SC_ACTION  = "Store Card landing - Arrears popup - Cant Afford This Payment or Store Card landing - Set-up a Payment Plan"
-        const val TAKE_UP_TREATMENT_PLAN_CC_ACTION  = "Credit Card landing - Arrears popup - Cant Afford This Payment or Store Card landing - Set-up a Payment Plan"
+        const val TAKE_UP_TREATMENT_PLAN_PL_ACTION = "Personal Loan landing - Arrears popup - SetupPlan"
+        const val TAKE_UP_TREATMENT_PLAN_SC_ACTION  = "Store Card landing - Arrears popup - SetupPlan"
+        const val TAKE_UP_TREATMENT_PLAN_CC_ACTION  = "Credit Card landing - Arrears popup - SetupPlan"
 
         // Voice of Customer
         const val VOC_SKIP = "voc_skip"

@@ -51,7 +51,7 @@ class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         makePaymentButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(viewPaymentOption) View.GONE else View.VISIBLE
+            visibility = if(viewPaymentOption) View.VISIBLE else View.GONE
             setOnClickListener(this@ShowTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -63,7 +63,7 @@ class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
 
         viewPaymentOptionsButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(viewPaymentOption) View.VISIBLE else View.GONE
+            visibility = if(viewPaymentOption) View.GONE else View.VISIBLE
             setOnClickListener(this@ShowTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
