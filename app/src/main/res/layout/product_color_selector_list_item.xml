@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/fifteen_dp"
         android:paddingStart="@dimen/two_dp"
-        android:src="@drawable/save_label"
+        android:src="@drawable/ic_save_label"
         android:visibility="invisible" />
 
 </FrameLayout>

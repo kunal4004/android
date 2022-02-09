@@ -58,7 +58,7 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
             if (otherSKUsByGroupKey[color]?.get(0)?.styleIdOnSale == true) {
                 itemView.saveLabelImage.visibility = View.VISIBLE
             } else
-                itemView.saveLabelImage.visibility = View.INVISIBLE
+                itemView.saveLabelImage.visibility = View.GONE
             itemView.setOnClickListener {
                 selectedColor = color
                 listener.onColorSelection(selectedColor,false)
