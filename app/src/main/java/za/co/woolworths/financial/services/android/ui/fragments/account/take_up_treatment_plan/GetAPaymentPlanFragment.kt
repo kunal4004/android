@@ -38,13 +38,13 @@ class GetAPaymentPlanFragment : Fragment() {
 
         when(mEligibilityPlan?.productGroupCode) {
             ProductGroupCode.SC -> {
-                binding.treatmentPlanImageView.setImageResource(R.drawable.image_treatement_plan_sc)
+                binding.treatmentPlanImageView.setImageResource(R.drawable.android_store_card)
             }
             ProductGroupCode.PL -> {
-                binding.treatmentPlanImageView.setImageResource(R.drawable.image_treatement_plan_pl)
+                binding.treatmentPlanImageView.setImageResource(R.drawable.android_personal_loan)
             }
             ProductGroupCode.CC -> {
-                binding.treatmentPlanImageView.setImageResource(R.drawable.image_treatement_plan_cc)
+                binding.treatmentPlanImageView.setImageResource(R.drawable.android_credit_card)
             }
         }
 
