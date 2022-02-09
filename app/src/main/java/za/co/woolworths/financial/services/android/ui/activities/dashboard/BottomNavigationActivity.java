@@ -506,6 +506,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         pushFragment(productDetailsFragmentNew);
     }
 
+    public void openProductDetailFragment(String productName, ProductList productList, String bannerLabel, String bannerImage) {
+        Gson gson = new Gson();
+        String strProductList = gson.toJson(productList);
+        Bundle bundle = new Bundle();
+        bundle.putString(STR_PRODUCT_LIST, strProductList);
+        bundle.putString(STR_PRODUCT_CATEGORY, productName);
+        bundle.putString(STR_BRAND_HEADER, productList.brandHeaderDescription);
+        bundle.putString(ProductListingFragment.CHANEL_BANNER_LABEL, bannerLabel);
+        bundle.putString(ProductListingFragment.CHANEL_BANNER_IMAGE, bannerImage);
+        ProductDetailsFragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
+        productDetailsFragmentNew.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragment(productDetailsFragmentNew);
+    }
+
     @Override
     public void scrollableViewHelper(NestedScrollView nsv) {
         getSlidingLayout().setScrollableViewHelper(new NestedScrollableViewHelper(nsv));

@@ -55,6 +55,7 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(color: String?) {
+
             itemView.setOnClickListener {
                 selectedColor = color
                 listener.onColorSelection(selectedColor,false)

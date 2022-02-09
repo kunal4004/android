@@ -9,9 +9,13 @@ import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigation
 import za.co.woolworths.financial.services.android.chanel.views.viewholder.ChanelHeaderBannerItemCellViewHolder
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 
-class ChanelHeaderBannerAdapter (val context: Context?,
-                                 val list: List<ProductList>,
-                                 private val chanelNavigationClickListener: ChanelNavigationClickListener) :
+class ChanelHeaderBannerAdapter(
+    val context: Context?,
+    val list: List<ProductList>,
+    private val chanelNavigationClickListener: ChanelNavigationClickListener,
+    val bannerLabel: String?,
+    val bannerImage: String?
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -25,7 +29,7 @@ class ChanelHeaderBannerAdapter (val context: Context?,
             return
         }
         if (holder is ChanelHeaderBannerItemCellViewHolder) {
-            holder.setProductItem(list[position], chanelNavigationClickListener)
+            holder.setProductItem(list[position], chanelNavigationClickListener, bannerLabel, bannerImage)
         }
     }
 

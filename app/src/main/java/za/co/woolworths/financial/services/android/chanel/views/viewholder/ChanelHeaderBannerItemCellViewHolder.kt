@@ -22,7 +22,12 @@ import za.co.woolworths.financial.services.android.util.ImageManager
 class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
 
-    fun setProductItem(productList: ProductList, chanelNavigationClickListener: ChanelNavigationClickListener) {
+    fun setProductItem(
+        productList: ProductList,
+        chanelNavigationClickListener: ChanelNavigationClickListener,
+        bannerLabel: String?,
+        bannerImage: String?
+    ) {
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages,virtualTryOn)
@@ -34,7 +39,7 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
             priceItem.setPrice(productList, itemView)
             setProductVariant(this)
             itemView.imQuickShopAddToCartIcon.visibility = View.GONE
-            setOnClickListener(chanelNavigationClickListener, this)
+            setOnClickListener(chanelNavigationClickListener, this, bannerLabel, bannerImage)
         }
     }
 
@@ -126,9 +131,13 @@ class ChanelHeaderBannerItemCellViewHolder(itemView: View) :
         }
     }
 
-    private fun setOnClickListener(chanelNavigationClickListener: ChanelNavigationClickListener,
-                                   productList: ProductList) {
-        itemView.setOnClickListener { chanelNavigationClickListener.openProductDetailsView(productList) }
+    private fun setOnClickListener(
+        chanelNavigationClickListener: ChanelNavigationClickListener,
+        productList: ProductList,
+        bannerLabel: String?,
+        bannerImage: String?
+    ) {
+        itemView.setOnClickListener { chanelNavigationClickListener.openProductDetailsView(productList, bannerLabel, bannerImage) }
     }
 
 }
