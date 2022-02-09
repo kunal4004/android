@@ -20,8 +20,8 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.take_up_treatment_plan.GetAPaymentPlanFragment
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
@@ -150,19 +150,20 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
+    override fun onClick(view: View?) {
+        KotlinUtils.avoidDoubleClicks(view)
+        when (view?.id) {
 
             R.id.mainButton -> {
                 dismiss()
                 if(eligibilityPlan?.actionText == ActionText.TAKE_UP_TREATMENT_PLAN.value)
-                    setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
-                else setFragmentResult(mClassName, bundleOf(mClassName to VIEW_PAYMENT_PLAN_BUTTON))
+                    setFragmentResult(mClassName, bundleOf(MAKE_A_PAYMENT_BUTTON to eligibilityPlan))
+                else setFragmentResult(mClassName, bundleOf(VIEW_PAYMENT_PLAN_BUTTON to eligibilityPlan))
             }
 
             R.id.makePaymentButton, R.id.viewPaymentOptionsButton -> {
                 dismiss()
-                setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
+                setFragmentResult(mClassName, bundleOf(MAKE_A_PAYMENT_BUTTON to MAKE_A_PAYMENT_BUTTON))
             }
 
             R.id.cannotAffordPaymentButton -> {
@@ -198,7 +199,7 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
                 }
 
                 dismiss()
-                setFragmentResult(mClassName, bundleOf(mClassName to CANNOT_AFFORD_PAYMENT_BUTTON,
+                setFragmentResult(mClassName, bundleOf(CANNOT_AFFORD_PAYMENT_BUTTON to CANNOT_AFFORD_PAYMENT_BUTTON,
                     ELIGIBILITY_PLAN to eligibilityPlan))
             }
 

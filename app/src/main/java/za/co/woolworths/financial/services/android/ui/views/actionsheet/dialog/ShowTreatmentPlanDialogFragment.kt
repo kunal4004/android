@@ -13,6 +13,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
@@ -68,8 +69,9 @@ class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
+    override fun onClick(view: View?) {
+        KotlinUtils.avoidDoubleClicks(view)
+        when (view?.id) {
 
             R.id.mainButton -> {
                 dismiss()
