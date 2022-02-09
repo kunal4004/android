@@ -9,9 +9,10 @@ import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
@@ -20,8 +21,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.helper.F
 
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.KotlinUtils
-import za.co.woolworths.financial.services.android.util.Utils
 
 class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
@@ -46,28 +45,10 @@ class BlackCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
-                when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
-                    ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON -> {
-                        activity?.apply {
-                            val arguments = HashMap<String, String>()
-                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD_ACTION
-                            Utils.triggerFireBaseEvents(
-                                FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_CREDIT_CARD,
-                                arguments,
-                                this)
-                            when (AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.renderMode){
-                                NATIVE_BROWSER ->
-                                    KotlinUtils.openUrlInPhoneBrowser(
-                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsUrl, this)
 
-                                else ->
-                                    KotlinUtils.openLinkInInternalWebView(activity,
-                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.collectionsUrl,
-                                        true,
-                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.creditCard?.exitUrl)
-                            }
-                        }
-                    }
+                val outSystemBuilder = OutSystemBuilder(activity, ProductGroupCode.CC, bundle)
+                when (outSystemBuilder.getBundleKey()) {
+                    ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON -> outSystemBuilder.build()
 
                     ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON -> {
                         val intent = Intent(context, GetAPaymentPlanActivity::class.java)

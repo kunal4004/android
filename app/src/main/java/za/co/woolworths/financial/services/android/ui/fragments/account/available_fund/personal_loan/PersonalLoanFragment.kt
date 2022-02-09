@@ -11,11 +11,12 @@ import kotlinx.android.synthetic.main.available_funds_fragment.*
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
@@ -49,10 +50,10 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 
         navController = Navigation.findNavController(view)
 
-        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner, {
+        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
             isQueryPayUPaymentMethodComplete = false
             queryPaymentMethod()
-        })
+        }
 
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
@@ -90,27 +91,10 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
-                when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
+                val outSystemBuilder = OutSystemBuilder(activity, ProductGroupCode.PL, bundle)
+                when (outSystemBuilder.getBundleKey()) {
                     VIEW_PAYMENT_PLAN_BUTTON -> {
-                        activity?.apply {
-                            val arguments = HashMap<String, String>()
-                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN_ACTION
-                            Utils.triggerFireBaseEvents(
-                                FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_PERSONAL_LOAN,
-                                arguments,
-                                this)
-                            when (AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.renderMode){
-                                NATIVE_BROWSER ->
-                                    KotlinUtils.openUrlInPhoneBrowser(
-                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl, this)
-
-                                else ->
-                                    KotlinUtils.openLinkInInternalWebView(activity,
-                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.collectionsUrl,
-                                        true,
-                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.personalLoan?.exitUrl)
-                            }
-                        }
+                        outSystemBuilder.build()
                     }
                     CANNOT_AFFORD_PAYMENT_BUTTON -> {
                         val intent = Intent(context, GetAPaymentPlanActivity::class.java)

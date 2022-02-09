@@ -11,8 +11,7 @@ import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.*
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
@@ -22,6 +21,7 @@ import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
@@ -77,29 +77,10 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
-                when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
-                    VIEW_PAYMENT_PLAN_BUTTON -> {
-                        activity?.apply {
-                            val arguments = HashMap<String, String>()
-                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD_ACTION
-                            Utils.triggerFireBaseEvents(
-                                FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD,
-                                arguments,
-                                this)
-                            when (AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.renderMode){
-                                NATIVE_BROWSER ->
-                                    KotlinUtils.openUrlInPhoneBrowser(
-                                        AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsUrl, this)
+                val outSystemWebUrl = OutSystemBuilder(activity, ProductGroupCode.SC, bundle)
+                when (outSystemWebUrl.getBundleKey()) {
+                    VIEW_PAYMENT_PLAN_BUTTON -> outSystemWebUrl.build()
 
-                                else ->
-                                KotlinUtils.openLinkInInternalWebView(activity,
-                                    AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.collectionsUrl,
-                                    true,
-                                    AppConfigSingleton.accountOptions?.showTreatmentPlanJourney?.storeCard?.exitUrl
-                                )
-                            }
-                        }
-                    }
                     CANNOT_AFFORD_PAYMENT_BUTTON -> {
                         val intent = Intent(context, GetAPaymentPlanActivity::class.java)
                         intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN))

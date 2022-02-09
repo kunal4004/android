@@ -13,6 +13,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
@@ -68,17 +69,18 @@ class ShowTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
         }
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
+    override fun onClick(view: View?) {
+        KotlinUtils.avoidDoubleClicks(view)
+        when (view?.id) {
 
             R.id.mainButton -> {
                 dismiss()
-                setFragmentResult(mClassName, bundleOf(mClassName to VIEW_PAYMENT_PLAN_BUTTON))
+                setFragmentResult(mClassName, bundleOf(VIEW_PAYMENT_PLAN_BUTTON to VIEW_PAYMENT_PLAN_BUTTON))
             }
 
             R.id.makePaymentButton, R.id.viewPaymentOptionsButton -> {
                 dismiss()
-                setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
+                setFragmentResult(mClassName, bundleOf(MAKE_A_PAYMENT_BUTTON to MAKE_A_PAYMENT_BUTTON))
             }
 
             R.id.closeIconImageButton -> dismiss()
