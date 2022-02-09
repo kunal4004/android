@@ -77,7 +77,7 @@ class AccountSignedInPresenterImpl(
         }
 
         navDetailController?.setGraph(navDetailController.graph, bundle)
-        showProductOfferOutstanding(accountInfo.first, myAccountsViewModel)
+        showProductOfferOutstanding(accountInfo.first, myAccountsViewModel, true)
     }
 
     private fun getAccount(accountsResponse: AccountsResponse): Account? {
@@ -130,7 +130,7 @@ class AccountSignedInPresenterImpl(
         }
     }
 
-    private fun checkEligibility(response: EligibilityPlanResponse, state: ApplyNowState) {
+    private fun checkEligibility(response: EligibilityPlanResponse, state: ApplyNowState, showPopupIfNeeded: Boolean) {
 
         val account = getAccount()
         val productOffering = ProductOfferingStatus(account)
@@ -145,27 +145,34 @@ class AccountSignedInPresenterImpl(
                 ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
                     if (productOffering.isTakeUpTreatmentPlanJourneyEnabled()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
-                        mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
-                    }else {
+                        if (showPopupIfNeeded) {
+                            mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                        }
+                    } else {
                         getAccount()?.let { mainView?.showAccountInArrears(account = it) }
                     }
                 }
                 ActionText.VIEW_TREATMENT_PLAN.value -> {
                     if (productOffering.isViewTreatmentPlanSupported()) {
                         mainView?.showPlanButton(state, response.eligibilityPlan)
-                        when (state) {
-                            ApplyNowState.PERSONAL_LOAN,
-                            ApplyNowState.STORE_CARD ->
-                                mainView?.showViewTreatmentPlan(state, response.eligibilityPlan)!!
+                        if (showPopupIfNeeded) {
+                            when (state) {
+                                ApplyNowState.PERSONAL_LOAN,
+                                ApplyNowState.STORE_CARD ->
+                                    mainView?.showViewTreatmentPlan(
+                                        state,
+                                        response.eligibilityPlan
+                                    )!!
 
-                            ApplyNowState.GOLD_CREDIT_CARD,
-                            ApplyNowState.BLACK_CREDIT_CARD,
-                            ApplyNowState.SILVER_CREDIT_CARD -> {
-                                //display treatment plan popup with view payment options for CC
-                                mainView?.showViewTreatmentPlan(
-                                    state,
-                                    response.eligibilityPlan
-                                )
+                                ApplyNowState.GOLD_CREDIT_CARD,
+                                ApplyNowState.BLACK_CREDIT_CARD,
+                                ApplyNowState.SILVER_CREDIT_CARD -> {
+                                    //display treatment plan popup with view payment options for CC
+                                    mainView?.showViewTreatmentPlan(
+                                        state,
+                                        response.eligibilityPlan
+                                    )
+                                }
                             }
                         }
                     }else {
@@ -187,7 +194,8 @@ class AccountSignedInPresenterImpl(
 
     override fun showProductOfferOutstanding(
         state: ApplyNowState,
-        myAccountsViewModel: MyAccountsRemoteApiViewModel
+        myAccountsViewModel: MyAccountsRemoteApiViewModel,
+        showPopupIfNeeded: Boolean
     ) {
         val account = getAccount() ?: return
         with(ProductOfferingStatus(account)) {
@@ -224,8 +232,8 @@ class AccountSignedInPresenterImpl(
                         AccountOfferingState.MakeGetEligibilityCall -> {
                             val productGroupCode = productGroupCode() ?: return@state
                             myAccountsViewModel.fetchCheckEligibilityTreatmentPlan(productGroupCode,
-                                { eligibilityPlanResponse -> checkEligibility(eligibilityPlanResponse, state) },
-                                { showAccountInArrears(account) })
+                                { eligibilityPlanResponse -> checkEligibility(eligibilityPlanResponse, state, showPopupIfNeeded) },
+                                { if (showPopupIfNeeded) showAccountInArrears(account) })
                         }
                     }
                 }
