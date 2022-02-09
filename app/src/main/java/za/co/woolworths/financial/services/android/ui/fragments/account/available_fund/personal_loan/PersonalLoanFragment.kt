@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
@@ -114,7 +115,9 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                     CANNOT_AFFORD_PAYMENT_BUTTON -> {
                         val intent = Intent(context, GetAPaymentPlanActivity::class.java)
                         intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN))
-                        startActivity(intent)
+                        startActivityForResult(intent,
+                            AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN
+                        )
                         activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
                     }
                     MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()

@@ -384,9 +384,17 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         }
     }
 
+    private fun hideTreatmentPlanButtons() {
+        val fragment = mAccountOptionsNavHost?.childFragmentManager?.primaryNavigationFragment
+        if (fragment is AccountsOptionFragment) {
+            fragment.hideTreatmentPlanButtons()
+        }
+    }
+
     fun onTreatmentPlanStatusUpdateRequired() {
         mAccountSignedInPresenter?.apply {
             getMyAccountCardInfo()?.first?.let { applyNowState ->
+                hideTreatmentPlanButtons()
                 showProductOfferOutstanding(applyNowState, myAccountsRemoteApiViewModel, false)
             }
         }

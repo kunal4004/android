@@ -760,6 +760,11 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         tvScheduleOrMangeDelivery?.text = bindString(R.string.schedule_your_delivery)
     }
 
+    fun hideTreatmentPlanButtons() {
+        setUpPaymentPlanGroup?.visibility = GONE
+        viewTreatmentPlanGroup?.visibility = GONE
+    }
+
     fun showSetUpPaymentPlanButton(state: ApplyNowState,
                                    eligibilityPlan: EligibilityPlan?) {
         setUpPaymentPlanGroup?.visibility = VISIBLE
