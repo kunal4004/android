@@ -425,6 +425,8 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                 ScreenManager.presentMain(activity)
             }
         }
+        // forgot password deeplink
+        forgotPasswordDeeplink()
     }
 
     fun handleAppLink(appLinkData: Any?) {
@@ -491,6 +493,22 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
         Utils.setScreenName(FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP)
         NotificationUtils.clearNotifications(this@StartupActivity)
     }
+
+    private fun forgotPasswordDeeplink() {
+        var uri = intent.data
+        if (null != uri) {
+            var params = uri.pathSegments
+            var forgotPassword = params[params.size - 1]
+            if (null != forgotPassword && forgotPassword.contentEquals("forgot-password")) {
+                getForgotPasswordLink(uri.toString())
+            }
+        }
+    }
+
+    private fun getForgotPasswordLink(forgotPasswordUri: String) {
+        ScreenManager.forgotPassword(this@StartupActivity,forgotPasswordUri)
+    }
+
 
     @VisibleForTesting
     fun testsetupLoadingScreen() {

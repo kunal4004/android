@@ -138,6 +138,7 @@
                 <data android:scheme="https" />
                 <data android:host="${app_links_host}" />
                 <data android:pathPattern="/cat.*" />
+                <data android:pathPattern="/forgot-password.*" />
             </intent-filter>
         </activity>
         <activity
@@ -466,19 +467,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/salesPageMainStyle" >
-            <intent-filter
-                android:autoVerify="true"
-                android:order="1">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" />
-                <data android:host="${app_links_host}" />
-                <data android:pathPattern="/forgot-password.*" />
-            </intent-filter>
-        </activity>
-
+            android:theme="@style/salesPageMainStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CancelOrderProgressActivity"
             android:screenOrientation="portrait"
