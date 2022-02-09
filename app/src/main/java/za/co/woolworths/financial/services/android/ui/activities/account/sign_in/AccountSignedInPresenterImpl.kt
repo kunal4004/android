@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountHel
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.AccountOfferingState
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOffering
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -133,7 +133,7 @@ class AccountSignedInPresenterImpl(
     private fun checkEligibility(response: EligibilityPlanResponse, state: ApplyNowState) {
 
         val account = getAccount()
-        val productOffering = ProductOffering(account)
+        val productOffering = ProductOfferingStatus(account)
         val eligibleState = when (state) {
             ApplyNowState.STORE_CARD -> ProductGroupCode.SC
             ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
@@ -190,7 +190,7 @@ class AccountSignedInPresenterImpl(
         myAccountsViewModel: MyAccountsRemoteApiViewModel
     ) {
         val account = getAccount() ?: return
-        with(ProductOffering(account)) {
+        with(ProductOfferingStatus(account)) {
             mainView?.apply {
                 state { status ->
                     when (status) {
@@ -210,7 +210,11 @@ class AccountSignedInPresenterImpl(
 
                         AccountOfferingState.ShowViewTreatmentPlanPopupFromConfigForChargedOff -> {
                             removeBlocksWhenChargedOff(true)
-                            showViewTreatmentPlan(true)
+                            when (productGroupCode()){
+                                ProductOfferingStatus.productGroupCodeSc, ProductOfferingStatus.productGroupCodePl -> {
+                                    showViewTreatmentPlan(true)
+                                }
+                            }
                         }
 
                         AccountOfferingState.ShowViewTreatmentPlanPopupInArrearsFromConfig -> {

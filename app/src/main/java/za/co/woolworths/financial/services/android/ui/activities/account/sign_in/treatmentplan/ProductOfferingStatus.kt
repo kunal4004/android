@@ -25,7 +25,7 @@ interface IProductOffering {
     fun getAccountsDelinquencyCycle(): Int
 }
 
-class ProductOffering(private val account: Account?) : IProductOffering {
+class ProductOfferingStatus(private val account: Account?) : IProductOffering {
 
     val accountOptions = AppConfigSingleton.accountOptions
 
