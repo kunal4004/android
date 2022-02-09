@@ -20,7 +20,7 @@
             style="@style/accountPaymentOptionIconImageViewStyle"
             android:contentDescription="@string/label_payment_options"
             app:layout_constraintBottom_toTopOf="@+id/paymentOptionTextView"
-            app:srcCompat="@drawable/card_white" />
+            app:srcCompat="@drawable/icon_money" />
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout

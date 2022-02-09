@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPReq
 import za.co.woolworths.financial.services.android.models.dto.otp.ValidateOTPResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 
 class ValidateOTPFragment : Fragment() {
 
@@ -44,7 +45,7 @@ class ValidateOTPFragment : Fragment() {
         bundle?.apply {
             otpSentTo = getString("otpSentTo", "")
             otpValue = getString("otpValue", "")
-            productOfferingId = getString("productOfferingId", "")
+            productOfferingId = getString(BundleKeysConstants.PRODUCT_OFFERINGID, "")
             otpMethodType = OTPMethodType.valueOf(getString("otpMethodType", OTPMethodType.SMS.name))
         }
     }

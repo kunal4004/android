@@ -580,7 +580,7 @@ object OneAppService : RetrofitConfig() {
             "",
             "",
             getSessionToken(),
-            deviceName,
+            URLEncoder.encode(deviceName, "UTF-8"),
             body,
             otp,
             otpMethod)

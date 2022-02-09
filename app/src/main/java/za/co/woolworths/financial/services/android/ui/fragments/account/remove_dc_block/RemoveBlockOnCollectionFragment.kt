@@ -211,7 +211,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
             activity?.apply {Utils.triggerFireBaseEvents(propertyName, this) }
             accountData?.second?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
-                intent.putExtra("productOfferingId", productOfferingId.toString())
+                intent.putExtra(BundleKeysConstants.PRODUCT_OFFERINGID, productOfferingId.toString())
                 intent.putExtra(
                     ChatFragment.ACCOUNTS,
                     Gson().toJson(Pair(applyNowState, this))

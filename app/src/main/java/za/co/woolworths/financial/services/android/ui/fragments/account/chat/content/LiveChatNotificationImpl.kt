@@ -38,11 +38,13 @@ class LiveChatNotificationImpl : ILiveChatNotification {
             ChatAWSAmplify.sessionStateType = messageResponse.sessionState
             broadcastMessageCountResult(woolworthsApplication)
             woolworthsApplication?.currentActivity?.let {
-                ToastFactory.liveChatHeadUpNotificationWindow(
-                    it.window?.decorView?.rootView,
-                    it,
-                    messageResponse
-                )
+                it.window?.decorView?.rootView?.apply {
+                    ToastFactory.liveChatHeadUpNotificationWindow(
+                        this,
+                        it,
+                        messageResponse
+                    )
+                }
             }
         }
     }
