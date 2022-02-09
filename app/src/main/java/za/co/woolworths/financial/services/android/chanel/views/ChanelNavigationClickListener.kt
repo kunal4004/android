@@ -5,5 +5,10 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList
 
 interface ChanelNavigationClickListener {
     fun openProductDetailsView(productList: ProductList?)
-    fun openCategoryListView(navigation: Navigation?)
+    fun clickCategoryListViewCell(
+        navigation: Navigation?,
+        bannerImage: String?,
+        bannerLabel: String?,
+        isComingFromBlp: Boolean
+    )
 }
