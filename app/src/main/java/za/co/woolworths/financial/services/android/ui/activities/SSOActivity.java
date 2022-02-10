@@ -97,7 +97,9 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_SCOPE = "TAG_SCOPE";
 	public static final String TAG_PASSWORD = "TAG_PASSWORD";
 	public static final String FORGOT_PASSWORD = "FORGOT_PASSWORD";
-	public static final String FORGOT_PASSWORD_VALUE = "paasword";
+	public static final String FORGOT_PASSWORD_VALUE = "PASSWORD";
+	public static final String FORGOT_PASSWORD_LOGIN = "login=true&source=oneapp";
+
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 	//Default redirect url used by LOGIN AND LINK CARDS
 	private static String redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURI();
@@ -171,7 +173,7 @@ public class SSOActivity extends WebViewActivity {
 				} else
 					toolbarTextView.setText(title);
 
-				if(title.contains("login=true&source=oneapp")){
+				if(title.contains(FORGOT_PASSWORD_LOGIN)){
 					Intent i = new Intent(SSOActivity.this, BottomNavigationActivity.class);
 					i.putExtra(FORGOT_PASSWORD,FORGOT_PASSWORD_VALUE);
 					startActivity(i);
