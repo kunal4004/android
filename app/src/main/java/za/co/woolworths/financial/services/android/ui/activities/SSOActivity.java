@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.helper.LiveChatService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
@@ -74,7 +75,8 @@ public class SSOActivity extends WebViewActivity {
 		NONCE_MISMATCH(5),
 		SUCCESS(6),
 		SIGNED_OUT(8),
-		CHANGE_PASSWORD(9);
+		CHANGE_PASSWORD(9),
+		FORGOT_PASSWORD(10);
 		private int result;
 
 		SSOActivityResult(int i) {
@@ -93,6 +95,9 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_PATH = "TAG_PATH";
 	public static final String TAG_JWT = "TAG_JWT";
 	public static final String TAG_SCOPE = "TAG_SCOPE";
+	public static final String TAG_PASSWORD = "TAG_PASSWORD";
+	public static final String FORGOT_PASSWORD = "FORGOT_PASSWORD";
+	public static final String FORGOT_PASSWORD_VALUE = "paasword";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 	//Default redirect url used by LOGIN AND LINK CARDS
 	private static String redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURI();
@@ -104,6 +109,7 @@ public class SSOActivity extends WebViewActivity {
 	private String state;
 	private final String nonce;
 	private String stsParams;
+	private String forgotPassword;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -160,10 +166,18 @@ public class SSOActivity extends WebViewActivity {
 								redirectURIString.concat(urlStateComponent))
 				);
 
-				if (invalidTitles.contains(title.toLowerCase()) || title.toLowerCase().endsWith(urlStateComponent)) {
+				if (invalidTitles.contains(title.toLowerCase()) || title.toLowerCase().endsWith(urlStateComponent) || SSOActivity.this.path == Path.FORGOT_PASSWORD) {
 					toolbarTextView.setText("");
 				} else
 					toolbarTextView.setText(title);
+
+				if(title.contains("login=true&source=oneapp")){
+					Intent i = new Intent(SSOActivity.this, BottomNavigationActivity.class);
+					i.putExtra(FORGOT_PASSWORD,FORGOT_PASSWORD_VALUE);
+					startActivity(i);
+					finish();
+					overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				}
 			}
 		});
 		retryConnect();
@@ -204,6 +218,7 @@ public class SSOActivity extends WebViewActivity {
 		this.extraQueryStringParams = (Map<String, String>) intent.getSerializableExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS);
 
 		String scope = bundle.getString(SSOActivity.TAG_SCOPE);
+		forgotPassword = bundle.getString(SSOActivity.TAG_PASSWORD);
 		String link = this.constructAndGetAuthorisationRequestURL(scope);
 
 		bundle.putString("title", "SIGN IN");
@@ -270,7 +285,8 @@ public class SSOActivity extends WebViewActivity {
 		REGISTER("customerid/register/step1"),
 		LOGOUT("customerid/connect/endsession"),
 		UPDATE_PASSWORD("customerid/userdetails/password"),
-		UPDATE_PROFILE("customerid/userdetails");
+		UPDATE_PROFILE("customerid/userdetails"),
+		FORGOT_PASSWORD("forgot-password");
 
 		private final String path;
 
@@ -355,6 +371,9 @@ public class SSOActivity extends WebViewActivity {
 			case LOGOUT:
 				redirectURIString = AppConfigSingleton.INSTANCE.getSsoRedirectURILogout();
 				break;
+
+			case FORGOT_PASSWORD:
+				return forgotPassword;
 
 			default:
 				break;
@@ -456,7 +475,7 @@ public class SSOActivity extends WebViewActivity {
 		@Nullable
 		@Override
 		public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-			
+
 			//fixes WOP-4401
 			extractFormDataOnUIThreadForLoginRegisterAndCloseSSOIfNeeded();
 			return super.shouldInterceptRequest(view, url);
@@ -715,6 +734,9 @@ public class SSOActivity extends WebViewActivity {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PASSWORD_CHANGE);
 		} else if(path == Path.UPDATE_PROFILE) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PROFILE_INFO);
+		}
+		else if(path == Path.FORGOT_PASSWORD) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_FORGOT_PASSWORD);
 		}
 	}
 
