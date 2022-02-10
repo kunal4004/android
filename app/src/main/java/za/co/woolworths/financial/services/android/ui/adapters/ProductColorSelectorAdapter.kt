@@ -55,6 +55,10 @@ class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, Array
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(color: String?) {
+            if (otherSKUsByGroupKey[color]?.getOrNull(0)?.styleIdOnSale == true) {
+                itemView.saveLabelImage.visibility = View.VISIBLE
+            } else
+                itemView.saveLabelImage.visibility = View.GONE
             itemView.setOnClickListener {
                 selectedColor = color
                 listener.onColorSelection(selectedColor,false)

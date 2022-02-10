@@ -159,6 +159,15 @@
                                 android:text="Product Details"
                                 android:visibility="invisible"/>
 
+                            <include
+                                android:id="@+id/cartLowStock"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/twelve_dp"
+                                android:layout_marginTop="@dimen/five_dp"
+                                android:visibility="gone"
+                                layout="@layout/cart_low_stock_indicator"/>
+
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
