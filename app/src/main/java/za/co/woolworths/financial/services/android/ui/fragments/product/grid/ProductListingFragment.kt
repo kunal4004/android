@@ -15,6 +15,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_brand_landing.*
@@ -68,6 +70,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawer
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -96,29 +100,33 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
-    private var toolbarTitleText: String? = null
-    private var menuActionSearch: MenuItem? = null
-    private var oneTimeInventoryErrorDialogDisplay: Boolean = false
-    private var mAddItemsToCart: MutableList<AddItemToCart>? = null
-    private var mErrorHandlerView: ErrorHandlerView? = null
-    private var mSubCategoryName: String? = null
-    private var mProductAdapter: ProductListingAdapter? = null
-    private var mProductList: MutableList<ProductList>? = null
+    private var EDIT_LOCATION_LOGIN_REQUEST = 1919
+    private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
     private var lastVisibleItem: Int = 0
     internal var totalItemCount: Int = 0
-    private var productView: ProductView? = null
-    private var sortOptionDialog: Dialog? = null
-    private var mStoreId: String = ""
-    private var mAddItemToCart: AddItemToCart? = null
-    private var mSelectedProductList: ProductList? = null
-    private var mSearchType: ProductsRequestParams.SearchType? = null
+
+    private var toolbarTitleText: String? = null
     private var mSearchTerm: String? = null
     private var mNavigationState: String? = null
-    private var mSortOption: String = ""
-    private var EDIT_LOCATION_LOGIN_REQUEST = 1919
+    private var mSubCategoryName: String? = null
     private var mFulfilmentTypeId: String? = null
+    private var mStoreId: String = ""
+    private var mSortOption: String = ""
+
+    private var oneTimeInventoryErrorDialogDisplay: Boolean = false
+    private var filterContent: Boolean = false
+
+    private var mSearchType: ProductsRequestParams.SearchType? = null
+    private var menuActionSearch: MenuItem? = null
+    private var mAddItemsToCart: MutableList<AddItemToCart>? = null
+    private var mErrorHandlerView: ErrorHandlerView? = null
+    private var mProductAdapter: ProductListingAdapter? = null
+    private var mProductList: MutableList<ProductList>? = null
+    private var productView: ProductView? = null
+    private var sortOptionDialog: Dialog? = null
+    private var mAddItemToCart: AddItemToCart? = null
+    private var mSelectedProductList: ProductList? = null
     private var liquorDialog: Dialog? = null
-    private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
 
     @OpenTermAndLighting
     @Inject
@@ -136,6 +144,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 mSearchTerm = getString(SEARCH_TERM, "")
                 mNavigationState = getString(NAVIGATION_STATE, "")
                 mSortOption = getString(SORT_OPTION, "")
+                filterContent = getBoolean(FILTER_CONTENT, false)
             }
             val localBody: HashMap<String, Any> = HashMap()
             localBody.apply {
@@ -144,6 +153,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 put("searchTerm", mSearchTerm!!)
                 put("navigationState", mNavigationState!!)
                 put("sortOption", mSortOption)
+                put("filterContent", filterContent)
             }
             localProductBody.add(localBody)
             setProductBody()
@@ -260,6 +270,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mSearchTerm = list["searchTerm"] as? String
             mNavigationState = list["navigationState"] as? String
             mSortOption = list["sortOption"] as String
+            filterContent = list["filterContent"] as Boolean
             setProductBody()
         }
         updateProductRequestBodyForRefinement(mNavigationState)
@@ -618,7 +629,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun setProductBody() {
-        setProductRequestBody(mSearchType, mSearchTerm, mNavigationState, mSortOption)
+        setProductRequestBody(mSearchType, mSearchTerm, mNavigationState, mSortOption, filterContent)
     }
 
     override fun onLoadStart(isLoadMore: Boolean) {
@@ -916,7 +927,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun openProductDetailView(productList: ProductList) {
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList)
+        (activity as? BottomNavigationActivity)?.apply {
+            val productDetailsFragmentNew = newInstance()
+            productDetailsFragmentNew.arguments = bundleOf(
+                ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList),
+                ProductDetailsFragment.STR_PRODUCT_CATEGORY to title
+            )
+            Utils.updateStatusBarBackground(this)
+            pushFragment(productDetailsFragmentNew)
+        }
     }
 
     override fun queryInventoryForStore(
@@ -1303,6 +1322,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
+        private const val IS_BRAND_LANDING_PAGE = "IS_BRAND_LANDING_PAGE"
+        private const val FILTER_CONTENT = "FILTER_CONTENT"
         private const val SORT_OPTION = "SORT_OPTION"
 
         fun newInstance(
@@ -1313,6 +1334,28 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
+        }
+
+        fun newInstance(
+            searchType: ProductsRequestParams.SearchType?,
+            searchTerm: String?,
+            sub_category_name: String?,
+            isBrandLandingPage: Boolean?
+        ) = ProductListingFragment().withArgs {
+            putString(SEARCH_TYPE, searchType?.name)
+            putString(SUB_CATEGORY_NAME, sub_category_name)
+            putString(SEARCH_TERM, searchTerm)
+            putBoolean(IS_BRAND_LANDING_PAGE, isBrandLandingPage ?: false)
+        }
+
+        fun newInstance(
+            searchType: ProductsRequestParams.SearchType?,
+            searchTerm: String?,
+            filterContent: Boolean?
+        ) = ProductListingFragment().withArgs {
+            putString(SEARCH_TYPE, searchType?.name)
+            putString(SEARCH_TERM, searchTerm)
+            putBoolean(FILTER_CONTENT, filterContent ?: false)
         }
 
         fun newInstance(
@@ -1430,11 +1473,27 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     override fun openCategoryListView(navigation: Navigation?) {
         // From Chanel Category click
         (activity as? BottomNavigationActivity)?.apply {
+            val isBrandLandingPage = arguments?.getBoolean(IS_BRAND_LANDING_PAGE, false) ?: false
+            Utils.triggerFireBaseEvents(
+                if (isBrandLandingPage)
+                    FirebaseManagerAnalyticsProperties.BRAND_LANDING_PAGE_CATEGORY
+                else
+                    FirebaseManagerAnalyticsProperties.BRAND_LANDING_PAGE_SUB_CATEGORY,
+                hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            if (isBrandLandingPage)
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_BRAND_LANDING_PAGE_CATEGORY
+                            else
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_BRAND_LANDING_PAGE_SUB_CATEGORY
+                ),
+                activity
+            )
+
             pushFragment(
                 newInstance(
                     ProductsRequestParams.SearchType.NAVIGATE,
-                    "",
-                    navigation?.navigationState
+                    navigation?.navigationState,
+                    navigation?.filterContent ?: false
                 )
             )
         }

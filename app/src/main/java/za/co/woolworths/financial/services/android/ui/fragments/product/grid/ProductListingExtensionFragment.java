@@ -52,10 +52,11 @@ public class ProductListingExtensionFragment extends Fragment {
         return mIsLoading;
     }
 
-    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm, String navigationState, String sortOption) {
+    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm, String navigationState, String sortOption, Boolean filterContent) {
         this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, pageOffset);
         this.productsRequestParams.setRefinement(navigationState);
         this.productsRequestParams.setSortOption(sortOption);
+        this.productsRequestParams.setFilterContent(filterContent);
     }
 
     public ProductsRequestParams getProductRequestBody() {

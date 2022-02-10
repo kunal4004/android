@@ -282,18 +282,17 @@ object OneAppService : RetrofitConfig() {
         val loc = getMyLocation()
         val (suburbId: String?, storeId: String?) = getSuburbOrStoreId()
 
-        /*todo need to add dynamically add filtercontent value */
-
         return if (Utils.isLocationEnabled(appContext())) {
             mApiInterface.getProducts("", "",  "",
                 "", getSessionToken(), getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value,
                 requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption,
-                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = false)
+                requestParams.refinement, suburbId = suburbId, storeId = storeId, filterContent = requestParams.filterContent
+            )
         } else {
             mApiInterface.getProductsWithoutLocation("", "", getSessionToken(),
                 getDeviceIdentityToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value,
                 requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement, suburbId = suburbId,
-                storeId = storeId, filterContent =  false)
+                storeId = storeId, filterContent =  requestParams.filterContent)
         }
     }
 
