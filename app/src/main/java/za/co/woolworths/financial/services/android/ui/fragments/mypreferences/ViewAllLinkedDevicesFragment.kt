@@ -138,7 +138,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                 //Do Nothing
                 progressLoadDevices?.visibility = View.GONE
             }
-
+            
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
                 progressLoadDevices?.visibility = View.GONE
                 deviceList = ArrayList(0)

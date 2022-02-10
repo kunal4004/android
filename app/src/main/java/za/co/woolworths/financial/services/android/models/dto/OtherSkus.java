@@ -40,4 +40,8 @@ public class OtherSkus {
 	@SerializedName("kilogramPrice")
 	@Expose
 	public String kilogramPrice;
+
+	@SerializedName("styleIdOnSale")
+	@Expose
+	public Boolean styleIdOnSale;
 }
