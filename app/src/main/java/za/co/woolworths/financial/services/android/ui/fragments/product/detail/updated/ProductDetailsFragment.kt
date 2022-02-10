@@ -147,6 +147,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
+    private var brandHeaderText: String? = null
     private var mFetchFromJson: Boolean = false
     private var defaultProductResponse: String? = null
     private var auxiliaryImages: MutableList<String> = ArrayList()
@@ -236,6 +237,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         const val STR_PRODUCT_CATEGORY = "strProductCategory"
         const val STR_PRODUCT_LIST = "strProductList"
+        const val STR_BRAND_HEADER = "strBandHeaderDesc"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -246,6 +248,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ProductDetails::class.java
             ) as ProductDetails
             subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
+            brandHeaderText = getString(STR_BRAND_HEADER)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
         }
@@ -550,6 +553,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         productDetails?.let {
             productName?.text = it.productName
+            if (!brandHeaderText.isNullOrEmpty()) {
+                rangeName.visibility = View.VISIBLE
+                rangeName?.text = brandHeaderText
+            }
             brandName?.apply {
                 if (!it.brandText.isNullOrEmpty()) {
                     text = it.brandText
