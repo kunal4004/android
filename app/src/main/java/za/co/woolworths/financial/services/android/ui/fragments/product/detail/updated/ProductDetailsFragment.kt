@@ -642,7 +642,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
-        if (!isAdded) return
+        if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
@@ -666,7 +666,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && it.storePickup
+                ) && it?.storePickup
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
@@ -676,14 +676,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
             storeIdForInventory =
-                RecyclerViewViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
+                RecyclerViewViewHolderItems.getFulFillmentStoreId(productDetails?.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
                 true -> showProductUnavailable()
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
-                        productDetails.otherSkus.joinToString(separator = "-") { it.sku }
+                        productDetails?.otherSkus.joinToString(separator = "-") { it.sku }
                     productDetailsPresenter?.loadStockAvailability(
                         storeIdForInventory!!,
                         multiSKUs,
@@ -692,7 +692,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
-        } else if (productDetails.otherSkus.isNullOrEmpty()) {
+        } else if (productDetails?.otherSkus.isNullOrEmpty()) {
             showProductOutOfStock()
         } else {
             showErrorWhileLoadingProductDetails()
@@ -966,7 +966,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun getDefaultSku(otherSKUsList: HashMap<String, ArrayList<OtherSkus>>): OtherSkus? {
-        otherSKUsList.keys.forEach { key ->
+        otherSKUsList?.keys?.forEach { key ->
             otherSKUsList[key]?.forEach { otherSku ->
                 if (otherSku.sku.equals(this.productDetails?.sku, ignoreCase = true)) {
                     defaultGroupKey = key
