@@ -39,7 +39,7 @@ class ProductListingAdapter(
                         activity, productList
                     )
                     (holder as? RecyclerViewViewHolderHeader)?.setChanelBanner(
-                        mBannerLabel, mBannerImage, mIsComingFromBLP
+                        mBannerLabel, mBannerImage, mIsComingFromBLP, navigator
                     )
                 }
                 ProductListingViewType.FOOTER -> (holder as? RecyclerViewViewHolderFooter)?.loadMoreProductProgressBarVisibility()

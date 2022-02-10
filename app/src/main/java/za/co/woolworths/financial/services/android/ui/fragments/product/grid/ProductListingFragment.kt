@@ -417,6 +417,19 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
+    override fun openBrandLandingPage() {
+        (activity as? BottomNavigationActivity)?.apply {
+      //      popFragmentNoAnim()
+            pushFragment(
+                newInstance(
+                    ProductsRequestParams.SearchType.SEARCH,
+                    "",
+                    "chanel"
+                )
+            )
+        }
+    }
+
     private fun getCategoryNameAndSetTitle() {
         if (!mSubCategoryName.isNullOrEmpty()) {
             toolbarTitleText = mSubCategoryName
