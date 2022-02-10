@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
 import za.co.woolworths.financial.services.android.ui.adapters.ViewAllLinkedDevicesAdapter
 import za.co.woolworths.financial.services.android.util.AppConstant
+import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -130,16 +131,16 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun callRetrieveDevices() {
-        progressLoadDevices.visibility = View.VISIBLE
+        progressLoadDevices?.visibility = View.VISIBLE
         val mViewAllLinkedDevices: Call<ViewAllLinkedDeviceResponse> = OneAppService.getAllLinkedDevices(true)
         mViewAllLinkedDevices.enqueue(CompletionHandler(object : IResponseListener<ViewAllLinkedDeviceResponse> {
             override fun onFailure(error: Throwable?) {
                 //Do Nothing
-                progressLoadDevices.visibility = View.GONE
+                progressLoadDevices?.visibility = View.GONE
             }
-
+            
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
-                progressLoadDevices.visibility = View.GONE
+                progressLoadDevices?.visibility = View.GONE
                 deviceList = ArrayList(0)
                 deviceList = response?.userDevices
                 if (deviceList.isNullOrEmpty()) {
@@ -240,9 +241,13 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
 
         when (v.id) {
             R.id.viewAllDeviceDeleteImageView -> {
-                navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment, bundleOf(
-                    DEVICE_LIST to deviceList
-                ))
+                try{
+                    navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_deletePrimaryDeviceFragment, bundleOf(
+                        DEVICE_LIST to deviceList
+                    ))
+                } catch (e: Exception) {
+                    FirebaseManager.logException(e)
+                }
             }
             R.id.viewAllDeviceEditImageView -> {
                 val bundle = Bundle()

@@ -3,13 +3,9 @@ package za.co.woolworths.financial.services.android.models.network
 import android.location.Location
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.Header
-import retrofit2.http.Path
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.bpi.BPIBody
@@ -245,6 +241,11 @@ object OneAppService : RetrofitConfig() {
 
     fun getShippingDetails(body: ShippingDetailsBody): Call<ShippingDetailsResponse>{
         return mApiInterface.getShippingDetails("", "", getSessionToken(),
+        getDeviceIdentityToken(), body)
+    }
+
+    fun getStorePickupInfo(body: StorePickupInfoBody): Call<ConfirmDeliveryAddressResponse> {
+        return mApiInterface.getStorePickupInfo("", "", getSessionToken(),
         getDeviceIdentityToken(), body)
     }
 
@@ -575,7 +576,7 @@ object OneAppService : RetrofitConfig() {
             "",
             "",
             getSessionToken(),
-            deviceName,
+            URLEncoder.encode(deviceName, "UTF-8"),
             body,
             otp,
             otpMethod)
@@ -682,5 +683,4 @@ object OneAppService : RetrofitConfig() {
             insuranceTypeOptInBody
         )
     }
-
 }

@@ -9,7 +9,7 @@
         android:id="@+id/divider3"
         android:layout_width="0dp"
         android:layout_height="@dimen/one_dp"
-        android:layout_marginTop="@dimen/twenty_two_dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
         android:background="@color/color_separator_light_grey"
         android:visibility="visible"
         app:layout_constraintLeft_toLeftOf="parent"

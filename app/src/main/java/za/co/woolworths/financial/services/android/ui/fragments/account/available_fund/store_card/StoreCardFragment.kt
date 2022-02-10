@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.*
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
@@ -27,6 +28,9 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.A
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
 
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.CANNOT_AFFORD_PAYMENT_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.MAKE_A_PAYMENT_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.VIEW_PAYMENT_PLAN_BUTTON
 import za.co.woolworths.financial.services.android.util.*
 
 class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
@@ -37,10 +41,10 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         navController = Navigation.findNavController(view)
         availableFundBackground?.setBackgroundResource(R.drawable.store_card_background)
 
-        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner, {
+        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
             isQueryPayUPaymentMethodComplete = false
             queryPaymentMethod()
-        })
+        }
 
         incRecentTransactionButton?.setOnClickListener(this)
         incViewStatementButton?.setOnClickListener(this)
@@ -71,30 +75,11 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
 
         setFragmentResultListener(ViewTreatmentPlanDialogFragment::class.java.simpleName) { _, bundle ->
             CoroutineScope(Dispatchers.Main).doAfterDelay(AppConstant.DELAY_100_MS) {
-                when (bundle.getString(ViewTreatmentPlanDialogFragment::class.java.simpleName)) {
-                    ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON -> {
-                        activity?.apply {
-                            val arguments = HashMap<String, String>()
-                            arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD_ACTION
-                            Utils.triggerFireBaseEvents(
-                                FirebaseManagerAnalyticsProperties.VIEW_PAYMENT_PLAN_STORE_CARD,
-                                arguments,
-                                this)
-                            when (WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.renderMode){
-                                NATIVE_BROWSER ->
-                                    KotlinUtils.openUrlInPhoneBrowser(
-                                    WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.collectionsUrl, this)
-
-                                else ->
-                                KotlinUtils.openLinkInInternalWebView(activity,
-                                    WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.collectionsUrl,
-                                    true,
-                                    WoolworthsApplication.getAccountOptions()?.showTreatmentPlanJourney?.storeCard?.exitUrl
-                                )
-                            }
-                        }
-                    }
-                    ViewTreatmentPlanDialogFragment.MAKE_A_PAYMENT_BUTTON -> onStoreCardButtonTap()
+                val outSystemWebUrl = OutSystemBuilder(activity, ProductGroupCode.SC, bundle = bundle)
+                when (outSystemWebUrl.getBundleKey()) {
+                    VIEW_PAYMENT_PLAN_BUTTON -> outSystemWebUrl.build()
+                    CANNOT_AFFORD_PAYMENT_BUTTON -> startGetAPaymentPlanActivity(bundle)
+                    MAKE_A_PAYMENT_BUTTON -> onStoreCardButtonTap()
                 }
             }
         }
@@ -142,7 +127,6 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         navigateToPayMyAccount {
             try {
                 navigateSafelyWithNavController(StoreCardFragmentDirections.storeCardFragmentToDisplayVendorDetailFragmentAction())
-
             } catch (ex: IllegalStateException) {
                 FirebaseManager.logException(ex)
             }

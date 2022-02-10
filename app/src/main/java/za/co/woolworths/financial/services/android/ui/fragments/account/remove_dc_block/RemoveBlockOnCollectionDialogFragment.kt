@@ -19,11 +19,7 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
         const val ARREARS_PAY_NOW_BUTTON = "payNowButton"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.remove_block_on_collection_dialog, container, false)
     }
 
@@ -39,7 +35,6 @@ class RemoveBlockOnCollectionDialogFragment : AppCompatDialogFragment(), View.On
             setOnClickListener(this@RemoveBlockOnCollectionDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
-
     }
 
     override fun onClick(view: View?) {

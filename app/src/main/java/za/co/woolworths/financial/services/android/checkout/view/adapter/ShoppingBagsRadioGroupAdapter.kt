@@ -9,14 +9,14 @@ import kotlinx.android.synthetic.main.checkout_address_confirmation_selection_de
 import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.*
 import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.subTitle
 import kotlinx.android.synthetic.main.shopping_bags_radio_button.view.title
-import za.co.woolworths.financial.services.android.models.dto.ShoppingBagsOptions
+import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
 
 /**
  * Created by Kunal Uttarwar on 12/10/21.
  */
 class ShoppingBagsRadioGroupAdapter(
-    private var shoppingBagsOptionsList: List<ShoppingBagsOptions>?,
+    private var shoppingBagsOptionsList: List<ConfigShoppingBagsOptions>?,
     private val listner: EventListner
 ) :
     RecyclerView.Adapter<ShoppingBagsRadioGroupAdapter.ShoppingBagsRadioGroupAdapterViewHolder>() {
@@ -113,7 +113,7 @@ class ShoppingBagsRadioGroupAdapter(
 
     interface EventListner {
         fun selectedShoppingBagType(
-            shoppingBagsOptionsList: ShoppingBagsOptions,
+            shoppingBagsOptionsList: ConfigShoppingBagsOptions,
             position: Int
         )
     }
