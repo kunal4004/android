@@ -8,23 +8,17 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.available_funds_fragment.*
-import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
-import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
-import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.credit_card.GoldCreditCardFragmentDirections
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
-import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PMA3DSecureProcessRequestFragment.Companion.PMA_TRANSACTION_COMPLETED_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
@@ -97,14 +91,7 @@ class PersonalLoanFragment : AvailableFundFragment(), View.OnClickListener {
                     VIEW_PAYMENT_PLAN_BUTTON -> {
                         outSystemBuilder.build()
                     }
-                    CANNOT_AFFORD_PAYMENT_BUTTON -> {
-                        val intent = Intent(context, GetAPaymentPlanActivity::class.java)
-                        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN))
-                        startActivityForResult(intent,
-                            AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN
-                        )
-                        activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
-                    }
+                    CANNOT_AFFORD_PAYMENT_BUTTON -> startGetAPaymentPlanActivity(bundle)
                     MAKE_A_PAYMENT_BUTTON -> onPayMyAccountButtonTap()
                 }
             }

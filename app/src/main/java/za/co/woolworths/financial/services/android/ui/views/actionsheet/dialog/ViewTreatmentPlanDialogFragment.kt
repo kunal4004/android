@@ -176,7 +176,6 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
                             arguments,
                             activity)
 
-                        dismiss()
                     }
                     ApplyNowState.PERSONAL_LOAN -> {
                         arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL_ACTION
@@ -185,7 +184,6 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
                             arguments,
                             activity)
 
-                        dismiss()
                     }
                     ApplyNowState.SILVER_CREDIT_CARD,
                     ApplyNowState.GOLD_CREDIT_CARD,
