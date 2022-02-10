@@ -583,13 +583,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 chanel_view?.visibility = View.VISIBLE
                 backArrow?.visibility = View.GONE
                 openCart?.visibility = View.GONE
-                if (bannerImage == null || bannerImage?.isEmpty()== true) {
+                share?.visibility = View.GONE
+                imgVTOOpen?.visibility = View.GONE
+                if (bannerImage == null || bannerImage?.isEmpty() == true) {
                     chanel_view?.chanel_pdp_logo_header?.tv_logo_name?.text = bannerLabel
                 } else {
                     setPicture(chanel_view?.chanel_pdp_img_banner, bannerImage)
                 }
             } else {
                 chanel_view?.visibility  = View.GONE
+                backArrow?.visibility = View.VISIBLE
+                openCart?.visibility = View.VISIBLE
+                share?.visibility = View.VISIBLE
+                imgVTOOpen?.visibility = View.VISIBLE
             }
 
             BaseProductUtils.displayPrice(
