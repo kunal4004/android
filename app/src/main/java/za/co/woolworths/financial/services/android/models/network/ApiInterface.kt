@@ -1234,16 +1234,6 @@ interface ApiInterface {
         @Body insuranceTypeOptInBody: InsuranceTypeOptInBody
     ):Call<GenericResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/accounts/collections/checkEligibility")
-    fun getEligibility(
-        @Header("userAgent") userAgent: String,
-        @Header("userAgentVersion") userAgentVersion: String,
-        @Header("sessionToken") sessionToken: String,
-        @Query("productGroupCode") productGroupCode: String,
-        @Header("deviceIdentityToken") deviceIdentityToken: String
-    ): Call<EligibilityPlanResponse>
-
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("wfs/app/v4/accounts/collections/checkEligibility")

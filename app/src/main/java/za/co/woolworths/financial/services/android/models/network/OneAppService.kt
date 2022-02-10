@@ -683,13 +683,4 @@ object OneAppService : RetrofitConfig() {
             insuranceTypeOptInBody
         )
     }
-
-    fun getEligibility(productGroupCode: ProductGroupCode): Call<EligibilityPlanResponse> {
-        return mApiInterface.getEligibility(
-            "",
-            "",
-            getSessionToken(),
-            productGroupCode.value,
-            getDeviceIdentityToken())
-    }
 }

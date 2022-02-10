@@ -170,6 +170,12 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment, bundle)
     }
 
+    override fun showViewTreatmentPlan(viewPaymentOptions: Boolean) {
+        val bundle = Bundle()
+        bundle.putBoolean(ShowTreatmentPlanDialogFragment.VIEW_PAYMENT_OPTIONS_VISIBILITY, viewPaymentOptions)
+        mAvailableFundsNavHost?.navController?.navigate(R.id.showTreatmentPlanDialogFragment, bundle)
+    }
+
     override fun removeBlocksWhenChargedOff() {
         availableFundFragmentFrameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
@@ -355,11 +361,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         }
     }
 
-    override fun showViewTreatmentPlan(viewPaymentOptions: Boolean){
-        val bundle = Bundle()
-        bundle.putBoolean(ShowTreatmentPlanDialogFragment.VIEW_PAYMENT_OPTIONS_VISIBILITY, viewPaymentOptions)
-        mAvailableFundsNavHost?.navController?.navigate(R.id.showTreatmentPlanDialogFragment, bundle)
-    }
     private fun queryGetPaymentMethod() {
         val fragment = mAvailableFundsNavHost?.childFragmentManager?.primaryNavigationFragment
         if (fragment is AvailableFundFragment) {
