@@ -783,11 +783,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     private fun openSetupPaymentPlanPage() {
-        val intent = Intent(context, GetAPaymentPlanActivity::class.java)
-        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, eligibilityPlan)
-        startActivityForResult(intent, REQUEST_GET_PAYMENT_PLAN)
-        activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
+        activity?.apply {
+            val intent = Intent(context, GetAPaymentPlanActivity::class.java)
+            intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, eligibilityPlan)
+            startActivityForResult(intent, REQUEST_GET_PAYMENT_PLAN)
+            overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
+        }
     }
+
 
     private fun openViewTreatmentPlanPage(){
         val productGroupCode : ProductGroupCode = when(state){

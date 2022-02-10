@@ -50,16 +50,7 @@ class GoldCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                 val outSystemBuilder = OutSystemBuilder(activity, ProductGroupCode.CC, bundle = bundle)
                 when (outSystemBuilder.getBundleKey()) {
                     ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_PLAN_BUTTON -> outSystemBuilder.build()
-
-                    ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON -> {
-                        val intent = Intent(context, GetAPaymentPlanActivity::class.java)
-                        intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN))
-                        startActivityForResult(intent,
-                            AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN
-                        )
-                        activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
-                    }
-
+                    ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON -> startGetAPaymentPlanActivity(bundle)
                     ViewTreatmentPlanDialogFragment.MAKE_A_PAYMENT_BUTTON -> navigateToPayMyAccountActivity()
                 }
             }
