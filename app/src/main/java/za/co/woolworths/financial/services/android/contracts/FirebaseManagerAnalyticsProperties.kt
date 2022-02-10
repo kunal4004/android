@@ -590,6 +590,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_VOUCHERS_BARCODE: String = "WRewards Vouchers Barcode"
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
+            const val SSO_FORGOT_PASSWORD: String = "SSO Forgot Password"
         }
     }
 

@@ -1792,7 +1792,7 @@
         <item name="android:textSize">@dimen/store_card_text_field_text_size_14_dp</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLength">2</item>
-        <item name="android:inputType">textFilter|textNoSuggestions|textVisiblePassword</item>
+        <item name="android:inputType">textNoSuggestions|textVisiblePassword</item>
     </style>
 
 
