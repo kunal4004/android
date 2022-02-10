@@ -350,7 +350,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
     }
 
     fun getConfig() {
-        startupViewModel.queryServiceGetConfig().observe(this, {
+        startupViewModel.queryServiceGetConfig().observe(this) {
             when (it.responseStatus) {
                 ResponseStatus.SUCCESS -> {
                     ConfigResource.persistGlobalConfig(it.data, startupViewModel)
@@ -361,7 +361,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     }
 
                     if (!startupViewModel.isVideoPlaying) {
-                        if(startupViewModel.isConnectedToInternet(this)) {
+                        if (startupViewModel.isConnectedToInternet(this)) {
                             fetchFirebaseConfigData(true)
                         } else {
                             showNonVideoViewWithErrorLayout()
@@ -375,7 +375,7 @@ class StartupActivity : AppCompatActivity(), MediaPlayer.OnCompletionListener,
                     fetchFirebaseConfigData(false)
                 }
             }
-        })
+        }
     }
 
     //video player on completion
