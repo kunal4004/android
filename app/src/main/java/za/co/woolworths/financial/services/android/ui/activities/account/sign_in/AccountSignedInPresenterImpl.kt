@@ -85,7 +85,7 @@ class AccountSignedInPresenterImpl(
             account?.productGroupCode == getProductCode(
                 mApplyNowState
             )
-        }?.get(0)
+        }?.getOrNull(0)
     }
 
     @Throws(RuntimeException::class)
