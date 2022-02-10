@@ -23,6 +23,7 @@ public class CommerceItem {
 	public boolean isItemRemoved = false;
 	public String commerceItemClassType;
 	private boolean deletePressed = false;
+	public int lowStockThreshold;
 
 	public void setDeleteSingleItem(boolean deleteSingleItem) {
 		this.deleteSingleItem = deleteSingleItem;

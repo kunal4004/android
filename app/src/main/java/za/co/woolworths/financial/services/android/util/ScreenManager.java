@@ -60,6 +60,16 @@ public class ScreenManager {
         activity.overridePendingTransition(0, 0);
     }
 
+    public static void forgotPassword(Activity activity, String uri) {
+        Intent intent = new Intent(activity, SSOActivity.class);
+        intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+        intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+        intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.FORGOT_PASSWORD.rawValue());
+        intent.putExtra(SSOActivity.TAG_PASSWORD, uri);
+        activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.FORGOT_PASSWORD.rawValue());
+        activity.overridePendingTransition(0, 0);
+    }
+
     public static void presentExpiredTokenSSOSignIn(Activity activity, String stsParams) {
         SessionUtilities.getInstance().setSTSParameters(stsParams);
         Intent intent = new Intent(activity, SSOActivity.class);

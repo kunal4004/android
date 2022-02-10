@@ -176,12 +176,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 						startActivity(intent);
 
 						Handler handler = new Handler();
-						handler.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								webInternalPage.loadUrl(mExternalLink);
-							}
-						}, AppConstant.DELAY_900_MS);
+						handler.postDelayed(() -> webInternalPage.loadUrl(mExternalLink), AppConstant.DELAY_900_MS);
 					}
 					else{
 						finishActivity();
@@ -191,17 +186,14 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		});
 		webInternalPage.loadUrl(mExternalLink);
 
-		webInternalPage.setDownloadListener(new DownloadListener() {
-			@Override
-			public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
-				downLoadUrl=url;
-				downLoadMimeType=mimeType;
-				downLoadUserAgent=userAgent;
-				downLoadConntentDisposition=contentDisposition;
+		webInternalPage.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) -> {
+			downLoadUrl=url;
+			downLoadMimeType=mimeType;
+			downLoadUserAgent=userAgent;
+			downLoadConntentDisposition=contentDisposition;
 
-				if (isStoragePermissionGranted()) {
-					downloadFile(url,mimeType,userAgent,contentDisposition);
-				}
+			if (isStoragePermissionGranted()) {
+				downloadFile(url,mimeType,userAgent,contentDisposition);
 			}
 		});
 	}
@@ -219,25 +211,22 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	private void retryConnect() {
-		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (NetworkManager.getInstance().isConnectedToNetwork(WInternalWebPageActivity.this)) {
-					hideAppBar();
-					showProgressBar();
-					WebBackForwardList history = webInternalPage.copyBackForwardList();
-					int index = -1;
-					String url;
-					while (webInternalPage.canGoBackOrForward(index)) {
-						if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
-							webInternalPage.goBackOrForward(index);
-							url = history.getItemAtIndex(-index).getUrl();
-							break;
-						}
-						index--;
+		findViewById(R.id.btnRetry).setOnClickListener(v -> {
+			if (NetworkManager.getInstance().isConnectedToNetwork(WInternalWebPageActivity.this)) {
+				hideAppBar();
+				showProgressBar();
+				WebBackForwardList history = webInternalPage.copyBackForwardList();
+				int index = -1;
+				String url;
+				while (webInternalPage.canGoBackOrForward(index)) {
+					if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
+						webInternalPage.goBackOrForward(index);
+						url = history.getItemAtIndex(-index).getUrl();
+						break;
 					}
-					mErrorHandlerView.hideErrorHandlerLayout();
+					index--;
 				}
+				mErrorHandlerView.hideErrorHandlerLayout();
 			}
 		});
 	}
@@ -321,6 +310,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void finishActivity() {
+		setResult(RESULT_OK);
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
@@ -335,12 +325,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	private void showAppBar() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				mAppbar.setVisibility(View.VISIBLE);
-			}
-		});
+		runOnUiThread(() -> mAppbar.setVisibility(View.VISIBLE));
 	}
 
 	private void hideAppBar() {
