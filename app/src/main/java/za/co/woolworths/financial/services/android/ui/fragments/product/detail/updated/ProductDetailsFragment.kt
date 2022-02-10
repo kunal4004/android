@@ -1829,7 +1829,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         activity?.apply {
             getSelectedGroupKey()?.let {
                 colorPlaceholder.setTextColor(ContextCompat.getColor(this, R.color.black))
-                selectedColor.text = " - $it"
+                selectedColor.text = "  -  $it"
             }
         }
     }
@@ -1845,7 +1845,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             } else {
                 hideLowStockForSize()
             }
-            selectedSize.text = if (it != null) " - ${it.size}" else ""
+            selectedSize.text = if (it != null) "  -  ${it.size}" else ""
             activity?.apply {
                 if (it != null)
                     selectedSizePlaceholder.setTextColor(
