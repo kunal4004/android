@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.AccountsPr
 import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
@@ -49,7 +50,7 @@ class SilverCreditCardFragment : AvailableFundFragment(), View.OnClickListener {
                     ViewTreatmentPlanDialogFragment.CANNOT_AFFORD_PAYMENT_BUTTON -> {
                         val intent = Intent(context, GetAPaymentPlanActivity::class.java)
                         intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN))
-                        startActivity(intent)
+                        startActivityForResult(intent, AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN)
                         activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
                     }
 
