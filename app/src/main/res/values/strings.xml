@@ -1299,8 +1299,19 @@
     <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
+    <string name="treatment_plan_eligible_charged_off_description_pl">Your account is being managed by our collection partners</string>
+    <string name="take_up_treatment_plan_description_pl">To keep your account in good standing, please pay the overdue amount of R%1$s today. Pay now or contact us for assistance.</string>
+    <string name="take_up_treatment_plan_description_sc">To keep your account in good standing, please pay the overdue amount of R%1$s today. Pay now or contact us for assistance.</string>
+    <string name="take_up_treatment_plan_description_cc">To keep your account in good standing, please pay the overdue amount of R%1$s today. Pay now or contact us for assistance.</string>
+    <string name="treatment_plan_eligible_charged_off_description_sc">Your account is being managed by our collection partners</string>
     <string name="view_payment_plan_button_label">View payment plan</string>
-    <string name="make_payment_now_button_label">Make a payment</string>
+    <string name="view_payment_plans_button_label">View payment plans</string>
+    <string name="make_payment_button_label">Make a payment</string>
+    <string name="make_payment_now_button_label">Make a payment now</string>
+    <string name="view_payment_options_button_label">View payment options</string>
+    <string name="view_plan_options_button_label">View plan options</string>
+    <string name="cannot_afford_payment_button_label">Can\'t afford this payment?</string>
+    <string name="view_other_payment_options_button_label">View other payment options</string>
 
     <!-- Unique Ids for Transactions-->
     <string name="transactions_title_layout">View Transaction Title Layout</string>
@@ -1455,6 +1466,7 @@
     <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
     <string name="recent_transactions_title">Recent Transactions</string>
 
+    <string name="set_up_payment_plan_title">Set Up A Payment Plan</string>
     <string name="payment_option_title">Payment Options</string>
     <string name="store_card_payment_options_title">Store Card Payment Options</string>
 
@@ -1762,7 +1774,7 @@
     <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 5 business working days to reflect on your account.</string>
     <string name="back_to_my_account_button">back to my account</string>
     <string name="pma_save_card_pay_now_title">Payment Summary</string>
-    <string name="pay_now_button_label">Pay Now</string>
+    <string name="pay_now_button_label">Make a payment now</string>
     <string name="payment_method">Payment Method</string>
     <string name="add_card_label">add card</string>
     <string name="card_expired">Expired</string>
@@ -2196,9 +2208,6 @@
     <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
     <string name="suburb_not_found">We Can’t Seem To Find This Suburb</string>
 
-    <string name="view_payment_plans_button_label">View payment plans</string>
-    <string name="view_payment_options_button_label">View payment options</string>
-
     <string name="delivering_address_types_error_msg">Please select an address type.</string>
     <string name="suburb_name_error_msg">Please select a suburb.</string>
     <string name="province_name_error_msg">Please select a province.</string>
@@ -2393,4 +2402,15 @@
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
+
+    <string name="get_payment_plan_title">Get a Payment Plan</string>
+    <string name="get_payment_plan_desc">By signing up for a repayment plan, you secure the use of your facility for some point in the future. Once you have successfully completed your repayment plan, you will be able to utilise your facility again.</string>
+    <string name="get_a_payment_plan_1">Pay smaller instalments over a chosen period.</string>
+    <string name="get_a_payment_plan_2">Make payments on the Woolies app.</string>
+    <string name="get_a_payment_plan_3">Track your payment plan history and schedule.</string>
+    <string name="get_a_payment_plan_4">Simple and easy to manage from the palm of your hand.</string>
+    <string name="treatment_plan_desc_1">Pay smaller instalments over a chosen period.</string>
+    <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
+    <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
+    <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
 </resources>
