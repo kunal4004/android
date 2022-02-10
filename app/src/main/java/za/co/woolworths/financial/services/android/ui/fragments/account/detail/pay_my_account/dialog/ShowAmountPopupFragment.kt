@@ -65,26 +65,28 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
         setupListener()
 
         with(payMyAccountViewModel) {
-            pmaCardPopupModel.observe(viewLifecycleOwner, { card ->
+            pmaCardPopupModel.observe(viewLifecycleOwner) { card ->
                 if (!isAdded) return@observe
 
-                card?.amountEntered = if (card?.amountEntered?.contains("R") == true) card.amountEntered else "R ${card?.amountEntered}"
+                card?.amountEntered =
+                    if (card?.amountEntered?.contains("R") == true) card.amountEntered else "R ${card?.amountEntered}"
 
                 //WOP-9291 - Prevent user from paying amount less than R 1. For
                 // this user it has overdue amount as R0.34 so it will populate R1.00 as default amount to pay
-                pmaAmountEnteredTextView?.text = if (convertRandFormatToDouble(card?.amountEntered) in 0.01..0.99) {
-                    getCardDetail()?.amountEntered = ONE_RAND
-                    updateAmountEntered(ONE_RAND)
-                } else {
-                    updateAmountEntered(card?.amountEntered)
-                }
+                pmaAmountEnteredTextView?.text =
+                    if (convertRandFormatToDouble(card?.amountEntered) in 0.01..0.99) {
+                        getCardDetail()?.amountEntered = ONE_RAND
+                        updateAmountEntered(ONE_RAND)
+                    } else {
+                        updateAmountEntered(card?.amountEntered)
+                    }
 
                 pmaAmountEnteredTextView?.apply {
                     if (!payMyAccountViewModel.isAmountBelowMaxLimit(card?.amountEntered)) {
                         setTextColor(Color.RED)
                         typeface = Typeface.DEFAULT_BOLD
                         invalidPaymentAmountTextView?.visibility = VISIBLE
-                    } else{
+                    } else {
                         setTextColor(Color.BLACK)
                         typeface = Typeface.DEFAULT
                         invalidPaymentAmountTextView?.visibility = GONE
@@ -92,7 +94,10 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 }
 
                 // Enable/Disable confirm payment button
-                pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(cvvEditTextInput.length(), pmaAmountEnteredTextView?.text?.toString())
+                pmaConfirmPaymentButton?.isEnabled = isConfirmPaymentButtonEnabled(
+                    cvvEditTextInput.length(),
+                    pmaAmountEnteredTextView?.text?.toString()
+                )
 
                 //Disable change button when amount is R0.00
                 when (isChangeIconEnabled(pmaAmountEnteredTextView?.text?.toString())) {
@@ -113,7 +118,7 @@ class ShowAmountPopupFragment : WBottomSheetDialogFragment(), View.OnClickListen
                 if (isPaymentListEmpty(card?.paymentMethodList))
                     dismiss()
 
-            })
+            }
         }
 
         initPaymentMethod()

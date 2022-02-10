@@ -447,5 +447,4 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             }
         }
     }
-
 }
