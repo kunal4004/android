@@ -96,6 +96,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
+    private val CHANEL: String = "chanel"
+
     private var toolbarTitleText: String? = null
     private var menuActionSearch: MenuItem? = null
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
@@ -122,6 +124,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var mFulfilmentTypeId: String? = null
     private var liquorDialog: Dialog? = null
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
+
+
 
     @OpenTermAndLighting
     @Inject
@@ -419,12 +423,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun openBrandLandingPage() {
         (activity as? BottomNavigationActivity)?.apply {
-      //      popFragmentNoAnim()
             pushFragment(
                 newInstance(
                     ProductsRequestParams.SearchType.SEARCH,
-                    "",
-                    "chanel"
+                    AppConstant.EMPTY_STRING,
+                    CHANEL
                 )
             )
         }
