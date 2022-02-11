@@ -125,8 +125,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var liquorDialog: Dialog? = null
     private var LOGIN_REQUEST_SUBURB_CHANGE = 1419
 
-
-
     @OpenTermAndLighting
     @Inject
     lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
