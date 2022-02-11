@@ -83,30 +83,31 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
 
     private fun absaApiResultObservers() {
         with(mViewModel) {
-            failureHandler.observe(viewLifecycleOwner, { failure ->
+            failureHandler.observe(viewLifecycleOwner) { failure ->
                 progressIndicator(GONE)
                 clearPin()
                 when (failure) {
                     is AbsaApiFailureHandler.FeatureValidateCardAndPin.ValidateCardAndPinStatusCodeInvalid -> {
-                        onFailureHandler(failure.message?: "",failure.isActivityRunning)
+                        onFailureHandler(failure.message ?: "", failure.isActivityRunning)
                     }
 
                     is AbsaApiFailureHandler.FeatureValidateCardAndPin.ValidateSureCheckStatusCodeInvalid -> {
-                        onFailureHandler(failure.message?: "",false)
+                        onFailureHandler(failure.message ?: "", false)
                     }
 
                     is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckContinuePolling -> {
-                        onFailureHandler(failure.message?: "",failure.isActivityRunning)
+                        onFailureHandler(failure.message ?: "", failure.isActivityRunning)
                     }
 
                     is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckFailedMessage -> {
-                        onFailureHandler(failure.message?: "",failure.isActivityRunning)
+                        onFailureHandler(failure.message ?: "", failure.isActivityRunning)
                     }
                     is AbsaApiFailureHandler.HttpException -> {
                         showErrorScreen(ErrorHandlerActivity.COMMON)
                     }
                     is AbsaApiFailureHandler.NoInternetApiFailure -> activity?.let {
-                        ErrorHandlerView(it).showToast()  }
+                        ErrorHandlerView(it).showToast()
+                    }
 
                     is AbsaApiFailureHandler.AppServerFailure.GeneralFailure -> {
                         showErrorScreen(ErrorHandlerActivity.COMMON)
@@ -114,36 +115,40 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
 
                     else -> return@observe
                 }
-            })
+            }
 
-            cellNumber.observe(viewLifecycleOwner,
-                { cellNumber ->
-                    cellNumber?.apply {
-                        replaceFragment(fragment = AbsaOTPConfirmationFragment.newInstance(this, mCreditCardToken),
-                            tag = AbsaOTPConfirmationFragment::class.java.simpleName,
-                            containerViewId = R.id.flAbsaOnlineBankingToDevice,
-                            allowStateLoss = true,
-                            enterAnimation = R.anim.slide_in_from_right,
-                            exitAnimation = R.anim.slide_to_left,
-                            popEnterAnimation = R.anim.slide_from_left,
-                            popExitAnimation = R.anim.slide_to_right
-                        )
-                        clearAliasIdAndCellphoneNumber()
-                        inProgress(false)
-                    }
-                })
+            cellNumber.observe(viewLifecycleOwner
+            ) { cellNumber ->
+                cellNumber?.apply {
+                    replaceFragment(
+                        fragment = AbsaOTPConfirmationFragment.newInstance(this, mCreditCardToken),
+                        tag = AbsaOTPConfirmationFragment::class.java.simpleName,
+                        containerViewId = R.id.flAbsaOnlineBankingToDevice,
+                        allowStateLoss = true,
+                        enterAnimation = R.anim.slide_in_from_right,
+                        exitAnimation = R.anim.slide_to_left,
+                        popEnterAnimation = R.anim.slide_from_left,
+                        popExitAnimation = R.anim.slide_to_right
+                    )
+                    clearAliasIdAndCellphoneNumber()
+                    inProgress(false)
+                }
+            }
 
-            isLoading.observe(viewLifecycleOwner, { isInProgress ->
+            isLoading.observe(viewLifecycleOwner) { isInProgress ->
                 pbEnterAtmPin?.visibility = when (isInProgress) {
                     true -> VISIBLE
                     else -> GONE
                 }
-            })
+            }
 
-            createAliasId.observe(viewLifecycleOwner, { aliasId ->
+            createAliasId.observe(viewLifecycleOwner) { aliasId ->
                 aliasId?.let { aliasID ->
                     replaceFragment(
-                        fragment = AbsaSecurityCheckSuccessfulFragment.newInstance(aliasID, mCreditCardToken),
+                        fragment = AbsaSecurityCheckSuccessfulFragment.newInstance(
+                            aliasID,
+                            mCreditCardToken
+                        ),
                         tag = AbsaSecurityCheckSuccessfulFragment::class.java.simpleName,
                         containerViewId = R.id.flAbsaOnlineBankingToDevice,
                         allowStateLoss = false
@@ -151,7 +156,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
                     clearAliasIdAndCellphoneNumber()
                     inProgress(false)
                 }
-            })
+            }
         }
     }
 

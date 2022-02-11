@@ -68,34 +68,42 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
 
     private fun absaApiResultObservers() {
         with(mViewModel){
-            createAliasId.observe(viewLifecycleOwner, { aliasId ->
+            createAliasId.observe(viewLifecycleOwner) { aliasId ->
                 replaceFragment(
-                    fragment = AbsaSecurityCheckSuccessfulFragment.newInstance(aliasId,mCreditCardToken),
+                    fragment = AbsaSecurityCheckSuccessfulFragment.newInstance(
+                        aliasId,
+                        mCreditCardToken
+                    ),
                     tag = AbsaSecurityCheckSuccessfulFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
                     allowStateLoss = false
                 )
-            })
+            }
 
-            failureHandler.observe(viewLifecycleOwner, { failure ->
+            failureHandler.observe(viewLifecycleOwner) { failure ->
                 progressIndicator(View.GONE)
                 clearPin()
                 when (failure) {
                     is AbsaApiFailureHandler.NoInternetApiFailure -> ErrorHandlerView(activity).showToast()
-                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckContinuePolling -> {showCommonError()}
+                    is AbsaApiFailureHandler.FeatureValidateCardAndPin.InvalidValidateSureCheckContinuePolling -> {
+                        showCommonError()
+                    }
                     is AbsaApiFailureHandler.HttpException -> handleFatalError(failure)
                     else -> showCommonError()
                 }
-            })
+            }
 
-            validateSureCheckResponseProperty.observe(viewLifecycleOwner,{ validateSureCheckResponseProperty ->
-                when(validateSureCheckResponseProperty?.result?.lowercase()){
-                    "rejected" -> { validateSureCheckResponseProperty.let { if (it.otpRetriesLeft > 0) showWrongOTPMessage() else showCommonError() }
+            validateSureCheckResponseProperty.observe(viewLifecycleOwner) { validateSureCheckResponseProperty ->
+                when (validateSureCheckResponseProperty?.result?.lowercase()) {
+                    "rejected" -> {
+                        validateSureCheckResponseProperty.let { if (it.otpRetriesLeft > 0) showWrongOTPMessage() else showCommonError() }
                     }
-                    "processed" -> {fetchCreateAlias()}
+                    "processed" -> {
+                        fetchCreateAlias()
+                    }
                     else -> showCommonError()
                 }
-            })
+            }
         }
     }
 

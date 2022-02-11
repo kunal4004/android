@@ -92,6 +92,7 @@ import za.co.woolworths.financial.services.android.models.dto.linkdevice.ViewAll
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.models.repository.AppStateRepository;
 import za.co.woolworths.financial.services.android.ui.activities.CreditReportTUActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
@@ -119,6 +120,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SignOutFragment;
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants;
 import za.co.woolworths.financial.services.android.util.CurrencyFormatter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FirebaseAnalyticsUserProperty;
@@ -214,7 +216,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     private LinearLayout retryStoreCardLinearLayout;
     private LinearLayout retryCreditCardLinearLayout;
     private LinearLayout retryPersonalLoanLinearLayout;
-    public static ArrayList<UserDevice> deviceList;
     private NotificationBadge notificationBadge;
     private ImageView onlineIndicatorImageView;
     private ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement;
@@ -435,7 +436,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
                         @Override
                         public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
-                            deviceList = response.getUserDevices();
+                            new AppStateRepository().saveLinkedDevices(response.getUserDevices());
                         }
                     }, ViewAllLinkedDeviceResponse.class));
                 }
@@ -495,7 +496,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void initialize() {
         this.mAccountResponse = null;
-        this.deviceList = new ArrayList(0);
+        new AppStateRepository().saveLinkedDevices(new ArrayList(0));
         this.hideAllLayers();
         this.mAccountsHashMap.clear();
         this.unavailableAccounts.clear();
@@ -527,7 +528,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         super.onResume();
         Activity activity = getActivity();
         if (activity == null) return;
-        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
+        Utils.setScreenName( FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
         isActivityInForeground = true;
         if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
             messageCounterRequest();
@@ -1020,7 +1021,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             case R.id.rlMyPreferences:
                 Intent myPreferences = new Intent(getActivity(), MyPreferencesActivity.class);
                 myPreferences.putExtra(IS_NON_WFS_USER, unavailableAccounts != null && unavailableAccounts.size() == 3);
-                myPreferences.putExtra(MyPreferencesFragment.DEVICE_LIST, deviceList);
+                myPreferences.putExtra(MyPreferencesFragment.DEVICE_LIST, new AppStateRepository().getLinkedDevices());
                 activity.startActivityForResult(myPreferences, RESULT_CODE_DEVICE_LINKED);
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
@@ -1137,7 +1138,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 @Override
                 public void onSuccess(@org.jetbrains.annotations.Nullable ViewAllLinkedDeviceResponse response) {
                     if(response !=null && response.getUserDevices() != null ){
-                        deviceList = response.getUserDevices();
+                        new AppStateRepository().saveLinkedDevices(response.getUserDevices());
                     }
                 }}, ViewAllLinkedDeviceResponse.class)
             );
@@ -1146,10 +1147,13 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     public static boolean verifyAppInstanceId() {
         boolean isLinked = false;
-        for (UserDevice device : deviceList) {
-            if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
-                isLinked = true;
-                break;
+        UserDevice[] deviceList = new AppStateRepository().getLinkedDevices();
+        if (deviceList != null && deviceList.length > 0) {
+            for (UserDevice device : deviceList) {
+                if (Objects.equals(device.getAppInstanceId(), Utils.getUniqueDeviceID())) {
+                    isLinked = true;
+                    break;
+                }
             }
         }
         return !isLinked;
@@ -1682,7 +1686,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     public void showFeatureWalkthroughPrompts() {
-        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             isPromptsShown = true;
             showFeatureWalkthroughAccounts(unavailableAccounts);
         }
@@ -1746,18 +1750,20 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
                 if (activity == null || !isAdded() || getBottomNavigationActivity() == null) return;
                 FirebaseManager.Companion.setCrashlyticsString(getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
                 FragmentActivity fragmentActivity = getActivity();
-                if(fragmentActivity != null){
-                    getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.ACCOUNTS)
-                            .setTarget(target)
-                            .setTitle(R.string.tips_tricks_view_your_accounts)
-                            .setDescription(R.string.tips_tricks_desc_my_accounts)
-                            .setActionText(finalActionText)
-                            .setImage(R.drawable.tips_tricks_ic_my_accounts)
-                            .setAction(listener)
-                            .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                            .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
+                if (getBottomNavigationActivity() != null) {
+                    if (fragmentActivity != null) {
+                        getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(fragmentActivity, WMaterialShowcaseView.Feature.ACCOUNTS)
+                                .setTarget(target)
+                                .setTitle(R.string.tips_tricks_view_your_accounts)
+                                .setDescription(R.string.tips_tricks_desc_my_accounts)
+                                .setActionText(finalActionText)
+                                .setImage(R.drawable.tips_tricks_ic_my_accounts)
+                                .setAction(listener)
+                                .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                                .setMaskColour(ContextCompat.getColor(fragmentActivity, R.color.semi_transparent_black)).build();
+                    }
+                    getBottomNavigationActivity().walkThroughPromtView.show(activity);
                 }
-                getBottomNavigationActivity().walkThroughPromtView.show(activity);
             }
         }.execute();
 
@@ -1907,14 +1913,14 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         Account account = mAccountResponse.accountList.get(0);
         Intent intent = new Intent(getContext(), CreditCardDeliveryActivity.class);
         Bundle mBundle = new Bundle();
-        mBundle.putString("envelopeNumber", account.cards.get(0).envelopeNumber);
-        mBundle.putString("accountBinNumber", account.accountNumberBin);
-        mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse.getStatusResponse()));
-        mBundle.putString("productOfferingId", String.valueOf(account.productOfferingId));
+        mBundle.putString(BundleKeysConstants.ENVELOPE_NUMBER, account.cards.get(0).envelopeNumber);
+        mBundle.putString(BundleKeysConstants.ACCOUNTBI_NNUMBER, account.accountNumberBin);
+        mBundle.putParcelable(BundleKeysConstants.STATUS_RESPONSE, creditCardDeliveryStatusResponse.getStatusResponse());
+        mBundle.putString(BundleKeysConstants.PRODUCT_OFFERINGID, String.valueOf(account.productOfferingId));
         mBundle.putBoolean("setUpDeliveryNowClicked", true);
         if (applyNowState != null)
             mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
-        intent.putExtra("bundle", mBundle);
+        intent.putExtra(BundleKeysConstants.BUNDLE, mBundle);
         startActivity(intent);
     }
 
@@ -2043,7 +2049,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             }
             mSetUpDeliveryListner = (ApplyNowState) -> redirectToCreditCardActivity(creditCardDeliveryStatusResponse, applyNowState);
             Bundle bundle = new Bundle();
-            bundle.putString("accountBinNumber", accountNumberBin);
+            bundle.putString(BundleKeysConstants.ACCOUNTBI_NNUMBER, accountNumberBin);
             SetUpDeliveryNowDialog setUpDeliveryNowDialog = new SetUpDeliveryNowDialog(bundle, mSetUpDeliveryListner);
             Activity activity = getActivity();
             if (activity == null)

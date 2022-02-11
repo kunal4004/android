@@ -15,7 +15,7 @@ class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_get_temp_store_card_popup)
         Utils.updateStatusBarBackground(this)
-        Utils.setAsVirtualTemporaryStoreCardPopupShown(true)
+        Utils.updateUserVirtualTempCardState(true)
         actionBar()
 
         intent?.extras?.apply { mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL, "") }

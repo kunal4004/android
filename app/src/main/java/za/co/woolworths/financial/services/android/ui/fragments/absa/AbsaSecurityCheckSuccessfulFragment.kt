@@ -12,7 +12,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaFiveDig
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaFiveDigitCodeFragment.Companion.CREDIT_CARD_TOKEN
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.opt_in.otp.ProgressIndicator
 import za.co.woolworths.financial.services.android.util.AppConstant
-import java.util.concurrent.TimeUnit
 
 class AbsaSecurityCheckSuccessfulFragment : Fragment() {
 

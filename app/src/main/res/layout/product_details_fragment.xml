@@ -40,7 +40,7 @@
 
                 <include
                     android:id="@+id/vtoLayout"
-                    layout="@layout/vto_imageview_fragment"
+                    layout="@layout/vto_layout"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/vto_preview_size"
                     android:visibility="gone"
@@ -206,6 +206,7 @@
                     app:layout_constraintEnd_toEndOf="@id/right_guideline"
                     app:layout_constraintStart_toStartOf="@id/left_guideline"
                     app:layout_constraintTop_toBottomOf="@+id/onlinePromotionalTextView2" />
+
 
                 <include
                     android:id="@+id/freeGiftWithPurchaseLayout"
