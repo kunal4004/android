@@ -2393,4 +2393,14 @@
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
+
+    <!--  Geo Location -->
+    <string name="geoloc_delivery">Standard Delivery</string>
+    <string name="geoloc_confirm">CONFIRM</string>
+    <string name="geoloc_click_collect">Click &amp; Collect</string>
+    <string name="products_available_title">Products available: </string>
+    <string name="item_limit">Item limit: </string>
+    <string name="earliest_food_delivery_date"> Earliest Food Delivery Date: </string>
+    <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date: </string>
+    <string name="geoloc_ClickNCollectValue">28 Eastlake Isla... </string>
 </resources>
