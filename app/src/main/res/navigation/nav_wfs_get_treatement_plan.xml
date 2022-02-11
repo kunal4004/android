@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_wfs_get_treatement_plan"
+    app:startDestination="@id/getAPaymentPlanFragment">
+
+    <fragment
+        android:id="@+id/getAPaymentPlanFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.take_up_treatment_plan.GetAPaymentPlanFragment"
+        android:label="GetAPaymentPlanFragment"
+        android:layout="@layout/get_a_payment_plan_fragment" />
+</navigation>
