@@ -256,10 +256,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ProductDetails::class.java
             ) as ProductDetails
             subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
-            brandHeaderText = getString(STR_BRAND_HEADER)
-            bannerLabel = getString(ProductListingFragment.CHANEL_BANNER_LABEL)
-            bannerImage = getString(ProductListingFragment.CHANEL_BANNER_IMAGE)
-            brandHeaderText = getString(STR_BRAND_HEADER)
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
+            bannerLabel = getString(ProductListingFragment.CHANEL_BANNER_LABEL, AppConstant.EMPTY_STRING)
+            bannerImage = getString(ProductListingFragment.CHANEL_BANNER_IMAGE, AppConstant.EMPTY_STRING)
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
         }
@@ -295,9 +295,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgCloseVTO?.setOnClickListener(this)
         imgVTORefresh?.setOnClickListener(this)
         openCart?.setOnClickListener(this)
-        chanel_view?.chanel_openCart?.setOnClickListener(this)
+        brand_view?.brand_openCart?.setOnClickListener(this)
         backArrow?.setOnClickListener(this)
-        chanel_view?.chanel_backArrow?.setOnClickListener(this)
+        brand_view?.brand_backArrow?.setOnClickListener(this)
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
         imgVTOOpen?.setOnClickListener(this)
@@ -377,9 +377,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 requireActivity(),
                 false)
             R.id.openCart -> openCart()
-            R.id.chanel_openCart -> openCart()
+            R.id.brand_openCart -> openCart()
             R.id.backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
-            R.id.chanel_backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
+            R.id.brand_backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
             R.id.imgCloseVTO -> closeVto()
             R.id.imgVTORefresh -> clearEffect()
             R.id.retakeCamera -> reOpenCamera()
@@ -580,16 +580,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
 
             if (ChanelUtils.isCategoryPresentInConfig(it.brandText)) {
-                chanel_view?.visibility = View.VISIBLE
+                brand_view?.visibility = View.VISIBLE
                 backArrow?.visibility = View.GONE
                 openCart?.visibility = View.GONE
-                if (bannerImage == null || bannerImage?.isEmpty()== true) {
-                    chanel_view?.chanel_pdp_logo_header?.tv_logo_name?.text = bannerLabel
+                if (bannerImage == null || bannerImage?.isEmpty() == true) {
+                    brand_view?.brand_pdp_logo_header?.tv_logo_name?.text = bannerLabel
                 } else {
-                    setPicture(chanel_view?.chanel_pdp_img_banner, bannerImage)
+                    setPicture(brand_view?.brand_pdp_img_banner, bannerImage)
                 }
             } else {
-                chanel_view?.visibility  = View.GONE
+                brand_view?.visibility  = View.GONE
             }
 
             BaseProductUtils.displayPrice(

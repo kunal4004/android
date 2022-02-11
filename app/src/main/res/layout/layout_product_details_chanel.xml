@@ -8,7 +8,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/chanel_backArrow"
+        android:id="@+id/brand_backArrow"
         android:layout_width="@dimen/thirty_dp"
         android:layout_height="@dimen/thirty_dp"
         android:layout_gravity="start"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/chanel_openCart"
+        android:id="@+id/brand_openCart"
         android:layout_width="@dimen/thirty_dp"
         android:layout_height="@dimen/thirty_dp"
         android:layout_gravity="end"
@@ -34,14 +34,14 @@
         android:id="@+id/view_plp_seperator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chanel_backArrow"
+        app:layout_constraintTop_toBottomOf="@+id/brand_backArrow"
         layout="@layout/chanel_view_seperator_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/eight_dp"
         android:layout_marginTop="@dimen/eight_dp" />
 
     <include
-        android:id="@+id/chanel_pdp_logo_header"
+        android:id="@+id/brand_pdp_logo_header"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_plp_seperator"
@@ -50,10 +50,10 @@
         android:layout_height="wrap_content" />
 
     <ImageView
-        android:id="@+id/chanel_pdp_img_banner"
+        android:id="@+id/brand_pdp_img_banner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chanel_pdp_logo_header"
+        app:layout_constraintTop_toBottomOf="@+id/brand_pdp_logo_header"
         tools:srcCompat="@tools:sample/avatars"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
