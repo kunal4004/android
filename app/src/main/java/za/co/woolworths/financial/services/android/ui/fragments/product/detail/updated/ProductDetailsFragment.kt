@@ -576,7 +576,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             } else {
                 brand_view?.visibility  = View.GONE
-                chanel_view?.visibility  = View.GONE
                 backArrow?.visibility = View.VISIBLE
                 openCart?.visibility = View.VISIBLE
                 share?.visibility = View.VISIBLE
