@@ -50,12 +50,8 @@ public class ScreenManager {
             activity.overridePendingTransition(0, 0);
         }
     }
-    public static void presentLocationConfirmAddress(Activity activity) {
-        Intent intent = new Intent(activity, GeoLocation.class);
-        activity.startActivityForResult(intent, 0);
-        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        activity.finish();
-    }
+
+
     public static void presentCartSSOSignin(Activity activity) {
         Intent intent = new Intent(activity, SSOActivity.class);
         intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
