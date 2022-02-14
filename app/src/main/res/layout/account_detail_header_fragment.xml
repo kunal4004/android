@@ -7,25 +7,19 @@
     android:layout_height="wrap_content"
     android:background="@drawable/card_header_background">
 
-    <FrameLayout
-        android:id="@+id/myCardTextViewShimmerFrameLayout"
+    <TextView
+        android:id="@+id/myCardTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.1"
+        android:text="@string/my_card_title"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
-        app:layout_constraintTop_toTopOf="@+id/topGuide">
-
-        <TextView
-            android:id="@+id/myCardTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:letterSpacing="0.1"
-            android:text="@string/my_card_title"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            tools:ignore="UnusedAttribute" />
-    </FrameLayout>
+        app:layout_constraintTop_toTopOf="@+id/topGuide"
+        tools:ignore="UnusedAttribute" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/startGuide"
@@ -134,6 +128,7 @@
 
     </FrameLayout>
 
+
     <FrameLayout
         android:id="@+id/cardDetailImageShimmerFrameLayout"
         android:layout_width="0dp"
@@ -143,7 +138,7 @@
         android:transitionName="accountCardImageViewTransition"
         app:layout_constraintEnd_toStartOf="@+id/imageGuideLineEnd"
         app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
-        app:layout_constraintTop_toBottomOf="@+id/myCardTextViewShimmerFrameLayout">
+        app:layout_constraintTop_toBottomOf="@+id/myCardTextView">
 
         <ImageView
             android:id="@+id/cardDetailImageView"
@@ -155,6 +150,7 @@
             tools:ignore="ContentDescription" />
 
     </FrameLayout>
+
 
     <View
         android:id="@+id/bottomCardSpace"
@@ -178,8 +174,7 @@
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/cardDetailImageShimmerFrameLayout"
-        app:layout_constraintStart_toStartOf="@+id/imageGuideLine"
-        tools:text="Thuli Sandile" />
+        app:layout_constraintStart_toStartOf="@+id/imageGuideLine" />
 
     <View
         android:id="@+id/storeCardLoaderView"
@@ -255,6 +250,14 @@
         android:visibility="gone"
         app:constraint_referenced_ids="linkNewCardDividerView,includeLinkNewCard" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/storeCardDetailsGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:alpha="0.0"
+        app:constraint_referenced_ids="cardDetailImageShimmerFrameLayout,myCardTextView,tempFreezeTextViewShimmerFrameLayout" />
+
     <View
         android:id="@+id/linkNewCardDividerView"
         style="@style/horizontal_divider_how_to_pay"
@@ -282,13 +285,13 @@
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/storeCardDetailShimmer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/endGuide"
         app:layout_constraintStart_toStartOf="@+id/startGuide"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/cardDetailImageShimmerFrameLayout">
+        app:layout_constraintBottom_toTopOf="@+id/bottomCardSpace"
+        app:layout_constraintTop_toTopOf="parent">
 
         <include layout="@layout/account_activate_credit_card_plcae_holder_layout" />
     </com.facebook.shimmer.ShimmerFrameLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

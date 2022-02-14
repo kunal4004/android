@@ -208,9 +208,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
 
     override fun showStoreCardProgress() {
         manageCardGroup?.visibility = VISIBLE
-        showHideShimmerLayout(includeManageMyCardSkeleton, true,includeManageMyCardMainView, VISIBLE)
-        showHideShimmerLayout(storeCardDetailShimmer, true,cardDetailImageShimmerFrameLayout, VISIBLE)
-        showHideShimmerLayout(cliSkeleton, true,llIncreaseLimitContainer, VISIBLE)
+        showHideShimmerLayout(includeManageMyCardSkeleton, true,includeManageMyCardMainView)
+        storeCardDetailsGroup?.setAlphaForGroupdViews(0.0f)
+        showHideShimmerLayout(storeCardDetailShimmer, true)
+        showHideShimmerLayout(cliSkeleton, true,llIncreaseLimitContainer)
 
         manageLinkNewCardGroup?.visibility = GONE
         bottomView?.visibility = VISIBLE
@@ -221,16 +222,17 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
         cardImageRootView?.isEnabled = false
     }
 
-    fun showHideShimmerLayout(shimmerFrame: ShimmerFrameLayout?, state: Boolean,mainView:View? = null,visibility:Int? = null) {
-        if (visibility!=null){
-            shimmerFrame?.visibility = visibility
-            mainView?.visibility = if (visibility == GONE) VISIBLE else GONE
-        }
+    fun showHideShimmerLayout(shimmerFrame: ShimmerFrameLayout?, state: Boolean,mainView:View? = null) {
+
         if (state) {
+            mainView?.visibility = GONE
+            shimmerFrame?.visibility = VISIBLE
             val shimmer = Shimmer.AlphaHighlightBuilder().build()
             shimmerFrame?.setShimmer(shimmer)
             shimmerFrame?.startShimmer()
         } else {
+            shimmerFrame?.visibility = GONE
+            mainView?.visibility = VISIBLE
             shimmerFrame?.stopShimmer()
             shimmerFrame?.setShimmer(null)
             shimmerFrame?.invalidate()
@@ -241,9 +243,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
     override fun hideStoreCardProgress() {
         storeCardLoaderView?.visibility = GONE
         manageCardGroup?.visibility = VISIBLE
-        showHideShimmerLayout(includeManageMyCardSkeleton, false,includeManageMyCardMainView ,GONE)
-        showHideShimmerLayout(storeCardDetailShimmer, false,cardDetailImageShimmerFrameLayout, GONE)
-        showHideShimmerLayout(cliSkeleton, false,llIncreaseLimitContainer, GONE)
+        showHideShimmerLayout(includeManageMyCardSkeleton, false,includeManageMyCardMainView )
+        showHideShimmerLayout(storeCardDetailShimmer, false)
+        storeCardDetailsGroup?.setAlphaForGroupdViews(1.0f)
+        showHideShimmerLayout(cliSkeleton, false,llIncreaseLimitContainer)
 
         // Boolean check will enable clickable event only when text is "view card"
         includeManageMyCard?.isEnabled = true
@@ -461,7 +464,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
         relIncreaseMyLimit?.isEnabled = true
         progressCreditLimit?.visibility = GONE
         tvIncreaseLimit?.visibility = VISIBLE
-        showHideShimmerLayout(cliSkeleton, false,llIncreaseLimitContainer, GONE)
+        showHideShimmerLayout(cliSkeleton, false,llIncreaseLimitContainer)
 
     }
 
@@ -476,7 +479,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
                 PorterDuff.Mode.MULTIPLY
             )
         }else{
-            showHideShimmerLayout(cliSkeleton, true,llIncreaseLimitContainer, VISIBLE)
+            showHideShimmerLayout(cliSkeleton, true,llIncreaseLimitContainer)
         }
         tvApplyNowIncreaseLimit?.visibility = GONE
         tvIncreaseLimit?.visibility = VISIBLE
