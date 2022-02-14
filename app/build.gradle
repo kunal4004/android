@@ -80,6 +80,34 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
         }
+
+
+        //MARK - MS App Center specific build types
+        msAppCenterReleaseProduction {
+            lintOptions {
+                disable 'MissingTranslation'
+                checkReleaseBuilds false
+                abortOnError false
+            }
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
+        }
+
+        msAppCenterReleaseQa {
+            lintOptions {
+                disable 'MissingTranslation'
+                checkReleaseBuilds false
+                abortOnError false
+            }
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
+
+            applicationIdSuffix ".qa"
+            manifestPlaceholders = [appLabel: "Woolworths Q"]
+            manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
+        }
     }
 
     flavorDimensions 'provider', 'environment'
