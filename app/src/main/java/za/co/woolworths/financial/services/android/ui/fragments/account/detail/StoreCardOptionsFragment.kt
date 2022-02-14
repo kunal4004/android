@@ -47,7 +47,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         super.onViewCreated(view, savedInstanceState)
         cardDetailImageView?.setImageResource(R.drawable.w_store_card)
 
-        disableShimmer()
         autoConnectListener()
 
         if (mCardPresenterImpl?.isDebitOrderActive() == VISIBLE) {
@@ -389,9 +388,8 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
         mCardPresenterImpl?.apply {
             when (v?.id) {
                 R.id.includeManageMyCard, R.id.cardDetailImageView -> {
-                    if (cardDetailImageShimmerFrameLayout?.isShimmerStarted == true) return
+                    if (storeCardDetailShimmer?.isShimmerStarted == true) return
                     cancelRetrofitRequest(mOfferActiveCall)
-
                     when (manageMyCardTextView?.text?.toString()) {
                         bindString(R.string.replacement_card_label) -> {
                             KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.STORE_CARD, {
