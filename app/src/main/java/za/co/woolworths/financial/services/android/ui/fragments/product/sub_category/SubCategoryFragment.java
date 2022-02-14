@@ -18,9 +18,11 @@ import com.awfs.coordination.databinding.ExpandableSubCategoryFragmentBinding;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
@@ -188,8 +190,18 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 
     @Override
     public void onChildItemClicked(SubCategory subCategory) {
-        //Navigate to product grid
-        pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE, subCategory.categoryName, subCategory.dimValId, true));
+        // Navigate to product grid
+        // If while category drill down
+        // ... brand is present in MobileConfig send filter content as false
+        // ... brand is not present in MobileConfig send filter content as true
+        ArrayList<String> list = AppConfigSingleton.INSTANCE.getBrandLandingPage() != null ? AppConfigSingleton.INSTANCE.getBrandLandingPage().getCategoryName() : new ArrayList(0);
+        pushFragment(ProductListingFragment.Companion.newInstance(
+                ProductsRequestParams.SearchType.NAVIGATE,
+                subCategory.categoryName,
+                subCategory.dimValId,
+                true,
+                list.stream().noneMatch(s -> s.equalsIgnoreCase(subCategory.categoryName))
+        ));
     }
 
     @Override

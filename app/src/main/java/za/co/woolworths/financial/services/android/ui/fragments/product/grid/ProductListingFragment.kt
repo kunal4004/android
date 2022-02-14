@@ -1378,6 +1378,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         fun newInstance(
             searchType: ProductsRequestParams.SearchType?,
             searchTerm: String?,
+            sub_category_name: String?,
+            isBrandLandingPage: Boolean?,
+            filterContent: Boolean?
+        ) = ProductListingFragment().withArgs {
+            putString(SEARCH_TYPE, searchType?.name)
+            putString(SUB_CATEGORY_NAME, sub_category_name)
+            putString(SEARCH_TERM, searchTerm)
+            putBoolean(IS_BRAND_LANDING_PAGE, isBrandLandingPage ?: false)
+            putBoolean(FILTER_CONTENT, filterContent ?: false)
+        }
+
+        fun newInstance(
+            searchType: ProductsRequestParams.SearchType?,
+            searchTerm: String?,
             filterContent: Boolean?
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
