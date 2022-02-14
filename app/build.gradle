@@ -64,13 +64,13 @@ android {
     buildTypes {
         //MARK - Debug build types
         debug {
-            if (file("../secure.properties").exists()) {
-                file("../secure.properties")?.withInputStream { secureProps.load(it) }
-            }
-
-            if (file("../ProductionKeystore.properties").exists()) {
-                file("../ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
-            }
+//            if (file("../secure.properties").exists()) {
+//                file("../secure.properties")?.withInputStream { secureProps.load(it) }
+//            }
+//
+//            if (file("../ProductionKeystore.properties").exists()) {
+//                file("../ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
+//            }
 
             debuggable true
         }
@@ -102,13 +102,19 @@ android {
         qa {
             dimension 'environment'
 
-            signingConfigs {
-                woolworths {
-                    keyAlias 'woneapp_qa'
-                    keyPassword 'woneapp_qa'
-                    storeFile file('key/woneapp_qa-release-key.keystore')
-                    storePassword 'woneapp_qa'
+            if (file("../secure.properties").exists()) {
+                file("../secure.properties")?.withInputStream { secureProps.load(it) }
+
+                signingConfigs {
+                    woolworths {
+                        keyAlias 'woneapp_qa'
+                        keyPassword 'woneapp_qa'
+                        storeFile file('key/woneapp_qa-release-key.keystore')
+                        storePassword 'woneapp_qa'
+                    }
                 }
+
+                signingConfig signingConfigs.woolworths
             }
 
             applicationIdSuffix ".qa"
@@ -118,28 +124,30 @@ android {
             buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
             buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
             buildConfigField("String", "ENV", '"QA"')
-
-            signingConfig signingConfigs.woolworths
         }
 
         production {
 
             dimension 'environment'
 
-            signingConfigs {
-                woolworths {
-                    keyAlias productionKeystoreProperties['keyAlias']
-                    keyPassword productionKeystoreProperties['keyPassword']
-                    storeFile file(productionKeystoreProperties['storeFile'])
-                    storePassword productionKeystoreProperties['storePassword']
+            if (file("../ProductionKeystore.properties").exists()) {
+                file("../ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
+
+                signingConfigs {
+                    woolworths {
+                        keyAlias productionKeystoreProperties['keyAlias']
+                        keyPassword productionKeystoreProperties['keyPassword']
+                        storeFile file(productionKeystoreProperties['storeFile'])
+                        storePassword productionKeystoreProperties['storePassword']
+                    }
                 }
+
+                signingConfig signingConfigs.woolworths
             }
 
             buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
             buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
             buildConfigField("String", "ENV", '""')
-
-            signingConfig signingConfigs.woolworths
         }
     }
 
