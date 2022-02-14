@@ -152,6 +152,26 @@ android {
 
             buildConfigField("String", "ENV", '""')
         }
+
+        if(isAppCenter){
+            def assembleTaskAliasName="huaweiRelease" // whatever "build variant" you are able to select in the Build Configuration web GUI
+            def assembleTaskAliasVariant="huaweiQaRelease" // an actual flavor (can contain multiple dimensions)
+
+            applicationVariants.all { variant ->
+                if (assembleTaskAliasName != ""
+                        && assembleTaskAliasVariant != ""
+                        && variant.name == assembleTaskAliasVariant) {
+                    println("Creating alias $assembleTaskAliasName for $assembleTaskAliasVariant")
+                    def aliasTaskName = "assemble${assembleTaskAliasName.capitalize()}"
+                    def aliasTask = task(aliasTaskName, type: Copy) {
+                        from variant.outputs*.outputFile.toSet()
+                        into "build/outputs/apk/$assembleTaskAliasName"
+                    }
+                    variant.assemble.finalizedBy aliasTask
+                    aliasTask.dependsOn variant.assemble
+                }
+            }
+        }
     }
 
     packagingOptions {
