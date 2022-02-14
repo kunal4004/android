@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.chanel_header_banner_view.view.*
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
+import za.co.woolworths.financial.services.android.chanel.views.adapter.BrandLandingAdapter
 import za.co.woolworths.financial.services.android.chanel.views.adapter.ChanelHeaderBannerAdapter
+import za.co.woolworths.financial.services.android.util.AppConstant
 
 
 class ChanelHeaderBannerViewHolder(itemView: View, val parent: ViewGroup) :
@@ -22,11 +24,23 @@ class ChanelHeaderBannerViewHolder(itemView: View, val parent: ViewGroup) :
         context: Context?,
         chanelNavigationClickListener: ChanelNavigationClickListener
     ) {
+
+        var bannerLabel: String? = AppConstant.EMPTY_STRING;
+        var bannerImage: String? = AppConstant.EMPTY_STRING;
+
+        for (banner in list) {
+            if (banner?.name.equals(BrandLandingAdapter.LOGO, true)) {
+                bannerLabel = banner?.label
+                bannerImage = banner?.externalImageRefV2
+            }
+        }
         list[position]?.products?.let {
             val adapter =
                 ChanelHeaderBannerAdapter(
                     context,
-                    it, chanelNavigationClickListener
+                    it, chanelNavigationClickListener,
+                    bannerLabel,
+                    bannerImage
                 )
             val layoutManager = LinearLayoutManager(
                 context,

@@ -43,6 +43,9 @@ import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.low_stock_product_details.*
 import kotlinx.android.synthetic.main.low_stock_product_details.view.*
+import kotlinx.android.synthetic.main.chanel_logo_view.view.*
+import kotlinx.android.synthetic.main.item_found_layout.view.*
+import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
@@ -53,6 +56,7 @@ import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import kotlinx.android.synthetic.main.vto_layout.*
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
@@ -82,6 +86,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
@@ -114,6 +119,7 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
+import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import java.io.File
@@ -194,6 +200,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isPickedImageFromLiveCamera: Boolean = false
     private var takenOriginalPicture: Bitmap? = null
     private var isVtoSdkInitFail: Boolean = false
+    private var bannerLabel: String? = null
+    private var bannerImage: String? = null
 
     @OpenTermAndLighting
     @Inject
@@ -232,7 +240,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ProductDetails::class.java
             ) as ProductDetails
             subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
-            brandHeaderText = getString(STR_BRAND_HEADER)
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
+            bannerLabel = getString(ProductListingFragment.CHANEL_BANNER_LABEL, AppConstant.EMPTY_STRING)
+            bannerImage = getString(ProductListingFragment.CHANEL_BANNER_IMAGE, AppConstant.EMPTY_STRING)
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
         }
@@ -268,7 +279,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgCloseVTO?.setOnClickListener(this)
         imgVTORefresh?.setOnClickListener(this)
         openCart?.setOnClickListener(this)
+        brand_view?.brand_openCart?.setOnClickListener(this)
         backArrow?.setOnClickListener(this)
+        brand_view?.brand_backArrow?.setOnClickListener(this)
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
         imgVTOOpen?.setOnClickListener(this)
@@ -348,7 +361,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 requireActivity(),
                 false)
             R.id.openCart -> openCart()
+            R.id.brand_openCart -> openCart()
             R.id.backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
+            R.id.brand_backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
             R.id.imgCloseVTO -> closeVto()
             R.id.imgVTORefresh -> clearEffect()
             R.id.retakeCamera -> reOpenCamera()
@@ -538,7 +553,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetails?.let {
             productName?.text = it.productName
             if (!brandHeaderText.isNullOrEmpty()) {
-                rangeName.visibility = View.VISIBLE
+                rangeName?.visibility = View.VISIBLE
                 rangeName?.text = brandHeaderText
             }
             brandName?.apply {
@@ -546,6 +561,25 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     text = it.brandText
                     visibility = View.VISIBLE
                 }
+            }
+
+            if (ChanelUtils.isCategoryPresentInConfig(it.brandText)) {
+                brand_view?.visibility = View.VISIBLE
+                backArrow?.visibility = View.GONE
+                openCart?.visibility = View.GONE
+                share?.visibility = View.GONE
+                imgVTOOpen?.visibility = View.GONE
+                if (bannerImage == null || bannerImage?.isEmpty() == true) {
+                    brand_view?.brand_pdp_logo_header?.tv_logo_name?.text = bannerLabel
+                } else {
+                    setPicture(brand_view?.brand_pdp_img_banner, bannerImage)
+                }
+            } else {
+                brand_view?.visibility  = View.GONE
+                backArrow?.visibility = View.VISIBLE
+                openCart?.visibility = View.VISIBLE
+                share?.visibility = View.VISIBLE
+                imgVTOOpen?.visibility = View.VISIBLE
             }
 
             BaseProductUtils.displayPrice(
