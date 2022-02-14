@@ -96,6 +96,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection,
     IOnConfirmDeliveryLocationActionListener, ChanelNavigationClickListener {
 
+    private val CHANEL: String = "chanel"
+
     private var toolbarTitleText: String? = null
     private var menuActionSearch: MenuItem? = null
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
@@ -414,6 +416,18 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setTitle(null)
             setCancelable(true)
             show()
+        }
+    }
+
+    override fun openBrandLandingPage() {
+        (activity as? BottomNavigationActivity)?.apply {
+            pushFragment(
+                newInstance(
+                    ProductsRequestParams.SearchType.SEARCH,
+                    AppConstant.EMPTY_STRING,
+                    CHANEL
+                )
+            )
         }
     }
 

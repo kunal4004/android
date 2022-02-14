@@ -567,6 +567,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 brand_view?.visibility = View.VISIBLE
                 backArrow?.visibility = View.GONE
                 openCart?.visibility = View.GONE
+                share?.visibility = View.GONE
+                imgVTOOpen?.visibility = View.GONE
                 if (bannerImage == null || bannerImage?.isEmpty() == true) {
                     brand_view?.brand_pdp_logo_header?.tv_logo_name?.text = bannerLabel
                 } else {
@@ -574,6 +576,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             } else {
                 brand_view?.visibility  = View.GONE
+                backArrow?.visibility = View.VISIBLE
+                openCart?.visibility = View.VISIBLE
+                share?.visibility = View.VISIBLE
+                imgVTOOpen?.visibility = View.VISIBLE
             }
 
             BaseProductUtils.displayPrice(
