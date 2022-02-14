@@ -120,6 +120,7 @@ android {
 
     flavorDimensions 'provider', 'environment'
     productFlavors {
+        // MARK - Providers
         google {
             dimension 'provider'
             resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Google Maps API Key")
@@ -129,11 +130,15 @@ android {
             resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
         }
 
+        // MARK - Environments
         qa {
             dimension 'environment'
 
             if (file("../secure.properties").exists()) {
                 file("../secure.properties")?.withInputStream { secureProps.load(it) }
+
+                buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
 
                 signingConfigs {
                     woolworths {
@@ -151,17 +156,16 @@ android {
             manifestPlaceholders = [appLabel: "Woolworths Q"]
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
 
-            buildConfigField("String", "HOST", '"' + secureProps['URL_QA_' + apiKey] + '"')
-            buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
             buildConfigField("String", "ENV", '"QA"')
         }
-
         production {
-
             dimension 'environment'
 
             if (file("../secure.properties").exists()) {
                 file("../secure.properties")?.withInputStream { secureProps.load(it) }
+
+                buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
+                buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
             }
 
             if (file("../ProductionKeystore.properties").exists()) {
@@ -179,31 +183,9 @@ android {
                 signingConfig signingConfigs.woolworths
             }
 
-            buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
-            buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
             buildConfigField("String", "ENV", '""')
         }
     }
-
-//    if(isAppCenter){
-//        def assembleTaskAliasName="huaweiQaRelease" // whatever "build variant" you are able to select in the Build Configuration web GUI
-//        def assembleTaskAliasVariant="huaweiQaRelease" // an actual flavor (can contain multiple dimensions)
-//
-//        applicationVariants.all { variant ->
-//            if (assembleTaskAliasName != ""
-//                    && assembleTaskAliasVariant != ""
-//                    && variant.name == assembleTaskAliasVariant) {
-//                println("Creating alias $assembleTaskAliasName for $assembleTaskAliasVariant")
-//                def aliasTaskName = "assemble${assembleTaskAliasName.capitalize()}"
-//                def aliasTask = task(aliasTaskName, type: Copy) {
-//                    from variant.outputs*.outputFile.toSet()
-//                    into "build/outputs/apk/$assembleTaskAliasName"
-//                }
-//                variant.assemble.finalizedBy aliasTask
-//                aliasTask.dependsOn variant.assemble
-//            }
-//        }
-//    }
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
