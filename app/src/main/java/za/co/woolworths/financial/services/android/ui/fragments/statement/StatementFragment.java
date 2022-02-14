@@ -219,7 +219,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         }
     }
 
-    private void viewPdfStatement(){
+    private void viewPdfStatement() {
         showViewProgress();
         final FragmentActivity activity = getActivity();
         if (activity == null || !isAdded()) return;
@@ -227,10 +227,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         mGetPdfFile.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    if (getActivity() != null) {
-                        loadSuccess();
-                        hideViewProgress();
+                if (getActivity() != null) {
+                    if (response.isSuccessful()) {
                         if (response.code() == 200) {
                             try {
                                 if (response.body() != null) {
@@ -245,9 +243,19 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                 FirebaseManager.Companion.logException(ex);
                             }
                         }
+
+                    } else {
+                        if(response.errorBody() != null){
+                            FirebaseManager.Companion.setCrashlyticsString ("viewPdfStatement - 500 ResponseCode with errorBody ",response.errorBody().source().toString());
+                            FirebaseManager.Companion.logException(response.errorBody());
+                        }
+                        Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, activity.getString(R.string.account_statement_error));
                     }
                 }
+                loadSuccess();
+                hideViewProgress();
             }
+
 
             @Override
             public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
@@ -398,11 +406,16 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             KotlinUtils.Companion.linkDeviceIfNecessary(
                     getActivity(),
                     applyNowState,
-                    () -> { VIEW_STATEMENT_DETAIL = true; return null; },
-                    () -> { viewPdfStatement(); return null; }
+                    () -> {
+                        VIEW_STATEMENT_DETAIL = true;
+                        return null;
+                    },
+                    () -> {
+                        viewPdfStatement();
+                        return null;
+                    }
             );
-        }
-        else {
+        } else {
             viewPdfStatement();
         }
     }
@@ -450,7 +463,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 ((StatementActivity) activity).setTitle(getString(R.string.statement));
             }
         }
-        if(SHOW_VIEW_STATEMENT_SCREEN) {
+        if (SHOW_VIEW_STATEMENT_SCREEN) {
             SHOW_VIEW_STATEMENT_SCREEN = false;
             viewPdfStatement();
         } else if (SEND_STATEMENT_SCREEN) {
@@ -515,7 +528,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             vocTriggerEvent = VocTriggerEvent.CHAT_CC_STATEMENT;
         }
 
-        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement, notificationBadge,onlineIndicatorImageView, vocTriggerEvent);
+        ChatFloatingActionButtonBubbleView inAppChatTipAcknowledgement = new ChatFloatingActionButtonBubbleView((StatementActivity) activity, new ChatBubbleVisibility(accountList, activity), chatWithAgentFloatingButton, account.first, rclEStatement, notificationBadge, onlineIndicatorImageView, vocTriggerEvent);
         inAppChatTipAcknowledgement.build();
     }
 }

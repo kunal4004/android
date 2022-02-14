@@ -6,8 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import java.io.Serializable
 
 interface IAccountSignedInContract {
@@ -17,11 +19,14 @@ interface IAccountSignedInContract {
         fun showAccountInArrears(account: Account)
         fun hideAccountInArrears(account: Account)
         fun showAccountHelp(informationModelAccount: MutableList<AccountHelpInformation>)
-        fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean)
+        fun removeBlocksWhenChargedOff()
         fun removeBlocksOnCollectionCustomer()
-        fun showViewTreatmentPlan(viewPaymentOptions: Boolean)
+        fun showViewTreatmentPlan(state: ApplyNowState, eligibilityPlan: EligibilityPlan?)
         fun bottomSheetIsExpanded(): Boolean
         fun chatToCollectionAgent(applyNowState: ApplyNowState, accountList: List<Account>? = null)
+        fun showPlanButton(state: ApplyNowState, eligibilityPlan: EligibilityPlan?)
+        fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean)
+        fun showViewTreatmentPlan(viewPaymentOptions: Boolean)
     }
 
     interface MyAccountPresenter {
@@ -29,10 +34,13 @@ interface IAccountSignedInContract {
         fun getAccountBundle(bundle: Bundle?): Serializable?
         fun onDestroy()
         fun getAppCompatActivity(): AppCompatActivity?
-        fun setAvailableFundBundleInfo(navDetailController: NavController?)
         fun getMyAccountCardInfo(): Pair<ApplyNowState, Account>?
         fun getToolbarTitle(state: ApplyNowState): String?
-        fun showProductOfferOutstanding(state: ApplyNowState)
+        fun showProductOfferOutstanding(
+            state: ApplyNowState,
+            myAccountsViewModel: MyAccountsRemoteApiViewModel,
+            showPopupIfNeeded: Boolean
+        )
         fun setAccountCardDetailInfo(navDetailController: NavController?)
         fun setAccountSixMonthInArrears(navDetailController: NavController?)
         fun getSixMonthOutstandingTitleAndCardResource(): Pair<Int, Int>
@@ -44,6 +52,10 @@ interface IAccountSignedInContract {
         fun getDeepLinkData(): JsonObject?
         fun deleteDeepLinkData()
         fun isProductInGoodStanding():Boolean
+        fun setAvailableFundBundleInfo(
+            navDetailController: NavController?,
+            myAccountsViewModel: MyAccountsRemoteApiViewModel
+        )
     }
 
     interface MyAccountModel {

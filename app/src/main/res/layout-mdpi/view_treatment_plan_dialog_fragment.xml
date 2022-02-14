@@ -61,7 +61,7 @@
         app:layout_constraintTop_toBottomOf="@+id/viewTreatmentPlanTitleTextView" />
 
     <Button
-        android:id="@+id/viewTreatmentPlanButton"
+        android:id="@+id/mainButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
@@ -88,7 +88,7 @@
         android:background="@color/grey_90_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewTreatmentPlanButton" />
+        app:layout_constraintTop_toBottomOf="@+id/mainButton" />
 
 
     <Button
@@ -98,10 +98,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:background="@color/white"
         android:fontFamily="@font/futura_medium_ttf"
         android:letterSpacing="0.1"
-        android:text="@string/make_payment_now_button_label"
+        android:text="@string/make_payment_button_label"
         android:textAllCaps="true"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="@dimen/twelve_sp"
@@ -118,10 +117,29 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_four_dp"
-        android:background="@color/white"
         android:fontFamily="@font/futura_medium_ttf"
         android:letterSpacing="0.1"
         android:text="@string/view_payment_options_button_label"
+        android:textAllCaps="true"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="@dimen/twelve_sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewTreatmentPlanDivider"
+        tools:ignore="UnusedAttribute" />
+
+
+    <Button
+        android:id="@+id/cannotAffordPaymentButton"
+        style="@style/whiteButtonBackgroundStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:letterSpacing="0.1"
+        android:text="@string/cannot_afford_payment_button_label"
         android:textAllCaps="true"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="@dimen/twelve_sp"

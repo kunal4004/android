@@ -83,6 +83,10 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
             override fun onSuccess(shoppingCartResponse: ShoppingCartResponse?) {
                 onItemRemoved(commerceId)
             }
+
+            override fun onFailure(error: Throwable?) {
+                onItemRemovedFailed(commerceId)
+            }
         }, ShoppingCartResponse::class.java))
     }
 
@@ -91,6 +95,17 @@ class RemoveProductsFromCartDialogFragment : WBottomSheetDialogFragment() {
 
         if (commerceItems?.filter { commerceItem -> !commerceItem.isItemRemoved }.isNullOrEmpty()) {
             hideRemoveItemsProgressBar()
+            isItemsRemoved = true
+            dismissAllowingStateLoss()
+        }
+    }
+
+    private fun onItemRemovedFailed(commerceId: String) {
+        commerceItems?.find { it.commerceItemInfo.commerceId == commerceId }?.isItemRemoved = false
+
+        if (commerceItems?.filter { commerceItem -> !commerceItem.isItemRemoved }.isNullOrEmpty()) {
+            hideRemoveItemsProgressBar()
+            // True because we need to reload items in cart those are removed even if the call fails.
             isItemsRemoved = true
             dismissAllowingStateLoss()
         }

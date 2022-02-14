@@ -333,6 +333,14 @@ open class FirebaseManagerAnalyticsProperties {
         const val VIEW_PAYMENT_PLAN_STORE_CARD_ACTION  = "Store Card landing - Arrears popup - View Treatment plan"
         const val VIEW_PAYMENT_PLAN_CREDIT_CARD_ACTION  = "Credit Card landing - Arrears popup - View Treatment plan"
 
+        //take up treatment plan
+        const val TAKE_UP_TREATMENT_PLAN_PL = "pl_takeupplan"
+        const val TAKE_UP_TREATMENT_PLAN_SC = "sc_takeupplan"
+        const val TAKE_UP_TREATMENT_PLAN_CC = "cc_takeupplan"
+        const val TAKE_UP_TREATMENT_PLAN_PL_ACTION = "Personal Loan landing - Arrears popup - SetupPlan"
+        const val TAKE_UP_TREATMENT_PLAN_SC_ACTION  = "Store Card landing - Arrears popup - SetupPlan"
+        const val TAKE_UP_TREATMENT_PLAN_CC_ACTION  = "Credit Card landing - Arrears popup - SetupPlan"
+
         // Voice of Customer
         const val VOC_SKIP = "voc_skip"
         const val VOC_SUBMIT = "voc_submit"
@@ -590,6 +598,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_VOUCHERS_BARCODE: String = "WRewards Vouchers Barcode"
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
+            const val SSO_FORGOT_PASSWORD: String = "SSO Forgot Password"
         }
     }
 

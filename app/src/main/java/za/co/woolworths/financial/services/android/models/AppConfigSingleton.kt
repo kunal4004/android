@@ -71,6 +71,7 @@ object AppConfigSingleton {
     var brandLandingPage: BrandLandingPage? = null
     var logPublicKey: String? = null
     var authenticVersionStamp: String? = ""
+    var lowStock: ConfigLowStock? = null
 
     init {
         AppConfigRepository().getAppConfigData()?.let { appConfig ->
@@ -202,6 +203,13 @@ object AppConfigSingleton {
             appConfig.virtualTryOn?.apply {
                 minimumSupportedAppBuildNumber.let { isEnabled = Utils.isFeatureEnabled(it) }
                 virtualTryOn = this
+            }
+
+            appConfig.lowStockIndicator?.apply {
+                minimumSupportedAppBuildNumber.let {
+                    isEnabled = Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)
+                    lowStock = this
+                }
             }
 
             appConfig.brandLandingPage?.apply {

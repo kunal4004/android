@@ -41,6 +41,11 @@ import com.google.gson.reflect.TypeToken
 import com.perfectcorp.perfectlib.CameraView
 import com.perfectcorp.perfectlib.MakeupCam
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.low_stock_product_details.*
+import kotlinx.android.synthetic.main.low_stock_product_details.view.*
+import kotlinx.android.synthetic.main.chanel_logo_view.view.*
+import kotlinx.android.synthetic.main.item_found_layout.view.*
+import kotlinx.android.synthetic.main.layout_product_details_chanel.view.*
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_delivery_location_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
@@ -51,6 +56,7 @@ import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.promotional_image.view.*
 import kotlinx.android.synthetic.main.vto_layout.*
 import kotlinx.coroutines.*
+import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
@@ -80,6 +86,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
@@ -90,10 +97,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenSelectOption
 import za.co.woolworths.financial.services.android.ui.vto.di.qualifier.OpenTermAndLighting
-import za.co.woolworths.financial.services.android.ui.vto.presentation.DataPrefViewModel
-import za.co.woolworths.financial.services.android.ui.vto.presentation.LiveCameraViewModel
-import za.co.woolworths.financial.services.android.ui.vto.presentation.PermissionViewModel
-import za.co.woolworths.financial.services.android.ui.vto.presentation.VtoApplyEffectOnImageViewModel
+import za.co.woolworths.financial.services.android.ui.vto.presentation.*
 import za.co.woolworths.financial.services.android.ui.vto.ui.PermissionAction
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.ui.bottomsheet.VtoBottomSheetDialog
@@ -115,25 +119,11 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
+import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.MutableList
-import kotlin.collections.any
-import kotlin.collections.arrayListOf
-import kotlin.collections.forEach
-import kotlin.collections.forEachIndexed
-import kotlin.collections.get
-import kotlin.collections.hashMapOf
-import kotlin.collections.isEmpty
-import kotlin.collections.isNotEmpty
-import kotlin.collections.isNullOrEmpty
-import kotlin.collections.joinToString
 import kotlin.collections.set
 
 @AndroidEntryPoint
@@ -210,6 +200,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var isPickedImageFromLiveCamera: Boolean = false
     private var takenOriginalPicture: Bitmap? = null
     private var isVtoSdkInitFail: Boolean = false
+    private var bannerLabel: String? = null
+    private var bannerImage: String? = null
 
     @OpenTermAndLighting
     @Inject
@@ -248,7 +240,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 ProductDetails::class.java
             ) as ProductDetails
             subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
-            brandHeaderText = getString(STR_BRAND_HEADER)
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
+            bannerLabel = getString(ProductListingFragment.CHANEL_BANNER_LABEL, AppConstant.EMPTY_STRING)
+            bannerImage = getString(ProductListingFragment.CHANEL_BANNER_IMAGE, AppConstant.EMPTY_STRING)
+            brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
         }
@@ -284,7 +279,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         imgCloseVTO?.setOnClickListener(this)
         imgVTORefresh?.setOnClickListener(this)
         openCart?.setOnClickListener(this)
+        brand_view?.brand_openCart?.setOnClickListener(this)
         backArrow?.setOnClickListener(this)
+        brand_view?.brand_backArrow?.setOnClickListener(this)
         share?.setOnClickListener(this)
         sizeGuide?.setOnClickListener(this)
         imgVTOOpen?.setOnClickListener(this)
@@ -364,7 +361,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 requireActivity(),
                 false)
             R.id.openCart -> openCart()
+            R.id.brand_openCart -> openCart()
             R.id.backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
+            R.id.brand_backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
             R.id.imgCloseVTO -> closeVto()
             R.id.imgVTORefresh -> clearEffect()
             R.id.retakeCamera -> reOpenCamera()
@@ -554,7 +553,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         productDetails?.let {
             productName?.text = it.productName
             if (!brandHeaderText.isNullOrEmpty()) {
-                rangeName.visibility = View.VISIBLE
+                rangeName?.visibility = View.VISIBLE
                 rangeName?.text = brandHeaderText
             }
             brandName?.apply {
@@ -562,6 +561,19 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     text = it.brandText
                     visibility = View.VISIBLE
                 }
+            }
+
+            if (ChanelUtils.isCategoryPresentInConfig(it.brandText)) {
+                brand_view?.visibility = View.VISIBLE
+                backArrow?.visibility = View.GONE
+                openCart?.visibility = View.GONE
+                if (bannerImage == null || bannerImage?.isEmpty() == true) {
+                    brand_view?.brand_pdp_logo_header?.tv_logo_name?.text = bannerLabel
+                } else {
+                    setPicture(brand_view?.brand_pdp_img_banner, bannerImage)
+                }
+            } else {
+                brand_view?.visibility  = View.GONE
             }
 
             BaseProductUtils.displayPrice(
@@ -874,7 +886,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSize() {
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         productSizeSelectorAdapter =
-            ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this).apply {
+            ProductSizeSelectorAdapter(requireActivity(),otherSKUsByGroupKey[getSelectedGroupKey()]!!,
+                productDetails?.lowStockIndicator ?: 0, this).apply {
                 sizeSelectorRecycleView.adapter = this
             }
 
@@ -1033,7 +1046,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onSizeSelection(selectedSku: OtherSkus) {
         setSelectedSku(selectedSku)
-        showSelectedSize()
+        showSelectedSize(selectedSku)
         updateUIForSelectedSKU(getSelectedSku())
     }
 
@@ -1051,6 +1064,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
         if (!isFeature && isVtoImage) {
             applyVtoEffectOnImage()
+        }
+        if (productDetails?.lowStockIndicator ?: 0 > getSelectedSku()?.quantity ?: 0
+            && !hasSize && getSelectedSku()?.quantity!! > 0 && AppConfigSingleton.lowStock?.isEnabled == true
+        ) {
+            showLowStockForSelectedColor()
+            colorPlaceholder.text = ""
+        } else {
+            hideLowStockFromSelectedColor()
+
         }
     }
 
@@ -1160,7 +1182,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     updateUIForSelectedSKU(getSelectedSku())
                 }
             }
-            showSelectedSize()
+            showSelectedSize(selectedSku)
 
         }
 
@@ -1197,10 +1219,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             }
         }
 
-
         toCartAndFindInStoreLayout?.visibility = View.VISIBLE
         groupAddToCartAction?.visibility = View.GONE
         findInStoreAction?.visibility = View.VISIBLE
+        hideLowStockFromSelectedColor()
+        hideLowStockForSize()
     }
 
     private fun showAddToCart() {
@@ -1864,19 +1887,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSelectedColor() {
         activity?.apply {
             getSelectedGroupKey()?.let {
-                colorPlaceholder.text = getString(R.string.selected_colour)
                 colorPlaceholder.setTextColor(ContextCompat.getColor(this, R.color.black))
-                selectedColor.text = " - $it"
+                selectedColor.text = "  -  $it"
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showSelectedSize() {
+    private fun showSelectedSize(selectedSku: OtherSkus?) {
         getSelectedSku().let {
-            selectedSizePlaceholder.text =
-                getString(if (it != null) R.string.product_placeholder_selected_size else R.string.product_placeholder_select_size)
-            selectedSize.text = if (it != null) " - ${it.size}" else ""
+            if (productDetails?.lowStockIndicator ?: 0 > selectedSku?.quantity ?: 0
+                && selectedSku?.quantity!! > 0 && AppConfigSingleton.lowStock?.isEnabled == true
+            ) {
+                showLowStockForSelectedSize()
+                selectedSizePlaceholder.text = ""
+            } else {
+                hideLowStockForSize()
+            }
+            selectedSize.text = if (it != null) "  -  ${it.size}" else ""
             activity?.apply {
                 if (it != null)
                     selectedSizePlaceholder.setTextColor(
@@ -2897,5 +2925,115 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         FirebaseManager.logException(e)
     }
 
+    /**
+     * Show low stock for selected size
+     * This method used for show low stock indicator when user select size or product have single size
+     * lowStockThreshold > quantity
+     */
+    private fun showLowStockForSelectedSize() {
+        if (hasColor) {
+            hideLowStockFromSelectedColor()
+        }
+        (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.startToEnd = R.id.layoutLowStockIndicator
+            it.topToTop = R.id.layoutLowStockIndicator
+            it.bottomToBottom = R.id.layoutLowStockIndicator
+            layoutLowStockIndicator?.visibility = View.VISIBLE
+            selectedSizePlaceholder?.visibility = View.GONE
+            selectedSize?.layoutParams = it
+            layoutLowStockIndicator?.txtLowStockIndicator?.text = AppConfigSingleton.lowStock?.lowStockCopy
+        }
+        (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.layoutLowStockIndicator
+            sizeSelectorRecycleView?.layoutParams = it
+        }
+        (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToTop = R.id.layoutLowStockIndicator
+            it.bottomToBottom = R.id.layoutLowStockIndicator
+            sizeGuide?.layoutParams = it
+        }
+    }
+
+    /**
+     *  This method used to Hide low stock indicator when
+     *  use selected size have not low stock
+     *  not have lowStockThreshold > quantity
+     */
+    private fun hideLowStockForSize(){
+        selectedSizePlaceholder.text =
+            getString(R.string.product_placeholder_selected_size)
+        (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.startToEnd = R.id.selectedSizePlaceholder
+            it.topToTop = R.id.selectedSizePlaceholder
+            it.bottomToBottom = R.id.selectedSizePlaceholder
+            selectedSize?.layoutParams = it
+            layoutLowStockIndicator?.visibility = View.GONE
+            selectedSizePlaceholder?.visibility = View.VISIBLE
+        }
+        (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.selectedSizePlaceholder
+            sizeSelectorRecycleView?.layoutParams = it
+        }
+        (sizeGuide?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToTop = R.id.selectedSizePlaceholder
+            it.bottomToBottom = R.id.selectedSizePlaceholder
+            sizeGuide?.layoutParams = it
+        }
+
+    }
+
+
+    /**
+     * Show low stock for selected color
+     * This method used for show low stock when selected color have
+     * lowStockThreshold > quantity
+     */
+    private fun showLowStockForSelectedColor() {
+        (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.startToEnd = R.id.layoutLowStockColor
+            it.topToTop = R.id.layoutLowStockColor
+            it.bottomToBottom = R.id.layoutLowStockColor
+            selectedColor?.layoutParams = it
+            layoutLowStockColor?.visibility = View.VISIBLE
+            txtLowStockIndicator?.text = AppConfigSingleton.lowStock?.lowStockCopy
+            colorPlaceholder?.visibility = View.GONE
+        }
+        (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.layoutLowStockColor
+            colorSelectorRecycleView?.layoutParams = it
+        }
+        (moreColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToTop = R.id.layoutLowStockColor
+            it.bottomToBottom = R.id.layoutLowStockColor
+            moreColor?.layoutParams = it
+        }
+    }
+
+    /**
+     * Hide low stock from selected color
+     * This method used hide low stock when selected color have not
+     * not have lowStockThreshold > quantity
+     */
+    private fun hideLowStockFromSelectedColor(){
+        colorPlaceholder.text = getString(R.string.selected_colour)
+        (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.startToEnd = R.id.colorPlaceholder
+            it.topToTop = R.id.colorPlaceholder
+            it.bottomToBottom = R.id.colorPlaceholder
+            selectedColor?.layoutParams = it
+            layoutLowStockColor?.visibility = View.GONE
+            colorPlaceholder?.visibility = View.VISIBLE
+        }
+        (colorSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToBottom = R.id.selectedColor
+            colorSelectorRecycleView?.layoutParams = it
+        }
+        (moreColor?.layoutParams as ConstraintLayout.LayoutParams).let {
+            it.topToTop = R.id.selectedColor
+            it.bottomToBottom = R.id.selectedColor
+            moreColor?.layoutParams = it
+        }
+
+    }
 }
 

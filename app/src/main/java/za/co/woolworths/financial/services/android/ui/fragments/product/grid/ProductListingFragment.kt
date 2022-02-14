@@ -936,13 +936,19 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         (activity as? BottomNavigationActivity)?.apply {
             val productDetailsFragmentNew = newInstance()
             productDetailsFragmentNew.arguments = bundleOf(
-                ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList),
+                ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList, mBannerLabel , mBannerImage),
                 ProductDetailsFragment.STR_PRODUCT_CATEGORY to title
             )
             Utils.updateStatusBarBackground(this)
             pushFragment(productDetailsFragmentNew)
         }
     }
+
+     fun openProductDetailView(productList: ProductList, bannerLabel:String?, bannerImage: String?) {
+        val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList, bannerLabel, bannerImage)
+    }
+
 
     override fun queryInventoryForStore(
         fulfilmentTypeId: String,
@@ -1331,8 +1337,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         private const val IS_BRAND_LANDING_PAGE = "IS_BRAND_LANDING_PAGE"
         private const val FILTER_CONTENT = "FILTER_CONTENT"
         private const val SORT_OPTION = "SORT_OPTION"
-        private const val CHANEL_BANNER_IMAGE = "BANNER_IMAGE"
-        private const val CHANEL_BANNER_LABEL = "BANNER_LABEL"
+         const val CHANEL_BANNER_IMAGE = "BANNER_IMAGE"
+         const val CHANEL_BANNER_LABEL = "BANNER_LABEL"
         private const val CHAEL_IS_COMING_FROM_BLP = "IS_CMING_FROM_BLP"
 
         fun newInstance(
@@ -1506,9 +1512,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun openProductDetailsView(productList: ProductList?) {
+    override fun openProductDetailsView(productList: ProductList?, bannerLabel:String? , bannerImage: String?) {
         // From Chanel Horizontal Category click
-        productList?.let { openProductDetailView(it) }
+        productList?.let { openProductDetailView(it, bannerLabel, bannerImage) }
     }
 
     override fun clickCategoryListViewCell(
