@@ -152,22 +152,21 @@ android {
 
             buildConfigField("String", "ENV", '""')
         }
+    }
 
-        if(isAppCenter){
-//            def assembleTaskAliasName = "huaweiRelease" // whatever "build variant" you are able to select in the Build Configuration web GUI
-            def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR // an actual flavor (can contain multiple dimensions)
+    if(isAppCenter){
+        def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR // an actual flavor (can contain multiple dimensions)
 
-            applicationVariants.all { variant ->
-                if (variant.name == "qaRelease" || variant.name == "productionRelease" ) {
-                    println("Creating alias $variant.name for $assembleTaskAliasVariant")
-                    def aliasTaskName = "assemble${variant.name.capitalize()}"
-                    def aliasTask = task(aliasTaskName, type: Copy) {
-                        from variant.outputs*.outputFile.toSet()
-                        into "build/outputs/apk/$variant.name"
-                    }
-                    variant.assemble.finalizedBy aliasTask
-                    aliasTask.dependsOn variant.assemble
+        applicationVariants.all { variant ->
+            if (variant.name == "qaRelease" || variant.name == "productionRelease" ) {
+                println("Creating alias $variant.name for $assembleTaskAliasVariant")
+                def aliasTaskName = "assemble${variant.name.capitalize()}"
+                def aliasTask = task(aliasTaskName, type: Copy) {
+                    from variant.outputs*.outputFile.toSet()
+                    into "build/outputs/apk/$variant.name"
                 }
+                variant.assemble.finalizedBy aliasTask
+                aliasTask.dependsOn variant.assemble
             }
         }
     }
