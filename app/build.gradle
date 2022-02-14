@@ -165,6 +165,8 @@ android {
 
         appCenterQa{
 
+            dimension 'default'
+
 
             applicationIdSuffix ".qa"
             manifestPlaceholders = [appLabel: "Woolworths Q"]
