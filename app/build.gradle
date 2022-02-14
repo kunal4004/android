@@ -40,13 +40,6 @@ android {
     }
 
     def apiKey = "ANDROID_V" + major + "." + minor
-    def secureProps = new Properties()
-    if (file("../secure.properties").exists()) {
-        file("../secure.properties")?.withInputStream { secureProps.load(it) }
-    }
-
-    def productionKeystoreProperties = new Properties()
-    file("ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
 
     defaultConfig {
         applicationId "com.awfs.coordination"
@@ -65,26 +58,21 @@ android {
         }
     }
 
-    signingConfigs {
-        woolworths {
-            keyAlias productionKeystoreProperties['keyAlias']
-            keyPassword productionKeystoreProperties['keyPassword']
-            storeFile file(productionKeystoreProperties['storeFile'])
-            storePassword productionKeystoreProperties['storePassword']
-        }
-        woneappQa {
-            keyAlias 'woneapp_qa'
-            keyPassword 'woneapp_qa'
-            storeFile file('key/woneapp_qa-release-key.keystore')
-            storePassword 'woneapp_qa'
-        }
-    }
+    def secureProps = new Properties()
+    def productionKeystoreProperties = new Properties()
 
     buildTypes {
         //MARK - Debug build types
         debug {
+            if (file("../secure.properties").exists()) {
+                file("../secure.properties")?.withInputStream { secureProps.load(it) }
+            }
+
+            if (file("../ProductionKeystore.properties").exists()) {
+                file("../ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
+            }
+
             debuggable true
-            signingConfig null
         }
 
         //MARK - Release build types
@@ -104,14 +92,24 @@ android {
     productFlavors {
         google {
             dimension 'provider'
-            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Google Maps API Key")
         }
         huawei {
             dimension 'provider'
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "Huawei MapKit API Key")
         }
 
         qa {
             dimension 'environment'
+
+            signingConfigs {
+                woolworths {
+                    keyAlias 'woneapp_qa'
+                    keyPassword 'woneapp_qa'
+                    storeFile file('key/woneapp_qa-release-key.keystore')
+                    storePassword 'woneapp_qa'
+                }
+            }
 
             applicationIdSuffix ".qa"
             manifestPlaceholders = [appLabel: "Woolworths Q"]
@@ -121,11 +119,21 @@ android {
             buildConfigField("String", "SHA1", '"' + secureProps['HASH_QA_' + apiKey] + '"')
             buildConfigField("String", "ENV", '"QA"')
 
-            signingConfig null
+            signingConfig signingConfigs.woolworths
         }
 
         production {
+
             dimension 'environment'
+
+            signingConfigs {
+                woolworths {
+                    keyAlias productionKeystoreProperties['keyAlias']
+                    keyPassword productionKeystoreProperties['keyPassword']
+                    storeFile file(productionKeystoreProperties['storeFile'])
+                    storePassword productionKeystoreProperties['storePassword']
+                }
+            }
 
             buildConfigField("String", "HOST", '"' + secureProps['URL_PROD_' + apiKey] + '"')
             buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
