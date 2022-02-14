@@ -68,13 +68,9 @@ android {
 
     if(isAppCenter){
         buildTypes {
-            // MARK - Debug build types
-            qaDebug {
-                debuggable true
-            }
 
             // MARK - Release build types
-            qaRelease {
+            huaweiQaRelease {
                 lintOptions {
                     disable 'MissingTranslation'
                     checkReleaseBuilds false
@@ -190,7 +186,7 @@ android {
     }
 
 //    if(isAppCenter){
-//        def assembleTaskAliasName="qaRelease" // whatever "build variant" you are able to select in the Build Configuration web GUI
+//        def assembleTaskAliasName="huaweiQaRelease" // whatever "build variant" you are able to select in the Build Configuration web GUI
 //        def assembleTaskAliasVariant="huaweiQaRelease" // an actual flavor (can contain multiple dimensions)
 //
 //        applicationVariants.all { variant ->
