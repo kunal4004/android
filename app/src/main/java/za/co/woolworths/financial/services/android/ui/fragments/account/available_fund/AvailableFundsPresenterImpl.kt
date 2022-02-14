@@ -5,7 +5,6 @@ import android.text.TextUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.dto.Account
@@ -13,7 +12,6 @@ import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 
 class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.AvailableFundsView?, private var model: IAvailableFundsContract.AvailableFundsModel?) : IAvailableFundsContract.AvailableFundsPresenter, IGenericAPILoaderView<Any> {
 
@@ -77,9 +75,7 @@ class AvailableFundsPresenterImpl(private var mainView: IAvailableFundsContract.
     }
 
     override fun getCreditCardNumber(cards: ArrayList<Card>?): String? {
-        return cards?.filter { card -> card.cardStatus?.trim { it <= ' ' } == "AAA" }
-                ?.takeIf { it.isNotEmpty() }
-                ?.let { it[0].absaCardToken }
+        return cards?.takeIf { it.isNotEmpty() }?.let { it[0].absaCardToken }
     }
 
     override fun getAccount(): Account? = mAccount

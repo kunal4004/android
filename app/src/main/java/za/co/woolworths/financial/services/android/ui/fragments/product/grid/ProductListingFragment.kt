@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.try_it_on_banner.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -266,8 +267,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         response.history?.apply {
             if (!categoryDimensions?.isNullOrEmpty()) {
                 mSubCategoryName = categoryDimensions.get(categoryDimensions.size - 1).label
-            } else if (!searchCrumbs?.isNullOrEmpty()) {
-                mSubCategoryName = searchCrumbs.get(searchCrumbs.size - 1).terms
+            } else if (searchCrumbs?.isNullOrEmpty() == false) {
+                searchCrumbs?.let {
+                    mSubCategoryName = it.get(it.size -1).terms
+                }
             }
         }
 
@@ -305,9 +308,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     showDeliveryOptionDialog()
                 }
 
-                if (WoolworthsApplication.isProductItemForLiquorInvetoryPending()) {
-                    WoolworthsApplication.getProductItemForInventory()?.let { productList ->
-                        WoolworthsApplication.getQuickShopDefaultValues()?.foodFulfilmentTypeId?.let {
+                if (AppConfigSingleton.isProductItemForLiquorInventoryPending) {
+                    AppConfigSingleton.productItemForLiquorInventory?.let { productList ->
+                        AppConfigSingleton.quickShopDefaultValues?.foodFulfilmentTypeId?.let {
                             dismissProgressBar()
                             queryInventoryForStore(
                                 it,
@@ -316,8 +319,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                             )
                         }
 
-                        WoolworthsApplication.setCallForLiquorInventory(false)
-                        WoolworthsApplication.setProductItemForInventory(null)
+                        AppConfigSingleton.isProductItemForLiquorInventoryPending = false
+                        AppConfigSingleton.productItemForLiquorInventory = null
                     }
                 }
             } else {
@@ -336,7 +339,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             val desc = view.findViewById<TextView>(R.id.desc)
             val close = view.findViewById<Button>(R.id.close)
             val setSuburb = view.findViewById<TextView>(R.id.setSuburb)
-            desc?.text = WoolworthsApplication.getLiquor()?.message ?: ""
+            desc?.text = AppConfigSingleton.liquor?.message ?: ""
             close?.setOnClickListener { dismiss() }
             setSuburb?.setOnClickListener {
                 dismiss()
@@ -390,6 +393,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     fragmentTransaction,
                     SingleButtonDialogFragment::class.java.simpleName
                 )
+                it.commitAllowingStateLoss()
             }
         } catch (ex: IllegalStateException) {
             FirebaseManager.logException(ex)
@@ -785,7 +789,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                         )
                     }
                 } else if(resultCode == RESULT_OK){
-                    WoolworthsApplication.setCallForLiquorInventory(true)
+                    AppConfigSingleton.isProductItemForLiquorInventoryPending = true
                 }
             }
             else -> return
@@ -802,15 +806,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private fun showFeatureWalkThrough() {
         if (!isAdded || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.refineProducts)
             return
-        (activity as? BottomNavigationActivity)?.apply {
+        (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
-            if (currentFragment !is ProductListingFragment) return
+            if (it.currentFragment !is ProductListingFragment) return
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
                 this.javaClass.canonicalName
             )
-            walkThroughPromtView =
-                WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.REFINE)
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.REFINE)
                     .setTarget(refineDownArrow)
                     .setTitle(R.string.walkthrough_refine_title)
                     .setDescription(R.string.walkthrough_refine_desc)
@@ -820,9 +824,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     .setAction(this@ProductListingFragment)
                     .setAsNewFeature()
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
-                    .setMaskColour(ContextCompat.getColor(this, R.color.semi_transparent_black))
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
                     .build()
-            walkThroughPromtView.show(this)
+            it.walkThroughPromtView.show(it)
         }
     }
 
@@ -889,7 +893,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if(productList.isLiquor == true && !KotlinUtils.isCurrentSuburbDeliversLiquor() && !KotlinUtils.isLiquorModalShown()){
             KotlinUtils.setLiquorModalShown()
             showLiquorDialog()
-            WoolworthsApplication.setProductItemForInventory(productList)
+            AppConfigSingleton.productItemForLiquorInventory = productList
             return
         }
 

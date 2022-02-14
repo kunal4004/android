@@ -1,0 +1,89 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvCollectionBottomSheetDialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fourty_dp"
+        android:fontFamily="@font/futura_semi_bold"
+        android:text="@string/choose_date"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/incSwipeCloseIndicator" />
+
+    <za.co.woolworths.financial.services.android.util.picker.WheelView
+        android:id="@+id/collectionDatePickerWheelView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/two_hundred_dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/fourty_dp"
+        android:background="@color/white"
+        android:contentDescription="@string/choose_date"
+        app:layout_constraintBottom_toTopOf="@id/tvConfirmCollectionDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvCollectionBottomSheetDialogTitle"
+        app:wv_dividerColor="@color/color_12000000"
+        app:wv_dividerHeight="@dimen/one_dp"
+        app:wv_lineSpacing="@dimen/eighteen_dp"
+        app:wv_normalItemTextColor="@color/black10"
+        app:wv_selectedItemTextColor="@color/black"
+        app:wv_selectedTextFont="medium_bold"
+        app:wv_selectedItemPosition="1"
+        app:wv_showDivider="true"
+        app:wv_textAlign="center"
+        app:wv_textBoundaryMargin="@dimen/sixteen_dp"
+        app:wv_textFont="medium"
+        app:wv_textSize="@dimen/eighteen_sp" />
+
+    <TextView
+        android:id="@+id/tvConfirmCollectionDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/twenty_four_dp"
+        android:background="@color/black"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:minHeight="@dimen/fifty_dp"
+        android:text="@string/confirm_date"
+        android:textColor="@color/white"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toTopOf="@id/tvCancelButton" />
+
+    <TextView
+        android:id="@+id/tvCancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ten_dp"
+        android:fontFamily="@font/futura_medium"
+        android:gravity="center"
+        android:letterSpacing="0.1"
+        android:minHeight="@dimen/fifty_dp"
+        android:padding="@dimen/fifteen_dp"
+        android:text="@string/cancel"
+        android:textColor="@color/color_666666"
+        android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,11 +25,16 @@ import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.fragment_link_device_from_account_prod.*
 import kotlinx.android.synthetic.main.layout_link_device_result.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
 import za.co.woolworths.financial.services.android.util.Utils
@@ -94,7 +99,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         }
 
         context?.let {
-            val deviceSecurity = WoolworthsApplication.getDeviceSecurity()
+            val deviceSecurity = AppConfigSingleton.deviceSecurity
             when(mApplyNowState){
                 ApplyNowState.STORE_CARD ->{
                     linkDeviceConfirmationHeaderIcon?.setImageResource(R.drawable.sc_asset)
@@ -224,6 +229,7 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
             gotItLinkDeviceConfirmationButton.apply {
                 visibility = View.VISIBLE
                 setOnClickListener {
+                    clearAllFlags()
                     val intent = Intent()
                     intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
                     activity?.setResult(MyAccountsFragment.RESULT_CODE_LINK_DEVICE, intent)
@@ -253,6 +259,22 @@ class LinkDeviceConfirmationFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    fun clearAllFlags(){
+        MyCardDetailFragment.apply {
+            FREEZE_CARD_DETAIL = false
+            BLOCK_CARD_DETAIL = false
+            PAY_WITH_CARD_DETAIL = false
+        }
+        StoreCardOptionsFragment.apply {
+            GET_REPLACEMENT_CARD_DETAIL = false
+            ACTIVATE_VIRTUAL_CARD_DETAIL = false
+        }
+        PersonalLoanFragment.apply{
+            PL_WITHDRAW_FUNDS_DETAIL = false
+        }
+        StatementFragment.VIEW_STATEMENT_DETAIL = false
+        StatementFragment.SEND_STATEMENT_DETAIL = false
+    }
     override fun onDestroy() {
         activity?.runOnUiThread { activity?.window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN) }
         super.onDestroy()

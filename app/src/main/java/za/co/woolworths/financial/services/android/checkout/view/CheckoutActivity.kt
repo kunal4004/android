@@ -9,16 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.activity_cart_checkout.*
 import kotlinx.android.synthetic.main.activity_checkout.*
-import kotlinx.android.synthetic.main.activity_checkout.btnClose
-import kotlinx.android.synthetic.main.activity_checkout.toolbarText
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
@@ -69,7 +65,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     fun showBackArrowWithoutTitle() {
         toolbar?.visibility = View.VISIBLE
         setSupportActionBar(toolbar)
-        toolbarText.text = ""
+        toolbarText?.text = ""
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(false)
@@ -81,7 +77,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     fun showBackArrowWithTitle(titleText: String) {
         toolbar?.visibility = View.VISIBLE
         setSupportActionBar(toolbar)
-        toolbarText.text = titleText
+        toolbarText?.text = titleText
         supportActionBar?.apply {
             title = ""
             setDisplayShowTitleEnabled(false)
@@ -94,7 +90,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         btnClose?.visibility = View.VISIBLE
         btnClose?.setOnClickListener(this)
         toolbar?.visibility = View.VISIBLE
-        toolbarText.text = titleText
+        toolbarText?.text = titleText
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
             title = ""
@@ -122,6 +118,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
         graph.startDestination = when {
+
+            baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {
+                R.id.checkoutWhoIsCollectingFragment
+            }
+
             savedAddressResponse?.addresses.isNullOrEmpty() -> {
                 R.id.CheckoutAddAddressNewUserFragment
             }
@@ -175,7 +176,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 ), this)
                 setReloadResultAndFinish()
             }
-            is CheckoutAddAddressReturningUserFragment -> {
+            is CheckoutAddAddressReturningUserFragment, is CheckoutReturningUserCollectionFragment -> {
                 setReloadResultAndFinish()
             }
             is OrderConfirmationFragment -> {

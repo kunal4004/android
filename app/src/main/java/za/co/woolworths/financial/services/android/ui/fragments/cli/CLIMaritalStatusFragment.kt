@@ -13,8 +13,9 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_cli_marital_status.*
 import za.co.woolworths.financial.services.android.contracts.MaritalStatusListener
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.MaritalStatus
+import za.co.woolworths.financial.services.android.models.dto.app_config.credit_limit_increase.ConfigMaritalStatus
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity
 import za.co.woolworths.financial.services.android.util.FragmentUtils
 import za.co.woolworths.financial.services.android.util.picker.WheelView
@@ -23,7 +24,7 @@ import za.co.woolworths.financial.services.android.util.picker.WheelView
 class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<Any>, View.OnClickListener {
 
     private var isChecked: Boolean = false
-    private var selectedMaritalStatus: MaritalStatus? = null
+    private var selectedMaritalStatus: ConfigMaritalStatus? = null
     private var maritalStatusListener: MaritalStatusListener? = null
     private lateinit var mContext: Context
 
@@ -51,9 +52,9 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatus?.apply {
-            if (!contains(MaritalStatus(0, mContext.getString(R.string.please_select))))
-                add(0, MaritalStatus(0, mContext.getString(R.string.please_select)))
+        AppConfigSingleton.creditLimitIncrease?.maritalStatus?.apply {
+            if (!contains(ConfigMaritalStatus(0, mContext.getString(R.string.please_select))))
+                add(0, ConfigMaritalStatus(0, mContext.getString(R.string.please_select)))
         }
 
         //set default text for picker selection.
@@ -83,7 +84,7 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
     override fun onItemSelected(wheelView: WheelView<Any>?, data: Any?, position: Int) {
         when (wheelView?.id) {
             R.id.cli_marital_status_picker -> {
-                val maritalStatusList = WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatus
+                val maritalStatusList = AppConfigSingleton.creditLimitIncrease?.maritalStatus
                 if (maritalStatusList == null || maritalStatusList.isEmpty() || position >= maritalStatusList.size) {
                     return
                 }
@@ -96,7 +97,7 @@ class CLIMaritalStatusFragment : Fragment(), WheelView.OnItemSelectedListener<An
 
     private fun setMaritalStatusPicker(position: Int) {
         val maritalStatusList =
-            WoolworthsApplication.getInstance()?.creditLimitIncrease?.maritalStatus
+            AppConfigSingleton.creditLimitIncrease?.maritalStatus
         if (maritalStatusList == null || maritalStatusList.isEmpty()) {
             return
         }

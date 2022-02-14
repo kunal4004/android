@@ -7,10 +7,17 @@ import android.view.View.*
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 open class OTPInputListener : MyCardExtension() {
 
     fun setupInputListeners() {
+
+        KotlinUtils.lowercaseEditText(edtVerificationCode1)
+        KotlinUtils.lowercaseEditText(edtVerificationCode2)
+        KotlinUtils.lowercaseEditText(edtVerificationCode3)
+        KotlinUtils.lowercaseEditText(edtVerificationCode4)
+        KotlinUtils.lowercaseEditText(edtVerificationCode5)
 
         edtVerificationCode1?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode1, edtVerificationCode2) {validateVerificationCode()})
         edtVerificationCode2?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode2, edtVerificationCode3) {validateVerificationCode()})

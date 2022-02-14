@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -544,6 +545,16 @@ interface ApiInterface {
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Body shippingDetailsBody: ShippingDetailsBody
     ): Call<ShippingDetailsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/cart/storePickupInfo")
+    fun getStorePickupInfo(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body body: StorePickupInfoBody
+    ): Call<ConfirmDeliveryAddressResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/location/confirmSelection")
@@ -1222,4 +1233,16 @@ interface ApiInterface {
         @Path("insuranceType") insuranceType: String,
         @Body insuranceTypeOptInBody: InsuranceTypeOptInBody
     ):Call<GenericResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/accounts/collections/checkEligibility")
+    suspend fun fetchCollectionCheckEligibility(
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Query("productGroupCode") productGroupCode: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String
+    ): EligibilityPlanResponse
 }
+

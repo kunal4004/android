@@ -21,9 +21,9 @@ import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecreas
 import za.co.woolworths.financial.services.android.contracts.IEditAmountSlider
 import za.co.woolworths.financial.services.android.contracts.MaritalStatusListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.MaritalStatus
 import za.co.woolworths.financial.services.android.models.dto.OfferActive
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.app_config.credit_limit_increase.ConfigMaritalStatus
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimitDecrease, DeclineOfferInterface, IEditAmountSlider, MaritalStatusListener {
 
     private var mFirebaseCreditLimitIncreaseEvent: FirebaseCreditLimitIncreaseEvent? = null
-    private var maritalStatus: MaritalStatus? = null
+    private var maritalStatus: ConfigMaritalStatus? = null
     private var mCLICreateOfferResponse: OfferActive? = null
     private var mOfferActivePayload: String? = null
     private var mOfferActive = false
@@ -343,12 +343,12 @@ class CLIPhase2Activity : AppCompatActivity(), View.OnClickListener, ICreditLimi
         (application as? WoolworthsApplication)?.bus()?.send(amount?.let { amt -> drawnDownAmount?.let { drawnAmount -> BusStation(amt, drawnAmount) } })
     }
 
-    override fun setMaritalStatus(maritalStatus: MaritalStatus) {
+    override fun setMaritalStatus(maritalStatus: ConfigMaritalStatus) {
         this.maritalStatus = maritalStatus
     }
 
-    override fun getMaritalStatus(): MaritalStatus {
-        return maritalStatus ?: MaritalStatus(0, bindString(R.string.please_select))
+    override fun getMaritalStatus(): ConfigMaritalStatus {
+        return maritalStatus ?: ConfigMaritalStatus(0, bindString(R.string.please_select))
     }
 
     fun getFirebaseEvent() = mFirebaseCreditLimitIncreaseEvent

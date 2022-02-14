@@ -13,10 +13,10 @@ import org.mockito.junit.MockitoJUnitRunner
 import za.co.woolworths.financial.services.android.checkout.service.network.*
 import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
-import za.co.woolworths.financial.services.android.models.NativeCheckout
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.Province
 import za.co.woolworths.financial.services.android.models.dto.Suburb
+import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigNativeCheckout
 import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.utils.BundleMock
@@ -186,8 +186,8 @@ class CheckoutAddAddressNewUserFragmentTest : Fragment() {
         bundle.putInt(CheckoutAddressConfirmationListAdapter.EDIT_ADDRESS_POSITION_KEY, 1)
         checkoutAddAddressNewUserFragment.testSetBundleArguments(bundle)
         checkoutAddAddressNewUserFragment.selectedAddress = SelectedPlacesAddress()
-        val mockNativeCheckout: NativeCheckout =
-            mock(NativeCheckout::class.java, CALLS_REAL_METHODS)
+        val mockNativeCheckout: ConfigNativeCheckout =
+            mock(ConfigNativeCheckout::class.java, CALLS_REAL_METHODS)
         val province = Province()
         province.apply {
             name = "Western Cape"
@@ -195,7 +195,7 @@ class CheckoutAddAddressNewUserFragmentTest : Fragment() {
         }
         val provinceList = listOf(province)
         mockNativeCheckout.regions = provinceList
-        WoolworthsApplication.setNativeCheckout(mockNativeCheckout)
+        AppConfigSingleton.nativeCheckout = mockNativeCheckout
 
         checkoutAddAddressNewUserFragment.handleBundleResponse()
 

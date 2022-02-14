@@ -161,5 +161,6 @@
     <color name="grid_border_color">#C2C2C2</color>
     <color name="color_D0021B">#D0021B</color>
     <color name="desc_color_code">#757575</color>
-
+    <color name="color_F3F3F3">#F3F3F3</color>
+    <color name="low_stock_indicator">#FCA933</color>
 </resources>

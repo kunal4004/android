@@ -10,6 +10,7 @@ import com.perfectcorp.perfectlib.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallback
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.SDK_INIT_FAIL
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
@@ -24,7 +25,7 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
 
 ) : ApplyVtoImageRepository {
 
-    private val _context = context
+    private val context = context
     private var photoMakeup: PhotoMakeup? = null
     private var applier: VtoApplier? = null
     private val getApplyResult = MutableLiveData<Any>()
@@ -37,7 +38,7 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
     ): MutableLiveData<Any> {
 
         SdkUtility.initSdk(
-            _context,
+            context,
             object : PfSDKInitialCallback {
                 override fun onInitialized() {
                     PhotoMakeup.create(object : PhotoMakeup.CreateCallback {
@@ -67,14 +68,15 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
                             } else {
                                 if (uri == null) {
                                     getApplyResult.value = VTO_INVALID_IMAGE_PATH
+
                                 }
                                 try {
-                                    _context!!.contentResolver.openInputStream(uri!!)
+                                    context?.contentResolver.openInputStream(uri!!)
                                         .use { imageStream ->
                                             val bitmap = BitmapFactory.decodeStream(imageStream)
                                             val matrix: Matrix =
                                                 SdkUtility.getRotationMatrixByExif(
-                                                    _context!!.contentResolver,
+                                                    context?.contentResolver,
                                                     uri
                                                 )
                                             val selectedImage =
@@ -115,7 +117,7 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
                                     // Select a face for applying effects.
                                     val faceIndex = Random().nextInt(faceList.size)
                                     val faceData = faceList[faceIndex]
-                                    photoMakeup!!.setFace(faceData)
+                                    photoMakeup?.setFace(faceData)
                                     if (!isFromLiveCamera) {
                                         applyEffectFirstTime(productId, sku, getApplyResult)
                                     }
@@ -136,7 +138,7 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
                 override fun onFailure(
                     throwable: Throwable?
                 ) {
-                    getApplyResult.value = VTO_FAIL_IMAGE_LOAD
+                    getApplyResult.value = SDK_INIT_FAIL
                 }
             })
         return getApplyResult
@@ -187,6 +189,7 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
             object : VtoApplier.ApplyCallback {
                 override fun onSuccess(bitmap: Bitmap) {
                     data.value = bitmap
+                    data.value = "" // avoid OOM (Bitmap)
 
                 }
 
@@ -208,8 +211,8 @@ class ApplyVtoImageRepositoryImpl @Inject constructor(
     override fun clearEffect(): MutableLiveData<Bitmap> {
         val data = MutableLiveData<Bitmap>()
         applier?.clearAllEffects(object : VtoApplier.ApplyCallback {
-            override fun onSuccess(bitmap: Bitmap?) {
-                data.value = bitmap!!
+            override fun onSuccess(bitmap: Bitmap) {
+                data.value = bitmap
             }
 
             override fun onFailure(throwable: Throwable) {
