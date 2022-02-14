@@ -15,8 +15,6 @@ android {
     def fix = "0"
     def jobNumber = 558
 
-    def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
-
     dataBinding {
         enabled = true
     }
@@ -66,32 +64,37 @@ android {
 
     def secureProps = new Properties()
     def productionKeystoreProperties = new Properties()
+    def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
-    buildTypes {
-        // MARK - Debug build types
-        debug {
-            debuggable true
-        }
-
-        // MARK - Release build types
-        release {
-            lintOptions {
-                disable 'MissingTranslation'
-                checkReleaseBuilds false
-                abortOnError false
+    if(isAppCenter){
+        buildTypes {
+            // MARK - Release build types
+            release {
+                lintOptions {
+                    disable 'MissingTranslation'
+                    checkReleaseBuilds false
+                    abortOnError false
+                }
+                minifyEnabled true
+                shrinkResources true
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
             }
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
+
+
+            // MARK - MS App Center specific build types
+            // Note
+            // App Center Build supports finding build variants
+            // as the combination of a Build Type (debug, release or custom defined)
+            // and one of your gradle declared Product Flavors.
+            // Detection of Flavor Dimensions (combinations of multiple product flavors) isn't supported at this time.
         }
-
-
-        // MARK - MS App Center specific build types
-        // Note
-        // App Center Build supports finding build variants
-        // as the combination of a Build Type (debug, release or custom defined)
-        // and one of your gradle declared Product Flavors.
-        // Detection of Flavor Dimensions (combinations of multiple product flavors) isn't supported at this time.
+    } else {
+        buildTypes {
+            // MARK - Debug build types
+            debug {
+                debuggable true
+            }
+        }
     }
 
     flavorDimensions 'provider', 'environment'
