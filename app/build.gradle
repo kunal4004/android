@@ -57,18 +57,14 @@ android {
 
         signingConfig null
 
-        buildConfigField("String", "HOST", '"' + System.getenv("WigroupServer_API_URL").toString() + '"')
-        buildConfigField("String", "SHA1", '"' + System.getenv("WigroupServer_API_HASH").toString() + '"')
-        buildConfigField("String", "ENV", '"' + System.getenv("Environment").toString() + '"')
+        buildConfigField("String", "HOST", '"' + System.env.WigroupServer_API_URL + '"')
+        buildConfigField("String", "SHA1", '"' + System.env.WigroupServer_API_HASH + '"')
+        buildConfigField("String", "ENV", '"' + System.env.Environment + '"')
     }
 
     def secureProps = new Properties()
     def productionKeystoreProperties = new Properties()
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
-
-    if(isAppCenter){
-
-    }
 
     buildTypes {
         // MARK - Debug build types
@@ -162,15 +158,25 @@ android {
             buildConfigField("String", "SHA1", '"' + secureProps['HASH_PROD_' + apiKey] + '"')
             buildConfigField("String", "ENV", '""')
         }
+    }
 
-        appCenterQa{
+    if(isAppCenter){
+        def assembleTaskAliasName="qaRelease" // whatever "build variant" you are able to select in the Build Configuration web GUI
+        def assembleTaskAliasVariant="huaweiQaRelease" // an actual flavor (can contain multiple dimensions)
 
-            dimension 'default'
-
-
-            applicationIdSuffix ".qa"
-            manifestPlaceholders = [appLabel: "Woolworths Q"]
-            manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
+        applicationVariants.all { variant ->
+            if (assembleTaskAliasName != ""
+                    && assembleTaskAliasVariant != ""
+                    && variant.name == assembleTaskAliasVariant) {
+                println("Creating alias $assembleTaskAliasName for $assembleTaskAliasVariant")
+                def aliasTaskName = "assemble${assembleTaskAliasName.capitalize()}"
+                def aliasTask = task(aliasTaskName, type: Copy) {
+                    from variant.outputs*.outputFile.toSet()
+                    into "build/outputs/apk/$assembleTaskAliasName"
+                }
+                variant.assemble.finalizedBy aliasTask
+                aliasTask.dependsOn variant.assemble
+            }
         }
     }
 
