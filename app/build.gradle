@@ -56,6 +56,8 @@ android {
         dexOptions {
             javaMaxHeapSize "2560M"
         }
+
+        signingConfig null
     }
 
     def secureProps = new Properties()
@@ -64,14 +66,6 @@ android {
     buildTypes {
         //MARK - Debug build types
         debug {
-//            if (file("../secure.properties").exists()) {
-//                file("../secure.properties")?.withInputStream { secureProps.load(it) }
-//            }
-//
-//            if (file("../ProductionKeystore.properties").exists()) {
-//                file("../ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
-//            }
-
             debuggable true
         }
 
@@ -129,6 +123,10 @@ android {
         production {
 
             dimension 'environment'
+
+            if (file("../secure.properties").exists()) {
+                file("../secure.properties")?.withInputStream { secureProps.load(it) }
+            }
 
             if (file("../ProductionKeystore.properties").exists()) {
                 file("../ProductionKeystore.properties").withInputStream { productionKeystoreProperties.load(it) }
