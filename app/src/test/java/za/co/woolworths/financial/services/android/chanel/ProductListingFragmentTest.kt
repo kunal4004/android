@@ -50,7 +50,7 @@ class ProductListingFragmentTest : Fragment() {
         val productList: ProductList = mock()
         productListingFragment.openProductDetailsView(productList, "", "")
         Mockito.verify(productListingFragment, Mockito.times(1))
-            .openProductDetailView(productList)
+            .openProductDetailView(productList,"","")
     }
 
     @Ignore
