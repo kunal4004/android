@@ -161,7 +161,31 @@
             </com.facebook.shimmer.ShimmerFrameLayout>
         </RelativeLayout>
 
-        <include layout="@layout/common_account_detail" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_16ssp"
+                android:background="@color/white">
+
+                <include
+                    android:id="@+id/accountOptionsSection"
+                    layout="@layout/common_account_detail" />
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/accountOptionsSkeleton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
+
+                    <include layout="@layout/account_options_skeleton" />
+                </com.facebook.shimmer.ShimmerFrameLayout>
+            </RelativeLayout>
+        </RelativeLayout>
 
         <View
             android:id="@+id/accbottomSpaceView"

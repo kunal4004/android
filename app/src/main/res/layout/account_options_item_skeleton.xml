@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/paymentOptionsRootRowContainerStyle"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:clickable="true">
 
 
@@ -18,7 +19,6 @@
 
     <View
         android:id="@+id/viewtitle"
-        android:maxWidth="@dimen/_10sdp"
         android:layout_height="@dimen/_10sdp"
         android:layout_width="0dp"
         android:layout_marginStart="@dimen/_10sdp"
