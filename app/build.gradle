@@ -92,32 +92,6 @@ android {
         // as the combination of a Build Type (debug, release or custom defined)
         // and one of your gradle declared Product Flavors.
         // Detection of Flavor Dimensions (combinations of multiple product flavors) isn't supported at this time.
-
-        msAppCenterReleaseQa {
-            lintOptions {
-                disable 'MissingTranslation'
-                checkReleaseBuilds false
-                abortOnError false
-            }
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
-
-            applicationIdSuffix ".qa"
-            manifestPlaceholders = [appLabel: "Woolworths Q"]
-            manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
-        }
-
-        msAppCenterReleaseProduction {
-            lintOptions {
-                disable 'MissingTranslation'
-                checkReleaseBuilds false
-                abortOnError false
-            }
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
-        }
     }
 
     flavorDimensions 'provider', 'environment'
