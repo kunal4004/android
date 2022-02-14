@@ -152,33 +152,21 @@ android {
 
             buildConfigField("String", "ENV", '""')
         }
-
-//        if(isAppCenter){
-////            def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR // an actual flavor (can contain multiple dimensions)
-//
-//            applicationVariants.all { variant ->
-//                if (variant.name == "qaRelease" || variant.name == "productionRelease" ) {
-//                    println("Creating alias $variant.name for $System.env.ANDROID_PRODUCT_FLAVOR")
-//                    def aliasTaskName = "assemble${variant.name.capitalize()}"
-//                    def aliasTask = task(aliasTaskName, type: Copy) {
-//                        from variant.outputs*.outputFile.toSet()
-//                        into "build/outputs/apk/$variant.name"
-//                    }
-//                    variant.assemble.finalizedBy aliasTask
-//                    aliasTask.dependsOn variant.assemble
-//                }
-//            }
-//        }
     }
 
     if(isAppCenter){
-        def assembleTaskAliasName="qaRelease" // whatever "build variant" you are able to select in the Build Configuration web GUI
+        def assembleTaskAliasName = "" // whatever "build variant" you are able to select in the Build Configuration web GUI
         def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
 
         applicationVariants.all { variant ->
-            println("applicationVariant: $variant.name")
-
             if (variant.name == assembleTaskAliasVariant) {
+
+                if (variant.name.contains("QaRelease")){
+                    assembleTaskAliasName = "qaRelease"
+                } else if (variant.name.contains("ProductionRelease")){
+                    assembleTaskAliasName = "productionRelease"
+                }
+
                 println("Creating alias $assembleTaskAliasName for $assembleTaskAliasVariant")
                 def aliasTaskName = "assemble${assembleTaskAliasName.capitalize()}"
                 def aliasTask = task(aliasTaskName, type: Copy) {
