@@ -1602,10 +1602,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         //TODO: Comment what's actually happening here.
 
         if (resultCode == RELOAD_ACCOUNT_RESULT_CODE) {
-            if (mUpdateMyAccount != null)
+            if (mUpdateMyAccount != null) {
                 mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
-            loadAccounts(true);
-            return;
+                loadAccounts(true);
+                return;
+            }
         }
 
         if (requestCode == ScreenManager.BIOMETRICS_LAUNCH_VALUE) {
