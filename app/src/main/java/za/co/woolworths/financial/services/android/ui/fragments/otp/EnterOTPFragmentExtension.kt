@@ -14,9 +14,16 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_enter_otp.*
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPViewTextWatcher
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 open class EnterOTPFragmentExtension : Fragment() {
     fun setupInputListeners() {
+
+        KotlinUtils.lowercaseEditText(edtVerificationCode1)
+        KotlinUtils.lowercaseEditText(edtVerificationCode2)
+        KotlinUtils.lowercaseEditText(edtVerificationCode3)
+        KotlinUtils.lowercaseEditText(edtVerificationCode4)
+        KotlinUtils.lowercaseEditText(edtVerificationCode5)
 
         edtVerificationCode1?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode1, edtVerificationCode2) {validateVerificationCode()})
         edtVerificationCode2?.addTextChangedListener(OTPViewTextWatcher(edtVerificationCode1, edtVerificationCode2, edtVerificationCode3) {validateVerificationCode()})

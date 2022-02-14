@@ -17,13 +17,10 @@ import kotlinx.android.synthetic.main.account_options_layout.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ITemporaryCardFreeze
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
-import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.TEMPORARY_FREEZE_STORE_CARD_RESULT_CODE
@@ -32,14 +29,14 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLocationSettingsFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.location.*
-import za.co.woolworths.financial.services.android.util.wenum.StoreCardViewType
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 class StoreCardOptionsFragment : AccountsOptionFragment() {
 
@@ -148,7 +145,10 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
         when (storeCardResponse.httpCode) {
             200 -> {
-                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) { setStoreCardTag() }
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                    setStoreCardTag()
+                    VoiceOfCustomerManager.showPendingSurveyIfNeeded(context)
+                }
             }
             440 -> activity?.let {
                 SessionUtilities.getInstance().setSessionState(
@@ -166,7 +166,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     }
 
     private fun setStoreCardTag() {
-
         when {
             // Activate Virtual Temporary card
             (mCardPresenterImpl?.isActivateVirtualTempCard() == true) -> {
@@ -189,8 +188,9 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                         )
                     )
                 }
+                imLogoIncreaseLimit?.alpha = AppConstant.ALPHA_1F
                 manageMyCardTextView?.text = bindString(R.string.activate_vtc_title)
-                cardDetailImageView?.alpha = 0.3f
+                cardDetailImageView?.alpha = AppConstant.ALPHA_POINT_3F
             }
 
             // Temporary card
@@ -301,14 +301,16 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 val shouldRefreshCardDetails =
                     getBooleanExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, false)
                 if (shouldRefreshCardDetails) {
+                    VoiceOfCustomerManager.pendingTriggerEvent = VocTriggerEvent.MYACCOUNTS_BLOCKCARD_CONFIRM
                     navigateToGetStoreCards()
                 }
             }
         }
         //Activate VTC journey when successfully activated
         if (resultCode == ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE) {
-            navigateToGetStoreCards()
             //ICR Journey success and When Get replacement card email confirmation is success and result ok
+            VoiceOfCustomerManager.pendingTriggerEvent = VocTriggerEvent.MYACCOUNTS_ICR_LINK_CONFIRM
+            navigateToGetStoreCards()
         } else if (requestCode == MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD && resultCode == AppCompatActivity.RESULT_OK) {
             navigateToGetStoreCards()
         }
@@ -445,5 +447,4 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             }
         }
     }
-
 }

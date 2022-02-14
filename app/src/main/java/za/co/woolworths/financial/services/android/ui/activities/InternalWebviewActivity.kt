@@ -79,9 +79,7 @@ class InternalWebViewActivity : AppCompatActivity() {
             with(settings) {
                 javaScriptEnabled = true
                 domStorageEnabled = true
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
-                }
+                mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
             }
 
             webViewClient = object : WebViewClient() {
@@ -234,6 +232,7 @@ class InternalWebViewActivity : AppCompatActivity() {
     }
 
     private fun closeActivity() {
+        setResult(RESULT_OK)
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }

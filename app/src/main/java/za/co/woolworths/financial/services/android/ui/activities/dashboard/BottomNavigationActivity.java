@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,10 +39,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.perfectcorp.perfectlib.SkuHandler;
-
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +51,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
@@ -120,6 +119,8 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE;
+import static za.co.woolworths.financial.services.android.ui.activities.SSOActivity.FORGOT_PASSWORD;
+import static za.co.woolworths.financial.services.android.ui.activities.SSOActivity.FORGOT_PASSWORD_VALUE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.OPEN_SHOPPING_LIST_TAB_FROM_TIPS_AND_TRICK_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
@@ -223,7 +224,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 .rootFragmentListener(this, 5)
                 .build();
         renderUI();
-        vtoSyncServer();
 
         /***
          * Update bottom navigation view counter
@@ -261,57 +261,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         addDrawerFragment();
     }
 
-    private void vtoSyncServer() {
-        SdkUtility.initSdk(this, new PfSDKInitialCallback() {
-            @Override
-            public void onInitialized() {
-                SkuHandler skuHandler = SkuHandler.getInstance();
-                if (skuHandler == null) {
-                    return;
-                }
-
-                skuHandler.checkNeedToUpdate(new SkuHandler.CheckNeedToUpdateCallback() {
-                    @Override
-                    public void onSuccess(boolean needUpdate) {
-                        if (needUpdate) {
-                            skuHandler.syncServer(new SkuHandler.SyncServerCallback() {
-                                @Override
-                                public void progress(double progress) {
-                                  //sync SDK in background. when update needed.
-                                    // later may be required show on UI
-                                }
-
-                                @Override
-                                public void onSuccess() {
-                                     //Do Nothing
-                                       // required later update UI.
-                                }
-
-                                @Override
-                                public void onFailure(Throwable throwable) {
-                                    handleExceptionWithFireBase(throwable);
-                                }
-                            });
-                        }
-                    }
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        handleExceptionWithFireBase(throwable);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                handleExceptionWithFireBase(throwable);
-            }
-        });
-    }
-
-    private void handleExceptionWithFireBase(Throwable throwable) {
-        FirebaseManager.logException(throwable);
-    }
-
     private void parseDeepLinkData() {
         if (mBundle == null) {
             return;
@@ -332,13 +281,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     private void queryBadgeCountOnStart() {
-        if (SessionUtilities.getInstance().isUserAuthenticated() && WoolworthsApplication.isIsBadgesRequired()) {
+        if (SessionUtilities.getInstance().isUserAuthenticated() && AppConfigSingleton.INSTANCE.isBadgesRequired()) {
             mQueryBadgeCounter.queryVoucherCount();
             mQueryBadgeCounter.queryCartSummaryCount();
             mQueryBadgeCounter.queryMessageCount();
-            WoolworthsApplication.setIsBadgesRequired(false);
-        } else if (!WoolworthsApplication.isIsBadgesRequired()) {
-            WoolworthsApplication.setIsBadgesRequired(true);
+            AppConfigSingleton.INSTANCE.setBadgesRequired(false);
+        } else if (!AppConfigSingleton.INSTANCE.isBadgesRequired()) {
+            AppConfigSingleton.INSTANCE.setBadgesRequired(true);
         }
     }
 
@@ -375,6 +324,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (!TextUtils.isEmpty(mSessionExpiredAtTabSection)) {
                 getBottomNavigationById().setCurrentItem(Integer.parseInt(mSessionExpiredAtTabSection));
                 SessionExpiredUtilities.getInstance().showSessionExpireDialog(BottomNavigationActivity.this);
+            }
+           String changePassword = mBundle.getString(FORGOT_PASSWORD);
+            if(null!=changePassword && changePassword.equals(FORGOT_PASSWORD_VALUE)){
+                navigateMyAccountScreen();
             }
         }
         mBundle = null;
@@ -681,7 +634,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 case R.id.navigate_to_cart:
                     setCurrentSection(R.id.navigate_to_cart);
                     identifyTokenValidationAPI();
-                    if(WoolworthsApplication.isIsBadgesRequired())
+                    if(AppConfigSingleton.INSTANCE.isBadgesRequired())
                         queryBadgeCountOnStart();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU, BottomNavigationActivity.this);
                     return false;
@@ -691,7 +644,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     currentSection = R.id.navigate_to_wreward;
                     setToolbarBackgroundColor(R.color.white);
                     switchTab(INDEX_REWARD);
-                    if(WoolworthsApplication.isIsBadgesRequired())
+                    if(AppConfigSingleton.INSTANCE.isBadgesRequired())
                         queryBadgeCountOnStart();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU, BottomNavigationActivity.this);
                     return true;
@@ -699,7 +652,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 case R.id.navigate_to_account:
                     setCurrentSection(R.id.navigate_to_account);
                     replaceAccountIcon(item);
-                    if(WoolworthsApplication.isIsBadgesRequired() && !isDeeplinkAction)
+                    if(AppConfigSingleton.INSTANCE.isBadgesRequired() && !isDeeplinkAction)
                         queryBadgeCountOnStart();
                     isDeeplinkAction = false;
                     if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
@@ -720,20 +673,25 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     };
 
     private void replaceAccountIcon(@NonNull MenuItem item) {
-        if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
-                && item.getItemId() != R.id.navigate_to_account) {
-            accountNavigationView.removeView(notificationBadgeOne);
-            SessionStateType sessionStateType = ChatAWSAmplify.INSTANCE.getSessionStateType();
-            if (sessionStateType!=null) {
-                if (sessionStateType == SessionStateType.DISCONNECT) {
-                    onlineIconImageView.setImageResource(R.drawable.nb_borderless_disconnect_badge_bg);
-                } else {
-                    onlineIconImageView.setImageResource(R.drawable.nb_borderless_badge_bg);
+        if(accountNavigationView != null){
+            if (ChatAWSAmplify.INSTANCE.isLiveChatBackgroundServiceRunning()
+                    && item.getItemId() != R.id.navigate_to_account) {
+                accountNavigationView.removeView(notificationBadgeOne);
+                SessionStateType sessionStateType = ChatAWSAmplify.INSTANCE.getSessionStateType();
+                if (sessionStateType!=null) {
+                    if (sessionStateType == SessionStateType.DISCONNECT) {
+                        onlineIconImageView.setImageResource(R.drawable.nb_borderless_disconnect_badge_bg);
+                    } else {
+                        onlineIconImageView.setImageResource(R.drawable.nb_borderless_badge_bg);
+                    }
                 }
+                accountNavigationView.addView(notificationBadgeOne);
+            } else {
+                accountNavigationView.removeView(notificationBadgeOne);
             }
-            accountNavigationView.addView(notificationBadgeOne);
-        } else {
-            accountNavigationView.removeView(notificationBadgeOne);
+        }
+        else {
+            FirebaseManager.logException("accountNavigationView is null");
         }
     }
 
@@ -1516,5 +1474,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             shopFragment.refreshCategories();
         }
     }
+
+    private void navigateMyAccountScreen() {
+        getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+        switchTab(INDEX_ACCOUNT);
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(() -> {
+            ScreenManager.presentSSOSignin(this);
+        }, AppConstant.DELAY_500_MS);
+
+    }
+
 
 }

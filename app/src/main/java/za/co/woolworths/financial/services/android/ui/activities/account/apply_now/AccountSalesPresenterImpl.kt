@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.IAccountSalesContract
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.AccountSales
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -35,13 +36,13 @@ class AccountSalesPresenterImpl(private var mainView: IAccountSalesContract.Acco
 
     @Throws(RuntimeException::class)
     fun onApplyNowButtonTapped(): String? {
-        val applyNowLinks = WoolworthsApplication.getApplyNowLink()
-       return when (getApplyNowState()) {
-            ApplyNowState.STORE_CARD -> applyNowLinks?.storeCard
-            ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> applyNowLinks?.creditCard
-            ApplyNowState.PERSONAL_LOAN -> applyNowLinks?.personalLoan
-            else -> throw RuntimeException("OnApplyNowButtonTapped:: Invalid ApplyNowState ## : ${getApplyNowState()}")
-        }
+        val applyNowLinks = AppConfigSingleton.applyNowLink
+           return when (getApplyNowState()) {
+               ApplyNowState.STORE_CARD -> applyNowLinks?.storeCard
+               ApplyNowState.GOLD_CREDIT_CARD, ApplyNowState.BLACK_CREDIT_CARD, ApplyNowState.SILVER_CREDIT_CARD -> applyNowLinks?.creditCard
+               ApplyNowState.PERSONAL_LOAN -> applyNowLinks?.personalLoan
+               else -> throw RuntimeException("OnApplyNowButtonTapped:: Invalid ApplyNowState ## : ${getApplyNowState()}")
+           }
     }
 
     fun onBackPressed(activity: Activity?) = KotlinUtils.onBackPressed(activity)

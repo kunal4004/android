@@ -55,9 +55,8 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.SelectedPlacesAddress
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.Suburb
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
@@ -174,12 +173,12 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun getProvinceName(provinceId: String?): String {
         val provinceList =
-            WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>
+            AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>
         if (!provinceId.isNullOrEmpty()) {
             for (provinces in provinceList) {
-                if (provinceId.equals(provinces.id)) {
+                if (provinceId == provinces.id) {
                     // province id is matching with the province list from config.
-                    return provinces.name
+                    return provinces.name ?: ""
                 }
             }
         }
@@ -324,7 +323,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     private fun init() {
-        deliveringOptionsList = WoolworthsApplication.getNativeCheckout()?.addressTypes
+        deliveringOptionsList = AppConfigSingleton.nativeCheckout?.addressTypes
         showWhereAreWeDeliveringView()
         activity?.applicationContext?.let { context ->
             Places.initialize(context, getString(R.string.maps_api_key))
@@ -586,7 +585,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             setSelection(autoCompleteTextView.length())
             autoCompleteTextView.dismissDropDown()
         }
-        checkIfSelectedProvinceExist(WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>)
+        checkIfSelectedProvinceExist(AppConfigSingleton.nativeCheckout?.regions as MutableList<Province>)
     }
 
     fun checkIfSelectedProvinceExist(provinceList: MutableList<Province>) {
@@ -603,7 +602,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
                     provinceAutocompleteEditText?.setText(provinceName)
                     disableProvinceSelection()
                     selectedAddress.apply {
-                        this.provinceName = localProvince.name
+                        this.provinceName = localProvince.name ?: ""
                         savedAddress.region = localProvince.id
                     }
                 }
@@ -715,7 +714,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
         bundle.apply {
             putString(
                 "ProvinceList",
-                Utils.toJson(WoolworthsApplication.getNativeCheckout()?.regions as? MutableList<Province>)
+                Utils.toJson(AppConfigSingleton.nativeCheckout?.regions as? MutableList<Province>)
             )
         }
         navController?.navigate(
@@ -1391,9 +1390,9 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     fun showErrorDialog() {
-        FirebaseManager.logException(WoolworthsApplication.getNativeCheckout()?.googlePlacesAddressErrorMessage)
+        FirebaseManager.logException(AppConfigSingleton.nativeCheckout?.googlePlacesAddressErrorMessage)
         val dialog = ErrorDialogFragment.newInstance(
-            WoolworthsApplication.getNativeCheckout()?.googlePlacesAddressErrorMessage
+            AppConfigSingleton.nativeCheckout?.googlePlacesAddressErrorMessage
                 ?: ""
         )
         (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
