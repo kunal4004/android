@@ -176,6 +176,8 @@ android {
         def assembleTaskAliasVariant = System.env.ANDROID_PRODUCT_FLAVOR.toString() // an actual flavor (can contain multiple dimensions)
 
         applicationVariants.all { variant ->
+            println("applicationVariant: $variant.name")
+
             if (variant.name == assembleTaskAliasVariant) {
                 println("Creating alias $assembleTaskAliasName for $assembleTaskAliasVariant")
                 def aliasTaskName = "assemble${assembleTaskAliasName.capitalize()}"
