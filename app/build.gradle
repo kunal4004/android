@@ -58,18 +58,22 @@ android {
         }
 
         signingConfig null
+
+        buildConfigField("String", "HOST", '"' + System.getenv("WigroupServer_API_URL").toString() + '"')
+        buildConfigField("String", "SHA1", '"' + System.getenv("WigroupServer_API_HASH").toString() + '"')
+        buildConfigField("String", "ENV", '"' + System.getenv("Environment").toString() + '"')
     }
 
     def secureProps = new Properties()
     def productionKeystoreProperties = new Properties()
 
     buildTypes {
-        //MARK - Debug build types
+        // MARK - Debug build types
         debug {
             debuggable true
         }
 
-        //MARK - Release build types
+        // MARK - Release build types
         release {
             lintOptions {
                 disable 'MissingTranslation'
@@ -82,17 +86,12 @@ android {
         }
 
 
-        //MARK - MS App Center specific build types
-        msAppCenterReleaseProduction {
-            lintOptions {
-                disable 'MissingTranslation'
-                checkReleaseBuilds false
-                abortOnError false
-            }
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
-        }
+        // MARK - MS App Center specific build types
+        // Note
+        // App Center Build supports finding build variants
+        // as the combination of a Build Type (debug, release or custom defined)
+        // and one of your gradle declared Product Flavors.
+        // Detection of Flavor Dimensions (combinations of multiple product flavors) isn't supported at this time.
 
         msAppCenterReleaseQa {
             lintOptions {
@@ -107,6 +106,17 @@ android {
             applicationIdSuffix ".qa"
             manifestPlaceholders = [appLabel: "Woolworths Q"]
             manifestPlaceholders = [app_links_host: "www-win-qa.woolworths.co.za"]
+        }
+
+        msAppCenterReleaseProduction {
+            lintOptions {
+                disable 'MissingTranslation'
+                checkReleaseBuilds false
+                abortOnError false
+            }
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
         }
     }
 
