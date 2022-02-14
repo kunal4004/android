@@ -933,15 +933,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun openProductDetailView(productList: ProductList) {
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.apply {
-            val productDetailsFragmentNew = newInstance()
-            productDetailsFragmentNew.arguments = bundleOf(
-                ProductDetailsFragment.STR_PRODUCT_LIST to Gson().toJson(productList, mBannerLabel , mBannerImage),
-                ProductDetailsFragment.STR_PRODUCT_CATEGORY to title
-            )
-            Utils.updateStatusBarBackground(this)
-            pushFragment(productDetailsFragmentNew)
-        }
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList, mBannerLabel , mBannerImage)
     }
 
      fun openProductDetailView(productList: ProductList, bannerLabel:String?, bannerImage: String?) {
