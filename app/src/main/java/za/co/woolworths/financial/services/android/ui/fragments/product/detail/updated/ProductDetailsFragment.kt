@@ -325,6 +325,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 if (RatingAndReviewUtil.reportedReviews.contains(it.id.toString())) {
                     tvReport.setTextColor(Color.RED)
                     tvReport.text = resources.getString(R.string.reported)
+                    tvReport?.setTypeface(tvReport.typeface,Typeface.BOLD)
                     tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 }
             }
@@ -1168,6 +1169,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     if (RatingAndReviewUtil.reportedReviews.contains(id.toString())){
                         tvReport.setTextColor(Color.RED)
                         tvReport.setText(resources.getString(R.string.reported))
+                        tvReport?.setTypeface(tvReport.typeface,Typeface.BOLD)
                         tvReport.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                     }
                 }
@@ -2298,6 +2300,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if(RatingAndReviewUtil.isSuccessFullyReported) {
             tvReport?.text = getString(R.string.reported)
             tvReport?.setTextColor(Color.RED)
+            tvReport?.setTypeface(tvReport.typeface,Typeface.BOLD)
             RatingAndReviewUtil.isSuccessFullyReported = false
         }
         updateReportLikeStatus()

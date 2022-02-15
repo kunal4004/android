@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
 
 import kotlinx.android.synthetic.main.review_helpful_and_report_layout.view.*
 import kotlinx.android.synthetic.main.review_row_layout.view.*
@@ -82,6 +84,7 @@ class MoreReviewsAdapter(
                         if(RatingAndReviewUtil.reportedReviews.contains(review.id.toString())){
                             tvReport.setTextColor(Color.RED)
                             tvReport.setText(resources.getString(R.string.reported))
+                            tvReport?.setTypeface(tvReport.typeface, Typeface.BOLD)
                             RatingAndReviewUtil.isSuccessFullyReported = false
                         }else{
                             tvReport.setTextColor(Color.BLACK)

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -117,6 +118,7 @@ class ReviewDetailsFragment : Fragment() {
             if (RatingAndReviewUtil.reportedReviews.contains(id.toString())) {
                 tvReport.setTextColor(Color.RED)
                 tvReport.text = getString(R.string.reported)
+                tvReport?.setTypeface(tvReport.typeface, Typeface.BOLD)
                 RatingAndReviewUtil.isSuccessFullyReported = false
             }
 
