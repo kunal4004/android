@@ -2398,4 +2398,5 @@
     <string name="enter_new_location">Enter new location</string>
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
+    <string name="update_address">Update Address</string>
 </resources>

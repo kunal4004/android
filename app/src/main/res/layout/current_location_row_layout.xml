@@ -32,7 +32,7 @@
     <TextView
         android:id="@+id/tvCurrentLocation"
         style="@style/myriad_pro_regular_black_13_text_style"
-        android:layout_width="0dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_dp"
         android:layout_marginTop="@dimen/four_dp"

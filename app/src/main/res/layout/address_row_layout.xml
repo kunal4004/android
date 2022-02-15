@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sixty_five_dp"
+    tools:context="za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog">
+
+
+    <RadioButton
+        android:id="@+id/rbAddressSelector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/shopping_list_item_selector"
+        android:clickable="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.31" />
+
+    <TextView
+        android:id="@+id/tvAddressNickName"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        style="@style/myriad_pro_semi_bold_black_15_text_style"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvAddress"
+        app:layout_constraintStart_toEndOf="@+id/rbAddressSelector"
+        app:layout_constraintTop_toTopOf="parent"
+        android:maxLength="@integer/thirty"
+        android:maxWidth="@dimen/two_hundred_ten_dp"
+        />
+
+    <TextView
+        android:id="@+id/tvUpdateAddress"
+        android:layout_height="wrap_content"
+        android:layout_width="@dimen/two_hundred_and_twenty_dp"
+        style="@style/myriad_pro_semi_bold_amber_14_text_style"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:text="@string/update_address"
+        app:layout_constraintBottom_toTopOf="@+id/tvAddress"
+        app:layout_constraintStart_toEndOf="@+id/tvAddressNickName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.51" />
+
+    <TextView
+        android:id="@+id/tvAddress"
+        android:layout_height="@dimen/thirty_five_dp"
+        android:layout_width="@dimen/two_hundred_and_fifty_dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/rbAddressSelector"
+        app:layout_constraintTop_toBottomOf="@+id/tvAddressNickName"
+        android:textColor="@color/color_444444"
+        style="@style/myriad_pro_regular_black_14_text_style"
+        android:maxLines="1"
+        android:ellipsize="end"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
