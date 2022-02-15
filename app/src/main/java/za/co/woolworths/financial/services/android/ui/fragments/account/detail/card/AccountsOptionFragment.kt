@@ -158,6 +158,9 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
                     logoIncreaseLimit?.visibility = GONE
                     tvIncreaseLimitDescription?.visibility = GONE
                     getUserCLIOfferActive()
+                    if (isProductCodeStoreCard()==true){
+                        showHideShimmerLayout(cliSkeleton, true)
+                    }
                 }
             }
         }
@@ -211,9 +214,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
         showHideShimmerLayout(includeManageMyCardSkeleton, true, includeManageMyCardMainView)
         storeCardDetailsGroup?.setAlphaForGroupdViews(0.0f)
         showHideShimmerLayout(storeCardDetailShimmer, true)
-        showHideShimmerLayout(cliSkeleton, true, llIncreaseLimitContainer)
         showHideShimmerLayout(accountOptionsSkeleton, true,accountOptionsSection)
-
         manageLinkNewCardGroup?.visibility = GONE
         bottomView?.visibility = VISIBLE
         manageMyCardTextView?.visibility = VISIBLE
@@ -239,8 +240,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
                 false -> {
                     visibility = GONE
                     mainView?.visibility = VISIBLE
-                    setShimmer(null)
                     stopShimmer()
+                    setShimmer(null)
                     invalidate()
                 }
             }
@@ -250,11 +251,10 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
     @SuppressLint("DefaultLocale")
     override fun hideStoreCardProgress() {
         storeCardLoaderView?.visibility = GONE
-        manageCardGroup?.visibility = VISIBLE
+        manageCardGroup?.visibility = if (mCardPresenterImpl?.isProductCodeStoreCard()==true) VISIBLE else GONE
         showHideShimmerLayout(includeManageMyCardSkeleton, false, includeManageMyCardMainView)
         showHideShimmerLayout(storeCardDetailShimmer, false)
         storeCardDetailsGroup?.setAlphaForGroupdViews(1.0f)
-        showHideShimmerLayout(cliSkeleton, false, llIncreaseLimitContainer)
         showHideShimmerLayout(accountOptionsSkeleton, false, accountOptionsSection)
 
         // Boolean check will enable clickable event only when text is "view card"
@@ -473,8 +473,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
         relIncreaseMyLimit?.isEnabled = true
         progressCreditLimit?.visibility = GONE
         tvIncreaseLimit?.visibility = VISIBLE
-        showHideShimmerLayout(cliSkeleton, false, llIncreaseLimitContainer)
-
+        showHideShimmerLayout(cliSkeleton, false)
     }
 
     override fun showUserOfferActiveProgress() {
@@ -483,12 +482,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
         relIncreaseMyLimit?.isEnabled = false
         if (mCardPresenterImpl?.isProductCodeStoreCard() == false) {
             progressCreditLimit?.visibility = VISIBLE
-            progressCreditLimit?.indeterminateDrawable?.setColorFilter(
-                Color.BLACK,
-                PorterDuff.Mode.MULTIPLY
-            )
-        } else {
-            showHideShimmerLayout(cliSkeleton, true, llIncreaseLimitContainer)
+            progressCreditLimit?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         }
         tvApplyNowIncreaseLimit?.visibility = GONE
         tvIncreaseLimit?.visibility = VISIBLE
@@ -498,12 +492,14 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
         relIncreaseMyLimit?.isEnabled = false
         llIncreaseLimitContainer?.isEnabled = false
         tvIncreaseLimit?.isEnabled = false
+        showHideShimmerLayout(cliSkeleton, false)
     }
 
     override fun enableContentStatusUI() {
         relIncreaseMyLimit?.isEnabled = true
         llIncreaseLimitContainer?.isEnabled = true
         tvIncreaseLimit?.isEnabled = true
+        showHideShimmerLayout(cliSkeleton, false)
     }
 
     override fun handleCreditLimitIncreaseTagStatus(offerActive: OfferActive) {
@@ -520,7 +516,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
     }
 
     override fun hideProductNotInGoodStanding() {
-        llIncreaseLimitContainer?.visibility = GONE
+        cliContainer?.visibility = GONE
     }
 
     override fun onOfferActiveSuccessResult() {
@@ -578,15 +574,16 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
         }
 
         activity?.apply {
-            includeAccountDetailHeaderView?.visibility = GONE
+            storeCardDetailsGroup?.setAlphaForGroupdViews(0.0f)
+            showHideShimmerLayout(storeCardDetailShimmer, true)
+            showHideShimmerLayout(includeManageMyCardSkeleton, true,includeManageMyCardMainView)
             creditCardActivationView?.visibility = GONE
-            creditCardActivationPlaceHolder?.visibility = VISIBLE
-            creditCardActivationPlaceHolder?.startShimmer()
             mCardPresenterImpl?.getCreditCardToken()
         }
     }
 
     override fun onGetCreditCArdTokenSuccess(creditCardTokenResponse: CreditCardTokenResponse) {
+        manageCardGroup.visibility = GONE
         creditCardTokenResponse.apply {
             if (cards.isNullOrEmpty()) {
                 showGetCreditCardActivationStatus(CreditCardActivationState.ACTIVATED)
@@ -617,6 +614,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
     }
 
     override fun onGetCreditCardTokenFailure() {
+        manageCardGroup.visibility = GONE
         showGetCreditCardActivationStatus(CreditCardActivationState.FAILED)
     }
 
@@ -651,10 +649,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
     }
 
     override fun stopCardActivationShimmer() {
-        creditCardActivationPlaceHolder?.apply {
-            stopShimmer()
-            visibility = GONE
-        }
+        showHideShimmerLayout(storeCardDetailShimmer, false)
+        storeCardDetailsGroup?.setAlphaForGroupdViews(1.0f)
     }
 
     private fun navigateToCreditCardActivation() {

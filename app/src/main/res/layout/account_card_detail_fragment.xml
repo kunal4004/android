@@ -22,22 +22,13 @@
             layout="@layout/account_activate_credit_card_layout"
             android:visibility="gone" />
 
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/creditCardActivationPlaceHolder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:shimmer_duration="800">
-
-            <include layout="@layout/account_activate_credit_card_plcae_holder_layout" />
-        </com.facebook.shimmer.ShimmerFrameLayout>
-
         <RelativeLayout
+            android:id="@+id/cliContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
+            android:paddingStart="@dimen/_16sdp"
             android:paddingTop="@dimen/thirty_two_dp"
-            android:paddingEnd="@dimen/ten_dp">
+            android:paddingEnd="@dimen/_10sdp">
 
             <LinearLayout
                 android:id="@+id/llIncreaseLimitContainer"
@@ -180,7 +171,9 @@
                     android:id="@+id/accountOptionsSkeleton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    android:paddingStart="@dimen/_16sdp"
+                    android:paddingEnd="@dimen/_10sdp">
 
                     <include layout="@layout/account_options_skeleton" />
                 </com.facebook.shimmer.ShimmerFrameLayout>
