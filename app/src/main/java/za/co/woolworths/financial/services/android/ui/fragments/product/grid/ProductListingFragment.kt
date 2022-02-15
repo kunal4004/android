@@ -105,6 +105,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var lastVisibleItem: Int = 0
     internal var totalItemCount: Int = 0
 
+    private val CHANEL: String = "chanel"
+
     private var toolbarTitleText: String? = null
     private var mSearchTerm: String? = null
     private var mNavigationState: String? = null
@@ -425,6 +427,18 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setTitle(null)
             setCancelable(true)
             show()
+        }
+    }
+
+    override fun openBrandLandingPage() {
+        (activity as? BottomNavigationActivity)?.apply {
+            pushFragment(
+                newInstance(
+                    ProductsRequestParams.SearchType.SEARCH,
+                    AppConstant.EMPTY_STRING,
+                    CHANEL
+                )
+            )
         }
     }
 
