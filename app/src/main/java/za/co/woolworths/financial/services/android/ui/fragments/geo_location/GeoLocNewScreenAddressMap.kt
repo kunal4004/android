@@ -57,8 +57,8 @@ class GeoLocNewScreenAddressMap : Fragment() {
             Places.initialize(context, getString(R.string.maps_api_key))
             val placesClient = Places.createClient(context)
             val mapFragment =
-                requireActivity().supportFragmentManager.findFragmentById(R.id.geoloc_Map) as SupportMapFragment?
-            mapFragment!!.getMapAsync(context)
+                childFragmentManager.findFragmentById(R.id.geoloc_Map) as SupportMapFragment?
+            mapFragment?.getMapAsync(context)
 
             val token = AutocompleteSessionToken.newInstance()
             val request =
@@ -75,7 +75,7 @@ class GeoLocNewScreenAddressMap : Fragment() {
                     }
                 }.addOnFailureListener { exception: Exception? -> }
             val autocompleteFragment =
-                requireActivity().supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment?
+                childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment?
             autocompleteFragment!!.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME))
             autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
                 override fun onPlaceSelected(place: Place) {
