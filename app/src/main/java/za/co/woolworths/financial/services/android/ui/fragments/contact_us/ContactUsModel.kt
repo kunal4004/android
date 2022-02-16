@@ -1,42 +1,46 @@
 package za.co.woolworths.financial.services.android.ui.fragments.contact_us
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.contact_us.*
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigOptions
+import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUs
+import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUsCall
+import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUsOptions
+import za.co.woolworths.financial.services.android.models.dto.app_config.contact_us.ConfigContactUsValue
 
 class ContactUsModel {
 
-    private var contactUsList: MutableList<ContactUs>? = null
+    private var contactUsList: MutableList<ConfigContactUs>? = null
 
     init {
-        contactUsList = WoolworthsApplication.getContactUs()
+        contactUsList = AppConfigSingleton.mContactUs
     }
 
-    fun contactUsLanding(): MutableList<ContactUs>? {
+    fun contactUsLanding(): MutableList<ConfigContactUs>? {
         return contactUsList
     }
 
 
-    fun contactUsFinancialService(): ContactUs? {
+    fun contactUsFinancialService(): ConfigContactUs? {
         return contactUsList?.get(0)
     }
 
-    private fun contactUsFinancialServiceOptions(): ContactUsValue? {
+    private fun contactUsFinancialServiceOptions(): ConfigContactUsValue? {
         return contactUsFinancialService()?.options?.get(0)?.value
     }
 
-    fun contactUsFinancialServicesCall(): ContactUsCall? {
+    fun contactUsFinancialServicesCall(): ConfigContactUsCall? {
         return contactUsFinancialServiceOptions()?.call
     }
 
-    fun contactUsFinancialServicesEmail(): List<Options>? {
+    fun contactUsFinancialServicesEmail(): List<ConfigOptions>? {
         return contactUsFinancialServiceOptions()?.email
     }
 
-    fun contactUsCustomerServices(): ContactUs? {
+    fun contactUsCustomerServices(): ConfigContactUs? {
         return contactUsList?.get(1)
     }
 
-    fun contactUsCustomerServicesOptions(): ArrayList<ContactUsOptions>? {
+    fun contactUsCustomerServicesOptions(): ArrayList<ConfigContactUsOptions>? {
         return contactUsList?.get(1)?.options
     }
 }

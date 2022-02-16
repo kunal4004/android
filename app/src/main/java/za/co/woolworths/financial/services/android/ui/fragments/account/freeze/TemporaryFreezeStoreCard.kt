@@ -52,8 +52,13 @@ open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsRes
         childFragmentManager?.let { cfm -> temporaryUnFreezeCardFragment.show(cfm, TemporaryUnFreezeCardFragment::class.java.simpleName) }
     }
 
-    fun showActiveTemporaryFreezeCard(switch: Switch?, cardFreezeImageView: ImageView?, cardStatusTextView: TextView?, blockCardLayout: RelativeLayout?) {
-
+    fun showActiveTemporaryFreezeCard(
+        switch: Switch?,
+        cardFreezeImageView: ImageView?,
+        cardStatusTextView: TextView?,
+        blockCardLayout: RelativeLayout?,
+        hasVirtualCard: Boolean
+    ) {
         val isFreezeCardChecked = when (blockType()) {
             TEMPORARY -> true
             else -> false
@@ -70,7 +75,7 @@ open class TemporaryFreezeStoreCard(private val storeCardResponse: StoreCardsRes
             false -> {
                 cardStatusTextView?.text = bindString(R.string.active)
                 cardFreezeImageView?.setImageDrawable(bindDrawable(R.drawable.w_store_card))
-                blockCardLayout?.visibility = View.VISIBLE
+                blockCardLayout?.visibility = if (hasVirtualCard) View.GONE else View.VISIBLE
             }
         }
     }

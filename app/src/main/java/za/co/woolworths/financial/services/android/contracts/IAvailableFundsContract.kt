@@ -9,7 +9,7 @@ import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowSt
 interface IAvailableFundsContract {
 
     interface AvailableFundsView {
-        fun navigateToOnlineBankingActivity(creditCardNumber: String, isRegistered: Boolean)
+        fun navigateToOnlineBankingActivity(creditCardNumber: String?, isRegistered: Boolean)
         fun displayCardNumberNotFound()
         fun handleUnknownHttpResponse(desc: String?)
         fun handleSessionTimeOut(stsParams: String)

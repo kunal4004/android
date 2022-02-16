@@ -4,20 +4,19 @@ import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
-import com.awfs.coordination.R
-
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.BpiSlideText
+import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.dto.app_config.balance_protection_insurance.ConfigBpiSlideText
 
-val slidesText = WoolworthsApplication.getBalanceProtectionInsuranceObject().coverage
+val slidesText = AppConfigSingleton.balanceProtectionInsurance?.coverage
 
-fun getTitle(slide: BpiSlideText?): String {
+fun getTitle(slide: ConfigBpiSlideText?): String {
     return slide?.title ?: ""
 }
 
-fun getDescription(slide: BpiSlideText?): Spannable {
+fun getDescription(slide: ConfigBpiSlideText?): Spannable {
     if(slide?.description != null && slide.descriptionBoldParts.isNotEmpty()){
         val description: Spannable = SpannableString(slide.description)
         slide.descriptionBoldParts.forEach {

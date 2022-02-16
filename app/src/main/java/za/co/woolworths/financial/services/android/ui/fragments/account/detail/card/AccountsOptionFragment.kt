@@ -29,15 +29,13 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.ACTION_LOWER_CASE
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties.PropertyNames.Companion.activationInitiated
 import za.co.woolworths.financial.services.android.contracts.IAccountCardDetailsContract
-import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
-import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
-import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
-import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
+import za.co.woolworths.financial.services.android.models.dto.account.*
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.DeliveryStatus
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -52,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
@@ -59,6 +58,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
@@ -69,9 +69,11 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private var cardWithPLCState: Card? = null
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-
     companion object {
+        const val PLC = "PLC"
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+        var SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
+        var CREDIT_CARD_ACTIVATION_DETAIL = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -149,6 +151,21 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     getUserCLIOfferActive()
                 }
             }
+        }
+
+        if(PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN){
+            PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN = false
+            mCardPresenterImpl?.apply {
+                cancelRequest()
+                navigateToLoanWithdrawalActivity()
+            }
+        }
+        else if (SHOW_CREDIT_CARD_ACTIVATION_SCREEN) {
+            SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
+            if (Utils.isCreditCardActivationEndpointAvailable())
+                navigateToCreditCardActivation()
+            else
+                showCreditCardActivationUnavailableDialog()
         }
     }
 
@@ -254,17 +271,24 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 }
 
                 R.id.withdrawCashView, R.id.loanWithdrawalLogoImageView, R.id.withdrawCashTextView -> {
-                    cancelRequest()
-                    navigateToLoanWithdrawalActivity()
+                    KotlinUtils.linkDeviceIfNecessary(activity, ApplyNowState.PERSONAL_LOAN, {
+                        PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL = true
+                    },{
+                        cancelRequest()
+                        navigateToLoanWithdrawalActivity()
+                    })
                 }
                 R.id.viewPaymentOptions -> {
                     mCardPresenterImpl?.navigateToPaymentOptionActivity()
                 }
                 R.id.activateCreditCard -> {
-                    if (Utils.isCreditCardActivationEndpointAvailable())
-                        navigateToCreditCardActivation()
-                    else
-                        showCreditCardActivationUnavailableDialog()
+                    handleActivateCreditCard {
+                        if (Utils.isCreditCardActivationEndpointAvailable())
+                            navigateToCreditCardActivation()
+                        else
+                            showCreditCardActivationUnavailableDialog()
+                    }
+
                 }
                 R.id.scheduleOrManageCreditCardDelivery -> {
                     activity?.apply {
@@ -280,6 +304,23 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     }
                 }
             }
+        }
+    }
+
+    private fun handleActivateCreditCard(doCreditActivation: () -> Unit) {
+        if(cardWithPLCState?.cardStatus.equals(PLC)){
+            KotlinUtils.linkDeviceIfNecessary(activity,
+                ApplyNowState.valueOf(
+                    mCardPresenterImpl?.mApplyNowAccountKeyPair?.first.toString()),
+                {
+                    CREDIT_CARD_ACTIVATION_DETAIL = true
+                },
+                {
+                    doCreditActivation()
+                })
+        }
+        else{
+            doCreditActivation()
         }
     }
 
@@ -552,7 +593,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     }
 
     private fun initCreditCardActivation() {
-        WoolworthsApplication.getCreditCardActivation()?.apply {
+        AppConfigSingleton.creditCardActivation?.apply {
             if (isEnabled) {
                 executeCreditCardTokenService()
             }
@@ -628,7 +669,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private fun isPLCInGoodStanding(): Boolean {
         var isEnable = false
         if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
-            val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
+            val cardTypes: List<ConfigCreditCardDeliveryCardTypes> = AppConfigSingleton.creditCardDelivery?.cardTypes ?: arrayListOf()
             for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
                 if (binNumber.equals(mCardPresenterImpl?.getAccount()?.accountNumberBin, ignoreCase = true)
                         && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {

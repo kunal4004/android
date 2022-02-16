@@ -41,30 +41,22 @@ import kotlinx.android.synthetic.main.layout_sending_otp_request.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.models.CreditCardDeliveryCardTypes
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
-import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.LinkedDeviceResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.otp.RetrieveOTPResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
-import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
-import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesInterface
-import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity
+import za.co.woolworths.financial.services.android.ui.activities.*
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.LinkDeviceConfirmationInterface
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
-import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
-import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.StoreCardOptionsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
@@ -79,6 +71,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
     private var mConnectionBroadCast: BroadcastReceiver? = null
     private var mApplyNowState: ApplyNowState? = null
     private var otpNumber: String? = null
+    private var otpSMSNumber: String? = null
     private var retryApiCall: String? = null
     private var otpMethod: String? = OTPMethodType.SMS.name
     private var currentLocation: Location? = null
@@ -206,6 +199,12 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         didNotReceiveOTPTextView?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         didNotReceiveOTPTextView?.setOnClickListener(this)
 
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt1)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt2)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt3)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt4)
+        KotlinUtils.lowercaseEditText(linkDeviceOTPEdtTxt5)
+
         linkDeviceOTPEdtTxt1?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2) { validateNextButton() })
         linkDeviceOTPEdtTxt2?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt1, linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3) { validateNextButton() })
         linkDeviceOTPEdtTxt3?.addTextChangedListener(OTPViewTextWatcher(linkDeviceOTPEdtTxt2, linkDeviceOTPEdtTxt3, linkDeviceOTPEdtTxt4) { validateNextButton() })
@@ -253,15 +252,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         const val RETRY_GET_OTP: String = "GET_OTP"
         const val RETRY_VALIDATE: String = "VALIDATE_OTP"
         const val RETRY_LINK_DEVICE: String = "LINK_DEVICE"
-        const val GO_TO_PRODUCT: Int = 999
-        const val PLC = "PLC"
-        const val KEY_ENVELOPE_NUMBER = "envelopeNumber"
-        const val KEY_ABSA_CARD_TOKEN = "absaCardToken"
-        const val KEY_PRODUCT_OFFERING_ID = "productOfferingId"
-        const val KEY_ACCOUNT_BIN_NUMBER = "accountBinNumber"
-        const val KEY_STATUS_RESPONSE = "StatusResponse"
-        const val KEY_SETUP_DELIVERY_NOW_CLICKED = "setUpDeliveryNowClicked"
-        const val KEY_BUNDLE = "bundle"
     }
 
     override fun onClick(v: View?) {
@@ -271,7 +261,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                     v.isEnabled = false
                     Handler().postDelayed({ v.isEnabled = true }, AppConstant.DELAY_1000_MS)
                     view?.findNavController()?.navigate(R.id.action_linkDeviceOTPFragment_to_resendOTPBottomSheetFragment, bundleOf(
-                            ResendOTPBottomSheetFragment.OTP_NUMBER to otpNumber
+                            ResendOTPBottomSheetFragment.OTP_SMS_NUMBER to otpSMSNumber
                     ))
                 }
             }
@@ -370,7 +360,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                         linkDeviceOTPScreen?.visibility = View.VISIBLE
                         retrieveOTPResponse.otpSentTo?.let {
                             if (otpMethod.equals(OTPMethodType.SMS.name, true)) {
-                                otpNumber = it
+                                otpSMSNumber = it
                             }
                             enterOTPSubtitle?.text = activity?.resources?.getString(R.string.sent_otp_desc, it)
                             Handler().postDelayed({
@@ -470,12 +460,14 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun callLinkingDeviceAPI() {
 
-        if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-            sendinOTPLayout?.visibility = View.GONE
-            linkDeviceOTPScreen?.visibility = View.VISIBLE
-            enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
-            retryApiCall = RETRY_LINK_DEVICE
-            return
+        NetworkManager.getInstance()?.let {
+            if (!it.isConnectedToNetwork(activity)) {
+                sendinOTPLayout?.visibility = View.GONE
+                linkDeviceOTPScreen?.visibility = View.VISIBLE
+                enterOTPSubtitle?.text = context?.getString(R.string.internet_waiting_subtitle)
+                retryApiCall = RETRY_LINK_DEVICE
+                return
+            }
         }
 
         showLinkingDeviceProcessing()
@@ -490,8 +482,8 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
 
     private fun retrieveTokenAndCallLinkDevice() {
         if (TextUtils.isEmpty(Utils.getToken())) {
-            if (Utils.isGooglePlayServicesAvailable()) {
-
+            if (Utils.isGooglePlayServicesAvailable() ||
+                Utils.isHuaweiMobileServicesAvailable()) {
                 FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         task.result.token.let {
@@ -528,7 +520,9 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                 sendinOTPLayout?.visibility = View.GONE
                 when (response?.httpCode) {
                     AppConstant.HTTP_OK_201.toString() -> {
-                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED, hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE, FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), this) }
+                        activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.DEVICESECURITY_LINK_CONFIRMED,
+                            hashMapOf(Pair(FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
+                            FirebaseManagerAnalyticsProperties.PropertyNames.linkDeviceConfirmed)), this) }
 
                         if (!isAdded) {
                             return
@@ -546,16 +540,10 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             mApplyNowState?.let {
                                 activity?.apply {
                                     if (this is LinkDeviceConfirmationActivity) {
+                                        MyAccountsFragment.updateLinkedDevices()
                                         when (mApplyNowState) {
-                                            //TODO: WOP-12578, WOP-12589 // credit card will be done after personal loan
-                                            /**ApplyNowState.BLACK_CREDIT_CARD,
-                                            ApplyNowState.GOLD_CREDIT_CARD,
-                                            ApplyNowState.SILVER_CREDIT_CARD -> {
-                                                //check if should activate credit card or should schedule delivery
-                                                activateCreditCardOrScheduleCardDelivery()
-                                            }*/
-                                            ApplyNowState.STORE_CARD -> {
-                                                MyAccountsFragment.updateLinkedDevices()
+                                            ApplyNowState.STORE_CARD,
+                                            ApplyNowState.PERSONAL_LOAN -> {
                                                 when {
                                                     MyCardDetailFragment.FREEZE_CARD_DETAIL -> {
                                                         showFreezeStoreCardDialog()
@@ -575,8 +563,28 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                                                     StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL -> {
                                                         showActivateVirtualTempCardScreen()
                                                     }
+
+                                                    PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL -> {
+                                                        showPersonalLoanWithdrawFundsScreen()
+                                                    }
+                                                    StatementFragment.SEND_STATEMENT_DETAIL ->{
+                                                        sendStatementToEmailScreen()
+                                                    }
                                                     else -> {
                                                         goToProduct()
+                                                    }
+                                                }
+                                            }
+
+                                            ApplyNowState.SILVER_CREDIT_CARD,
+                                            ApplyNowState.BLACK_CREDIT_CARD,
+                                            ApplyNowState.GOLD_CREDIT_CARD -> {
+                                                when {
+                                                    AbsaStatementsActivity.VIEW_ABSA_CC_STATEMENT_DETAIL -> {
+                                                        showViewAbsaCCStatementScreen()
+                                                    }
+                                                    AccountsOptionFragment.CREDIT_CARD_ACTIVATION_DETAIL -> {
+                                                        activateCreditCard()
                                                     }
                                                 }
                                             }
@@ -599,7 +607,7 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             }
                         }
                     else -> response?.response?.desc?.let { desc ->
-                        showValidateOTPError(getString(R.string.icr_wrong_otp_error))
+                        activity?.let { showValidateOTPError(it.getString(R.string.icr_wrong_otp_error)) }
                         Handler().postDelayed({
                             linkDeviceOTPEdtTxt5.requestFocus()
                             val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
@@ -648,99 +656,33 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         StatementFragment.VIEW_STATEMENT_DETAIL = false
         activity?.finish()
     }
-
+    private fun sendStatementToEmailScreen(){
+        StatementFragment.SEND_STATEMENT_SCREEN = true
+        StatementFragment.SEND_STATEMENT_DETAIL = false
+        activity?.finish()
+    }
     private fun showActivateVirtualTempCardScreen(){
         StoreCardOptionsFragment.ACTIVATE_VIRTUAL_CARD_DETAIL = true
         StoreCardOptionsFragment.SHOW_ACTIVATE_VIRTUAL_CARD_SCREEN = false
         activity?.finish()
     }
 
-    private fun activateCreditCardOrScheduleCardDelivery() {
-        activity?.apply {
-            OneAppService.getCreditCardToken()
-                .enqueue(CompletionHandler(object : IResponseListener<CreditCardTokenResponse> {
-                    override fun onSuccess(response: CreditCardTokenResponse?) {
-                        response?.apply {
-                            if (!cards.isNullOrEmpty()) {
-                                cardWithPLCState = getCardWithPLCState(cards)
-                                cards?.get(0)?.apply {
-                                    when (envelopeNumber.isNullOrEmpty()) {
-                                        true -> {
-                                            when (cardStatus) {
-                                                PLC -> {
-                                                    when (isPLCInGoodStanding()) {
-                                                        true -> checkCreditCardDeliveryStatus()
-
-                                                        false -> goToCreditCardActivation()
-                                                    }
-                                                }
-                                                else -> goToProduct()
-                                            }
-                                        }
-                                        false -> checkCreditCardDeliveryStatus()
-                                    }
-                                }
-                            } else {
-                                goToProduct()
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        goToProduct()
-                    }
-                }, CreditCardTokenResponse::class.java))
-        }
+    private fun showPersonalLoanWithdrawFundsScreen(){
+        PersonalLoanFragment.SHOW_PL_WITHDRAW_FUNDS_SCREEN = true
+        PersonalLoanFragment.PL_WITHDRAW_FUNDS_DETAIL = false
+        activity?.finish()
     }
 
-    private fun checkCreditCardDeliveryStatus() {
-        cardWithPLCState?.envelopeNumber?.let {
-            OneAppService.getCreditCardDeliveryStatus(
-                it,
-                getAccount()?.productOfferingId.toString())
-                .enqueue(CompletionHandler(object : IResponseListener<CreditCardDeliveryStatusResponse> {
-                    override fun onSuccess(response: CreditCardDeliveryStatusResponse?) {
-                        when (response?.statusResponse?.deliveryStatus?.statusDescription?.asEnumOrDefault(
-                            CreditCardDeliveryStatus.DEFAULT)) {
-                            CreditCardDeliveryStatus.CARD_RECEIVED ->
-                                goToScheduleDelivery(response)
-                            else -> goToProduct()
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        goToProduct()
-                    }
-                }, CreditCardDeliveryStatusResponse::class.java))
-        }
+    private fun showViewAbsaCCStatementScreen(){
+        AbsaStatementsActivity.SHOW_VIEW_ABSA_CC_STATEMENT_SCREEN = true
+        AbsaStatementsActivity.VIEW_ABSA_CC_STATEMENT_DETAIL = false
+        activity?.finish()
     }
 
-    private fun getAccount(): Account? {
-        return MyAccountsFragment.mAccountResponse.accountList?.filter { account ->
-            account?.productGroupCode == AccountSignedInPresenterImpl.getProductCode(mApplyNowState!!) }?.get(0)
-    }
-
-    private fun getCardWithPLCState(cards: ArrayList<Card>?): Card? {
-        var cardWithPLCState: Card? = null
-        cards?.apply {
-            if (this.isNotEmpty())
-                cardWithPLCState = this[0]
-        }
-        return cardWithPLCState
-    }
-
-    private fun isPLCInGoodStanding(): Boolean {
-        var isEnable = false
-        if (!cardWithPLCState?.envelopeNumber.isNullOrEmpty()) {
-            val cardTypes: List<CreditCardDeliveryCardTypes> = WoolworthsApplication.getCreditCardDelivery().cardTypes
-            for ((binNumber, minimumSupportedAppBuildNumber) in cardTypes) {
-                if (binNumber.equals(getAccount()?.accountNumberBin, ignoreCase = true)
-                    && Utils.isFeatureEnabled(minimumSupportedAppBuildNumber)) {
-                    isEnable = true
-                }
-            }
-        }
-        return isEnable
+    private fun activateCreditCard() {
+        AccountsOptionFragment.SHOW_CREDIT_CARD_ACTIVATION_SCREEN = true
+        AccountsOptionFragment.CREDIT_CARD_ACTIVATION_DETAIL = false
+        activity?.finish()
     }
 
     private fun goToProduct() {
@@ -751,66 +693,31 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
         activity?.finish()
     }
 
-    private fun goToCreditCardActivation() {
-        activity?.apply {
-            if (Utils.isCreditCardActivationEndpointAvailable()){
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CC_ACTIVATE_NEW_CARD, hashMapOf(Pair(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE,
-                    FirebaseManagerAnalyticsProperties.PropertyNames.activationInitiated
-                )), this)
-                val mIntent = Intent(this, CreditCardActivationActivity::class.java)
-                val mBundle = Bundle()
-                mBundle.putString(KEY_ABSA_CARD_TOKEN, cardWithPLCState?.absaCardToken)
-                mBundle.putString(KEY_PRODUCT_OFFERING_ID, getAccount()?.productOfferingId.toString())
-                mIntent.putExtra(KEY_BUNDLE, mBundle)
-                mIntent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-                startActivityIfNeeded(mIntent,
-                    AccountsOptionFragment.REQUEST_CREDIT_CARD_ACTIVATION
-                )
-                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            }
-            else {
-                goToProduct()
-            }
-        }
-    }
-
-    private fun goToScheduleDelivery(response: CreditCardDeliveryStatusResponse) {
-        val account = MyAccountsFragment.mAccountResponse.accountList[0]
-        val intent = Intent(context, CreditCardDeliveryActivity::class.java)
-        val mBundle = Bundle()
-        mBundle.putString(KEY_ENVELOPE_NUMBER, account.cards[0].envelopeNumber)
-        mBundle.putString(KEY_ACCOUNT_BIN_NUMBER, account.accountNumberBin)
-        mBundle.putString(KEY_STATUS_RESPONSE, Utils.toJson(response.statusResponse))
-        mBundle.putString(KEY_PRODUCT_OFFERING_ID, account.productOfferingId.toString())
-        mBundle.putBoolean(KEY_SETUP_DELIVERY_NOW_CLICKED, true)
-        mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mApplyNowState)
-        intent.putExtra(KEY_BUNDLE, mBundle)
-        startActivity(intent)
-    }
-
     private fun getLocationAddress(latitude: Double?, longitude: Double?): String? {
 
         var location = ""
         if (latitude == null || longitude == null) {
             return location
         }
-        val gcd = Geocoder(context, Locale.getDefault())
-        val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
-        if (addresses.isNotEmpty()) {
-            location =
-                    if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
-                        for (address in addresses) {
-                            if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
-                                return address.locality + ", " + address.countryName
-                            } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
-                                return address.subLocality + ", " + address.countryName
-                            }
+        try{
+            val gcd = Geocoder(context, Locale.getDefault())
+            val addresses: List<Address> = gcd.getFromLocation(latitude, longitude, 2)
+            if (addresses.isNotEmpty()) {
+                location = if (TextUtils.isEmpty(addresses[0].locality) || "null".equals(addresses[0].locality, ignoreCase = true)) {
+                    for (address in addresses) {
+                        if (!TextUtils.isEmpty(address.locality) && !"null".equals( address.locality, ignoreCase = true)) {
+                            address.locality + ", " + address.countryName
+                        } else if (!TextUtils.isEmpty(address.subLocality) && !"null".equals( address.subLocality, ignoreCase = true)) {
+                            address.subLocality + ", " + address.countryName
                         }
-                        return addresses[0].countryName
-                    } else
-                        return addresses[0].locality + ", " + addresses[0].countryName
-
+                    }
+                    addresses[0].countryName
+                } else
+                    addresses[0].locality + ", " + addresses[0].countryName
+            }
+        }
+        catch(e: Exception){
+            FirebaseManager.logException(e)
         }
         return location
     }
@@ -900,9 +807,6 @@ class LinkDeviceOTPFragment : Fragment(), View.OnClickListener, NetworkChangeLis
                             imm?.showSoftInput(linkDeviceOTPEdtTxt5, InputMethodManager.SHOW_IMPLICIT)
                         }, AppConstant.DELAY_200_MS)
                         linkDeviceOTPScreen?.visibility = View.VISIBLE
-                    }
-                    GO_TO_PRODUCT -> {
-                        goToProduct()
                     }
                 }
         }
