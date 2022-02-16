@@ -2413,4 +2413,10 @@
     <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
     <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
+
+
+
+    <string name="standard_delivery">Standard Delivery</string>
+    <string name="click_and_collect">Click &amp; Collect</string>
+    <string name="dash_delivery">Dash Delivery</string>
 </resources>
