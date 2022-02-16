@@ -8,12 +8,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -28,12 +30,14 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import kotlinx.android.synthetic.main.reward_vip_exclusive_fragment.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.geoLoc.GeolocationDeliveryClickCollectChanges
 import za.co.woolworths.financial.services.android.util.Utils
 import java.io.IOException
 import java.util.*
 
-class GeoLocNewScreenAddressMap : Fragment() {
+class GeoLocNewScreenAddressMap : Fragment(), OnMapReadyCallback {
 
     companion object {
         fun newInstance() = GeoLocNewScreenAddressMap()
@@ -58,8 +62,7 @@ class GeoLocNewScreenAddressMap : Fragment() {
             val placesClient = Places.createClient(context)
             val mapFragment =
                 childFragmentManager.findFragmentById(R.id.geoloc_Map) as SupportMapFragment?
-            mapFragment?.getMapAsync(context)
-
+            mapFragment?.getMapAsync(this)
             val token = AutocompleteSessionToken.newInstance()
             val request =
                 FindAutocompletePredictionsRequest.builder() // Call either setLocationBias() OR setLocationRestriction().
@@ -76,8 +79,8 @@ class GeoLocNewScreenAddressMap : Fragment() {
                 }.addOnFailureListener { exception: Exception? -> }
             val autocompleteFragment =
                 childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment?
-            autocompleteFragment!!.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME))
-            autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            autocompleteFragment?.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME))
+            autocompleteFragment?.setOnPlaceSelectedListener(object : PlaceSelectionListener {
                 override fun onPlaceSelected(place: Place) {
                     val location = place.name
                     var addressList: List<Address>? = null
@@ -88,10 +91,12 @@ class GeoLocNewScreenAddressMap : Fragment() {
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
-                        val address = addressList!![0]
-                        val latLng = LatLng(address.latitude, address.longitude)
-                        mMap!!.addMarker(MarkerOptions().position(latLng).title(location))
-                        mMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+                        val address = addressList?.get(0)
+                        val latLng = address?.latitude?.let { LatLng(it, address?.longitude) }
+                        mMap?.addMarker(latLng?.let {
+                            MarkerOptions().position(it).title(location)
+                        })
+                        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
                         Log.i("TAG", "Place: " + place.name + ", " + place.id)
                     }
                 }
@@ -100,21 +105,25 @@ class GeoLocNewScreenAddressMap : Fragment() {
                     Log.i("TAG", "An error occurred: $status")
                 }
 
+
             })
-        }
-        tvTermsCondition?.apply {
-            activity?.apply {
-                text =
-                    WRewardBenefitActivity.convertWRewardCharacter(bindString(R.string.benefits_term_and_condition_link))
-                setOnClickListener {
-                    Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsTCLink())
-                }
+            val confirmAdd =view.findViewById(R.id.btnConfirmAddress) as Button
+            confirmAdd.setOnClickListener {
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(GeolocationDeliveryClickCollectChanges())
             }
         }
+
+    }
+
+    override fun onMapReady(p0: GoogleMap?) {
+
+        // Add a marker in Sydney and move the camera
+        val sydney = LatLng(-34.0, 151.0)
+        mMap?.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
 }
 
-private fun SupportMapFragment.getMapAsync(context: Context) {
 
-}
+
