@@ -1,5 +1,9 @@
 package za.co.woolworths.financial.services.android.models.dto.credit_card_delivery
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class AddressDetails(
         var deliveryAddress: String? = null,
         var searchPhrase: String? = null,
@@ -12,4 +16,4 @@ data class AddressDetails(
         var suburb: String? = null,
         var city: String? = null,
         var province: String? = null,
-        var postalCode: String? = null)
+        var postalCode: String? = null): Parcelable

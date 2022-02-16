@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindColor
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 
 class CreditCardDeliveryActivity : AppCompatActivity() {
@@ -30,10 +31,10 @@ class CreditCardDeliveryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.credit_card_delivery_activity)
         Utils.updateStatusBarBackground(this, R.color.grey_bg)
-        bundle = intent.getBundleExtra("bundle")
+        bundle = intent.getBundleExtra(BundleKeysConstants.BUNDLE)
         bundle?.apply {
-            statusResponse = Utils.jsonStringToObject(getString("StatusResponse"), StatusResponse::class.java) as StatusResponse?
-            accountBinNumber = getString("accountBinNumber")
+            statusResponse = getParcelable(BundleKeysConstants.STATUS_RESPONSE) as StatusResponse?
+            accountBinNumber = getString(BundleKeysConstants.ACCOUNTBI_NNUMBER)
             setUpDeliveryNowClicked = getBoolean("setUpDeliveryNowClicked", false);
             val applyNowState: ApplyNowState? = getSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE) as? ApplyNowState
             if (applyNowState != null)

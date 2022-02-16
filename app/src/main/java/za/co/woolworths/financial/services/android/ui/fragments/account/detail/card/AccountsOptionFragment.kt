@@ -33,7 +33,11 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.account.*
+import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
+import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.account.CreditCardActivationState
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus.*
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigCreditCardDeliveryCardTypes
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.CreditCardDeliveryStatusResponse
@@ -41,14 +45,18 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.service.event.BusStation
 import za.co.woolworths.financial.services.android.ui.activities.CreditCardActivationActivity
+import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInPresenterImpl
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.cancelRetrofitRequest
+import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.personal_loan.PersonalLoanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.MyAccountsScreenNavigator
@@ -56,8 +64,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.presentation.BalanceProtectionInsuranceActivity
 
 import za.co.woolworths.financial.services.android.ui.fragments.credit_card_activation.CreditCardActivationAvailabilityDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
@@ -68,9 +78,17 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
     private var cardWithPLCState: Card? = null
     private var creditCardDeliveryStatusResponse: CreditCardDeliveryStatusResponse? = null
     private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
+    private var state: ApplyNowState? = null
+    private var eligibilityPlan: EligibilityPlan? = null
 
     companion object {
+        const val PLC = "PLC"
         const val REQUEST_CREDIT_CARD_ACTIVATION = 1983
+        const val REQUEST_GET_PAYMENT_PLAN = 1984
+        var SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
+        var CREDIT_CARD_ACTIVATION_DETAIL = false
+        var SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
+        var CREDIT_CARD_SHECULE_OR_MANAGE = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,6 +112,8 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         llIncreaseLimitContainer?.setOnClickListener(this)
         withdrawCashView?.setOnClickListener(this)
         viewPaymentOptions?.setOnClickListener(this)
+        setUpPaymentPlanOptions?.setOnClickListener(this)
+        viewTreatmentPlanOptions?.setOnClickListener(this)
         activateCreditCard?.setOnClickListener(this)
         scheduleOrManageCreditCardDelivery?.setOnClickListener(this)
         AnimationUtilExtension.animateViewPushDown(cardDetailImageView)
@@ -156,6 +176,16 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 cancelRequest()
                 navigateToLoanWithdrawalActivity()
             }
+        }
+        else if (SHOW_CREDIT_CARD_ACTIVATION_SCREEN) {
+            SHOW_CREDIT_CARD_ACTIVATION_SCREEN = false
+            if (Utils.isCreditCardActivationEndpointAvailable())
+                navigateToCreditCardActivation()
+            else
+                showCreditCardActivationUnavailableDialog()
+        }else if (SHOW_CREDIT_CARD_SHECULE_OR_MANAGE){
+            SHOW_CREDIT_CARD_SHECULE_OR_MANAGE = false
+            navigateToScheduleOrManage()
         }
     }
 
@@ -271,29 +301,59 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                 R.id.viewPaymentOptions -> {
                     mCardPresenterImpl?.navigateToPaymentOptionActivity()
                 }
+                R.id.setUpPaymentPlanOptions -> {
+                    openSetupPaymentPlanPage()
+                }
+                R.id.viewTreatmentPlanOptions -> {
+                    openViewTreatmentPlanPage()
+                }
                 R.id.activateCreditCard -> {
-                    if (Utils.isCreditCardActivationEndpointAvailable())
-                        navigateToCreditCardActivation()
-                    else
-                        showCreditCardActivationUnavailableDialog()
+                    handleActivateCreditCard {
+                        if (Utils.isCreditCardActivationEndpointAvailable())
+                            navigateToCreditCardActivation()
+                        else
+                            showCreditCardActivationUnavailableDialog()
+                    }
+
                 }
                 R.id.scheduleOrManageCreditCardDelivery -> {
-                    activity?.apply {
-                        val intent = Intent(this, CreditCardDeliveryActivity::class.java)
-                        val mBundle = Bundle()
-                        mBundle.putString("envelopeNumber", cardWithPLCState?.envelopeNumber)
-                        mBundle.putString("accountBinNumber", mCardPresenterImpl?.getAccount()?.accountNumberBin)
-                        mBundle.putString("StatusResponse", Utils.toJson(creditCardDeliveryStatusResponse?.statusResponse))
-                        mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
-                        mBundle.putSerializable(AccountSignedInPresenterImpl.APPLY_NOW_STATE, mCardPresenterImpl?.mApplyNowAccountKeyPair?.first)
-                        intent.putExtra("bundle", mBundle)
-                        startActivity(intent)
+                    handleScheduleDeliveryCreditCard {
+                        if (!MyAccountsFragment.verifyAppInstanceId())
+                            navigateToScheduleOrManage()
                     }
                 }
             }
         }
     }
 
+    private fun handleActivateCreditCard(doCreditActivation: () -> Unit) {
+        if(cardWithPLCState?.cardStatus.equals(PLC)){
+            KotlinUtils.linkDeviceIfNecessary(activity,
+                ApplyNowState.valueOf(
+                    mCardPresenterImpl?.mApplyNowAccountKeyPair?.first.toString()),
+                {
+                    CREDIT_CARD_ACTIVATION_DETAIL = true
+                },
+                {
+                    doCreditActivation()
+                })
+        }
+        else{
+            doCreditActivation()
+        }
+    }
+    private fun handleScheduleDeliveryCreditCard(doScheduleOrManage: () -> Unit) {
+        KotlinUtils.linkDeviceIfNecessary(activity,
+            ApplyNowState.valueOf(
+                mCardPresenterImpl?.mApplyNowAccountKeyPair?.first.toString()
+            ),
+            {
+                CREDIT_CARD_SHECULE_OR_MANAGE = true
+            },
+            {
+                doScheduleOrManage()
+            })
+    }
     private fun AccountCardDetailPresenterImpl.cancelRequest() {
         cancelRetrofitRequest(mOfferActiveCall)
         cancelRetrofitRequest(mStoreCardCall)
@@ -522,13 +582,38 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
             val mIntent = Intent(this, CreditCardActivationActivity::class.java)
             val mBundle = Bundle()
             mBundle.putString("absaCardToken", cardWithPLCState?.absaCardToken)
-            mBundle.putString("productOfferingId", mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
+            mBundle.putString(BundleKeysConstants.PRODUCT_OFFERINGID, mCardPresenterImpl?.getAccount()?.productOfferingId.toString())
             mIntent.putExtra("bundle", mBundle)
             startActivityForResult(mIntent, REQUEST_CREDIT_CARD_ACTIVATION)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
 
+    private fun navigateToScheduleOrManage() {
+        activity?.apply {
+            val intent = Intent(this, CreditCardDeliveryActivity::class.java)
+            val mBundle = Bundle()
+            mBundle.putString(BundleKeysConstants.ENVELOPE_NUMBER, cardWithPLCState?.envelopeNumber)
+            mBundle.putString(
+                BundleKeysConstants.ACCOUNTBI_NNUMBER,
+                mCardPresenterImpl?.getAccount()?.accountNumberBin
+            )
+            mBundle.putParcelable(
+                BundleKeysConstants.STATUS_RESPONSE,
+                creditCardDeliveryStatusResponse?.statusResponse
+            )
+            mBundle.putString(
+                BundleKeysConstants.PRODUCT_OFFERINGID,
+                mCardPresenterImpl?.getAccount()?.productOfferingId.toString()
+            )
+            mBundle.putSerializable(
+                AccountSignedInPresenterImpl.APPLY_NOW_STATE,
+                mCardPresenterImpl?.mApplyNowAccountKeyPair?.first
+            )
+            intent.putExtra(BundleKeysConstants.BUNDLE, mBundle)
+            startActivity(intent)
+        }
+    }
     private fun showCreditCardActivationUnavailableDialog() {
         activity?.supportFragmentManager?.let { CreditCardActivationAvailabilityDialogFragment.newInstance(mCardPresenterImpl?.getAccount()?.accountNumberBin).show(it, CreditCardActivationAvailabilityDialogFragment::class.java.simpleName) }
     }
@@ -547,18 +632,24 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
                     }
                 }
             }
-
             REQUEST_CREDIT_CARD_ACTIVATION -> {
                 if (resultCode == RESULT_OK) {
                     executeCreditCardTokenService()
                 }
             }
-
+            REQUEST_GET_PAYMENT_PLAN -> {
+                if (resultCode == RESULT_OK) {
+                    onTreatmentPlanStatusUpdateRequired()
+                }
+            }
         }
     }
 
+    private fun onTreatmentPlanStatusUpdateRequired() {
+        (activity as? AccountSignedInActivity)?.let { it.onTreatmentPlanStatusUpdateRequired() }
+    }
+
     private fun showAccount(accounts: Account?) {
-        val applyNowState =  mCardPresenterImpl?.mApplyNowAccountKeyPair?.first
         mCardPresenterImpl?.refreshAccount(accounts)
     }
 
@@ -667,6 +758,48 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         creditCardActivationView?.visibility = VISIBLE
         scheduleOrManageCreditCardDelivery?.visibility = VISIBLE
         tvScheduleOrMangeDelivery?.text = bindString(R.string.schedule_your_delivery)
+    }
+
+    fun hideTreatmentPlanButtons() {
+        setUpPaymentPlanGroup?.visibility = GONE
+        viewTreatmentPlanGroup?.visibility = GONE
+    }
+
+    fun showSetUpPaymentPlanButton(state: ApplyNowState,
+                                   eligibilityPlan: EligibilityPlan?) {
+        setUpPaymentPlanGroup?.visibility = VISIBLE
+        setUpPaymentPlanTextView?.text = eligibilityPlan?.displayText
+
+        this.state = state
+        this.eligibilityPlan = eligibilityPlan
+    }
+
+    fun showViewTreatmentPlanButton(state: ApplyNowState, eligibilityPlan: EligibilityPlan?) {
+        viewTreatmentPlanGroup?.visibility = VISIBLE
+        viewTreatmentPlanTextView?.text = eligibilityPlan?.displayText
+
+        this.state = state
+        this.eligibilityPlan = eligibilityPlan
+    }
+
+    private fun openSetupPaymentPlanPage() {
+        activity?.apply {
+            val intent = Intent(context, GetAPaymentPlanActivity::class.java)
+            intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, eligibilityPlan)
+            startActivityForResult(intent, REQUEST_GET_PAYMENT_PLAN)
+            overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
+        }
+    }
+
+
+    private fun openViewTreatmentPlanPage(){
+        val productGroupCode : ProductGroupCode = when(state){
+            ApplyNowState.STORE_CARD -> ProductGroupCode.SC
+            ApplyNowState.PERSONAL_LOAN -> ProductGroupCode.PL
+            else -> ProductGroupCode.CC
+        }
+        val outSystemBuilder = OutSystemBuilder(activity,productGroupCode, eligibilityPlan)
+        outSystemBuilder.build()
     }
 }
 
