@@ -9,6 +9,8 @@ import android.widget.ProgressBar;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ImageManager;
+
 
 public class ParentSubCategoryViewHolder extends ParentViewHolder {
 
@@ -18,6 +20,7 @@ public class ParentSubCategoryViewHolder extends ParentViewHolder {
 	private final ProgressBar pbLoadChildItem;
 	private WTextView tvSubCategoryName;
 	private LinearLayout llLoadChild;
+	private ImageView imgBadge;
 
 	public ParentSubCategoryViewHolder(View itemView) {
 		super(itemView);
@@ -25,12 +28,24 @@ public class ParentSubCategoryViewHolder extends ParentViewHolder {
 		llLoadChild = itemView.findViewById(R.id.llLoadChild);
 		mArrowExpandImageView = itemView.findViewById(R.id.carbon_groupExpandedIndicator);
 		pbLoadChildItem = itemView.findViewById(R.id.pbLoadChildItem);
+		imgBadge = itemView.findViewById(R.id.imgBadge);
 	}
 
 	public void bind(SubCategoryModel subCategoryModel) {
 		tvSubCategoryName.setText(subCategoryModel.getName());
 		arrowVisibility(subCategoryModel);
 		retrieveChildVisibility(subCategoryModel);
+		setNewBadgeImage(subCategoryModel);
+
+	}
+
+	private void setNewBadgeImage(SubCategoryModel subCategoryModel) {
+		if (subCategoryModel.getImageUrl() != null) {
+			imgBadge.setVisibility(View.VISIBLE);
+			ImageManager.setPictureWithoutPlaceHolder(imgBadge, subCategoryModel.getImageUrl());
+		} else {
+			imgBadge.setVisibility(View.GONE);
+		}
 	}
 
 	private void arrowVisibility(SubCategoryModel subCategoryModel) {
