@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity.Companion.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
@@ -278,8 +279,13 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         if ((activity as? AccountSignedInActivity)?.bottomSheetIsExpanded() == true) return
         try {
             activity?.apply {
-                val dialog = resources?.getString(R.string.credit_card_statement_unavailable)?.let { ErrorMessageDialogWithTitleFragment.newInstance(it, false) }
-                dialog?.isCancelable = false
+                val dialog =
+                    ErrorMessageDialogWithTitleFragment.newInstance(
+                        title = bindString(R.string.credit_card_statement_unavailable_title),
+                        description = bindString(R.string.credit_card_statement_unavailable_description),
+                        actionButtonTitle = bindString(R.string.got_it),
+                        shouldFinishActivity = false
+                    )
                 dialog?.show(supportFragmentManager.beginTransaction(), ErrorMessageDialogWithTitleFragment::class.java.simpleName)
             }
         } catch (ex: IllegalStateException) {
