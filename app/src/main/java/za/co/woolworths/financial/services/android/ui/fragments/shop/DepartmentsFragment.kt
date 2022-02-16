@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_shop_department.*
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
@@ -239,11 +240,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun onEditDeliveryLocation() {
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
+       // if (SessionUtilities.getInstance().isUserAuthenticated) {
             /* if (Utils.getPreferredDeliveryLocation() != null) {
                  activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
              } else*/
-            activity?.apply {
+          /*  activity?.apply {
                 KotlinUtils.presentEditDeliveryLocationActivity(
                     this,
                     EditDeliveryLocationActivity.REQUEST_CODE
@@ -251,7 +252,17 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             }
         } else {
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
-        }
+        }*/
+
+       /* activity?.apply {
+            if (!ConfirmAddressDialog.dialogInstance.isVisible)
+                ConfirmAddressDialog.newInstance().show(
+                    this@DepartmentsFragment.childFragmentManager,
+                    ConfirmAddressDialog::class.java.simpleName
+                )
+        }*/
+
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
     }
 
 

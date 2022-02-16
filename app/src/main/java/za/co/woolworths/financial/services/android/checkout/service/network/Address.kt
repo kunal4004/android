@@ -45,4 +45,8 @@ class Address : Serializable {
 
     @SerializedName("longitude")
     var longitude: Double? = null
+
+    @SerializedName("verified")
+    var verified: Boolean = false
+
 }
