@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountPresenterImpl.Companion.IS_DONE_BUTTON_ENABLED
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.getFuturaMediumFont
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel.Companion.DEFAULT_RAND_CURRENCY
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.InfoDialogFragment
 
 import za.co.woolworths.financial.services.android.util.CurrencySymbols
@@ -111,7 +112,7 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
     private fun configureButton() {
         continueToPaymentButton?.apply {
-            text = if (isDoneButtonEnabled) bindString(R.string.done) else bindString(R.string.confirm_payment)
+            text = if (isDoneButtonEnabled) bindString(R.string.done) else bindString(R.string.continue_to_payment)
             AnimationUtilExtension.animateViewPushDown(this)
             setOnClickListener(this@EnterPaymentAmountFragment)
         }
@@ -134,8 +135,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
 
             addTextChangedListener(object : TextWatcher {
 
-                override fun afterTextChanged(s: Editable) {
-                    continueToPaymentButton?.isEnabled = s.isNotEmpty()
+                override fun afterTextChanged(editableText: Editable) {
+                    continueToPaymentButton?.isEnabled = editableText.isNotEmpty() && !editableText.toString().equals(DEFAULT_RAND_CURRENCY, ignoreCase = true)
                     when (this@apply.text?.toString()) {
                         payMyAccountViewModel.getCurrentBalance() -> selectCurrentBalance()
                         payMyAccountViewModel.getOverdueAmount() -> selectOutstandingAmount()
@@ -143,8 +144,8 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                         else -> clearSelection()
                     }
 
-                    if (isAmountSelected && !TextUtils.isEmpty(s)) {
-                        setSelection(s.length)
+                    if (isAmountSelected && !TextUtils.isEmpty(editableText)) {
+                        setSelection(editableText.length)
                         isAmountSelected = false
                     }
                 }
