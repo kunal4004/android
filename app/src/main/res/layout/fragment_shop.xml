@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,14 +25,12 @@
         android:textColorHint="@color/product_search_hint"
         android:textSize="@dimen/fifteen_dp"
         app:WTextView_font="myriadpro_regular"
-        app:layout_constraintBottom_toTopOf="@+id/productSearchGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/tabs_main"
         app:layout_constraintEnd_toStartOf="@+id/imBarcodeScanner"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlSymmetry" />
-
 
     <ImageView
         android:id="@+id/imBarcodeScanner"
@@ -39,16 +38,15 @@
         android:layout_height="24dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginTop="@dimen/twenty_one_dp"
         android:layout_marginEnd="@dimen/sixteen_dp"
-        android:layout_marginBottom="8dp"
         android:contentDescription="@string/enter_barcode_desc"
         android:src="@drawable/barcode"
-        app:layout_constraintBottom_toTopOf="@+id/productSearchGuideline"
+        android:background="@color/shop_search_color"
+        app:layout_constraintBottom_toBottomOf="@+id/tvSearchProduct"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/tvSearchProduct"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/tvSearchProduct" />
 
 
     <com.google.android.material.tabs.TabLayout
@@ -61,10 +59,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSearchProduct"
-        app:tabBackground="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabBackground="@drawable/shop_tab_color_selector"
         app:tabGravity="fill"
-        app:tabIndicatorColor="@color/black"
+        app:tabIndicatorColor="@null"
         app:tabMode="fixed"
         app:tabPaddingEnd="2dp"
         app:tabPaddingStart="2dp"
@@ -76,17 +74,19 @@
         android:id="@+id/viewpager_main"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabs_main" />
+        app:layout_constraintTop_toBottomOf="@+id/tvSearchProduct"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/productSearchGuideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="?attr/actionBarSize" />
-
+    <!--    <androidx.constraintlayout.widget.Guideline-->
+<!--        android:id="@+id/productSearchGuideline"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        app:layout_constraintGuide_begin="?attr/actionBarSize" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

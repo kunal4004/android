@@ -2418,5 +2418,7 @@
     <string name="walkthrough_shop_title">SHOPPING AT YOUR FINGERTIPS</string>
     <string name="walkthrough_shop_desc">We’ve made shopping even easier to access than before.</string>
     <string name="walkthrough_shop_action">Start shopping</string>
-
+    <string name="standard_delivery">Standard Delivery</string>
+    <string name="click_and_collect">Click &amp; Collect</string>
+    <string name="dash_delivery">Dash Delivery</string>
 </resources>

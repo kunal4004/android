@@ -59,9 +59,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mTabTitle = mutableListOf(
-            bindString(R.string.shop_department_title_category),
-            bindString(R.string.shop_department_title_list),
-            bindString(R.string.shop_department_title_order))
+            bindString(R.string.standard_delivery),
+            bindString(R.string.click_and_collect),
+            bindString(R.string.dash_delivery))
     }
 
     override fun onCreateView(
