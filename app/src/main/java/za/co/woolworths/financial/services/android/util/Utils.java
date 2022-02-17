@@ -1197,6 +1197,9 @@ public class Utils {
             case VTO_TRY_IT:
                 appInstanceObject.featureWalkThrough.isTryItOn = true;
                 break;
+            case SHOPPING:
+                appInstanceObject.featureWalkThrough.shopping = true;
+                break;
             default:
                 break;
         }
