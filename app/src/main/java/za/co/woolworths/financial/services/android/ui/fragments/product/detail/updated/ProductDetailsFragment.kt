@@ -851,8 +851,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSize() {
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         productSizeSelectorAdapter =
-            ProductSizeSelectorAdapter(requireActivity(),otherSKUsByGroupKey[getSelectedGroupKey()]!!,
-                productDetails?.lowStockIndicator ?: 0, this).apply {
+            ProductSizeSelectorAdapter(requireActivity(),
+                otherSKUsByGroupKey[getSelectedGroupKey()]!!,
+                productDetails?.lowStockIndicator ?: 0,
+                this).apply {
                 sizeSelectorRecycleView.adapter = this
             }
 
@@ -1377,8 +1379,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         onActivityResult(ADD_TO_CART_SUCCESS_RESULT,
                             ADD_TO_CART_SUCCESS_RESULT,
                             intent)
-                        //setResult(RESULT_OK, intent)
-                        //onBackPressed()
                     }
                 }
             }
@@ -2906,7 +2906,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             layoutLowStockIndicator?.visibility = View.VISIBLE
             selectedSizePlaceholder?.visibility = View.GONE
             selectedSize?.layoutParams = it
-            layoutLowStockIndicator?.txtLowStockIndicator?.text = AppConfigSingleton.lowStock?.lowStockCopy
+            layoutLowStockIndicator?.txtLowStockIndicator?.text =
+                AppConfigSingleton.lowStock?.lowStockCopy
         }
         (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.layoutLowStockIndicator
@@ -2924,7 +2925,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      *  use selected size have not low stock
      *  not have lowStockThreshold > quantity
      */
-    private fun hideLowStockForSize(){
+    private fun hideLowStockForSize() {
         selectedSizePlaceholder.text =
             getString(R.string.product_placeholder_selected_size)
         (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
@@ -2979,7 +2980,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      * This method used hide low stock when selected color have not
      * not have lowStockThreshold > quantity
      */
-    private fun hideLowStockFromSelectedColor(){
+    private fun hideLowStockFromSelectedColor() {
         colorPlaceholder.text = getString(R.string.selected_colour)
         (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
             it.startToEnd = R.id.colorPlaceholder
