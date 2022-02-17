@@ -163,4 +163,7 @@
     <color name="desc_color_code">#757575</color>
     <color name="color_F3F3F3">#F3F3F3</color>
     <color name="low_stock_indicator">#FCA933</color>
+    <color name="color_F0AC4E">#F0AC4E</color>
+    <color name="color_A9A9A9">#A9A9A9</color>
+
 </resources>
