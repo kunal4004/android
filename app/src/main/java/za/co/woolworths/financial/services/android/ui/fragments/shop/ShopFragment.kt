@@ -116,6 +116,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         })
         tabs_main?.setupWithViewPager(viewpager_main)
         updateTabIconUI(0)
+        showShopFeatureWalkThrough()
     }
 
     private fun checkCameraPermission() {
@@ -157,7 +158,6 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         if (!hidden) {
             //do when hidden
             (activity as? BottomNavigationActivity)?.apply {
-                showFeatureWalkThrough()
                 fadeOutToolbar(R.color.recent_search_bg)
                 showBackNavigationIcon(false)
                 showBottomNavigationMenu()
@@ -375,10 +375,10 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
-    private fun showFeatureWalkThrough() {
+    private fun showShopFeatureWalkThrough() {
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
-            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.shopping)
+            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.shopping || !Utils.isFeatureWalkThroughTutorialsEnabled())
                 return
             FirebaseManager.setCrashlyticsString(
                 bindString(R.string.crashlytics_materialshowcase_key),
@@ -400,11 +400,47 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
-    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature?) {
+    private fun showDashFeatureWalkThrough() {
+        (activity as? BottomNavigationActivity)?.let {
+            // Prevent dialog to display in other section when fragment is not visible
+            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.dash || !Utils.isFeatureWalkThroughTutorialsEnabled())
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.DASH)
+                    .setTarget(tabs_main.getTabAt(2)?.view)
+                    .setTitle(R.string.walkthrough_dash_title)
+                    .setDescription(R.string.walkthrough_dash_desc)
+                    .setActionText(R.string.walkthrough_dash_action)
+                    .setImage(R.drawable.dash_delivery_icon)
+                    .setShapePadding(48)
+                    .setAction(this@ShopFragment)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
+                    .build()
+            it.walkThroughPromtView.show(it)
+        }
+    }
 
+    override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature?) {
+        when (feature) {
+            WMaterialShowcaseView.Feature.DASH -> {
+                viewpager_main?.apply {
+                    currentItem = 2
+                    adapter?.notifyDataSetChanged()
+                }
+                updateTabIconUI(2)
+            }
+            WMaterialShowcaseView.Feature.SHOPPING -> {
+                showDashFeatureWalkThrough()
+            }
+        }
     }
 
     override fun onPromptDismiss() {
-
+        showDashFeatureWalkThrough()
     }
 }

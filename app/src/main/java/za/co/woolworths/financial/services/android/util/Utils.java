@@ -1200,6 +1200,9 @@ public class Utils {
             case SHOPPING:
                 appInstanceObject.featureWalkThrough.shopping = true;
                 break;
+            case DASH:
+                appInstanceObject.featureWalkThrough.dash = true;
+                break;
             default:
                 break;
         }

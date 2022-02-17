@@ -146,6 +146,7 @@ public class AppInstanceObject {
         public boolean creditScore;
         public boolean isTryItOn;
         public boolean shopping;
+        public boolean dash;
 
     }
 
