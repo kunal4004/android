@@ -650,7 +650,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener,
 
     override fun stopCardActivationShimmer() {
         showHideShimmerLayout(storeCardDetailShimmer, false)
-        storeCardDetailsGroup?.setAlphaForGroupdViews(1.0f)
+        includeAccountDetailHeaderView.visibility = GONE
     }
 
     private fun navigateToCreditCardActivation() {
