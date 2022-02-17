@@ -106,15 +106,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     internal var totalItemCount: Int = 0
 
     private val CHANEL: String = "chanel"
-
-    private var toolbarTitleText: String? = null
+    var toolbarTitleText: String? = null
     private var mSearchTerm: String? = null
     private var mNavigationState: String? = null
     private var mSubCategoryName: String? = null
     private var mFulfilmentTypeId: String? = null
     private var mStoreId: String = ""
     private var mSortOption: String = ""
-
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var filterContent: Boolean = false
 
@@ -284,7 +282,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         updateProductRequestBodyForRefinement(mNavigationState)
     }
 
-    private fun setTitle() {
+     fun setTitle() {
         if ((activity as? BottomNavigationActivity)?.currentFragment !is ProductListingFragment) {
             return
         }
@@ -376,10 +374,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         chanel_layout?.visibility = VISIBLE
         plp_relativeLayout?.visibility = GONE
         val brandLandingAdapter = BrandLandingAdapter(
-            requireContext(),
+            context,
             response.dynamicBanners as List<DynamicBanner?>, this
         )
-        val layoutManager = LinearLayoutManager(requireContext())
+        val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         chanel_layout?.rv_chanel?.layoutManager = layoutManager
         chanel_layout?.rv_chanel?.setHasFixedSize(true)
