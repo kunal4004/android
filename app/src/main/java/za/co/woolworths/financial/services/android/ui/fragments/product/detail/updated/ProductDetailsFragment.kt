@@ -1752,10 +1752,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showVtoTryItOnHint() {
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.isTryItOn)
            return
-        (requireActivity() as? ProductDetailsActivity)?.apply {
+        (requireActivity() as? ProductDetailsActivity)?.let {
 
-            walkThroughPromtView =
-                WMaterialShowcaseView.Builder(requireActivity(), WMaterialShowcaseView.Feature.VTO_TRY_IT,true)
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.VTO_TRY_IT,true)
                     .setTarget(imgVTOOpen)
                     .setTitle(R.string.try_on_intro_txt)
                     .setDescription(R.string.try_on_intro_desc)
@@ -1764,9 +1764,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     .setAction(this@ProductDetailsFragment)
                     .hideFeatureTutorialsText()
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                    .setMaskColour(ContextCompat.getColor(requireActivity(), R.color.semi_transparent_black))
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
                     .build()
-           walkThroughPromtView?.show(requireActivity())
+           it.walkThroughPromtView?.show(it)
         }
 
     }

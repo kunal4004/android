@@ -24,6 +24,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AlertDialog
@@ -39,6 +40,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.layout_link_device_validate_otp.*
 import kotlinx.coroutines.GlobalScope
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -849,8 +851,8 @@ class KotlinUtils {
         ) {
             if (MyAccountsFragment.verifyAppInstanceId() &&
                 Utils.isGooglePlayServicesAvailable() &&
-                state == ApplyNowState.STORE_CARD
-            ) {
+                (state == ApplyNowState.STORE_CARD ||
+                state == ApplyNowState.PERSONAL_LOAN)) {
                 doJob()
                 activity?.let {
                     val intent = Intent(it, LinkDeviceConfirmationActivity::class.java)
@@ -880,6 +882,22 @@ class KotlinUtils {
             }
         }
 
+
+        fun lowercaseEditText(editText: EditText){
+            editText.filters = arrayOf<InputFilter>(
+                object : InputFilter.AllCaps() {
+                    override fun filter(
+                        source: CharSequence,
+                        start: Int,
+                        end: Int,
+                        dest: Spanned?,
+                        dstart: Int,
+                        dend: Int ): CharSequence {
+                        return source.toString().lowercase()
+                    }
+                }
+            )
+        }
     }
 
 }
