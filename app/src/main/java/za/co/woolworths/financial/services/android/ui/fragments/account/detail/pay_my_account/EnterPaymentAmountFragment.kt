@@ -70,6 +70,11 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                 amountOverdueLabelTextView?.text = getString(R.string.overdue_amount_label)
                 amountOutstandingValueTextView?.text = getOverdueAmount()
             }
+
+            if (isPaymentMethodListChecked()){
+
+            }
+
             paymentAmountInputEditText?.setText(getAmountEntered())
         }
 
