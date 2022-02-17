@@ -107,5 +107,7 @@ public class ProductDetails {
 	@SerializedName("virtualTryOn")
 	@Expose
 	public String virtualTryOn;
-
+	@SerializedName("lowStockThreshold")
+	@Expose
+	public Integer lowStockIndicator;
 }

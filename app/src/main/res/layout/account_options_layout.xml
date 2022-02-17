@@ -155,11 +155,129 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
-        android:id="@+id/viewPaymentOptions"
+        android:id="@+id/viewTreatmentPlanOptions"
         style="@style/paymentOptionsRootRowContainerStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/viewTreatmentPlanLogoImageView"
+        style="@style/style_loan_logo_img"
+        android:alpha="1"
+        android:src="@drawable/icon_limit"
+        app:layout_constraintBottom_toBottomOf="@+id/viewTreatmentPlanOptions"
+        app:layout_constraintStart_toStartOf="@+id/viewTreatmentPlanOptions"
+        app:layout_constraintTop_toTopOf="@+id/viewTreatmentPlanOptions" />
+
+    <TextView
+        android:id="@+id/viewTreatmentPlanTextView"
+        style="@style/style_loan_title"
+        android:layout_width="0dp"
+        android:layout_marginStart="@dimen/twenty_two_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
+        tools:text="View Treatment Plan"
+        app:layout_constraintBottom_toBottomOf="@+id/viewTreatmentPlanOptions"
+        app:layout_constraintEnd_toStartOf="@+id/viewTreatmentPlanNext"
+        app:layout_constraintStart_toEndOf="@+id/viewTreatmentPlanLogoImageView"
+        app:layout_constraintTop_toTopOf="@+id/viewTreatmentPlanOptions" />
+
+    <ImageView
+        android:id="@+id/viewTreatmentPlanNext"
+        style="@style/style_loan_logo_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="1"
+        android:contentDescription="@string/bpi_covered"
+        android:src="@drawable/ic_caret_black"
+        app:layout_constraintBottom_toBottomOf="@+id/viewTreatmentPlanOptions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/viewTreatmentPlanOptions" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/viewTreatmentPlanGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:constraint_referenced_ids="viewTreatmentPlanDivider,viewTreatmentPlanLogoImageView,viewTreatmentPlanOptions,viewTreatmentPlanTextView,viewTreatmentPlanNext"
+        app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/viewTreatmentPlanDivider"
+        style="@style/creditLimitDividerStyle"
+        android:layout_height="@dimen/one_dp"
+        app:layout_constraintBottom_toTopOf="@+id/setUpPaymentPlanOptions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/setUpPaymentPlanOptions"
+        style="@style/paymentOptionsRootRowContainerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewTreatmentPlanOptions" />
+
+    <ImageView
+        android:id="@+id/setUpPaymentPlanLogoImageView"
+        style="@style/style_loan_logo_img"
+        android:alpha="1"
+        android:src="@drawable/icon_limit"
+        app:layout_constraintBottom_toBottomOf="@+id/setUpPaymentPlanOptions"
+        app:layout_constraintStart_toStartOf="@+id/setUpPaymentPlanOptions"
+        app:layout_constraintTop_toTopOf="@+id/setUpPaymentPlanOptions" />
+
+    <TextView
+        android:id="@+id/setUpPaymentPlanTextView"
+        style="@style/style_loan_title"
+        android:layout_width="0dp"
+        android:layout_marginStart="@dimen/twenty_two_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:text="@string/set_up_payment_plan_title"
+        app:layout_constraintBottom_toBottomOf="@+id/setUpPaymentPlanOptions"
+        app:layout_constraintEnd_toStartOf="@+id/setUpPaymentPlanNext"
+        app:layout_constraintStart_toEndOf="@+id/setUpPaymentPlanLogoImageView"
+        app:layout_constraintTop_toTopOf="@+id/setUpPaymentPlanOptions" />
+
+    <ImageView
+        android:id="@+id/setUpPaymentPlanNext"
+        style="@style/style_loan_logo_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="1"
+        android:contentDescription="@string/bpi_covered"
+        android:src="@drawable/ic_caret_black"
+        app:layout_constraintBottom_toBottomOf="@+id/setUpPaymentPlanOptions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/setUpPaymentPlanOptions" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/setUpPaymentPlanGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:constraint_referenced_ids="setUpPaymentPlanDivider,setUpPaymentPlanLogoImageView,setUpPaymentPlanOptions,setUpPaymentPlanTextView,setUpPaymentPlanNext"
+        app:layout_constraintEnd_toStartOf="@+id/balanceProtectionInsuranceView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/setUpPaymentPlanDivider"
+        style="@style/creditLimitDividerStyle"
+        android:layout_height="@dimen/one_dp"
+        app:layout_constraintBottom_toTopOf="@+id/viewPaymentOptions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/viewPaymentOptions"
+        style="@style/paymentOptionsRootRowContainerStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setUpPaymentPlanOptions" />
 
     <View
         android:id="@+id/creditLimitDividerStyle"
