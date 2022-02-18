@@ -2419,4 +2419,5 @@
     <string name="standard_delivery">Standard Delivery</string>
     <string name="click_and_collect">Click &amp; Collect</string>
     <string name="dash_delivery">Dash Delivery</string>
+    <string name="dash_product_search">Search name, product code or brand</string>
 </resources>
