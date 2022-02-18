@@ -533,6 +533,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         if (!AppInstanceObject.biometricWalkthroughIsPresented(activity))
             messageCounterRequest();
 
+
         if (getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() != null
                 && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment
                 && NetworkManager.getInstance().isConnectedToNetwork(activity) && httpCode == HTTP_EXPECTATION_FAILED_502) {
@@ -1601,8 +1602,11 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
         //TODO: Comment what's actually happening here.
 
         if (resultCode == RELOAD_ACCOUNT_RESULT_CODE) {
-            loadAccounts(false);
-            return;
+            if (mUpdateMyAccount != null) {
+                mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
+                loadAccounts(true);
+                return;
+            }
         }
 
         if (requestCode == ScreenManager.BIOMETRICS_LAUNCH_VALUE) {
