@@ -1818,7 +1818,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         //Do Nothing
     }
 
-    override fun onPromptDismiss() {
+    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
         imgVTOOpen?.setImageResource(R.drawable.ic_camera_vto)
     }
 

@@ -1807,7 +1807,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     }
 
     @Override
-    public void onPromptDismiss() {
+    public void onPromptDismiss(WMaterialShowcaseView.Feature feature) {
         if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity() != null && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
             try {
                 showSetUpDeliveryPopUp();

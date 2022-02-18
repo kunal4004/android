@@ -66,7 +66,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     public interface IWalkthroughActionListener {
         void onWalkthroughActionButtonClick(Feature feature);
-        void onPromptDismiss();
+        void onPromptDismiss(Feature feature);
     }
 
     private int mOldHeight;
@@ -295,7 +295,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     private void notifyOnDismissed() {
         if(actionListener!=null)
-            actionListener.onPromptDismiss();
+            actionListener.onPromptDismiss(feature);
 
         if (mListeners != null) {
             for (IShowcaseListener listener : mListeners) {

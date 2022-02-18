@@ -841,7 +841,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             refineProducts?.let { refineProducts -> onClick(refineProducts) }
     }
 
-    override fun onPromptDismiss() {
+    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
 
     }
 

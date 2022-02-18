@@ -386,7 +386,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             )
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.SHOPPING)
-                    .setTarget(it.bottomNavigationById.getIconAt(INDEX_PRODUCT))
+                    .setTarget(it.bottomNavigationById?.getIconAt(INDEX_PRODUCT))
                     .setTitle(R.string.walkthrough_shop_title)
                     .setDescription(R.string.walkthrough_shop_desc)
                     .setActionText(R.string.walkthrough_shop_action)
@@ -411,7 +411,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             )
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.DASH)
-                    .setTarget(tabs_main.getTabAt(2)?.view)
+                    .setTarget(tabs_main?.getTabAt(2)?.customView?.tvTitle)
                     .setTitle(R.string.walkthrough_dash_title)
                     .setDescription(R.string.walkthrough_dash_desc)
                     .setActionText(R.string.walkthrough_dash_action)
@@ -440,7 +440,11 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
-    override fun onPromptDismiss() {
-        showDashFeatureWalkThrough()
+    override fun onPromptDismiss(feature: WMaterialShowcaseView.Feature) {
+        when (feature) {
+            WMaterialShowcaseView.Feature.SHOPPING -> {
+                showDashFeatureWalkThrough()
+            }
+        }
     }
 }
