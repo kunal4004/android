@@ -7,18 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 
-class DashDeliveryAddressFragment : Fragment() {
+class DashDeliveryAddressFragment : Fragment(R.layout.layout_dash_set_address_fragment) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.layout_dash_set_address_fragment, container, false)
-
-    }
 }
