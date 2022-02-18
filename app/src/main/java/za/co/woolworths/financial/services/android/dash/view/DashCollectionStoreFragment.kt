@@ -7,18 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 
-class DashCollectionStoreFragment : Fragment() {
+class DashCollectionStoreFragment : Fragment(R.layout.layout_dash_collection_store) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.layout_dash_collection_store, container, false)
-
-    }
 }
