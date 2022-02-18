@@ -1203,6 +1203,9 @@ public class Utils {
             case DASH:
                 appInstanceObject.featureWalkThrough.dash = true;
                 break;
+            case DELIVERY_DETAILS:
+                appInstanceObject.featureWalkThrough.delivery_details = true;
+                break;
             default:
                 break;
         }

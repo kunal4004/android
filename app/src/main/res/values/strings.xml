@@ -2421,6 +2421,9 @@
     <string name="walkthrough_dash_title">NEW DELIVERY METHODS</string>
     <string name="walkthrough_dash_desc">Give Woolworths Dash a try, with the ability to change delivery methods with ease.</string>
     <string name="walkthrough_dash_action">try dash</string>
+    <string name="walkthrough_delivery_details_title">CUSTOMIZE DELIVERY DETAILS</string>
+    <string name="walkthrough_delivery_details_desc">View and edit your delivery details, no matter where you are in the App.</string>
+    <string name="walkthrough_delivery_details_action">set your delivery address</string>
     <string name="standard_delivery">Standard Delivery</string>
     <string name="click_and_collect">Click &amp; Collect</string>
     <string name="dash_delivery">Dash Delivery</string>

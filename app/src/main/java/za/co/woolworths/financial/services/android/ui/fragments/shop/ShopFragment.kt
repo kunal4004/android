@@ -425,6 +425,31 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
+    private fun showDeliveryDetailsFeatureWalkThrough() {
+        (activity as? BottomNavigationActivity)?.let {
+            // Prevent dialog to display in other section when fragment is not visible
+            if (it.currentFragment !is ShopFragment || !isAdded || AppInstanceObject.get().featureWalkThrough.delivery_details || !Utils.isFeatureWalkThroughTutorialsEnabled())
+                return
+            FirebaseManager.setCrashlyticsString(
+                bindString(R.string.crashlytics_materialshowcase_key),
+                this.javaClass.canonicalName
+            )
+            it.walkThroughPromtView =
+                WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.DELIVERY_DETAILS)
+                    .setTarget(tabs_main?.getTabAt(0)?.customView?.tvTitle)
+                    .setTitle(R.string.walkthrough_delivery_details_title)
+                    .setDescription(R.string.walkthrough_delivery_details_desc)
+                    .setActionText(R.string.walkthrough_delivery_details_action)
+                    .setImage(R.drawable.ic_delivery_truck)
+                    .setShapePadding(48)
+                    .setAction(this@ShopFragment)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+                    .setMaskColour(ContextCompat.getColor(it, R.color.semi_transparent_black))
+                    .build()
+            it.walkThroughPromtView.show(it)
+        }
+    }
+
     override fun onWalkthroughActionButtonClick(feature: WMaterialShowcaseView.Feature?) {
         when (feature) {
             WMaterialShowcaseView.Feature.DASH -> {
@@ -433,6 +458,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
                     adapter?.notifyDataSetChanged()
                 }
                 updateTabIconUI(2)
+                showDeliveryDetailsFeatureWalkThrough()
             }
             WMaterialShowcaseView.Feature.SHOPPING -> {
                 showDashFeatureWalkThrough()
@@ -444,6 +470,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         when (feature) {
             WMaterialShowcaseView.Feature.SHOPPING -> {
                 showDashFeatureWalkThrough()
+            }
+            WMaterialShowcaseView.Feature.DASH -> {
+                showDeliveryDetailsFeatureWalkThrough()
             }
         }
     }

@@ -147,6 +147,7 @@ public class AppInstanceObject {
         public boolean isTryItOn;
         public boolean shopping;
         public boolean dash;
+        public boolean delivery_details;
 
     }
 
