@@ -4,6 +4,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
+import za.co.woolworths.financial.services.android.dash.view.DashCollectionStoreFragment
+import za.co.woolworths.financial.services.android.dash.view.DashDeliveryAddressFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersFragment
@@ -14,8 +16,8 @@ class ShopPagerAdapter(fm: FragmentManager, tabTitle: MutableList<String>?, var 
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> DepartmentsFragment()
-            1 -> MyListsFragment()
-            else -> MyOrdersFragment.getInstance(listener)
+            1 -> DashCollectionStoreFragment()
+            else -> DashDeliveryAddressFragment()
         }
     }
 
