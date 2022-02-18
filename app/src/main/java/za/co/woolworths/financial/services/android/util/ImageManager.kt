@@ -39,7 +39,6 @@ class ImageManager {
             }
         }
 
-        @JvmStatic
         fun setPictureWithoutPlaceHolder(productImage: ImageView?, img_location: String) = productImage?.let { image ->
             productImage.visibility = if (img_location.isEmpty()) View.GONE else View.VISIBLE
             productImage.context?.apply {

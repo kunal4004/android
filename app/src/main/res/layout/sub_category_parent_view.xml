@@ -17,14 +17,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:layout_marginEnd="@dimen/exr_margin"
             android:orientation="horizontal">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/carbon_groupText"
+                android:id="@+id/carbonGroupText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:ellipsize="end"
@@ -63,7 +63,7 @@
                 android:visibility="gone"/>
 
             <ImageView
-                android:id="@+id/carbon_groupExpandedIndicator"
+                android:id="@+id/carbonGroupExpandedIndicator"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
                 android:layout_gravity="center_vertical"
