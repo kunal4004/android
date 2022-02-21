@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
@@ -246,6 +247,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 });
 
                 productHolder.swipeLayout.setOnClickListener(view -> onItemClick.onOpenProductDetail(commerceItem));
+                if (commerceItem.lowStockThreshold > commerceItem.quantityInStock
+                        && commerceItem.quantityInStock > 0 && AppConfigSingleton.INSTANCE.getLowStock().isEnabled()) {
+                    showLowStockIndicator(productHolder);
+                }
                 mItemManger.bindView(productHolder.itemView, position);
                 break;
 
@@ -361,6 +366,17 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             default:
                 break;
         }
+    }
+
+    /**
+     * This method used to show low stock indicator
+     * When lowStockThreshold > quantity
+     * @param productHolder
+     */
+    private void showLowStockIndicator(ProductHolder productHolder) {
+        productHolder.cartLowStock.setVisibility(View.VISIBLE);
+        productHolder.txtCartLowStock.setText(AppConfigSingleton.INSTANCE.getLowStock().getLowStockCopy());
+
     }
 
     private String getSizeColor(CommerceItemInfo commerceItemInfo) {
@@ -570,6 +586,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private ImageView btnDelete;
         private ProgressBar pbDelete;
         private RelativeLayout rlDelete;
+        private View cartLowStock;
+        private TextView txtCartLowStock;
 
         public ProductHolder(View view) {
             super(view);
@@ -593,6 +611,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             btnDelete = view.findViewById(R.id.btnDelete);
             rlDelete = view.findViewById(R.id.rlDelete);
             pbDelete = view.findViewById(R.id.pbDelete);
+            cartLowStock = view.findViewById(R.id.cartLowStock);
+            txtCartLowStock = view.findViewById(R.id.txtCartLowStock);
+
         }
     }
 
