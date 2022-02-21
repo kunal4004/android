@@ -1,6 +1,5 @@
-package za.co.woolworths.financial.services.android.ui.fragments.geo_location
+package za.co.woolworths.financial.services.android.geolocation.view
 
-import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -27,20 +26,14 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import kotlinx.android.synthetic.main.reward_vip_exclusive_fragment.*
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.extension.bindString
-import za.co.woolworths.financial.services.android.ui.fragments.geoLoc.GeolocationDeliveryClickCollectChanges
-import za.co.woolworths.financial.services.android.util.Utils
 import java.io.IOException
 import java.util.*
 
-class GeoLocNewScreenAddressMap : Fragment(), OnMapReadyCallback {
+class NewScreenAddressMap : Fragment(), OnMapReadyCallback {
 
     companion object {
-        fun newInstance() = GeoLocNewScreenAddressMap()
+        fun newInstance() = NewScreenAddressMap()
     }
 
     var searchView: SearchView? = null
@@ -109,7 +102,9 @@ class GeoLocNewScreenAddressMap : Fragment(), OnMapReadyCallback {
             })
             val confirmAdd =view.findViewById(R.id.btnConfirmAddress) as Button
             confirmAdd.setOnClickListener {
-                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(GeolocationDeliveryClickCollectChanges())
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                    DeliveryClickCollectChanges()
+                )
             }
         }
 

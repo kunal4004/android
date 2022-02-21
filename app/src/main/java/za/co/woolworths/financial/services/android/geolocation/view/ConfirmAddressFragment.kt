@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.apihelper
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -70,11 +71,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         rvSavedAddress = view.findViewById(R.id.rvSavedAddressList)
         setUpViewModel()
         inCurrentLocation.setOnClickListener(View.OnClickListener {
-            Toast.makeText(
-                activity,
-                "clicked",
-                Toast.LENGTH_LONG
-            ).show()
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(NewScreenAddressMap())
         })
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress.visibility = View.GONE
