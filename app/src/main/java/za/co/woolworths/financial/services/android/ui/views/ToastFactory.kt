@@ -337,8 +337,7 @@ class ToastFactory {
             )
 
             viewCart?.setOnClickListener {
-                //TODO: Nav stack changes
-//                ScreenManager.presentShoppingCart(activity)
+                ScreenManager.presentShoppingCart(activity)
                 popupWindow.dismiss() // dismiss the window
             }
             popupWindow.isFocusable = false

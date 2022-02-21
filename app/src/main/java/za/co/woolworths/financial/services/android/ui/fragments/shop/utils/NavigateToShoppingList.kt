@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import com.google.gson.Gson
 import com.google.gson.JsonElement
+import kotlinx.android.synthetic.main.fragment_shop.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.Companion.POST_ADD_TO_SHOPPING_LIST
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ScreenManager
 
@@ -38,6 +40,12 @@ class NavigateToShoppingList {
 
         fun navigateToShoppingListOnToastClicked(activity: Activity?, jsonElement: JsonElement) {
             jsonElement.asJsonObject?.apply {
+                if (activity is BottomNavigationActivity) {
+                    // Move to shop tab first.
+                    activity.bottomNavigationById.currentItem = INDEX_PRODUCT
+                    activity.viewpager_main?.currentItem = 1
+                    activity.viewpager_main?.adapter?.notifyDataSetChanged()
+                }
                 if (size() == 1) {
                     var listName = ""
                     var listId = ""
@@ -47,19 +55,23 @@ class NavigateToShoppingList {
                         listName = item.get("name").asString
                     }
                     ScreenManager.presentShoppingListDetailActivity(activity, listId, listName)
-                } else {
-                    requestToastOnNavigateBack(activity, POST_ADD_TO_SHOPPING_LIST, this)
                 }
             }
         }
 
-        fun openShoppingList(activity: Activity?, addToListRequest: Any?, orderId: String?, navigateToCreateList: Boolean) {
+        fun openShoppingList(
+            activity: Activity?,
+            addToListRequest: Any?,
+            orderId: String?,
+            navigateToCreateList: Boolean,
+        ) {
             activity?.apply {
                 val intentAddToList = Intent(this, AddToShoppingListActivity::class.java)
                 intentAddToList.putExtra("addToListRequest", Gson().toJson(addToListRequest))
                 intentAddToList.putExtra("shouldDisplayCreateList", navigateToCreateList)
                 intentAddToList.putExtra(AppConstant.ORDER_ID, orderId ?: "")
-                startActivityForResult(intentAddToList, AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE)
+                startActivityForResult(intentAddToList,
+                    AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE)
                 overridePendingTransition(0, 0)
             }
         }
