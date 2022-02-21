@@ -35,6 +35,11 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
+    }
+
     flavorDimensions "default"
     lintOptions {
         abortOnError false
