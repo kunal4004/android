@@ -50,8 +50,7 @@
                         android:layout_above="@+id/bottom_line"
                         android:layout_below="@+id/incToolbar"
                         android:layout_alignParentTop="true"
-                        android:background="@color/white"
-                        />
+                        android:background="@color/white" />
 
                     <View
                         android:id="@+id/bottom_line"
