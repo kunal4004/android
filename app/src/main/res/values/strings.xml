@@ -2414,8 +2414,16 @@
     <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
 
-
-
+    <!--Dash-->
+    <string name="walkthrough_shop_title">SHOPPING AT YOUR FINGERTIPS</string>
+    <string name="walkthrough_shop_desc">We’ve made shopping even easier to access than before.</string>
+    <string name="walkthrough_shop_action">Start shopping</string>
+    <string name="walkthrough_dash_title">NEW DELIVERY METHODS</string>
+    <string name="walkthrough_dash_desc">Give Woolworths Dash a try, with the ability to change delivery methods with ease.</string>
+    <string name="walkthrough_dash_action">try dash</string>
+    <string name="walkthrough_delivery_details_title">CUSTOMIZE DELIVERY DETAILS</string>
+    <string name="walkthrough_delivery_details_desc">View and edit your delivery details, no matter where you are in the App.</string>
+    <string name="walkthrough_delivery_details_action">set your delivery address</string>
     <string name="standard_delivery">Standard Delivery</string>
     <string name="click_and_collect">Click &amp; Collect</string>
     <string name="dash_delivery">Dash Delivery</string>

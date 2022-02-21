@@ -1759,7 +1759,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     @Override
-    public void onPromptDismiss() {
+    public void onPromptDismiss(WMaterialShowcaseView.Feature feature) {
         isMaterialPopUpClosed = true;
         if (voucherDetails != null && isAdded())
             showAvailableVouchersToast(voucherDetails.getActiveVouchersCount());

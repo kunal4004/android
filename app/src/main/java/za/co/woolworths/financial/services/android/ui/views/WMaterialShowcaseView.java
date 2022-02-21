@@ -66,7 +66,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     public interface IWalkthroughActionListener {
         void onWalkthroughActionButtonClick(Feature feature);
-        void onPromptDismiss();
+        void onPromptDismiss(Feature feature);
     }
 
     private int mOldHeight;
@@ -295,7 +295,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     private void notifyOnDismissed() {
         if(actionListener!=null)
-            actionListener.onPromptDismiss();
+            actionListener.onPromptDismiss(feature);
 
         if (mListeners != null) {
             for (IShowcaseListener listener : mListeners) {
@@ -1153,7 +1153,10 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         STATEMENTS(8),
         CART_REDEEM_VOUCHERS(9),
         CREDIT_SCORE(9),
-        VTO_TRY_IT(10);
+        VTO_TRY_IT(10),
+        SHOPPING(11),
+        DASH(12),
+        DELIVERY_DETAILS(13);
 
         private int value;
 
