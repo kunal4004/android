@@ -72,10 +72,12 @@ import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Card;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse;
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.ProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode;
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState;
@@ -128,6 +130,7 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.KotlinUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.ProductType;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -1698,23 +1701,7 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     private void showSetUpDeliveryPopUp() {
         if (mAccountResponse != null && mAccountResponse.accountList != null && mAccountResponse.accountList.size() != 0) {
-            Account account = mAccountResponse.accountList.get(0);
-            if (account != null && account.cards != null) {
-                if (account.cards.get(0).cardStatus != null) {
-                    if (account.cards.get(0).cardStatus.equals("PLC") && (account.cards.get(0).envelopeNumber != null)) {
-                        List<ConfigCreditCardDeliveryCardTypes> cardTypes = AppConfigSingleton.INSTANCE.getCreditCardDelivery().getCardTypes();
-                        if (cardTypes != null) {
-                            for (ConfigCreditCardDeliveryCardTypes ccdTypes : cardTypes) {
-                                if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
-                                        && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
-                                    executeCreditCardDeliveryStatusService();
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            executeCreditCardDeliveryStatusService();
         } else {
             if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
                 loadAccounts(false);
@@ -2032,9 +2019,36 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
 
     }
 
+    private Account getCCAccount(ArrayList<Account> accountsList){
+        for (Account account:accountsList) {
+            if (account.productGroupCode.equalsIgnoreCase(String.valueOf(ProductGroupCode.CC))){
+                return account;
+            }
+        }
+        return null;
+    }
     @Override
     public void executeCreditCardDeliveryStatusService() {
-        mCardPresenterImpl.getCreditCardDeliveryStatus(mAccountResponse.accountList.get(0).cards.get(0).envelopeNumber, String.valueOf(mAccountResponse.accountList.get(0).productOfferingId));
+        Account account = getCCAccount(mAccountResponse.accountList);
+        if (account != null) {
+            Card card = account.cards.get(0);
+            if (card != null) {
+                if (card.cardStatus != null) {
+                    if (card.cardStatus.equals("PLC") && (card.envelopeNumber != null)) {
+                        List<ConfigCreditCardDeliveryCardTypes> cardTypes = AppConfigSingleton.INSTANCE.getCreditCardDelivery().getCardTypes();
+                        if (cardTypes != null) {
+                            for (ConfigCreditCardDeliveryCardTypes ccdTypes : cardTypes) {
+                                if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
+                                        && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
+                                    mCardPresenterImpl.getCreditCardDeliveryStatus(card.envelopeNumber, String.valueOf(account.productOfferingId));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
