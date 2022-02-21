@@ -202,7 +202,6 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun showCommonError() {
-        cancelRequest()
         progressIndicator(View.INVISIBLE)
         clearPin()
         showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
@@ -234,16 +233,6 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cancelRequest()
-    }
-
-    private fun cancelRequest() {
-        cancelVolleyRequest(AbsaValidateSureCheckRequest::class.java.simpleName)
-        cancelVolleyRequest(AbsaCreateAliasRequest::class.java.simpleName)
-    }
-
     private fun showErrorScreen(errorType: Int) {
         activity?.let {
             val intent = Intent(it, ErrorHandlerActivity::class.java)
@@ -261,7 +250,6 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
 
     private fun showWrongOTPMessage() {
         wrongOTP?.visibility = View.VISIBLE
-        cancelRequest()
         progressIndicator(View.INVISIBLE)
         clearPin()
     }
