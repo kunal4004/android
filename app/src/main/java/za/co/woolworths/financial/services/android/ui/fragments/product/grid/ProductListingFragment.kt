@@ -15,7 +15,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
@@ -23,9 +22,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import com.skydoves.balloon.balloon
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.blp_error_layout.view.*
 import kotlinx.android.synthetic.main.fragment_brand_landing.*
 import kotlinx.android.synthetic.main.fragment_brand_landing.view.*
 import kotlinx.android.synthetic.main.grid_layout.*
@@ -38,6 +37,7 @@ import kotlinx.android.synthetic.main.no_connection_handler.view.*
 import kotlinx.android.synthetic.main.search_result_fragment.*
 import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 import kotlinx.android.synthetic.main.try_it_on_banner.*
+import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.DynamicBanner
 import za.co.woolworths.financial.services.android.models.dto.brandlandingpage.Navigation
 import za.co.woolworths.financial.services.android.chanel.views.ChanelNavigationClickListener
@@ -70,8 +70,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.RefinementDrawer
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.DeliveryOrClickAndCollectSelectorDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.Companion.newInstance
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
@@ -206,6 +204,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             }
 
+        }
+
+        layout_error_blp?.blp_error_back_btn?.setOnClickListener {
+            (activity as? BottomNavigationActivity)?.popFragment()
+        }
+
+        layout_error_blp?.btn_retry_it?.setOnClickListener {
+            startProductRequest()
         }
     }
 
@@ -451,6 +457,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val activity = activity ?: return
         if (response.desc == null) return
         hideFooterView()
+
+        if (ChanelUtils.isCategoryPresentInConfig(mSearchTerm) || ChanelUtils.isCategoryPresentInConfig(mSubCategoryName) || mIsComingFromBLP) {
+            (activity as? BottomNavigationActivity)?.apply {
+                hideBottomNavigationMenu()
+                Handler().postDelayed({ hideToolbar() }, AppConstant.DELAY_300_MS)
+            }
+            chanel_layout?.visibility = GONE
+            plp_relativeLayout?.visibility = GONE
+            layout_error_blp?.visibility = VISIBLE
+            return
+        }
         val fragmentTransaction: FragmentTransaction? =
             (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()
         // check if sortOptionDialog is being displayed
