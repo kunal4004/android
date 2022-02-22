@@ -1377,14 +1377,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             sub_category_name: String?,
             searchTerm: String?,
             chanelBannerImageUrl: String?,
-            chanelBannerImageLabel: String?,
+            chanelBannerLabel: String?,
             isComingFrom: Boolean,
             filterContent: Boolean?
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
-            putString(CHANEL_BANNER_LABEL, chanelBannerImageLabel)
+            putString(CHANEL_BANNER_LABEL, chanelBannerLabel)
             putString(CHANEL_BANNER_IMAGE, chanelBannerImageUrl)
             putBoolean(CHAEL_IS_COMING_FROM_BLP, isComingFrom)
             putBoolean(FILTER_CONTENT, filterContent ?: false)
