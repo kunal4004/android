@@ -2429,4 +2429,8 @@
     <string name="click_and_collect">Click &amp; Collect</string>
     <string name="dash_delivery">Dash Delivery</string>
     <string name="dash_product_search">Search name, product code or brand</string>
+    <string name="set_address">SET ADDRESS</string>
+    <string name="dash_delivery_title">To view and shop with Woolies Dash,\n we need your address.</string>
+    <string name="dash_delivery_msg">Set your address to \n start shopping.</string>
+
 </resources>
