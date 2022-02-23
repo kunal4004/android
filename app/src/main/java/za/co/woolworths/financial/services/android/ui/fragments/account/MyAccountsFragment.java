@@ -2031,19 +2031,15 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
     public void executeCreditCardDeliveryStatusService() {
         Account account = getCCAccount(mAccountResponse.accountList);
         if (account != null) {
-            Card card = account.cards.get(0);
-            if (card != null) {
-                if (card.cardStatus != null) {
-                    if (card.cardStatus.equals("PLC") && (card.envelopeNumber != null)) {
-                        List<ConfigCreditCardDeliveryCardTypes> cardTypes = AppConfigSingleton.INSTANCE.getCreditCardDelivery().getCardTypes();
-                        if (cardTypes != null) {
-                            for (ConfigCreditCardDeliveryCardTypes ccdTypes : cardTypes) {
-                                if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
-                                        && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
-                                    mCardPresenterImpl.getCreditCardDeliveryStatus(card.envelopeNumber, String.valueOf(account.productOfferingId));
-                                    return;
-                                }
-                            }
+            if (account.cards.get(0) != null) {
+                Card card = account.cards.get(0);
+                if (card.cardStatus != null && card.cardStatus.equals("PLC") && (card.envelopeNumber != null)) {
+                    List<ConfigCreditCardDeliveryCardTypes> cardTypes = AppConfigSingleton.INSTANCE.getCreditCardDelivery().getCardTypes();
+                    for (ConfigCreditCardDeliveryCardTypes ccdTypes : cardTypes) {
+                        if (ccdTypes.getBinNumber().equalsIgnoreCase(account.accountNumberBin)
+                                && Utils.isFeatureEnabled(ccdTypes.getMinimumSupportedAppBuildNumber())) {
+                            mCardPresenterImpl.getCreditCardDeliveryStatus(card.envelopeNumber, String.valueOf(account.productOfferingId));
+                            return;
                         }
                     }
                 }
