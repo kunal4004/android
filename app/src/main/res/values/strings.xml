@@ -2421,4 +2421,13 @@
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
     <string name="update_address">Update Address</string>
+    <!--  Geo Location -->
+    <string name="geoloc_delivery">Standard Delivery</string>
+    <string name="geoloc_confirm">CONFIRM</string>
+    <string name="geoloc_click_collect">Click &amp; Collect</string>
+    <string name="products_available_title">Products available: </string>
+    <string name="item_limit">Item limit: </string>
+    <string name="earliest_food_delivery_date"> Earliest Food Delivery Date: </string>
+    <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date: </string>
+    <string name="geoloc_ClickNCollectValue">28 Eastlake Isla... </string>
 </resources>
