@@ -97,7 +97,7 @@ abstract class BarcodeScanExtension : Fragment() {
                                         putString("productResponse", Gson().toJson(response))
                                         putBoolean("fetchFromJson", true)
                                     }
-                                    activity?.let { ScreenManager.presentProductDetails(it, bundle) }
+                                    activity?.let { ScreenManager.presentProductDetails(it.supportFragmentManager, R.id.codeScannerView, bundle) }
                                 }
                             }
                         }

@@ -2315,6 +2315,7 @@
     <string name="add_a_new_address">Add A New Address</string>
     <string name="add_address">Add Address</string>
     <string name="change_suburb">change suburb</string>
+    <string name="change_address">change address</string>
     <string name="change_province"><u>change province</u></string>
     <string name="no_saved_addresses">No Saved Addresses</string>
     <string name="link_my_device">Link my device</string>

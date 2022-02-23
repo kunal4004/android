@@ -22,12 +22,12 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.AddToShoppingListAdapter
 import java.util.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
-import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.AppConstant.Companion.ORDER_ID
 
 class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickListener {
 
