@@ -100,6 +100,8 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                 showDeviceUnlinked()
 
                                 Handler().postDelayed({
+                                    if (!isAdded) return@postDelayed
+
                                     setupToolbar()
                                     context?.let { it ->
                                         viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.default_background)
