@@ -30,10 +30,12 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import java.io.IOException
 import java.util.*
 
-class NewScreenAddressMap : Fragment(), OnMapReadyCallback {
+class NewScreenAddressMap(val addressLatLong: String) : Fragment(), OnMapReadyCallback {
 
     companion object {
-        fun newInstance() = NewScreenAddressMap()
+        fun newInstance(addressLatLong: String): NewScreenAddressMap {
+            return NewScreenAddressMap(addressLatLong)
+        }
     }
 
     var searchView: SearchView? = null
@@ -90,7 +92,7 @@ class NewScreenAddressMap : Fragment(), OnMapReadyCallback {
                             MarkerOptions().position(it).title(location)
                         })
                         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
-                        Log.i("TAG", "Place: " + place.name + ", " + place.id)
+                       // Log.i("TAG", "Place: " + place.name + ", " + place.id)
                     }
                 }
 
@@ -100,6 +102,7 @@ class NewScreenAddressMap : Fragment(), OnMapReadyCallback {
 
 
             })
+            Log.i("TAG", "Place: new " + addressLatLong )
             val confirmAdd =view.findViewById(R.id.btnConfirmAddress) as Button
             confirmAdd.setOnClickListener {
                 (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
