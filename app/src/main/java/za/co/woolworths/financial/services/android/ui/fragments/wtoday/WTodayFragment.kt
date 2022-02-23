@@ -18,7 +18,6 @@ import android.webkit.*
 import android.webkit.WebViewClient.ERROR_CONNECT
 import android.webkit.WebViewClient.ERROR_TIMEOUT
 import com.awfs.coordination.R
-import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.add_to_list_content.*
 import kotlinx.android.synthetic.main.wtoday_main_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -28,9 +27,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.extension.isEmailValid
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
-import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.HashMap
 
 @Suppress("DEPRECATION")
 class WTodayFragment : WTodayExtension(), IWTodayInterface {

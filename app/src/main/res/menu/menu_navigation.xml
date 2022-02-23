@@ -17,12 +17,10 @@
         android:icon="@drawable/cart_icon"
         android:title="@string/bottom_title_cart"/>
 
-
     <item
         android:id="@+id/navigate_to_wreward"
         android:icon="@drawable/icon_wreward"
         android:title="@string/bottom_title_reward"/>
-
 
     <item
         android:id="@+id/navigate_to_account"
