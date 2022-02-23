@@ -71,10 +71,6 @@ class EnterPaymentAmountFragment : Fragment(), OnClickListener {
                 amountOutstandingValueTextView?.text = getOverdueAmount()
             }
 
-            if (isPaymentMethodListChecked()){
-
-            }
-
             paymentAmountInputEditText?.setText(getAmountEntered())
         }
 

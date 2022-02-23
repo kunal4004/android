@@ -46,7 +46,7 @@ abstract class WTodayExtension : Fragment() {
                                 bundle.putString("strProductCategory", response.product?.productName)
                                 bundle.putString("productResponse", Gson().toJson(response))
                                 bundle.putBoolean("fetchFromJson", true)
-                                ScreenManager.presentProductDetails(activity, bundle)
+                                ScreenManager.presentProductDetails(supportFragmentManager, R.id.webWToday, bundle)
                             }
                             else -> {
                                 Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, Utils.getString(this, R.string.statement_send_email_false_desc))
