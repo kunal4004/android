@@ -30,13 +30,8 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import java.io.IOException
 import java.util.*
 
-class NewScreenAddressMap(val addressLatLong: String) : Fragment(), OnMapReadyCallback {
+class NewScreenAddressMap(val lattitude: Double , val longitude: Double) : Fragment(), OnMapReadyCallback {
 
-    companion object {
-        fun newInstance(addressLatLong: String): NewScreenAddressMap {
-            return NewScreenAddressMap(addressLatLong)
-        }
-    }
 
     var searchView: SearchView? = null
     private var mMap: GoogleMap? = null
@@ -102,7 +97,7 @@ class NewScreenAddressMap(val addressLatLong: String) : Fragment(), OnMapReadyCa
 
 
             })
-            Log.i("TAG", "Place: new " + addressLatLong )
+            Log.i("TAG", "Place: new " + lattitude+""+longitude )
             val confirmAdd =view.findViewById(R.id.btnConfirmAddress) as Button
             confirmAdd.setOnClickListener {
                 (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(

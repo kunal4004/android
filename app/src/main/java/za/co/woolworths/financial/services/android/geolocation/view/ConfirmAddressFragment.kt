@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -73,7 +72,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         rvSavedAddress = view.findViewById(R.id.rvSavedAddressList)
         setUpViewModel()
         inCurrentLocation.setOnClickListener(View.OnClickListener {
-            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(NewScreenAddressMap(addressLatLong))
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(NewScreenAddressMap(mLastLocation!!.latitude, mLastLocation!!.longitude))
         })
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress.visibility = View.GONE
