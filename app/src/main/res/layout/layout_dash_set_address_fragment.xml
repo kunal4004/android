@@ -7,21 +7,21 @@
 
     <ImageView
         android:src="@drawable/scooter"
-        android:id="@+id/imageView3"
+        android:id="@+id/img_view"
         android:layout_width="@dimen/fifty_dp"
         android:layout_height="@dimen/fourty_dp"
         android:layout_marginBottom="@dimen/thirty_two_dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        app:layout_constraintBottom_toTopOf="@+id/txt_dash_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/txt_dash_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/eight_dp"
         android:fontFamily="@font/futura_bold"
         android:text="@string/dash_delivery_msg"
         android:textAlignment="center"
@@ -29,14 +29,14 @@
         android:textColor="@color/black"
         android:textSize="@dimen/twenty_sp"
         android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/textView5"
+        app:layout_constraintBottom_toTopOf="@+id/txt_dash_sub_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/img_view" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/txt_dash_sub_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/eight_dp"
@@ -47,16 +47,16 @@
         android:textColor="@color/color_444444"
         android:textSize="@dimen/fifteen_sp"
         android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintBottom_toTopOf="@+id/btn_dash_set_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_dash_title" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btn_dash_set_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="@dimen/twenty_nine_dp"
         android:background="@drawable/btn_black_normal"
         android:paddingStart="@dimen/minimum_spend_view_height_45dp"
         android:paddingTop="@dimen/eighteen_dp"
@@ -71,5 +71,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_dash_sub_title" />
 </androidx.constraintlayout.widget.ConstraintLayout>
