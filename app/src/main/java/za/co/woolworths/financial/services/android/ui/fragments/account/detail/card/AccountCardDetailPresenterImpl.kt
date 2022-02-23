@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.C
 import za.co.woolworths.financial.services.android.ui.fragments.account.freeze.TemporaryFreezeStoreCard
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils.PRIMARY_CARD_POSITION
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.util.*
 
 class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsContract.AccountCardDetailView?, private var model: IAccountCardDetailsContract.AccountCardDetailModel?) : IAccountCardDetailsContract.AccountCardDetailPresenter, IGenericAPILoaderView<Any> {

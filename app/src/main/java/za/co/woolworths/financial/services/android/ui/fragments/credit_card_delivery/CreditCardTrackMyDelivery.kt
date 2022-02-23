@@ -11,10 +11,10 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_track_my_delivery.*
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.ToastUtils
 import za.co.woolworths.financial.services.android.util.ToastUtils.ToastInterface
@@ -35,16 +35,16 @@ class CreditCardTrackMyDelivery : WBottomSheetDialogFragment(), View.OnClickList
 
     companion object {
         fun newInstance(bundle: Bundle, envelopeNumber: String) = CreditCardTrackMyDelivery().withArgs {
-            putBundle("bundle", bundle)
-            putString("envelopeNumber", envelopeNumber)
+            putBundle(BundleKeysConstants.BUNDLE, bundle)
+            putString(BundleKeysConstants.ENVELOPE_NUMBER, envelopeNumber)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mToastUtils = ToastUtils(this)
-        bundle = arguments?.getBundle("bundle")
-        envelopeNumber = arguments?.getString("envelopeNumber", "")
+        bundle = arguments?.getBundle(BundleKeysConstants.BUNDLE)
+        envelopeNumber = arguments?.getString(BundleKeysConstants.ENVELOPE_NUMBER, "")
     }
 
     private fun init() {
