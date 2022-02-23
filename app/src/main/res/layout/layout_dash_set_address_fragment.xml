@@ -10,7 +10,7 @@
         android:id="@+id/imageView3"
         android:layout_width="@dimen/fifty_dp"
         android:layout_height="@dimen/fourty_dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
