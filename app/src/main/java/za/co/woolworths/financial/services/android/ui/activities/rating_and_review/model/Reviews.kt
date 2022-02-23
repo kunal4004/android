@@ -20,5 +20,7 @@ data class Reviews (
         @SerializedName("secondaryRatings") var secondaryRatings : List<SecondaryRatings>,
         @SerializedName("contextDataValue") var contextDataValue : List<SkinProfile>,
         @SerializedName("tagDimensions") var tagDimensions : List<SkinProfile>,
-        @SerializedName("photos") var photos : Photos
+        @SerializedName("photos") var photos : Photos,
+        var isLiked: Boolean = false,
+        var isReported: Boolean = false
 ) : Serializable

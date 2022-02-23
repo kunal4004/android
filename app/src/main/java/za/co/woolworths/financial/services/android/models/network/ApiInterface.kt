@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.voc.SurveyDetailsR
 import za.co.woolworths.financial.services.android.models.dto.voc.SurveyOptOutBody
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.CouponClaimCode
 import za.co.woolworths.financial.services.android.models.dto.voucher_and_promo_code.SelectedVoucher
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 
 interface ApiInterface {
 
@@ -1257,4 +1258,13 @@ interface ApiInterface {
             @Query("refinement") refinement: String?
 
     ): RatingAndReviewData
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @POST("/retail-ratings-reviews/app/v1/submitFeedback")
+    suspend fun submitFeedback(
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Body reviewFeedback: ReviewFeedback
+
+    ): GenericResponse
 }

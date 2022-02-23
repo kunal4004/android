@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.rating_and_rev
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.awfs.coordination.R
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.common_toolbar.view.*
 import kotlinx.android.synthetic.main.fragment_more_reviews.*
+import kotlinx.android.synthetic.main.fragment_report_review.*
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,11 +33,16 @@ import za.co.woolworths.financial.services.android.ui.activities.rating_and_revi
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.size_guide.SkinProfileDialog
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import kotlinx.android.synthetic.main.no_connection_handler.view.*
+import kotlinx.android.synthetic.main.review_helpful_and_report_layout.*
+import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.models.network.GenericResponse
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.featureutils.RatingAndReviewUtil
+import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewFeedback
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.model.ReviewStatistics
 import za.co.woolworths.financial.services.android.ui.activities.rating_and_review.view.adapter.MoreReviewHeaderAdapter
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import kotlin.collections.ArrayList
 
 class MoreReviewsFragment : Fragment(),
@@ -48,7 +55,7 @@ class MoreReviewsFragment : Fragment(),
     private var refinementString: String? = null
     private lateinit var reviewStatistics: ReviewStatistics
     private var reviewStatisticsList: MutableList<ReviewStatistics> = mutableListOf<ReviewStatistics>()
-
+    private var moreReviewsAdapter: MoreReviewsAdapter? = null
     companion object {
         fun newInstance() = MoreReviewsFragment()
     }
@@ -105,7 +112,7 @@ class MoreReviewsFragment : Fragment(),
             return
         }
 
-        val moreReviewsAdapter = MoreReviewsAdapter(
+         moreReviewsAdapter = MoreReviewsAdapter(
                 requireContext(),
                 this,
                 listOf<String>(),
@@ -117,9 +124,9 @@ class MoreReviewsFragment : Fragment(),
                 this,
                 0)
 
-        val footerLoadStateAdapter = moreReviewsAdapter.withLoadStateFooter(
+        val footerLoadStateAdapter = moreReviewsAdapter?.withLoadStateFooter(
                 footer = MoreReviewLoadStateAdapter({
-                    moreReviewsAdapter.retry()
+                    moreReviewsAdapter?.retry()
                 }, this@MoreReviewsFragment)
         )
         val concatAdapter = ConcatAdapter(headerAdapter, footerLoadStateAdapter)
@@ -139,16 +146,15 @@ class MoreReviewsFragment : Fragment(),
                                 {
                             reviewStatisticsList.add(it.reviewStatistics)
                             headerAdapter.setReviewTotalCounts(it.totalResults)
-                            moreReviewsAdapter.setReviewOptionsList(it.reportReviewOptions)
+                            moreReviewsAdapter?.setReviewOptionsList(it.reportReviewOptions)
                             headerAdapter.setReviewStatics(reviewStatisticsList)
                             headerAdapter.notifyDataSetChanged()
                         })
-                moreReviewsAdapter.snapshot().count()
-                moreReviewsAdapter.submitData(pagedData)
+                moreReviewsAdapter?.submitData(pagedData)
             }
         }
 
-        moreReviewsAdapter.addLoadStateListener {
+        moreReviewsAdapter?.addLoadStateListener {
             if (it.refresh == LoadState.Loading) {
                 progress_bar?.visibility = View.VISIBLE
             } else {
@@ -172,7 +178,7 @@ class MoreReviewsFragment : Fragment(),
         viewSkinProfileDialog(reviews)
     }
 
-    override fun openReportScreen(reportReviewOptions: List<String>?) {
+    override fun openReportScreen(reviews: Reviews, reportReviewOptions: List<String>?) {
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity)
         } else {
@@ -180,6 +186,10 @@ class MoreReviewsFragment : Fragment(),
             bundle.putStringArrayList(
                     KotlinUtils.REVIEW_REPORT,
                     reportReviewOptions as ArrayList<String>
+            )
+            bundle.putSerializable(
+                KotlinUtils.REVIEW_DATA,
+                reviews
             )
             reportReviewFragment = ReportReviewFragment.newInstance()
             reportReviewFragment?.arguments = bundle
@@ -210,6 +220,41 @@ class MoreReviewsFragment : Fragment(),
         reviewDetailsFragment = ReviewDetailsFragment.newInstance()
         reviewDetailsFragment?.arguments = bundle
         navigateToNextScreen(reviewDetailsFragment)
+    }
+
+    override fun reviewHelpfulClicked(review: Reviews) {
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity)
+        }else {
+            lifecycleScope.launch {
+                try {
+                    progress_bar.visibility = View.VISIBLE
+                    val response = moreReviewViewModel.reviewFeedback(
+                        ReviewFeedback(
+                            review.id.toString(),
+                            SessionUtilities.getInstance().jwt.AtgId.asString,
+                            KotlinUtils.REWIEW,
+                            KotlinUtils.HELPFULNESS,
+                            KotlinUtils.POSITIVE,
+                            null
+                        )
+                    )
+                    progress_bar.visibility = View.GONE
+                    if (response.httpCode == 200) {
+                        RatingAndReviewUtil.likedReviews.add(review.id.toString())
+                        moreReviewsAdapter?.notifyDataSetChanged()
+                    }
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                    progress_bar.visibility = View.GONE
+                    if (e.code() != 502) {
+                        activity?.supportFragmentManager?.let {
+                                fragmentManager -> Utils.showGeneralErrorDialog(fragmentManager, getString(R.string.statement_send_email_false_desc))
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun viewSkinProfileDialog(reviews: Reviews) {
@@ -266,6 +311,8 @@ class MoreReviewsFragment : Fragment(),
         sortString = sortOption.sortOption
         onSortRefineFragmentListener?.closeDrawer()
         setReviewsList(sortString, refinementString)
+        RatingAndReviewUtil.likedReviews.clear()
+        RatingAndReviewUtil.reportedReviews.clear()
     }
 
     fun onRefineOptionSelected(refinements: String?) {
@@ -274,6 +321,8 @@ class MoreReviewsFragment : Fragment(),
             setReviewsList(sortString, refinementString)
         }
         onSortRefineFragmentListener?.closeDrawer()
+        RatingAndReviewUtil.likedReviews.clear()
+        RatingAndReviewUtil.reportedReviews.clear()
     }
 
     override fun showFooterErrorMessage() {
