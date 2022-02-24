@@ -2401,4 +2401,5 @@
     <string name="update_address">Update Address</string>
     <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
     <string name="search_by_store_or_location">Search by store or location</string>
+    <string name="change">change</string>
 </resources>

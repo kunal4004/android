@@ -71,11 +71,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         rvSavedAddress = view.findViewById(R.id.rvSavedAddressList)
         setUpViewModel()
         inCurrentLocation.setOnClickListener(View.OnClickListener {
-            Toast.makeText(
-                activity,
-                "clicked",
-                Toast.LENGTH_LONG
-            ).show()
             (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ClickAndCollectStoresFragment.newInstance())
         })
         if (SessionUtilities.getInstance().isUserAuthenticated) {

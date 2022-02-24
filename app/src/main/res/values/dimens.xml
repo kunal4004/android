@@ -234,5 +234,6 @@
     <dimen name="vto_count_txt_size">90sp</dimen>
     <dimen name="vto_preview_size">380dp</dimen>
     <dimen name="two_hundred_ten_dp">210dp</dimen>
+    <dimen name="two_hundred_eight_dp">208dp</dimen>
 </resources>
 
