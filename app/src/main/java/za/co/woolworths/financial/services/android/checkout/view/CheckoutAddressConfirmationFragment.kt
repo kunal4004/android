@@ -34,8 +34,8 @@ import za.co.woolworths.financial.services.android.checkout.view.adapter.Checkou
 import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAddAddressNewUserViewModel
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.service.network.ResponseStatus
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -116,10 +116,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         when (v?.id) {
             R.id.deliveryTab -> {
                 if (loadingProgressBar.visibility == View.GONE && isDeliverySelected == false) {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY, hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY
-                    ), activity)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_DELIVERY
+                        ),
+                        activity)
                     showDeliveryTab()
                     showDeliveryAddressListView()
                     initialiseDeliveryAddressRecyclerView()
@@ -127,18 +129,22 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             }
             R.id.collectionTab -> {
                 if (loadingProgressBar.visibility == View.GONE && isDeliverySelected == true) {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_COLLECTION, hashMapOf(
-                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION
-                    ), activity)
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_COLLECTION,
+                        hashMapOf(
+                            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION
+                        ),
+                        activity)
                     showCollectionTab(localSuburbId)
                 }
             }
             R.id.plusImgAddAddress, R.id.addNewAddressTextView -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_ADD_NEW_ADDRESS, hashMapOf(
-                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_ADD_NEW_ADDRESS
-                ), activity)
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_ADD_NEW_ADDRESS,
+                    hashMapOf(
+                        FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_ADD_NEW_ADDRESS
+                    ),
+                    activity)
                 navigateToAddAddress()
             }
             R.id.btnAddressConfirmation -> {
@@ -147,10 +153,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                         if (checkoutAddressConfirmationListAdapter?.checkedItemPosition == -1)
                             addNewAddressErrorMsg.visibility = View.VISIBLE
                         else {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY_CONFIRM_BTN, hashMapOf(
-                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CONFIRM_ADDRESS
-                            ), activity)
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHANGE_FULFILLMENT_DELIVERY_CONFIRM_BTN,
+                                hashMapOf(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CONFIRM_ADDRESS
+                                ),
+                                activity)
                             callChangeAddressApi()
                         }
                     } else {
@@ -159,10 +167,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                             //Zero stores and user clicks on change suburb.
                             getSuburb(selectedProvince)
                         } else if (selectedSuburb.storeAddress != null) {
-                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONFIRM_NEW_STORE, hashMapOf(
-                                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CONFIRM_STORE
-                            ), activity)
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_CONFIRM_NEW_STORE,
+                                hashMapOf(
+                                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_CONFIRM_STORE
+                                ),
+                                activity)
                             checkUnsellableItems()
                         }
                     }
@@ -308,15 +318,17 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun changeLocation() {
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLECTION_CHANGE_BTN, hashMapOf(
-            FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                    FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CHANGE_SUBURB
-        ), activity)
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_COLECTION_CHANGE_BTN,
+            hashMapOf(
+                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_COLLECTION_CHANGE_SUBURB
+            ),
+            activity)
         val bundle = Bundle()
         bundle.apply {
             putString(
                 "ProvinceList",
-                Utils.toJson(WoolworthsApplication.getNativeCheckout()?.regions)
+                Utils.toJson(AppConfigSingleton.nativeCheckout?.regions)
             )
         }
         navController?.navigate(
@@ -381,10 +393,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
             initialiseDeliveryAddressRecyclerView()
         }
         setFragmentResultListener(UNSELLABLE_CHANGE_STORE_REQUEST_KEY) { _, _ ->
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS, hashMapOf(
-                FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
-                        FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
-            ), activity)
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CHECKOUT_REMOVE_UNSELLABLE_ITEMS,
+                hashMapOf(
+                    FirebaseManagerAnalyticsProperties.PropertyNames.ACTION_LOWER_CASE to
+                            FirebaseManagerAnalyticsProperties.PropertyValues.ACTION_VALUE_NATIVE_CHECKOUT_REMOVE_ITEMS
+                ),
+                activity)
             if (isDeliverySelected == true) {
                 view?.findNavController()?.navigate(
                     R.id.action_checkoutAddressConfirmationFragment_to_CheckoutAddAddressReturningUserFragment,
@@ -457,7 +471,9 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun initView() {
-        selectedProvince = Utils.getPreferredDeliveryLocation().province
+        selectedProvince = Utils.getPreferredDeliveryLocation().let {
+            if (it != null) it.province else Province()
+        }
         if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
                 KEY_IS_WHO_IS_COLLECTING
             ) == true
@@ -821,7 +837,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
         unSellableCommerceItems: List<UnSellableCommerceItem>,
         address: Address,
         deliverable: Boolean,
-        deliveryType: DeliveryType
+        deliveryType: DeliveryType,
     ) {
         val suburb = Suburb()
         when (deliveryType) {
@@ -877,12 +893,12 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
 
     private fun getProvinceName(provinceId: String?): String {
         val provinceList =
-            WoolworthsApplication.getNativeCheckout()?.regions as MutableList<Province>
-        if (!provinceId.isNullOrEmpty()) {
+            AppConfigSingleton.nativeCheckout?.regions as? MutableList<Province>
+        if (!provinceId.isNullOrEmpty() && !provinceList.isNullOrEmpty()) {
             for (provinces in provinceList) {
                 if (provinceId == provinces.id) {
                     // province id is matching with the province list from config.
-                    return provinces.name
+                    return provinces.name ?: ""
                 }
             }
         }

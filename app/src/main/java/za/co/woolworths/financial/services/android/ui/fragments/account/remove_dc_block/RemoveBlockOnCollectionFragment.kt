@@ -23,10 +23,10 @@ import kotlinx.android.synthetic.main.remove_block_dc_fragment.incViewStatementB
 import kotlinx.android.synthetic.main.view_pay_my_account_button.*
 import kotlinx.coroutines.GlobalScope
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.PayMyAccount
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
+import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
@@ -51,11 +51,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
     private var accountData: Pair<ApplyNowState, Account>? = null
     private var mAccountPresenter: AccountSignedInPresenterImpl? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.remove_block_dc_fragment, container, false)
     }
 
@@ -77,10 +73,8 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
         }
 
         val account = accountData?.second
-        currentBalanceAmountTextview?.text =
-            Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.currentBalance))
-        totalAmountDueAmountTextview?.text =
-            Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.totalAmountDue))
+        currentBalanceAmountTextview?.text = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.currentBalance))
+        totalAmountDueAmountTextview?.text = Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCentWithSpace(account?.totalAmountDue))
 
         setPushViewDownAnimation(incRecentTransactionButton)
         setPushViewDownAnimation(incViewStatementButton)
@@ -186,7 +180,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
-        val payMyAccountOption: PayMyAccount? = WoolworthsApplication.getPayMyAccountOption()
+        val payMyAccountOption: ConfigPayMyAccount? = AppConfigSingleton.mPayMyAccount
         val isFeatureEnabled = payMyAccountOption?.isFeatureEnabled() ?: false
         val payUMethodType = payMyAccountViewModel.getCardDetail()?.payuMethodType
         when {
@@ -211,7 +205,7 @@ class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
             activity?.apply {Utils.triggerFireBaseEvents(propertyName, this) }
             accountData?.second?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
-                intent.putExtra("productOfferingId", productOfferingId.toString())
+                intent.putExtra(BundleKeysConstants.PRODUCT_OFFERINGID, productOfferingId.toString())
                 intent.putExtra(
                     ChatFragment.ACCOUNTS,
                     Gson().toJson(Pair(applyNowState, this))

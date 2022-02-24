@@ -19,12 +19,13 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import java.lang.IllegalStateException
@@ -82,7 +83,9 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     fun configureUI(isNewSession: Boolean) {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             val orderResponse = parentFragment?.getOrdersResponseData()
-            if (orderResponse != null && !isNewSession && !parentFragment?.isDifferentUser()!!) showSignInView(orderResponse) else {
+            if (orderResponse != null && !isNewSession && !parentFragment?.isDifferentUser()!!)
+                showSignInView(orderResponse)
+            else {
                 parentFragment?.clearCachedData()
                 executeOrdersRequest(false)
             }
@@ -241,9 +244,14 @@ class MyOrdersFragment : Fragment(), OrderHistoryErrorDialogFragment.IOrderHisto
     }
 
     override fun presentOrderDetailsPage(item: Order) {
-        val intent = Intent(context, OrderDetailsActivity::class.java)
-        intent.putExtra("order", Utils.toJson(item))
-        activity?.startActivityForResult(intent, OrderDetailsActivity.REQUEST_CODE_ORDER_DETAILS_PAGE)
-        activity?.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+
+         val orderItenm = Utils.toJson(item)
+         val order = Utils.jsonStringToObject(orderItenm, Order::class.java) as? Order
+
+        order?.let {
+            (activity as? BottomNavigationActivity)?.pushFragment(
+                    OrderDetailsFragment.getInstance(order)
+            )
+        }
     }
 }
