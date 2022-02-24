@@ -5,15 +5,19 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -94,8 +98,6 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
             override fun onPageSelected(position: Int) {
                 shopPagerAdapter?.notifyDataSetChanged()
-                setupToolbar(position)
-                updateTabIconUI(position)
                 activity?.apply {
                     when (position) {
                         0 -> Utils.triggerFireBaseEvents(
@@ -115,8 +117,24 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         })
         tabs_main?.setupWithViewPager(viewpager_main)
-        updateTabIconUI(0)
         showShopFeatureWalkThrough()
+        tabs_main?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.view?.getChildAt(1)?.let { tvTab ->
+                    (tvTab as? TextView)?.typeface = ResourcesCompat.getFont(requireContext(), R.font.myriad_pro_semi_bold)
+                }
+            }
+
+            override fun onTabUnselected(previousTab: TabLayout.Tab?) {
+                //Do Nothing
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                //Do Nothing
+            }
+        })
+        updateTabIconUI(0)
+        setupToolbar(0)
     }
 
     private fun setupToolbar(tabPosition: Int) {
@@ -126,17 +144,33 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
         when (tabPosition) {
             1 -> {
-                imgToolbarStart?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_collection_circle))
+                imgToolbarStart?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_collection_circle
+                    )
+                )
                 tvToolbarTitle?.text = requireContext().getString(R.string.collecting_from)
-                tvToolbarSubtitle?.text = requireContext().getString(R.string.select_your_preferred_store)
+                tvToolbarSubtitle?.text =
+                    requireContext().getString(R.string.select_your_preferred_store)
             }
             2 -> {
-                imgToolbarStart?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_dash_delivery_circle))
+                imgToolbarStart?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_dash_delivery_circle
+                    )
+                )
                 tvToolbarTitle?.text = requireContext().getString(R.string.dash_delivery)
                 tvToolbarSubtitle?.text = requireContext().getString(R.string.set_your_address)
             }
             else -> {
-                imgToolbarStart?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_delivery_circle))
+                imgToolbarStart?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_delivery_circle
+                    )
+                )
                 tvToolbarTitle?.text = requireContext().getString(R.string.dash_delivery)
                 tvToolbarSubtitle?.text = requireContext().getString(R.string.default_location)
             }
@@ -158,12 +192,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
-        tabs_main?.let { tab ->
-            for (i in mTabTitle?.indices!!) {
-                tab.getTabAt(i)?.customView = prepareTabView(i, mTabTitle)
-            }
-            tab.getTabAt(selectedTab)?.customView?.isSelected = true
-        }
+        tabs_main?.selectTab(tabs_main?.getTabAt(selectedTab))
     }
 
     private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View? {

@@ -88,21 +88,14 @@
             android:layout_marginEnd="@dimen/sixteen_dp"
             android:layout_marginBottom="@dimen/sixteen_dp"
             android:elevation="@dimen/zero_dp"
-            android:tabStripEnabled="false"
+            style="@style/shop_tab_style"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tabBackground="@drawable/shop_tab_color_selector"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@null"
-            app:tabIndicatorHeight="0dp"
             app:tabMode="fixed"
             app:tabPaddingEnd="@dimen/two_dp"
-            app:tabPaddingStart="@dimen/two_dp"
-            app:tabRippleColor="@null"
-            app:tabSelectedTextColor="@color/black"
-            app:tabTextColor="@color/drawer_color" />
+            app:tabPaddingStart="@dimen/two_dp" />
 
         <TextView
             android:id="@+id/tvSearchProduct"
