@@ -34,6 +34,7 @@
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:layout_marginEnd="@dimen/thirty_dp"
         android:textAlignment="center"
+        android:textColor="@color/black"
         android:lineHeight="@dimen/twenty_four_dp"
         android:text="@string/collection_store_title"
         android:textSize="@dimen/twenty_sp"
