@@ -29,15 +29,11 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
-import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_SESSION_TIMEOUT_440
-import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
 class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickListener {
@@ -74,7 +70,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 putString(SHOPPING_LIST_SELECTED_GROUP, selectedListGroup)
                 putBoolean(DISPLAY_CREATE_LIST_ONLY, shouldDisplayCreateList)
                 putBoolean(DISPLAY_CLOSE_ICON, closeIconVisibility)
-                putString(OrderDetailsActivity.ORDER_ID, orderId)
+                putString(AppConstant.ORDER_ID, orderId)
             }
         }
 
@@ -83,7 +79,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 putSerializable(SHOPPING_LIST_SELECTED_LIST_ID, listOfIds)
                 putString(SHOPPING_LIST_SELECTED_GROUP, selectedListGroup)
                 putBoolean(DISPLAY_CREATE_LIST_ONLY, shouldDisplayCreateList)
-                putString(OrderDetailsActivity.ORDER_ID, orderId)
+                putString(AppConstant.ORDER_ID, orderId)
             }
         }
     }
@@ -159,8 +155,8 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             if (this.containsKey(DISPLAY_CLOSE_ICON)) {
                 mDisplayCloseIcon = this.getBoolean(DISPLAY_CLOSE_ICON, false)
             }
-            if (this.containsKey(OrderDetailsActivity.ORDER_ID)) {
-                mOrderId = this.getString(OrderDetailsActivity.ORDER_ID)
+            if (this.containsKey(AppConstant.ORDER_ID)) {
+                mOrderId = this.getString(AppConstant.ORDER_ID)
             }
         }
     }

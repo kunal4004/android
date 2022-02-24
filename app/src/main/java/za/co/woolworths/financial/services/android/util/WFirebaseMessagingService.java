@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
-import static za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.DEEP_LINK_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.DEEP_LINK_REQUEST_CODE;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -78,14 +78,19 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         Intent intent = new Intent(this, StartupActivity.class);
 
-            if (payload.get("feature") != null && payload.get("feature").equals("Product Listing"))
-            {
-                String json = payload.get("parameters").replaceAll("\\\\", "");
-                JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
+        String payloadParameters = payload.get("parameters");
+        String payloadFeature = payload.get("feature");
 
-                intent.setData(Uri.parse(parameters.get("url").getAsString()));
-                intent.setAction(Intent.ACTION_VIEW);
-            }
+        if (payloadFeature != null &&
+                payloadFeature.equals("Product Listing") &&
+                payloadParameters != null) {
+
+            String json = payloadParameters.replaceAll("\\\\", "");
+            JsonObject parameters = new Gson().fromJson(json, JsonObject.class);
+
+            intent.setData(Uri.parse(parameters.get("url").getAsString()));
+            intent.setAction(Intent.ACTION_VIEW);
+        }
         
         /*Deep link to PDP disabled*/
         /*else if (payload.get("feature").equals("Product Detail")){

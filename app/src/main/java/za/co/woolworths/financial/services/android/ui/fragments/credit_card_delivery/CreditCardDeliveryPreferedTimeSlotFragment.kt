@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.credit_card_delive
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.StatusResponse
 import za.co.woolworths.financial.services.android.models.dto.credit_card_delivery.TimeSlot
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import za.co.woolworths.financial.services.android.util.picker.WheelView
@@ -56,7 +57,7 @@ class CreditCardDeliveryPreferedTimeSlotFragment : CreditCardDeliveryBaseFragmen
             val response: StatusResponse? = statusResponse
             response?.slotDetails = slotDetails
             bundle?.putString("ScheduleDeliveryRequest", Utils.toJson(request))
-            bundle?.putString("StatusResponse", Utils.toJson(response))
+            bundle?.putParcelable(BundleKeysConstants.STATUS_RESPONSE, response)
 
             if (bundle?.containsKey("isEditRecipient") == true) {
                 if (bundle?.getBoolean("isEditRecipient") == true) {

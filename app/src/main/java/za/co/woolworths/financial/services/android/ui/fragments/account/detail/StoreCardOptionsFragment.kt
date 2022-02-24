@@ -35,6 +35,8 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.EnableLo
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.location.*
+import za.co.woolworths.financial.services.android.util.voc.VoiceOfCustomerManager
+import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 class StoreCardOptionsFragment : AccountsOptionFragment() {
 
@@ -143,7 +145,10 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
 
         when (storeCardResponse.httpCode) {
             200 -> {
-                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) { setStoreCardTag() }
+                GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+                    setStoreCardTag()
+                    VoiceOfCustomerManager.showPendingSurveyIfNeeded(context)
+                }
             }
             440 -> activity?.let {
                 SessionUtilities.getInstance().setSessionState(
@@ -161,7 +166,6 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
     }
 
     private fun setStoreCardTag() {
-
         when {
             // Activate Virtual Temporary card
             (mCardPresenterImpl?.isActivateVirtualTempCard() == true) -> {
@@ -297,14 +301,16 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
                 val shouldRefreshCardDetails =
                     getBooleanExtra(MyCardDetailActivity.REFRESH_MY_CARD_DETAILS, false)
                 if (shouldRefreshCardDetails) {
+                    VoiceOfCustomerManager.pendingTriggerEvent = VocTriggerEvent.MYACCOUNTS_BLOCKCARD_CONFIRM
                     navigateToGetStoreCards()
                 }
             }
         }
         //Activate VTC journey when successfully activated
         if (resultCode == ACTIVATE_VIRTUAL_TEMP_CARD_RESULT_CODE) {
-            navigateToGetStoreCards()
             //ICR Journey success and When Get replacement card email confirmation is success and result ok
+            VoiceOfCustomerManager.pendingTriggerEvent = VocTriggerEvent.MYACCOUNTS_ICR_LINK_CONFIRM
+            navigateToGetStoreCards()
         } else if (requestCode == MyCardDetailActivity.REQUEST_CODE_GET_REPLACEMENT_CARD && resultCode == AppCompatActivity.RESULT_OK) {
             navigateToGetStoreCards()
         }
@@ -441,5 +447,4 @@ class StoreCardOptionsFragment : AccountsOptionFragment() {
             }
         }
     }
-
 }

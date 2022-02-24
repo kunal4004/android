@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.checkout.service.network
 
 import com.google.gson.annotations.SerializedName
-import za.co.woolworths.financial.services.android.models.dto.Response
 
 /**
  * Created by Kunal Uttarwar on 05/07/21.

@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import kotlinx.android.synthetic.main.scan_barcode_to_pay_dialog.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
@@ -70,9 +71,9 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
         btnDismissDialog.setOnClickListener { dismiss() }
         btnToggleCardDetails.setOnClickListener { toggleCardDetailsVisibility() }
 
-        tvCardDetailsTitle.text = WoolworthsApplication.getVirtualTempCard().cardDisplayTitle ?: getString(R.string.dialog_scan_barcode_to_pay_card_details_title)
-        tvBarcodeTitle.text = WoolworthsApplication.getVirtualTempCard().barcodeDisplayTitle ?: getString(R.string.dialog_scan_barcode_to_pay_barcode_title)
-        tvBarcodeDescription.text = WoolworthsApplication.getVirtualTempCard().barcodeDisplaySubtitle ?: getString(R.string.dialog_scan_barcode_to_pay_barcode_desc)
+        tvCardDetailsTitle.text = AppConfigSingleton.virtualTempCard?.cardDisplayTitle ?: getString(R.string.dialog_scan_barcode_to_pay_card_details_title)
+        tvBarcodeTitle.text = AppConfigSingleton.virtualTempCard?.barcodeDisplayTitle ?: getString(R.string.dialog_scan_barcode_to_pay_barcode_title)
+        tvBarcodeDescription.text = AppConfigSingleton.virtualTempCard?.barcodeDisplaySubtitle ?: getString(R.string.dialog_scan_barcode_to_pay_barcode_desc)
 
         mStoreCardsResponse?.storeCardsData?.virtualCard?.let {
             tvCardNumber.text = it.number.chunked(4).joinToString("  ")
@@ -106,7 +107,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
 
         timerCardDetailsVisibility.removeCallbacksAndMessages(null)
         if (isCardDetailsVisible) {
-            val cardDisplayTimeoutInSeconds = WoolworthsApplication.getVirtualTempCard().cardDisplayTimeoutInSeconds ?: 10L
+            val cardDisplayTimeoutInSeconds = AppConfigSingleton.virtualTempCard?.cardDisplayTimeoutInSeconds ?: 10L
             timerCardDetailsVisibility.postDelayed({ toggleCardDetailsVisibility() }, cardDisplayTimeoutInSeconds * 1000)
 
             activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_VTC_VIEWCARDNUMBERS, this) }
