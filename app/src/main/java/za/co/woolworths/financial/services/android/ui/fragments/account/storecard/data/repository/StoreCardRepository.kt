@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.storecard.data.repository
 
-import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.data.local.StoreCardDao
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.data.remote.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.utils.performGetOperation
 import javax.inject.Inject

@@ -5,9 +5,13 @@ import android.util.Base64
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.ColorRes
+import androidx.annotation.NavigationRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
@@ -129,4 +133,14 @@ fun Fragment.updateStatusBarColor(@ColorRes colorId: Int, isStatusBarFontDark: B
             setSystemBarTheme(isStatusBarFontDark)
         }
     }
+}
+
+/**
+ * Accessing graph-scoped ViewModel of child NavHostFragment
+ * using by navGraphViewModels
+ */
+
+inline fun <reified T: ViewModel> NavController.viewModel(@NavigationRes navGraphId: Int): T {
+    val storeOwner = getViewModelStoreOwner(navGraphId)
+    return ViewModelProvider(storeOwner)[T::class.java]
 }
