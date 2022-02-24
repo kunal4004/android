@@ -35,16 +35,17 @@
         android:layout_marginEnd="@dimen/thirty_dp"
         android:textAlignment="center"
         android:textColor="@color/black"
+        android:fontFamily="@font/futura_bold"
         android:lineHeight="@dimen/twenty_four_dp"
         android:text="@string/collection_store_title"
         android:textSize="@dimen/twenty_sp"
-        app:layout_constraintBottom_toTopOf="@+id/bnt_change_location"
+        app:layout_constraintBottom_toTopOf="@+id/btn_change_location"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img_view_shoppingbag" />
 
     <Button
-        android:id="@+id/bnt_change_location"
+        android:id="@+id/btn_change_location"
         android:layout_width="@dimen/zero_dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
