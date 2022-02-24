@@ -144,6 +144,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         if (pos == 2) {
             foodOnlyText?.visibility = View.VISIBLE
         }
+        if (pos == 1) {
+            clickCollectText?.visibility = View.VISIBLE
+        }
         return view
     }
 

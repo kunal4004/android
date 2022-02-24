@@ -54,8 +54,28 @@
             android:paddingBottom="@dimen/three_dp"
             android:text="@string/food_only"
             android:textSize="@dimen/seven_sp"
-            android:visibility="gone"
             app:layout_constraintRight_toRightOf="@+id/tabs_main"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/clickCollectText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/seventy_five_dp"
+            android:layout_marginTop="@dimen/six_dp"
+            android:background="#4A9521"
+            android:fontFamily="@font/futura_bold"
+            android:gravity="center"
+            android:paddingStart="@dimen/eight_dp"
+            android:paddingTop="@dimen/three_dp"
+            android:paddingEnd="@dimen/eight_dp"
+            android:paddingBottom="@dimen/three_dp"
+            android:text="@string/food_only"
+            android:textAlignment="center"
+            android:textSize="@dimen/seven_sp"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toStartOf="@+id/foodOnlyText"
+            app:layout_constraintStart_toStartOf="@+id/tvSearchProduct"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
