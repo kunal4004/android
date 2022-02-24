@@ -241,11 +241,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun onEditDeliveryLocation() {
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
+       // if (SessionUtilities.getInstance().isUserAuthenticated) {
             /* if (Utils.getPreferredDeliveryLocation() != null) {
                  activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
              } else*/
-            activity?.apply {
+          /*  activity?.apply {
                 KotlinUtils.presentEditDeliveryLocationActivity(
                     this,
                     EditDeliveryLocationActivity.REQUEST_CODE
@@ -253,7 +253,17 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             }
         } else {
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
-        }
+        }*/
+
+       /* activity?.apply {
+            if (!ConfirmAddressDialog.dialogInstance.isVisible)
+                ConfirmAddressDialog.newInstance().show(
+                    this@DepartmentsFragment.childFragmentManager,
+                    ConfirmAddressDialog::class.java.simpleName
+                )
+        }*/
+
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
     }
 
 
