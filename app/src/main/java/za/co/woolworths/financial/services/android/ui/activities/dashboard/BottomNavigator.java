@@ -1,10 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
+import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
+
+import javax.annotation.Nullable;
 
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -125,4 +129,6 @@ public interface BottomNavigator {
 	void onRefined(String navigationState, Boolean isMultiSelectCategoryRefined);
 
 	void onResetFilter();
+
+	void navigateToTabIndex(int tabIndex, @Nullable Bundle data);
 }
