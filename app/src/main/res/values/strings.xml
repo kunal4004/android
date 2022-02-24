@@ -2404,6 +2404,12 @@
     <string name="unavailable_item">Unfortunately this item is unavailable in %1$s. Try changing your delivery location and try again.</string>
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
+    <string name="confirm_your_address">Confirm Your Address</string>
+    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">We use your location to give you the most \naccurate stock availabilty and pricing.</string>
+    <string name="enter_new_location">Enter new location</string>
+    <string name="my_saved_addresses">My Saved Addresses</string>
+    <string name="current_location">Current Location</string>
+    <string name="update_address">Update Address</string>
 
     <string name="get_payment_plan_title">Get a Payment Plan</string>
     <string name="get_payment_plan_desc">By signing up for a repayment plan, you secure the use of your facility for some point in the future. Once you have successfully completed your repayment plan, you will be able to utilise your facility again.</string>
@@ -2415,19 +2421,4 @@
     <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
     <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
-    <string name="confirm_your_address">Confirm Your Address</string>
-    <string name="we_use_your_location_to_give_you_the_most_naccurate_stock_availabilty_and_pricing">We use your location to give you the most \naccurate stock availabilty and pricing.</string>
-    <string name="enter_new_location">Enter new location</string>
-    <string name="my_saved_addresses">My Saved Addresses</string>
-    <string name="current_location">Current Location</string>
-    <string name="update_address">Update Address</string>
-    <!--  Geo Location -->
-    <string name="geoloc_delivery">Standard Delivery</string>
-    <string name="geoloc_confirm">CONFIRM</string>
-    <string name="geoloc_click_collect">Click &amp; Collect</string>
-    <string name="products_available_title">Products available: </string>
-    <string name="item_limit">Item limit: </string>
-    <string name="earliest_food_delivery_date"> Earliest Food Delivery Date: </string>
-    <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date: </string>
-    <string name="geoloc_ClickNCollectValue">28 Eastlake Isla... </string>
 </resources>
