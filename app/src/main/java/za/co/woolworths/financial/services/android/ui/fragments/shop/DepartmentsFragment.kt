@@ -264,7 +264,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 )
         }*/
 
-        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(NoCollectionStoreFragment.newInstance())
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
     }
 
 
