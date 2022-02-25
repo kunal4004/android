@@ -19,9 +19,9 @@
 
     <ImageView
         android:id="@+id/deliverLocationIcon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="48dp"
+        android:layout_width="@dimen/sixty_four_dp"
+        android:layout_height="@dimen/sixty_four_dp"
+        android:layout_marginTop="@dimen/fourty_eight_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/incSwipeCloseIndicator" />
@@ -30,7 +30,7 @@
 
         android:id="@+id/title"
         style="@style/dialog_title_text_style"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
         android:text="@string/set_your_collection_location"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
@@ -58,7 +58,7 @@
         android:id="@+id/btnDefaultLocation"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:layout_marginBottom="32dp"
         android:background="@drawable/order_add_to_cart_button_bg"
