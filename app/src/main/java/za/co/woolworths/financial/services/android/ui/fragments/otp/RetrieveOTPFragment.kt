@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProgressStateFragment
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 
 class RetrieveOTPFragment : Fragment(), IProgressAnimationState,View.OnClickListener {
@@ -41,7 +42,7 @@ class RetrieveOTPFragment : Fragment(), IProgressAnimationState,View.OnClickList
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
             absaCardToken = getString("absaCardToken", "")
-            productOfferingId = getString("productOfferingId", "")
+            productOfferingId = getString(BundleKeysConstants.PRODUCT_OFFERINGID, "")
             otpMethodType = OTPMethodType.valueOf(getString("otpMethodType", OTPMethodType.SMS.name))
         }
     }

@@ -121,7 +121,8 @@ class LiveCameraRepositoryImpl @Inject constructor(
                 override fun onPictureTaken(originalPicture: Bitmap?, resultPicture: Bitmap?) {
                     resultPicture?.let {
                         takenPicture.value= LiveCameraBitmapImages(originalPicture,resultPicture)
-
+                        // avoid OOM (due to Bitmap)
+                        takenPicture.value= LiveCameraBitmapImages(null,null)
                     }
                 }
 

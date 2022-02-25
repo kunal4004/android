@@ -10,7 +10,7 @@ import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -81,8 +81,9 @@ class PayMyAccountViewModel : ViewModel() {
         paymentList?.forEach {
             it.isCardChecked = false
         }
-        if (paymentList?.size ?:0 >= selectedPosition) {
-            paymentList?.get(selectedPosition)?.isCardChecked = true
+        if (paymentList?.isNotEmpty() == true &&
+            paymentList.size > selectedPosition) {
+            paymentList[selectedPosition].isCardChecked = true
         }
         return paymentList
     }
@@ -335,7 +336,7 @@ class PayMyAccountViewModel : ViewModel() {
 
     @Nullable
     fun getAddNewCardUrl(): String? {
-        return WoolworthsApplication.getPayMyAccountOption()?.addCardUrl(getProductGroupCode())
+        return AppConfigSingleton.mPayMyAccount?.addCardUrl(getProductGroupCode())
     }
 
     fun setAddCardResponse(addCardResponse: AddCardResponse) {

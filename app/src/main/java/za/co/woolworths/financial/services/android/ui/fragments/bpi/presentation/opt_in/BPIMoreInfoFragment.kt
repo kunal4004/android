@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebSettings
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_more_info_fragment.*
@@ -32,7 +33,6 @@ class BPIMoreInfoFragment : Fragment()  {
 
         BPIOptInCarouselFragment.htmlContent?.moreInformationHtml?.let {
             bpiMoreInfoWebView?.loadData(it, "text/html; charset=utf-8", null)
-            bpiMoreInfoWebView?.refreshDrawableState()
         }
 
         bpiCheckBox?.onClick {
@@ -61,8 +61,12 @@ class BPIMoreInfoFragment : Fragment()  {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setUpWebView(){
         bpiMoreInfoWebView?.apply {
+            visibility = View.GONE
             with(settings) {
                 javaScriptEnabled = true
+                allowContentAccess = true
+                domStorageEnabled = true
+                cacheMode = WebSettings.LOAD_NO_CACHE
             }
 
             webViewClient = object : android.webkit.WebViewClient() {
@@ -79,6 +83,8 @@ class BPIMoreInfoFragment : Fragment()  {
                             "document.querySelectorAll('body').forEach((element) => { element.classList.add('bpi-notes'); });"
                     bpiMoreInfoWebView.evaluateJavascript(js,null)
 
+                    visibility = View.VISIBLE
+                    refreshDrawableState()
                     super.onPageFinished(view, url)
                 }
             }

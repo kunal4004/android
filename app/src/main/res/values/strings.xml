@@ -461,7 +461,7 @@
     <string name="bottom_title_product">Shop</string>
     <string name="bottom_title_cart">My Cart</string>
     <string name="bottom_title_reward">WRewards</string>
-    <string name="bottom_title_account">Accounts</string>
+    <string name="bottom_title_account">My Accounts</string>
     <string name="lets_make_it_easy_for_you">Let us make it easy for you – we can request your electronic bank statement directly from your bank at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
     <string name="edit_quantity">edit your quantity</string>
@@ -702,7 +702,7 @@
     <string name="no_of_item">\u0020Item</string>
     <string name="toast_added_to_cart">ADDED TO CART</string>
     <string name="deselect">DESELECT</string>
-    <string name="card_number_not_found">Card number not found</string>
+    <string name="credit_card_statement_unavailable">Oops! Sorry, statements are currently unavailable</string>
     <string name="check_connection_status">Check your connection and try again.</string>
     <string name="general_error_desc">Oops, There seems to be a problem. Please try again later.</string>
     <string name="crashlytics_materialshowcase_key">materialshowcase_parent</string>
@@ -835,7 +835,6 @@
     <string name="vip_exclusive_welcome_voucher1">A welcome voucher of R75 off R350 on your next shop</string>
     <string name="vip_exclusive_welcome_voucher2">A 10% off birthday voucher</string>
     <string name="vip_exclusive_welcome_voucher3">First access to events</string>
-    <string name="vip_exclusive_welcome_voucher4">Exclusive VIP surprise offers like 40% off 40 destinations with Emirates</string>
     <string name="vip_exclusive_get_to_vip_status">To get to VIP status, spend R30 000 or more, annually.</string>
     <string name="calculation_status_level_title">CALCULATION OF STATUS LEVEL</string>
     <string name="calculation_status_level_paragraph1">Your annual spend will be calculated from the first Monday of each Woolworths financial year. This commences at the end of June or beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 months later.</string>
@@ -1271,7 +1270,7 @@
     <string name="withdrawal_options">Withdraw \nFunds</string>
 
     <string name="black_credit_card_available_fund_information_desc">Funds available for you to use.</string>
-    <string name="black_credit_card_current_balance_information_desc">Balance as at the current date</string>
+    <string name="black_credit_card_current_balance_information_desc">Balance as at the current date.</string>
     <string name="black_credit_card_credit_limit_information_desc">This is the total amount of credit offered to you by Woolies.</string>
     <string name="black_credit_card_total_amount_due_desc">The total amount due, is the total of that months due amount plus any previous over due amounts.</string>
     <string name="black_credit_card_next_payment_due_desc">This is the date the Total Amount Due is to be paid by.</string>
@@ -1300,8 +1299,19 @@
     <string name="account_arrears_description">Your account is in arrears for more than 6 months and has been handed to a collections agency.</string>
     <string name="call_the_call_centre">call the call centre</string>
     <string name="view_treatment_plan_description">Your account is in arrears. Have you already agreed to a repayment plan? View your plan or make a payment now.</string>
+    <string name="treatment_plan_eligible_charged_off_description_pl">Your account is being managed by our collection partners</string>
+    <string name="take_up_treatment_plan_description_pl">To keep your account in good standing, please pay the overdue amount of R%1$s today. Pay now or contact us for assistance.</string>
+    <string name="take_up_treatment_plan_description_sc">To keep your account in good standing, please pay the overdue amount of R%1$s today. Pay now or contact us for assistance.</string>
+    <string name="take_up_treatment_plan_description_cc">To keep your account in good standing, please pay the overdue amount of R%1$s today. Pay now or contact us for assistance.</string>
+    <string name="treatment_plan_eligible_charged_off_description_sc">Your account is being managed by our collection partners</string>
     <string name="view_payment_plan_button_label">View payment plan</string>
-    <string name="make_payment_now_button_label">Make a payment</string>
+    <string name="view_payment_plans_button_label">View payment plans</string>
+    <string name="make_payment_button_label">Make a payment</string>
+    <string name="make_payment_now_button_label">Make a payment now</string>
+    <string name="view_payment_options_button_label">View payment options</string>
+    <string name="view_plan_options_button_label">View plan options</string>
+    <string name="cannot_afford_payment_button_label">Can\'t afford this payment?</string>
+    <string name="view_other_payment_options_button_label">View other payment options</string>
 
     <!-- Unique Ids for Transactions-->
     <string name="transactions_title_layout">View Transaction Title Layout</string>
@@ -1456,6 +1466,7 @@
     <string name="sent_otp_desc">Your One-time PIN (OTP) has been sent to  %1$s. Please enter the OTP below.</string>
     <string name="recent_transactions_title">Recent Transactions</string>
 
+    <string name="set_up_payment_plan_title">Set Up A Payment Plan</string>
     <string name="payment_option_title">Payment Options</string>
     <string name="store_card_payment_options_title">Store Card Payment Options</string>
 
@@ -1763,7 +1774,7 @@
     <string name="payment_successful_desc">Thank you for your payment. Please note that payments may take up to 5 business working days to reflect on your account.</string>
     <string name="back_to_my_account_button">back to my account</string>
     <string name="pma_save_card_pay_now_title">Payment Summary</string>
-    <string name="pay_now_button_label">Pay Now</string>
+    <string name="pay_now_button_label">Make a payment now</string>
     <string name="payment_method">Payment Method</string>
     <string name="add_card_label">add card</string>
     <string name="card_expired">Expired</string>
@@ -2197,9 +2208,6 @@
     <string name="common_error_message_without_contact_info">We are unable to process your request at the moment. Please try again later.</string>
     <string name="suburb_not_found">We Can’t Seem To Find This Suburb</string>
 
-    <string name="view_payment_plans_button_label">View payment plans</string>
-    <string name="view_payment_options_button_label">View payment options</string>
-
     <string name="delivering_address_types_error_msg">Please select an address type.</string>
     <string name="suburb_name_error_msg">Please select a suburb.</string>
     <string name="province_name_error_msg">Please select a province.</string>
@@ -2307,6 +2315,7 @@
     <string name="add_a_new_address">Add A New Address</string>
     <string name="add_address">Add Address</string>
     <string name="change_suburb">change suburb</string>
+    <string name="change_address">change address</string>
     <string name="change_province"><u>change province</u></string>
     <string name="no_saved_addresses">No Saved Addresses</string>
     <string name="link_my_device">Link my device</string>
@@ -2322,7 +2331,7 @@
     <string name="product_item">item found</string>
     <string name="goldCreditCard_title">Gold Credit Card</string>
     <string name="silverCreditCard_title">Silver Credit Card</string>
-    <!--vto-->
+     <!--vto-->
     <string name="capture">Capture Image</string>
     <string name="use_live_camera">Use Live Camera</string>
     <string name="take_a_photo">Take a Photo</string>
@@ -2352,6 +2361,7 @@
     <string name="actual_size">Actual Size</string>
     <string name="vto_color_selected_error">Oh no! That colour is unavailable to try on.</string>
     <string name="vto_try_it_on_tips">Try It On Tips</string>
+    <string name="saved_to_photos">Saved To Photos</string>
 
     <string name="blackCreditCard_title">Black Credit Card</string>
     <string name="account_arrears_cc_description">Your account is in arrears for more than 6 months and has been handed to a collections agency. If you have already agreed to a repayment plan, you can now view it in the app.</string>
@@ -2379,8 +2389,8 @@
     <string name="bpi_checkbox_text">I agree with the <u>Comprehensive Balance Protection Terms &amp; Conditions</u></string>
     <string name="bpi_opt_in_text">opt in</string>
     <string name="bpi_opt_in_for_balance_protection_insurance">Opt in for Balance Protection Insurance</string>
-    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br /> cancel within the first 31 days after which you have<br /> received the policy terms and conditions,<br /> we will reverse any premiums paid,<br /> provided have not claimed.</string>
-    <string name="bpi_confirm_opt_in_desc2">Should you require more information; need to<br /> submit a claim; log a complaint; wish to cancel or<br /> have not received your policy wording within 30<br /> days please contact Woolworth Financial Services<br /> on 0861502020</string>
+    <string name="bpi_confirm_opt_in_desc1">You may cancel this policy at any time. If you<br/> cancel within the first 31 days after which you have<br/> received the policy terms and conditions,<br/> we will reverse any premiums paid,<br/> provided have not claimed.</string>
+    <string name="bpi_confirm_opt_in_desc2">Should you require more information, need to<br/> submit a claim, log a complaint, wish to cancel or<br/> have not received your policy wording within 30<br/> days, please contact Woolworth Financial Services<br/> on 0861502020</string>
     <string name="bpi_confirm_opt_in_desc_call_services">0861502020</string>
     <string name="bpi_email_me_a_copy">Email me a copy</string>
     <string name="bpi_terms_conditions_title">Terms &amp; Conditions</string>
@@ -2399,6 +2409,17 @@
     <string name="my_saved_addresses">My Saved Addresses</string>
     <string name="current_location">Current Location</string>
     <string name="update_address">Update Address</string>
+
+    <string name="get_payment_plan_title">Get a Payment Plan</string>
+    <string name="get_payment_plan_desc">By signing up for a repayment plan, you secure the use of your facility for some point in the future. Once you have successfully completed your repayment plan, you will be able to utilise your facility again.</string>
+    <string name="get_a_payment_plan_1">Pay smaller instalments over a chosen period.</string>
+    <string name="get_a_payment_plan_2">Make payments on the Woolies app.</string>
+    <string name="get_a_payment_plan_3">Track your payment plan history and schedule.</string>
+    <string name="get_a_payment_plan_4">Simple and easy to manage from the palm of your hand.</string>
+    <string name="treatment_plan_desc_1">Pay smaller instalments over a chosen period.</string>
+    <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
+    <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
+    <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
     <string name="please_select_the_store_you_are_collecting_from">Please select the store you\nare collecting from.</string>
     <string name="search_by_store_or_location">Search by store or location</string>
     <string name="change">change</string>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -25,7 +26,6 @@ import io.reactivex.functions.Consumer;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -363,10 +363,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void checkLocationPermission(BottomNavigator bottomNavigator, ArrayList<String> permissionType, int request_code) {
 		bottomNavigator.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
-	}
-
-	public void checkLocationPermission(CartActivity cartActivity, ArrayList<String> permissionType, int request_code) {
-		cartActivity.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
 	}
 
 	public void slideDownOnToolbarNavigationOnClickListener() {

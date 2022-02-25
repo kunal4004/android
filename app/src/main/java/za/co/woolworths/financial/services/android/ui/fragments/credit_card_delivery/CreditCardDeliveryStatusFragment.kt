@@ -12,12 +12,14 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.*
 import kotlinx.android.synthetic.main.credit_card_delivery_status_layout.imgCreditCard
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.account.CreditCardDeliveryStatus
 import za.co.woolworths.financial.services.android.ui.activities.credit_card_delivery.CreditCardDeliveryActivity
 import za.co.woolworths.financial.services.android.ui.extension.asEnumOrDefault
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.util.BundleKeysConstants
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -34,9 +36,9 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bundle = arguments?.getBundle("bundle")
+        bundle = arguments?.getBundle(BundleKeysConstants.BUNDLE)
         bundle?.apply {
-            accountBinNumber = getString("accountBinNumber")
+            accountBinNumber = getString(BundleKeysConstants.ACCOUNTBI_NNUMBER)
         }
     }
 
@@ -44,7 +46,7 @@ class CreditCardDeliveryStatusFragment : CreditCardDeliveryBaseFragment(), View.
         super.onViewCreated(view, savedInstanceState)
         Utils.updateStatusBarBackground(activity, R.color.grey_bg)
         navController = Navigation.findNavController(view)
-        callTheCallCenter?.setOnClickListener { Utils.makeCall(WoolworthsApplication.getCreditCardDelivery().callCenterNumber) }
+        callTheCallCenter?.setOnClickListener { Utils.makeCall(AppConfigSingleton.creditCardDelivery?.callCenterNumber) }
         if (activity is CreditCardDeliveryActivity) {
             (activity as? CreditCardDeliveryActivity)?.apply {
                 changeToolbarBackground(R.color.grey_bg)

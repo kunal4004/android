@@ -86,7 +86,7 @@ open class FirebaseManagerAnalyticsProperties {
         const val MY_ACCOUNTS_VTC_GET = "myaccounts_vtc_get"
         const val MY_ACCOUNTS_VTC_PAY = "myaccounts_vtc_pay"
         const val MY_ACCOUNTS_VTC_VIEWCARDNUMBERS = "vtc_viewcardnumbers"
-        const val MY_ACCOUNTS_VTC_HOW_TO = "my_accounts_vtc_howto"
+        const val MY_ACCOUNTS_VTC_HOW_TO = "myaccounts_vtc_howto"
 
         const val MYACCOUNTS_ICR_GET_CARD = "myaccounts_icr_get_card"
         const val MYACCOUNTS_ICR_STORES = "myaccounts_icr_stores"
@@ -329,6 +329,14 @@ open class FirebaseManagerAnalyticsProperties {
         const val VIEW_PAYMENT_PLAN_STORE_CARD_ACTION  = "Store Card landing - Arrears popup - View Treatment plan"
         const val VIEW_PAYMENT_PLAN_CREDIT_CARD_ACTION  = "Credit Card landing - Arrears popup - View Treatment plan"
 
+        //take up treatment plan
+        const val TAKE_UP_TREATMENT_PLAN_PL = "pl_takeupplan"
+        const val TAKE_UP_TREATMENT_PLAN_SC = "sc_takeupplan"
+        const val TAKE_UP_TREATMENT_PLAN_CC = "cc_takeupplan"
+        const val TAKE_UP_TREATMENT_PLAN_PL_ACTION = "Personal Loan landing - Arrears popup - SetupPlan"
+        const val TAKE_UP_TREATMENT_PLAN_SC_ACTION  = "Store Card landing - Arrears popup - SetupPlan"
+        const val TAKE_UP_TREATMENT_PLAN_CC_ACTION  = "Credit Card landing - Arrears popup - SetupPlan"
+
         // Voice of Customer
         const val VOC_SKIP = "voc_skip"
         const val VOC_SUBMIT = "voc_submit"
@@ -494,8 +502,16 @@ open class FirebaseManagerAnalyticsProperties {
 
     class ScreenNames {
         companion object {
-            const val STARTUP: String = "Startup"
-            const val WTODAY: String = "WToday"
+            const val STARTUP: String = "startup"
+            const val STARTUP_API_ERROR: String = "startup_api_error"
+            const val DEVICE_ROOTED_AT_STARTUP: String = "startup_jailbreak_error"
+            const val SPLASH_WITHOUT_CTA: String = "splash_without_cta"
+            const val SPLASH_WITH_CTA: String = "splash_with_cta"
+            const val ONBOARDING_ONE: String = "onboarding_one"
+            const val ONBOARDING_TWO: String = "onboarding_two"
+            const val ONBOARDING_THREE: String = "onboarding_three"
+            const val ONBOARDING_FOUR: String = "onboarding_four"
+            const val WTODAY: String = "wtoday_webview"
             const val SHOP_BARCODE: String = "Shop Barcode"
             const val SHOP_BARCODE_MANUAL: String = "Shop Barcode Manual"
             const val SHOP_MAIN_CATEGORIES: String = "Shop Main Categories"
@@ -511,7 +527,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val DELIVERY_LOCATION_SUBURB: String = "Delivery Location Suburb"
             const val CART_LIST: String = "Cart List"
             const val CART_CHECKOUT: String = "Cart Checkout"
-            const val MY_ACCOUNTS: String = "My Accounts"
+            const val MY_ACCOUNTS: String = "my_accounts"
             const val PREFERENCES: String = "Preferences"
             const val HELP_SECTION: String = "Help Section"
             const val FAQ_LIST: String = "FAQ List"
@@ -574,7 +590,7 @@ open class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_VOUCHERS_BARCODE: String = "WRewards Vouchers Barcode"
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
-            const val DEVICE_ROOTED_AT_STARTUP: String = "Block Rooted Device"
+            const val SSO_FORGOT_PASSWORD: String = "SSO Forgot Password"
         }
     }
 

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.reward_benefit_fragment.tvTermsCondition
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity
 import za.co.woolworths.financial.services.android.util.Utils
@@ -31,7 +32,7 @@ class RewardBenefitFragment : Fragment() {
                 text = WRewardBenefitActivity.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
                 movementMethod = LinkMovementMethod.getInstance()
                 setOnClickListener {
-                    Utils.openLinkInInternalWebView(WoolworthsApplication.getWrewardsTCLink())
+                    Utils.openLinkInInternalWebView(AppConfigSingleton.wrewardsTCLink)
                 }
             }
         }

@@ -75,6 +75,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.huawei.hms.api.HuaweiApiAvailability;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,6 +102,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -113,7 +115,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetailRespo
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
@@ -543,7 +544,12 @@ public class Utils {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
         mFirebaseAnalytics.setCurrentScreen(activity, screenName, null /* class override */);
     }
-
+    public static void setScreenName(String screenName) {
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
+    }
     public static void sendEmail(String emailId, String subject, Context mContext) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
         emailIntent.setData(Uri.parse(emailId +
@@ -869,55 +875,6 @@ public class Utils {
     public static ArrayList<ShoppingDeliveryLocation> getShoppingDeliveryLocationHistory() {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         return currentUserObject.shoppingDeliveryLocationHistory;
-    }
-
-    public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
-        // inflate your xml layout
-        if (activity != null) {
-            LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View layout = inflater.inflate(R.layout.add_to_cart_success, null);
-            // set the custom display
-            WTextView tvView = layout.findViewById(R.id.tvView);
-            WTextView tvCart = layout.findViewById(R.id.tvCart);
-            WTextView tvAddToCart = layout.findViewById(R.id.tvAddToCart);
-            // initialize your popupWindow and use your custom layout as the view
-            final PopupWindow pw = new PopupWindow(layout,
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT, true);
-
-            tvView.setVisibility(viewState ? View.VISIBLE : View.GONE);
-            tvCart.setVisibility(viewState ? View.VISIBLE : View.GONE);
-            tvAddToCart.setText(message);
-
-            // handle popupWindow click event
-            tvView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (viewState) {
-                        // do anything when popupWindow was clicked
-                        if (false) {//TODO: this needs to change
-                            ScreenManager.presentSSOSignin(activity);
-                        } else {
-                            Intent openCartActivity = new Intent(activity, CartActivity.class);
-                            activity.startActivity(openCartActivity);
-                            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-                        }
-                        pw.dismiss(); // dismiss the window
-                    }
-                }
-            });
-
-            // dismiss the popup window after 3sec
-            new Handler().postDelayed(new Runnable() {
-                public void run() {
-                    if (pw != null)
-                        pw.dismiss();
-                }
-            }, POPUP_DELAY_MILLIS);
-            return pw;
-        }
-
-        return null;
     }
 
     public static void fadeInFadeOutAnimation(final View view, final boolean editMode) {
@@ -1437,16 +1394,14 @@ public class Utils {
         }
     }
 
-    public static int getMinimumSupportedAppBuildNumber(Integer  minimumSupportedAppBuildNumber) {
-        return minimumSupportedAppBuildNumber;
-    }
-
     public static Integer getAppBuildNumber() {
         return BuildConfig.VERSION_CODE;
     }
 
-    public static Boolean isFeatureEnabled(Integer  minimumSupportedAppBuildNumber) {
-        return (getAppBuildNumber() >= getMinimumSupportedAppBuildNumber(minimumSupportedAppBuildNumber));
+    public static Boolean isFeatureEnabled(Integer minimumSupportedAppBuildNumber) {
+        // if minimumSupportedAppBuildNumber is not present in AppConfig, then we consider the feature to be disabled
+        if (minimumSupportedAppBuildNumber == null) return false;
+        return getAppBuildNumber() >= minimumSupportedAppBuildNumber;
     }
 
     public static boolean checkForBinarySu() {
@@ -1478,8 +1433,7 @@ public class Utils {
     public static String aes256EncryptStringAsBase64String(String entry) throws DecryptionFailureException {
         return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, entry), Base64.DEFAULT);
     }
-
-    public static void setAsVirtualTemporaryStoreCardPopupShown(Boolean state) {
+    public static void updateUserVirtualTempCardState(Boolean state) {
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         currentUserObject.isVirtualTemporaryStoreCardPopupShown = state;
         currentUserObject.save();
@@ -1558,8 +1512,8 @@ public class Utils {
     }
 
     public static Boolean isCreditCardActivationEndpointAvailable() {
-        String startTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
-        String endTime = WoolworthsApplication.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
+        String startTime = AppConfigSingleton.INSTANCE.getCreditCardActivation().getEndpointAvailabilityTimes().getStartTime();
+        String endTime = AppConfigSingleton.INSTANCE.getCreditCardActivation().getEndpointAvailabilityTimes().getEndTime();
         Calendar now = Calendar.getInstance();
         int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
         int minute = now.get(Calendar.MINUTE);
@@ -1636,6 +1590,10 @@ public class Utils {
 
     public static Boolean isGooglePlayServicesAvailable() {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
+    }
+
+    public static Boolean isHuaweiMobileServicesAvailable() {
+        return HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(WoolworthsApplication.getAppContext()) == ConnectionResult.SUCCESS;
     }
 
    public static String formatAnalyticsButtonText(String btnName){

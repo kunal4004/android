@@ -1,10 +1,22 @@
 package za.co.woolworths.financial.services.android.ui.fragments.integration.utils
 
+import android.os.Build
 import android.util.Base64
+import android.view.View
+import android.view.WindowManager
+import androidx.annotation.ColorRes
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.transform
 import retrofit2.HttpException
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper
 import za.co.absa.openbankingapi.DecryptionFailureException
 import za.co.absa.openbankingapi.SymmetricCipher
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.Aes256DecryptSymmetricCipherDelegate
@@ -30,12 +42,11 @@ fun resultOf(absaProxyResponseProperty: AbsaProxyResponseProperty): NetworkState
     }
 }
 
-
 fun ByteArray.toHex(separator: String = " "): String = joinToString(separator = separator) { eachByte -> "%02x".format(eachByte) }
 
 fun ByteArray.toEncryptedHex(): String? {
-   val logPublicKey =  WoolworthsApplication.getLogPublicKey()
-   return if (logPublicKey!=null) AsymmetricCryptoHelper().encryptToString(this.toHex(), WoolworthsApplication.getLogPublicKey()) else null
+   val logPublicKey =  AppConfigSingleton.logPublicKey
+   return if (logPublicKey!=null) AsymmetricCryptoHelper().encryptToString(this.toHex(), AppConfigSingleton.logPublicKey) else null
 }
 
 fun String.contentLength(): Int? {
@@ -71,4 +82,51 @@ fun String.toAes256DecryptBase64BodyToByteArray(): ByteArray? {
         FirebaseManager.logException(e)
     }
     return null
+}
+
+sealed class ApiResult<out T : Any> {
+
+    data class Success<out T : Any>(val data: T) : ApiResult<T>()
+    data class Error(val exception: Exception) : ApiResult<Nothing>()
+
+    override fun toString(): String {
+        return when (this) {
+            is Success<*> -> "Success[data=$data]"
+            is Error -> "Error[exception=$exception]"
+        }
+    }
+}
+
+fun Fragment.setNavigationBarColor(colorId: Int) {
+    activity?.apply {
+        window?.apply {
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            navigationBarColor = ContextCompat.getColor(this.context, colorId)
+        }
+    }
+}
+
+/** Changes the System Bar Theme.  */
+@RequiresApi(api = Build.VERSION_CODES.M)
+private fun Fragment.setSystemBarTheme(isStatusBarFontDark: Boolean) {
+    // Fetch the current flags.
+    activity?.apply {
+        val lFlags = window.decorView.systemUiVisibility
+        // Update the SystemUiVisibility depending on whether we want a Light or Dark theme.
+        window.decorView.systemUiVisibility =
+            if (isStatusBarFontDark) lFlags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv() else lFlags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    }
+}
+
+
+fun Fragment.updateStatusBarColor(@ColorRes colorId: Int, isStatusBarFontDark: Boolean = true) {
+    activity?.apply {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val window = window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.statusBarColor = ContextCompat.getColor(this, colorId)
+            setSystemBarTheme(isStatusBarFontDark)
+        }
+    }
 }
