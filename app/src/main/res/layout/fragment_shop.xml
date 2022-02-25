@@ -61,7 +61,7 @@
             android:id="@+id/clickCollectText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/seventy_five_dp"
+            android:layout_marginStart="@dimen/eighty_five_dp"
             android:layout_marginTop="@dimen/six_dp"
             android:background="#4A9521"
             android:fontFamily="@font/futura_bold"
