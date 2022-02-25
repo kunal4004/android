@@ -1372,6 +1372,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onSetNewLocation() {
-        // start GeolocationDelivery Address Confirmation Fragment
+        /*
+         start GeolocationDelivery Address Confirmation Fragment
+        */
     }
 }

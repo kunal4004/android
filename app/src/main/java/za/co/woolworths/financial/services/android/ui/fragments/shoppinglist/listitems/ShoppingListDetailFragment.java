@@ -1205,7 +1205,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onSetNewLocation() {
-        // start GeolocationDelivery Address Confirmation Fragment
+        /*
+        start GeolocationDelivery Address Confirmation Fragment
+        */
     }
 
     public int getTotalItemQuantity(List<AddItemToCart> addItemToCart) {

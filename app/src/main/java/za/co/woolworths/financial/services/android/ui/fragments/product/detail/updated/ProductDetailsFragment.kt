@@ -1337,7 +1337,9 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onSetNewLocation() {
-        // start GeolocationDelivery Address Confirmation Fragment
+    /*
+        start GeolocationDelivery Address Confirmation Fragment
+    */
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
