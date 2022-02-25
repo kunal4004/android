@@ -991,7 +991,7 @@ interface ApiInterface {
             @Query("isStore") isStore: Boolean): Call<ValidateSelectedSuburbResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("wfs/app/v4/locationItems/validateLocation/{placeId}")
+    @GET("wfs/app/v4/locationItems/validateLocation")
     fun validateLocation(
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
@@ -1000,7 +1000,7 @@ interface ApiInterface {
             @Header("environment") environment: String,
             @Header("latitude") latitude: Double?,
             @Header("longitude") longitude: Double?,
-            @Path("placeId") placeId: String): Call<ValidateLocationResponse>
+            @Query("placeId") placeId: String): Call<ValidateLocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("wfs/app/v4/payments/payu/methods/{paymenToken}")
