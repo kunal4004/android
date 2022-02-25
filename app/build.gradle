@@ -13,7 +13,7 @@ android {
     def major = "8"
     def minor = "9"
     def fix = "0"
-    def jobNumber = 558
+    def jobNumber = 561
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -33,6 +33,11 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
     }
 
     flavorDimensions "default"
@@ -92,7 +97,7 @@ android {
             jobNumber = 1
         } else {
             //assume prod
-            jobNumber = 173
+            jobNumber = 176
         }
 
         defaultConfig {
@@ -292,6 +297,8 @@ dependencies {
     // Hilt DI
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-android-compiler:2.37"
+    implementation 'com.google.maps:google-maps-services:2.0.0'
+
 
 }
 

@@ -31,14 +31,13 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
-import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    protected var mLastLocation: Location? = null
+    private var mLastLocation: Location? = null
     private var rvSavedAddress: RecyclerView? = null
 
     companion object {
@@ -47,7 +46,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     }
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
-    private var addressLatLong: String = AppConstant.EMPTY_STRING
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +70,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         rvSavedAddress = view.findViewById(R.id.rvSavedAddressList)
         setUpViewModel()
         inCurrentLocation.setOnClickListener(View.OnClickListener {
-            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(NewScreenAddressMap(mLastLocation!!.latitude, mLastLocation!!.longitude))
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressMapFragment(mLastLocation?.latitude, mLastLocation?.longitude))
         })
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress.visibility = View.GONE
@@ -117,7 +115,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                             Locale.getDefault()
                         ).getFromLocation(mLastLocation!!.latitude, mLastLocation!!.longitude, 1)
                         tvCurrentLocation.text = addresses[0].getAddressLine(0)
-                        addressLatLong = addresses[0].getAddressLine(0)
                     } else {
                         hideCurrentLocation()
                     }

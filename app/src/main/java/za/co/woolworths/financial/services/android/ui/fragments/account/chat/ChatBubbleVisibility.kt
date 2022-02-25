@@ -310,6 +310,6 @@ class ChatBubbleVisibility(private var accountList: List<Account>? = null, priva
 
     private fun isAccountNotChargeOff(productGroupCode: AccountsProductGroupCode): Boolean {
         val account = accountList?.singleOrNull { it.productGroupCode == productGroupCode.groupCode }
-        return account?.productOfferingStatus != Utils.ACCOUNT_CHARGED_OFF
+        return (account?.productOfferingGoodStanding == false && account.productOfferingStatus == Utils.ACCOUNT_ACTIVE)
     }
 }

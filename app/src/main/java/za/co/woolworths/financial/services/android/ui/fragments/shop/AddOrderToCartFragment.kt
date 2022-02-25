@@ -16,10 +16,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.*
+import kotlinx.android.synthetic.main.fragment_add_order_to_cart.btnBack
+import kotlinx.android.synthetic.main.fragment_add_order_to_cart.loadingBar
+import kotlinx.android.synthetic.main.fragment_add_order_to_cart.toolbarText
+import kotlinx.android.synthetic.main.order_details_fragment.*
 import org.json.JSONObject
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -27,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.adapters.AddOrderToCartAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.*
 
 
@@ -37,12 +43,14 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     private var addOrderToCartAdapter: AddOrderToCartAdapter? = null
     var updateQuantityPosition: Int = 0
     private var isAnyItemSelected: Boolean = false
-    private var tvSelectAll: TextView? = null
     private var mFulFillmentStoreId: String? = null
     private var mMapStoreFulFillmentKeyValue: MutableMap<String, String> = hashMapOf()
     private var mWoolWorthsApplication: WoolworthsApplication? = null
     private var isSelectAllReadyToShow = false
     private lateinit var listener: FragmentsEventsListner
+
+    private var order: Order? = null
+    private var orderText: String = ""
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -55,16 +63,18 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         private const val ARG_PARAM = "orderDetailsResponse"
         const val QUANTITY_CHANGED = 2019
         const val REQUEST_SUBURB_CHANGE = 1550
-        fun getInstance(orderDetailsResponse: OrderDetailsResponse) = AddOrderToCartFragment().withArgs {
+        fun getInstance(orderDetailsResponse: OrderDetailsResponse, order: Order?) = AddOrderToCartFragment().withArgs {
             putString(ARG_PARAM, Utils.objectToJson(orderDetailsResponse))
+            putString(OrderDetailsFragment.ARG_PARAM, Utils.objectToJson(order))
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let{
             orderDetailsResponse = Utils.jsonStringToObject(it.getString(ARG_PARAM), OrderDetailsResponse::class.java) as OrderDetailsResponse
+            order = Utils.jsonStringToObject(it.getString("order"),Order::class.java) as Order?
+            orderText = getString(R.string.order_page_title_prefix) + order?.orderId
         }
     }
 
@@ -75,15 +85,15 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     private fun initViews() {
-        tvSelectAll = activity?.findViewById(R.id.tvSelectAll)
+        toolbarText?.text = orderText
+        btnBack?.setOnClickListener { activity?.onBackPressed() }
         rvItemsToCart.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
         addToCartButton.isEnabled = isAnyItemSelected
-        tvSelectAll?.setOnClickListener { onSelectAll() }
+        tvSelectAllAddToCart?.setOnClickListener { onSelectAll() }
         addToCartButton.setOnClickListener { addItemsToCart() }
         setSelectAllTextVisibility(isSelectAllReadyToShow)
         bindData()
     }
-
 
     fun bindData() {
         dataList = buildDataForOrderDetailsView(orderDetailsResponse!!)
@@ -107,9 +117,9 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             isAnyItemSelected = getButtonStatus(dataList)
             addToCartButton.isEnabled = isAnyItemSelected
             if (dataList.size > 0)
-                tvSelectAll?.setText(getString(if (getSelectAllMenuVisibility(dataList)) R.string.deselect else R.string.select_all))
+                tvSelectAllAddToCart?.setText(getString(if (getSelectAllMenuVisibility(dataList)) R.string.deselect else R.string.select_all))
             else
-                tvSelectAll?.visibility = View.GONE
+                tvSelectAllAddToCart?.visibility = View.GONE
         }
     }
 
@@ -348,7 +358,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     private fun setSelectAllTextVisibility(state: Boolean) {
-        tvSelectAll?.visibility = if (state) View.VISIBLE else View.GONE
+        tvSelectAllAddToCart?.visibility = if (state) View.VISIBLE else View.GONE
     }
 
     private fun selectAllItems(isSelected: Boolean) {
@@ -368,12 +378,12 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     private fun onSelectAll() {
-        if (tvSelectAll?.getText().toString().equals("SELECT ALL", ignoreCase = true)) {
+        if (tvSelectAllAddToCart?.getText().toString().equals("SELECT ALL", ignoreCase = true)) {
             selectAllItems(true)
-            tvSelectAll?.setText(getString(R.string.deselect))
+            tvSelectAllAddToCart?.setText(getString(R.string.deselect))
         } else {
             selectAllItems(false)
-            tvSelectAll?.setText(getString(R.string.select_all))
+            tvSelectAllAddToCart?.setText(getString(R.string.select_all))
         }
     }
 
@@ -414,15 +424,26 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse, size: Int) {
-        listener.onItemsAddedToCart(addItemToCartResponse, size)
+      onItemsAddedToCart(addItemToCartResponse, size)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is FragmentsEventsListner) {
-            listener = context
-        } else {
-            throw ClassCastException("$context must implement FragmentsEventsListner.")
+     fun onItemsAddedToCart(addItemToCartResponse: AddItemToCartResponse, size:Int) {
+        when (addItemToCartResponse.httpCode) {
+            200 -> {
+
+                activity?.onBackPressed()
+
+                if (KotlinUtils.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data[0]?.productCountMap?.quantityLimit?.foodLayoutColour != null) {
+                    addItemToCartResponse.data[0]?.productCountMap?.let {
+                        ToastFactory.showItemsLimitToastOnAddToCart(fragment_add_to_order, it, requireActivity(), size) }
+                } else {
+                    ToastFactory.buildAddToCartSuccessToast(fragment_add_to_order, true, requireActivity())
+                }
+            }
+            440 -> {
+                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, addItemToCartResponse.response.stsParams, requireActivity())
+            }
+
         }
     }
 
