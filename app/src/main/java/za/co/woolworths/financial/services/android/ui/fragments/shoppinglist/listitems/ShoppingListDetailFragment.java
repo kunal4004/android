@@ -1205,7 +1205,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onSetNewLocation() {
-        KotlinUtils.Companion.presentEditDeliveryLocationActivity(this.getActivity(), REQUEST_SUBURB_CHANGE, null);
+        // start GeolocationDelivery Address Confirmation Fragment
     }
 
     public int getTotalItemQuantity(List<AddItemToCart> addItemToCart) {

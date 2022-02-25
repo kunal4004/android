@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,10 +50,11 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
 
     private fun configureUI() {
         Utils.getPreferredDeliveryLocation()?.apply {
-                btnSetNewLocation?.text = activity?.resources?.getString(if (storePickup) R.string.edit_collection_location else R.string.edit_delivery_location)
-                title?.text = activity?.resources?.getString(if (storePickup) R.string.set_your_collection_location else R.string.set_your_delivery_location)
-                description?.text = activity?.resources?.getString(if (storePickup) R.string.your_collection_location_is_currently_set_to else R.string.your_delivery_location_is_set_to)
-                deliverLocationIcon?.setBackgroundResource(if (storePickup) R.drawable.icon_basket else R.drawable.icon_truck)
+            btnSetNewLocation?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            btnSetNewLocation?.text = activity?.resources?.getString(R.string.edt_location)
+                title?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_title else R.string.confirm_delivery_location_title)
+                description?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_desc else R.string.current_delivery_location_desc)
+                deliverLocationIcon?.setBackgroundResource(if (storePickup) R.drawable.icon_basket else R.drawable.ic_delivery_truck)
                 tvLocation.text = if (storePickup) store?.name else suburb?.name + ", " + this.province.name
         }
     }

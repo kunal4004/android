@@ -1337,12 +1337,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onSetNewLocation() {
-        activity?.apply {
-            KotlinUtils.presentEditDeliveryLocationActivity(
-                this,
-                REQUEST_SUBURB_CHANGE
-            )
-        }
+        // start GeolocationDelivery Address Confirmation Fragment
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {

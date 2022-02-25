@@ -1372,12 +1372,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun onSetNewLocation() {
-        activity?.apply {
-            KotlinUtils.presentEditDeliveryLocationActivity(
-                this,
-                SET_DELIVERY_LOCATION_REQUEST_CODE
-            )
-        }
+        // start GeolocationDelivery Address Confirmation Fragment
     }
-
 }
