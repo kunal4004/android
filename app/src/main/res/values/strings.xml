@@ -2427,4 +2427,10 @@
     <string name="earliest_food_delivery_date">Earliest Food Delivery Date:</string>
     <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date:</string>
     <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
+
+
+    <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
+    <string name="change_location">CHANGE LOCATION</string>
+
+
 </resources>

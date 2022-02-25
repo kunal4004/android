@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -30,6 +29,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.apihelper
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -37,7 +37,7 @@ import java.util.*
 
 class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    protected var mLastLocation: Location? = null
+    private var mLastLocation: Location? = null
     private var rvSavedAddress: RecyclerView? = null
 
     companion object {
@@ -70,11 +70,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         rvSavedAddress = view.findViewById(R.id.rvSavedAddressList)
         setUpViewModel()
         inCurrentLocation.setOnClickListener(View.OnClickListener {
-            Toast.makeText(
-                activity,
-                "clicked",
-                Toast.LENGTH_LONG
-            ).show()
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressMapFragment(mLastLocation?.latitude, mLastLocation?.longitude))
         })
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress.visibility = View.GONE
