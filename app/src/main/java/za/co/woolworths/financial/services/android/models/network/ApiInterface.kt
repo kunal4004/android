@@ -8,6 +8,7 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.cart.SubmittedOrderResponse
@@ -988,6 +989,18 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Path("suburbId") suburbId: String,
             @Query("isStore") isStore: Boolean): Call<ValidateSelectedSuburbResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("wfs/app/v4/locationItems/validateLocation/{placeId}")
+    fun validateLocation(
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Header("environment") environment: String,
+            @Header("latitude") latitude: Double?,
+            @Header("longitude") longitude: Double?,
+            @Path("placeId") placeId: String): Call<ValidateLocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("wfs/app/v4/payments/payu/methods/{paymenToken}")
