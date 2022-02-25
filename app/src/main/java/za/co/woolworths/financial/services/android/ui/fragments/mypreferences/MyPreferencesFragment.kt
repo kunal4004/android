@@ -12,8 +12,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation
 import com.awfs.coordination.R
@@ -25,7 +23,6 @@ import kotlinx.android.synthetic.main.link_card_fragment.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
@@ -432,19 +429,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     private fun locationSelectionClicked() {
-        //presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null)
-
-
-        val confirmAddressFragment: Fragment = ConfirmAddressFragment()
-        val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()
-        transaction.replace(
-            R.id.pref_layout,
-            confirmAddressFragment
-        )
-
-        transaction.addToBackStack(null) // if written, this transaction will be added to backstack
-
-        transaction.commit()
+        presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null)
     }
 
     override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {

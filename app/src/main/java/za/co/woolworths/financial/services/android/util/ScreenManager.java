@@ -27,15 +27,6 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.onboarding.OnBoardingActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
-import za.co.woolworths.financial.services.android.ui.activities.voc.GeoLocation;
-
-import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.APP_SCREEN;
-import static za.co.woolworths.financial.services.android.ui.activities.account.sign_in.whatsapp.WhatsAppChatToUs.FEATURE_NAME;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
 
