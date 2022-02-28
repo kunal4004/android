@@ -198,6 +198,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View? {
         val view = activity?.layoutInflater?.inflate(R.layout.shop_custom_tab, null)
         view?.tvTitle?.text = tabTitle?.get(pos)
+        if (pos == 2) {
+            foodOnlyText?.visibility = View.VISIBLE
+        }
+        if (pos == 1) {
+            clickCollectText?.visibility = View.VISIBLE
+        }
         return view
     }
 

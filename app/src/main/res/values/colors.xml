@@ -104,6 +104,7 @@
     <color name="block_card_color" >#424244</color>
     <color name="gray_35">#35D8D8D8</color>
     <color name="color_yellow_FDE353">#FDE353</color>
+    <color name="color_yellow_FEE600">#FEE600</color>
     <color name="color_7f7f7f">#7f7f7f</color>
     <color name="layout_background_gray">#1A000000</color>
     <color name="colorPrimary">@color/white</color>

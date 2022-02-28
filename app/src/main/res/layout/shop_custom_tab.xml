@@ -2,16 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:paddingStart="@dimen/four_dp"
         android:textAllCaps="false"
         android:textColor="@drawable/shop_tab_text_color"
         android:textSize="@dimen/twelve_sp"
         android:paddingHorizontal="@dimen/three_dp"
         android:fontFamily="@font/myriad_pro_regular" />
-
 </RelativeLayout>
