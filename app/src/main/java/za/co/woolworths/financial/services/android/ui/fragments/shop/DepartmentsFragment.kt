@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
+import za.co.woolworths.financial.services.android.geolocation.view.NoCollectionStoreFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -252,7 +253,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 )
             }
         } else {
-            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            //ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment())
         }*/
 
        /* activity?.apply {
