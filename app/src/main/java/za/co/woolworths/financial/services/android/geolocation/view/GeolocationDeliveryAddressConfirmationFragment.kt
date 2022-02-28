@@ -64,6 +64,7 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
     }
 
     companion object {
+        @JvmStatic
         fun newInstance() = GeolocationDeliveryAddressConfirmationFragment()
     }
 

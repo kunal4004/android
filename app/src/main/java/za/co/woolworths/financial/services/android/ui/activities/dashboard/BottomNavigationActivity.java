@@ -556,7 +556,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             if (mNavController.getCurrentFrag() instanceof ProductDetailsFragment) {
                 ProductDetails productDetails = ((ProductDetailsFragment) mNavController.getCurrentFrag()).getProductDetails();
                 Bundle arguments = fragment.getArguments();
-                ProductDetails newProductDetails = (ProductDetails) Utils.jsonStringToObject(arguments.getString(STR_PRODUCT_LIST), ProductDetails.class);
+                ProductDetails newProductDetails = (ProductDetails) Utils.jsonStringToObject(arguments.getString(STR_PRODUCT_LIST, AppConstant.EMPTY_STRING), ProductDetails.class);
 
                 if (productDetails != null && productDetails.productId.equals(newProductDetails.productId)) {
                     // when we open same PDP then instead of new PDP it will close existing PDP and opens up new same PDP.

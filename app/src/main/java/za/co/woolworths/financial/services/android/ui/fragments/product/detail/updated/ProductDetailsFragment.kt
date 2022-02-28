@@ -56,6 +56,7 @@ import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.geolocation.view.GeolocationDeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -1340,6 +1341,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     /*
         start GeolocationDelivery Address Confirmation Fragment
     */
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+            GeolocationDeliveryAddressConfirmationFragment.newInstance())
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {

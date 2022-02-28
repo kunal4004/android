@@ -5,12 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.confirm_deliverylocation_bottom_sheet_dialog.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
+import android.text.style.UnderlineSpan
+
+import android.text.SpannableString
+import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.nav_drawer_row.*
+import android.text.Html
+
+
+
+
 
 class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
     private var listener: IOnConfirmDeliveryLocationActionListener? = null
@@ -50,12 +58,12 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
 
     private fun configureUI() {
         Utils.getPreferredDeliveryLocation()?.apply {
-            btnSetNewLocation?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            btnSetNewLocation?.text = activity?.resources?.getString(R.string.edt_location)
-                title?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_title else R.string.confirm_delivery_location_title)
-                description?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_desc else R.string.current_delivery_location_desc)
-                deliverLocationIcon?.setBackgroundResource(if (storePickup) R.drawable.icon_basket else R.drawable.ic_delivery_truck)
-                tvLocation.text = if (storePickup) store?.name else suburb?.name + ", " + this.province.name
+            btnSetNewLocation.setPaintFlags(btnSetNewLocation.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
+            btnSetNewLocation.setText(activity?.resources?.getString(R.string.edt_location))
+            title?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_title else R.string.confirm_delivery_location_title)
+            description?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_desc else R.string.current_delivery_location_desc)
+            deliverLocationIcon?.setBackgroundResource(if (storePickup) R.drawable.basket else R.drawable.ic_delivery_truck)
+            tvLocation.text = if (storePickup) store?.name else suburb?.name + ", " + this.province.name
         }
     }
 
