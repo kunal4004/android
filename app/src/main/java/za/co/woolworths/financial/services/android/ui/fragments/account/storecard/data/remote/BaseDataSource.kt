@@ -12,23 +12,24 @@ abstract class BaseDataSource {
                 val body = response.body()
                 if (body != null) return Result.success(body)
             }
-            return error(" ${getErrorMessage(response.code())}")
+            return error(getErrorMessage(response.code()), response.body())
         } catch (e: Exception) {
             return error(getErrorMessage())
         }
 
     }
 
-    private fun <T> error(message: String): Result<T> {
-        return Result.error(message)
+    private fun <T> error(apiError: ApiError, data: T? = null): Result<T> {
+        return Result.error(apiError, data)
     }
 
-    private fun getErrorMessage(responseCode:Int = 0):String{
+    private fun getErrorMessage(responseCode: Int = 0): ApiError {
         return when (responseCode) {
-            400 -> ApiError.BadRequest.value
-            404 -> ApiError.NotFound.value
-            500, 502, 503, 504 -> ApiError.ServerErrors.value
-            else -> ApiError.SomethingWrong.value
+            0 -> ApiError.SomethingWrong
+            400 -> ApiError.BadRequest
+            404 -> ApiError.NotFound
+            440 -> ApiError.SessionTimeOut
+            else -> ApiError.ServerErrors
         }
     }
 
@@ -37,6 +38,7 @@ abstract class BaseDataSource {
 enum class ApiError(val value: String) {
     BadRequest("The request was unacceptable, often due to missing a required parameter"),
     NotFound("The requested resource doesn’t exist."),
+    SessionTimeOut("Session timeout"),
     ServerErrors("Something went wrong on the API’s end"),
     SomethingWrong("Something went wrong ,Please check your internet connection");
 

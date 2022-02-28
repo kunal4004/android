@@ -8,6 +8,6 @@ import javax.inject.Inject
 @HiltViewModel
 class StoreCardViewModel @Inject constructor(private val repository: StoreCardRepository) :
     ViewModel()  {
-    val toDo = repository.fetchCLIActiveOffer()
+//    val toDo = repository.fetchService()
 
 }

@@ -5,6 +5,10 @@ import androidx.lifecycle.liveData
 import kotlinx.coroutines.Dispatchers
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.utils.Result.Status.*
 
+/*TODO :
+    * databaseQuery will be used to retrieve data from DB
+    * saveCallResult will be used to save the network call to database or doing any extra work on response
+*/
 fun <T> performGetOperation(
     networkCall: suspend () -> Result<T>
 ): LiveData<Result<T>> =
@@ -17,6 +21,6 @@ fun <T> performGetOperation(
             emit(Result.success(responseStatus.data!!))
 
         } else if (responseStatus.status == ERROR) {
-            emit(Result.error(responseStatus.message!!))
+            emit(Result.error(responseStatus.apiError!!,responseStatus.data))
         }
     }
