@@ -122,6 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:textColor="@color/black"
                 android:textSize="@dimen/fifteen_sp" />
 
         </RelativeLayout>
@@ -148,6 +149,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:textColor="@color/black"
                 android:textSize="@dimen/fifteen_sp" />
 
         </RelativeLayout>
@@ -174,6 +176,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:textColor="@color/black"
                 android:textSize="@dimen/fifteen_sp" />
         </RelativeLayout>
 
@@ -199,6 +202,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:textColor="@color/black"
                 android:textSize="@dimen/fifteen_sp" />
         </RelativeLayout>
 
@@ -224,8 +228,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:textColor="@color/black"
                 android:textSize="@dimen/fifteen_sp" />
         </RelativeLayout>
+
+        <View
+            android:id="@+id/confirmAddressPartition"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_dp"
+            android:layout_marginTop="@dimen/twenty_dp"
+            android:layout_marginBottom="@dimen/five_dp"
+            android:background="@color/sign_in_register_button_border" />
     </LinearLayout>
 
     <LinearLayout
@@ -236,7 +249,7 @@
         android:layout_marginEnd="@dimen/thirty_dp"
         android:background="@color/white"
         android:orientation="horizontal"
-        android:paddingTop="@dimen/eight_dp"
+        android:paddingTop="@dimen/ten_dp"
         android:paddingBottom="@dimen/eighteen_dp"
         app:layout_constraintBottom_toTopOf="@id/geoloc_confirmLayout">
 
@@ -306,4 +319,18 @@
             android:fontFamily="@font/futura_medium"
             android:text="@string/confirm" />
     </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="@dimen/fourty_dp"
+        android:layout_height="@dimen/fourty_dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/black"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
