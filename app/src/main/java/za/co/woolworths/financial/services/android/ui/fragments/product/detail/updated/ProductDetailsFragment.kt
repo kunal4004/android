@@ -1340,9 +1340,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onSetNewLocation() {
     /*
         start GeolocationDelivery Address Confirmation Fragment
+        // place id :  take from cache
+        // delivery type : take from cache
     */
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            GeolocationDeliveryAddressConfirmationFragment.newInstance())
+            GeolocationDeliveryAddressConfirmationFragment.newInstance("", ""))
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {

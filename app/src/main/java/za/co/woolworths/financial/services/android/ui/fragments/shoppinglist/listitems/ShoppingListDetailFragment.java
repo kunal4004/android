@@ -1208,10 +1208,12 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void onSetNewLocation() {
         /*
         start GeolocationDelivery Address Confirmation Fragment
+        // place id :  take from cache
+        // delivery type : take from cache
         */
         BottomNavigationActivity activity = (BottomNavigationActivity) getActivity();
         if (activity !=null) {
-            activity.pushFragment(GeolocationDeliveryAddressConfirmationFragment.newInstance());
+            activity.pushFragment(GeolocationDeliveryAddressConfirmationFragment.newInstance("", ""));
         }
     }
 

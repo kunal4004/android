@@ -73,12 +73,20 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
         private val KEY_LATITUDE = "latitude"
         private val KEY_LONGITUDE = "longitude"
         private val KEY_PLACE_ID = "placeId"
+        private val DELIVERY_TYPE = "placeId"
 
         fun newInstance(latitude: Double, longitude: Double, placesId: String) =
             GeolocationDeliveryAddressConfirmationFragment().withArgs {
                 putDouble(KEY_LATITUDE, latitude)
                 putDouble(KEY_LONGITUDE, longitude)
                 putString(KEY_PLACE_ID, placesId)
+            }
+
+        @JvmStatic
+        fun newInstance(placesId: String, deliveryType: String  = "standard") =
+            GeolocationDeliveryAddressConfirmationFragment().withArgs {
+                putString(KEY_PLACE_ID, placesId)
+                putString(DELIVERY_TYPE, deliveryType)
             }
     }
 
