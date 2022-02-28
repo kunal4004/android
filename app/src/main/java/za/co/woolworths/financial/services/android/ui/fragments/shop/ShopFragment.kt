@@ -98,6 +98,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
 
             override fun onPageSelected(position: Int) {
                 shopPagerAdapter?.notifyDataSetChanged()
+                updateTabIconUI(position)
                 activity?.apply {
                     when (position) {
                         0 -> Utils.triggerFireBaseEvents(
@@ -117,23 +118,8 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             }
         })
         tabs_main?.setupWithViewPager(viewpager_main)
-        showShopFeatureWalkThrough()
-        tabs_main?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                tab?.view?.getChildAt(1)?.let { tvTab ->
-                    (tvTab as? TextView)?.typeface = ResourcesCompat.getFont(requireContext(), R.font.myriad_pro_semi_bold)
-                }
-            }
-
-            override fun onTabUnselected(previousTab: TabLayout.Tab?) {
-                //Do Nothing
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                //Do Nothing
-            }
-        })
         updateTabIconUI(0)
+        showShopFeatureWalkThrough()
         setupToolbar(0)
     }
 
@@ -192,7 +178,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     }
 
     private fun updateTabIconUI(selectedTab: Int) {
-        tabs_main?.selectTab(tabs_main?.getTabAt(selectedTab))
+        tabs_main?.let { tab ->
+            for (i in mTabTitle?.indices!!) {
+                tab.getTabAt(i)?.customView = prepareTabView(i, mTabTitle)
+            }
+            tab.getTabAt(selectedTab)?.customView?.isSelected = true
+        }
     }
 
     private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View? {
