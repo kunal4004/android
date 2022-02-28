@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.apihelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -44,9 +45,14 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        placeId = "EiRMb3R1cyBSaXZlciwgQ2FwZSBUb3duLCBTb3V0aCBBZnJpY2EiLiosChQKEgm7_uOL90PMHRGhcHCGx9_rrRIUChIJ1-4miA9QzB0Rh6ooKPzhf2g"
-        latitude = -33.9228
-        longitude = 18.4233
+        activity?.apply {
+            arguments?.apply {
+                placeId =
+                    getString(KEY_PLACE_ID)
+                latitude = getDouble(KEY_LATITUDE)
+                longitude = getDouble(KEY_LONGITUDE)
+            }
+        }
     }
 
     override fun onClick(v: View?) {
@@ -64,7 +70,16 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
     }
 
     companion object {
-        fun newInstance() = GeolocationDeliveryAddressConfirmationFragment()
+        private val KEY_LATITUDE = "latitude"
+        private val KEY_LONGITUDE = "longitude"
+        private val KEY_PLACE_ID = "placeId"
+
+        fun newInstance(latitude: Double, longitude: Double, placesId: String) =
+            GeolocationDeliveryAddressConfirmationFragment().withArgs {
+                putDouble(KEY_LATITUDE, latitude)
+                putDouble(KEY_LONGITUDE, longitude)
+                putString(KEY_PLACE_ID, placesId)
+            }
     }
 
     private fun setUpViewModel() {
@@ -127,6 +142,7 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
         if (earliestFashionDate.isNullOrEmpty())
             earliestFashionDeliveryDateLayout.visibility = View.GONE
         else
-            earliestFashionDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFashionDate)
+            earliestFashionDeliveryDateValue?.text =
+                WFormatter.getFullMonthWithDate(earliestFashionDate)
     }
 }
