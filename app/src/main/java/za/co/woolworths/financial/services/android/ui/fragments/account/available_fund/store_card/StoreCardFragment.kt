@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWi
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.OutSystemBuilder
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.fragment.StoreCardAvailableFundsFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
@@ -33,7 +34,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.V
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment.Companion.VIEW_PAYMENT_PLAN_BUTTON
 import za.co.woolworths.financial.services.android.util.*
 
-class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
+class StoreCardFragment : StoreCardAvailableFundsFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,8 +42,8 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         navController = Navigation.findNavController(view)
         availableFundBackground?.setBackgroundResource(R.drawable.store_card_background)
 
-        payMyAccountViewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
-            isQueryPayUPaymentMethodComplete = false
+        viewModel.queryPaymentMethod.observe(viewLifecycleOwner) {
+            viewModel.isQueryPayUPaymentMethodComplete = false
             queryPaymentMethod()
         }
 
@@ -60,14 +61,14 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
                 when (bundle.getString(AccountInArrearsDialogFragment::class.java.simpleName, "N/A")) {
                     ARREARS_PAY_NOW_BUTTON -> onStoreCardButtonTap()
                     ARREARS_CHAT_TO_US_BUTTON -> {
-                        val chatBubble = payMyAccountViewModel.getApplyNowState()?.let { applyNowState ->
+                        val chatBubble = viewModel.getApplyNowState()?.let { applyNowState ->
                             ChatFloatingActionButtonBubbleView(
-                                    activity = activity as? AccountSignedInActivity,
-                                    applyNowState = applyNowState,
-                                    vocTriggerEvent = payMyAccountViewModel.getVocTriggerEventMyAccounts()
+                                activity = activity as? AccountSignedInActivity,
+                                applyNowState = applyNowState,
+                                vocTriggerEvent = viewModel.getVocTriggerEventMyAccounts()
                             )
                         }
-                        chatBubble?.navigateToChatActivity(activity, payMyAccountViewModel.getCardDetail()?.account?.second)
+                        chatBubble?.navigateToChatActivity(activity, viewModel.getCardDetail()?.account?.second)
                     }
                 }
             }
@@ -111,9 +112,9 @@ class StoreCardFragment : AvailableFundFragment(), View.OnClickListener {
         if (viewPaymentOptionImageShimmerLayout?.isShimmerStarted == true) return
 
         activity?.apply { Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTS_PMA_SC, this) }
-        payMyAccountViewModel.resetAmountEnteredToDefault()
+        viewModel.resetAmountEnteredToDefault()
 
-        if (payMyAccountViewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
+        if (viewModel.getPaymentMethodType() == PayMyAccountViewModel.PAYUMethodType.ERROR) {
             try {
                 if (navController.currentDestination?.id == R.id.storeCardFragment) {
                     navController.navigate(R.id.payMyAccountRetryErrorFragment)

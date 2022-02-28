@@ -32,17 +32,12 @@ class StoreCardAccountOptionsFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.toDo.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
-                SUCCESS -> {
-                    Toast.makeText(requireContext(), ""+it.data, Toast.LENGTH_LONG).show()
-                }
-                ERROR ->
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
-
-                LOADING ->
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
-            }
-        })
+//        viewModel.toDo.observe(viewLifecycleOwner, Observer {
+//            when (it.status) {
+//                SUCCESS -> {
+//                    Toast.makeText(requireContext(), ""+it.data, Toast.LENGTH_LONG).show()
+//                }
+//            }
+//        })
     }
 }

@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.data.remote.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.data.remote.StoreCardService
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.data.repository.StoreCardRepository
@@ -20,9 +21,12 @@ object AccountProductsModule {
 
     @Singleton
     @Provides
-    fun provideStoreCardDataSource(storeCardService: StoreCardService) =
-        StoreCardDataSource(storeCardService)
+    fun provideStoreCardDataSource(storeCardService: StoreCardService, networkConfig: NetworkConfig) =
+        StoreCardDataSource(storeCardService, networkConfig)
 
+    @Singleton
+    @Provides
+    fun provideNetworkConfig() = NetworkConfig()
 
     @Singleton
     @Provides
