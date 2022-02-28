@@ -429,7 +429,21 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     private fun locationSelectionClicked() {
-        presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null)
+      //  presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null)
+        activity?.apply {
+            if (this is MyPreferencesInterface) {
+                hideToolbar()
+            }
+        }
+        view?.let {
+            try{
+                Navigation.findNavController(it)
+                    .navigate(R.id.action_myPreferencesFragment_to_confirmAddressFragment)
+            } catch (e: Exception) {
+                FirebaseManager.logException(e)
+            }
+        }
+
     }
 
     override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
