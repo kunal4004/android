@@ -2420,6 +2420,13 @@
     <string name="treatment_plan_desc_2">Make payments on the Woolies app.</string>
     <string name="treatment_plan_desc_3">Track your payment plan history and schedule.</string>
     <string name="treatment_plan_desc_4">Simple and easy to manage from the palm of your hand.</string>
+    <string name="geoloc_delivery">Standard Delivery</string>
+    <string name="products_available_title">Products available:</string>
+    <string name="item_limit">Item limit:</string>
+    <string name="geo_delivery_fee">Delivery fee:</string>
+    <string name="earliest_food_delivery_date">Earliest Food Delivery Date:</string>
+    <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date:</string>
+    <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
 
 
     <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
