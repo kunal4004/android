@@ -201,7 +201,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tvConfirmAddress -> {
-                if (progressBar.visibility == View.GONE && selectedAddress != null) //&& tvConfirmAddress.text == getString(R.string.confirm))
+                if (progressBar.visibility == View.GONE && selectedAddress != null && tvConfirmAddress.text == getString(R.string.confirm))
                 {
                     selectedAddress.let {
                         if (it.latitude != null && it.longitude != null && it.placesId != null) {
