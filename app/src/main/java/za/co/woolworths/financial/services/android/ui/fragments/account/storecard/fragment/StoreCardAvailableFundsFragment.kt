@@ -45,6 +45,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.fragment.availablefunds.AvailableFundsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.utils.autoCleared
+import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.utils.openActivity
+import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.utils.openActivityForResult
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
@@ -261,12 +263,9 @@ open class StoreCardAvailableFundsFragment : Fragment() {
 
     fun navigateToStatementActivity() {
         activity?.apply {
-            val openStatement = Intent(this, StatementActivity::class.java)
-            openStatement.putExtra(
-                ChatFragment.ACCOUNTS,
-                Gson().toJson(viewModel.mAccountPair.value)
+            openActivity<StatementActivity>(
+                ChatFragment.ACCOUNTS to Gson().toJson(viewModel.mAccountPair.value)
             )
-            startActivity(openStatement)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
@@ -283,21 +282,11 @@ open class StoreCardAvailableFundsFragment : Fragment() {
 
     fun navigateToOnlineBankingActivity(isRegistered: Boolean) {
         activity?.apply {
-            val openABSAOnlineBanking =
-                Intent(this, ABSAOnlineBankingRegistrationActivity::class.java)
-            openABSAOnlineBanking.putExtra(
-                ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN,
-                isRegistered
-            )
-            openABSAOnlineBanking.putExtra("creditCardToken", viewModel.creditCardNumber.value)
-            openABSAOnlineBanking.putExtra(
-                ChatFragment.ACCOUNTS,
-                Gson().toJson(viewModel.mAccountPair.value)
-            )
-            startActivityForResult(
-                openABSAOnlineBanking,
-                AccountSignedInActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
-            )
+            openActivityForResult<ABSAOnlineBankingRegistrationActivity>(
+                ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN to isRegistered,
+                "creditCardToken" to viewModel.creditCardNumber.value,
+                ChatFragment.ACCOUNTS to Gson().toJson(viewModel.mAccountPair.value)
+            ,requestCode = AccountSignedInActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
     }
@@ -342,33 +331,30 @@ open class StoreCardAvailableFundsFragment : Fragment() {
     // confirm if not used then delete
     fun navigateToLoanWithdrawalActivity() {
         activity?.apply {
-            val intentWithdrawalActivity = Intent(this, LoanWithdrawalActivity::class.java)
-            intentWithdrawalActivity.putExtra(
-                "account_info",
-                Gson().toJson(viewModel.mAccount.value)
+            openActivityForResult<LoanWithdrawalActivity>(
+                "account_info" to Gson().toJson(viewModel.mAccount.value)
             )
-            startActivityForResult(intentWithdrawalActivity, 0)
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
     }
 
+
     fun navigateToRecentTransactionActivity(cardType: String) {
         activity?.let { activity ->
             viewModel.mAccount.value?.apply {
-                val intent = Intent(activity, WTransactionsActivity::class.java)
-                intent.putExtra(
-                    BundleKeysConstants.PRODUCT_OFFERINGID,
-                    productOfferingId.toString()
+                activity.openActivityForResult<WTransactionsActivity>(
+                    BundleKeysConstants.PRODUCT_OFFERINGID to productOfferingId.toString(),
+                    if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true)
+                         "accountNumber" to accountNumber.toString()
+                    else "accountNumber" to "",
+                    ChatFragment.ACCOUNTS to Gson().toJson(
+                        Pair(
+                            viewModel.mAccountPair.value?.first,
+                            this
+                        )
+                    ),
+                    "cardType" to cardType
                 )
-                if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true) {
-                    intent.putExtra("accountNumber", accountNumber.toString())
-                }
-                intent.putExtra(
-                    ChatFragment.ACCOUNTS,
-                    Gson().toJson(Pair(viewModel.mAccountPair.value?.first, this))
-                )
-                intent.putExtra("cardType", cardType)
-                activity.startActivityForResult(intent, 0)
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
         }
@@ -462,13 +448,12 @@ open class StoreCardAvailableFundsFragment : Fragment() {
 
     fun startGetAPaymentPlanActivity(bundle: Bundle) {
         activity?.apply {
-            val intent = Intent(context, GetAPaymentPlanActivity::class.java)
-            intent.putExtra(
-                ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(
+            openActivityForResult<GetAPaymentPlanActivity>(
+                ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN to bundle.getSerializable(
                     ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN
-                )
+                ),
+                requestCode = AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN
             )
-            startActivityForResult(intent, AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN)
             overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
         }
     }
