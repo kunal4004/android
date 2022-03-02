@@ -11,6 +11,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.com
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.INavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase.AccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase.BalanceProtectionInsuranceImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase.IAccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase.IBalanceProtectionInsurance
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -22,4 +26,13 @@ object AccountProductsLandingModule {
     @Provides
     fun provideBottomSheetBehaviour(@ApplicationContext context: Context): IBottomSheetBehaviour =
         WBottomSheetBehaviour(context)
+
+    @Provides
+    fun provideAccountProductLiveEvent(): IAccountProductLandingDao =
+        AccountProductLandingDao()
+
+    @Provides
+    fun provideBalanceProtectionInsurance(product : AccountProductLandingDao?): IBalanceProtectionInsurance =
+        BalanceProtectionInsuranceImpl(product)
+
 }

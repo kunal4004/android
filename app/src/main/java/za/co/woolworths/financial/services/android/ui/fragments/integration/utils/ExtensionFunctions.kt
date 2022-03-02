@@ -144,3 +144,13 @@ inline fun <reified T: ViewModel> NavController.viewModel(@NavigationRes navGrap
     val storeOwner = getViewModelStoreOwner(navGraphId)
     return ViewModelProvider(storeOwner)[T::class.java]
 }
+
+inline fun <T> T?.whenNull(block: T?.() -> Unit): T? {
+    if (this == null) block()
+    return this@whenNull
+}
+
+inline fun <T> T?.whenNonNull(block: T.() -> Unit): T? {
+    this?.block()
+    return this@whenNonNull
+}

@@ -71,7 +71,6 @@ import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 
 open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDetailsContract.AccountCardDetailView {
 
-
     private var userOfferActiveCallWasCompleted = false
     var mCardPresenterImpl: AccountCardDetailPresenterImpl? = null
     private val disposable: CompositeDisposable? = CompositeDisposable()
@@ -765,8 +764,7 @@ open class AccountsOptionFragment : Fragment(), OnClickListener, IAccountCardDet
         viewTreatmentPlanGroup?.visibility = GONE
     }
 
-    fun showSetUpPaymentPlanButton(state: ApplyNowState,
-                                   eligibilityPlan: EligibilityPlan?) {
+    fun showSetUpPaymentPlanButton(state: ApplyNowState, eligibilityPlan: EligibilityPlan?) {
         setUpPaymentPlanGroup?.visibility = VISIBLE
         setUpPaymentPlanTextView?.text = eligibilityPlan?.displayText
 

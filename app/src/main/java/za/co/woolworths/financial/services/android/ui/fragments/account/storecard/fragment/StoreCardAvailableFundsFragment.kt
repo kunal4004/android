@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account.storecard.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.TypedValue
