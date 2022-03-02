@@ -151,6 +151,7 @@ class ToastFactory {
 
             // handle popupWindow click event
             tvButtonClick?.setOnClickListener {
+
                 ScreenManager.presentShoppingCart(activity)
                 popupWindow.dismiss() // dismiss the window
             }

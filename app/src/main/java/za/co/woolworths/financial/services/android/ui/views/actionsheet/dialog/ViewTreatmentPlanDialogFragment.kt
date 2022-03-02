@@ -8,24 +8,38 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.view_treatment_plan_dialog_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
+import za.co.woolworths.financial.services.android.models.dto.ActionText
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
+import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
+import za.co.woolworths.financial.services.android.util.CurrencyFormatter
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickListener {
 
+    private val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
     private var showChatBubbleInterface: IShowChatBubble? = null
     private val mClassName = ViewTreatmentPlanDialogFragment::class.java.simpleName
-    private var viewPaymentOption: Boolean = false
+    private var state: ApplyNowState? = null
+    private var eligibilityPlan: EligibilityPlan? = null
 
     companion object {
         const val VIEW_PAYMENT_PLAN_BUTTON = "viewPaymentPlanButton"
         const val MAKE_A_PAYMENT_BUTTON = "makeAPaymentButton"
-        const val VIEW_PAYMENT_OPTIONS_VISIBILITY = "viewPaymentOptionsVisibility"
-
+        const val CANNOT_AFFORD_PAYMENT_BUTTON = "cannotAffordPaymentButton"
+        const val PLAN_BUTTON_TYPE = "buttonType"
+        const val APPLY_NOW_STATE = "state"
+        const val ELIGIBILITY_PLAN = "eligibilityPlan"
     }
 
     override fun onAttach(context: Context) {
@@ -42,16 +56,13 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewPaymentOption = arguments?.getBoolean(VIEW_PAYMENT_OPTIONS_VISIBILITY,false)?: false
+        state = arguments?.getSerializable(APPLY_NOW_STATE) as? ApplyNowState
+        eligibilityPlan = arguments?.getSerializable(ELIGIBILITY_PLAN) as EligibilityPlan?
 
-        viewTreatmentPlanButton?.apply {
-            setOnClickListener(this@ViewTreatmentPlanDialogFragment)
-            AnimationUtilExtension.animateViewPushDown(this)
-        }
-
-        makePaymentButton?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(viewPaymentOption) View.GONE else View.VISIBLE
+        mainButton?.apply {
+            text = if(eligibilityPlan?.actionText == ActionText.TAKE_UP_TREATMENT_PLAN.value)
+                bindString(R.string.make_payment_now_button_label)
+            else bindString(R.string.view_payment_plan_button_label)
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
@@ -61,25 +72,133 @@ class ViewTreatmentPlanDialogFragment : AppCompatDialogFragment(), View.OnClickL
             AnimationUtilExtension.animateViewPushDown(this)
         }
 
-        viewPaymentOptionsButton?.apply {
+        makePaymentButton?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            visibility = if(viewPaymentOption) View.VISIBLE else View.GONE
+            visibility = if(eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value &&
+                (state == ApplyNowState.PERSONAL_LOAN ||
+                        state == ApplyNowState.STORE_CARD))
+            View.VISIBLE else View.GONE
             setOnClickListener(this@ViewTreatmentPlanDialogFragment)
             AnimationUtilExtension.animateViewPushDown(this)
         }
+
+        viewPaymentOptionsButton?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            visibility = if(eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value &&
+                (state == ApplyNowState.GOLD_CREDIT_CARD ||
+                        state == ApplyNowState.BLACK_CREDIT_CARD ||
+                        state == ApplyNowState.SILVER_CREDIT_CARD))
+                    View.VISIBLE else View.GONE
+
+            setOnClickListener(this@ViewTreatmentPlanDialogFragment)
+            AnimationUtilExtension.animateViewPushDown(this)
+        }
+
+        cannotAffordPaymentButton?.apply {
+            visibility = if(eligibilityPlan?.actionText == ActionText.TAKE_UP_TREATMENT_PLAN.value)
+                    View.VISIBLE else View.GONE
+            setOnClickListener(this@ViewTreatmentPlanDialogFragment)
+            AnimationUtilExtension.animateViewPushDown(this)
+        }
+
+        viewTreatmentPlanDescriptionTextView?.apply {
+            text =
+                when(eligibilityPlan?.actionText) {
+                    ActionText.TAKE_UP_TREATMENT_PLAN.value -> {
+                        when(state){
+                            ApplyNowState.PERSONAL_LOAN ->
+                                payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                                    activity?.resources?.getString(
+                                        R.string.take_up_treatment_plan_description_pl,
+                                        Utils.removeNegativeSymbol(
+                                            CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)
+                                        )
+                                    )
+                                }
+
+                            ApplyNowState.STORE_CARD ->
+                                payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                                    activity?.resources?.getString(
+                                        R.string.take_up_treatment_plan_description_sc,
+                                        Utils.removeNegativeSymbol(
+                                            CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)
+                                        )
+                                    )
+                                }
+
+                            else -> {
+                                payMyAccountViewModel.getCardDetail()?.account?.second?.amountOverdue?.let { totalAmountDue ->
+                                    activity?.resources?.getString(
+                                        R.string.take_up_treatment_plan_description_cc,
+                                        Utils.removeNegativeSymbol(
+                                            CurrencyFormatter.formatAmountToRandAndCent(totalAmountDue)
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    ActionText.VIEW_TREATMENT_PLAN.value -> bindString(R.string.view_treatment_plan_description)
+
+                    else -> ""
+                }
+        }
+
+        viewTreatmentPlanTitleTextView?.apply {
+            text = bindString(R.string.payment_overdue_label)
+        }
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
+    override fun onClick(view: View?) {
+        KotlinUtils.avoidDoubleClicks(view)
+        when (view?.id) {
 
-            R.id.viewTreatmentPlanButton -> {
+            R.id.mainButton -> {
                 dismiss()
-                setFragmentResult(mClassName, bundleOf(mClassName to VIEW_PAYMENT_PLAN_BUTTON))
+                if(eligibilityPlan?.actionText == ActionText.TAKE_UP_TREATMENT_PLAN.value)
+                    setFragmentResult(mClassName, bundleOf(MAKE_A_PAYMENT_BUTTON to eligibilityPlan))
+                else setFragmentResult(mClassName, bundleOf(VIEW_PAYMENT_PLAN_BUTTON to eligibilityPlan))
             }
 
             R.id.makePaymentButton, R.id.viewPaymentOptionsButton -> {
                 dismiss()
-                setFragmentResult(mClassName, bundleOf(mClassName to MAKE_A_PAYMENT_BUTTON))
+                setFragmentResult(mClassName, bundleOf(MAKE_A_PAYMENT_BUTTON to MAKE_A_PAYMENT_BUTTON))
+            }
+
+            R.id.cannotAffordPaymentButton -> {
+                val arguments = HashMap<String, String>()
+                when(state){
+                    ApplyNowState.STORE_CARD -> {
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC_ACTION
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_SC,
+                            arguments,
+                            activity)
+
+                    }
+                    ApplyNowState.PERSONAL_LOAN -> {
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL_ACTION
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_PL,
+                            arguments,
+                            activity)
+
+                    }
+                    ApplyNowState.SILVER_CREDIT_CARD,
+                    ApplyNowState.GOLD_CREDIT_CARD,
+                    ApplyNowState.BLACK_CREDIT_CARD, -> {
+                        arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_CC_ACTION
+                        Utils.triggerFireBaseEvents(
+                            FirebaseManagerAnalyticsProperties.TAKE_UP_TREATMENT_PLAN_CC,
+                            arguments,
+                            activity)
+                    }
+                }
+
+                dismiss()
+                setFragmentResult(mClassName, bundleOf(CANNOT_AFFORD_PAYMENT_BUTTON to CANNOT_AFFORD_PAYMENT_BUTTON,
+                    ELIGIBILITY_PLAN to eligibilityPlan))
             }
 
             R.id.closeIconImageButton -> dismiss()

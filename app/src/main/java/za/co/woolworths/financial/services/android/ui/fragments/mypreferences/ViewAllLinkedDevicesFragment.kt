@@ -100,6 +100,8 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                                 showDeviceUnlinked()
 
                                 Handler().postDelayed({
+                                    if (!isAdded) return@postDelayed
+
                                     setupToolbar()
                                     context?.let { it ->
                                         viewAllDeviceConstraintLayout?.background = AppCompatResources.getDrawable(it, R.color.default_background)
@@ -138,7 +140,7 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
                 //Do Nothing
                 progressLoadDevices?.visibility = View.GONE
             }
-
+            
             override fun onSuccess(response: ViewAllLinkedDeviceResponse?) {
                 progressLoadDevices?.visibility = View.GONE
                 deviceList = ArrayList(0)

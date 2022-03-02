@@ -115,8 +115,10 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
         arguments?.apply {
             isNonWFSUser = getBoolean(IS_NON_WFS_USER)
             val list = getSerializable(DEVICE_LIST)
-            if (list is ArrayList<*> && list.isNotEmpty()) {
-                deviceList = list as ArrayList<UserDevice>
+            if (list is Array<*> && list.isNotEmpty()) {
+                list.forEach {
+                    deviceList?.add(it as UserDevice)
+                }
             }
         }
     }
@@ -412,7 +414,7 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
 
     fun setUserAuthentication(isAuthenticated: Boolean) {
         AuthenticateUtils.getInstance(activity).setUserAuthenticate(if (isAuthenticated) SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON else SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF)
-        auSwitch.isChecked = isAuthenticated
+        auSwitch?.isChecked = isAuthenticated
     }
 
     fun openDeviceSecuritySettings() {

@@ -28,12 +28,12 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IAvailableFundsContract
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.app_config.ConfigPayMyAccount
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
+import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlanActivity
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
@@ -44,12 +44,14 @@ import za.co.woolworths.financial.services.android.ui.extension.doAfterDelay
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment.Companion.ACCOUNTS
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_CHAT_TO_US_BUTTON
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.AccountInArrearsDialogFragment.Companion.ARREARS_PAY_NOW_BUTTON
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DP_LINKING_MY_ACCOUNTS_PRODUCT_STATEMENT
@@ -334,7 +336,7 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
         activity?.let { activity ->
             mAvailableFundPresenter?.getAccount()?.apply {
                 val intent = Intent(activity, WTransactionsActivity::class.java)
-                intent.putExtra("productOfferingId", productOfferingId.toString())
+                intent.putExtra(BundleKeysConstants.PRODUCT_OFFERINGID, productOfferingId.toString())
                 if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true) {
                     intent.putExtra("accountNumber", accountNumber.toString())
                 }
@@ -490,6 +492,16 @@ open class AvailableFundFragment : Fragment(), IAvailableFundsContract.Available
                     }
                 }
             }
+        }
+    }
+
+
+    fun startGetAPaymentPlanActivity(bundle: Bundle) {
+        activity?.apply {
+            val intent = Intent(context, GetAPaymentPlanActivity::class.java)
+            intent.putExtra(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, bundle.getSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN))
+            startActivityForResult(intent, AccountsOptionFragment.REQUEST_GET_PAYMENT_PLAN)
+            overridePendingTransition(R.anim.slide_from_right, R.anim.stay)
         }
     }
 }
