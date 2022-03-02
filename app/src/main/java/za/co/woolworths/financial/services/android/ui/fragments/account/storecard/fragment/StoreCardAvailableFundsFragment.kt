@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -23,6 +24,8 @@ import com.facebook.shimmer.Shimmer
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
@@ -327,17 +330,6 @@ open class StoreCardAvailableFundsFragment : Fragment() {
         }
     }
 
-    // confirm if not used then delete
-    fun navigateToLoanWithdrawalActivity() {
-        activity?.apply {
-            openActivityForResult<LoanWithdrawalActivity>(
-                "account_info" to Gson().toJson(viewModel.mAccount.value)
-            )
-            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-        }
-    }
-
-
     fun navigateToRecentTransactionActivity(cardType: String) {
         activity?.let { activity ->
             viewModel.mAccount.value?.apply {
@@ -393,7 +385,8 @@ open class StoreCardAvailableFundsFragment : Fragment() {
         performClick: Boolean = true
     ) {
         if (activity is AccountSignedInActivity) {
-            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(AppConstant.DELAY_100_MS)
                 (activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.apply {
                     val deepLinkingObject = getDeepLinkData()
                     when (deepLinkingObject?.get("feature")?.asString) {
@@ -420,7 +413,8 @@ open class StoreCardAvailableFundsFragment : Fragment() {
 
     fun accountInArrearsResultListener(onPayMyAccountButtonTap: () -> Unit) {
         setFragmentResultListener(AccountInArrearsDialogFragment::class.java.simpleName) { _, bundle ->
-            GlobalScope.doAfterDelay(AppConstant.DELAY_100_MS) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(AppConstant.DELAY_100_MS)
                 when (bundle.getString(
                     AccountInArrearsDialogFragment::class.java.simpleName,
                     "N/A"
