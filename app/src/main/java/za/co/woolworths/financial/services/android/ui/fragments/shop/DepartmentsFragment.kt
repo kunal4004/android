@@ -252,7 +252,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 )
             }
         } else {
-            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            //ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment())
         }*/
 
        /* activity?.apply {

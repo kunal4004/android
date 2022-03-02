@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -36,10 +35,12 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.*
 
-class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected {
+class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected,
+    View.OnClickListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    protected var mLastLocation: Location? = null
+    private var mLastLocation: Location? = null
     private var rvSavedAddress: RecyclerView? = null
+    private var selectedAddress = Address()
 
     companion object {
         var dialogInstance = ConfirmAddressFragment()
@@ -61,7 +62,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.confirm_address_bottom_sheet_dialog, container, false)
     }
@@ -70,24 +71,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         super.onViewCreated(view, savedInstanceState)
         rvSavedAddress = view.findViewById(R.id.rvSavedAddressList)
         setUpViewModel()
-        inCurrentLocation.setOnClickListener(View.OnClickListener {
-            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ClickAndCollectStoresFragment.newInstance())
-        })
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            inSavedAddress.visibility = View.GONE
-            tvConfirmAddress.visibility = View.VISIBLE
-            fetchAddress()
-        } else {
-            inSavedAddress.visibility = View.VISIBLE
-            tvConfirmAddress.visibility = View.GONE
-        }
-        inSavedAddress.setOnClickListener(View.OnClickListener {
-            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
-        })
-
-        backButton.setOnClickListener{
-            activity?.onBackPressed()
-        }
+        initViews()
     }
 
     override fun onResume() {
@@ -101,6 +85,22 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             inSavedAddress.visibility = View.VISIBLE
             tvConfirmAddress.visibility = View.GONE
             rvSavedAddressList.visibility = View.GONE
+        }
+    }
+
+    private fun initViews() {
+        tvConfirmAddress?.setOnClickListener(this)
+        inCurrentLocation?.setOnClickListener(this)
+        inSavedAddress?.setOnClickListener(this)
+        backButton?.setOnClickListener(this)
+
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            inSavedAddress?.visibility = View.GONE
+            tvConfirmAddress?.visibility = View.VISIBLE
+            fetchAddress()
+        } else {
+            inSavedAddress?.visibility = View.VISIBLE
+            tvConfirmAddress?.visibility = View.GONE
         }
     }
 
@@ -189,12 +189,43 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     }
 
     override fun onAddressSelected(address: Address) {
+        selectedAddress = address
         setButtonUI(true)
         if (address.verified) {
             tvConfirmAddress.text = getString(R.string.confirm)
         } else {
             tvConfirmAddress.text = getString(R.string.update_address)
         }
+    }
 
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.tvConfirmAddress -> {
+                if (progressBar.visibility == View.GONE && selectedAddress != null && tvConfirmAddress.text == getString(R.string.confirm))
+                {
+                    selectedAddress.let {
+                        if (it.latitude != null && it.longitude != null && it.placesId != null) {
+                            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                                GeolocationDeliveryAddressConfirmationFragment.newInstance(
+                                    selectedAddress.latitude!!,
+                                    selectedAddress.longitude!!,
+                                    selectedAddress.placesId!!))
+                        }
+                        else
+                            return
+                    }
+                }
+            }
+            R.id.inCurrentLocation -> {
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                    ConfirmAddressMapFragment(mLastLocation?.latitude, mLastLocation?.longitude))
+            }
+            R.id.inSavedAddress -> {
+                ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            }
+            R.id.backButton -> {
+                activity?.onBackPressed()
+            }
+        }
     }
 }
