@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.fragment.availablefunds.AvailableFundsViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.utils.autoCleared
+import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.utils.loadingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.utils.openActivity
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.utils.openActivityForResult
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.AccountsErrorHandlerFragment
@@ -352,22 +353,8 @@ open class StoreCardAvailableFundsFragment : Fragment() {
     }
 
     fun initShimmer(state: Boolean) {
-        when (state) {
-            true -> {
-                val shimmer = Shimmer.AlphaHighlightBuilder().build()
-                binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.setShimmer(shimmer)
-                binding.incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.setShimmer(shimmer)
-                binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.startShimmer()
-                binding.incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.startShimmer()
-            }
-            false -> {
-                binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.setShimmer(null)
-                binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.stopShimmer()
-                binding.incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.setShimmer(null)
-                binding.incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.stopShimmer()
-            }
-        }
-
+        binding.incPayMyAccountButton.viewPaymentOptionImageShimmerLayout.loadingState(state)
+        binding.incPayMyAccountButton.viewPaymentOptionTextShimmerLayout.loadingState(state)
     }
 
     fun navigateToPayMyAccount(openCardOptionsDialog: () -> Unit) {
