@@ -117,6 +117,7 @@ import za.co.woolworths.financial.services.android.ui.vto.ui.PfSDKInitialCallbac
 import za.co.woolworths.financial.services.android.ui.vto.utils.SdkUtility
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_1500_MS
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.DELAY_500_MS
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 @AndroidEntryPoint
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, MultipleImageInterface, IOnConfirmDeliveryLocationActionListener, PermissionResultCallback, ILocationProvider, View.OnClickListener, OutOfStockMessageDialogFragment.IOutOfStockMessageDialogDismissListener, DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection, ProductNotAvailableForCollectionDialog.IProductNotAvailableForCollectionDialogListener,
@@ -571,12 +572,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 true -> {
                     title = getString(R.string.product_unavailable)
                     message =
-                        getString(R.string.unavailable_item, if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name)
+                        getString(
+                            R.string.unavailable_item,
+                            KotlinUtils.getPreferredDeliveryAddressOrStoreName()
+                        )
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
                     message =
-                        getString(R.string.out_of_stock_item, if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name)
+                        getString(
+                            R.string.out_of_stock_item,
+                            KotlinUtils.getPreferredDeliveryAddressOrStoreName()
+                        )
 
                 }
             }
@@ -650,7 +657,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && it.storePickup
+                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
@@ -1413,7 +1420,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                ) && it.storePickup
+                                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -1450,7 +1457,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             if (!this.productDetails?.productType.equals(
                                     getString(R.string.food_product_type),
                                     ignoreCase = true
-                                ) && it.storePickup
+                                ) && KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
                             ) {
                                 storeIdForInventory = ""
                                 clearStockAvailability()
@@ -1837,28 +1844,23 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateStockAvailabilityLocation() {
         activity?.apply {
-            getDeliveryLocation()?.let {
-                when (it) {
-                    is ShoppingDeliveryLocation -> {
-                        when (it.storePickup) {
-                            true -> {
-                                currentDeliveryLocation.text =
-                                    resources?.getString(R.string.store) + it.store?.name
-                                defaultLocationPlaceholder.text =
-                                    getString(R.string.collecting_from) + " "
-                            }
-                            else -> {
-                                currentDeliveryLocation.text =
-                                    it.suburb?.name + "," + it.province?.name
-                                defaultLocationPlaceholder.text =
-                                    getString(R.string.delivering_to_pdp)
-                            }
-                        }
+            getDeliveryLocation()?.fulfillmentDetails?.let {
+                when (Delivery.getType(it.deliveryType)) {
+                    Delivery.CNC -> {
+                        currentDeliveryLocation.text =
+                            resources?.getString(R.string.store) + it.storeName ?: ""
+                        defaultLocationPlaceholder.text =
+                            getString(R.string.collecting_from) + " "
                     }
-                    is QuickShopDefaultValues -> {
-                        currentDeliveryLocation.text = it.suburb.name
-                        defaultLocationPlaceholder.text = getString(R.string.set_to_default)
+                    Delivery.STANDARD -> {
+                        currentDeliveryLocation.text =
+                            it.address?.address1 ?: ""
+                        defaultLocationPlaceholder.text =
+                            getString(R.string.delivering_to_pdp)
                     }
+                    else -> {
+                    }
+
                 }
             }
         }
@@ -2003,14 +2005,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (!isOutOfStockFragmentAdded) {
             isOutOfStockFragmentAdded = true
             activity?.apply {
-                getDeliveryLocation().let {
-                    val suburbName = when (it) {
-                        is ShoppingDeliveryLocation -> if (it.storePickup) it.store?.name else it.suburb?.name
-                        is QuickShopDefaultValues -> it.suburb.name
-                        else -> ""
-                    }
+                getDeliveryLocation()?.fulfillmentDetails?.let {
                     val message =
-                        bindString(R.string.product_details_out_of_stock, suburbName ?: "")
+                        bindString(
+                            R.string.product_details_out_of_stock,
+                            KotlinUtils.getPreferredDeliveryAddressOrStoreName()
+                        )
                     OutOfStockMessageDialogFragment.newInstance(message).show(
                         this@ProductDetailsFragment.childFragmentManager,
                         OutOfStockMessageDialogFragment::class.java.simpleName
@@ -2021,10 +2021,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
     }
 
-    private fun getDeliveryLocation(): Any? {
-        val userLocation = Utils.getPreferredDeliveryLocation()
-        val defaultLocation = WoolworthsApplication.getQuickShopDefaultValues()
-        return if (userLocation != null && SessionUtilities.getInstance().isUserAuthenticated) userLocation else defaultLocation
+    private fun getDeliveryLocation(): ShoppingDeliveryLocation? {
+        var userLocation: ShoppingDeliveryLocation? = null
+        if (SessionUtilities.getInstance().isUserAuthenticated)
+            userLocation = Utils.getPreferredDeliveryLocation()
+        return userLocation
     }
 
     override fun onOutOfStockDialogDismiss() {

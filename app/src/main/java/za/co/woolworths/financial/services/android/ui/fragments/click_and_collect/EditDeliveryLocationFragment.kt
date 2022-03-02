@@ -333,13 +333,13 @@ class EditDeliveryLocationFragment : Fragment(),
         hideSetSuburbProgressBar()
         when (deliveryType) {
             DeliveryType.DELIVERY -> {
-                Utils.savePreferredDeliveryLocation(
+                /*Utils.savePreferredDeliveryLocation(
                     ShoppingDeliveryLocation(
                         selectedProvince,
                         selectedSuburb,
                         null
                     )
-                )
+                )*/
             }
             DeliveryType.STORE_PICKUP -> {
                 val store = selectedStore?.let {
@@ -350,13 +350,13 @@ class EditDeliveryLocationFragment : Fragment(),
                         it.storeAddress?.address1
                     )
                 }
-                Utils.savePreferredDeliveryLocation(
+                /*Utils.savePreferredDeliveryLocation(
                     ShoppingDeliveryLocation(
                         selectedProvince,
                         null,
                         store
                     )
-                )
+                )*/
             }
         }
         navigateToSuburbConfirmationFragment()
@@ -500,7 +500,7 @@ class EditDeliveryLocationFragment : Fragment(),
     }
 
     private fun setUsersCurrentDeliveryDetails() {
-        Utils.getPreferredDeliveryLocation()?.apply {
+       /* Utils.getPreferredDeliveryLocation()?.apply {
             if (province?.id.isNullOrEmpty()) return
             selectedProvince = province
             tvSelectedProvince?.setText(selectedProvince?.name)
@@ -518,7 +518,7 @@ class EditDeliveryLocationFragment : Fragment(),
             (if (deliveryType == DeliveryType.DELIVERY) selectedSuburb else selectedStore)?.let {
                 validateSelectedSuburb(it.id, deliveryType == DeliveryType.STORE_PICKUP)
             }
-        }
+        }*/
     }
 
     private fun showNoStoresError() {

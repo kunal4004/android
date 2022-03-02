@@ -75,6 +75,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
@@ -449,7 +450,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             activity.overridePendingTransition(0, 0);
         } else {
             // else display shopping list toast
-            if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && addItemToCartResponse.data.get(0).productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
                 ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, addItemToCartResponse.data.get(0).productCountMap, activity, size, true);
             } else {
                 ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
@@ -917,7 +918,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             ProductCountMap productCountMap = (ProductCountMap) Utils.jsonStringToObject(data.getStringExtra("ProductCountMap"), ProductCountMap.class);
             int itemsCount = data.getIntExtra("ItemsCount", 0);
 
-            if (KotlinUtils.Companion.isDeliveryOptionClickAndCollect() && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
+            if (KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC && productCountMap.getQuantityLimit().getFoodLayoutColour() != null) {
                 ToastFactory.Companion.showItemsLimitToastOnAddToCart(rlCheckOut, productCountMap, activity, itemsCount, true);
             } else {
                 ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
@@ -1055,7 +1056,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     public boolean shouldUserSetSuburb() {
         ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
-        return (shoppingDeliveryLocation.suburb == null && shoppingDeliveryLocation.store == null);
+        return (shoppingDeliveryLocation == null);
     }
 
     public void toggleEditButton(String name) {

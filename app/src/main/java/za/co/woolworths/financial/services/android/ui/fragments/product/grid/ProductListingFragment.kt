@@ -168,8 +168,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             setTitle()
             startProductRequest()
             setUniqueIds()
-            localSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-            localStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
+            localPlaceId = KotlinUtils.getPreferredPlaceId()
             imgInfo?.setOnClickListener {
                 vtoBottomSheetDialog.showBottomSheetDialog(this@ProductListingFragment,requireActivity(),true)
 
@@ -201,19 +200,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
 
         if (activity is BottomNavigationActivity && (activity as BottomNavigationActivity).currentFragment is ProductListingFragment) {
-            val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-            val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-            if (currentStoreId == null && currentSuburbId == null) {
-                //Fresh install with no location selection.
-            } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
-                localStoreId = currentStoreId
-                localSuburbId = null
-                isReloadNeeded = false
-                updateRequestForReload()
-                pushFragment()
-            } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
-                localSuburbId = currentSuburbId
-                localStoreId = null
+            val currentPlaceId = KotlinUtils.getPreferredPlaceId()
+            if (currentPlaceId == null && !(currentPlaceId?.equals(localPlaceId))!!) {
+                localPlaceId = currentPlaceId
                 isReloadNeeded = false
                 updateRequestForReload()
                 pushFragment()
@@ -762,15 +751,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
             PDP_REQUEST_CODE, OPEN_CART_REQUEST -> {
                 if (resultCode == Activity.RESULT_CANCELED || resultCode == DISMISS_POP_WINDOW_CLICKED) {
-                    val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-                    val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-                    if (currentStoreId == null && currentSuburbId == null) {
+                    val currentPlaceId = KotlinUtils.getPreferredPlaceId()
+                    if (currentPlaceId == null) {
                         //Fresh install with no location selection.
                         return
-                    } else if ((currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) || (currentStoreId == null && !(localSuburbId.equals(
-                            currentSuburbId
-                        )))
-                    )
+                    } else if (currentPlaceId != localPlaceId)
                         isBackPressed =
                             true // if PDP closes or cart fragment closed with location change.
                 }
@@ -1237,8 +1222,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     companion object {
         private var isReloadNeeded = true
         private var localProductBody: ArrayList<Any> = ArrayList()
-        private var localSuburbId: String? = null
-        private var localStoreId: String? = null
+        private var localPlaceId: String? = null
         private var isBackPressed: Boolean = false
 
         /*const val REFINEMENT_DATA = "REFINEMENT_DATA"*/

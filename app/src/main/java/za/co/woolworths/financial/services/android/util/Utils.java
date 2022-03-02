@@ -852,7 +852,6 @@ public class Utils {
     }
 
     public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
-        shoppingDeliveryLocation.storePickup = shoppingDeliveryLocation.store != null;
         AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
         currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
         currentUserObject.save();
@@ -1036,7 +1035,7 @@ public class Utils {
 
     @Nullable
     public static String retrieveStoreId(String fulFillmentType) {
-        JsonParser parser = new JsonParser();
+       /* JsonParser parser = new JsonParser();
         ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
         String fulfillmentStore = "";
         if (shoppingDeliveryLocation == null) return "";
@@ -1075,8 +1074,8 @@ public class Utils {
                 if (jsSuburbFulfillment.has(fulFillmentType))
                     storeId = jsSuburbFulfillment.get(fulFillmentType).getAsString();
             }
-        }
-        return storeId;
+        }*/
+        return KotlinUtils.Companion.retrieveFulfillmentStoreId(fulFillmentType);
     }
 
     public static void toggleStatusBarColor(final Activity activity, int color) {

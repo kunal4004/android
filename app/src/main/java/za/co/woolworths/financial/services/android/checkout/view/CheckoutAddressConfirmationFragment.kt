@@ -268,7 +268,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                             suburb.storeAddress.address1
                                         )
                                     }
-                                    val shoppingDeliveryLocation = ShoppingDeliveryLocation(
+                                    /*val shoppingDeliveryLocation = ShoppingDeliveryLocation(
                                         selectedProvince,
                                         null,
                                         store
@@ -276,7 +276,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                     shoppingDeliveryLocation.storePickup = true
                                     Utils.savePreferredDeliveryLocation(
                                         shoppingDeliveryLocation
-                                    )
+                                    )*/
                                     if (isDeliverySelected != null && !isDeliverySelected!!) {
                                         // check if it's from collection Change Fullfilments or delivery Change Fullfilments. if collection then nav up else who is collecting.
                                         if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
@@ -457,7 +457,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
     }
 
     private fun initView() {
-        selectedProvince = Utils.getPreferredDeliveryLocation().province
+       // selectedProvince = Utils.getPreferredDeliveryLocation().province
         if (arguments?.containsKey(KEY_IS_WHO_IS_COLLECTING) == true && arguments?.getBoolean(
                 KEY_IS_WHO_IS_COLLECTING
             ) == true
@@ -953,7 +953,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                         return@observe
                                     }
                                     // Update location in cache/shared prefs when Confirmed a delivery address
-                                    Utils.savePreferredDeliveryLocation(
+                                    /*Utils.savePreferredDeliveryLocation(
                                         ShoppingDeliveryLocation(
                                             Province().apply {
                                                 id = selectedAddress?.region ?: ""
@@ -966,7 +966,7 @@ class CheckoutAddressConfirmationFragment : CheckoutAddressManagementBaseFragmen
                                                 suburbDeliverable = response.deliverable ?: false
                                             }, null
                                         )
-                                    )
+                                    )*/
                                     navigateToReturningUser()
                                 }
                                 else -> {

@@ -65,8 +65,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     private var isDashEnabled = false
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = createLocationRequest()
-    private var localSuburbId: String? = null
-    private var localStoreId: String? = null
+    private var localPlaceId: String? = null
     private var isValidateSelectedSuburbCallStopped = true
 
 
@@ -106,8 +105,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        localSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-        localStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
+        localPlaceId = KotlinUtils.getPreferredPlaceId()
 
         var isPermissionGranted = false
         activity?.apply {
@@ -474,24 +472,18 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun isLocationChanged(): Boolean {
-        val currentSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
-        val currentStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
-        if (currentStoreId == null && currentSuburbId == null) {
+        val currentPlaceId = KotlinUtils.getPreferredPlaceId()
+        if (currentPlaceId == null) {
             return false
-        } else if (currentSuburbId == null && !(currentStoreId?.equals(localStoreId))!!) {
-            localStoreId = currentStoreId
-            localSuburbId = null
-            return true
-        } else if (currentStoreId == null && !(localSuburbId.equals(currentSuburbId))) {
-            localSuburbId = currentSuburbId
-            localStoreId = null
+        } else if (!(currentPlaceId?.equals(localPlaceId))!!) {
+            localPlaceId = currentPlaceId
             return true
         }
         return true
     }
 
     private fun executeValidateSuburb() {
-        Utils.getPreferredDeliveryLocation().let {
+        /*Utils.getPreferredDeliveryLocation().let {
             if (it == null) {
                 mDepartmentAdapter?.hideDeliveryDates()
             } else {
@@ -538,7 +530,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                     }
                 }
             }
-        }
+        }*/
     }
 
     fun updateDeliveryDates() {

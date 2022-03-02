@@ -122,9 +122,9 @@ class UnsellableItemsFragment : Fragment(), View.OnClickListener {
                         200 -> {
                             QueryBadgeCounter.instance.queryCartSummaryCount()
                             when (deliveryType) {
-                                DeliveryType.DELIVERY -> Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, it, null))
+                                //DeliveryType.DELIVERY -> Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, it, null))
                                 DeliveryType.STORE_PICKUP -> {
-                                    Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, null, Store(it.id, it.name, it.fulfillmentStores, it.storeAddress.address1)))
+                                    //Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(selectedProvince, null, Store(it.id, it.name, it.fulfillmentStores, it.storeAddress.address1)))
                                 }
                             }
                             if (activity is CheckoutActivity) {

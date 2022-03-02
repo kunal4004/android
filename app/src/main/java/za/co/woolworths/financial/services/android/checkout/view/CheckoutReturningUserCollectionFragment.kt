@@ -59,11 +59,9 @@ import za.co.woolworths.financial.services.android.models.network.StorePickupInf
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment
-import za.co.woolworths.financial.services.android.util.AppConstant
-import za.co.woolworths.financial.services.android.util.CurrencyFormatter
-import za.co.woolworths.financial.services.android.util.Utils
-import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.WFormatter.DATE_FORMAT_EEEE_COMMA_dd_MMMM
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import java.util.regex.Pattern
 
 class CheckoutReturningUserCollectionFragment : Fragment(),
@@ -406,7 +404,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     private fun getStorePickupInfoBody() = StorePickupInfoBody().apply {
         firstName = whoIsCollectingDetails?.recipientName
         primaryContactNo = whoIsCollectingDetails?.phoneNumber
-        storeId = Utils.getPreferredDeliveryLocation()?.store?.id ?: ""
+        storeId = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeId ?: ""
         vehicleModel = whoIsCollectingDetails?.vehicleModel ?: ""
         vehicleColour = whoIsCollectingDetails?.vehicleColor ?: ""
         vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
@@ -454,7 +452,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         val location = Utils.getPreferredDeliveryLocation()
         checkoutCollectingFromLayout.setOnClickListener(this)
         if (location != null) {
-            val selectedStore = if (location.storePickup) location.store.name else ""
+            val selectedStore = if (KotlinUtils.getPreferredDeliveryType() == Delivery.CNC) location.fulfillmentDetails?.storeName else ""
             if (!selectedStore.isNullOrEmpty()) {
                 tvNativeCheckoutDeliveringTitle?.text =
                     context?.getString(R.string.native_checkout_collecting_from)
@@ -818,7 +816,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             if (switchGiftInstructions?.isChecked == true) edtTxtGiftInstructions?.text.toString() else ""
         suburbId = ""
         storeId = Utils.getPreferredDeliveryLocation()?.let {
-            it.store?.id ?: ""
+            it.fulfillmentDetails.storeId
         }
     }
 
