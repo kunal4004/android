@@ -287,9 +287,10 @@ open class StoreCardAvailableFundsFragment : Fragment() {
         activity?.apply {
             openActivityForResult<ABSAOnlineBankingRegistrationActivity>(
                 ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN to isRegistered,
-                "creditCardToken" to viewModel.creditCardNumber.value,
-                ChatFragment.ACCOUNTS to Gson().toJson(viewModel.mAccountPair.value)
-            ,requestCode = AccountSignedInActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE)
+                BundleKeysConstants.CREDITCARD_TOKEN to viewModel.creditCardNumber.value,
+                ChatFragment.ACCOUNTS to Gson().toJson(viewModel.mAccountPair.value),
+                requestCode = AccountSignedInActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
+            )
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
         }
     }
@@ -336,16 +337,14 @@ open class StoreCardAvailableFundsFragment : Fragment() {
             viewModel.mAccount.value?.apply {
                 activity.openActivityForResult<WTransactionsActivity>(
                     BundleKeysConstants.PRODUCT_OFFERINGID to productOfferingId.toString(),
-                    if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true)
-                         "accountNumber" to accountNumber.toString()
-                    else "accountNumber" to "",
+                    BundleKeysConstants.ACCOUNT_NUMBER to if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true) accountNumber.toString() else null,
                     ChatFragment.ACCOUNTS to Gson().toJson(
                         Pair(
                             viewModel.mAccountPair.value?.first,
                             this
                         )
                     ),
-                    "cardType" to cardType
+                    BundleKeysConstants.CARDTYPE to cardType
                 )
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
