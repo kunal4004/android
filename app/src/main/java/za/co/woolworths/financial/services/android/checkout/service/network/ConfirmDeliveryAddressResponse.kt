@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.checkout.service.network
 
 import com.google.gson.annotations.SerializedName
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
-import za.co.woolworths.financial.services.android.models.dto.Response
 
 class ConfirmDeliveryAddressResponse {
     @SerializedName("timedDeliveryCosts")

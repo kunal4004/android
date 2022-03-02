@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.product_listing_page_row.view.*
 import kotlinx.android.synthetic.main.product_listing_price_layout.view.*
 import kotlinx.android.synthetic.main.product_listing_promotional_images.view.*
 import za.co.woolworths.financial.services.android.contracts.IProductListing
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
@@ -150,7 +151,7 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
     companion object {
         // Extracting the fulfilmentStoreId from user location or default MC config
         fun getFulFillmentStoreId(fulfilmentTypeId: String): String {
-            val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
+            val quickShopDefaultValues = AppConfigSingleton.quickShopDefaultValues
             val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
             var defaultStoreId = ""
             if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.fulfillmentDetails.fulfillmentStores == null || !SessionUtilities.getInstance().isUserAuthenticated) {

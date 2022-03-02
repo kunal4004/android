@@ -8,6 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_suburb_not_deliverable_bottomsheet_dialog.*
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class SuburbNotDeliverableBottomsheetDialogFragment : WBottomSheetDialogFragment(),
@@ -42,6 +43,9 @@ class SuburbNotDeliverableBottomsheetDialogFragment : WBottomSheetDialogFragment
             ERROR_CODE_SUBURB_NOT_FOUND -> {
                 tvDescription?.visibility = View.GONE
                 tvTitle?.text = context?.getString(R.string.suburb_not_found)
+            }
+            ERROR_CODE_SUBURB_NOT_DELIVERABLE -> {
+                buttonChangeAddress.text =  context?.bindString(R.string.change_address)
             }
         }
 

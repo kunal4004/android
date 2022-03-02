@@ -19,6 +19,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.account_in_arrears_layout.*
 import kotlinx.android.synthetic.main.account_signed_in_activity.*
 import kotlinx.android.synthetic.main.chat_collect_agent_floating_button_layout.*
@@ -26,12 +27,15 @@ import za.co.woolworths.financial.services.android.contracts.IAccountSignedInCon
 import za.co.woolworths.financial.services.android.contracts.IBottomSheetBehaviourPeekHeightListener
 import za.co.woolworths.financial.services.android.contracts.IShowChatBubble
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.ActionText
+import za.co.woolworths.financial.services.android.models.dto.EligibilityPlan
 import za.co.woolworths.financial.services.android.models.dto.PMACardPopupModel
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.information.CardInformationHelpActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAYMENT_DETAIL_CARD_UPDATE
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.pay_my_account.PayMyAccountActivity.Companion.PAY_MY_ACCOUNT_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.available_fund.AvailableFundFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
@@ -40,6 +44,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.detail.p
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ChatBubbleVisibility
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.AccountSixMonthArrearsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ShowTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.dialog.ViewTreatmentPlanDialogFragment
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.BALANCE_PROTECTION_INSURANCE_OPT_IN_SUCCESS_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.BALANCE_PROTECTION_INSURANCE_REQUEST_CODE
@@ -47,6 +53,7 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
+@AndroidEntryPoint
 class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.MyAccountView,
     IBottomSheetBehaviourPeekHeightListener, View.OnClickListener, IShowChatBubble {
 
@@ -65,6 +72,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     private var mAccountHelpInformation: MutableList<AccountHelpInformation>? = null
 
     private val payMyAccountViewModel: PayMyAccountViewModel by viewModels()
+    private val myAccountsRemoteApiViewModel: MyAccountsRemoteApiViewModel by viewModels()
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,11 +83,11 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         mAccountSignedInPresenter = AccountSignedInPresenterImpl(this, AccountSignedInModelImpl())
         mAccountSignedInPresenter?.apply {
             intent?.extras?.let { bundle -> getAccountBundle(bundle) }
-
+            myAccountsRemoteApiViewModel.account = mAccountSignedInPresenter?.getAccount()
             mAvailableFundsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_available_fund_fragment) as? NavHostFragment
             mAccountOptionsNavHost = supportFragmentManager.findFragmentById(R.id.nav_host_overlay_bottom_sheet_fragment) as? NavHostFragment
 
-            setAvailableFundBundleInfo(mAvailableFundsNavHost?.navController)
+            setAvailableFundBundleInfo(mAvailableFundsNavHost?.navController, myAccountsRemoteApiViewModel)
             setAccountCardDetailInfo(mAccountOptionsNavHost?.navController)
 
             setToolbarTopMargin()
@@ -101,8 +109,7 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
     }
 
     private fun configureBottomSheetDialog() {
-        val bottomSheetBehaviourLinearLayout =
-            findViewById<LinearLayout>(R.id.bottomSheetBehaviourLinearLayout)
+        val bottomSheetBehaviourLinearLayout = findViewById<LinearLayout>(R.id.bottomSheetBehaviourLinearLayout)
         val layoutParams = bottomSheetBehaviourLinearLayout?.layoutParams
         layoutParams?.height = mAccountSignedInPresenter?.bottomSheetBehaviourHeight()
         bottomSheetBehaviourLinearLayout?.requestLayout()
@@ -156,13 +163,20 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         this.mAccountHelpInformation = informationModelAccount
     }
 
-    override fun showViewTreatmentPlan(viewPaymentOptions: Boolean){
+    override fun showViewTreatmentPlan(state: ApplyNowState, eligibilityPlan: EligibilityPlan?){
         val bundle = Bundle()
-        bundle.putBoolean(ViewTreatmentPlanDialogFragment.VIEW_PAYMENT_OPTIONS_VISIBILITY, viewPaymentOptions)
+        bundle.putSerializable(ViewTreatmentPlanDialogFragment.APPLY_NOW_STATE, state)
+        bundle.putSerializable(ViewTreatmentPlanDialogFragment.ELIGIBILITY_PLAN, eligibilityPlan)
         mAvailableFundsNavHost?.navController?.navigate(R.id.viewTreatmentPlanDialogFragment, bundle)
     }
 
-    override fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean) {
+    override fun showViewTreatmentPlan(viewPaymentOptions: Boolean) {
+        val bundle = Bundle()
+        bundle.putBoolean(ShowTreatmentPlanDialogFragment.VIEW_PAYMENT_OPTIONS_VISIBILITY, viewPaymentOptions)
+        mAvailableFundsNavHost?.navController?.navigate(R.id.showTreatmentPlanDialogFragment, bundle)
+    }
+
+    override fun removeBlocksWhenChargedOff() {
         availableFundFragmentFrameLayout?.visibility = GONE
         bottomSheetBehaviourLinearLayout?.visibility = GONE
         removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
@@ -176,7 +190,6 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
                 else -> {
                     val bundle = Bundle()
                     bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(getSixMonthOutstandingTitleAndCardResource()))
-                    bundle.putBoolean(AccountSixMonthArrearsFragment.IS_VIEW_TREATMENT_PLAN, isViewTreatmentPlanActive)
                     navigationController?.navigate(R.id.accountInDelinquencyFragment, bundle)
                 }
             }
@@ -327,6 +340,27 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
         }
     }
 
+    override fun removeBlocksWhenChargedOff(isViewTreatmentPlanActive: Boolean) {
+        availableFundFragmentFrameLayout?.visibility = GONE
+        bottomSheetBehaviourLinearLayout?.visibility = GONE
+        removeBlockOnCollectionCustomerFrameLayout?.visibility = VISIBLE
+        val removeBlockOnCollectionFragmentContainerView = supportFragmentManager.findFragmentById(R.id.removeBlockOnCollectionFragmentContainerView) as? NavHostFragment
+        val navigationController: NavController? = removeBlockOnCollectionFragmentContainerView?.navController
+        mAccountSignedInPresenter?.apply {
+            when (getMyAccountCardInfo()?.first) {
+                ApplyNowState.STORE_CARD, ApplyNowState.PERSONAL_LOAN -> {
+                    navigationController?.navigate(R.id.removeBlockDCFragment)
+                }
+                else -> {
+                    val bundle = Bundle()
+                    bundle.putString(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Gson().toJson(getSixMonthOutstandingTitleAndCardResource()))
+                    bundle.putBoolean(AccountSixMonthArrearsFragment.IS_VIEW_TREATMENT_PLAN, isViewTreatmentPlanActive)
+                    navigationController?.navigate(R.id.accountInDelinquencyFragment, bundle)
+                }
+            }
+        }
+    }
+
     private fun queryGetPaymentMethod() {
         val fragment = mAvailableFundsNavHost?.childFragmentManager?.primaryNavigationFragment
         if (fragment is AvailableFundFragment) {
@@ -337,5 +371,33 @@ class AccountSignedInActivity : AppCompatActivity(), IAccountSignedInContract.My
 
     override fun showChatBubble() {
         showChatToCollectionAgent()
+    }
+
+    override fun showPlanButton(state: ApplyNowState, eligibilityPlan: EligibilityPlan?) {
+        val fragment = mAccountOptionsNavHost?.childFragmentManager?.primaryNavigationFragment
+        if (fragment is AccountsOptionFragment) {
+            if(eligibilityPlan?.actionText == ActionText.TAKE_UP_TREATMENT_PLAN.value){
+                fragment.showSetUpPaymentPlanButton(state, eligibilityPlan)
+            }
+            else if(eligibilityPlan?.actionText == ActionText.VIEW_TREATMENT_PLAN.value){
+                fragment.showViewTreatmentPlanButton(state, eligibilityPlan)
+            }
+        }
+    }
+
+    private fun hideTreatmentPlanButtons() {
+        val fragment = mAccountOptionsNavHost?.childFragmentManager?.primaryNavigationFragment
+        if (fragment is AccountsOptionFragment) {
+            fragment.hideTreatmentPlanButtons()
+        }
+    }
+
+    fun onTreatmentPlanStatusUpdateRequired() {
+        mAccountSignedInPresenter?.apply {
+            getMyAccountCardInfo()?.first?.let { applyNowState ->
+                hideTreatmentPlanButtons()
+                showProductOfferOutstanding(applyNowState, myAccountsRemoteApiViewModel, false)
+            }
+        }
     }
 }

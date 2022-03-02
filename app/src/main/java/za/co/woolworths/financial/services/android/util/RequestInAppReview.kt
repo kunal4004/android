@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.app.Activity
 import com.google.android.play.core.review.ReviewManagerFactory
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 
 
@@ -22,7 +23,7 @@ fun launchInAppReviewFlow(activity: Activity?) {
 }
 
 fun requestInAppReview(eventName: String, activity: Activity?) {
-    if (WoolworthsApplication.getInAppReview()?.isEnabled == true && WoolworthsApplication.getInAppReview()?.triggerEvents?.contains(eventName) == true && !Utils.isInAppReviewRequested()) {
+    if (AppConfigSingleton.inAppReview?.isEnabled == true && AppConfigSingleton.inAppReview?.triggerEvents?.contains(eventName) == true && !Utils.isInAppReviewRequested()) {
         launchInAppReviewFlow(activity)
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.inAppReviewRequest, activity)
     }

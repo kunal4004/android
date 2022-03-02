@@ -5,6 +5,7 @@ import za.co.absa.openbankingapi.AsymmetricCryptoHelper
 import za.co.absa.openbankingapi.Cryptography
 import za.co.absa.openbankingapi.KeyGenerationFailureException
 import za.co.absa.openbankingapi.SessionKey
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.integration.helper.AbsaTemporaryDataSourceSingleton
 import za.co.woolworths.financial.services.android.ui.fragments.integration.remote.AbsaRemoteApi
@@ -34,7 +35,7 @@ class AbsaContentEncryptionKeyIdImpl : IAbsaContentEncryptionKeyId {
     }
 
     override fun getContentEncryptionPublicKey(): String? {
-        return WoolworthsApplication.getAbsaBankingOpenApiServices()?.contentEncryptionPublicKey
+        return AppConfigSingleton.absaBankingOpenApiServices?.contentEncryptionPublicKey
     }
 
     override fun createCekdRequestProperty(derivedSeed : (ByteArray?) -> Unit): CekdRequestProperty? {

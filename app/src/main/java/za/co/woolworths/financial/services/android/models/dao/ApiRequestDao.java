@@ -151,6 +151,7 @@ public class ApiRequestDao extends BaseDao {
 
         List<String> queries = new ArrayList<String>();
         queries.add("PRAGMA foreign_keys = 0;");
+        queries.add("DROP TABLE IF EXISTS sqlitestudio_temp_table;");
         queries.add("CREATE TABLE sqlitestudio_temp_table AS SELECT * FROM ApiRequest;");
         queries.add("DROP TABLE ApiRequest;");
         queries.add("CREATE TABLE ApiRequest ( id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, endpoint VARCHAR (255) NOT NULL, requestType VARCHAR NOT NULL, headers VARCHAR, parameters VARCHAR, dateCreated DATETIME DEFAULT (datetime() ) NOT NULL, dateUpdated DATETIME NOT NULL DEFAULT (datetime() ), dateExpires DATETIME DEFAULT (datetime() ) NOT NULL, appVersion VARCHAR (50) NOT NULL DEFAULT ('5.16.0.300') );");

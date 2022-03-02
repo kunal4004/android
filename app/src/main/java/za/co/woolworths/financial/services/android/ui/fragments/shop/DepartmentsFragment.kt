@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
@@ -77,7 +78,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
     init {
         isDashEnabled =
-            Utils.isFeatureEnabled(WoolworthsApplication.getInstance()?.dashConfig?.minimumSupportedAppBuildNumber ?: 0)
+            Utils.isFeatureEnabled(AppConfigSingleton.dashConfig?.minimumSupportedAppBuildNumber ?: 0)
                 ?: false
     }
 
@@ -100,7 +101,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         }
 
-        isDashEnabled = WoolworthsApplication.getInstance()?.dashConfig?.isEnabled ?: false
+        isDashEnabled = AppConfigSingleton.dashConfig?.isEnabled ?: false
 
         parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
@@ -249,7 +250,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 )
             }
         } else {
-            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            //ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment())
         }*/
 
        /* activity?.apply {
@@ -268,7 +270,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         context?.apply {
             return if (KotlinUtils.isAppInstalled(
                     activity,
-                    WoolworthsApplication.getInstance()?.dashConfig?.appURI
+                    AppConfigSingleton.dashConfig?.appURI
                 )
             )
                 this.getString(R.string.dash_banner_text_open_app) else this.getString(R.string.dash_banner_text_download_app)
@@ -284,7 +286,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
             )
 
             val intent: Intent? = this.packageManager.getLaunchIntentForPackage(
-                WoolworthsApplication.getInstance()?.dashConfig?.appURI
+                AppConfigSingleton.dashConfig?.appURI
                     ?: ""
             )
             if (intent == null) {

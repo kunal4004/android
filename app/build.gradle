@@ -11,9 +11,9 @@ apply plugin: 'dagger.hilt.android.plugin'
 android {
 
     def major = "8"
-    def minor = "7"
+    def minor = "9"
     def fix = "0"
-    def jobNumber = 542
+    def jobNumber = 561
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -33,6 +33,11 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
     }
 
     flavorDimensions "default"
@@ -92,7 +97,7 @@ android {
             jobNumber = 1
         } else {
             //assume prod
-            jobNumber = 171
+            jobNumber = 176
         }
 
         defaultConfig {
@@ -273,6 +278,10 @@ dependencies {
     testImplementation "org.powermock:powermock-api-mockito2:2.0.2"
     testImplementation "org.powermock:powermock-module-junit4:2.0.2"
 
+    //scalable size unit
+    implementation 'com.intuit.ssp:ssp-android:1.0.5'
+    implementation 'com.intuit.sdp:sdp-android:1.0.5'
+
     testImplementation 'junit:junit:4.13'
     testImplementation "org.mockito:mockito-core:3.4.6"
     testImplementation "org.mockito:mockito-inline:2.21.0"
@@ -288,6 +297,8 @@ dependencies {
     // Hilt DI
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-android-compiler:2.37"
+    implementation 'com.google.maps:google-maps-services:2.0.0'
+
 
 }
 

@@ -52,9 +52,9 @@ import za.co.woolworths.financial.services.android.checkout.viewmodel.CheckoutAd
 import za.co.woolworths.financial.services.android.checkout.viewmodel.ViewModelFactory
 import za.co.woolworths.financial.services.android.checkout.viewmodel.WhoIsCollectingDetails
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary
-import za.co.woolworths.financial.services.android.models.dto.ShoppingBagsOptions
+import za.co.woolworths.financial.services.android.models.dto.app_config.native_checkout.ConfigShoppingBagsOptions
 import za.co.woolworths.financial.services.android.models.network.StorePickupInfoBody
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindString
@@ -532,7 +532,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
             edtTxtGiftInstructions?.visibility =
                 if (isChecked) View.VISIBLE else View.GONE
         }
-        if (WoolworthsApplication.getNativeCheckout()?.currentShoppingBag?.isEnabled == true) {
+        if (AppConfigSingleton.nativeCheckout?.currentShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.VISIBLE
             txtNeedBags?.visibility = View.VISIBLE
             newShoppingBagsLayout?.visibility = View.GONE
@@ -544,7 +544,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
                     )
                 }
             }
-        } else if (WoolworthsApplication.getNativeCheckout()?.newShoppingBag?.isEnabled == true) {
+        } else if (AppConfigSingleton.nativeCheckout?.newShoppingBag?.isEnabled == true) {
             switchNeedBags?.visibility = View.GONE
             txtNeedBags?.visibility = View.GONE
             newShoppingBagsLayout?.visibility = View.VISIBLE
@@ -554,7 +554,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
 
     private fun addShoppingBagsRadioButtons() {
         txtNewShoppingBagsSubDesc?.visibility = View.VISIBLE
-        val newShoppingBags = WoolworthsApplication.getNativeCheckout()?.newShoppingBag
+        val newShoppingBags = AppConfigSingleton.nativeCheckout?.newShoppingBag
         txtNewShoppingBagsDesc?.text = newShoppingBags?.title
         txtNewShoppingBagsSubDesc?.text = newShoppingBags?.description
 
@@ -632,7 +632,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
     }
 
     override fun selectedShoppingBagType(
-        shoppingBagsOptionsList: ShoppingBagsOptions,
+        shoppingBagsOptionsList: ConfigShoppingBagsOptions,
         position: Int
     ) {
         selectedShoppingBagType = shoppingBagsOptionsList.shoppingBagType

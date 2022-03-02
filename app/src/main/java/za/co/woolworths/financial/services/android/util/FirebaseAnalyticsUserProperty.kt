@@ -3,11 +3,12 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import com.google.firebase.analytics.FirebaseAnalytics
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.UserPropertiesForDelinquentCodes
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.Products
+import za.co.woolworths.financial.services.android.models.dto.app_config.defaults.ConfigUserPropertiesForDelinquentCodes
 
 class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
 
@@ -58,7 +59,7 @@ class FirebaseAnalyticsUserProperty : FirebaseManagerAnalyticsProperties() {
         }
 
         private fun getUserPropertiesForDelinquentCodes(): HashMap<String, String> {
-            val userProperty: UserPropertiesForDelinquentCodes? = WoolworthsApplication.getFirebaseUserPropertiesForDelinquentProductGroupCodes()
+            val userProperty: ConfigUserPropertiesForDelinquentCodes? = AppConfigSingleton.firebaseUserPropertiesForDelinquentProductGroupCodes
             val userPropertiesForDelinquentCodes: HashMap<String, String> = HashMap()
             if (userProperty?.cc != null) {
                 userPropertiesForDelinquentCodes[CREDIT_CARD_PRODUCT_GROUP_CODE] = userProperty.cc
