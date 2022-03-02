@@ -11,9 +11,10 @@ apply plugin: 'dagger.hilt.android.plugin'
 android {
 
     def major = "8"
-    def minor = "9"
+    def minor = "8"
     def fix = "0"
-    def jobNumber = 561
+    def jobNumber = 15213
+//    def jobNumber = 561
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
