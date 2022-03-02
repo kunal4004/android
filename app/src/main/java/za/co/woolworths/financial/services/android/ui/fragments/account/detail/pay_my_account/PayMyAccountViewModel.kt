@@ -6,13 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.awfs.coordination.R
 import com.google.gson.Gson
-import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
 import za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -25,14 +23,12 @@ import za.co.woolworths.financial.services.android.ui.extension.request
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.BeginPayMyAccountJourneyActionImpl
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PMATrackFirebaseEvent
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.helper.PayMyAccountPresenter
-import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.fragment.availablefunds.AvailableFundsViewModel
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.wenum.PMAVendorCardEnum
 import za.co.woolworths.financial.services.android.util.wenum.VocTriggerEvent
 import java.net.ConnectException
 import java.util.*
 import javax.annotation.Nullable
-import javax.inject.Inject
 
 open class PayMyAccountViewModel: ViewModel() {
 

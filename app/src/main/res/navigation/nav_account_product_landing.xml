@@ -5,12 +5,12 @@
     android:id="@+id/nav_account_product_landing">
     <fragment
         android:id="@+id/accountProductsMainFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.fragment.main.AccountProductsMainFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.main.AccountProductsMainFragment"
         android:label="AccountProductsMainFragment"
         tools:layout="@layout/account_product_landing_main_fragment" />
     <fragment
         android:id="@+id/accountProductsHomeFragment"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.fragment.landing.AccountProductsHomeFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeFragment"
         android:label="AccountProductsHomeFragment"
         tools:layout="@layout/account_products_home_fragment">
         <action
