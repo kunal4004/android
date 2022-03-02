@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.apihelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -24,6 +25,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter
  */
 class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
+    private var mvalidateLocationResponse: ValidateLocationResponse? = null
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var placeId: String? = null
     private var latitude: Double? = null
@@ -61,7 +63,7 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                 activity?.onBackPressed()
             }
             R.id.geoloc_clickNCollectEditChangetv -> {
-
+                (activity as? BottomNavigationActivity)?.pushFragment(ClickAndCollectStoresFragment.newInstance(mvalidateLocationResponse))
             }
             R.id.btnConfirmAddress -> {
 
@@ -110,6 +112,7 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse.httpCode) {
                         HTTP_OK -> {
+                            mvalidateLocationResponse = validateLocationResponse
                             updateDeliveryDetails(validateLocationResponse)
                         }
                         else -> {

@@ -26,7 +26,6 @@ import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import java.util.*
 
-
 class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
     Fragment(R.layout.geolocation_confirm_address), OnMapReadyCallback {
 
@@ -46,15 +45,15 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
         confirmAddressClick()
     }
 
-
     private fun clearAddress() {
         imgRemoveAddress?.setOnClickListener {
             autoCompleteTextView?.setText("")
         }
     }
+
     private fun confirmAddressClick() {
         btnConfirmAddress?.setOnClickListener {
-            //TODO: call next screen with "placeId"
+
         }
     }
 
@@ -115,7 +114,6 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
         }
     }
 
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap?.uiSettings?.setAllGesturesEnabled(true)
@@ -157,7 +155,6 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
             autoCompleteTextView?.setText(it)
             autoCompleteTextView.dismissDropDown()
         }
-
     }
 
     private fun getPlaceId(latitude: Double?, longitude: Double?) {
@@ -174,7 +171,6 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
             }).await()
         placeId = results[0].placeId.toString()
        GeoLocationAddress(mLatitude,mLongitude,placeId)
-
     }
-
 }
+

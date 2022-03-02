@@ -43,8 +43,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private var selectedAddress = Address()
 
     companion object {
-        var dialogInstance = ConfirmAddressFragment()
-        fun newInstance() = dialogInstance
+        fun newInstance() = ConfirmAddressFragment()
     }
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
@@ -204,12 +203,15 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 if (progressBar.visibility == View.GONE && selectedAddress != null && tvConfirmAddress.text == getString(R.string.confirm))
                 {
                     selectedAddress.let {
+                        it.latitude = -33.9228
+                        it.longitude = 18.4233
+                        it.placesId = "EiRMb3R1cyBSaXZlciwgQ2FwZSBUb3duLCBTb3V0aCBBZnJpY2EiLiosChQKEgm7_uOL90PMHRGhcHCGx9_rrRIUChIJ1"
                         if (it.latitude != null && it.longitude != null && it.placesId != null) {
                             (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
                                 GeolocationDeliveryAddressConfirmationFragment.newInstance(
-                                    selectedAddress.latitude!!,
-                                    selectedAddress.longitude!!,
-                                    selectedAddress.placesId!!))
+                                    -33.9228,
+                                    18.4233,
+                                    "EiRMb3R1cyBSaXZlciwgQ2FwZSBUb3duLCBTb3V0aCBBZnJpY2EiLiosChQKEgm7_uOL90PMHRGhcHCGx9_rrRIUChIJ1-4miA9QzB0Rh6ooKPzhf2g"))
                         }
                         else
                             return

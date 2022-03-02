@@ -1,4 +1,5 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,6 +22,8 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:textColor="@color/black"
+            android:textStyle="normal"
             android:id="@+id/tvSelectStoreLabel"
             style="@style/futura_semi_bold_black_20_text_style"
             android:layout_width="match_parent"
@@ -61,13 +64,16 @@
             app:cardCornerRadius="@dimen/five_dp"
             app:layout_constraintTop_toBottomOf="@+id/etEnterNewAddress">
 
-            <com.google.android.gms.maps.MapView
+            <fragment
                 android:id="@+id/mapView"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </androidx.cardview.widget.CardView>
 
         <TextView
+            android:textStyle="normal"
+            android:textColor="@color/black"
             android:id="@+id/tvStoresNearMe"
             style="@style/myriad_pro_semi_bold_black_15_text_style"
             android:layout_width="match_parent"
@@ -75,7 +81,7 @@
             android:layout_marginStart="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/twenty_four_dp"
             android:layout_marginEnd="@dimen/twenty_four_dp"
-            android:text="18 Strores near me"
+            tools:text="18 Strores near me"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cvMapView" />
@@ -88,7 +94,7 @@
             android:layout_marginStart="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/two_dp"
             android:layout_marginEnd="@dimen/twenty_four_dp"
-            android:text="28 Eastlake Island Drive"
+            tools:text="28 Eastlake Island Drive"
             android:textColor="@color/color_444444"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -127,12 +133,12 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvStoreList"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero_dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/twenty_four_dp"
             android:layout_marginTop="@dimen/fifteen_dp"
             android:layout_marginEnd="@dimen/twenty_four_dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/eight_dp"
             android:background="@color/white"
             android:clipToPadding="true"
             android:contentDescription="@string/plp_sortOptionList"

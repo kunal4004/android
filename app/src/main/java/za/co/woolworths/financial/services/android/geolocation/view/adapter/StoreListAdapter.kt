@@ -6,14 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.Store
+import kotlinx.android.synthetic.main.store_row_layout.view.*
+import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 
 class StoreListAdapter (
     val context: Context,
-    val storeList: ArrayList<Store>,
+    val storeList: List<Store>?,
     val listener: OnStoreSelected
 ) : RecyclerView.Adapter<StoreListAdapter.SavedAddressViewHolder>() {
-    var selectedPosition = -1;
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedAddressViewHolder {
         return SavedAddressViewHolder(
             LayoutInflater.from(context).inflate(R.layout.store_row_layout, parent, false)
@@ -21,32 +22,24 @@ class StoreListAdapter (
     }
 
     override fun getItemCount(): Int {
-        return 5//addressList.size
+        storeList?.let {
+            return it.size
+        }
+        return 0
     }
 
     override fun onBindViewHolder(holder: SavedAddressViewHolder, position: Int) {
-        /*holder.tvAddressNickname.text = addressList[position].nickname
-        holder.rbAddressSelector.isChecked = selectedPosition == position
-        holder.view.setOnClickListener {
-            selectedPosition = position
-            listener.onAddressSelected(addressList[position])
-            notifyDataSetChanged()
-        }
-        if (addressList[position].verified) {
-            holder.tvUpdateAddress.visibility = View.GONE
-        } else {
-            holder.tvUpdateAddress.visibility = View.VISIBLE
-        }
-        holder.tvAddress.text = addressList[position].address1*/
+        holder.tvAddressNickname.text = storeList?.get(position)?.storeName
+        holder.tvAddress.text = storeList?.get(position)?.storeAddress
+        holder.tvStoreDistance.text = storeList?.get(position)?.distance.toString()
     }
 
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        /*val tvAddressNickname = itemView.tvAddressNickName
+        val tvAddressNickname = itemView.tvAddressNickName
+        val tvStoreDistance= itemView.txtStoreDistance
+        val imgAddressSelector= itemView.imgAddressSelector
         val view = itemView
         val tvAddress = itemView.tvAddress
-        val tvUpdateAddress = itemView.tvUpdateAddress
-        val rbAddressSelector = itemView.rbAddressSelector*/
     }
 
     interface OnStoreSelected {

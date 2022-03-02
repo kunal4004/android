@@ -7,10 +7,11 @@
     tools:context="za.co.woolworths.financial.services.android.checkout.view.CollectionDatesBottomSheetDialog">
 
 
-    <RadioButton
-        android:id="@+id/rbAddressSelector"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:src="@drawable/oval"
+        android:id="@+id/imgAddressSelector"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:button="@drawable/shopping_list_item_selector"
         android:clickable="false"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,7 +26,7 @@
         style="@style/myriad_pro_semi_bold_black_15_text_style"
         android:layout_marginStart="@dimen/sixteen_dp"
         app:layout_constraintBottom_toTopOf="@+id/tvAddress"
-        app:layout_constraintStart_toEndOf="@+id/rbAddressSelector"
+        app:layout_constraintStart_toEndOf="@+id/imgAddressSelector"
         app:layout_constraintTop_toTopOf="parent"
         android:maxLength="@integer/thirty"
         android:maxWidth="@dimen/two_hundred_ten_dp"
@@ -39,7 +40,7 @@
         android:layout_width="@dimen/two_hundred_and_fifty_dp"
         android:layout_marginStart="@dimen/sixteen_dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/rbAddressSelector"
+        app:layout_constraintStart_toEndOf="@+id/imgAddressSelector"
         app:layout_constraintTop_toBottomOf="@+id/tvAddressNickName"
         android:textColor="@color/color_444444"
         style="@style/myriad_pro_regular_black_14_text_style"
@@ -58,9 +59,10 @@
         app:layout_constraintVertical_bias="0.31"
         >
     <TextView
+        android:id="@+id/txtStoreDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="400 m"
+        tools:text="400 m"
         style="@style/futura_semi_bold_white_12_text_style"
         android:background="@color/light_blue"
         android:paddingStart="@dimen/twelve_dp"
