@@ -782,6 +782,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            Activity activity = getActivity();
+            if (activity instanceof BottomNavigationActivity) {
+                ((BottomNavigationActivity) activity).showBottomNavigationMenu();
+            }
+        }
+    }
+
+    @Override
     public void onToastButtonClicked(String currentState) {
 
     }

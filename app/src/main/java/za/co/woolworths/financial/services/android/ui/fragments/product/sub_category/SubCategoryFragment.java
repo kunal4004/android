@@ -302,6 +302,10 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			hideToolbar();
+			Activity activity = getActivity();
+			if (activity instanceof BottomNavigationActivity) {
+				((BottomNavigationActivity) activity).showBottomNavigationMenu();
+			}
 		}
 	}
 
