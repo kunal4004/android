@@ -53,10 +53,10 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
             listener?.onSetNewLocation()
             dismissAllowingStateLoss()
         }
-        configureUI()
+       // configureUI()
     }
 
-    private fun configureUI() {
+    /*private fun configureUI() {
         Utils.getPreferredDeliveryLocation()?.apply {
             btnSetNewLocation.setPaintFlags(btnSetNewLocation.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
             btnSetNewLocation.setText(activity?.resources?.getString(R.string.edt_location))
@@ -66,5 +66,5 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
             tvLocation.text = if (storePickup) store?.name else suburb?.name + ", " + this.province.name
         }
     }
-
+*/
 }

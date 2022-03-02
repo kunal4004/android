@@ -127,6 +127,7 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.wenum.Delivery;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, RemoveProductsFromCartDialogFragment.IRemoveProductsFromCartDialog {
 
@@ -135,8 +136,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private final String GENERAL_ITEM = "GENERAL";
     private final String TAG_AVAILABLE_VOUCHERS_TOAST = "AVAILABLE_VOUCHERS";
     private final String TAG_ADDED_TO_LIST_TOAST = "ADDED_TO_LIST";
-    private static String localSuburbId = null;
-    private static String localStoreId = null;
 
     private static final int CART_BACK_PRESSED_CODE = 9;
     private static final int PDP_LOCATION_CHANGED_BACK_PRESSED_CODE = 18;
@@ -208,13 +207,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         }
 
         ShoppingDeliveryLocation location = Utils.getPreferredDeliveryLocation();
-        if (location != null) {
-            if (location.suburb != null)
-                localSuburbId = location.suburb.id;
-            if (location.store != null)
-                localStoreId = location.store.getId();
-        }
-
         mChangeQuantityList = new ArrayList<>(0);
         mChangeQuantity = new ChangeQuantity();
         mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
@@ -447,7 +439,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             case R.id.btnCheckOut:
                 Activity checkOutActivity = getActivity();
                 if ((checkOutActivity != null) && btnCheckOut.isEnabled() && orderSummary != null) {
-                    if (Utils.getPreferredDeliveryLocation().storePickup && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
+                    Delivery deliveryType = Delivery.Companion.getType(Utils.getPreferredDeliveryLocation().fulfillmentDetails.getDeliveryType());
+                    if (deliveryType == Delivery.CNC && productCountMap != null && productCountMap.getQuantityLimit() != null && !productCountMap.getQuantityLimit().getAllowsCheckout()) {
                         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_CLCK_CLLCT_CNFRM_LMT, checkOutActivity);
                         showMaxItemView();
                         return;
@@ -532,7 +525,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
             Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
             checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
-            checkoutActivityIntent.putExtra(IS_DELIVERY, !Utils.getPreferredDeliveryLocation().storePickup);
+            checkoutActivityIntent.putExtra(IS_DELIVERY, KotlinUtils.Companion.getPreferredDeliveryType());
             activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
             activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
         }
@@ -920,16 +913,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                                 cartProductAdapter.setEditMode(true);
                             }
                             Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-                            Suburb suburb = new Suburb();
-                            if (shoppingCartResponse.data[0].suburbId.contains("st")) {
-                                suburb.id = shoppingCartResponse.data[0].suburbId.replace("st", "");
-                                suburb.fulfillmentStores = shoppingCartResponse.data[0].orderSummary.store.getFulfillmentStores();
-                            } else {
-                                suburb.id = shoppingCartResponse.data[0].suburbId;
-                                suburb.fulfillmentStores = shoppingCartResponse.data[0].orderSummary.suburb.fulfillmentStores;
+                            if (shoppingCartResponse.data[0].orderSummary.fulfillmentDetails != null) {
+                                Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(shoppingCartResponse.data[0].orderSummary.fulfillmentDetails));
                             }
-                            suburb.name = shoppingCartResponse.data[0].suburbName;
-                            Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(Utils.getPreferredDeliveryLocation().province, suburb, Utils.getPreferredDeliveryLocation().store));
                             setItemLimitsBanner();
                             break;
                         case 440:
@@ -1138,16 +1124,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             cartResponse.orderSummary = data.orderSummary;
             cartResponse.voucherDetails = data.voucherDetails;
             cartResponse.productCountMap = data.productCountMap;// set delivery location
-            if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
-                Province province = new Province(data.provinceId, data.provinceName);
-                if (cartResponse.orderSummary.store != null) {
-                    Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, null, cartResponse.orderSummary.store));
-                } else if (cartResponse.orderSummary.suburb != null) {
-                    Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, cartResponse.orderSummary.suburb, null));
-                }
-                if (cartResponse.orderSummary.store != null || cartResponse.orderSummary.suburb != null)
-                    setDeliveryLocation(Utils.getPreferredDeliveryLocation());
+            if (cartResponse.orderSummary.fulfillmentDetails != null) {
+                Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(cartResponse.orderSummary.fulfillmentDetails));
             }
+            setDeliveryLocation(Utils.getPreferredDeliveryLocation());
             JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
             Iterator<String> keys = itemsObject.keys();
             ArrayList<CartItemGroup> cartItemGroups = new ArrayList<>();
@@ -1266,7 +1246,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                             cartProductAdapter.clear();
                         }
                         hideEditCart();
-                        Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
+                       /* Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.storePickup ? lastDeliveryLocation.store.getId() : lastDeliveryLocation.suburb.id);
                         setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new IResponseListener<SetDeliveryLocationSuburbResponse>() {
                             @Override
                             public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
@@ -1291,7 +1271,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                                 );
 
                             }
-                        }, SetDeliveryLocationSuburbResponse.class));
+                        }, SetDeliveryLocationSuburbResponse.class));*/
                     } else {
                         // Fallback if there is no cached location
                         loadShoppingCart(false);
@@ -1374,7 +1354,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     private void checkLocationChangeAndReload() {
-        ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
+       /* ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
         String currentSuburbId = null;
         String currentStoreId = null;
         int currentCartCount = QueryBadgeCounter.getInstance().getCartCount();
@@ -1399,7 +1379,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             return;
         } else if (productCountMap != null && productCountMap.getTotalProductCount() != currentCartCount) {
             reloadFragment();
-        }
+        }*/
     }
 
     private void loadShoppingCartAndSetDeliveryLocation() {
@@ -1904,7 +1884,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private void setItemLimitsBanner() {
         Activity activity = getActivity();
         if (activity != null && isAdded()) {
-            CartUtils.Companion.updateItemLimitsBanner(productCountMap, itemLimitsBanner, itemLimitsMessage, itemLimitsCounter, Utils.getPreferredDeliveryLocation().storePickup);
+            CartUtils.Companion.updateItemLimitsBanner(productCountMap, itemLimitsBanner, itemLimitsMessage, itemLimitsCounter, KotlinUtils.Companion.getPreferredDeliveryType() == Delivery.CNC);
         }
     }
 
