@@ -1212,9 +1212,11 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         // place id :  take from cache
         // delivery type : take from cache
         */
+        String placeId = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId();
+        String deliveryType = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getDeliveryType();
         BottomNavigationActivity activity = (BottomNavigationActivity) getActivity();
         if (activity !=null) {
-            activity.pushFragment(GeolocationDeliveryAddressConfirmationFragment.newInstance("", ""));
+            activity.pushFragment(GeolocationDeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType));
         }
     }
 

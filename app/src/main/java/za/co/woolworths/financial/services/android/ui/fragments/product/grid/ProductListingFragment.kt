@@ -1360,6 +1360,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         /*   start GeolocationDelivery Address Confirmation Fragment */
         // place id :  take from cache
         // delivery type : take from cache
+        val placeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+        val deliveryType = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
             GeolocationDeliveryAddressConfirmationFragment.newInstance("", ""))
 

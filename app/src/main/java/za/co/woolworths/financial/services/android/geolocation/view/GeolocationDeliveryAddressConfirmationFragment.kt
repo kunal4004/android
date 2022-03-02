@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
@@ -83,7 +84,7 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
             }
 
         @JvmStatic
-        fun newInstance(placesId: String, deliveryType: String  = "standard") =
+        fun newInstance(placesId: String?, deliveryType: String? = "Standard") =
             GeolocationDeliveryAddressConfirmationFragment().withArgs {
                 putString(KEY_PLACE_ID, placesId)
                 putString(DELIVERY_TYPE, deliveryType)

@@ -1347,8 +1347,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         // place id :  take from cache
         // delivery type : take from cache
     */
+        val placeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+        val deliveryType = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            GeolocationDeliveryAddressConfirmationFragment.newInstance("", ""))
+            GeolocationDeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType))
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
