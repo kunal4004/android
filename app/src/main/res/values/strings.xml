@@ -2431,6 +2431,8 @@
 
     <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
     <string name="change_location">CHANGE LOCATION</string>
+    <string name="no_location_title">We Can’t Deliver \n To This Location Yet.</string>
+    <string name="no_location_desc">However, we’re growing quickly, \n so please check back soon</string>
 
 
 </resources>
