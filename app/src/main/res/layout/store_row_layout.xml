@@ -11,10 +11,12 @@
         android:id="@+id/imgAddressSelector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:button="@drawable/address_selector_background"
+        android:padding="@dimen/two_dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvAddressNickName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tvAddress"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView

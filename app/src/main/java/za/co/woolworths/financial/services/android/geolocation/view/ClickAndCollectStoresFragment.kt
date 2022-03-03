@@ -27,15 +27,19 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 
 import android.graphics.drawable.Drawable
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
+import androidx.databinding.adapters.TextViewBindingAdapter
 import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.model.BitmapDescriptor
 
 
 class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
-    StoreListAdapter.OnStoreSelected, View.OnClickListener {
+    StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
     private lateinit var mapFragment: SupportMapFragment
     private var mValidateLocationResponse: ValidateLocationResponse? = null
@@ -73,6 +77,7 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
         ivCross.setOnClickListener {
             (activity as? BottomNavigationActivity)?.popFragment()
         }
+        etEnterNewAddress.addTextChangedListener(this)
         mapFragment = childFragmentManager
             .findFragmentById(R.id.mapView) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -155,6 +160,7 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
                 this
             )
         }
+        rvStoreList.adapter?.notifyDataSetChanged()
     }
 
     override fun onStoreSelected(store: Store?) {
@@ -167,6 +173,27 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
               /*TODO : start GeoLocationDeliveryAddressCnfirmation Fragment with mStore object */
             }
         }
+    }
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+    }
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+    }
+
+    override fun afterTextChanged(s: Editable?) {
+        val list = ArrayList<Store>()
+        mValidateLocationResponse?.validatePlace?.stores?.let {
+            for (store in it) {
+                if (store.storeName?.contains(s.toString(), true) == true) {
+                    list.add(store)
+                }
+            }
+        }
+        setStoreList(list)
+
     }
 
 }
