@@ -62,16 +62,38 @@
         </TableRow>
     </TableLayout>
 
-    <RelativeLayout
-        android:id="@+id/deliv_click_image_layout"
-        android:layout_width="@dimen/hundred_and_thirty_dp"
-        android:layout_height="@dimen/hundred_and_thirty_dp"
-        android:layout_marginTop="@dimen/eighty_dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/geoloc_deliv_clickLayout">
+    <include
+        android:visibility="gone"
+        android:id="@+id/no_conn_layout"
+        layout="@layout/no_collection_store_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/geoloc_deliv_clickLayout" />
 
-        <View
+    <include
+        android:visibility="gone"
+        android:id="@+id/no_loc_layout"
+        layout="@layout/layout_laocation_not_available"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/geoloc_deliv_clickLayout" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/geoloc_deliv_clickLayout">
+
+        <ImageView
             android:id="@+id/icon_deliv_click"
             android:layout_width="@dimen/seventy_four_dp"
             android:layout_height="@dimen/seventy_four_dp"
@@ -79,259 +101,261 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="@dimen/twenty_dp"
-            android:layout_marginTop="@dimen/twenty_dp"
-            android:layout_marginEnd="@dimen/twenty_dp"
-            android:layout_marginBottom="@dimen/twenty_dp"
-            android:background="@drawable/icon_delivery" />
-    </RelativeLayout>
+            android:background="@drawable/icon_delivery"
+            app:layout_constraintBottom_toTopOf="@+id/geolocDeliveryDetailsLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/geolocDeliveryDetailsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/thirty_dp"
-        android:layout_marginEnd="@dimen/thirty_dp"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/sixteen_dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/geoloc_clickNCollectTitleLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible">
 
-        <RelativeLayout
-            android:id="@+id/productsAvailableLayout"
+        <LinearLayout
+            android:id="@+id/geolocDeliveryDetailsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/five_dp">
+            android:layout_marginStart="@dimen/thirty_dp"
+            android:layout_marginEnd="@dimen/thirty_dp"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/sixteen_dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/geoloc_clickNCollectTitleLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible">
+
+            <RelativeLayout
+                android:id="@+id/productsAvailableLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/five_dp">
+
+                <TextView
+                    android:id="@+id/productsAvailableTitle"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/products_available_title"
+                    android:textColor="@color/color_666666"
+                    android:textSize="@dimen/fifteen_sp" />
+
+                <TextView
+                    android:id="@+id/productsAvailableValue"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fifteen_sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/itemLimitLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/three_dp">
+
+                <TextView
+                    android:id="@+id/itemLimitLabel"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/item_limit"
+                    android:textColor="@color/color_666666"
+                    android:textSize="@dimen/fifteen_sp" />
+
+                <TextView
+                    android:id="@+id/itemLimitValue"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fifteen_sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/feeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/three_dp">
+
+                <TextView
+                    android:id="@+id/feeLabel"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/geo_delivery_fee"
+                    android:textColor="@color/color_666666"
+                    android:textSize="@dimen/fifteen_sp" />
+
+                <TextView
+                    android:id="@+id/feeValue"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fifteen_sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/earliestDeliveryDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/three_dp">
+
+                <TextView
+                    android:id="@+id/earliestDeliveryDateLabel"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/earliest_food_delivery_date"
+                    android:textColor="@color/color_666666"
+                    android:textSize="@dimen/fifteen_sp" />
+
+                <TextView
+                    android:id="@+id/earliestDeliveryDateValue"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fifteen_sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/earliestFashionDeliveryDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/three_dp">
+
+                <TextView
+                    android:id="@+id/earliestFashionDeliveryDateLabel"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/earliest_fashion_delivery_date"
+                    android:textColor="@color/color_666666"
+                    android:textSize="@dimen/fifteen_sp" />
+
+                <TextView
+                    android:id="@+id/earliestFashionDeliveryDateValue"
+                    style="@style/myriad_pro_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fifteen_sp" />
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/confirmAddressPartition"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_dp"
+                android:layout_marginTop="@dimen/twenty_dp"
+                android:layout_marginBottom="@dimen/five_dp"
+                android:background="@color/sign_in_register_button_border" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/geoloc_clickNCollectTitleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/thirty_dp"
+            android:layout_marginEnd="@dimen/thirty_dp"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/ten_dp"
+            android:paddingBottom="@dimen/eighteen_dp"
+            app:layout_constraintBottom_toTopOf="@id/geoloc_confirmLayout">
+
+            <View
+                android:id="@+id/geoloc_delivIconImage"
+                android:layout_width="@dimen/twenty_five_dp"
+                android:layout_height="@dimen/twenty_five_dp"
+                android:layout_gravity="center"
+                android:background="@drawable/icon_delivery" />
 
             <TextView
-                android:id="@+id/productsAvailableTitle"
+                android:id="@+id/geoloc_clickNCollectTitle"
                 style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/products_available_title"
+                android:layout_weight="@integer/point_five"
+                android:padding="@dimen/six_dp"
+                android:text="@string/delivering_to"
                 android:textColor="@color/color_666666"
                 android:textSize="@dimen/fifteen_sp" />
 
             <TextView
-                android:id="@+id/productsAvailableValue"
+                android:id="@+id/geoloc_clickNCollectValue"
                 style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:textColor="@color/black"
+                android:layout_weight="@integer/point_five"
+                android:padding="@dimen/six_dp"
+                android:singleLine="true"
+                android:text="@string/geoloc_ClickNCollectValue"
                 android:textSize="@dimen/fifteen_sp" />
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/geoloc_clickNCollectEditChangetv"
+                style="@style/myriad_pro_regular"
+                android:layout_width="@dimen/fifty_five_dp"
+                android:layout_height="@dimen/twenty_five_dp"
+                android:background="@drawable/change_location_round_black"
+                android:gravity="center"
+                android:padding="@dimen/six_dp"
+                android:text="@string/edit"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twelve_sp" />
+        </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/itemLimitLayout"
+            android:id="@+id/geoloc_confirmLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/three_dp">
+            android:layout_marginLeft="@dimen/thirty_dp"
+            android:layout_marginRight="@dimen/thirty_dp"
+            android:layout_marginBottom="@dimen/thirty_dp"
+            android:background="@color/white"
+            android:clickable="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/itemLimitLabel"
-                style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/btnConfirmAddress"
+                style="@style/blackButtonStyle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/item_limit"
-                android:textColor="@color/color_666666"
-                android:textSize="@dimen/fifteen_sp" />
-
-            <TextView
-                android:id="@+id/itemLimitValue"
-                style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fifteen_sp" />
-
+                android:background="@color/black"
+                android:fontFamily="@font/futura_medium"
+                android:text="@string/confirm" />
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/feeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/three_dp">
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="@dimen/fourty_dp"
+            android:layout_height="@dimen/fourty_dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/black"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/feeLabel"
-                style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/geo_delivery_fee"
-                android:textColor="@color/color_666666"
-                android:textSize="@dimen/fifteen_sp" />
-
-            <TextView
-                android:id="@+id/feeValue"
-                style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fifteen_sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/earliestDeliveryDateLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/three_dp">
-
-            <TextView
-                android:id="@+id/earliestDeliveryDateLabel"
-                style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/earliest_food_delivery_date"
-                android:textColor="@color/color_666666"
-                android:textSize="@dimen/fifteen_sp" />
-
-            <TextView
-                android:id="@+id/earliestDeliveryDateValue"
-                style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fifteen_sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/earliestFashionDeliveryDateLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/three_dp">
-
-            <TextView
-                android:id="@+id/earliestFashionDeliveryDateLabel"
-                style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/earliest_fashion_delivery_date"
-                android:textColor="@color/color_666666"
-                android:textSize="@dimen/fifteen_sp" />
-
-            <TextView
-                android:id="@+id/earliestFashionDeliveryDateValue"
-                style="@style/myriad_pro_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fifteen_sp" />
-        </RelativeLayout>
-
-        <View
-            android:id="@+id/confirmAddressPartition"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_dp"
-            android:layout_marginTop="@dimen/twenty_dp"
-            android:layout_marginBottom="@dimen/five_dp"
-            android:background="@color/sign_in_register_button_border" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/geoloc_clickNCollectTitleLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/thirty_dp"
-        android:layout_marginEnd="@dimen/thirty_dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/ten_dp"
-        android:paddingBottom="@dimen/eighteen_dp"
-        app:layout_constraintBottom_toTopOf="@id/geoloc_confirmLayout">
-
-        <View
-            android:id="@+id/geoloc_delivIconImage"
-            android:layout_width="@dimen/twenty_five_dp"
-            android:layout_height="@dimen/twenty_five_dp"
-            android:layout_gravity="center"
-            android:background="@drawable/icon_delivery" />
-
-        <TextView
-            android:id="@+id/geoloc_clickNCollectTitle"
-            style="@style/myriad_pro_regular"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="@integer/point_five"
-            android:padding="@dimen/six_dp"
-            android:text="@string/delivering_to"
-            android:textColor="@color/color_666666"
-            android:textSize="@dimen/fifteen_sp" />
-
-        <TextView
-            android:id="@+id/geoloc_clickNCollectValue"
-            style="@style/myriad_pro_regular"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="@integer/point_five"
-            android:padding="@dimen/six_dp"
-            android:singleLine="true"
-            android:text="@string/geoloc_ClickNCollectValue"
-            android:textSize="@dimen/fifteen_sp" />
-
-        <TextView
-            android:id="@+id/geoloc_clickNCollectEditChangetv"
-            style="@style/myriad_pro_regular"
-            android:layout_width="@dimen/fifty_five_dp"
-            android:layout_height="@dimen/twenty_five_dp"
-            android:background="@drawable/change_location_round_black"
-            android:gravity="center"
-            android:padding="@dimen/six_dp"
-            android:text="@string/edit"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="@dimen/twelve_sp" />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/geoloc_confirmLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/thirty_dp"
-        android:layout_marginRight="@dimen/thirty_dp"
-        android:layout_marginBottom="@dimen/thirty_dp"
-        android:background="@color/white"
-        android:clickable="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/btnConfirmAddress"
-            style="@style/blackButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
-            android:fontFamily="@font/futura_medium"
-            android:text="@string/confirm" />
-    </RelativeLayout>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="@dimen/fourty_dp"
-        android:layout_height="@dimen/fourty_dp"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/black"
-        android:indeterminateTintMode="src_atop"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

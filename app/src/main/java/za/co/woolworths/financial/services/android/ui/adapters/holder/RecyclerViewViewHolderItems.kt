@@ -154,13 +154,13 @@ class RecyclerViewViewHolderItems(parent: ViewGroup) : RecyclerViewViewHolder(La
             val quickShopDefaultValues = AppConfigSingleton.quickShopDefaultValues
             val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
             var defaultStoreId = ""
-            if (userSelectedDeliveryLocation == null || (userSelectedDeliveryLocation.suburb?.fulfillmentStores == null && userSelectedDeliveryLocation.store?.fulfillmentStores == null) || !SessionUtilities.getInstance().isUserAuthenticated) {
-                quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
+            if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.fulfillmentDetails.fulfillmentStores == null || !SessionUtilities.getInstance().isUserAuthenticated) {
+                /*quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
                     if (fulfillmentType.fulfilmentTypeId.equals(fulfilmentTypeId, ignoreCase = true)) {
                         defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
                         return@forEach
                     }
-                }
+                }*/
             } else {
                 Utils.retrieveStoreId(fulfilmentTypeId)?.let { defaultStoreId = it }
             }

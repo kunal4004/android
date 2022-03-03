@@ -611,7 +611,7 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Query("commerceId") commerceId: String): Call<ShoppingCartResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev2")
     @GET("wfs/app/v4/cart/summary")
     fun getCartSummary(
 
