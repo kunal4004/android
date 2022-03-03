@@ -12,6 +12,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 import android.app.Activity;
@@ -389,19 +390,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void onRemoveItem(boolean visibility) {
         pbRemoveAllItem.setVisibility(visibility ? View.VISIBLE : View.GONE);
         btnClearCart.setVisibility(visibility ? View.GONE : View.VISIBLE);
-//        btnCloseCart.setVisibility(visibility ? View.GONE : View.GONE);
         btnEditCart.setEnabled(visibility ? false : true);
     }
 
     public void onRemoveSuccess() {
         pbRemoveAllItem.setVisibility(View.GONE);
-//        btnCloseCart.setVisibility(View.VISIBLE);
         btnClearCart.setVisibility(View.GONE);
     }
 
     public void resetToolBarIcons() {
         hideEditCart();
-//        btnCloseCart.setVisibility(View.VISIBLE);
         btnClearCart.setVisibility(View.GONE);
     }
 
@@ -433,16 +431,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
                 locationSelectionClicked();
                 break;
             case R.id.btnGoToProduct:
-                //TODO: Nav stack changes. Start shopping clicked so go to shop tab
-                // since cart activity is removed setResult wont work
                 Activity activity = getActivity();
                 if (activity instanceof BottomNavigator) {
                     BottomNavigator navigator = (BottomNavigator) activity;
                     navigator.navigateToTabIndex(INDEX_PRODUCT, null);
-                    //TODO: check where all the places result is being checked
-//                    activity.setResult(Activity.RESULT_OK);
-//                    activity.finish();
-//                    activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
                 }
                 break;
             case R.id.btnRetry:
@@ -488,35 +480,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     public void toggleCartMode() {
         boolean isEditMode = toggleEditMode();
         btnEditCart.setText(isEditMode ? R.string.done : R.string.edit);
-//        btnCloseCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
         btnClearCart.setVisibility(isEditMode ? View.VISIBLE : View.GONE);
         deliveryLocationEnabled(!isEditMode);
     }
 
     private void dismissProgress() {
         pbRemoveAllItem.setVisibility(View.GONE);
-    }
-
-    private void onCloseButtonClick() {
-        int currentCartCount = 0;
-        if (productCountMap != null && productCountMap.getTotalProductCount() != null)
-            currentCartCount = productCountMap.getTotalProductCount();
-        // Check to prevent DISMISS_POP_WINDOW_CLICKED override setResult for toast clicked event
-        if (!toastButtonWasClicked && localCartCount != currentCartCount) {
-            //TODO: Nav stack changes
-//            setResult(DISMISS_POP_WINDOW_CLICKED);
-        }
-
-        //TODO: Nav stack changes
-        //TODO: Updates cart count when closed cart. In nav stack close button is not present
-        // so find another way to implement this functionality
-        /*ArrayList<CartItemGroup> cartItem = getCartItems();
-        if (cartItem == null || cartItem.isEmpty()) {
-            // No product, hide badge counter
-            QueryBadgeCounter.getInstance().setCartCount(0);
-        }*/
-
-        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT, getActivity());
     }
 
     private void callSavedAddress() {
@@ -1379,7 +1348,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             switch (resultCode) {
                 case REQUEST_CHECKOUT_ON_DESTROY:
                     reloadFragment();
-                    finishActivityOnCheckoutSuccess();
                     break;
                 case RESULT_RELOAD_CART:
                     checkLocationChangeAndReload();
@@ -1390,20 +1358,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
             }
         }
 
+        if (requestCode == CART_LAUNCH_VALUE && resultCode == SSOActivity.SSOActivityResult.STATE_MISMATCH.rawValue()) {
+            // login screen opens on cart and user closes it without login then move tab to last opened tab.
+            Activity activity = getActivity();
+            if (activity != null && activity instanceof BottomNavigationActivity) {
+                int previousTabIndex = ((BottomNavigationActivity) activity).getPreviousTabIndex();
+                ((BottomNavigationActivity) activity).getBottomNavigationById().setCurrentItem(previousTabIndex);
+            }
+        }
+
         // Retry callback when saved address api fails
         if (resultCode == ErrorHandlerActivity.RESULT_RETRY) {
             callSavedAddress();
         }
-    }
-
-    private void finishActivityOnCheckoutSuccess() {
-        //TODO: Nav stack change
-        /*Activity activity = getActivity();
-        if (activity != null) {
-            activity.setResult(CHECKOUT_SUCCESS);
-            activity.finish();
-            activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-        }*/
     }
 
     private void checkLocationChangeAndReload() {

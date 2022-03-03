@@ -365,11 +365,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		bottomNavigator.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
 	}
 
-	//TODO: Nav stack change
-	/*public void checkLocationPermission(@NonNull CartActivity cartActivity, ArrayList<String> permissionType, int request_code) {
-		cartActivity.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
-	}*/
-
 	public void slideDownOnToolbarNavigationOnClickListener() {
 		Activity activity = getActivity();
 		if (activity != null) {

@@ -713,7 +713,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
-        if (!isAdded) return
+        if (!isAdded || productDetails == null) return
 
         this.productDetails = productDetails
         otherSKUsByGroupKey = this.productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
@@ -737,7 +737,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             if (!this.productDetails?.productType.equals(
                     getString(R.string.food_product_type),
                     ignoreCase = true
-                ) && it.storePickup
+                ) && it?.storePickup
             ) {
                 showProductUnavailable()
                 showProductNotAvailableForCollection()
@@ -747,14 +747,14 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
             storeIdForInventory =
-                RecyclerViewViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)
+                RecyclerViewViewHolderItems.getFulFillmentStoreId(productDetails?.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
                 true -> showProductUnavailable()
                 false -> {
                     showProductDetailsLoading()
                     val multiSKUs =
-                        productDetails.otherSkus.joinToString(separator = "-") { it.sku }
+                        productDetails?.otherSkus.joinToString(separator = "-") { it.sku }
                     productDetailsPresenter?.loadStockAvailability(
                         storeIdForInventory!!,
                         multiSKUs,
@@ -763,7 +763,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 }
             }
 
-        } else if (productDetails.otherSkus.isNullOrEmpty()) {
+        } else if (productDetails?.otherSkus.isNullOrEmpty()) {
             showProductOutOfStock()
         } else {
             showErrorWhileLoadingProductDetails()
@@ -892,8 +892,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSize() {
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         productSizeSelectorAdapter =
-            ProductSizeSelectorAdapter(requireActivity(),otherSKUsByGroupKey[getSelectedGroupKey()]!!,
-                productDetails?.lowStockIndicator ?: 0, this).apply {
+            ProductSizeSelectorAdapter(requireActivity(),
+                otherSKUsByGroupKey[getSelectedGroupKey()]!!,
+                productDetails?.lowStockIndicator ?: 0,
+                this).apply {
                 sizeSelectorRecycleView.adapter = this
             }
 
@@ -1028,7 +1030,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun getDefaultSku(otherSKUsList: HashMap<String, ArrayList<OtherSkus>>): OtherSkus? {
-        otherSKUsList.keys.forEach { key ->
+        otherSKUsList?.keys?.forEach { key ->
             otherSKUsList[key]?.forEach { otherSku ->
                 if (otherSku.sku.equals(this.productDetails?.sku, ignoreCase = true)) {
                     defaultGroupKey = key
@@ -1418,8 +1420,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                         onActivityResult(ADD_TO_CART_SUCCESS_RESULT,
                             ADD_TO_CART_SUCCESS_RESULT,
                             intent)
-                        //setResult(RESULT_OK, intent)
-                        //onBackPressed()
                     }
                 }
             }
@@ -2947,7 +2947,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             layoutLowStockIndicator?.visibility = View.VISIBLE
             selectedSizePlaceholder?.visibility = View.GONE
             selectedSize?.layoutParams = it
-            layoutLowStockIndicator?.txtLowStockIndicator?.text = AppConfigSingleton.lowStock?.lowStockCopy
+            layoutLowStockIndicator?.txtLowStockIndicator?.text =
+                AppConfigSingleton.lowStock?.lowStockCopy
         }
         (sizeSelectorRecycleView?.layoutParams as ConstraintLayout.LayoutParams).let {
             it.topToBottom = R.id.layoutLowStockIndicator
@@ -2965,7 +2966,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      *  use selected size have not low stock
      *  not have lowStockThreshold > quantity
      */
-    private fun hideLowStockForSize(){
+    private fun hideLowStockForSize() {
         selectedSizePlaceholder.text =
             getString(R.string.product_placeholder_selected_size)
         (selectedSize?.layoutParams as ConstraintLayout.LayoutParams).let {
@@ -3020,7 +3021,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
      * This method used hide low stock when selected color have not
      * not have lowStockThreshold > quantity
      */
-    private fun hideLowStockFromSelectedColor(){
+    private fun hideLowStockFromSelectedColor() {
         colorPlaceholder.text = getString(R.string.selected_colour)
         (selectedColor?.layoutParams as ConstraintLayout.LayoutParams).let {
             it.startToEnd = R.id.colorPlaceholder

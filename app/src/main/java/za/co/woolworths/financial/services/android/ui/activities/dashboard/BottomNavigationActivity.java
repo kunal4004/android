@@ -184,6 +184,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private View notificationBadgeOne;
     private ImageView onlineIconImageView;
     private Boolean isDeeplinkAction = false;
+    private int currentTabIndex = INDEX_TODAY;
+    private int previousTabIndex = INDEX_TODAY;
 
     @Override
     public int getLayoutId() {
@@ -946,6 +948,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     @Override
     public void switchTab(int number) {
+        previousTabIndex = currentTabIndex;
+        currentTabIndex = number;
         mNavController.switchTab(number);
         SessionUtilities.getInstance().setBottomNavigationPosition(String.valueOf(number));
     }
@@ -1560,6 +1564,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             ShopFragment shopFragment = (ShopFragment) currentFragment;
             shopFragment.refreshCategories();
         }
+    }
+    public int getPreviousTabIndex() {
+        return previousTabIndex;
     }
 
     private void navigateMyAccountScreen() {
