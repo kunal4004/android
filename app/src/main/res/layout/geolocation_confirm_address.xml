@@ -5,16 +5,25 @@
     android:layout_height="match_parent">
 
 
-    <fragment
-        android:id="@+id/gMap"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <FrameLayout
+        android:id="@+id/mapFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <fragment
+            android:id="@+id/gMap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -31,6 +40,7 @@
             android:drawablePadding="@dimen/eight_dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:hint="@string/enter_your_street_number_and_name"
             android:paddingEnd="@dimen/_35sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -50,6 +60,7 @@
 
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgMapMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -67,20 +78,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/btnConfirmAddress"
-            style="@style/blackButtonStyle"
+
+        <TextView
+            android:id="@+id/confirmAddress"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/fifty_dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/twenty_five_dp"
             android:layout_marginEnd="@dimen/twenty_five_dp"
-            android:background="@color/black"
-            android:fontFamily="@font/futura_medium"
+            android:background="@drawable/order_add_to_cart_button_bg"
+            android:minHeight="@dimen/fifty_dp"
             android:text="@string/confirm_address"
+            android:textAllCaps="true"
+            android:enabled="false"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:letterSpacing="@integer/point_two"
+            android:textSize="@dimen/twelve_sp"
+            android:fontFamily="@font/futura_semi_bold_ttf"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"  />
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
