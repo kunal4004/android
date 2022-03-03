@@ -46,12 +46,12 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
         confirmAddressClick()
     }
 
-
     private fun clearAddress() {
         imgRemoveAddress?.setOnClickListener {
             autoCompleteTextView?.setText("")
         }
     }
+
     private fun confirmAddressClick() {
         btnConfirmAddress?.setOnClickListener {
             //TODO: call next screen with "placeId"
@@ -115,7 +115,6 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
         }
     }
 
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap?.uiSettings?.setAllGesturesEnabled(true)
@@ -178,3 +177,4 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
     }
 
 }
+

@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.util.wenum.Delivery
  */
 class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
+    private var mvalidateLocationResponse: ValidateLocationResponse? = null
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var placeId: String? = null
     private var latitude: Double? = null
@@ -65,7 +66,7 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                 activity?.onBackPressed()
             }
             R.id.geoloc_clickNCollectEditChangetv -> {
-
+                (activity as? BottomNavigationActivity)?.pushFragment(ClickAndCollectStoresFragment.newInstance(mvalidateLocationResponse))
             }
             R.id.btnConfirmAddress -> {
 
@@ -134,6 +135,7 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse.httpCode) {
                         HTTP_OK -> {
+                            mvalidateLocationResponse = validateLocationResponse
                             updateDeliveryDetails(validateLocationResponse)
                         }
                         else -> {

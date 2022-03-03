@@ -1696,6 +1696,10 @@
         <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
 
+    <style name="futura_semi_bold_black_20_text_style" parent="futura_semi_bold_black">
+        <item name="android:textSize">@dimen/twenty_sp</item>
+    </style>
+
     <style name="futura_semi_bold_black_24_text_style" parent="futura_semi_bold_black">
         <item name="android:textSize">@dimen/twenty_four_sp</item>
     </style>
