@@ -2431,6 +2431,8 @@
 
     <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
     <string name="change_location">CHANGE LOCATION</string>
+    <string name="no_location_title">We Can’t Deliver \n To This Location Yet.</string>
+    <string name="no_location_desc">However, we’re growing quickly, \n so please check back soon</string>
     <string name="confirm_delivery_location_title">Confirm Your Delivery Location</string>
     <string name="current_delivery_location_desc">Your current delivery location is set to</string>
     <string name="confirm_collection_location_title">Confirm Your Collection Store</string>
@@ -2439,4 +2441,6 @@
     <string name="edt_location">EDIT LOCATION </string>
 
 
+
+    <string name="product_listing_price_from">From</string>
 </resources>
