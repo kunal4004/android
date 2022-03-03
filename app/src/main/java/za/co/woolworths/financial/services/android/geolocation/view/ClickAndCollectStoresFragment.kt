@@ -96,15 +96,15 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
                 googleMap?.addMarker(
                     MarkerOptions().position(
                         LatLng(
-                            addressStorList.get(i).latitude!!,
-                            addressStorList.get(i).longitude!!
+                            addressStorList?.get(i)?.latitude!!,
+                            addressStorList?.get(i)?.longitude!!
                         )
                     ).icon(BitmapFromVector(requireContext(), R.drawable.pin))
                 )
                 googleMap?.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
                 googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(
-                    addressStorList.get(i).latitude!!,
-                    addressStorList.get(i).longitude!!
+                    addressStorList.get(i)?.latitude!!,
+                    addressStorList.get(i)?.longitude!!
                 )));
             }
         }
