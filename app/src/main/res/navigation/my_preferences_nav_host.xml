@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_myPreferencesFragment_to_viewAllLinkedDevicesFragment"
             app:destination="@id/viewAllLinkedDevicesFragment" />
+        <action
+            android:id="@+id/action_myPreferencesFragment_to_confirmAddressFragment"
+            app:destination="@id/confirmAddressFragment" />
     </fragment>
 
     <dialog
@@ -71,4 +74,10 @@
     </fragment>
 
     <include app:graph="@navigation/graph_link_primary_device_otp" />
+
+    <fragment
+        android:id="@+id/confirmAddressFragment"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment"
+        android:label="ConfirmAddressFragment"
+        tools:layout="@layout/confirm_address_bottom_sheet_dialog"/>
 </navigation>
