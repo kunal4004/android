@@ -1,15 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.confirm_deliverylocation_bottom_sheet_dialog.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.Utils
+
+import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
     private var listener: IOnConfirmDeliveryLocationActionListener? = null
@@ -20,8 +23,6 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         try {
             listener = parentFragment as IOnConfirmDeliveryLocationActionListener?
         } catch (e: ClassCastException) {
@@ -44,17 +45,19 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
             listener?.onSetNewLocation()
             dismissAllowingStateLoss()
         }
-       // configureUI()
+        configureUI()
     }
 
-    /*private fun configureUI() {
+    private fun configureUI() {
         Utils.getPreferredDeliveryLocation()?.apply {
-                btnSetNewLocation?.text = activity?.resources?.getString(if (storePickup) R.string.edit_collection_location else R.string.edit_delivery_location)
-                title?.text = activity?.resources?.getString(if (storePickup) R.string.set_your_collection_location else R.string.set_your_delivery_location)
-                description?.text = activity?.resources?.getString(if (storePickup) R.string.your_collection_location_is_currently_set_to else R.string.your_delivery_location_is_set_to)
-                deliverLocationIcon?.setBackgroundResource(if (storePickup) R.drawable.icon_basket else R.drawable.icon_truck)
-                tvLocation.text = if (storePickup) store?.name else suburb?.name + ", " + this.province.name
+            val storePickup = KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
+            btnSetNewLocation.setPaintFlags(btnSetNewLocation.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
+            btnSetNewLocation.setText(activity?.resources?.getString(R.string.edt_location))
+            title?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_title else R.string.confirm_delivery_location_title)
+            description?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_desc else R.string.current_delivery_location_desc)
+            deliverLocationIcon?.setBackgroundResource(if (storePickup) R.drawable.basket else R.drawable.ic_delivery_truck)
+            tvLocation.text = KotlinUtils.getPreferredDeliveryAddressOrStoreName()
         }
     }
-*/
+
 }

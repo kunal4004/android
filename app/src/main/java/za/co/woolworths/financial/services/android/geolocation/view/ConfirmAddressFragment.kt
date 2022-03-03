@@ -43,8 +43,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private var selectedAddress = Address()
 
     companion object {
-        var dialogInstance = ConfirmAddressFragment()
-        fun newInstance() = dialogInstance
+        fun newInstance() = ConfirmAddressFragment()
     }
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel

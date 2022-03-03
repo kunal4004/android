@@ -54,6 +54,7 @@ import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.geolocation.view.GeolocationDeliveryAddressConfirmationFragment;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -1206,7 +1207,17 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onSetNewLocation() {
-        KotlinUtils.Companion.presentEditDeliveryLocationActivity(this.getActivity(), REQUEST_SUBURB_CHANGE, null);
+        /*
+        start GeolocationDelivery Address Confirmation Fragment
+        // place id :  take from cache
+        // delivery type : take from cache
+        */
+        String placeId = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId();
+        String deliveryType = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getDeliveryType();
+        BottomNavigationActivity activity = (BottomNavigationActivity) getActivity();
+        if (activity !=null) {
+            activity.pushFragment(GeolocationDeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType));
+        }
     }
 
     public int getTotalItemQuantity(List<AddItemToCart> addItemToCart) {

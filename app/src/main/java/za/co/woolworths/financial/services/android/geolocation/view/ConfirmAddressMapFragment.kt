@@ -102,12 +102,12 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
         }
     }
 
-
     private fun clearAddress() {
         imgRemoveAddress?.setOnClickListener {
             autoCompleteTextView?.setText("")
         }
     }
+
     private fun confirmAddressClick() {
         confirmAddress?.setOnClickListener {
             //TODO: call next screen with "placeId"
@@ -171,7 +171,6 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
                 }
         }
     }
-
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -255,3 +254,4 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
     }
 
 }
+

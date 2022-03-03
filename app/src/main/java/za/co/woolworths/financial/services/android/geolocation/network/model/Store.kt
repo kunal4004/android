@@ -41,4 +41,10 @@ class Store {
 
     @SerializedName("deliveryStatus")
     var deliveryStatus: DeliveryStatus? = null
+
+    @SerializedName("longitude")
+    var longitude: Double?= null
+
+    @SerializedName("latitude")
+    var latitude: Double?= null
 }
