@@ -9,12 +9,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.geolocation_deliv_click_collect.*
+import kotlinx.android.synthetic.main.layout_laocation_not_available.view.*
+import kotlinx.android.synthetic.main.no_collection_store_fragment.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -65,6 +68,18 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
             }
             R.id.btnConfirmAddress -> {
 
+            }
+
+            R.id.btn_no_loc_change_location -> {
+                (activity as? BottomNavigationActivity)?.pushFragment(ConfirmAddressFragment.newInstance())
+            }
+
+            R.id.btn_change_location -> {
+                (activity as? BottomNavigationActivity)?.pushFragment(ConfirmAddressFragment.newInstance())
+            }
+
+            R.id.img_close -> {
+                (activity as? BottomNavigationActivity)?.popFragment()
             }
         }
     }
@@ -125,6 +140,27 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
     }
 
     private fun updateDeliveryDetails(validateLocationResponse: ValidateLocationResponse) {
+
+        if (validateLocationResponse?.validatePlace?.stores?.isEmpty() == true) {
+            no_conn_layout?.visibility = View.VISIBLE
+            main_layout?.visibility = View.GONE
+            no_loc_layout?.visibility = View.GONE
+            geoloc_deliv_clickLayout?.visibility = View.GONE
+            geoloc_deliv_click_back?.visibility = View.GONE
+            no_conn_layout?.img_close?.setOnClickListener(this)
+            no_conn_layout?.btn_change_location?.setOnClickListener(this)
+            return
+        }
+
+        if (validateLocationResponse?.validatePlace?.deliverable == false) {
+            no_loc_layout?.visibility = View.VISIBLE
+            main_layout?.visibility = View.GONE
+            /*TODO: Set image as Per standard delivery or CNC*/
+            no_loc_layout?.img_no_loc?.setImageDrawable(resources.getDrawable(R.drawable.ic_delivery_truck))
+            no_loc_layout?.btn_no_loc_change_location?.setOnClickListener(this)
+            return
+        }
+
         geolocDeliveryDetailsLayout.visibility = View.VISIBLE
         productsAvailableValue?.text = ""//validateLocationResponse.validatePlace
         itemLimitValue?.text = ""//validateLocationResponse.validatePlace
