@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.Department
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RootCategoryViewType
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
 internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit, private val onEditDeliveryLocation: () -> Unit, private val onDashBannerClick: () -> Unit, var validatedSuburbProducts: ValidatedSuburbProducts? = null)
@@ -127,14 +128,14 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
             } else {
                 validatedSuburbProducts?.let { it ->
                     itemView.apply {
-                        when (Utils.getPreferredDeliveryLocation()?.storePickup) {
-                            true -> {
+                        when (KotlinUtils.getPreferredDeliveryType()) {
+                            Delivery.CNC -> {
                                 earliestDateValue?.text = it.firstAvailableFoodDeliveryDate ?: ""
                                 earliestDateValue?.visibility = View.VISIBLE
                                 foodItemsDeliveryDateLayout?.visibility = View.GONE
                                 otherItemsDeliveryDateLayout?.visibility = View.GONE
                             }
-                            false -> {
+                            Delivery.STANDARD -> {
                                 foodItemsDeliveryDate?.text = it.firstAvailableFoodDeliveryDate
                                         ?: ""
                                 otherItemsDeliveryDate?.text = it.firstAvailableOtherDeliveryDate
@@ -144,7 +145,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
                                 otherItemsDeliveryDateLayout?.visibility = if (it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.GONE else View.VISIBLE
                             }
                         }
-                        earliestDateTitle?.text = bindString(if (Utils.getPreferredDeliveryLocation()?.storePickup == false) R.string.earliest_delivery_date else R.string.earliest_collection_date)
+                        earliestDateTitle?.text = bindString(if (KotlinUtils.getPreferredDeliveryType() == Delivery.STANDARD) R.string.earliest_delivery_date else R.string.earliest_collection_date)
                         deliveryDateLayout?.visibility = if (!it.firstAvailableFoodDeliveryDate.isNullOrEmpty() || !it.firstAvailableOtherDeliveryDate.isNullOrEmpty()) View.VISIBLE else View.GONE
                     }
                 }
