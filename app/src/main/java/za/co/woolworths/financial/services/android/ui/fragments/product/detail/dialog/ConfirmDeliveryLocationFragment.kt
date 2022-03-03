@@ -15,9 +15,9 @@ import android.text.SpannableString
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.nav_drawer_row.*
 import android.text.Html
-
-
-
+import za.co.woolworths.financial.services.android.util.DeliveryType
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
 class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
@@ -53,18 +53,19 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
             listener?.onSetNewLocation()
             dismissAllowingStateLoss()
         }
-       // configureUI()
+        configureUI()
     }
 
-    /*private fun configureUI() {
+    private fun configureUI() {
         Utils.getPreferredDeliveryLocation()?.apply {
+            val storePickup = KotlinUtils.getPreferredDeliveryType() == Delivery.CNC
             btnSetNewLocation.setPaintFlags(btnSetNewLocation.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
             btnSetNewLocation.setText(activity?.resources?.getString(R.string.edt_location))
             title?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_title else R.string.confirm_delivery_location_title)
             description?.text = activity?.resources?.getString(if (storePickup) R.string.confirm_collection_location_desc else R.string.current_delivery_location_desc)
             deliverLocationIcon?.setBackgroundResource(if (storePickup) R.drawable.basket else R.drawable.ic_delivery_truck)
-            tvLocation.text = if (storePickup) store?.name else suburb?.name + ", " + this.province.name
+            tvLocation.text = KotlinUtils.getPreferredDeliveryAddressOrStoreName()
         }
     }
-*/
+
 }
