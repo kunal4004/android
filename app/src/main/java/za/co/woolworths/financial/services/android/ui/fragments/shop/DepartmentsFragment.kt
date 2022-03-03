@@ -311,8 +311,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         return when (rootCategory.hasChildren) {
             // navigate to drill down of categories
             true -> {
-                bundle.putString("ROOT_CATEGORY", Utils.toJson(rootCategory))
-                bundle.putString("VERSION", version)
+                bundle.putString(SubCategoryFragment.KEY_ARGS_ROOT_CATEGORY, Utils.toJson(rootCategory))
+                bundle.putString(SubCategoryFragment.KEY_ARGS_VERSION, version)
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }
