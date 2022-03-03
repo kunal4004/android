@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
@@ -88,12 +89,20 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
         private val KEY_LATITUDE = "latitude"
         private val KEY_LONGITUDE = "longitude"
         private val KEY_PLACE_ID = "placeId"
+        private val DELIVERY_TYPE = "deliveryType"
 
         fun newInstance(latitude: Double, longitude: Double, placesId: String) =
             GeolocationDeliveryAddressConfirmationFragment().withArgs {
                 putDouble(KEY_LATITUDE, latitude)
                 putDouble(KEY_LONGITUDE, longitude)
                 putString(KEY_PLACE_ID, placesId)
+            }
+
+        @JvmStatic
+        fun newInstance(placesId: String?, deliveryType: String? = "Standard") =
+            GeolocationDeliveryAddressConfirmationFragment().withArgs {
+                putString(KEY_PLACE_ID, placesId)
+                putString(DELIVERY_TYPE, deliveryType)
             }
     }
 

@@ -56,6 +56,7 @@ import kotlinx.coroutines.*
 import za.co.woolworths.financial.services.android.common.SingleMessageCommonToast
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
+import za.co.woolworths.financial.services.android.geolocation.view.GeolocationDeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -1341,12 +1342,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onSetNewLocation() {
-        activity?.apply {
-            KotlinUtils.presentEditDeliveryLocationActivity(
-                this,
-                REQUEST_SUBURB_CHANGE
-            )
-        }
+    /*
+        start GeolocationDelivery Address Confirmation Fragment
+        // place id :  take from cache
+        // delivery type : take from cache
+    */
+        val placeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+        val deliveryType = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+            GeolocationDeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType))
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
