@@ -13,15 +13,17 @@ import kotlinx.android.synthetic.main.layout_laocation_not_available.view.*
 import kotlinx.android.synthetic.main.no_collection_store_fragment.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.geolocation.model.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.model.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.WFormatter
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
@@ -69,7 +71,7 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                 (activity as? BottomNavigationActivity)?.pushFragment(ClickAndCollectStoresFragment.newInstance(mvalidateLocationResponse))
             }
             R.id.btnConfirmAddress -> {
-
+                   confirmLocation()
             }
 
             R.id.btn_no_loc_change_location -> {
@@ -82,6 +84,39 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
 
             R.id.img_close -> {
                 (activity as? BottomNavigationActivity)?.popFragment()
+            }
+        }
+    }
+
+    private fun confirmLocation() {
+
+        if (placeId == null) {
+            return
+        }
+
+        val confirmLocationAddress = ConfirmLocationAddress(placeId)
+        val confirmLocationRequest = ConfirmLocationRequest("Standard", confirmLocationAddress)
+        lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
+            try {
+                val confirmLocationResponse =
+                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                progressBar.visibility = View.GONE
+                if (confirmLocationResponse != null) {
+                    when (confirmLocationResponse.httpCode) {
+                        HTTP_OK -> {
+                             // save details in cache
+                             // navigate to shop tab
+                        }
+                        else -> {
+                            // navigate to shop tab with error sceanario
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                progressBar.visibility = View.GONE
+                // navigate to shop tab with error sceanario
             }
         }
     }

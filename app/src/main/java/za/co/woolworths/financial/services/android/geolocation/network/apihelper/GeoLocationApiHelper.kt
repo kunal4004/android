@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.geolocation.network.apihelper
 
 import retrofit2.await
+import za.co.woolworths.financial.services.android.geolocation.model.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.models.network.RetrofitConfig
 
 class GeoLocationApiHelper : RetrofitConfig() {
@@ -18,4 +19,12 @@ class GeoLocationApiHelper : RetrofitConfig() {
             longitude,
             placeId).await()
 
+    suspend fun postConfirmLocation(confirmLocationRequest: ConfirmLocationRequest) =
+        mApiInterface.confirmLocation("",
+            "",
+            getSessionToken(),
+            getDeviceIdentityToken(),
+            "SIT2",
+            confirmLocationRequest
+            ).await()
 }

@@ -8,6 +8,7 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
+import za.co.woolworths.financial.services.android.geolocation.model.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -1257,5 +1258,16 @@ interface ApiInterface {
         @Query("productGroupCode") productGroupCode: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String
     ): EligibilityPlanResponse
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/cartV2/confirmLocation")
+    fun confirmLocation(
+
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Header("environment") String: String,
+        @Body confirmLocationRequest: ConfirmLocationRequest): Call<ShoppingCartResponse>
 }
 
