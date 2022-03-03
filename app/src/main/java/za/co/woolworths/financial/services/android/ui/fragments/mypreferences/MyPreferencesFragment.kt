@@ -429,7 +429,6 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
     }
 
     private fun locationSelectionClicked() {
-      //  presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null)
         activity?.apply {
             if (this is MyPreferencesInterface) {
                 hideToolbar()
