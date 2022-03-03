@@ -15,6 +15,8 @@ class StoreListAdapter (
     val listener: OnStoreSelected
 ) : RecyclerView.Adapter<StoreListAdapter.SavedAddressViewHolder>() {
 
+    private var lastSelectedPosition: Int = -1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedAddressViewHolder {
         return SavedAddressViewHolder(
             LayoutInflater.from(context).inflate(R.layout.store_row_layout, parent, false)
@@ -29,20 +31,28 @@ class StoreListAdapter (
     }
 
     override fun onBindViewHolder(holder: SavedAddressViewHolder, position: Int) {
-        holder.tvAddressNickname.text = storeList?.get(position)?.storeName
-        holder.tvAddress.text = storeList?.get(position)?.storeAddress
-        holder.tvStoreDistance.text = storeList?.get(position)?.distance.toString()
+        holder.bindItems(storeList?.get(position), position)
     }
 
     inner class SavedAddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvAddressNickname = itemView.tvAddressNickName
-        val tvStoreDistance= itemView.txtStoreDistance
-        val imgAddressSelector= itemView.imgAddressSelector
-        val view = itemView
-        val tvAddress = itemView.tvAddress
+        fun bindItems(store: Store?, position: Int) {
+            itemView.tvAddressNickName.text = store?.storeName
+            itemView.tvAddress.text = store?.storeAddress
+            itemView.txtStoreDistance.text = store?.distance.toString()
+            if (lastSelectedPosition == position) {
+                itemView.imgAddressSelector.isChecked = true
+            } else {
+                itemView.imgAddressSelector.isChecked = false
+            }
+            itemView.imgAddressSelector.setOnClickListener {
+                lastSelectedPosition = adapterPosition
+                notifyDataSetChanged()
+                listener.onStoreSelected(store)
+            }
+        }
     }
 
     interface OnStoreSelected {
-        fun onStoreSelected(store: Store)
+        fun onStoreSelected(store: Store?)
     }
 }

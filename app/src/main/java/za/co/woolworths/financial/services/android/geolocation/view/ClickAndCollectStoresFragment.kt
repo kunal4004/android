@@ -27,6 +27,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 
 import android.graphics.drawable.Drawable
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 
@@ -34,10 +35,11 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 
 
 class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
-    StoreListAdapter.OnStoreSelected {
+    StoreListAdapter.OnStoreSelected, View.OnClickListener {
 
     private lateinit var mapFragment: SupportMapFragment
     private var mValidateLocationResponse: ValidateLocationResponse? = null
+    private var mStore: Store? = null
 
     companion object {
 
@@ -155,7 +157,16 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
         }
     }
 
-    override fun onStoreSelected(store: Store) {
-
+    override fun onStoreSelected(store: Store?) {
+        this.mStore = store
     }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.tvConfirmStore -> {
+              /*TODO : start GeoLocationDeliveryAddressCnfirmation Fragment with mStore object */
+            }
+        }
+    }
+
 }
