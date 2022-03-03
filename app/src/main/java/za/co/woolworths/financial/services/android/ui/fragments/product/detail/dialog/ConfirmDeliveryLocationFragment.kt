@@ -9,16 +9,10 @@ import kotlinx.android.synthetic.main.confirm_deliverylocation_bottom_sheet_dial
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
-import android.text.style.UnderlineSpan
 
-import android.text.SpannableString
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.nav_drawer_row.*
-import android.text.Html
-import za.co.woolworths.financial.services.android.util.DeliveryType
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.wenum.Delivery
-
 
 class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
     private var listener: IOnConfirmDeliveryLocationActionListener? = null
@@ -29,8 +23,6 @@ class ConfirmDeliveryLocationFragment : WBottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         try {
             listener = parentFragment as IOnConfirmDeliveryLocationActionListener?
         } catch (e: ClassCastException) {
