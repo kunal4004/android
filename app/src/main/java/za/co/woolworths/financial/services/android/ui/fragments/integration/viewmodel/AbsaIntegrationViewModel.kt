@@ -107,11 +107,16 @@ class AbsaIntegrationViewModel : ViewModel() {
         inProgress(true)
 
         with(absaValidateCardAndPinDelegate) {
-            viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+            viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+                failureHandler(failureResult)
+            }) {
                 val fetchAbsaContentEncryptionKeyId = fetchAbsaContentEncryptionKeyId()
                 AbsaApiResponse(false, fetchAbsaContentEncryptionKeyId, CekdResponseProperty::class) { result ->
                     when(result){
-                        is AbsaResultWrapper.Section.Cekd.StatusCodeValid ->  viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) { executeValidateCardAndPin(cardPin, cardToken) }
+                        is AbsaResultWrapper.Section.Cekd.StatusCodeValid ->
+                            viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+                                failureHandler(failureResult)
+                            }) { executeValidateCardAndPin(cardPin, cardToken) }
                         is AbsaResultWrapper.Failure ->  failureHandler(result.failure)
                         else -> return@AbsaApiResponse
                     }
@@ -122,7 +127,9 @@ class AbsaIntegrationViewModel : ViewModel() {
 
     private fun executeValidateCardAndPin(cardPin: String?, cardToken: String?) {
         with(absaValidateCardAndPinDelegate) {
-            viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+            viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+                failureHandler(failureResult)
+            }) {
                 val fetchValidateCardAndPin = fetchValidateCardAndPin(cardPin, cardToken)
                 AbsaApiResponse(true, fetchValidateCardAndPin, ValidateCardAndPinResponseProperty::class) { result ->
                     when (result) {
@@ -145,7 +152,9 @@ class AbsaIntegrationViewModel : ViewModel() {
      private fun fetchValidateSureCheck(securityNotificationType: SecurityNotificationType?) {
         with(absaValidateCardAndPinDelegate) {
             mScheduleValidateSureCheck = schedulePollingWithFixedDelay {
-                viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+                viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+                    failureHandler(failureResult)
+                }) {
                     val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheck(securityNotificationType)
                     AbsaApiResponse(true, fetchAbsaValidateSureCheck, ValidateSureCheckResponseProperty::class) { result ->
                         when(result){
@@ -213,7 +222,9 @@ class AbsaIntegrationViewModel : ViewModel() {
     }
 
     fun fetchValidateSureCheckForOTP(otpToBeVerified : String? = null) {
-        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+            failureHandler(failureResult)
+        }) {
             with(absaValidateCardAndPinDelegate) {
                 val fetchAbsaValidateSureCheck = fetchAbsaValidateSureCheckOTP(SecurityNotificationType.OTP, otpToBeVerified)
                 AbsaApiResponse(true, fetchAbsaValidateSureCheck, ValidateSureCheckResponseProperty::class) { result ->
@@ -245,7 +256,9 @@ class AbsaIntegrationViewModel : ViewModel() {
     }
 
     fun fetchCreateAlias() {
-        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+            failureHandler(failureResult)
+        }) {
             with(absaValidateCardAndPinDelegate) {
                 val fetchCreateAlias = fetchCreateAlias()
                 AbsaApiResponse(true, fetchCreateAlias, CreateAliasResponseProperty::class)
@@ -266,7 +279,9 @@ class AbsaIntegrationViewModel : ViewModel() {
 
     fun fetchRegisterCredentials(aliasId: String?, passcode: String?) {
         with(absaRegisterCredentialDelegate) {
-            viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+            viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+                failureHandler(failureResult)
+            }) {
                 val fetchRegisterCredentialResponse =
                     fetchAbsaRegisterCredentials(aliasId, passcode)
                 AbsaApiResponse(
@@ -292,7 +307,9 @@ class AbsaIntegrationViewModel : ViewModel() {
 
     fun fetchLogin(passcode: String){
         with(absaLoginDelegate){
-        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+            failureHandler(failureResult)
+        }) {
             inProgress(true)
             val fetchAbsaContentEncryptionKeyId = fetchAbsaContentEncryptionKeyId()
             AbsaApiResponse(
@@ -302,18 +319,21 @@ class AbsaIntegrationViewModel : ViewModel() {
                 when(result){
                     AbsaResultWrapper.Loading -> inProgress(true)
                     is AbsaResultWrapper.Failure -> failureHandler(result.failure)
-                    is AbsaResultWrapper.Section.Cekd.StatusCodeValid->  viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
-                        val fetchRegisterCredentialResponse =  fetchAbsaLogin(passcode)
-                        AbsaApiResponse(true, fetchRegisterCredentialResponse, LoginResponseProperty::class) { login ->
-                            when(login){
-                                is AbsaResultWrapper.Loading -> inProgress(true)
-                                is AbsaResultWrapper.Failure -> failureHandler(login.failure)
-                                is AbsaResultWrapper.Section.Login.StatusCodeValid -> { _loginResponseProperty.postValue(login.response)}
-                                is AbsaResultWrapper.Section.Login.StatusCodeInValid -> { failureHandler(login.failure)}
+                    is AbsaResultWrapper.Section.Cekd.StatusCodeValid ->
+                        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+                            failureHandler(failureResult)
+                        }) {
+                            val fetchRegisterCredentialResponse =  fetchAbsaLogin(passcode)
+                            AbsaApiResponse(true, fetchRegisterCredentialResponse, LoginResponseProperty::class) { login ->
+                                when(login){
+                                    is AbsaResultWrapper.Loading -> inProgress(true)
+                                    is AbsaResultWrapper.Failure -> failureHandler(login.failure)
+                                    is AbsaResultWrapper.Section.Login.StatusCodeValid -> { _loginResponseProperty.postValue(login.response)}
+                                    is AbsaResultWrapper.Section.Login.StatusCodeInValid -> { failureHandler(login.failure)}
+                                }
+                                inProgress(false)
                             }
-                            inProgress(false)
                         }
-                    }
                 }
             }
         }
@@ -321,7 +341,9 @@ class AbsaIntegrationViewModel : ViewModel() {
     }
 
     fun fetchBalanceEnquiryFacadeGetAllBalances(eSessionId: String?, nonce: String?, timestampAsString: String?) {
-        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+            failureHandler(failureResult)
+        }) {
             inProgress(true)
             val  fetchAbsaBalanceEnquiryFacadeGetAllBalance =  absaShowStatementDelegate.fetchAbsaBalanceEnquiryFacadeGetAllBalance(eSessionId, nonce, timestampAsString)
             AbsaApiResponse(
@@ -341,7 +363,9 @@ class AbsaIntegrationViewModel : ViewModel() {
 
     fun fetchArchivedStatement(header: Header?, number: String?) {
         inProgress(true)
-        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+            failureHandler(failureResult)
+        }) {
             val fetchArchivedStatement = absaShowStatementDelegate.fetchAbsaArchivedStatement(header,getCookieWithXFPTAndWFPT(), number)
             AbsaApiResponse(
                 true,
@@ -359,7 +383,9 @@ class AbsaIntegrationViewModel : ViewModel() {
     }
 
     fun fetchIndividualStatement(archivedStatement: ArchivedStatement) {
-        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler()) {
+        viewModelScope.launch(KotlinUtils.coroutineContextWithExceptionHandler { failureResult ->
+            failureHandler(failureResult)
+        }) {
             inProgress(true)
             val fetchIndividualStatement = absaShowStatementDelegate.fetchAbsaIndividualStatement(getCookieWithXFPTAndWFPT(), archivedStatement)
             AbsaApiResponse(

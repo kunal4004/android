@@ -68,6 +68,8 @@ import za.co.woolworths.financial.services.android.ui.activities.account.sign_in
 import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.*
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.AbsaApiFailureHandler
+import za.co.woolworths.financial.services.android.ui.fragments.integration.utils.NetworkState
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
@@ -908,18 +910,13 @@ class KotlinUtils {
             )
         }
 
-        fun coroutineContextWithExceptionHandler(): CoroutineContext {
+        fun coroutineContextWithExceptionHandler(errorHandler: (AbsaApiFailureHandler) -> Unit): CoroutineContext {
             return (Dispatchers.IO + CoroutineExceptionHandler{ _, throwable ->
-                if (throwable is SocketException) {
-                    //TODO::very bad internet
-                }
-
-                if (throwable is HttpException) {
-                    //TODO::parse error body message
-                }
-
-                if (throwable is UnknownHostException) {
-                    //TODO::probably no internet or base url is wrong
+                when (throwable) {
+                    is SocketException -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
+                    is HttpException -> errorHandler(AbsaApiFailureHandler.HttpException(throwable.message(), throwable.code()))
+                    is Exception -> errorHandler(AbsaApiFailureHandler.Exception(throwable.message, throwable.hashCode()))
+                    else -> errorHandler(AbsaApiFailureHandler.NoInternetApiFailure)
                 }
             })
         }
