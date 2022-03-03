@@ -206,9 +206,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         if (it.latitude != null && it.longitude != null && it.placesId != null) {
                             (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
                                 GeolocationDeliveryAddressConfirmationFragment.newInstance(
-                                    -33.9228,
-                                    18.4233,
-                                    "EiRMb3R1cyBSaXZlciwgQ2FwZSBUb3duLCBTb3V0aCBBZnJpY2EiLiosChQKEgm7_uOL90PMHRGhcHCGx9_rrRIUChIJ1-4miA9QzB0Rh6ooKPzhf2g"))
+                                    selectedAddress.latitude!!,
+                                    selectedAddress.longitude!!,
+                                    selectedAddress.placesId!!))
                         }
                         else
                             return
