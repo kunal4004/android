@@ -191,7 +191,6 @@ class AccountSignedInPresenterImpl(
         mainView?.showAccountHelp(getCardProductInformation(true))
     }
 
-
     override fun showProductOfferOutstanding(
         state: ApplyNowState,
         myAccountsViewModel: MyAccountsRemoteApiViewModel,
@@ -203,6 +202,7 @@ class AccountSignedInPresenterImpl(
                 state { status ->
                     when (status) {
 
+                        //consumed
                         AccountOfferingState.AccountInGoodStanding -> {
                             //when productOfferingGoodStanding == true
                             hideAccountInArrears(account)

@@ -2,15 +2,16 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase.*
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.*
 import javax.inject.Inject
 
 @HiltViewModel
 class StoreCardAccountOptionsViewModel @Inject constructor(
     private val accountProduct: AccountProductLandingDao,
-    private val accountOptions: AccountOptionsImpl
+    private val accountOptions: AccountOptionsImpl,
 ) : ViewModel(), IAccountProductLandingDao by accountProduct,
     IAccountOptions by accountOptions {
+
     init {
         balanceProtectionInsurance()
         isDebitOrderActive()

@@ -6,27 +6,24 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.StoreCardAccountOptionsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
+import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.sealing.AccountOptions
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.autoCleared
+
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 @AndroidEntryPoint
-class StoreCardAccountOptionsFragment : Fragment() {
-    private var binding: StoreCardAccountOptionsFragmentBinding by autoCleared()
+class StoreCardAccountOptionsFragment : ViewBindingFragment<StoreCardAccountOptionsFragmentBinding>() {
+
     val viewModel: StoreCardAccountOptionsViewModel by activityViewModels()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = StoreCardAccountOptionsFragmentBinding.inflate(inflater, container, false)
-        return binding.root
+
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): StoreCardAccountOptionsFragmentBinding {
+        return StoreCardAccountOptionsFragmentBinding.inflate(inflater, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,44 +39,53 @@ class StoreCardAccountOptionsFragment : Fragment() {
                         is AccountOptions.ViewTreatmentPlan -> {}
                         is AccountOptions.SetUpAPaymentPlan -> {}
                         is AccountOptions.PaymentOptions -> {}
-                        is AccountOptions.BalanceProtectionInsurance -> showBalanceProtectionInsuranceTag(item)
-                        is AccountOptions.WithdrawCashNow -> withdrawCashView.visibility = GONE
-                        is AccountOptions.DebitOrder -> showDebitOrder(item.isActive)
+                        is AccountOptions.BalanceProtectionInsurance -> this?.showBalanceProtectionInsuranceTag(item)
+                        is AccountOptions.WithdrawCashNow -> this?.hideLoanWithdrawal()
+                        is AccountOptions.DebitOrder -> this?.showDebitOrder(item.isActive)
                     }
                 }
             }
         }
     }
 
-    private fun StoreCardAccountOptionsFragmentBinding.showBalanceProtectionInsuranceTag(
-        bpi : AccountOptions.BalanceProtectionInsurance
-    ) {
-            when (bpi.status) {
-                BpiInsuranceApplicationStatusType.INSURANCE_COVERED -> {
-                    balanceProtectionInsuranceTag.bpiTagTextView.visibility = VISIBLE
-                    balanceProtectionInsuranceTag.bpiNotCoveredTextView.visibility = GONE
-                    balanceProtectionInsuranceTag.balanceProtectionInsuranceArrowImageView.visibility = GONE
-                    balanceProtectionInsuranceTag.bpiTagTextView.text = getString(R.string.bpi_covered)
-                    KotlinUtils.roundCornerDrawable(balanceProtectionInsuranceTag.bpiTagTextView, Constants.GreenColorCode)
-                }
-                BpiInsuranceApplicationStatusType.NOT_COVERED -> {
-                    balanceProtectionInsuranceTag.bpiTagTextView.visibility = GONE
-                    balanceProtectionInsuranceTag.bpiNotCoveredTextView.visibility = VISIBLE
-                    balanceProtectionInsuranceTag.balanceProtectionInsuranceArrowImageView.visibility = VISIBLE
-                }
-                else -> {
-                    val data = bpi.leadGen
-                    val displayLabel = data?.displayLabel
-                    balanceProtectionInsuranceTag.bpiTagTextView.visibility = VISIBLE
-                    balanceProtectionInsuranceTag.bpiNotCoveredTextView.visibility = GONE
+    private fun StoreCardAccountOptionsFragmentBinding.hideLoanWithdrawal() {
+        withdrawCashView.visibility = GONE
+    }
 
-                    balanceProtectionInsuranceTag.balanceProtectionInsuranceArrowImageView.visibility = GONE
-                    balanceProtectionInsuranceTag.bpiTagTextView.text = displayLabel
-                    KotlinUtils.roundCornerDrawable(
-                        balanceProtectionInsuranceTag.bpiTagTextView,
-                        data?.displayLabelColor
-                    )
-                }
+    private fun StoreCardAccountOptionsFragmentBinding.showBalanceProtectionInsuranceTag(
+        bpi: AccountOptions.BalanceProtectionInsurance
+    ) {
+        when (bpi.status) {
+            BpiInsuranceApplicationStatusType.INSURANCE_COVERED -> {
+                balanceProtectionInsuranceTag.bpiTagTextView.visibility = VISIBLE
+                balanceProtectionInsuranceTag.bpiNotCoveredTextView.visibility = GONE
+                balanceProtectionInsuranceTag.balanceProtectionInsuranceArrowImageView.visibility =
+                    GONE
+                balanceProtectionInsuranceTag.bpiTagTextView.text = getString(R.string.bpi_covered)
+                KotlinUtils.roundCornerDrawable(
+                    balanceProtectionInsuranceTag.bpiTagTextView,
+                    Constants.GreenColorCode
+                )
+            }
+            BpiInsuranceApplicationStatusType.NOT_COVERED -> {
+                balanceProtectionInsuranceTag.bpiTagTextView.visibility = GONE
+                balanceProtectionInsuranceTag.bpiNotCoveredTextView.visibility = VISIBLE
+                balanceProtectionInsuranceTag.balanceProtectionInsuranceArrowImageView.visibility =
+                    VISIBLE
+            }
+            else -> {
+                val data = bpi.leadGen
+                val displayLabel = data?.displayLabel
+                balanceProtectionInsuranceTag.bpiTagTextView.visibility = VISIBLE
+                balanceProtectionInsuranceTag.bpiNotCoveredTextView.visibility = GONE
+                balanceProtectionInsuranceTag.balanceProtectionInsuranceArrowImageView.visibility =
+                    GONE
+                balanceProtectionInsuranceTag.bpiTagTextView.text = displayLabel
+                KotlinUtils.roundCornerDrawable(
+                    balanceProtectionInsuranceTag.bpiTagTextView,
+                    data?.displayLabelColor
+                )
+            }
         }
     }
 

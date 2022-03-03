@@ -154,3 +154,31 @@ inline fun <T> T?.whenNonNull(block: T.() -> Unit): T? {
     this?.block()
     return this@whenNonNull
 }
+
+
+enum class ApiStatus{
+    SUCCESS,
+    ERROR,
+    LOADING
+}
+
+sealed class AccountApiResult <out T> (val status: ApiStatus, val data: T?, val message:String?) {
+
+    data class Success<out R>(val _data: R?): AccountApiResult<R>(
+        status = ApiStatus.SUCCESS,
+        data = _data,
+        message = null
+    )
+
+    data class Error(val exception: String): AccountApiResult<Nothing>(
+        status = ApiStatus.ERROR,
+        data = null,
+        message = exception
+    )
+
+    data class Loading<out R>(val _data: R?, val isLoading: Boolean): AccountApiResult<R>(
+        status = ApiStatus.LOADING,
+        data = _data,
+        message = null
+    )
+}

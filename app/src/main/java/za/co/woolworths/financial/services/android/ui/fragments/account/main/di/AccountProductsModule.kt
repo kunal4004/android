@@ -6,10 +6,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
-import za.co.woolworths.financial.services.android.models.network.NetworkConfig
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardService
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.CollectionRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.StoreCardRepository
+import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.data.remote.collection.CollectionRemoteApiService
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.collection.CollectionRemoteDataSource
+
 import javax.inject.Singleton
 
 @Module
@@ -22,15 +25,26 @@ object AccountProductsModule {
 
     @Singleton
     @Provides
-    fun provideStoreCardDataSource(storeCardService: StoreCardService, networkConfig: NetworkConfig) =
-        StoreCardDataSource(storeCardService, networkConfig)
-
-    @Singleton
-    @Provides
-    fun provideNetworkConfig() = NetworkConfig()
+    fun provideStoreCardDataSource(storeCardService: StoreCardService) =
+        StoreCardDataSource(storeCardService)
 
     @Singleton
     @Provides
     fun provideRepository(remoteDataSource: StoreCardDataSource) =
         StoreCardRepository(remoteDataSource)
+
+
+    @Provides
+    fun provideCollectionRemoteApiService(retrofit: Retrofit): CollectionRemoteApiService = retrofit.create(CollectionRemoteApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideCollectionRemoteDataSource(collectionRemoteApiService: CollectionRemoteApiService) =
+        CollectionRemoteDataSource(collectionRemoteApiService)
+
+    @Singleton
+    @Provides
+    fun provideCollectionRepository(remoteDataSource: CollectionRemoteDataSource) =
+        CollectionRepository(remoteDataSource)
+
 }

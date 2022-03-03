@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities.StoreCard
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.activities
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -7,8 +7,10 @@ import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StoreCardActivity : AppCompatActivity() {
@@ -16,6 +18,8 @@ class StoreCardActivity : AppCompatActivity() {
     lateinit var binding: AccountProductLandingActivityBinding
 
     val viewModel: AccountProductsHomeViewModel by viewModels()
+
+    @Inject lateinit var navigationGraph : NavigationGraph
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +36,7 @@ class StoreCardActivity : AppCompatActivity() {
 
     private fun setupView() {
         val fragmentContainer = supportFragmentManager.findFragmentById(R.id.accountProductLandingFragmentContainerView) as? NavHostFragment
-        viewModel.setupNavigationGraph(
+        navigationGraph.setupNavigationGraph(
             fragmentContainer?.navController,
             graphResId = R.navigation.nav_account_product_landing,
             startDestinationId = R.id.accountProductsMainFragment,

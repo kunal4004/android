@@ -11,10 +11,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.main.com
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.WBottomSheetBehaviour
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.INavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase.AccountProductLandingDao
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase.BalanceProtectionInsuranceImpl
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase.IAccountProductLandingDao
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase.IBalanceProtectionInsurance
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.AccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.BalanceProtectionInsuranceImpl
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IAccountProductLandingDao
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.IBalanceProtectionInsurance
 
 @Module
 @InstallIn(SingletonComponent::class)

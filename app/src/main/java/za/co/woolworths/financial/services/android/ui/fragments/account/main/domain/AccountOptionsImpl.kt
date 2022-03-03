@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.main.usecase
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.domain
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

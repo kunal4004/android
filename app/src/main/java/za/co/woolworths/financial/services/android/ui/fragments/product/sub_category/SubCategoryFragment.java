@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ImageManager;
@@ -37,8 +38,6 @@ import za.co.woolworths.financial.services.android.util.expand.ParentSubCategory
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryAdapter;
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryChild;
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryModel;
-
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 
 public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragmentBinding, SubCategoryViewModel> implements SubCategoryNavigator, View.OnClickListener {
 

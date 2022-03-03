@@ -90,7 +90,6 @@ open class AvailableFundsFragment : Fragment() {
         bottomViewSetup(view)
         connectionBroadCastReciver()
 
-
         viewModel.getNavigationResult().observe(viewLifecycleOwner) { result ->
             when (result) {
                 PayMyAccountViewModel.OnBackNavigation.RETRY -> {

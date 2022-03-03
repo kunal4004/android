@@ -12,5 +12,4 @@ class StoreCardRepository @Inject constructor(
         networkCall = { storeCardDataSource.getCreditCardToken() }
     )
 
-
 }
