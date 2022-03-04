@@ -1233,13 +1233,4 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
         return totalQuantity;
     }
-
-    @Override
-    public void onDestroy() {
-        Activity activity = getActivity();
-        if (activity instanceof BottomNavigationActivity) {
-            ((BottomNavigationActivity) activity).showToolbar();
-        }
-        super.onDestroy();
-    }
 }
