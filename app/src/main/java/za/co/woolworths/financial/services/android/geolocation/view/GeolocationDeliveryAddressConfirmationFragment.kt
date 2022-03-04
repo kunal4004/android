@@ -21,8 +21,11 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.WFormatter
 
 /**
@@ -71,7 +74,20 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                 (activity as? BottomNavigationActivity)?.pushFragment(ClickAndCollectStoresFragment.newInstance(mvalidateLocationResponse))
             }
             R.id.btnConfirmAddress -> {
-                   confirmLocation()
+                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                    // sign in user :  make confirm api call and store response in cache navigate to shop tab
+                    confirmLocation()
+                } else {
+                    /*  not sign in user
+                      Don’t make confirm place API
+                      Cache placeDetails and Store objects from validate place API
+                       Next time when user logins from anywhere in app
+                       and if above data available in cache make confirm place API
+                       using using above details
+                       And clear the cache then navigate to shop tab
+                      */
+                   // (activity as? BottomNavigationActivity)?.pushFragment(DepartmentsFragment())
+                }
             }
 
             R.id.btn_no_loc_change_location -> {
@@ -107,6 +123,8 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                         HTTP_OK -> {
                              // save details in cache
                              // navigate to shop tab
+                           // (activity as? BottomNavigationActivity)?.pushFragment(ShopFragment())
+
                         }
                         else -> {
                             // navigate to shop tab with error sceanario
