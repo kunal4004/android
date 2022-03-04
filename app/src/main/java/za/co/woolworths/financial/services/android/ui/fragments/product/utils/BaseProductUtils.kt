@@ -51,7 +51,7 @@ open class BaseProductUtils {
                         tvWasPrice?.text = wasPrice?.let { getMassPrice(it, priceType, kilogramPrice) }
                     }
 
-                    tvPrice?.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
+                    tvPrice?.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.promo_text_color))
                     tvWasPrice?.apply {
                         paintFlags = tvWasPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                         setTextColor(android.graphics.Color.BLACK)
