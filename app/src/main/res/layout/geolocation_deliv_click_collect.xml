@@ -37,12 +37,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/five_dp"
                 android:layout_weight="0.5"
-                android:background="@drawable/delivery_round_btn_white"
+                android:background="@drawable/delivery_round_btn_black"
                 android:gravity="center"
                 android:paddingTop="@dimen/ten_dp"
                 android:paddingBottom="@dimen/ten_dp"
                 android:text="@string/geoloc_delivery"
-                android:textColor="@color/offer_title"
+                android:textColor="@color/white"
                 android:textSize="@dimen/twelve_sp" />
 
             <TextView
@@ -52,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/five_dp"
                 android:layout_weight="0.5"
+                android:background="@drawable/rounded_view_grey_tab_bg"
                 android:gravity="center"
                 android:paddingTop="@dimen/ten_dp"
                 android:paddingBottom="@dimen/ten_dp"
