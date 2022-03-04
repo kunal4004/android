@@ -110,10 +110,10 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
         private val KEY_PLACE_ID = "placeId"
         private val DELIVERY_TYPE = "deliveryType"
 
-        fun newInstance(latitude: Double, longitude: Double, placesId: String) =
+        fun newInstance(latitude: String, longitude: String, placesId: String) =
             GeolocationDeliveryAddressConfirmationFragment().withArgs {
-                putDouble(KEY_LATITUDE, latitude)
-                putDouble(KEY_LONGITUDE, longitude)
+                putString(KEY_LATITUDE, latitude)
+                putString(KEY_LONGITUDE, longitude)
                 putString(KEY_PLACE_ID, placesId)
             }
 
