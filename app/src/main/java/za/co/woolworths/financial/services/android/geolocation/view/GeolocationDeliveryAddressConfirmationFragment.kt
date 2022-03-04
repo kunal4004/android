@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.geolocation_deliv_click_collect.*
 import kotlinx.android.synthetic.main.geolocation_deliv_click_collect.deliveryTab
+import kotlinx.android.synthetic.main.layout_laocation_not_available.view.*
+import kotlinx.android.synthetic.main.no_collection_store_fragment.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
@@ -20,15 +22,18 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.WFormatter
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
  */
 class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
+    private var mvalidateLocationResponse: ValidateLocationResponse? = null
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var placeId: String? = null
     private var latitude: Double? = null
@@ -67,10 +72,22 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                 activity?.onBackPressed()
             }
             R.id.geoloc_clickNCollectEditChangetv -> {
-
+                (activity as? BottomNavigationActivity)?.pushFragment(ClickAndCollectStoresFragment.newInstance(mvalidateLocationResponse))
             }
             R.id.btnConfirmAddress -> {
 
+            }
+
+            R.id.btn_no_loc_change_location -> {
+                (activity as? BottomNavigationActivity)?.pushFragment(ConfirmAddressFragment.newInstance())
+            }
+
+            R.id.btn_change_location -> {
+                (activity as? BottomNavigationActivity)?.pushFragment(ConfirmAddressFragment.newInstance())
+            }
+
+            R.id.img_close -> {
+                (activity as? BottomNavigationActivity)?.popFragment()
             }
             R.id.geocollectionTab -> {
                 if (progressBar.visibility == View.VISIBLE)
@@ -91,12 +108,20 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
         private val KEY_LATITUDE = "latitude"
         private val KEY_LONGITUDE = "longitude"
         private val KEY_PLACE_ID = "placeId"
+        private val DELIVERY_TYPE = "deliveryType"
 
         fun newInstance(latitude: Double, longitude: Double, placesId: String) =
             GeolocationDeliveryAddressConfirmationFragment().withArgs {
                 putDouble(KEY_LATITUDE, latitude)
                 putDouble(KEY_LONGITUDE, longitude)
                 putString(KEY_PLACE_ID, placesId)
+            }
+
+        @JvmStatic
+        fun newInstance(placesId: String?, deliveryType: String? = "Standard") =
+            GeolocationDeliveryAddressConfirmationFragment().withArgs {
+                putString(KEY_PLACE_ID, placesId)
+                putString(DELIVERY_TYPE, deliveryType)
             }
     }
 
@@ -161,6 +186,28 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
     }
 
     private fun updateDeliveryDetails() {
+
+        if (validateLocationResponse?.validatePlace?.stores?.isEmpty() == true) {
+            no_conn_layout?.visibility = View.VISIBLE
+            main_layout?.visibility = View.GONE
+            no_loc_layout?.visibility = View.GONE
+            geoloc_deliv_clickLayout?.visibility = View.GONE
+            geoloc_deliv_click_back?.visibility = View.GONE
+            no_conn_layout?.img_close?.setOnClickListener(this)
+            no_conn_layout?.btn_change_location?.setOnClickListener(this)
+            return
+        }
+
+        if (validateLocationResponse?.validatePlace?.deliverable == false) {
+            no_loc_layout?.visibility = View.VISIBLE
+            main_layout?.visibility = View.GONE
+            /*TODO: Set image as Per standard delivery or CNC*/
+            no_loc_layout?.img_no_loc?.setImageDrawable(resources.getDrawable(R.drawable.ic_delivery_truck))
+            no_loc_layout?.btn_no_loc_change_location?.setOnClickListener(this)
+            return
+        }
+
+
         geolocDeliveryDetailsLayout.visibility = View.VISIBLE
         geoloc_clickNCollectTitle.text = bindString(R.string.delivering_to)
         icon_deliv_click.background = bindDrawable(R.drawable.icon_delivery)

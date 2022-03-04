@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccoun
 import za.co.woolworths.financial.services.android.ui.fragments.onboarding.OnBoardingFragment.Companion.ON_BOARDING_SCREEN_TYPE
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GeneralInfoDialogFragment
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 import za.co.woolworths.financial.services.android.util.wenum.OnBoardingScreenType
 import java.io.*
 import java.text.NumberFormat
@@ -364,8 +365,8 @@ class KotlinUtils {
             var type = deliveryType
             if (type == null) {
                 if (Utils.getPreferredDeliveryLocation() != null) {
-                    type =
-                        if (Utils.getPreferredDeliveryLocation().storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
+                    type =  if (getPreferredDeliveryType() == Delivery.CNC) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY
+
                 }
             }
             activity?.apply {
@@ -385,23 +386,26 @@ class KotlinUtils {
             tvDeliveryLocation: WTextView,
             deliverLocationIcon: ImageView?
         ) {
-            with(shoppingDeliveryLocation) {
-                when (storePickup) {
-                    true -> {
+            with(shoppingDeliveryLocation.fulfillmentDetails) {
+                when (Delivery.getType(deliveryType)) {
+                    Delivery.CNC -> {
                         tvDeliveringTo.text =
                             context?.resources?.getString(R.string.collecting_from)
                         tvDeliveryLocation.text =
-                            context?.resources?.getString(R.string.store) + store?.name
+                                context?.resources?.getString(R.string.store) + storeName?:""
+
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_basket)
                     }
-                    false -> {
+                    Delivery.STANDARD -> {
                         tvDeliveringTo.text = context?.resources?.getString(R.string.delivering_to)
                         tvDeliveryLocation.text =
-                            suburb.name + if (province?.name.isNullOrEmpty()) "" else ", " + province.name
+                                address?.address1?:""
+
                         tvDeliveryLocation.visibility = View.VISIBLE
                         deliverLocationIcon?.setBackgroundResource(R.drawable.icon_delivery)
                     }
+                    else ->{ }
                 }
             }
         }
@@ -692,7 +696,7 @@ class KotlinUtils {
         }
 
         fun isDeliveryOptionClickAndCollect(): Boolean {
-            return Utils.getPreferredDeliveryLocation()?.storePickup == true
+            return getPreferredDeliveryType() == Delivery.CNC
         }
 
         @SuppressLint("MissingPermission")
@@ -794,11 +798,9 @@ class KotlinUtils {
          * @see [za.co.woolworths.financial.services.android.models.dao.AppInstanceObject.User.preferredShoppingDeliveryLocation]
          */
         fun isCurrentSuburbDeliversLiquor(): Boolean {
-            Utils.getPreferredDeliveryLocation()?.apply {
-                return (!storePickup && suburb != null && AppConfigSingleton.liquor?.suburbs?.contains(
-                    suburb.id
-                ) == true)
-            }
+            /*Utils.getPreferredDeliveryLocation()?.apply {
+                return (!storePickup && suburb != null && WoolworthsApplication.getLiquor()?.suburbs?.contains(suburb.id) == true)
+            }*/
             return false
         }
 
@@ -865,6 +867,49 @@ class KotlinUtils {
             } else {
                 elseJob()
             }
+        }
+
+        fun getPreferredDeliveryType(): Delivery? {
+            return Delivery.getType(
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType ?: ""
+            )
+        }
+
+        fun getPreferredPlaceId(): String {
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId ?: ""
+        }
+
+        fun getPreferredStoreName(): String {
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.storeName ?: ""
+        }
+
+        fun getPreferredDeliveryAddress(): String {
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.address1 ?: ""
+        }
+
+        fun getPreferredDeliveryAddressOrStoreName(): String {
+            return when (getPreferredDeliveryType()) {
+                Delivery.CNC ->
+                    getPreferredStoreName()
+                Delivery.STANDARD ->
+                    getPreferredStoreName()
+                else -> ""
+            }
+        }
+
+        fun retrieveFulfillmentStoreId(fulFillmentTypeId: String): String {
+            var fulFillmentStoreId: String = ""
+            var typeId = fulFillmentTypeId
+            if (typeId.length == 1)
+                typeId = "0$typeId"
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.fulfillmentStores?.let {
+                val details = Gson().fromJson<Map<String, String>>(
+                    it,
+                    object : com.google.gson.reflect.TypeToken<Map<String, String>>() {}.type
+                )
+                fulFillmentStoreId = details?.get(typeId) ?: ""
+            }
+            return fulFillmentStoreId
         }
 
         fun getUniqueDeviceID(result: (String?) -> Unit) {

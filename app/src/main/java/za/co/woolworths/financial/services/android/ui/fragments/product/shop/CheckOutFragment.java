@@ -296,7 +296,7 @@ public class CheckOutFragment extends Fragment {
     public void initPostCheckout() {
         QueryBadgeCounter.getInstance().setCartCount(0);
         ShoppingDeliveryLocation preferredDeliveryLocation = Utils.getPreferredDeliveryLocation();
-        Call<Void> checkoutSuccess = OneAppService.INSTANCE.postCheckoutSuccess(new CheckoutSuccess(preferredDeliveryLocation.storePickup ? preferredDeliveryLocation.store.getId() : preferredDeliveryLocation.suburb.id));
+        /*Call<Void> checkoutSuccess = OneAppService.INSTANCE.postCheckoutSuccess(new CheckoutSuccess(preferredDeliveryLocation.storePickup ? preferredDeliveryLocation.store.getId() : preferredDeliveryLocation.suburb.id));
         checkoutSuccess.enqueue(new CompletionHandler<>(new IResponseListener<Void>() {
             @Override
             public void onSuccess(Void response) {
@@ -306,6 +306,6 @@ public class CheckOutFragment extends Fragment {
             public void onFailure(Throwable error) {
 
             }
-        }, Void.class));
+        }, Void.class));*/
     }
 }

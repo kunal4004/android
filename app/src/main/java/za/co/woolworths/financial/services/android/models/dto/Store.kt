@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models.dto
 import com.google.gson.JsonElement
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Store(var id: String?, var name: String? = null, @SerializedName("fulfillmentStores")
-@Expose var fulfillmentStores: JsonElement?, var storeAddress: String?)
+@Expose var fulfillmentStores: JsonElement?, var storeAddress: String?): Serializable
