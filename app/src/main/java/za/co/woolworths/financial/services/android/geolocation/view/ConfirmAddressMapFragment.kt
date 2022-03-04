@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.geolocation_confirm_address.*
 import kotlinx.android.synthetic.main.geolocation_confirm_address.autoCompleteTextView
 import za.co.woolworths.financial.services.android.checkout.view.adapter.GooglePlacesAdapter
 import za.co.woolworths.financial.services.android.checkout.view.adapter.PlaceAutocomplete
-import za.co.woolworths.financial.services.android.geolocation.model.GeoLocationAddress
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.KeyboardUtils.Companion.hideKeyboard
 import java.util.*
@@ -34,8 +34,8 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
     private var mAddress: String? = null
     private var placeId: String? = null
     private var latLng: LatLng? = null
-    private var mLatitude: String? = null
-    private var mLongitude: String? = null
+    private var mLatitude: Double? = null
+    private var mLongitude: Double? = null
 
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
@@ -52,9 +52,15 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
             autoCompleteTextView?.setText("")
         }
     }
+
     private fun confirmAddressClick() {
         btnConfirmAddress?.setOnClickListener {
-            //TODO: call next screen with "placeId"
+            if (mLatitude != null && mLongitude != null && placeId != null) {
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                    GeolocationDeliveryAddressConfirmationFragment.newInstance(mLatitude!!,
+                        mLongitude!!,
+                        placeId!!))
+            }
         }
     }
 
@@ -132,8 +138,8 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
                         getAddressFromLatLng(lat, longitude)
                     }
                 }
-                mLatitude = latitude?.toString()
-                mLongitude = longitude?.toString()
+                mLatitude = latitude
+                mLongitude = longitude
                 getPlaceId(latitude, longitude)
             }
         }
@@ -173,7 +179,6 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?) :
                 }
             }).await()
         placeId = results[0].placeId.toString()
-       GeoLocationAddress(mLatitude,mLongitude,placeId)
 
     }
 

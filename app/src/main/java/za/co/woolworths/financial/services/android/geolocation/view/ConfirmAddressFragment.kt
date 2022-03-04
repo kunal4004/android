@@ -57,6 +57,13 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         } else {
             hideCurrentLocation()
         }
+        hideBottomNav()
+    }
+
+    private fun hideBottomNav() {
+        (activity as? BottomNavigationActivity)?.apply {
+            hideBottomNavigationMenu()
+        }
     }
 
     override fun onCreateView(
