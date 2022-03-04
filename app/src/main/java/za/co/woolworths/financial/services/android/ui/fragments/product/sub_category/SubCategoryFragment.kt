@@ -27,12 +27,20 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPictureCenterInside
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.expand.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 class SubCategoryFragment :
     BaseFragment<ExpandableSubCategoryFragmentBinding?, SubCategoryViewModel?>(),
     SubCategoryNavigator, View.OnClickListener {
+
+    companion object {
+        const val ERROR_DIALOG_REQUEST = 1456
+        const val KEY_ARGS_ROOT_CATEGORY = "rootCategory"
+        const val KEY_ARGS_VERSION = "version"
+        const val KEY_ARGS_IS_LOCATION_ENABLED = "isLocationEnabled"
+        const val KEY_ARGS_LOCATION = "location"
+    }
+
     private var mSubCategories: ArrayList<SubCategory>? = null
     private var rvCategoryDrill: RecyclerView? = null
     private var mAdapter: SubCategoryAdapter? = null
@@ -83,7 +91,7 @@ class SubCategoryFragment :
         }
         setHeader(mRootCategory)
         rvCategoryDrill?.layoutManager = LinearLayoutManager(activity)
-        onRetryConnectionClicked(mRootCategory?.categoryId, false, version)
+        fetchSubCategories(mRootCategory?.categoryId, false, version)
         viewDataBinding?.btnRetry?.setOnClickListener(this)
     }
 
@@ -199,7 +207,7 @@ class SubCategoryFragment :
     ) {
         mSelectedHeaderPosition = selectedHeaderPosition
         mParentViewHolder = holder
-        onRetryConnectionClicked(subCategory.categoryId, true, version)
+        fetchSubCategories(subCategory.categoryId, true, version)
     }
 
     override fun onCloseIconPressed() {
@@ -219,19 +227,19 @@ class SubCategoryFragment :
     override fun onClick(view: View) {
         when (view.id) {
             R.id.imClose -> popFragmentSlideDown()
-            R.id.btnRetry -> onRetryConnectionClicked(mRootCategory?.categoryId, false, version)
+            R.id.btnRetry -> fetchSubCategories(mRootCategory?.categoryId, false, version)
             else -> {
             }
         }
     }
 
-    private fun onRetryConnectionClicked(categoryId: String?, childItem: Boolean, version: String?) {
+    private fun fetchSubCategories(categoryId: String?, childItem: Boolean, version: String?) {
         if (categoryId == null || version == null) return
         if (isNetworkConnected) {
             mErrorHandlerView?.hideErrorHandler()
             //ChildItem params determine whether to perform header or child operation
             viewModel.setChildItem(childItem)
-            viewModel.executeSubCategory(categoryId, version, isLocationEnabled, location)
+            viewModel.fetchSubCategory(categoryId, version, isLocationEnabled, location)
         } else {
             if (!viewModel.childItem()) {
                 connectionFailureUI("e")
@@ -309,13 +317,5 @@ class SubCategoryFragment :
                 activity.reloadDepartmentFragment()
             }
         }
-    }
-
-    companion object {
-        const val ERROR_DIALOG_REQUEST = 1456
-        const val KEY_ARGS_ROOT_CATEGORY = "rootCategory"
-        const val KEY_ARGS_VERSION = "version"
-        const val KEY_ARGS_IS_LOCATION_ENABLED = "isLocationEnabled"
-        const val KEY_ARGS_LOCATION = "location"
     }
 }

@@ -10,14 +10,13 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.network.OneAppService.getSubCategory
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel
-import za.co.woolworths.financial.services.android.util.Utils
 
 class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
     private var childItem = false
     private var rootCategoryRequest: Call<RootCategories>? = null
     private var subCategoryRequest: Call<SubCategories>? = null
 
-    fun executeSubCategory(
+    fun fetchSubCategory(
         categoryId: String,
         version: String,
         isLocationEnabled: Boolean,
@@ -35,18 +34,23 @@ class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
                                 navigator.onLoadComplete()
                             }
                             502 -> {
-                                fetchRootCategory(
-                                    categoryId,
-                                    version,
-                                    isLocationEnabled,
-                                    location,
-                                    retryCountOn502 - 1
-                                )
+                                if (retryCountOn502 > 0) {
+                                    fetchRootCategory(
+                                        categoryId,
+                                        version,
+                                        isLocationEnabled,
+                                        location,
+                                        retryCountOn502 - 1
+                                    )
+                                } else {
+                                    subCategories?.response?.let {
+                                        navigator.unhandledResponseHandler(it)
+                                    }
+                                }
                             }
                             else -> {
-                                val response = subCategories?.response
-                                if (response != null) {
-                                    navigator.unhandledResponseHandler(response)
+                                subCategories?.response?.let {
+                                    navigator.unhandledResponseHandler(it)
                                 }
                             }
                         }
@@ -74,12 +78,12 @@ class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
                 when (response?.httpCode) {
                     200 -> {
                         response.response?.version?.let { updatedVersion ->
-                            executeSubCategory(
+                            fetchSubCategory(
                                 categoryId,
                                 updatedVersion,
                                 isLocationEnabled,
                                 location,
-                                retryCountOn502 - 1
+                                retryCountOn502
                             )
                         } ?: run {
                             fetchRootCategory(
@@ -92,18 +96,23 @@ class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
                         }
                     }
                     502 -> {
-                        fetchRootCategory(
-                            categoryId,
-                            version,
-                            isLocationEnabled,
-                            location,
-                            retryCountOn502 - 1
-                        )
+                        if (retryCountOn502 > 0) {
+                            fetchRootCategory(
+                                categoryId,
+                                version,
+                                isLocationEnabled,
+                                location,
+                                retryCountOn502 - 1
+                            )
+                        } else {
+                            response?.response?.let {
+                                navigator.unhandledResponseHandler(it)
+                            }
+                        }
                     }
                     else -> {
-                        val response = response?.response
-                        if (response != null) {
-                            navigator.unhandledResponseHandler(response)
+                        response?.response?.let {
+                            navigator.unhandledResponseHandler(it)
                         }
                     }
                 }
