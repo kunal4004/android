@@ -92,6 +92,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         inCurrentLocation?.setOnClickListener(this)
         inSavedAddress?.setOnClickListener(this)
         backButton?.setOnClickListener(this)
+        enterNewAddress?.setOnClickListener(this)
 
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress?.visibility = View.GONE
@@ -217,13 +218,18 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             }
             R.id.inCurrentLocation -> {
                 (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                    ConfirmAddressMapFragment(mLastLocation?.latitude, mLastLocation?.longitude))
+                    ConfirmAddressMapFragment(mLastLocation?.latitude, mLastLocation?.longitude,false))
             }
             R.id.inSavedAddress -> {
                 ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
             }
             R.id.backButton -> {
                 activity?.onBackPressed()
+            }
+            R.id.enterNewAddress ->{
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                    ConfirmAddressMapFragment(null, null,true))
+
             }
         }
     }
