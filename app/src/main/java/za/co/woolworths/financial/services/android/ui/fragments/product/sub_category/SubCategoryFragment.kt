@@ -304,6 +304,7 @@ class SubCategoryFragment :
         super.onHiddenChanged(hidden)
         if (!hidden) {
             hideToolbar()
+            (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
         }
     }
 
