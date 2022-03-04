@@ -294,8 +294,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun setUpToolBar() {
         (activity as? BottomNavigationActivity)?.apply {
-            hideToolbar()
             hideBottomNavigationMenu()
+            Handler().postDelayed({ hideToolbar() }, DELAY_500_MS)
         }
     }
 
