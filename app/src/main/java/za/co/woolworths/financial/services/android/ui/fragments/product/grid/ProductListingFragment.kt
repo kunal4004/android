@@ -201,9 +201,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     requireActivity(),
                     true
                 )
-
             }
-
         }
 
         layout_error_blp?.blp_error_back_btn?.setOnClickListener {
@@ -1376,6 +1374,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             searchType: ProductsRequestParams.SearchType?,
             sub_category_name: String?,
             searchTerm: String?,
+            navigationState: String?,
             chanelBannerImageUrl: String?,
             chanelBannerLabel: String?,
             isComingFrom: Boolean,
@@ -1384,6 +1383,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
+            putString(NAVIGATION_STATE, navigationState)
             putString(CHANEL_BANNER_LABEL, chanelBannerLabel)
             putString(CHANEL_BANNER_IMAGE, chanelBannerImageUrl)
             putBoolean(CHAEL_IS_COMING_FROM_BLP, isComingFrom)
@@ -1566,6 +1566,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 newInstance(
                     ProductsRequestParams.SearchType.NAVIGATE,
                     "",
+                    navigation?.displayName,
                     navigation?.navigationState,
                     bannerImage,
                     bannerLabel,
