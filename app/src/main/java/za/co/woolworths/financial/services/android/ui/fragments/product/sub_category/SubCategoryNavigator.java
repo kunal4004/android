@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.util.expand.ParentSubCategoryViewHolder;
 
 public interface SubCategoryNavigator {
-	void bindSubCategoryResult(List<SubCategory> subCategoryList);
+	void bindSubCategoryResult(List<SubCategory> subCategoryList, String latestVersionParam);
 
 	void unhandledResponseHandler(Response response);
 

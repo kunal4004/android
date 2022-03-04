@@ -14,9 +14,16 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
     private var childItem = false
+    private var rootCategoryRequest: Call<RootCategories>? = null
     private var subCategoryRequest: Call<SubCategories>? = null
 
-    fun executeSubCategory(categoryId: String, version: String) {
+    fun executeSubCategory(
+        categoryId: String,
+        version: String,
+        isLocationEnabled: Boolean,
+        location: Location?,
+        retryCountOn502: Int = 3
+    ) {
         subCategoryRequest = getSubCategory(categoryId, version)
         subCategoryRequest?.enqueue(
             CompletionHandler(
@@ -24,8 +31,17 @@ class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
                     override fun onSuccess(subCategories: SubCategories?) {
                         when (subCategories?.httpCode) {
                             200 -> {
-                                navigator.bindSubCategoryResult(subCategories.subCategories)
+                                navigator.bindSubCategoryResult(subCategories.subCategories, version)
                                 navigator.onLoadComplete()
+                            }
+                            502 -> {
+                                fetchRootCategory(
+                                    categoryId,
+                                    version,
+                                    isLocationEnabled,
+                                    location,
+                                    retryCountOn502 - 1
+                                )
                             }
                             else -> {
                                 val response = subCategories?.response
@@ -43,6 +59,61 @@ class SubCategoryViewModel : BaseViewModel<SubCategoryNavigator>() {
                 }, SubCategories::class.java
             )
         )
+    }
+
+    fun fetchRootCategory(
+        categoryId: String,
+        version: String,
+        isLocationEnabled: Boolean,
+        location: Location?,
+        retryCountOn502: Int = 3
+    ) {
+        rootCategoryRequest = OneAppService.getRootCategory(isLocationEnabled, location)
+        rootCategoryRequest?.enqueue(CompletionHandler(object : IResponseListener<RootCategories> {
+            override fun onSuccess(response: RootCategories?) {
+                when (response?.httpCode) {
+                    200 -> {
+                        response.response?.version?.let { updatedVersion ->
+                            executeSubCategory(
+                                categoryId,
+                                updatedVersion,
+                                isLocationEnabled,
+                                location,
+                                retryCountOn502 - 1
+                            )
+                        } ?: run {
+                            fetchRootCategory(
+                                categoryId,
+                                version,
+                                isLocationEnabled,
+                                location,
+                                retryCountOn502 - 1
+                            )
+                        }
+                    }
+                    502 -> {
+                        fetchRootCategory(
+                            categoryId,
+                            version,
+                            isLocationEnabled,
+                            location,
+                            retryCountOn502 - 1
+                        )
+                    }
+                    else -> {
+                        val response = response?.response
+                        if (response != null) {
+                            navigator.unhandledResponseHandler(response)
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                navigator.onLoadComplete()
+                navigator.onFailureResponse(error.toString())
+            }
+        }, RootCategories::class.java))
     }
 
     val loading: ObservableBoolean

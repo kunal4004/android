@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.sub_cat
 
 import android.app.Activity
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -42,6 +43,8 @@ class SubCategoryFragment :
     private var mParentViewHolder: ParentSubCategoryViewHolder? = null
     private var mSubCategoryListModel: MutableList<SubCategoryModel>? = null
     private var version: String? = null
+    private var isLocationEnabled: Boolean = false
+    private var location: Location? = null
 
     override fun getLayoutId(): Int {
         return R.layout.expandable_sub_category_fragment
@@ -56,6 +59,10 @@ class SubCategoryFragment :
         if (bundle != null) {
             val rootCategory = bundle.getString(KEY_ARGS_ROOT_CATEGORY)
             version = bundle.getString(KEY_ARGS_VERSION, "")
+            isLocationEnabled = bundle.getBoolean(KEY_ARGS_IS_LOCATION_ENABLED, false)
+            if (bundle.containsKey(KEY_ARGS_LOCATION)) {
+                location = bundle.getParcelable(KEY_ARGS_LOCATION)
+            }
             if (rootCategory != null) mRootCategory =
                 Gson().fromJson(rootCategory, RootCategory::class.java)
             mRootCategory = Gson().fromJson(rootCategory, RootCategory::class.java)
@@ -98,7 +105,8 @@ class SubCategoryFragment :
         return BR.viewModel
     }
 
-    override fun bindSubCategoryResult(subCategoryList: List<SubCategory>) {
+    override fun bindSubCategoryResult(subCategoryList: List<SubCategory>, latestVersionParam: String) {
+        version = latestVersionParam
         if (viewModel.childItem()) { // child item
             val subCategoryChildList: MutableList<SubCategoryChild> = ArrayList()
             for (subCat in subCategoryList) {
@@ -223,7 +231,7 @@ class SubCategoryFragment :
             mErrorHandlerView?.hideErrorHandler()
             //ChildItem params determine whether to perform header or child operation
             viewModel.setChildItem(childItem)
-            viewModel.executeSubCategory(categoryId, version)
+            viewModel.executeSubCategory(categoryId, version, isLocationEnabled, location)
         } else {
             if (!viewModel.childItem()) {
                 connectionFailureUI("e")
@@ -305,7 +313,9 @@ class SubCategoryFragment :
 
     companion object {
         const val ERROR_DIALOG_REQUEST = 1456
-        const val KEY_ARGS_ROOT_CATEGORY = "ROOT_CATEGORY"
-        const val KEY_ARGS_VERSION = "VERSION"
+        const val KEY_ARGS_ROOT_CATEGORY = "rootCategory"
+        const val KEY_ARGS_VERSION = "version"
+        const val KEY_ARGS_IS_LOCATION_ENABLED = "isLocationEnabled"
+        const val KEY_ARGS_LOCATION = "location"
     }
 }
