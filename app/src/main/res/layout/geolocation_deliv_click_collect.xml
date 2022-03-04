@@ -280,7 +280,7 @@
             android:layout_weight="@integer/point_five"
             android:padding="@dimen/six_dp"
             android:singleLine="true"
-            android:text="@string/geoloc_ClickNCollectValue"
+            android:textColor="@color/black"
             android:textSize="@dimen/fifteen_sp" />
 
         <TextView

@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Val
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
+import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -161,13 +162,19 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
 
     private fun updateDeliveryDetails() {
         geolocDeliveryDetailsLayout.visibility = View.VISIBLE
+        geoloc_clickNCollectTitle.text = bindString(R.string.delivering_to)
         icon_deliv_click.background = bindDrawable(R.drawable.icon_delivery)
+        feeLayout.visibility = View.GONE
         feeValue?.text = ""//validateLocationResponse.validatePlace
         geoloc_clickNCollectValue?.text =
             validateLocationResponse?.validatePlace?.placeDetails?.address1
 
         val earliestFoodDate =
             validateLocationResponse.validatePlace?.firstAvailableFoodDeliveryDate
+        if (earliestFoodDate.isNullOrEmpty())
+            earliestDeliveryDateLayout.visibility = View.GONE
+        else
+            earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
 
         val earliestFashionDate =
             validateLocationResponse.validatePlace?.firstAvailableOtherDeliveryDate
@@ -178,22 +185,22 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                 WFormatter.getFullMonthWithDate(earliestFashionDate)
 
         if (!earliestFoodDate.isNullOrEmpty() && !earliestFashionDate.isNullOrEmpty()) {
-            productsAvailableValue?.text = "All"
-            itemLimitValue?.text = "Unlimited"
+            productsAvailableValue?.text = bindString(R.string.all)
+            itemLimitValue?.text = bindString(R.string.unlimited)
         }
 
         if (earliestFoodDate.isNullOrEmpty() && !earliestFashionDate.isNullOrEmpty()) {
-            productsAvailableValue?.text = "Fashin and Beauty"
+            productsAvailableValue?.text = bindString(R.string.fashion_beauty)
             val otherMaxQuantity =
                 validateLocationResponse?.validatePlace?.quantityLimit?.otherMaximumQuantity?.toString()
             if (otherMaxQuantity.isNullOrEmpty())
-                itemLimitValue?.text = "Unlimited"
+                itemLimitValue?.text = bindString(R.string.unlimited)
             else
                 itemLimitValue?.text = otherMaxQuantity
         }
 
         if (!earliestFoodDate.isNullOrEmpty() && earliestFashionDate.isNullOrEmpty()) {
-            productsAvailableValue?.text = "Food"
+            productsAvailableValue?.text = bindString(R.string.food)
             itemLimitValue?.text =
                 validateLocationResponse?.validatePlace?.quantityLimit?.foodMaximumQuantity?.toString()
         }
@@ -201,7 +208,9 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
 
     private fun updateCollectionDetails() {
         geolocDeliveryDetailsLayout.visibility = View.VISIBLE
+        geoloc_clickNCollectTitle.text = bindString(R.string.collecting_from)
         icon_deliv_click.background = bindDrawable(R.drawable.shoppingbag)
+        feeLayout.visibility = View.GONE
         feeValue?.text = ""//validateLocationResponse.validatePlace
         val storeName = getNearestStore(validateLocationResponse?.validatePlace?.stores)
         if (storeName.isNullOrEmpty())
@@ -215,7 +224,8 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
             earliestDeliveryDateLayout.visibility = View.GONE
         else
             earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
-        productsAvailableValue?.text = "Food"
+        earliestFashionDeliveryDateLayout.visibility = View.GONE
+        productsAvailableValue?.text = bindString(R.string.food)
         itemLimitValue?.text =
             validateLocationResponse?.validatePlace?.quantityLimit?.foodMaximumQuantity?.toString()
     }
