@@ -173,17 +173,20 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
             validateLocationResponse.validatePlace?.firstAvailableFoodDeliveryDate
         if (earliestFoodDate.isNullOrEmpty())
             earliestDeliveryDateLayout.visibility = View.GONE
-        else
+        else {
             earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
+            earliestDeliveryDateLayout.visibility = View.VISIBLE
+        }
 
         val earliestFashionDate =
             validateLocationResponse.validatePlace?.firstAvailableOtherDeliveryDate
         if (earliestFashionDate.isNullOrEmpty())
             earliestFashionDeliveryDateLayout.visibility = View.GONE
-        else
+        else {
+            earliestFashionDeliveryDateLayout.visibility = View.VISIBLE
             earliestFashionDeliveryDateValue?.text =
                 WFormatter.getFullMonthWithDate(earliestFashionDate)
-
+        }
         if (!earliestFoodDate.isNullOrEmpty() && !earliestFashionDate.isNullOrEmpty()) {
             productsAvailableValue?.text = bindString(R.string.all)
             itemLimitValue?.text = bindString(R.string.unlimited)
@@ -222,8 +225,10 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
             validateLocationResponse.validatePlace?.firstAvailableFoodDeliveryDate
         if (earliestFoodDate.isNullOrEmpty())
             earliestDeliveryDateLayout.visibility = View.GONE
-        else
+        else {
+            earliestDeliveryDateLayout.visibility = View.VISIBLE
             earliestDeliveryDateValue?.text = WFormatter.getFullMonthWithDate(earliestFoodDate)
+        }
         earliestFashionDeliveryDateLayout.visibility = View.GONE
         productsAvailableValue?.text = bindString(R.string.food)
         itemLimitValue?.text =
