@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.geolocation.network.model.Sto
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -154,11 +155,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         btnConfirmAddress?.setOnClickListener(this)
         deliveryTab?.setOnClickListener(this)
         geocollectionTab?.setOnClickListener(this)
-
-        confirmAddressViewModel?.storeDetailsData?.observe(viewLifecycleOwner,  {
+        StoreLiveData.observe(viewLifecycleOwner,{
             geoloc_clickNCollectValue?.text = it?.storeName
-         })
 
+        })
         placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
 

@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
+import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 
 
 class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
@@ -44,9 +45,8 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
 
     private lateinit var mapFragment: SupportMapFragment
     private var mValidateLocationResponse: ValidateLocationResponse? = null
-    private var mStore: Store? = null
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
-
+    private var dataStore: Store? = null
 
     companion object {
 
@@ -176,13 +176,14 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
         rvStoreList.adapter?.notifyDataSetChanged()
     }
 
-    override fun onStoreSelected(store: Store?) {
-        confirmAddressViewModel.setStoreDetails(store)
+    override fun onStoreSelected(mStore: Store?) {
+        dataStore = mStore
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.tvConfirmStore -> {
+                dataStore?.let { StoreLiveData.value = it }
                 (activity as? BottomNavigationActivity)?.popFragment()
             }
         }
