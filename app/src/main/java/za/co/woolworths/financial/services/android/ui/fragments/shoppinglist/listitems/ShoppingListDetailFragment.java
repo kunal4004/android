@@ -199,6 +199,13 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         view.findViewById(R.id.btnRetry).setOnClickListener(this);
         EmptyCartView emptyCartView = new EmptyCartView(view, this);
         emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.emptyshoppinglist);
+
+        // Show Bottom Navigation Menu
+        Activity activity = getActivity();
+        if (activity instanceof BottomNavigationActivity) {
+            ((BottomNavigationActivity) activity).showBottomNavigationMenu();
+        }
+
     }
 
     private void updateList(List<ShoppingListItem> listItems) {
@@ -586,8 +593,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             fragment.setArguments(bundle);
             BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
             bottomNavigationActivity.pushFragment(fragment);
-        } else
-            return;
+        }
     }
 
 
