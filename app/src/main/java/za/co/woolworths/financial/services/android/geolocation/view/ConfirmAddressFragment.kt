@@ -213,7 +213,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                     selectedAddress.let {
                         if (it.latitude != null && it.longitude != null && it.placesId != null) {
                             (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                                GeolocationDeliveryAddressConfirmationFragment.newInstance(
+                                DeliveryAddressConfirmationFragment.newInstance(
                                     selectedAddress.latitude.toString()!!,
                                     selectedAddress.longitude.toString()!!,
                                     selectedAddress.placesId.toString()!!))

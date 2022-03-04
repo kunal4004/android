@@ -24,21 +24,21 @@ import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
 import za.co.woolworths.financial.services.android.util.WFormatter
-import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
  */
-class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
+class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
-    private var mvalidateLocationResponse: ValidateLocationResponse? = null
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var placeId: String? = null
     private var latitude: Double? = null
     private var longitude: Double? = null
     private lateinit var validateLocationResponse: ValidateLocationResponse
+    private var deliveryType: String = STANDARD_DELIVERY
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,9 +70,18 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
         when (v?.id) {
             R.id.geoloc_deliv_click_back -> {
                 activity?.onBackPressed()
+                deliveryType = AppConstant.EMPTY_STRING
             }
             R.id.geoloc_clickNCollectEditChangetv -> {
-                (activity as? BottomNavigationActivity)?.pushFragment(ClickAndCollectStoresFragment.newInstance(mvalidateLocationResponse))
+                if (deliveryType.equals(CLICK_AND_COLLECT)) {
+                    (activity as? BottomNavigationActivity)?.pushFragment(ClickAndCollectStoresFragment.newInstance(validateLocationResponse))
+                    return
+                }
+
+                if (deliveryType.equals(STANDARD_DELIVERY)) {
+                    (activity as? BottomNavigationActivity)?.pushFragment(ConfirmAddressFragment.newInstance())
+                    return
+                }
             }
             R.id.btnConfirmAddress -> {
 
@@ -90,12 +99,14 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
                 (activity as? BottomNavigationActivity)?.popFragment()
             }
             R.id.geocollectionTab -> {
+                deliveryType = CLICK_AND_COLLECT
                 if (progressBar.visibility == View.VISIBLE)
                     return
                 else
                     openCollectionTab()
             }
             R.id.deliveryTab -> {
+                deliveryType = STANDARD_DELIVERY
                 if (progressBar.visibility == View.VISIBLE)
                     return
                 else
@@ -110,8 +121,13 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
         private val KEY_PLACE_ID = "placeId"
         private val DELIVERY_TYPE = "deliveryType"
 
+
+        private const val STANDARD_DELIVERY = "StandardDelivery"
+        private const val CLICK_AND_COLLECT = "CLICKANDCOLLECT"
+
+
         fun newInstance(latitude: String, longitude: String, placesId: String) =
-            GeolocationDeliveryAddressConfirmationFragment().withArgs {
+            DeliveryAddressConfirmationFragment().withArgs {
                 putString(KEY_LATITUDE, latitude)
                 putString(KEY_LONGITUDE, longitude)
                 putString(KEY_PLACE_ID, placesId)
@@ -119,7 +135,7 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
 
         @JvmStatic
         fun newInstance(placesId: String?, deliveryType: String? = "Standard") =
-            GeolocationDeliveryAddressConfirmationFragment().withArgs {
+            DeliveryAddressConfirmationFragment().withArgs {
                 putString(KEY_PLACE_ID, placesId)
                 putString(DELIVERY_TYPE, deliveryType)
             }
@@ -138,6 +154,10 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
         btnConfirmAddress?.setOnClickListener(this)
         deliveryTab?.setOnClickListener(this)
         geocollectionTab?.setOnClickListener(this)
+
+        confirmAddressViewModel?.storeDetailsData?.observe(viewLifecycleOwner,  {
+            geoloc_clickNCollectValue?.text = it?.storeName
+         })
 
         placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
@@ -202,7 +222,13 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
             no_loc_layout?.visibility = View.VISIBLE
             main_layout?.visibility = View.GONE
             /*TODO: Set image as Per standard delivery or CNC*/
-            no_loc_layout?.img_no_loc?.setImageDrawable(resources.getDrawable(R.drawable.ic_delivery_truck))
+            if (deliveryType == STANDARD_DELIVERY) {
+                no_loc_layout?.img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_delivery_truck))
+            } else {
+                no_loc_layout?.img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
+                    R.drawable.shoppingbag
+                ))
+            }
             no_loc_layout?.btn_no_loc_change_location?.setOnClickListener(this)
             return
         }
@@ -292,3 +318,5 @@ class GeolocationDeliveryAddressConfirmationFragment : Fragment(), View.OnClickL
         return shortestDistance?.storeName
     }
 }
+
+

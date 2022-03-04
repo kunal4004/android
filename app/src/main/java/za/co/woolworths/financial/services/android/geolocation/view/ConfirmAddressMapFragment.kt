@@ -110,10 +110,10 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
     }
 
     private fun confirmAddressClick() {
-        btnConfirmAddress?.setOnClickListener {
+        confirmAddress?.setOnClickListener {
             if (mLatitude != null && mLongitude != null && placeId != null) {
                 (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                    GeolocationDeliveryAddressConfirmationFragment.newInstance(mLatitude!!,
+                    DeliveryAddressConfirmationFragment.newInstance(mLatitude!!,
                         mLongitude!!,
                         placeId!!))
             }
