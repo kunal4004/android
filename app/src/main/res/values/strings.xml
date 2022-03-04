@@ -1306,9 +1306,7 @@
     <string name="treatment_plan_eligible_charged_off_description_sc">Your account is being managed by our collection partners</string>
     <string name="view_payment_plan_button_label">View payment plan</string>
     <string name="view_payment_plans_button_label">View payment plans</string>
-    <string name="make_payment_button_label">Make a payment</string>
     <string name="make_payment_now_button_label">Make a payment now</string>
-    <string name="view_payment_options_button_label">View payment options</string>
     <string name="view_plan_options_button_label">View plan options</string>
     <string name="cannot_afford_payment_button_label">Can\'t afford this payment?</string>
     <string name="view_other_payment_options_button_label">View other payment options</string>
