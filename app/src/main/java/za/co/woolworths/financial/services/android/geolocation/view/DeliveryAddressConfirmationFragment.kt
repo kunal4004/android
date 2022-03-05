@@ -40,6 +40,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     private var longitude: Double? = null
     private lateinit var validateLocationResponse: ValidateLocationResponse
     private var deliveryType: String = STANDARD_DELIVERY
+    private var mStoreName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -157,6 +158,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         geocollectionTab?.setOnClickListener(this)
         StoreLiveData.observe(viewLifecycleOwner,{
             geoloc_clickNCollectValue?.text = it?.storeName
+            mStoreName = it?.storeName.toString()
 
         })
         placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
@@ -292,7 +294,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         if (storeName.isNullOrEmpty())
             geoloc_clickNCollectValue?.text = ""
         else
-            geoloc_clickNCollectValue?.text = storeName
+            geoloc_clickNCollectValue?.text = if (mStoreName != null) mStoreName else storeName
 
         val earliestFoodDate =
             validateLocationResponse.validatePlace?.firstAvailableFoodDeliveryDate
