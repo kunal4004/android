@@ -56,6 +56,13 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         } else {
             hideCurrentLocation()
         }
+        hideBottomNav()
+    }
+
+    private fun hideBottomNav() {
+        (activity as? BottomNavigationActivity)?.apply {
+            hideBottomNavigationMenu()
+        }
     }
 
     override fun onCreateView(
@@ -92,6 +99,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         inCurrentLocation?.setOnClickListener(this)
         inSavedAddress?.setOnClickListener(this)
         backButton?.setOnClickListener(this)
+        enterNewAddress?.setOnClickListener(this)
 
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress?.visibility = View.GONE
@@ -208,10 +216,10 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         it.placesId = "EiRMb3R1cyBSaXZlciwgQ2FwZSBUb3duLCBTb3V0aCBBZnJpY2EiLiosChQKEgm7_uOL90PMHRGhcHCGx9_rrRIUChIJ1-4miA9QzB0Rh6ooKPzhf2g"
                         if (it.latitude != null && it.longitude != null && it.placesId != null) {
                             (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                                GeolocationDeliveryAddressConfirmationFragment.newInstance(
-                                    selectedAddress.latitude!!,
-                                    selectedAddress.longitude!!,
-                                    selectedAddress.placesId!!))
+                                DeliveryAddressConfirmationFragment.newInstance(
+                                    selectedAddress.latitude.toString()!!,
+                                    selectedAddress.longitude.toString()!!,
+                                    selectedAddress.placesId.toString()!!))
                         }
                         else
                             return
@@ -220,13 +228,18 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             }
             R.id.inCurrentLocation -> {
                 (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                    ConfirmAddressMapFragment(mLastLocation?.latitude, mLastLocation?.longitude))
+                    ConfirmAddressMapFragment(mLastLocation?.latitude, mLastLocation?.longitude,false))
             }
             R.id.inSavedAddress -> {
                 ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
             }
             R.id.backButton -> {
                 activity?.onBackPressed()
+            }
+            R.id.enterNewAddress ->{
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                    ConfirmAddressMapFragment(null, null,true))
+
             }
         }
     }

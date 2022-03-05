@@ -2426,11 +2426,16 @@
     <string name="geo_delivery_fee">Delivery fee:</string>
     <string name="earliest_food_delivery_date">Earliest Food Delivery Date:</string>
     <string name="earliest_fashion_delivery_date">Earliest Fashion Delivery Date:</string>
-    <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
+    <string name="all">All</string>
+    <string name="unlimited">Unlimited</string>
+    <string name="food">Food</string>
+    <string name="fashion_beauty">Fashion and Beauty</string>
 
+    <string name="geoloc_ClickNCollectValue">28 Eastlake Isla...</string>
 
     <string name="collection_store_title">There Are No Collection Stores Available Near You</string>
     <string name="change_location">CHANGE LOCATION</string>
+    <string name="enter_your_street_number_and_name">Enter your street number and name</string>
     <string name="no_location_title">We Can’t Deliver \n To This Location Yet.</string>
     <string name="no_location_desc">However, we’re growing quickly, \n so please check back soon</string>
     <string name="confirm_delivery_location_title">Confirm Your Delivery Location</string>

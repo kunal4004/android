@@ -36,7 +36,7 @@ import kotlinx.android.synthetic.main.try_it_on_banner.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
-import za.co.woolworths.financial.services.android.geolocation.view.GeolocationDeliveryAddressConfirmationFragment
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
@@ -1363,7 +1363,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         val placeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
         val deliveryType = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            GeolocationDeliveryAddressConfirmationFragment.newInstance("", ""))
+            DeliveryAddressConfirmationFragment.newInstance("", ""))
 
     }
 }

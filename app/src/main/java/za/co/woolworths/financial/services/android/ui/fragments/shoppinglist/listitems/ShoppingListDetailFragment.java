@@ -54,7 +54,7 @@ import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
-import za.co.woolworths.financial.services.android.geolocation.view.GeolocationDeliveryAddressConfirmationFragment;
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -1216,7 +1216,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         String deliveryType = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getDeliveryType();
         BottomNavigationActivity activity = (BottomNavigationActivity) getActivity();
         if (activity !=null) {
-            activity.pushFragment(GeolocationDeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType));
+            activity.pushFragment(DeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType));
         }
     }
 

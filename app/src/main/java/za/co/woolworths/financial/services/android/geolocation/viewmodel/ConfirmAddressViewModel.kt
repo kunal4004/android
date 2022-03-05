@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.geolocation.viewmodel
 
+
 import androidx.lifecycle.ViewModel
 import za.co.woolworths.financial.services.android.geolocation.model.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
