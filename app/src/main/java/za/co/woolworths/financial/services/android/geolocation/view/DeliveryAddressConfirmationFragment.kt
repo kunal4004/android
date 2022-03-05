@@ -47,6 +47,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     private lateinit var validateLocationResponse: ValidateLocationResponse
     private var deliveryType: String = STANDARD_DELIVERY
     private var mStoreName: String? = null
+    private var mStoreId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -153,7 +154,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
         if (deliveryType.equals(CLICK_AND_COLLECT)) {
             confirmLocationRequest =
-                ConfirmLocationRequest(CNC, confirmLocationAddress, storeId)
+                ConfirmLocationRequest(CNC, confirmLocationAddress, mStoreId)
         }
 
         lifecycleScope.launch {
@@ -242,9 +243,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         deliveryTab?.setOnClickListener(this)
         geocollectionTab?.setOnClickListener(this)
         StoreLiveData.observe(viewLifecycleOwner,{
+            geoloc_clickNCollectTitle?.text = bindString(R.string.collecting_from)
+            geoloc_clickNCollectEditChangetv.text = bindString(R.string.edit)
             geoloc_clickNCollectValue?.text = it?.storeName
+            btnConfirmAddress.isEnabled = true
+            btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
             mStoreName = it?.storeName.toString()
-
+            mStoreId = it?.storeId.toString()
         })
         placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
@@ -255,6 +260,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         geocollectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         geocollectionTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.offer_title))
         geoloc_delivIconImage.background = ContextCompat.getDrawable(requireContext(), R.drawable.icon_delivery)
+        btnConfirmAddress.isEnabled = true
+        btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
         updateDeliveryDetails()
     }
 
@@ -378,15 +385,29 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
 
         geolocDeliveryDetailsLayout.visibility = View.VISIBLE
-        geoloc_clickNCollectTitle.text = bindString(R.string.collecting_from)
+
         icon_deliv_click.background = bindDrawable(R.drawable.shoppingbag)
         feeLayout.visibility = View.GONE
         feeValue?.text = ""//validateLocationResponse.validatePlace
-        val storeName = getNearestStore(validateLocationResponse?.validatePlace?.stores)
-        if (storeName.isNullOrEmpty())
-            geoloc_clickNCollectValue?.text = ""
-        else
-            geoloc_clickNCollectValue?.text = if (mStoreName != null) mStoreName else storeName
+       // val storeName = getNearestStore(validateLocationResponse?.validatePlace?.stores)
+//        if (storeName.isNullOrEmpty())
+//            geoloc_clickNCollectValue?.text = ""
+//        else
+//            geoloc_clickNCollectValue?.text = if (mStoreName != null) mStoreName else storeName
+
+        if (StoreLiveData.value?.storeName.isNullOrEmpty()) {
+            geoloc_clickNCollectTitle.text = bindString(R.string.where_do_you_want_to_collect)
+            geoloc_clickNCollectEditChangetv.text = bindString(R.string.choose)
+            geoloc_clickNCollectValue?.text = AppConstant.EMPTY_STRING
+            btnConfirmAddress.isEnabled = false
+            btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_A9A9A9))
+        } else {
+            geoloc_clickNCollectTitle.text = bindString(R.string.collecting_from)
+            geoloc_clickNCollectEditChangetv.text = bindString(R.string.edit)
+            geoloc_clickNCollectValue?.text = mStoreName
+            btnConfirmAddress.isEnabled = true
+            btnConfirmAddress.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+        }
 
         val earliestFoodDate =
             validateLocationResponse.validatePlace?.firstAvailableFoodDeliveryDate
@@ -410,6 +431,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             }
         }
         return shortestDistance?.storeName
+    }
+
+    override fun onStop() {
+        super.onStop()
+        StoreLiveData.value?.storeName = null
+        StoreLiveData.value?.storeId = null
+        StoreLiveData.postValue(null)
     }
 }
 
