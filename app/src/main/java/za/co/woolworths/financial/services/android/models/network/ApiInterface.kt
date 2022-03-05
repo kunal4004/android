@@ -1275,13 +1275,12 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("wfs/app/v4/locationItems/saveLocation")
     fun saveLocation(
-
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Header("environment") String: String,
         @Body saveAddressLocationRequest: SaveAddressLocationRequest
-    ): Call<Response>
+    ): Call<GenericResponse>
 }
 
