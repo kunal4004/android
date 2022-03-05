@@ -153,6 +153,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             } catch (e: HttpException) {
                 e.printStackTrace()
                 progressBar.visibility = View.GONE
+                /*TODO:  Error sceanrio*/
             }
 
         }
