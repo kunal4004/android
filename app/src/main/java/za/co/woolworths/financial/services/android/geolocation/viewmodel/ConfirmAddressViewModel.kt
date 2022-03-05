@@ -2,7 +2,8 @@ package za.co.woolworths.financial.services.android.geolocation.viewmodel
 
 
 import androidx.lifecycle.ViewModel
-import za.co.woolworths.financial.services.android.geolocation.model.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 
 class ConfirmAddressViewModel(private val geoLocationApiHelper: GeoLocationApiHelper) :
@@ -16,5 +17,8 @@ class ConfirmAddressViewModel(private val geoLocationApiHelper: GeoLocationApiHe
 
     suspend fun postConfirmAddress(confirmLocationRequest: ConfirmLocationRequest) =
         geoLocationApiHelper.postConfirmLocation(confirmLocationRequest)
+
+    suspend fun postSaveAddress(saveAddressLocationRequest: SaveAddressLocationRequest) =
+        geoLocationApiHelper.postSaveAddress(saveAddressLocationRequest)
 
 }

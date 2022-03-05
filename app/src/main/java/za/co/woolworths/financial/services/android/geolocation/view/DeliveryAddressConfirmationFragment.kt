@@ -15,18 +15,24 @@ import kotlinx.android.synthetic.main.layout_laocation_not_available.view.*
 import kotlinx.android.synthetic.main.no_collection_store_fragment.view.*
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocationAddress
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_PRODUCT
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.AppConstant
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
 /**
@@ -40,6 +46,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     private var longitude: Double? = null
     private lateinit var validateLocationResponse: ValidateLocationResponse
     private var deliveryType: String = STANDARD_DELIVERY
+    private var storeId: String? = "-1"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,7 +92,24 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.btnConfirmAddress -> {
+                if (SessionUtilities.getInstance().isUserAuthenticated) {
+                    // sign in user :  make confirm api call and store response in cache navigate to shop tab
+                    sendConfirmLocation()
+                } else {
+                    /*  not sign in user
+                      Don’t make confirm place API
+                      Cache placeDetails and Store objects from validate place API
+                       Next time when user logins from anywhere in app
+                       and if above data available in cache make confirm place API
+                       using using above details
+                       And clear the cache then navigate to shop tab
+                      */
 
+                    // navigate to shop tab
+                    (activity as? BottomNavigationActivity)?.clearStack()
+                    (activity as? BottomNavigationActivity)?.getBottomNavigationById()
+                        ?.setCurrentItem(INDEX_PRODUCT);
+                }
             }
 
             R.id.btn_no_loc_change_location -> {
@@ -116,6 +140,65 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun sendConfirmLocation() {
+        if (placeId == null) {
+            return
+        }
+
+        val confirmLocationAddress = ConfirmLocationAddress(placeId)
+        var confirmLocationRequest = ConfirmLocationRequest("", confirmLocationAddress,"", )
+        if (deliveryType.equals(STANDARD_DELIVERY)) {
+            confirmLocationRequest =
+                ConfirmLocationRequest(STANDARD, confirmLocationAddress)
+        }
+        if (deliveryType.equals(CLICK_AND_COLLECT)) {
+            confirmLocationRequest =
+                ConfirmLocationRequest(CNC, confirmLocationAddress, storeId)
+        }
+
+        lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
+            try {
+                val confirmLocationResponse =
+                    confirmAddressViewModel.postConfirmAddress(confirmLocationRequest)
+                progressBar.visibility = View.GONE
+                if (confirmLocationResponse != null) {
+                    when (confirmLocationResponse.httpCode) {
+                        HTTP_OK -> {
+                            // save details in cache
+                            confirmLocationResponse?.orderSummary?.fulfillmentDetails?.let {
+                                Utils.savePreferredDeliveryLocation(
+                                    ShoppingDeliveryLocation(
+                                        confirmLocationResponse?.orderSummary?.fulfillmentDetails
+                                    )
+                                )
+                            }
+
+                            // navigate to shop tab
+                            (activity as? BottomNavigationActivity)?.clearStack()
+                            (activity as? BottomNavigationActivity)?.getBottomNavigationById()
+                                ?.setCurrentItem(INDEX_PRODUCT);
+
+                        }
+                        else -> {
+                            // navigate to shop tab with error sceanario
+                            (activity as? BottomNavigationActivity)?.clearStack()
+                            (activity as? BottomNavigationActivity)?.getBottomNavigationById()
+                                ?.setCurrentItem(INDEX_PRODUCT);
+                        }
+                    }
+                }
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                progressBar.visibility = View.GONE
+                // navigate to shop tab with error sceanario
+                (activity as? BottomNavigationActivity)?.clearStack()
+                (activity as? BottomNavigationActivity)?.getBottomNavigationById()
+                    ?.setCurrentItem(INDEX_PRODUCT);
+            }
+        }
+    }
+
     companion object {
         private val KEY_LATITUDE = "latitude"
         private val KEY_LONGITUDE = "longitude"
@@ -125,6 +208,9 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
         private const val STANDARD_DELIVERY = "StandardDelivery"
         private const val CLICK_AND_COLLECT = "CLICKANDCOLLECT"
+
+        private const val STANDARD = "Standard"
+        private const val CNC = "CnC"
 
 
         fun newInstance(latitude: String, longitude: String, placesId: String) =
@@ -157,7 +243,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         geocollectionTab?.setOnClickListener(this)
         StoreLiveData.observe(viewLifecycleOwner,{
             geoloc_clickNCollectValue?.text = it?.storeName
-
+            storeId = it?.storeId
         })
         placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
     }
@@ -221,18 +307,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         if (validateLocationResponse?.validatePlace?.deliverable == false) {
             no_loc_layout?.visibility = View.VISIBLE
             main_layout?.visibility = View.GONE
-            /*TODO: Set image as Per standard delivery or CNC*/
-            if (deliveryType == STANDARD_DELIVERY) {
-                no_loc_layout?.img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_delivery_truck))
-            } else {
-                no_loc_layout?.img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(),
-                    R.drawable.shoppingbag
-                ))
-            }
+            no_loc_layout?.img_no_loc?.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_delivery_truck))
             no_loc_layout?.btn_no_loc_change_location?.setOnClickListener(this)
             return
         }
-
 
         geolocDeliveryDetailsLayout.visibility = View.VISIBLE
         geoloc_clickNCollectTitle.text = bindString(R.string.delivering_to)
@@ -283,6 +361,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateCollectionDetails() {
+        if (validateLocationResponse?.validatePlace?.deliverable == false) {
+            no_loc_layout?.visibility = View.VISIBLE
+            main_layout?.visibility = View.GONE
+            no_loc_layout?.img_no_loc?.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireActivity(),
+                    R.drawable.shoppingbag
+                )
+            )
+            no_loc_layout?.btn_no_loc_change_location?.setOnClickListener(this)
+            return
+        }
+
         geolocDeliveryDetailsLayout.visibility = View.VISIBLE
         geoloc_clickNCollectTitle.text = bindString(R.string.collecting_from)
         icon_deliv_click.background = bindDrawable(R.drawable.shoppingbag)

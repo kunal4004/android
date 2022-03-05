@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models.network
 
-import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -8,8 +7,9 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.checkout.service.network.*
-import za.co.woolworths.financial.services.android.geolocation.model.ConfirmLocation
-import za.co.woolworths.financial.services.android.geolocation.model.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.response.ConfirmLocation
+import za.co.woolworths.financial.services.android.geolocation.model.request.ConfirmLocationRequest
+import za.co.woolworths.financial.services.android.geolocation.model.request.SaveAddressLocationRequest
 import za.co.woolworths.financial.services.android.geolocation.network.model.ValidateLocationResponse
 import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.dto.*
@@ -1269,6 +1269,19 @@ interface ApiInterface {
         @Header("sessionToken") sessionToken: String,
         @Header("deviceIdentityToken") deviceIdentityToken: String,
         @Header("environment") String: String,
-        @Body confirmLocationRequest: ConfirmLocationRequest): Call<ConfirmLocation>
+        @Body confirmLocationRequest: ConfirmLocationRequest
+    ): Call<ConfirmLocation>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("wfs/app/v4/locationItems/saveLocation")
+    fun saveLocation(
+
+        @Header("userAgent") userAgent: String,
+        @Header("userAgentVersion") userAgentVersion: String,
+        @Header("sessionToken") sessionToken: String,
+        @Header("deviceIdentityToken") deviceIdentityToken: String,
+        @Header("environment") String: String,
+        @Body saveAddressLocationRequest: SaveAddressLocationRequest
+    ): Call<Response>
 }
 

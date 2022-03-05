@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.geolocation.model
+package za.co.woolworths.financial.services.android.geolocation.model.response
 
 data class Address(
     val address1: String,
