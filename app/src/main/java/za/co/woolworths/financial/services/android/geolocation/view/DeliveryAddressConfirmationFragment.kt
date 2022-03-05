@@ -253,6 +253,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         deliveryTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         geocollectionTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         geocollectionTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.offer_title))
+        geoloc_delivIconImage.background = ContextCompat.getDrawable(requireContext(), R.drawable.icon_delivery)
         updateDeliveryDetails()
     }
 
@@ -261,6 +262,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         geocollectionTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         deliveryTab.setBackgroundResource(R.drawable.rounded_view_grey_tab_bg)
         deliveryTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.offer_title))
+        geoloc_delivIconImage.background = ContextCompat.getDrawable(requireContext(), R.drawable.shoppingbag)
         updateCollectionDetails()
     }
 
