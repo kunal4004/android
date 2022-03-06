@@ -18,6 +18,8 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
+import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
@@ -190,7 +192,18 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun locationSelectionClicked() {
-        activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, 0) }
+        //activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, 0) }
+
+        if (Utils.getPreferredDeliveryLocation() == null) {
+            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
+        } else {
+            Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                    DeliveryAddressConfirmationFragment.newInstance(it.address?.placeId, KotlinUtils.getPreferredDeliveryType()))
+            }
+        }
+
     }
 
     private fun showEmptyShoppingListView() {

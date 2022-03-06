@@ -29,8 +29,8 @@ import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.ValidateSelectedSuburbResponse
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -239,30 +239,32 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun onEditDeliveryLocation() {
-       // if (SessionUtilities.getInstance().isUserAuthenticated) {
-            /* if (Utils.getPreferredDeliveryLocation() != null) {
-                 activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
-             } else*/
-          /*  activity?.apply {
-                KotlinUtils.presentEditDeliveryLocationActivity(
-                    this,
-                    EditDeliveryLocationActivity.REQUEST_CODE
-                )
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
+            if (Utils.getPreferredDeliveryLocation() != null) {
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                        DeliveryAddressConfirmationFragment.newInstance(
+                            it.address?.placeId,
+                            KotlinUtils.getPreferredDeliveryType()
+                        )
+                    )
+                }
+            } else {
+                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
             }
         } else {
-            //ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
-            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment())
-        }*/
+            ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
+        }
 
-       /* activity?.apply {
-            if (!ConfirmAddressDialog.dialogInstance.isVisible)
-                ConfirmAddressDialog.newInstance().show(
-                    this@DepartmentsFragment.childFragmentManager,
-                    ConfirmAddressDialog::class.java.simpleName
-                )
-        }*/
+//       activity?.apply {
+//            if (!ConfirmAddressDialog.dialogInstance.isVisible)
+//                ConfirmAddressDialog.newInstance().show(
+//                    this@DepartmentsFragment.childFragmentManager,
+//                    ConfirmAddressDialog::class.java.simpleName
+//                )
+//        }
 
-        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
+
     }
 
 
@@ -392,11 +394,12 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             if (Utils.getPreferredDeliveryLocation() != null) {
-                activity?.apply {
-                    KotlinUtils.presentEditDeliveryLocationActivity(
-                        this,
-                        EditDeliveryLocationActivity.REQUEST_CODE,
-                        deliveryType
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+                        DeliveryAddressConfirmationFragment.newInstance(
+                            it.address?.placeId,
+                            KotlinUtils.getPreferredDeliveryType()
+                        )
                     )
                 }
             } else {
@@ -434,10 +437,7 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
                 when (response?.httpCode) {
                     AppConstant.HTTP_OK -> {
                         activity?.apply {
-                            KotlinUtils.presentEditDeliveryLocationActivity(
-                                this,
-                                ProductListingFragment.SET_DELIVERY_LOCATION_REQUEST_CODE
-                            )
+                            onEditDeliveryLocation()
                         }
                     }
                 }
@@ -485,6 +485,8 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun executeValidateSuburb() {
+
+        /*TODO :  */
         /*Utils.getPreferredDeliveryLocation().let {
             if (it == null) {
                 mDepartmentAdapter?.hideDeliveryDates()

@@ -68,6 +68,8 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IResponseListener;
+import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment;
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -622,8 +624,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void locationSelectionClicked() {
         Activity activity = getActivity();
-        if (activity != null) {
-            KotlinUtils.Companion.presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null);
+//        if (activity != null) {
+  //         KotlinUtils.Companion.presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null);
+//        }
+
+        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+
+        if (bottomNavigationActivity instanceof BottomNavigationActivity) {
+            if (Utils.getPreferredDeliveryLocation() != null) {
+                bottomNavigationActivity.pushFragmentSlideUp(
+                        DeliveryAddressConfirmationFragment.newInstance(
+                                Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId(),
+                                KotlinUtils.Companion.getPreferredDeliveryType()));
+
+            } else {
+                bottomNavigationActivity.pushFragmentSlideUp(ConfirmAddressFragment.Companion.newInstance());
+            }
         }
     }
 
