@@ -1032,6 +1032,8 @@ public class Utils {
                     storeId = jsSuburbFulfillment.get(fulFillmentType).getAsString();
             }
         }*/
+        if (fulFillmentType.length() == 1)
+            fulFillmentType = "0" + fulFillmentType;
         return KotlinUtils.Companion.retrieveFulfillmentStoreId(fulFillmentType);
     }
 
