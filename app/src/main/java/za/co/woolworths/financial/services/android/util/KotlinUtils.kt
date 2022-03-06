@@ -798,10 +798,7 @@ class KotlinUtils {
          * @see [za.co.woolworths.financial.services.android.models.dao.AppInstanceObject.User.preferredShoppingDeliveryLocation]
          */
         fun isCurrentSuburbDeliversLiquor(): Boolean {
-            /*Utils.getPreferredDeliveryLocation()?.apply {
-                return (!storePickup && suburb != null && WoolworthsApplication.getLiquor()?.suburbs?.contains(suburb.id) == true)
-            }*/
-            return false
+            return Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.liquorDeliverable == true
         }
 
         /**
