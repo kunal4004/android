@@ -118,7 +118,7 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
                 googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(
                     addressStorList.get(i)?.latitude!!,
                     addressStorList.get(i)?.longitude!!
-                 ), 11f));
+                 ), 10f));
             }
         }
     }

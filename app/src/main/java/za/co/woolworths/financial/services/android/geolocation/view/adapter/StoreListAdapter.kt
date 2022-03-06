@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.store_row_layout.view.*
+import za.co.woolworths.financial.services.android.common.changeMeterToKM
 import za.co.woolworths.financial.services.android.geolocation.network.model.Store
 
 class StoreListAdapter (
@@ -38,13 +39,16 @@ class StoreListAdapter (
         fun bindItems(store: Store?, position: Int) {
             itemView.tvAddressNickName.text = store?.storeName
             itemView.tvAddress.text = store?.storeAddress
-            itemView.txtStoreDistance.text = store?.distance.toString()
+            val distance = changeMeterToKM(store?.distance!!)
+            itemView.txtStoreDistance.text = distance
             if (lastSelectedPosition == position) {
-                itemView.imgAddressSelector.isChecked = true
+                itemView.imgAddressSelector?.isChecked = true
+                itemView.storeSelectorLayout?.setBackgroundResource(R.drawable.bg_select_store)
             } else {
-                itemView.imgAddressSelector.isChecked = false
+                itemView.imgAddressSelector?.isChecked = false
+                itemView.storeSelectorLayout?.setBackgroundResource(R.color.white)
             }
-            itemView.imgAddressSelector.setOnClickListener {
+            itemView.storeSelectorLayout?.setOnClickListener {
                 lastSelectedPosition = adapterPosition
                 notifyDataSetChanged()
                 listener.onStoreSelected(store)

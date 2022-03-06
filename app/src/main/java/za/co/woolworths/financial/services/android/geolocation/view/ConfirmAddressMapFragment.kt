@@ -152,6 +152,8 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val item = parent.getItemAtPosition(position) as? PlaceAutocomplete
                     placeId = item?.placeId.toString()
+                    val placeName = item?.primaryText.toString()
+                    autoCompleteTextView?.setText(placeName)
                     val placeFields: MutableList<Place.Field> = mutableListOf(
                         Place.Field.ID,
                         Place.Field.NAME,
@@ -175,7 +177,6 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
                                     try {
                                         val geocoder = Geocoder(context)
                                         addressList = geocoder.getFromLocationName(location, 1)
-                                        autoCompleteTextView?.setText("")
                                         val address = addressList?.get(0)
                                         latLng = address?.latitude?.let {
                                             LatLng(it, address.longitude)
