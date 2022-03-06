@@ -508,6 +508,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     private fun onQuantitySelector() {
+
+        if (!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null) {
+            addItemToCart()
+        }
+
         activity?.supportFragmentManager?.apply {
             if (getSelectedSku() == null) {
                 requestSelectSize()
@@ -577,6 +582,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     fun addItemToCart() {
 
+        if (!SessionUtilities.getInstance().isUserAuthenticated) {
+            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
+            return
+        }
+
+        if (Utils.getPreferredDeliveryLocation() == null) {
+            activity?.apply {
+                KotlinUtils.presentEditDeliveryLocationActivity(
+                    this,
+                    REQUEST_SUBURB_CHANGE
+                )
+            }
+            return
+        }
+
         if (getSelectedSku() == null) {
             if (getSelectedGroupKey().isNullOrEmpty())
                 requestSelectColor()
@@ -587,17 +607,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         if (!Utils.isDeliverySelectionModalShown()) {
             showDeliveryOptionDialog()
-            return
-        }
-
-        if (!SessionUtilities.getInstance().isUserAuthenticated) {
-            ScreenManager.presentSSOSignin(activity, SSO_REQUEST_ADD_TO_CART)
-            return
-        }
-
-        val deliveryLocation = Utils.getPreferredDeliveryLocation()
-        if (deliveryLocation == null) {
-            productDetailsPresenter?.loadCartSummary()
             return
         }
 
@@ -709,8 +718,16 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         }
 
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
+            //If user is not signed in or User dosen't have any location set then don't make inventory
+            if(!SessionUtilities.getInstance().isUserAuthenticated || Utils.getPreferredDeliveryLocation() == null)
+            {
+                updateDefaultUI(false)
+                hideProductDetailsLoading()
+                return
+            }
+
             storeIdForInventory =
-                RecyclerViewViewHolderItems.getFulFillmentStoreId(productDetails?.fulfillmentType)
+                Utils.retrieveStoreId(productDetails?.fulfillmentType)
 
             when (storeIdForInventory.isNullOrEmpty()) {
                 true -> showProductUnavailable()
@@ -920,7 +937,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun updateDefaultUI(isInventoryCalled: Boolean) {
-        loadSizeAndColor()
+        if (isInventoryCalled)
+            loadSizeAndColor()
         loadPromotionalImages()
         updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
         if (!TextUtils.isEmpty(this.productDetails?.ingredients))
@@ -1201,7 +1219,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         toCartAndFindInStoreLayout?.visibility = View.VISIBLE
         groupAddToCartAction?.visibility = View.VISIBLE
         findInStoreAction?.visibility = View.GONE
-        if (isAllProductsOutOfStock()) {
+        if (isAllProductsOutOfStock() && SessionUtilities.getInstance().isUserAuthenticated && Utils.getPreferredDeliveryLocation() != null) {
             showFindInStore()
         }
     }
@@ -1543,7 +1561,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 updateStockAvailabilityLocation()
                 when (requestCode) {
                     SSO_REQUEST_ADD_TO_CART, EDIT_LOCATION_LOGIN_REQUEST -> {
-                        addItemToCart()
+                        productDetailsPresenter?.loadCartSummary()
                     }
                     SSO_REQUEST_ADD_TO_SHOPPING_LIST -> {
                         addItemToShoppingList()
@@ -1904,6 +1922,13 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun updateStockAvailabilityLocation() {
         activity?.apply {
+            //If user is not authenticated or Preferred DeliveryAddress is not available hide this view
+            if (!SessionUtilities.getInstance().isUserAuthenticated || getDeliveryLocation() == null) {
+                deliveryLocationLayout.visibility = View.GONE
+                return
+            } else
+                deliveryLocationLayout.visibility = View.VISIBLE
+
             getDeliveryLocation()?.fulfillmentDetails?.let {
                 when (Delivery.getType(it.deliveryType)) {
                     Delivery.CNC -> {
