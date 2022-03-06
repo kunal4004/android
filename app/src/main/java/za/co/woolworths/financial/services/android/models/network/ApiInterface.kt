@@ -593,14 +593,15 @@ interface ApiInterface {
             @Header("deviceIdentityToken") deviceIdentityToken: String,
     ): Call<ShoppingCartResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("wfs/app/v4/cart/item")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "environment: www-win-dev2")
+    @POST("wfs/app/v4/cart/{deliveryType}/itemV2")
     fun addItemToCart(
 
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
+            @Path("deliveryType") deliveryType: String,
             @Body addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
