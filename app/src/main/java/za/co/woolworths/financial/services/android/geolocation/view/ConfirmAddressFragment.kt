@@ -56,6 +56,13 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         } else {
             hideCurrentLocation()
         }
+        hideBottomNav()
+    }
+
+    private fun hideBottomNav() {
+        (activity as? BottomNavigationActivity)?.apply {
+            hideBottomNavigationMenu()
+        }
     }
 
     override fun onCreateView(
@@ -207,9 +214,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                         if (it.latitude != null && it.longitude != null && it.placesId != null) {
                             (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
                                 GeolocationDeliveryAddressConfirmationFragment.newInstance(
-                                    selectedAddress.latitude!!,
-                                    selectedAddress.longitude!!,
-                                    selectedAddress.placesId!!))
+                                    selectedAddress.latitude.toString()!!,
+                                    selectedAddress.longitude.toString()!!,
+                                    selectedAddress.placesId.toString()!!))
                         }
                         else
                             return
