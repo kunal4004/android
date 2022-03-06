@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.HTTP_OK
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 /**
  * Created by Kunal Uttarwar on 24/02/22.
@@ -42,7 +43,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     private var latitude: Double? = null
     private var longitude: Double? = null
     private lateinit var validateLocationResponse: ValidateLocationResponse
-    private var deliveryType: String = STANDARD_DELIVERY
+    private var deliveryType: String? = STANDARD_DELIVERY
     private var mStoreName: String? = null
     private var mStoreId: String? = null
 
@@ -219,10 +220,10 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             }
 
         @JvmStatic
-        fun newInstance(placesId: String?, deliveryType: String? = STANDARD) =
+        fun newInstance(placesId: String?, deliveryType: Delivery? = Delivery.STANDARD) =
             DeliveryAddressConfirmationFragment().withArgs {
                 putString(KEY_PLACE_ID, placesId)
-                putString(DELIVERY_TYPE, deliveryType)
+                putString(DELIVERY_TYPE, deliveryType.toString())
             }
     }
 

@@ -1215,9 +1215,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         String placeId = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId();
         String deliveryType = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getDeliveryType();
         BottomNavigationActivity activity = (BottomNavigationActivity) getActivity();
-        if (activity !=null) {
-            activity.pushFragment(DeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType));
-        }
+//        if (activity !=null) {
+//            activity.pushFragment(DeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType));
+//        }
     }
 
     public int getTotalItemQuantity(List<AddItemToCart> addItemToCart) {

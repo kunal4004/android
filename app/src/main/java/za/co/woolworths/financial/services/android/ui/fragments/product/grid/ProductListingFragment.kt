@@ -1361,9 +1361,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         // place id :  take from cache
         // delivery type : take from cache
         val placeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
-        val deliveryType = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            DeliveryAddressConfirmationFragment.newInstance("", ""))
-
+            DeliveryAddressConfirmationFragment.newInstance(placeId, KotlinUtils.getPreferredDeliveryType()))
     }
 }

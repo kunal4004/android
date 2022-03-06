@@ -74,7 +74,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelec
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter.MultipleImageInterface
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RecyclerViewViewHolderItems
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.extension.deviceWidth
 import za.co.woolworths.financial.services.android.ui.extension.underline
@@ -1367,7 +1366,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         val placeId: String? = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
         val deliveryType = Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.deliveryType
         (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-            DeliveryAddressConfirmationFragment.newInstance(placeId, deliveryType))
+            DeliveryAddressConfirmationFragment.newInstance(placeId, KotlinUtils.getPreferredDeliveryType()))
     }
 
     private fun updateStockAvailability(isDefaultRequest: Boolean) {
