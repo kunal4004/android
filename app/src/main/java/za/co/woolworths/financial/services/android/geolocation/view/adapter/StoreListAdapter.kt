@@ -39,8 +39,7 @@ class StoreListAdapter (
         fun bindItems(store: Store?, position: Int) {
             itemView.tvAddressNickName.text = store?.storeName
             itemView.tvAddress.text = store?.storeAddress
-            val distance = changeMeterToKM(store?.distance!!)
-            itemView.txtStoreDistance.text = distance
+            itemView.txtStoreDistance.text = store?.distance?.let { changeMeterToKM(it) }
             if (lastSelectedPosition == position) {
                 itemView.imgAddressSelector?.isChecked = true
                 itemView.storeSelectorLayout?.setBackgroundResource(R.drawable.bg_select_store)
