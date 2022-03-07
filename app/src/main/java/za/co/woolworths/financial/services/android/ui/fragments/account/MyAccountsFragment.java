@@ -1894,36 +1894,6 @@ public class MyAccountsFragment extends Fragment implements OnClickListener, MyA
             activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
         }
     }
-
-    /*
-        private void redirectToAccountSignInActivity(ApplyNowState applyNowState) {
-        Activity activity = getActivity();
-        if (activity == null) return;
-        Intent intent;
-//        if (applyNowState == ApplyNowState.STORE_CARD){
-//            if (mAccountResponse == null) return;
-//            for ( Account account: mAccountResponse.accountList){
-//                if (account.productGroupCode.equalsIgnoreCase(ProductGroupCode.SC.getValue())) {
-//                    intent = new Intent(activity, StoreCardActivity.class);
-//                    intent.putExtra(ACCOUNT_PRODUCT_PAYLOAD,  Utils.objectToJson(account));
-//                    if (deepLinkParams != null)
-//                        intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams));
-//                    activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
-//                    return;
-//                }
-//            }
-//        }else {
-            intent = new Intent(activity, AccountSignedInActivity.class);
-            intent.putExtra(AccountSignedInPresenterImpl.APPLY_NOW_STATE, applyNowState);
-            intent.putExtra(AccountSignedInPresenterImpl.MY_ACCOUNT_RESPONSE, Utils.objectToJson(mAccountResponse));
-            if (deepLinkParams != null)
-                intent.putExtra(AccountSignedInPresenterImpl.DEEP_LINKING_PARAMS, Utils.objectToJson(deepLinkParams));
-            activity.startActivityForResult(intent, ACCOUNT_CARD_REQUEST_CODE);
-            activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
-    //    }
-    }
-     */
-
     private void redirectToMyAccountsCardsActivity(ApplyNowState applyNowState) {
         Activity activity = getActivity();
         if (activity == null) return;

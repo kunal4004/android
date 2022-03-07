@@ -12,5 +12,11 @@ class StoreCardDataSource @Inject constructor(
             getDeviceIdentityToken()
         )
     }
-
+    suspend fun getPaymentPAYUMethod() = getResult {
+        storeCardService.getPaymentPAYUMethod(
+            "", "",
+            getSessionToken(),
+            getDeviceIdentityToken()
+        )
+    }
 }

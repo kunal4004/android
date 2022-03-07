@@ -14,11 +14,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
+import com.awfs.coordination.databinding.AccountProductsHomeFragmentBinding
 import com.awfs.coordination.databinding.AvailableFundsFragmentBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,12 +37,15 @@ import za.co.woolworths.financial.services.android.ui.activities.GetAPaymentPlan
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.AccountSignedInActivity
+import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
 import za.co.woolworths.financial.services.android.ui.extension.navigateSafelyWithNavController
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFloatingActionButtonBubbleView
 import za.co.woolworths.financial.services.android.ui.fragments.account.chat.ui.ChatFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.card.AccountsOptionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.account.detail.pay_my_account.PayMyAccountViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.helper.FirebaseEventDetailManager
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.ApiError
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Result
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.autoCleared
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.loadingState
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.openActivity
@@ -52,34 +57,24 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 
 @AndroidEntryPoint
-open class AvailableFundsFragment : Fragment() {
-    var binding: AvailableFundsFragmentBinding by autoCleared()
+open class AvailableFundsFragment : ViewBindingFragment<AvailableFundsFragmentBinding>() {
     val viewModel: AvailableFundsViewModel by viewModels()
     lateinit var navController: NavController
     val payMyAccountViewModel: PayMyAccountViewModel by activityViewModels()
-    private lateinit var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener
+//    private lateinit var bottomSheetBehaviourPeekHeightListener: IBottomSheetBehaviourPeekHeightListener
 
+
+    override fun inflateViewBinding(inflater: LayoutInflater, container: ViewGroup?): AvailableFundsFragmentBinding {
+        return AvailableFundsFragmentBinding.inflate(inflater, container, false)
+    }
     @Throws(RuntimeException::class)
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is IBottomSheetBehaviourPeekHeightListener) {
-            bottomSheetBehaviourPeekHeightListener = context
-        } else {
-            throw RuntimeException("AvailableFundsFragment context value $context must implement BottomSheetBehaviourPeekHeightListener")
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.start(arguments)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = AvailableFundsFragmentBinding.inflate(inflater, container, false)
-        return binding.root
+//        if (context is IBottomSheetBehaviourPeekHeightListener) {
+//            bottomSheetBehaviourPeekHeightListener = context
+//        } else {
+//            throw RuntimeException("AvailableFundsFragment context value $context must implement BottomSheetBehaviourPeekHeightListener")
+//        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -161,9 +156,9 @@ open class AvailableFundsFragment : Fragment() {
             val bottomGuidelineVerticalPosition = location[1]
             val displayBottomSheetBehaviorWithinRemainingHeight =
                 deviceHeight - bottomGuidelineVerticalPosition + Utils.dp2px(20f)
-            bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(
-                displayBottomSheetBehaviorWithinRemainingHeight
-            )
+//            bottomSheetBehaviourPeekHeightListener?.onBottomSheetPeekHeight(
+//                displayBottomSheetBehaviorWithinRemainingHeight
+//            )
         }
     }
 
@@ -171,17 +166,17 @@ open class AvailableFundsFragment : Fragment() {
         viewModel.command.observe(viewLifecycleOwner) {
             initShimmer(false)
             when (it) {
-                is AvailableFundsViewModel.Command.DisplayCardNumberNotFound -> displayCardNumberNotFound()
-                is AvailableFundsViewModel.Command.NavigateToOnlineBankingActivity -> navigateToOnlineBankingActivity(
+                is AvailableFundsCommand.DisplayCardNumberNotFound -> displayCardNumberNotFound()
+                is AvailableFundsCommand.NavigateToOnlineBankingActivity -> navigateToOnlineBankingActivity(
                     it.isRegistered
                 )
-                is AvailableFundsViewModel.Command.NavigateToDeepLinkView -> {
+                is AvailableFundsCommand.NavigateToDeepLinkView -> {
                     navigateToDeepLinkView(
                         AppConstant.DP_LINKING_MY_ACCOUNTS_PRODUCT_PAY_MY_ACCOUNT,
                         ((activity as? AccountSignedInActivity)?.mAccountSignedInPresenter?.isProductInGoodStanding() == true)
                     )
                 }
-                is AvailableFundsViewModel.Command.SessionExpired -> {
+                is AvailableFundsCommand.SessionExpired -> {
                     val sessionData = it.onSessionData
                     activity?.let {
                         SessionUtilities.getInstance().setSessionState(
@@ -191,21 +186,21 @@ open class AvailableFundsFragment : Fragment() {
                         )
                     }
                 }
-                is AvailableFundsViewModel.Command.SetViewDetails -> setUpView(it)
-                is AvailableFundsViewModel.Command.PresentPayMyAccountActivity -> {
+                is AvailableFundsCommand.SetViewDetails -> setUpView(it)
+                is AvailableFundsCommand.PresentPayMyAccountActivity -> {
                     ActivityIntentNavigationManager.presentPayMyAccountActivity(
                         activity,
                         viewModel.getCardDetail()
                     )
                 }
-                is AvailableFundsViewModel.Command.PayMyAccountRetryErrorFragment -> {
+                is AvailableFundsCommand.PayMyAccountRetryErrorFragment -> {
                     try {
                         navController.navigate(R.id.payMyAccountRetryErrorFragment)
                     } catch (ex: IllegalStateException) {
                         FirebaseManager.logException(ex)
                     }
                 }
-                is AvailableFundsViewModel.Command.OpenPayMyAccountOptionOrEnterPaymentAmountDialogFragment -> {
+                is AvailableFundsCommand.OpenPayMyAccountOptionOrEnterPaymentAmountDialogFragment -> {
                     viewModel.payMyAccountPresenter.openPayMyAccountOptionOrEnterPaymentAmountDialogFragment(
                         activity
                     ) {
@@ -216,7 +211,7 @@ open class AvailableFundsFragment : Fragment() {
                         }
                     }
                 }
-                is AvailableFundsViewModel.Command.setPMAData -> {
+                is AvailableFundsCommand.SetPMAData -> {
                     /*TODO: this is a temp solution for setting pmaCardPopupModel.
                     *  this should be deleted after payMyAccountViewModel refactor */
                     payMyAccountViewModel.setPMACardInfo(viewModel.getCardDetail())
@@ -230,6 +225,29 @@ open class AvailableFundsFragment : Fragment() {
     fun queryPaymentMethod() {
         initShimmer(true)
         viewModel.queryServicePayUPaymentMethod()
+        viewModel.let { viewModel->
+            viewModel.paymentPAYUService.observe(viewLifecycleOwner, Observer {
+                when (it.status) {
+                    Result.Status.SUCCESS -> {
+                        it.data?.let { tokenResponse ->
+
+                        }
+                    }
+                    Result.Status.ERROR -> {
+                        when (it.apiError) {
+                            ApiError.SessionTimeOut -> it.data?.response?.stsParams?.let { stsParams ->
+                                handleSessionTimeOut(
+                                    stsParams
+                                )
+                            }
+                            ApiError.SomethingWrong -> onABSACreditCardFailureHandler()
+                            else -> handleUnknownHttpResponse(it.apiError?.value)
+                        }
+                    }
+
+                }
+            })
+        }
     }
 
 
@@ -247,7 +265,7 @@ open class AvailableFundsFragment : Fragment() {
         }
     }
 
-    private fun setUpView(data: AvailableFundsViewModel.Command.SetViewDetails) {
+    private fun setUpView(data: AvailableFundsCommand.SetViewDetails) {
         activity?.apply {
             binding.availableFundAmountTextView.text = data.availableFund
             binding.currentBalanceAmountTextView.text = data.currentBalance
@@ -328,7 +346,7 @@ open class AvailableFundsFragment : Fragment() {
 
     fun navigateToRecentTransactionActivity(cardType: String) {
         activity?.let { activity ->
-            viewModel.mAccount.value?.apply {
+            viewModel.product?.apply {
                 activity.openActivityForResult<WTransactionsActivity>(
                     BundleKeysConstants.PRODUCT_OFFERINGID to productOfferingId.toString(),
                     BundleKeysConstants.ACCOUNT_NUMBER to if (cardType == AccountsProductGroupCode.CREDIT_CARD.groupCode && accountNumber?.isNotEmpty() == true) accountNumber.toString() else null,

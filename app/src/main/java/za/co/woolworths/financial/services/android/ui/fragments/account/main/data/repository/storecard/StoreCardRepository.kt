@@ -11,5 +11,8 @@ class StoreCardRepository @Inject constructor(
     fun getCreditCardToken() = performGetOperation(
         networkCall = { storeCardDataSource.getCreditCardToken() }
     )
+    fun getPaymentPAYUMethod() = performGetOperation(
+        networkCall = { storeCardDataSource.getPaymentPAYUMethod() }
+    )
 
 }
