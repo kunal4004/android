@@ -8,6 +8,8 @@
     <ImageView
         android:id="@+id/viewTransactionImageView"
         style="@style/accountPaymentOptionIconImageViewStyle"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
         android:contentDescription="@string/view_statements"
         app:layout_constraintBottom_toTopOf="@+id/viewTransactionTextView"
         app:layout_constraintEnd_toEndOf="parent"
