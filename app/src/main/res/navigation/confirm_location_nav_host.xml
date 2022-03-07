@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/confirm_delivery_location_nav_host"
+    app:startDestination="@id/confirmDeliveryLocationFragment">
+
+    <fragment
+        android:id="@+id/confirmDeliveryLocationFragment"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment"
+        android:label="ConfirmDeliveryLocationFragment"
+        tools:layout="@layout/confirm_address_bottom_sheet_dialog">
+        <action
+            android:id="@+id/action_confirmDeliveryLocationFragment_to_confirmAddressMapFragment2"
+            app:destination="@id/confirmAddressMapFragment2" />
+        <action
+            android:id="@+id/action_confirmDeliveryLocationFragment_to_deliveryAddressConfirmationFragment2"
+            app:destination="@id/deliveryAddressConfirmationFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/confirmAddressMapFragment2"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressMapFragment"
+        android:label="ConfirmAddressMapFragment" >
+        <action
+            android:id="@+id/action_confirmAddressMapFragment2_to_deliveryAddressConfirmationFragment2"
+            app:destination="@id/deliveryAddressConfirmationFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/deliveryAddressConfirmationFragment2"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment"
+        android:label="DeliveryAddressConfirmationFragment" >
+        <action
+            android:id="@+id/action_deliveryAddressConfirmationFragment2_to_clickAndCollectStoresFragment"
+            app:destination="@id/clickAndCollectStoresFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/clickAndCollectStoresFragment"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.ClickAndCollectStoresFragment"
+        android:label="ClickAndCollectStoresFragment" >
+        <action
+            android:id="@+id/action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment2"
+            app:destination="@id/deliveryAddressConfirmationFragment2" />
+    </fragment>
+
+
+</navigation>

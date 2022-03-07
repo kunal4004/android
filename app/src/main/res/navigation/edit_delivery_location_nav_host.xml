@@ -5,6 +5,14 @@
     android:id="@+id/edit_delivery_location_nav_host"
     app:startDestination="@id/editDeliveryLocationFragment">
 
+    <fragment
+        android:id="@+id/geoDeliveryLocationFragment"
+        android:name="za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment"
+        android:label="EditDeliveryLocationFragment"
+        tools:layout="@layout/geolocation_deliv_click_collect">
+    </fragment>
+
+
 
     <fragment
         android:id="@+id/editDeliveryLocationFragment"

@@ -357,6 +357,31 @@ class KotlinUtils {
             return SimpleDateFormat("dd-MM-yyy").format(date)
         }
 
+
+        fun presentEditDeliveryGeoLocationActivity(
+            activity: Activity?,
+            requestCode: Int,
+            delivery: Delivery? = null,
+            placeId: String? = null
+        ) {
+            var type = delivery
+            if (type == null) {
+                if (Utils.getPreferredDeliveryLocation() != null) {
+                    type =  if (getPreferredDeliveryType() == Delivery.CNC) Delivery.CNC else Delivery.STANDARD
+
+                }
+            }
+            activity?.apply {
+                val mIntent = Intent(this, EditDeliveryLocationActivity::class.java)
+                val mBundle = Bundle()
+                mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, type?.name)
+                mBundle.putString(EditDeliveryLocationActivity.PLACE_ID, placeId)
+                mIntent.putExtra("bundle", mBundle)
+                startActivityForResult(mIntent, requestCode)
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+        }
+
         fun presentEditDeliveryLocationActivity(
             activity: Activity?,
             requestCode: Int,

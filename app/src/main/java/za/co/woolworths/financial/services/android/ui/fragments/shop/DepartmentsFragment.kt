@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.sub_cate
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1
 import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 class DepartmentsFragment : DepartmentExtensionFragment(),
     DeliveryOrClickAndCollectSelectorDialogFragment.IDeliveryOptionSelection {
@@ -239,19 +240,35 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun onEditDeliveryLocation() {
+
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
-                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                        DeliveryAddressConfirmationFragment.newInstance(
-                            it?.placeId,
-                            KotlinUtils.getPreferredDeliveryType()
-                        )
-                    )
-                }
-            } else {
-                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
-            }
+
+
+            KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                requireActivity(),
+                EditDeliveryLocationActivity.REQUEST_CODE,
+                KotlinUtils.getPreferredDeliveryType(),
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+                )
+
+//            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
+//                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
+//
+//                    KotlinUtils.presentEditDeliveryLocationActivity(
+//                        requireActivity(),
+//                        EditDeliveryLocationActivity.REQUEST_CODE,
+//                        DeliveryType.STORE_PICKUP)
+////
+////                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+////                        DeliveryAddressConfirmationFragment.newInstance(
+////                            it?.placeId,
+////                            KotlinUtils.getPreferredDeliveryType()
+////                        )
+////                    )
+//                }
+//            } else {
+//                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
+//            }
         } else {
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
         }

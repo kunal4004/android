@@ -5,9 +5,12 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -60,11 +63,11 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
 
-
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+
         if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
             initMap()
         } else {
@@ -81,6 +84,8 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
     }
 
     private fun showErrorDialog() {
+
+
         requireActivity().resources?.apply {
             vtoErrorBottomSheetDialog.showErrorBottomSheetDialog(
                 this@ConfirmAddressMapFragment,

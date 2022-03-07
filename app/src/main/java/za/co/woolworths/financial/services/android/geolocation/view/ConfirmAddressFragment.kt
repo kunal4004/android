@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
@@ -217,19 +218,31 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         when (v?.id) {
 
             R.id.tvConfirmAddress -> {
-                if (progressBar.visibility == View.GONE && selectedAddress != null && tvConfirmAddress.text == getString(R.string.update_address)){
+                if (progressBar.visibility == View.GONE
+                    && selectedAddress != null
+                    && tvConfirmAddress.text == getString(R.string.update_address)){
                     savedAddressResponse?.let { navigateToCheckout(it) }
                     return
                 }
-                if (progressBar.visibility == View.GONE && selectedAddress != null && tvConfirmAddress.text == getString(R.string.confirm))
+                if (progressBar.visibility == View.GONE
+                    && selectedAddress != null
+                    && tvConfirmAddress.text == getString(R.string.confirm))
                 {
                     selectedAddress.let {
                         if (it.latitude != null && it.longitude != null && it.placesId != null) {
-                            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                                DeliveryAddressConfirmationFragment.newInstance(
-                                    selectedAddress.latitude.toString()!!,
-                                    selectedAddress.longitude.toString()!!,
-                                    selectedAddress.placesId.toString()!!))
+
+                              Navigation.findNavController(
+                                  requireActivity(),
+                                  R.id.nav_host_container).navigate(
+                                  ConfirmAddressFragmentDirections
+                                      .actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2())
+
+
+//                            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+//                                DeliveryAddressConfirmationFragment.newInstance(
+//                                    selectedAddress.latitude.toString()!!,
+//                                    selectedAddress.longitude.toString()!!,
+//                                    selectedAddress.placesId.toString()!!))
                         }
                         else
                             return
@@ -237,8 +250,18 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 }
             }
             R.id.inCurrentLocation -> {
-                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                    ConfirmAddressMapFragment(mLastLocation?.latitude, mLastLocation?.longitude,false))
+
+                Navigation.findNavController(
+                    requireActivity(),
+                    R.id.nav_host_container).navigate(
+                    ConfirmAddressFragmentDirections
+                        .actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2())
+
+
+//                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+//                    ConfirmAddressMapFragment(mLastLocation?.latitude,
+//                        mLastLocation?.longitude,
+//                        false))
             }
             R.id.inSavedAddress -> {
                 ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
@@ -247,13 +270,21 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 activity?.onBackPressed()
             }
             R.id.enterNewAddress ->{
-                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                    ConfirmAddressMapFragment(null, null,true))
+
+                Navigation.findNavController(
+                    requireActivity(),
+                    R.id.nav_geo_host_container).navigate(
+                    ConfirmAddressFragmentDirections
+                        .actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2())
+
+
+
+//                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
+//                    ConfirmAddressMapFragment(null, null,true))
 
             }
         }
     }
-
 
     private fun navigateToCheckout(response: SavedAddressResponse) {
         val activity: Activity? = activity
