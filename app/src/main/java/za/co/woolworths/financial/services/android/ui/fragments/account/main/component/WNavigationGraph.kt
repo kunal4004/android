@@ -40,7 +40,7 @@ class NavigationGraph @Inject constructor() : INavigationGraph {
     ) {
         navController?.apply {
             val graph = navInflater.inflate(graphResId)
-            graph.setStartDestination(startDestinationId)
+            graph.startDestination = startDestinationId
             setGraph(graph, startDestinationArgs)
         }
     }

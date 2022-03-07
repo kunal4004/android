@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.main.sealing
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing
 
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType

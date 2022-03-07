@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.do
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.sealing.AccountOptions
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptions
 import javax.inject.Inject
 
 interface IAccountOptions {

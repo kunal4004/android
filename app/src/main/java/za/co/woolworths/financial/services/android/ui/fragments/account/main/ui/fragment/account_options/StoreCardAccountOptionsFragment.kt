@@ -12,7 +12,7 @@ import com.awfs.coordination.databinding.StoreCardAccountOptionsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
 import za.co.woolworths.financial.services.android.ui.base.ViewBindingFragment
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.sealing.AccountOptions
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptions
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants
 
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -39,9 +39,9 @@ class StoreCardAccountOptionsFragment : ViewBindingFragment<StoreCardAccountOpti
                         is AccountOptions.ViewTreatmentPlan -> {}
                         is AccountOptions.SetUpAPaymentPlan -> {}
                         is AccountOptions.PaymentOptions -> {}
-                        is AccountOptions.BalanceProtectionInsurance -> this?.showBalanceProtectionInsuranceTag(item)
-                        is AccountOptions.WithdrawCashNow -> this?.hideLoanWithdrawal()
-                        is AccountOptions.DebitOrder -> this?.showDebitOrder(item.isActive)
+                        is AccountOptions.BalanceProtectionInsurance -> showBalanceProtectionInsuranceTag(item)
+                        is AccountOptions.WithdrawCashNow -> hideLoanWithdrawal()
+                        is AccountOptions.DebitOrder -> showDebitOrder(item.isActive)
                     }
                 }
             }

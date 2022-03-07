@@ -4,19 +4,8 @@ import za.co.woolworths.financial.services.android.models.AppConfigSingleton
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.app_config.account_options.ConfigShowTreatmentPlan
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.util.Utils
-
-// consumed
-sealed class AccountOfferingState {
-    object AccountInGoodStanding : AccountOfferingState() //when productOfferingGoodStanding == true
-    object AccountIsInArrears : AccountOfferingState()//account is in arrears
-    object AccountIsChargedOff :
-        AccountOfferingState() //account is in arrears for more than 6 months
-
-    object MakeGetEligibilityCall : AccountOfferingState()
-    object ShowViewTreatmentPlanPopupFromConfigForChargedOff : AccountOfferingState()
-    object ShowViewTreatmentPlanPopupInArrearsFromConfig : AccountOfferingState()
-}
 
 interface IProductOffering {
     fun state(result: (AccountOfferingState) -> Unit)

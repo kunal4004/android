@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.account.main.sealing
+package za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing
 
 sealed class ProductLandingGroupCode {
     data class PersonalLoan(val name: String = AccountCardType.PERSONAL_LOAN.type) :

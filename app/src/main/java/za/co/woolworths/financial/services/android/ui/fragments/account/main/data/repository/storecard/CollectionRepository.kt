@@ -7,7 +7,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.integration.util
 import javax.inject.Inject
 
 interface ICollectionRepository {
-    suspend fun fetchCollectionCheckEligibility(
+    suspend fun queryServiceCheckCustomerEligibilityPlan(
         productGroupCode: String?
     ): Flow<AccountApiResult<EligibilityPlanResponse>?>?
 }
@@ -15,9 +15,9 @@ interface ICollectionRepository {
 class CollectionRepository @Inject constructor(private val collectionRemoteDataSource: CollectionRemoteDataSource) :
     ICollectionRepository {
 
-    override suspend fun fetchCollectionCheckEligibility(productGroupCode: String?): Flow<AccountApiResult<EligibilityPlanResponse>?>? {
+    override suspend fun queryServiceCheckCustomerEligibilityPlan(productGroupCode: String?): Flow<AccountApiResult<EligibilityPlanResponse>?>? {
         productGroupCode ?: return null
-        return collectionRemoteDataSource.fetchCollectionCheckEligibility(productGroupCode)
+        return collectionRemoteDataSource.queryServiceCheckCustomerEligibilityPlan(productGroupCode)
     }
 
 }

@@ -8,10 +8,10 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.StoreCardService
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.collection.CollectionRemoteDataSource
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.CollectionRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.repository.storecard.StoreCardRepository
 import za.co.woolworths.financial.services.android.ui.fragments.account.storecard.data.remote.collection.CollectionRemoteApiService
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.data.remote.storecard.collection.CollectionRemoteDataSource
 
 import javax.inject.Singleton
 
@@ -34,9 +34,6 @@ object AccountProductsModule {
         StoreCardRepository(remoteDataSource)
 
 
-    @Provides
-    fun provideCollectionRemoteApiService(retrofit: Retrofit): CollectionRemoteApiService = retrofit.create(CollectionRemoteApiService::class.java)
-
     @Singleton
     @Provides
     fun provideCollectionRemoteDataSource(collectionRemoteApiService: CollectionRemoteApiService) =
@@ -46,5 +43,8 @@ object AccountProductsModule {
     @Provides
     fun provideCollectionRepository(remoteDataSource: CollectionRemoteDataSource) =
         CollectionRepository(remoteDataSource)
+
+    @Provides
+    fun provideCollectionRemoteApiService(retrofit: Retrofit): CollectionRemoteApiService = retrofit.create(CollectionRemoteApiService::class.java)
 
 }

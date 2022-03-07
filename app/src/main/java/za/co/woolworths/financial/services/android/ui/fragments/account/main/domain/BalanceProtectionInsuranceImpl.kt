@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.do
 
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplication
 import za.co.woolworths.financial.services.android.models.dto.account.BpiInsuranceApplicationStatusType
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.sealing.AccountOptions
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOptions
 import javax.inject.Inject
 
 interface IBalanceProtectionInsurance {

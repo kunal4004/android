@@ -8,8 +8,8 @@ import javax.inject.Inject
 class CollectionRemoteDataSource @Inject constructor(private val collectionRemoteApiService: CollectionRemoteApiService) :
     BaseDataSource() {
 
-    suspend fun fetchCollectionCheckEligibility(productGroupCode: String) = toResultFlow {
-        collectionRemoteApiService.fetchCollectionCheckEligibility(
+    suspend fun queryServiceCheckCustomerEligibilityPlan(productGroupCode: String) = toResultFlow {
+        collectionRemoteApiService.queryServiceCheckCustomerEligibilityPlan(
             "",
             "",
             getSessionToken(),

@@ -3,10 +3,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.account.main.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.AccountProductLandingActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.component.NavigationGraph
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.ui.fragment.landing.AccountProductsHomeViewModel
 import za.co.woolworths.financial.services.android.ui.fragments.account.main.util.Constants.ACCOUNT_PRODUCT_PAYLOAD
@@ -29,8 +33,6 @@ class StoreCardActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        actionBar()
-        setAccountObject()
         setupView()
     }
 
@@ -44,25 +46,17 @@ class StoreCardActivity : AppCompatActivity() {
         )
     }
 
-    /**
-     * TODO:: Fetch data from room db after room implementation
-     */
-    private fun setAccountObject() {
-        val bundle = intent.extras
-        val accountStr = bundle?.getString(ACCOUNT_PRODUCT_PAYLOAD)
-        viewModel.saveAccount(accountStr)
-    }
-
-    fun actionBar() {
-        setSupportActionBar(binding.accountToolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowTitleEnabled(false)
-            setDisplayUseLogoEnabled(false)
-            setHomeAsUpIndicator(R.drawable.back24)
-        }
-        binding.accountToolbar.setNavigationOnClickListener {
-            onBackPressed()
-        }
-    }
+//
+//    fun actionBar() {
+//        setSupportActionBar(binding.accountToolbar)
+//        supportActionBar?.apply {
+//            setDisplayHomeAsUpEnabled(true)
+//            setDisplayShowTitleEnabled(false)
+//            setDisplayUseLogoEnabled(false)
+//            setHomeAsUpIndicator(R.drawable.back24)
+//        }
+//        binding.accountToolbar.setNavigationOnClickListener {
+//            onBackPressed()
+//        }
+//    }
 }

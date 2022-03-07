@@ -6,8 +6,8 @@ import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.extension.fromJson
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.sealing.CreditCardType
-import za.co.woolworths.financial.services.android.ui.fragments.account.main.sealing.ProductLandingGroupCode
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.CreditCardType
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.ProductLandingGroupCode
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.Utils.getSessionDaoValue
 import javax.inject.Inject
@@ -22,6 +22,7 @@ interface IAccountProductLandingDao {
 class AccountProductLandingDao @Inject constructor() : IAccountProductLandingDao {
 
     override val account by lazy { MutableLiveData<Account>() }
+
     override fun saveAccount(product: String?) {
         product ?: return
         Utils.sessionDaoSave(SessionDao.KEY.ACCOUNT_PRODUCT_PAYLOAD, product)

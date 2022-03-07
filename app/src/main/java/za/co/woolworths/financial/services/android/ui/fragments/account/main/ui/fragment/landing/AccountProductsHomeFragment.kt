@@ -46,7 +46,7 @@ class AccountProductsHomeFragment : ViewBindingFragment<AccountProductsHomeFragm
                     val homeIcon = (activity as? StoreCardActivity)?.findViewById<Button>(android.R.id.home)
                     animateDim(slideOffset, this?.dimView)
                     animateDim(slideOffset, homeIcon)
-                    animateDim(slideOffset, (activity as? StoreCardActivity)?.binding?.accountToolbar)
+                    //animateDim(slideOffset, (activity as? StoreCardActivity)?.binding?.accountToolbar)
                     homeIcon?.rotation = slideOffset * 90
                 })
             }

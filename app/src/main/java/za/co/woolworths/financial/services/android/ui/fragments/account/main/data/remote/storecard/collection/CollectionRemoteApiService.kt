@@ -15,7 +15,7 @@ interface CollectionRemoteApiService {
         "Media-Type: application/json"
     )
     @GET("wfs/app/v4/accounts/collections/checkEligibility")
-    suspend fun fetchCollectionCheckEligibility(
+    suspend fun queryServiceCheckCustomerEligibilityPlan(
         @Header("userAgent") userAgent: String,
         @Header("userAgentVersion") userAgentVersion: String,
         @Header("sessionToken") sessionToken: String,
