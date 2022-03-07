@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.link_card_fragment.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
 import za.co.woolworths.financial.services.android.models.dto.linkdevice.UserDevice
@@ -433,14 +434,39 @@ class MyPreferencesFragment : Fragment(), View.OnClickListener, View.OnTouchList
                 hideToolbar()
             }
         }
-        view?.let {
-            try{
-                Navigation.findNavController(it)
-                    .navigate(R.id.action_myPreferencesFragment_to_confirmAddressFragment)
-            } catch (e: Exception) {
-                FirebaseManager.logException(e)
+
+        if (Utils.getPreferredDeliveryLocation() != null) {
+            view?.let {
+                val bundle = Bundle()
+                bundle.putString(
+                    DeliveryAddressConfirmationFragment.KEY_PLACE_ID,
+                    Utils.getPreferredDeliveryLocation().fulfillmentDetails?.address?.placeId
+                )
+                bundle.putString(
+                    DeliveryAddressConfirmationFragment.DELIVERY_TYPE,
+                    KotlinUtils.getPreferredDeliveryType().toString()
+                )
+                try {
+                    Navigation.findNavController(it)
+                        .navigate(
+                            R.id.action_myPreferencesFragment_to_deliveryAddressConfirmationFragment,
+                            bundle
+                        )
+                } catch (e: Exception) {
+                    FirebaseManager.logException(e)
+                }
+            }
+        } else {
+            view?.let {
+                try {
+                    Navigation.findNavController(it)
+                        .navigate(R.id.action_myPreferencesFragment_to_confirmAddressFragment)
+                } catch (e: Exception) {
+                    FirebaseManager.logException(e)
+                }
             }
         }
+
 
     }
 

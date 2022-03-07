@@ -201,8 +201,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     companion object {
         private val KEY_LATITUDE = "latitude"
         private val KEY_LONGITUDE = "longitude"
-        private val KEY_PLACE_ID = "placeId"
-        private val DELIVERY_TYPE = "deliveryType"
+        val KEY_PLACE_ID = "placeId"
+        val DELIVERY_TYPE = "deliveryType"
 
 
         private const val STANDARD_DELIVERY = "StandardDelivery"
