@@ -240,11 +240,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
     private fun onEditDeliveryLocation() {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (Utils.getPreferredDeliveryLocation() != null) {
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
                     (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
                         DeliveryAddressConfirmationFragment.newInstance(
-                            it.address?.placeId,
+                            it?.placeId,
                             KotlinUtils.getPreferredDeliveryType()
                         )
                     )
@@ -393,11 +393,11 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEPARTMENT_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            if (Utils.getPreferredDeliveryLocation() != null) {
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.let {
+            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
+                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
                     (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
                         DeliveryAddressConfirmationFragment.newInstance(
-                            it.address?.placeId,
+                            it.placeId,
                             KotlinUtils.getPreferredDeliveryType()
                         )
                     )

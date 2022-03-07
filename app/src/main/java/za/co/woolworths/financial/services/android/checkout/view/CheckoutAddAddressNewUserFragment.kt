@@ -556,8 +556,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             val googlePlacesName = place.name
             address1 =
                 if (googlePlacesName.isNullOrEmpty()) tempAddress1 else if (googlePlacesName.length > 50) tempAddress1 else googlePlacesName
-            latitude = place.latLng?.latitude
-            longitude = place.latLng?.longitude
+            latitude = place.latLng?.latitude.toString()
+            longitude = place.latLng?.longitude.toString()
             placesId = place.id
         }
 
@@ -568,8 +568,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             val geocoder = Geocoder(context, Locale.getDefault())
             val addresses =
                 geocoder.getFromLocation(
-                    selectedAddress.savedAddress.latitude!!,
-                    selectedAddress.savedAddress.longitude!!,
+                    selectedAddress.savedAddress.latitude!!.toDouble(),
+                    selectedAddress.savedAddress.longitude!!.toDouble(),
                     1
                 )
             if (!addresses[0]?.postalCode.isNullOrEmpty())
@@ -1228,8 +1228,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             suburbEditText?.text.toString(),
             "",
             false,
-            selectedAddress.savedAddress.latitude,
-            selectedAddress.savedAddress.longitude,
+            selectedAddress.savedAddress.latitude?.toDouble(),
+            selectedAddress.savedAddress.longitude?.toDouble(),
             selectedAddress.savedAddress.placesId ?: "",
             selectedDeliveryAddressType.toString()
         )

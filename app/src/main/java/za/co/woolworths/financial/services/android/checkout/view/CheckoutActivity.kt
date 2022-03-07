@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddress
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
@@ -46,6 +47,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
                 Utils.toJson(savedAddressResponse)
             )
             baseFragBundle?.putBoolean(IS_DELIVERY, if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
+            baseFragBundle?.putBoolean(ConfirmAddressFragment.IS_COMING_FROM_CONFIRM_ADDRESS, true)
         }
         loadNavHostFragment()
     }
@@ -121,6 +123,11 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
             baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {
                 R.id.checkoutWhoIsCollectingFragment
+            }
+
+            baseFragBundle?.containsKey(ConfirmAddressFragment.IS_COMING_FROM_CONFIRM_ADDRESS)==true
+                    && baseFragBundle?.getBoolean(ConfirmAddressFragment.IS_COMING_FROM_CONFIRM_ADDRESS) == true -> {
+                R.id.CheckoutAddAddressNewUserFragment
             }
 
             savedAddressResponse?.addresses.isNullOrEmpty() -> {

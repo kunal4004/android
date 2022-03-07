@@ -411,7 +411,7 @@ class CheckoutReturningUserCollectionFragment : Fragment(),
         vehicleRegistration = whoIsCollectingDetails?.vehicleRegistration ?: ""
         taxiOpted = whoIsCollectingDetails?.isMyVehicle != true
         deliveryType = KotlinUtils.getPreferredDeliveryType().toString()
-        address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation().fulfillmentDetails.address?.placeId)
+        address = ConfirmLocationAddress(Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId)
     }
 
     private fun showEmptyCart() {
