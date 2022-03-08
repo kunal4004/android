@@ -57,12 +57,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
-        if (checkPermissions()) {
-            getLastLocation()
-        } else {
-            hideCurrentLocation()
-        }
+
         hideBottomNav()
     }
 
@@ -88,6 +83,12 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     override fun onResume() {
         super.onResume()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+        if (checkPermissions()) {
+            getLastLocation()
+        } else {
+            hideCurrentLocation()
+        }
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             inSavedAddress?.visibility = View.GONE
             tvConfirmAddress?.visibility = View.VISIBLE
