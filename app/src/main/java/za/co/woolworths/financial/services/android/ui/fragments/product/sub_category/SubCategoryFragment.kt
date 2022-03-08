@@ -15,6 +15,8 @@ import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ExpandableSubCategoryFragmentBinding
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.models.AppConfigSingleton.brandLandingPage
+import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
@@ -22,12 +24,12 @@ import za.co.woolworths.financial.services.android.models.dto.SubCategory
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.newInstance
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPictureCenterInside
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.expand.*
-import kotlin.collections.ArrayList
+
 
 class SubCategoryFragment :
     BaseFragment<ExpandableSubCategoryFragmentBinding?, SubCategoryViewModel?>(),
@@ -113,7 +115,10 @@ class SubCategoryFragment :
         return BR.viewModel
     }
 
-    override fun bindSubCategoryResult(subCategoryList: List<SubCategory>, latestVersionParam: String) {
+    override fun bindSubCategoryResult(
+        subCategoryList: List<SubCategory>,
+        latestVersionParam: String
+    ) {
         version = latestVersionParam
         if (viewModel.childItem()) { // child item
             val subCategoryChildList: MutableList<SubCategoryChild> = ArrayList()
@@ -183,14 +188,23 @@ class SubCategoryFragment :
     }
 
     override fun onChildItemClicked(subCategory: SubCategory) {
-        //Navigate to product grid
-        pushFragment(
-            newInstance(
-                ProductsRequestParams.SearchType.NAVIGATE,
-                subCategory.categoryName,
-                subCategory.dimValId
-            )
+        // Navigate to product grid
+        // If while category drill down
+        // ... brand is present in MobileConfig send filter content as false
+        // ... brand is not present in MobileConfig send filter content as true
+        val list = if (brandLandingPage != null) brandLandingPage!!.categoryName else ArrayList(0)
+        val brandNavigationDetails = BrandNavigationDetails(
+            brandText = subCategory.categoryName,
+            displayName = subCategory.categoryName,
+            isBrandLandingPage = true,
+            filterContent = list.stream().noneMatch { s -> s.equals(subCategory.categoryName, true)}
         )
+        pushFragment(ProductListingFragment.newInstance(
+            ProductsRequestParams.SearchType.NAVIGATE,
+            subCategory.categoryName,
+            subCategory.dimValId,
+            brandNavigationDetails
+        ))
     }
 
     override fun noConnectionDetected() {

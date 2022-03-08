@@ -32,11 +32,13 @@
         android:id="@+id/chanel_img_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
+        android:padding="@dimen/fifteen_dp"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chanel_logo_header"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@tools:sample/avatars"
+        tools:visibility="visible"/>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

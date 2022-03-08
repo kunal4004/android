@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.IResponseListener
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -103,12 +104,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var lastVisibleItem: Int = 0
     internal var totalItemCount: Int = 0
 
-    private val CHANEL: String = "chanel"
-    var toolbarTitleText: String? = null
-    private var mSearchTerm: String? = null
-    private var mNavigationState: String? = null
-    private var mSubCategoryName: String? = null
-    private var mFulfilmentTypeId: String? = null
+    var toolbarTitleText: String? = ""
+    private var mSearchTerm: String = ""
+    private var mNavigationState: String = ""
+    private var mSubCategoryName: String = ""
+    private var mFulfilmentTypeId: String = ""
     private var mStoreId: String = ""
     private var mSortOption: String = ""
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
@@ -133,7 +133,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     @Inject
     lateinit var vtoBottomSheetDialog: VtoBottomSheetDialog
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -143,12 +142,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 mSearchType =
                     ProductsRequestParams.SearchType.valueOf(getString(SEARCH_TYPE, "SEARCH"))
                 mSearchTerm = getString(SEARCH_TERM, "")
-                mNavigationState = getString(NAVIGATION_STATE, "")
                 mSortOption = getString(SORT_OPTION, "")
-                mBannerLabel = getString(CHANEL_BANNER_LABEL, "")
-                mBannerImage = getString(CHANEL_BANNER_IMAGE, "")
-                mIsComingFromBLP = getBoolean(CHAEL_IS_COMING_FROM_BLP, false)
-                filterContent = getBoolean(FILTER_CONTENT, false)
+
+                (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let { brandNavigationDetails ->
+                    mNavigationState = brandNavigationDetails.navigationState ?: ""
+                    mBannerLabel = brandNavigationDetails.bannerLabel ?: ""
+                    mBannerImage = brandNavigationDetails.bannerImage ?: ""
+                    mIsComingFromBLP = brandNavigationDetails.isComingFromBLP
+                    filterContent = brandNavigationDetails.filterContent
+                }
             }
             val localBody: HashMap<String, Any> = HashMap()
             localBody.apply {
@@ -262,23 +264,26 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             pushFragment(
                 newInstance(
                     mSearchType,
-                    mSubCategoryName,
                     mSearchTerm,
-                    mNavigationState,
-                    productRequestBody.sortOption
+                    mSubCategoryName,
+                    productRequestBody.sortOption,
+                    BrandNavigationDetails(
+                        brandText = (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText,
+                        navigationState = mNavigationState
+                    )
                 )
             )
         }
     }
 
     private fun updateRequestForReload() {
-        if (!localProductBody.isEmpty()) {
+        if (localProductBody.isNotEmpty()) {
             val list: HashMap<String, Any> =
                 (localProductBody.get(localProductBody.lastIndex) as HashMap<String, Any>)
-            mSubCategoryName = list["subCategory"] as String?
+            mSubCategoryName = list["subCategory"] as? String ?: ""
             mSearchType = list["searchType"] as? ProductsRequestParams.SearchType
-            mSearchTerm = list["searchTerm"] as? String
-            mNavigationState = list["navigationState"] as? String
+            mSearchTerm = list["searchTerm"] as? String ?: ""
+            mNavigationState = list["navigationState"] as? String ?: ""
             mSortOption = list["sortOption"] as String
             filterContent = list["filterContent"] as Boolean
             setProductBody()
@@ -286,7 +291,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         updateProductRequestBodyForRefinement(mNavigationState)
     }
 
-     fun setTitle() {
+    fun setTitle() {
         if ((activity as? BottomNavigationActivity)?.currentFragment !is ProductListingFragment) {
             return
         }
@@ -438,7 +443,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 newInstance(
                     ProductsRequestParams.SearchType.SEARCH,
                     AppConstant.EMPTY_STRING,
-                    CHANEL
+                    (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText
                 )
             )
         }
@@ -456,7 +461,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         if (response.desc == null) return
         hideFooterView()
 
-        if (ChanelUtils.isCategoryPresentInConfig(mSearchTerm) || ChanelUtils.isCategoryPresentInConfig(mSubCategoryName) || mIsComingFromBLP) {
+        if (ChanelUtils.isCategoryPresentInConfig(mSearchTerm) || ChanelUtils.isCategoryPresentInConfig(
+                mSubCategoryName
+            ) || mIsComingFromBLP
+        ) {
             (activity as? BottomNavigationActivity)?.apply {
                 hideBottomNavigationMenu()
                 Handler().postDelayed({ hideToolbar() }, AppConstant.DELAY_300_MS)
@@ -518,7 +526,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mProductList?.add(0, headerProduct)
         }
 
-        mProductAdapter = activity?.let { ProductListingAdapter(this, mProductList, it, mBannerLabel, mBannerImage, mIsComingFromBLP) }
+        mProductAdapter = activity?.let {
+            ProductListingAdapter(
+                this,
+                mProductList,
+                it,
+                mBannerLabel,
+                mBannerImage,
+                mIsComingFromBLP
+            )
+        }
         val mRecyclerViewLayoutManager: GridLayoutManager?
         mRecyclerViewLayoutManager = GridLayoutManager(activity, 2)
         // Set up a GridLayoutManager to change the SpanSize of the header and footer
@@ -544,7 +561,16 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
         mProductAdapter = null
         mProductAdapter =
-            activity?.let { ProductListingAdapter(this@ProductListingFragment, mProductList, it, mBannerLabel, mBannerImage, mIsComingFromBLP) }
+            activity?.let {
+                ProductListingAdapter(
+                    this@ProductListingFragment,
+                    mProductList,
+                    it,
+                    mBannerLabel,
+                    mBannerImage,
+                    mIsComingFromBLP
+                )
+            }
         productsRecyclerView?.apply {
             if (visibility == View.INVISIBLE)
                 visibility = VISIBLE
@@ -662,7 +688,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun setProductBody() {
-        setProductRequestBody(mSearchType, mSearchTerm, mNavigationState, mSortOption, filterContent)
+        setProductRequestBody(
+            mSearchType,
+            mSearchTerm,
+            mNavigationState,
+            mSortOption,
+            filterContent
+        )
     }
 
     override fun onLoadStart(isLoadMore: Boolean) {
@@ -960,12 +992,26 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun openProductDetailView(productList: ProductList) {
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList, mBannerLabel , mBannerImage)
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(
+            title,
+            productList,
+            mBannerLabel,
+            mBannerImage
+        )
     }
 
-     fun openProductDetailView(productList: ProductList, bannerLabel:String?, bannerImage: String?) {
+    fun openProductDetailView(
+        productList: ProductList,
+        bannerLabel: String?,
+        bannerImage: String?
+    ) {
         val title = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
-        (activity as? BottomNavigationActivity)?.openProductDetailFragment(title, productList, bannerLabel, bannerImage)
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(
+            title,
+            productList,
+            bannerLabel,
+            bannerImage
+        )
     }
 
 
@@ -1310,13 +1356,17 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     fun onRefined(navigationState: String, isMultiSelectCategoryRefined: Boolean) {
         if (isMultiSelectCategoryRefined)
             updateProductRequestBodyForRefinement(navigationState)
+
         (activity as? BottomNavigationActivity)?.pushFragment(
             newInstance(
                 mSearchType,
-                mSubCategoryName,
                 mSearchTerm,
-                navigationState,
-                productRequestBody.sortOption
+                mSubCategoryName,
+                productRequestBody.sortOption,
+                BrandNavigationDetails(
+                    brandText = (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText,
+                    navigationState = navigationState
+                )
             )
         )
     }
@@ -1353,12 +1403,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         private const val SEARCH_TYPE = "SEARCH_TYPE"
         private const val SEARCH_TERM = "SEARCH_TERM"
-        private const val IS_BRAND_LANDING_PAGE = "IS_BRAND_LANDING_PAGE"
-        private const val FILTER_CONTENT = "FILTER_CONTENT"
         private const val SORT_OPTION = "SORT_OPTION"
-         const val CHANEL_BANNER_IMAGE = "BANNER_IMAGE"
-         const val CHANEL_BANNER_LABEL = "BANNER_LABEL"
-        private const val CHAEL_IS_COMING_FROM_BLP = "IS_CMING_FROM_BLP"
+        private const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
 
         fun newInstance(
             searchType: ProductsRequestParams.SearchType?,
@@ -1372,72 +1418,28 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
         fun newInstance(
             searchType: ProductsRequestParams.SearchType?,
-            sub_category_name: String?,
             searchTerm: String?,
-            navigationState: String?,
-            chanelBannerImageUrl: String?,
-            chanelBannerLabel: String?,
-            isComingFrom: Boolean,
-            filterContent: Boolean?
+            sub_category_name: String?,
+            brandNavigationDetails: BrandNavigationDetails?
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
+            putString(SEARCH_TERM, searchTerm)
             putString(SUB_CATEGORY_NAME, sub_category_name)
-            putString(SEARCH_TERM, searchTerm)
-            putString(NAVIGATION_STATE, navigationState)
-            putString(CHANEL_BANNER_LABEL, chanelBannerLabel)
-            putString(CHANEL_BANNER_IMAGE, chanelBannerImageUrl)
-            putBoolean(CHAEL_IS_COMING_FROM_BLP, isComingFrom)
-            putBoolean(FILTER_CONTENT, filterContent ?: false)
+            putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
         }
 
         fun newInstance(
             searchType: ProductsRequestParams.SearchType?,
             searchTerm: String?,
             sub_category_name: String?,
-            isBrandLandingPage: Boolean?
-        ) = ProductListingFragment().withArgs {
-            putString(SEARCH_TYPE, searchType?.name)
-            putString(SUB_CATEGORY_NAME, sub_category_name)
-            putString(SEARCH_TERM, searchTerm)
-            putBoolean(IS_BRAND_LANDING_PAGE, isBrandLandingPage ?: false)
-        }
-
-        fun newInstance(
-            searchType: ProductsRequestParams.SearchType?,
-            searchTerm: String?,
-            sub_category_name: String?,
-            isBrandLandingPage: Boolean?,
-            filterContent: Boolean?
-        ) = ProductListingFragment().withArgs {
-            putString(SEARCH_TYPE, searchType?.name)
-            putString(SUB_CATEGORY_NAME, sub_category_name)
-            putString(SEARCH_TERM, searchTerm)
-            putBoolean(IS_BRAND_LANDING_PAGE, isBrandLandingPage ?: false)
-            putBoolean(FILTER_CONTENT, filterContent ?: false)
-        }
-
-        fun newInstance(
-            searchType: ProductsRequestParams.SearchType?,
-            searchTerm: String?,
-            filterContent: Boolean?
-        ) = ProductListingFragment().withArgs {
-            putString(SEARCH_TYPE, searchType?.name)
-            putString(SEARCH_TERM, searchTerm)
-            putBoolean(FILTER_CONTENT, filterContent ?: false)
-        }
-
-        fun newInstance(
-            searchType: ProductsRequestParams.SearchType?,
-            sub_category_name: String?,
-            searchTerm: String?,
-            navigationState: String?,
             sortOption: String,
+            brandNavigationDetails: BrandNavigationDetails?
         ) = ProductListingFragment().withArgs {
             putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
             putString(SEARCH_TERM, searchTerm)
-            putString(NAVIGATION_STATE, navigationState)
             putString(SORT_OPTION, sortOption)
+            putSerializable(BRAND_NAVIGATION_DETAILS, brandNavigationDetails)
         }
     }
 
@@ -1533,7 +1535,11 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         }
     }
 
-    override fun openProductDetailsView(productList: ProductList?, bannerLabel:String? , bannerImage: String?) {
+    override fun openProductDetailsView(
+        productList: ProductList?,
+        bannerLabel: String?,
+        bannerImage: String?
+    ) {
         // From Chanel Horizontal Category click
         productList?.let { openProductDetailView(it, bannerLabel, bannerImage) }
     }
@@ -1546,7 +1552,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     ) {
         // From Chanel Vertical Category click
         (activity as? BottomNavigationActivity)?.apply {
-            val isBrandLandingPage = arguments?.getBoolean(IS_BRAND_LANDING_PAGE, false) ?: false
+            val isBrandLandingPage = (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)
+                ?.isBrandLandingPage ?: false
+
             Utils.triggerFireBaseEvents(
                 if (isBrandLandingPage)
                     FirebaseManagerAnalyticsProperties.BRAND_LANDING_PAGE_CATEGORY
@@ -1562,16 +1570,21 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 activity
             )
 
+            val brandNavigationDetails = BrandNavigationDetails(
+                brandText = (arguments?.getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.brandText,
+                displayName = navigation?.displayName,
+                navigationState = navigation?.navigationState,
+                bannerImage = bannerImage,
+                bannerLabel = bannerLabel,
+                isComingFromBLP = isComingFromBLP,
+                filterContent = navigation?.filterContent ?: false
+            )
             pushFragment(
                 newInstance(
                     ProductsRequestParams.SearchType.NAVIGATE,
+                    searchTerm = navigation?.displayName,
                     "",
-                    navigation?.displayName,
-                    navigation?.navigationState,
-                    bannerImage,
-                    bannerLabel,
-                    isComingFromBLP,
-                    navigation?.filterContent ?: false
+                    brandNavigationDetails
                 )
             )
         }
