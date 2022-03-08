@@ -1001,8 +1001,6 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Header("deviceIdentityToken") deviceIdentityToken: String,
             @Header("environment") environment: String,
-            @Header("latitude") latitude: Double?,
-            @Header("longitude") longitude: Double?,
             @Query("placeId") placeId: String): Call<ValidateLocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")

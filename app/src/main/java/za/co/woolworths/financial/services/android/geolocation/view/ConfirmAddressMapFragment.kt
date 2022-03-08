@@ -3,11 +3,15 @@ package za.co.woolworths.financial.services.android.geolocation.view
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -41,8 +45,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ConfirmAddressMapFragment() :
-    Fragment(R.layout.geolocation_confirm_address), OnMapReadyCallback, VtoTryAgainListener {
+class ConfirmAddressMapFragment : Fragment() , OnMapReadyCallback, VtoTryAgainListener {
 
     private var mMap: GoogleMap? = null
     private var mAddress: String? = null
@@ -59,10 +62,22 @@ class ConfirmAddressMapFragment() :
     private var longitude: Double? = null
     private var suburb: String? = null
     private var isAddAddress: Boolean? = false
+    private var fragentView : View? = null
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        if (fragentView == null) {
+            fragentView = inflater.inflate(R.layout.geolocation_confirm_address, container, false)
+        }
+        return fragentView
+    }
 
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
@@ -139,10 +154,23 @@ class ConfirmAddressMapFragment() :
     private fun confirmAddressClick() {
         confirmAddress?.setOnClickListener {
             if (mLatitude != null && mLongitude != null && placeId != null) {
-                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-                    DeliveryAddressConfirmationFragment.newInstance(mLatitude!!,
-                        mLongitude!!,
-                        placeId!!))
+
+                val bundle = Bundle()
+                bundle?.apply {
+                    putString(
+                        DeliveryAddressConfirmationFragment.KEY_LATITUDE, mLatitude
+                    )
+                    putString(
+                        DeliveryAddressConfirmationFragment.KEY_LONGITUDE, mLongitude
+                    )
+                    putString(
+                        DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                    )
+                }
+
+                findNavController().navigate(R.id.action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment,
+                    bundleOf("bundle" to bundle)
+                )
             }
         }
     }

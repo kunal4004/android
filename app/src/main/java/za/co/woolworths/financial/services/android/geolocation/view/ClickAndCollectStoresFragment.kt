@@ -30,11 +30,14 @@ import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.model.BitmapDescriptor
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment.Companion.VALIDATE_RESPONSE
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
@@ -47,11 +50,9 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
     private var mValidateLocationResponse: ValidateLocationResponse? = null
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var dataStore: Store? = null
+    private var bundle: Bundle? = null
 
     companion object {
-
-        private const val VALIDATE_RESPONSE = "VALIDATE_LOCATION_RESPONSE"
-
         fun newInstance(validateLocationResponse: ValidateLocationResponse?) =
             ClickAndCollectStoresFragment().withArgs {
                 putSerializable(VALIDATE_RESPONSE, validateLocationResponse)
@@ -60,11 +61,9 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.apply {
-            arguments?.apply {
-                mValidateLocationResponse =
-                    getSerializable(VALIDATE_RESPONSE) as ValidateLocationResponse?
-            }
+        bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
+           mValidateLocationResponse = getSerializable(VALIDATE_RESPONSE)  as ValidateLocationResponse
         }
     }
 
@@ -74,7 +73,6 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
             GeoLocationViewModelFactory(GeoLocationApiHelper())
         ).get(ConfirmAddressViewModel::class.java)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -184,7 +182,7 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
         when (v?.id) {
             R.id.tvConfirmStore -> {
                 dataStore?.let { StoreLiveData.value = it }
-                (activity as? BottomNavigationActivity)?.popFragment()
+                activity?.onBackPressed()
             }
         }
     }

@@ -84,6 +84,7 @@ class KotlinUtils {
         const val COLLECTIONS_EXIT_URL = "collectionsExitUrl"
         const val TREATMENT_PLAN = "treamentPlan"
         const val RESULT_CODE_CLOSE_VIEW = 2203
+        var GEO_REQUEST_CODE = -1
 
         fun highlightTextInDesc(
             context: Context?,
@@ -377,6 +378,7 @@ class KotlinUtils {
                 mBundle.putString(EditDeliveryLocationActivity.DELIVERY_TYPE, type?.name)
                 mBundle.putString(EditDeliveryLocationActivity.PLACE_ID, placeId)
                 mIntent.putExtra("bundle", mBundle)
+                GEO_REQUEST_CODE = requestCode
                 startActivityForResult(mIntent, requestCode)
                 overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }

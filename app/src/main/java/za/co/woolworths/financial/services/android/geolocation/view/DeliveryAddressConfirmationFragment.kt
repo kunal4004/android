@@ -1,13 +1,17 @@
 package za.co.woolworths.financial.services.android.geolocation.view
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.geolocation_deliv_click_collect.*
 import kotlinx.android.synthetic.main.geolocation_deliv_click_collect.deliveryTab
@@ -24,6 +28,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.Confirm
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation
+import za.co.woolworths.financial.services.android.ui.activities.click_and_collect.EditDeliveryLocationActivity
 import za.co.woolworths.financial.services.android.ui.extension.bindDrawable
 import za.co.woolworths.financial.services.android.ui.extension.bindString
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -40,19 +45,27 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     private var placeId: String? = null
-    private var latitude: Double? = null
-    private var longitude: Double? = null
+    private var latitude: String? = null
+    private var longitude: String? = null
     private lateinit var validateLocationResponse: ValidateLocationResponse
     private var deliveryType: String? = STANDARD_DELIVERY
     private var mStoreName: String? = null
     private var mStoreId: String? = null
+    private var bundle: Bundle? = null
+    private var fragentView : View? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.geolocation_deliv_click_collect, container, false)
+
+        if (fragentView == null) {
+            fragentView =
+                inflater.inflate(R.layout.geolocation_deliv_click_collect, container, false)
+        }
+        return fragentView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,13 +76,12 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.apply {
-            arguments?.apply {
-                placeId =
-                    getString(KEY_PLACE_ID)
-                latitude = getDouble(KEY_LATITUDE)
-                longitude = getDouble(KEY_LONGITUDE)
-            }
+        bundle = arguments?.getBundle("bundle")
+
+        bundle?.apply {
+            latitude = getString(KEY_LATITUDE, "")
+            longitude = this.getString(KEY_LONGITUDE, "")
+            placeId = this.getString(KEY_PLACE_ID, "")
         }
     }
 
@@ -80,13 +92,23 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 deliveryType = AppConstant.EMPTY_STRING
             }
             R.id.geoloc_clickNCollectEditChangetv -> {
+
                 if (deliveryType.equals(CLICK_AND_COLLECT)) {
-                    (activity as? BottomNavigationActivity)?.pushFragment(ClickAndCollectStoresFragment.newInstance(validateLocationResponse))
+
+                    bundle?.putSerializable(
+                        VALIDATE_RESPONSE, validateLocationResponse)
+
+                    findNavController().navigate(
+                        R.id.action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment,
+                        bundleOf("bundle" to bundle)
+                    )
                     return
                 }
 
                 if (deliveryType.equals(STANDARD_DELIVERY)) {
-                    (activity as? BottomNavigationActivity)?.pushFragment(ConfirmAddressFragment.newInstance())
+                    findNavController().navigate(
+                        R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment
+                    )
                     return
                 }
             }
@@ -165,6 +187,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                     when (confirmLocationResponse.httpCode) {
                         HTTP_OK -> {
                             // save details in cache
+
                             confirmLocationResponse?.orderSummary?.fulfillmentDetails?.let {
                                 Utils.savePreferredDeliveryLocation(
                                     ShoppingDeliveryLocation(
@@ -174,16 +197,15 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                             }
 
                             // navigate to shop tab
-                            (activity as? BottomNavigationActivity)?.clearStack()
-                            (activity as? BottomNavigationActivity)?.getBottomNavigationById()
-                                ?.setCurrentItem(INDEX_PRODUCT);
+                            Log.e("GEO_REQUEST_CODE :", "" + KotlinUtils.GEO_REQUEST_CODE)
+                            activity?.setResult(KotlinUtils.GEO_REQUEST_CODE)
+                            activity?.finish()
 
                         }
                         else -> {
                             // navigate to shop tab with error sceanario
-                            (activity as? BottomNavigationActivity)?.clearStack()
-                            (activity as? BottomNavigationActivity)?.getBottomNavigationById()
-                                ?.setCurrentItem(INDEX_PRODUCT);
+                            activity?.setResult(EditDeliveryLocationActivity.REQUEST_CODE)
+                            activity?.finish()
                         }
                     }
                 }
@@ -191,19 +213,19 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
                 e.printStackTrace()
                 progressBar.visibility = View.GONE
                 // navigate to shop tab with error sceanario
-                (activity as? BottomNavigationActivity)?.clearStack()
-                (activity as? BottomNavigationActivity)?.getBottomNavigationById()
-                    ?.setCurrentItem(INDEX_PRODUCT);
+                activity?.setResult(EditDeliveryLocationActivity.REQUEST_CODE)
+                activity?.finish()
             }
         }
     }
 
     companion object {
-        private val KEY_LATITUDE = "latitude"
-        private val KEY_LONGITUDE = "longitude"
+        val KEY_LATITUDE = "latitude"
+        val KEY_LONGITUDE = "longitude"
         val KEY_PLACE_ID = "placeId"
         val DELIVERY_TYPE = "deliveryType"
 
+        val VALIDATE_RESPONSE = "ValidateResponse"
 
         private const val STANDARD_DELIVERY = "StandardDelivery"
         private const val CLICK_AND_COLLECT = "CLICKANDCOLLECT"
@@ -249,7 +271,8 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             mStoreName = it?.storeName.toString()
             mStoreId = it?.storeId.toString()
         })
-        placeId?.let { getDeliveryDetailsFromValidateLocation(it) }
+        placeId?.let {
+            getDeliveryDetailsFromValidateLocation(it) }
     }
 
     private fun openDeliveryTab() {
@@ -281,7 +304,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
             progressBar.visibility = View.VISIBLE
             try {
                 validateLocationResponse =
-                    confirmAddressViewModel.getValidateLocation(placeId, latitude, longitude)
+                    confirmAddressViewModel.getValidateLocation(placeId)
                 progressBar.visibility = View.GONE
                 if (validateLocationResponse != null) {
                     when (validateLocationResponse.httpCode) {

@@ -243,7 +243,6 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
 
         if (SessionUtilities.getInstance().isUserAuthenticated) {
 
-
             KotlinUtils.presentEditDeliveryGeoLocationActivity(
                 requireActivity(),
                 EditDeliveryLocationActivity.REQUEST_CODE,

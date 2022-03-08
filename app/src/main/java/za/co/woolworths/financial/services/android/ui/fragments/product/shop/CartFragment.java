@@ -625,22 +625,27 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private void locationSelectionClicked() {
         Activity activity = getActivity();
 //        if (activity != null) {
-  //         KotlinUtils.Companion.presentEditDeliveryLocationActivity(activity, REQUEST_SUBURB_CHANGE, null);
+//           KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+//                   activity,
+//                   REQUEST_SUBURB_CHANGE,
+//                   KotlinUtils.getPreferredDeliveryType(),
+//                   Utils.getPreferredDeliveryLocation()
+//                           .fulfillmentDetails.getStoreId()fulfillmentDetails?.address?.placeId);
 //        }
 
-        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-
-        if (bottomNavigationActivity instanceof BottomNavigationActivity) {
-            if (Utils.getPreferredDeliveryLocation() != null) {
-                bottomNavigationActivity.pushFragmentSlideUp(
-                        DeliveryAddressConfirmationFragment.newInstance(
-                                Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId(),
-                                KotlinUtils.Companion.getPreferredDeliveryType()));
-
-            } else {
-                bottomNavigationActivity.pushFragmentSlideUp(ConfirmAddressFragment.Companion.newInstance());
-            }
-        }
+//        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+//
+//        if (bottomNavigationActivity instanceof BottomNavigationActivity) {
+//            if (Utils.getPreferredDeliveryLocation() != null) {
+//                bottomNavigationActivity.pushFragmentSlideUp(
+//                        DeliveryAddressConfirmationFragment.newInstance(
+//                                Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId(),
+//                                KotlinUtils.Companion.getPreferredDeliveryType()));
+//
+//            } else {
+//                bottomNavigationActivity.pushFragmentSlideUp(ConfirmAddressFragment.Companion.newInstance());
+//            }
+//        }
     }
 
     public void bindCartData(CartResponse cartResponse) {

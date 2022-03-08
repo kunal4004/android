@@ -6,10 +6,14 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.edit_delivery_location_activity.toolbar
+import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragmentDirections
+import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressMapFragmentDirections
+import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.util.*
 
@@ -23,10 +27,9 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
     companion object {
         var REQUEST_CODE = 1515
         var DELIVERY_TYPE = "DELIVERY_TYPE"
-        var PLACE_ID = "PLACE_ID"
+        var PLACE_ID = "placeId"
         var IS_LIQUOR = "IS_LIQUOR"
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +38,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         bundle = intent.getBundleExtra("bundle")
         bundle?.apply {
             delivery = this.getString(DELIVERY_TYPE, "")
-            placeId =  this.getString(DELIVERY_TYPE, "")
+            placeId =  this.getString(PLACE_ID, "")
         }
         actionBar()
         loadNavHostFragment()
@@ -77,23 +80,32 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         val navGraph = navController.navInflater.inflate(R.navigation.confirm_location_nav_host)
 
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
+            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address == null) {
+                navGraph.startDestination = R.id.confirmDeliveryLocationFragment
+                navController.graph = navGraph
+                navController
+                    .setGraph(
+                        navGraph,
+                        bundleOf("bundle" to bundle)
+                    )
+            } else {
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
                     navGraph.startDestination = R.id.deliveryAddressConfirmationFragment
                     navController.graph = navGraph
+                    bundle?.apply {
+                        putString(
+                            DeliveryAddressConfirmationFragment.KEY_PLACE_ID, it.placeId)
+                    }
                     navController
                         .setGraph(
                             navGraph,
                             bundleOf("bundle" to bundle)
                         )
                 }
-            } else {
-                navGraph.startDestination = R.id.confirmDeliveryLocationFragment
-                navController.graph = navGraph
             }
         } else {
             ScreenManager.presentSSOSignin(this, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
         }
-   }
+    }
 
 }

@@ -12,8 +12,8 @@ class ConfirmAddressViewModel(private val geoLocationApiHelper: GeoLocationApiHe
     suspend fun getSavedAddress() =
         geoLocationApiHelper.getSavedAddress()
 
-    suspend fun getValidateLocation(placeId: String, latitude: Double?, longitude: Double?) =
-        geoLocationApiHelper.getValidateLocation(placeId, latitude, longitude)
+    suspend fun getValidateLocation(placeId: String) =
+        geoLocationApiHelper.getValidateLocation(placeId)
 
     suspend fun postConfirmAddress(confirmLocationRequest: ConfirmLocationRequest) =
         geoLocationApiHelper.postConfirmLocation(confirmLocationRequest)
