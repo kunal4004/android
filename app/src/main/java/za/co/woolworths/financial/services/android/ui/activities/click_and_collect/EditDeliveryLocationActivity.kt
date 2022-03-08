@@ -79,7 +79,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
                 Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
-                    navGraph.startDestination = R.id.deliveryAddressConfirmationFragment2
+                    navGraph.startDestination = R.id.deliveryAddressConfirmationFragment
                     navController.graph = navGraph
                     navController
                         .setGraph(

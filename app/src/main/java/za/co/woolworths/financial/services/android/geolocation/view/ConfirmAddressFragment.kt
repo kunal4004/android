@@ -253,7 +253,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 val getMapData =
                     getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
                 val directions =
-                    ConfirmAddressFragmentDirections.actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2(
+                    ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                         getMapData)
                 findNavController().navigate(directions)
 
@@ -268,7 +268,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 val getMapData =
                     getDataForMapView(0.0, 0.0, true)
                 val directions =
-                    ConfirmAddressFragmentDirections.actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2(
+                    ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
                         getMapData)
                 findNavController().navigate(directions)
 

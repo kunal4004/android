@@ -12,73 +12,73 @@
 
         <argument
             android:name="mapData"
-            app:argType="za.co.woolworths.financial.services.android.geolocation.model.MapData"
-
-
-            />
+            app:argType="za.co.woolworths.financial.services.android.geolocation.model.MapData" />
 
         <action
-            android:id="@+id/action_confirmDeliveryLocationFragment_to_confirmAddressMapFragment2"
+            android:id="@+id/actionToConfirmAddressMapFragment"
             app:destination="@id/confirmAddressMapFragment2"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
+            app:popExitAnim="@anim/slide_to_right" />
+
         <action
-            android:id="@+id/action_confirmDeliveryLocationFragment_to_deliveryAddressConfirmationFragment2"
-            app:destination="@id/deliveryAddressConfirmationFragment2"
+            android:id="@+id/actionToDeliveryAddressConfirmationFragment"
+            app:destination="@id/deliveryAddressConfirmationFragment"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
+            app:popExitAnim="@anim/slide_to_right" />
+
     </fragment>
+
     <fragment
         android:id="@+id/confirmAddressMapFragment2"
         android:name="za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressMapFragment"
-        android:label="ConfirmAddressMapFragment" >
+        android:label="ConfirmAddressMapFragment">
 
         <argument
             android:name="mapData"
-            app:argType="za.co.woolworths.financial.services.android.geolocation.model.MapData"
-          />
+            app:argType="za.co.woolworths.financial.services.android.geolocation.model.MapData" />
 
         <action
-            android:id="@+id/action_confirmAddressMapFragment2_to_deliveryAddressConfirmationFragment2"
-            app:destination="@id/deliveryAddressConfirmationFragment2"
+            android:id="@+id/action_confirmAddressMapFragment_to_deliveryAddressConfirmationFragment"
+            app:destination="@id/deliveryAddressConfirmationFragment"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
-
-
+            app:popExitAnim="@anim/slide_to_right" />
 
     </fragment>
+
     <fragment
-        android:id="@+id/deliveryAddressConfirmationFragment2"
+        android:id="@+id/deliveryAddressConfirmationFragment"
         android:name="za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment"
-        android:label="DeliveryAddressConfirmationFragment" >
+        android:label="DeliveryAddressConfirmationFragment">
         <action
-            android:id="@+id/action_deliveryAddressConfirmationFragment2_to_clickAndCollectStoresFragment"
+            android:id="@+id/action_deliveryAddressConfirmationFragment_to_clickAndCollectStoresFragment"
             app:destination="@id/clickAndCollectStoresFragment"
-            app:popUpTo="@id/deliveryAddressConfirmationFragment2"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
+            app:popExitAnim="@anim/slide_to_right"
+            app:popUpTo="@id/deliveryAddressConfirmationFragment"
+            app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
         android:id="@+id/clickAndCollectStoresFragment"
         android:name="za.co.woolworths.financial.services.android.geolocation.view.ClickAndCollectStoresFragment"
-        android:label="ClickAndCollectStoresFragment" >
+        android:label="ClickAndCollectStoresFragment">
         <action
             android:id="@+id/action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment2"
-            app:destination="@id/deliveryAddressConfirmationFragment2"
-            app:popUpToInclusive="true"
+            app:destination="@id/deliveryAddressConfirmationFragment"
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"/>
+            app:popExitAnim="@anim/slide_to_right"
+            app:popUpToInclusive="true" />
+
     </fragment>
 
 
