@@ -26,6 +26,15 @@ data class BrandNavigationDetails(
 
     constructor(
         brandText: String?,
+        bannerLabel: String?,
+        bannerImage: String?
+    ) : this(
+        brandText, null, null, null, bannerImage, bannerLabel,
+        false, false, false
+    )
+
+    constructor(
+        brandText: String?,
         navigationState: String?
     ) : this(
         brandText, null, null, navigationState, null, null,

@@ -14,6 +14,7 @@ import com.awfs.coordination.BR
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.ExpandableSubCategoryFragmentBinding
 import com.google.gson.Gson
+import za.co.woolworths.financial.services.android.chanel.utils.ChanelUtils
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton.brandLandingPage
 import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
@@ -192,12 +193,11 @@ class SubCategoryFragment :
         // If while category drill down
         // ... brand is present in MobileConfig send filter content as false
         // ... brand is not present in MobileConfig send filter content as true
-        val list = if (brandLandingPage != null) brandLandingPage!!.categoryName else ArrayList(0)
         val brandNavigationDetails = BrandNavigationDetails(
             brandText = subCategory.categoryName,
             displayName = subCategory.categoryName,
             isBrandLandingPage = true,
-            filterContent = list.stream().noneMatch { s -> s.equals(subCategory.categoryName, true)}
+            filterContent = ChanelUtils.isCategoryPresentInConfig(subCategory.categoryName)
         )
         pushFragment(ProductListingFragment.newInstance(
             ProductsRequestParams.SearchType.NAVIGATE,

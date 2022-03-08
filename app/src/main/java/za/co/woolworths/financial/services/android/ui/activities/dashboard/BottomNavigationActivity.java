@@ -14,6 +14,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.BRAND_NAVIGATION_DETAILS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
@@ -84,6 +85,7 @@ import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton;
+import za.co.woolworths.financial.services.android.models.BrandNavigationDetails;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
@@ -522,8 +524,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         bundle.putString(STR_PRODUCT_LIST, strProductList);
         bundle.putString(STR_PRODUCT_CATEGORY, productName);
         bundle.putString(STR_BRAND_HEADER, productList.brandHeaderDescription);
-        bundle.putString(ProductListingFragment.CHANEL_BANNER_LABEL, bannerLabel);
-        bundle.putString(ProductListingFragment.CHANEL_BANNER_IMAGE, bannerImage);
+        bundle.putSerializable(BRAND_NAVIGATION_DETAILS, new BrandNavigationDetails(
+                productList.brandText,
+                bannerLabel,
+                bannerImage
+        ));
         ProductDetailsFragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
         productDetailsFragmentNew.setArguments(bundle);
         Utils.updateStatusBarBackground(this);

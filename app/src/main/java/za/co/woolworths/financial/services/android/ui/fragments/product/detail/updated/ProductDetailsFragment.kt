@@ -61,6 +61,7 @@ import za.co.woolworths.financial.services.android.common.SingleMessageCommonToa
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
+import za.co.woolworths.financial.services.android.models.BrandNavigationDetails
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -86,7 +87,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.click_and_collec
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.IOnConfirmDeliveryLocationActionListener
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ConfirmDeliveryLocationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.OutOfStockMessageDialogFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment.Companion.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProductNotAvailableForCollectionDialog
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
@@ -119,7 +119,6 @@ import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_COLOR_NOT_MATCH
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FACE_NOT_DETECT
 import za.co.woolworths.financial.services.android.util.AppConstant.Companion.VTO_FAIL_IMAGE_LOAD
-import za.co.woolworths.financial.services.android.util.ImageManager.Companion.setPicture
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageFileContract
 import za.co.woolworths.financial.services.android.util.pickimagecontract.PickImageGalleryContract
 import java.io.File
@@ -230,6 +229,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         const val STR_PRODUCT_CATEGORY = "strProductCategory"
         const val STR_PRODUCT_LIST = "strProductList"
         const val STR_BRAND_HEADER = "strBandHeaderDesc"
+        const val BRAND_NAVIGATION_DETAILS = "BRAND_NAVIGATION_DETAILS"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -241,8 +241,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             ) as ProductDetails
             subCategoryTitle = getString(STR_PRODUCT_CATEGORY)
             brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
-            bannerLabel = getString(ProductListingFragment.CHANEL_BANNER_LABEL, AppConstant.EMPTY_STRING)
-            bannerImage = getString(ProductListingFragment.CHANEL_BANNER_IMAGE, AppConstant.EMPTY_STRING)
+
+            (getSerializable(BRAND_NAVIGATION_DETAILS) as? BrandNavigationDetails)?.let {
+                bannerLabel = it.bannerLabel ?: ""
+                bannerImage = it.bannerImage ?: ""
+            }
+
             brandHeaderText = getString(STR_BRAND_HEADER, AppConstant.EMPTY_STRING)
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
@@ -357,9 +361,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             R.id.moreColor -> showMoreColors()
             R.id.share -> shareProduct()
             R.id.sizeGuide -> showDetailsInformation(ProductInformationActivity.ProductInformationType.SIZE_GUIDE)
-            R.id.imgVTOOpen -> vtoOptionSelectBottomDialog.showBottomSheetDialog(this@ProductDetailsFragment,
+            R.id.imgVTOOpen -> vtoOptionSelectBottomDialog.showBottomSheetDialog(
+                this@ProductDetailsFragment,
                 requireActivity(),
-                false)
+                false
+            )
             R.id.openCart -> openCart()
             R.id.brand_openCart -> openCart()
             R.id.backArrow -> (activity as? BottomNavigationActivity)?.popFragment()
@@ -551,37 +557,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         updateStockAvailabilityLocation()
 
         productDetails?.let {
-            productName?.text = it.productName
-            if (!brandHeaderText.isNullOrEmpty()) {
-                rangeName?.visibility = View.VISIBLE
-                rangeName?.text = brandHeaderText
-            }
-            brandName?.apply {
-                if (!it.brandText.isNullOrEmpty()) {
-                    text = it.brandText
-                    visibility = View.VISIBLE
-                }
-            }
-
-            if (ChanelUtils.isCategoryPresentInConfig(it.brandText)) {
-                brand_view?.visibility = View.VISIBLE
-                backArrow?.visibility = View.GONE
-                openCart?.visibility = View.GONE
-                share?.visibility = View.GONE
-                imgVTOOpen?.visibility = View.GONE
-                if (bannerImage == null || bannerImage?.isEmpty() == true) {
-                    brand_view?.brand_pdp_logo_header?.tv_logo_name?.text = bannerLabel
-                } else {
-                    setPicture(brand_view?.brand_pdp_img_banner, bannerImage)
-                }
-            } else {
-                brand_view?.visibility  = View.GONE
-                backArrow?.visibility = View.VISIBLE
-                openCart?.visibility = View.VISIBLE
-                share?.visibility = View.VISIBLE
-                imgVTOOpen?.visibility = View.VISIBLE
-            }
-
+            setupBrandView()
             BaseProductUtils.displayPrice(
                 fromPricePlaceHolder,
                 textPrice,
@@ -611,6 +587,55 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     productDetails?.sku
                 )
             )
+        }
+    }
+
+    private fun setupBrandView() {
+
+        productDetails?.let {
+            productName?.text = it.productName
+            if (!it.range.isNullOrEmpty()) {
+                rangeName?.visibility = View.VISIBLE
+                rangeName?.text = it.range
+            }
+            brandName?.apply {
+                if (!it.brandText.isNullOrEmpty()) {
+                    text = it.brandText
+                    visibility = View.VISIBLE
+                }
+            }
+
+            if (ChanelUtils.isCategoryPresentInConfig(it.brandText)) {
+                brand_view?.visibility = View.VISIBLE
+                backArrow?.visibility = View.GONE
+                openCart?.visibility = View.GONE
+                share?.visibility = View.GONE
+                imgVTOOpen?.visibility = View.GONE
+                if (!TextUtils.isEmpty(bannerLabel)) {
+                    brand_view?.brand_pdp_logo_header?.tv_logo_name?.text = bannerLabel
+                } else {
+                    if (TextUtils.isEmpty(bannerImage)) {
+                        // Apply logo image from config if not present
+                        ImageManager.loadImage(
+                            brand_view?.brand_pdp_img_banner,
+                            ChanelUtils.getBrandCategory(
+                                it.brandText
+                            )?.externalImageRefV2 ?: ""
+                        )
+                    } else {
+                        ImageManager.loadImage(
+                            brand_view?.brand_pdp_img_banner,
+                            bannerImage ?: ""
+                        )
+                    }
+                }
+            } else {
+                brand_view?.visibility = View.GONE
+                backArrow?.visibility = View.VISIBLE
+                openCart?.visibility = View.VISIBLE
+                share?.visibility = View.VISIBLE
+                imgVTOOpen?.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -656,14 +681,18 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 true -> {
                     title = getString(R.string.product_unavailable)
                     message =
-                        getString(R.string.unavailable_item,
-                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name)
+                        getString(
+                            R.string.unavailable_item,
+                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name
+                        )
                 }
                 else -> {
                     title = getString(R.string.out_of_stock)
                     message =
-                        getString(R.string.out_of_stock_item,
-                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name)
+                        getString(
+                            R.string.out_of_stock_item,
+                            if (deliveryLocation.storePickup) deliveryLocation.store?.name else deliveryLocation.suburb?.name
+                        )
 
                 }
             }
@@ -728,6 +757,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             setSelectedSku(this.defaultSku)
             updateAddToCartButtonForSelectedSKU()
         }
+
+        setupBrandView()
 
         if (hasSize)
             setSelectedGroupKey(defaultGroupKey)
@@ -892,10 +923,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private fun showSize() {
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         productSizeSelectorAdapter =
-            ProductSizeSelectorAdapter(requireActivity(),
+            ProductSizeSelectorAdapter(
+                requireActivity(),
                 otherSKUsByGroupKey[getSelectedGroupKey()]!!,
                 productDetails?.lowStockIndicator ?: 0,
-                this).apply {
+                this
+            ).apply {
                 sizeSelectorRecycleView.adapter = this
             }
 
@@ -1417,9 +1450,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                             putExtra("ItemsCount", getSelectedQuantity())
                             putExtra("ProductCountMap", Utils.toJson(it[0].productCountMap))
                         }
-                        onActivityResult(ADD_TO_CART_SUCCESS_RESULT,
+                        onActivityResult(
                             ADD_TO_CART_SUCCESS_RESULT,
-                            intent)
+                            ADD_TO_CART_SUCCESS_RESULT,
+                            intent
+                        )
                     }
                 }
             }
@@ -1836,9 +1871,11 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         (requireActivity() as? BottomNavigationActivity)?.let {
 
             it.walkThroughPromtView =
-                WMaterialShowcaseView.Builder(it,
+                WMaterialShowcaseView.Builder(
+                    it,
                     WMaterialShowcaseView.Feature.VTO_TRY_IT,
-                    true)
+                    true
+                )
                     .setTarget(imgVTOOpen)
                     .setTitle(R.string.try_on_intro_txt)
                     .setDescription(R.string.try_on_intro_desc)
@@ -1847,8 +1884,12 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                     .setAction(this@ProductDetailsFragment)
                     .hideFeatureTutorialsText()
                     .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
-                    .setMaskColour(ContextCompat.getColor(it,
-                        R.color.semi_transparent_black))
+                    .setMaskColour(
+                        ContextCompat.getColor(
+                            it,
+                            R.color.semi_transparent_black
+                        )
+                    )
                     .build()
             it.walkThroughPromtView?.show(it)
         }
