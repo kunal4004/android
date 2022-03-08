@@ -86,10 +86,14 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     private fun initViews() {
 
         when (isNavigatedFromMyAccounts) {
-            true -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Acc_My_Orders_DT,
-                requireActivity())
-            false -> Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.Shop_My_Orders_DT,
-                requireActivity())
+            true -> Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.Acc_My_Orders_DT,
+                requireActivity()
+            )
+            false -> Utils.triggerFireBaseEvents(
+                FirebaseManagerAnalyticsProperties.Shop_My_Orders_DT,
+                requireActivity()
+            )
         }
 
         mBottomNavigator?.apply {
@@ -121,8 +125,10 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                     }
                     502 -> {
                         loadingBar.visibility = View.GONE
-                        showErrorDialog(ordersResponse?.response?.desc
-                            ?: getString(R.string.general_error_desc))
+                        showErrorDialog(
+                            ordersResponse?.response?.desc
+                                ?: getString(R.string.general_error_desc)
+                        )
                     }
                 }
 
@@ -162,26 +168,33 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                 key.contains(ProductTypeDetails.DEFAULT.value) -> OrderDetailsItem(
                     ProductTypeDetails.DEFAULT.longHeader,
                     OrderDetailsItem.ViewType.HEADER,
-                    orderItemLength)
+                    orderItemLength
+                )
                 key.contains(ProductTypeDetails.HOME_COMMERCE_ITEM.value) -> OrderDetailsItem(
                     ProductTypeDetails.HOME_COMMERCE_ITEM.longHeader,
                     OrderDetailsItem.ViewType.HEADER,
-                    orderItemLength)
+                    orderItemLength
+                )
                 key.contains(ProductTypeDetails.FOOD_COMMERCE_ITEM.value) -> OrderDetailsItem(
                     ProductTypeDetails.FOOD_COMMERCE_ITEM.longHeader,
                     OrderDetailsItem.ViewType.HEADER,
-                    orderItemLength)
+                    orderItemLength
+                )
                 key.contains(ProductTypeDetails.CLOTHING_COMMERCE_ITEM.value) -> OrderDetailsItem(
                     ProductTypeDetails.CLOTHING_COMMERCE_ITEM.longHeader,
                     OrderDetailsItem.ViewType.HEADER,
-                    orderItemLength)
+                    orderItemLength
+                )
                 key.contains(ProductTypeDetails.PREMIUM_BRAND_COMMERCE_ITEM.value) -> OrderDetailsItem(
                     ProductTypeDetails.PREMIUM_BRAND_COMMERCE_ITEM.longHeader,
                     OrderDetailsItem.ViewType.HEADER,
-                    orderItemLength)
-                else -> OrderDetailsItem(ProductTypeDetails.OTHER_ITEMS.longHeader,
+                    orderItemLength
+                )
+                else -> OrderDetailsItem(
+                    ProductTypeDetails.OTHER_ITEMS.longHeader,
                     OrderDetailsItem.ViewType.HEADER,
-                    orderItemLength)
+                    orderItemLength
+                )
             }
 
             dataList.add(orderDetailsItem)
@@ -190,26 +203,40 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
                 for (i in 0 until orderItemLength) {
                     try {
                         val commerceItem =
-                            Gson().fromJson(productsArray.getJSONObject(i).toString(),
-                                CommerceItem::class.java)
+                            Gson().fromJson(
+                                productsArray.getJSONObject(i).toString(),
+                                CommerceItem::class.java
+                            )
                         val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
                         commerceItem.fulfillmentStoreId =
                             fulfillmentStoreId!!.replace("\"".toRegex(), "")
                         if (commerceItem.isGWP)
-                            dataList.add(OrderDetailsItem(commerceItem,
-                                OrderDetailsItem.ViewType.GIFT,
-                                orderItemLength))
+                            dataList.add(
+                                OrderDetailsItem(
+                                    commerceItem,
+                                    OrderDetailsItem.ViewType.GIFT,
+                                    orderItemLength
+                                )
+                            )
                         else
-                            dataList.add(OrderDetailsItem(commerceItem,
-                                OrderDetailsItem.ViewType.COMMERCE_ITEM,
-                                orderItemLength))
+                            dataList.add(
+                                OrderDetailsItem(
+                                    commerceItem,
+                                    OrderDetailsItem.ViewType.COMMERCE_ITEM,
+                                    orderItemLength
+                                )
+                            )
                     } catch (e: Exception) {
                         when (e) {
                             is IllegalStateException,
                             is JsonSyntaxException,
-                            -> dataList.add(OrderDetailsItem(CommerceItem(),
-                                OrderDetailsItem.ViewType.COMMERCE_ITEM,
-                                orderItemLength))
+                            -> dataList.add(
+                                OrderDetailsItem(
+                                    CommerceItem(),
+                                    OrderDetailsItem.ViewType.COMMERCE_ITEM,
+                                    orderItemLength
+                                )
+                            )
                         }
                     }
                 }
@@ -264,16 +291,19 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
     override fun onViewTaxInvoice() {
         (activity as? BottomNavigationActivity)?.pushFragment(
             TaxInvoiceLIstFragment.getInstance(
-                order?.orderId!!, order?.taxNoteNumbers!!)
+                order?.orderId!!, order?.taxNoteNumbers!!
+            )
         )
     }
 
     fun triggerFirebaseEvent(properties: String) {
         val arguments = HashMap<String, String>()
         arguments[FirebaseManagerAnalyticsProperties.PropertyNames.ACTION] = properties
-        Utils.triggerFireBaseEvents(if (isNavigatedFromMyAccounts) FirebaseManagerAnalyticsProperties.Acc_My_Orders_Cancel_Order else FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER,
+        Utils.triggerFireBaseEvents(
+            if (isNavigatedFromMyAccounts) FirebaseManagerAnalyticsProperties.Acc_My_Orders_Cancel_Order else FirebaseManagerAnalyticsProperties.SHOP_MY_ORDERS_CANCEL_ORDER,
             arguments,
-            requireActivity())
+            requireActivity()
+        )
     }
 
     override fun onCancelOrder() {
@@ -306,14 +336,18 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         if (requestCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE
             && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
         ) {
-            ToastFactory.buildShoppingListToast(requireActivity(),
-                orderDetails, true, data, this)
+            ToastFactory.buildShoppingListToast(
+                requireActivity(),
+                orderDetails, true, data, this
+            )
             return
         }
 
         if (requestCode == BottomNavigationActivity.PDP_REQUEST_CODE && resultCode == AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            activity?.setResult(AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
-                data)
+            activity?.setResult(
+                AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE,
+                data
+            )
             activity?.onBackPressed()
             activity?.overridePendingTransition(0, 0)
             return
@@ -337,8 +371,10 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
         activity?.apply {
             this@OrderDetailsFragment.childFragmentManager?.beginTransaction()
                 ?.let { fragmentTransaction ->
-                    dialog.show(fragmentTransaction,
-                        OrderHistoryErrorDialogFragment::class.java.simpleName)
+                    dialog.show(
+                        fragmentTransaction,
+                        OrderHistoryErrorDialogFragment::class.java.simpleName
+                    )
                 }
         }
     }
@@ -349,8 +385,15 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick,
 
     override fun onToastButtonClicked(jsonElement: JsonElement?) {
         jsonElement?.let {
-            NavigateToShoppingList.navigateToShoppingListOnToastClicked(requireActivity(),
-                it)
+            NavigateToShoppingList.navigateToShoppingListOnToastClicked(
+                requireActivity(),
+                it
+            )
         }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) (activity as? BottomNavigationActivity)?.showBottomNavigationMenu()
     }
 }

@@ -1817,7 +1817,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun hideProductDetailsLoading() {
         activity?.apply {
             hideProgressBar()
-            viewsToHideOnProductLoading.visibility = View.VISIBLE
+            viewsToHideOnProductLoading?.visibility = View.VISIBLE
             updateAddToCartButtonForSelectedSKU()
         }
 
