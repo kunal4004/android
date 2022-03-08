@@ -16,9 +16,8 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -31,6 +30,7 @@ import za.co.woolworths.financial.services.android.checkout.service.network.Save
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
@@ -46,7 +46,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var mLastLocation: Location? = null
-    private var rvSavedAddress: RecyclerView? = null
     private var selectedAddress = Address()
 
     companion object {
@@ -83,7 +82,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvSavedAddress = view.findViewById(R.id.rvSavedAddressList)
         setUpViewModel()
         initViews()
     }
@@ -91,14 +89,14 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     override fun onResume() {
         super.onResume()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            inSavedAddress.visibility = View.GONE
-            tvConfirmAddress.visibility = View.VISIBLE
+            inSavedAddress?.visibility = View.GONE
+            tvConfirmAddress?.visibility = View.VISIBLE
             fetchAddress()
-            rvSavedAddressList.visibility = View.VISIBLE
+            rvSavedAddressList?.visibility = View.VISIBLE
         } else {
-            inSavedAddress.visibility = View.VISIBLE
-            tvConfirmAddress.visibility = View.GONE
-            rvSavedAddressList.visibility = View.GONE
+            inSavedAddress?.visibility = View.VISIBLE
+            tvConfirmAddress?.visibility = View.GONE
+            rvSavedAddressList?.visibility = View.GONE
         }
     }
 
@@ -150,17 +148,17 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     private fun fetchAddress() {
         lifecycleScope.launch {
-            progressBar.visibility = View.VISIBLE
+            progressBar?.visibility = View.VISIBLE
             try {
                 savedAddressResponse = confirmAddressViewModel.getSavedAddress()
                 savedAddressResponse?.addresses?.let { setAddressUI(it) }
                 savedAddressResponse?.defaultAddressNickname?.let {
                     setButtonUI(it.length > 1)
                 }
-                progressBar.visibility = View.GONE
+                progressBar?.visibility = View.GONE
             } catch (e: HttpException) {
                 FirebaseManager.logException(e)
-                progressBar.visibility = View.GONE
+                progressBar?.visibility = View.GONE
                 /*TODO:  Error sceanrio*/
             }
 
@@ -168,9 +166,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     }
 
     private fun setAddressUI(address: ArrayList<Address>) {
-        rvSavedAddressList.layoutManager =
+        rvSavedAddressList?.layoutManager =
             activity?.let { activity -> LinearLayoutManager(activity) }
-        rvSavedAddressList.adapter = activity?.let { activity ->
+        rvSavedAddressList?.adapter = activity?.let { activity ->
             SavedAddressAdapter(
                 activity,
                 address,
@@ -181,9 +179,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     private fun setButtonUI(activated: Boolean) {
         if (activated) {
-            tvConfirmAddress.setBackgroundColor(resources.getColor(R.color.black))
+            tvConfirmAddress?.setBackgroundColor(resources.getColor(R.color.black))
         } else {
-            tvConfirmAddress.setBackgroundColor(resources.getColor(R.color.color_A9A9A9))
+            tvConfirmAddress?.setBackgroundColor(resources.getColor(R.color.color_A9A9A9))
         }
 
     }
@@ -230,12 +228,12 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 {
                     selectedAddress.let {
                         if (it.latitude != null && it.longitude != null && it.placesId != null) {
-
-                              Navigation.findNavController(
-                                  requireActivity(),
-                                  R.id.nav_host_container).navigate(
-                                  ConfirmAddressFragmentDirections
-                                      .actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2())
+//
+//                              Navigation.findNavController(
+//                                  requireActivity(),
+//                                  R.id.nav_host_container).navigate(
+//                                  ConfirmAddressFragmentDirections
+//                                      .actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2())
 
 
 //                            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
@@ -251,17 +249,13 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             }
             R.id.inCurrentLocation -> {
 
-                Navigation.findNavController(
-                    requireActivity(),
-                    R.id.nav_host_container).navigate(
-                    ConfirmAddressFragmentDirections
-                        .actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2())
+                val getMapData =
+                    getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
+                val directions =
+                    ConfirmAddressFragmentDirections.actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2(
+                        getMapData)
+                findNavController().navigate(directions)
 
-
-//                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-//                    ConfirmAddressMapFragment(mLastLocation?.latitude,
-//                        mLastLocation?.longitude,
-//                        false))
             }
             R.id.inSavedAddress -> {
                 ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
@@ -269,21 +263,24 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             R.id.backButton -> {
                 activity?.onBackPressed()
             }
-            R.id.enterNewAddress ->{
-
-                Navigation.findNavController(
-                    requireActivity(),
-                    R.id.nav_geo_host_container).navigate(
-                    ConfirmAddressFragmentDirections
-                        .actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2())
-
-
-
-//                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-//                    ConfirmAddressMapFragment(null, null,true))
+            R.id.enterNewAddress -> {
+                val getMapData =
+                    getDataForMapView(0.0, 0.0, true)
+                val directions =
+                    ConfirmAddressFragmentDirections.actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2(
+                        getMapData)
+                findNavController().navigate(directions)
 
             }
         }
+    }
+
+    private fun getDataForMapView(latitude: Double?, longitude: Double?, boolean: Boolean?): MapData {
+        return MapData(
+            latitude = latitude,
+            longitude = longitude,
+            isAddAddress = boolean
+        )
     }
 
     private fun navigateToCheckout(response: SavedAddressResponse) {

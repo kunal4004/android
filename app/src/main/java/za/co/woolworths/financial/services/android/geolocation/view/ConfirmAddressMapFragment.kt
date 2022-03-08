@@ -5,12 +5,9 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -44,7 +41,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,var isAddAddress:Boolean) :
+class ConfirmAddressMapFragment() :
     Fragment(R.layout.geolocation_confirm_address), OnMapReadyCallback, VtoTryAgainListener {
 
     private var mMap: GoogleMap? = null
@@ -58,7 +55,11 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
     private var state: String? = null
     private var country: String? = null
     private var postalCode: String? = null
+    private var latitude: Double? = null
+    private var longitude: Double? = null
     private var suburb: String? = null
+    private var isAddAddress: Boolean? = false
+
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
@@ -67,6 +68,12 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
         view: View, savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+
+        val bundle = arguments ?: return
+        val args = ConfirmAddressMapFragmentArgs.fromBundle(bundle)
+        latitude = args.mapData.latitude
+        longitude = args.mapData.longitude
+        isAddAddress = args.mapData.isAddAddress
 
         if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
             initMap()
@@ -106,7 +113,7 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
                     imgMapMarker?.visibility = View.VISIBLE
                     autoCompleteTextView?.isEnabled = true
                     confirmAddress?.isEnabled = true
-                    if(isAddAddress){
+                    if(isAddAddress!!){
                         confirmAddress?.isEnabled = false
                         imgMapMarker?.visibility = View.GONE
 
@@ -201,7 +208,7 @@ class ConfirmAddressMapFragment(val latitude: Double?, val longitude: Double?,va
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        if (!isAddAddress) {
+        if (!isAddAddress!!) {
             mMap?.uiSettings?.setAllGesturesEnabled(true)
             latLng = longitude?.let { latitude?.let { it1 -> LatLng(it1, it) } }
             moveMapCamera(latLng)

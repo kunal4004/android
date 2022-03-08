@@ -2,28 +2,56 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/confirm_delivery_location_nav_host"
-    app:startDestination="@id/confirmDeliveryLocationFragment">
+    android:id="@+id/confirm_delivery_location_nav_host">
 
     <fragment
         android:id="@+id/confirmDeliveryLocationFragment"
         android:name="za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragment"
         android:label="ConfirmDeliveryLocationFragment"
         tools:layout="@layout/confirm_address_bottom_sheet_dialog">
+
+        <argument
+            android:name="mapData"
+            app:argType="za.co.woolworths.financial.services.android.geolocation.model.MapData"
+
+
+            />
+
         <action
             android:id="@+id/action_confirmDeliveryLocationFragment_to_confirmAddressMapFragment2"
-            app:destination="@id/confirmAddressMapFragment2" />
+            app:destination="@id/confirmAddressMapFragment2"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
         <action
             android:id="@+id/action_confirmDeliveryLocationFragment_to_deliveryAddressConfirmationFragment2"
-            app:destination="@id/deliveryAddressConfirmationFragment2" />
+            app:destination="@id/deliveryAddressConfirmationFragment2"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
     <fragment
         android:id="@+id/confirmAddressMapFragment2"
         android:name="za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressMapFragment"
         android:label="ConfirmAddressMapFragment" >
+
+        <argument
+            android:name="mapData"
+            app:argType="za.co.woolworths.financial.services.android.geolocation.model.MapData"
+          />
+
         <action
             android:id="@+id/action_confirmAddressMapFragment2_to_deliveryAddressConfirmationFragment2"
-            app:destination="@id/deliveryAddressConfirmationFragment2" />
+            app:destination="@id/deliveryAddressConfirmationFragment2"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+
+
+
     </fragment>
     <fragment
         android:id="@+id/deliveryAddressConfirmationFragment2"
@@ -31,7 +59,13 @@
         android:label="DeliveryAddressConfirmationFragment" >
         <action
             android:id="@+id/action_deliveryAddressConfirmationFragment2_to_clickAndCollectStoresFragment"
-            app:destination="@id/clickAndCollectStoresFragment" />
+            app:destination="@id/clickAndCollectStoresFragment"
+            app:popUpTo="@id/deliveryAddressConfirmationFragment2"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
     <fragment
         android:id="@+id/clickAndCollectStoresFragment"
@@ -39,7 +73,12 @@
         android:label="ClickAndCollectStoresFragment" >
         <action
             android:id="@+id/action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment2"
-            app:destination="@id/deliveryAddressConfirmationFragment2" />
+            app:destination="@id/deliveryAddressConfirmationFragment2"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
 
 
