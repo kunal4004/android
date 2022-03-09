@@ -254,9 +254,9 @@ class ViewAllLinkedDevicesFragment : Fragment(), View.OnClickListener {
             R.id.viewAllDeviceEditImageView -> {
                 val bundle = Bundle()
                 bundle.putSerializable(NEW_DEVICE, userDevice)
-                bundle.putSerializable(OLD_DEVICE,
-                    deviceList?.filter { device -> device.primarydDevice == true }?.get(0)
-                )
+                deviceList?.firstOrNull { device -> device.primarydDevice == true }?.let {
+                    bundle.putSerializable(OLD_DEVICE, it)
+                }
                 navController?.navigate(R.id.action_viewAllLinkedDevicesFragment_to_secondaryDeviceBottomSheetFragment, bundle)
             }
         }
