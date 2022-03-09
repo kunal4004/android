@@ -217,6 +217,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
         val KEY_LONGITUDE = "longitude"
         val KEY_PLACE_ID = "placeId"
         val DELIVERY_TYPE = "deliveryType"
+        val ADDRESS = "address"
 
         val VALIDATE_RESPONSE = "ValidateResponse"
 

@@ -40,7 +40,7 @@ class SavedAddressAdapter(
 
         holder.view.setOnClickListener {
             selectedPosition = position
-            listener.onAddressSelected(addressList[position])
+            listener.onAddressSelected(addressList[position], position)
             notifyDataSetChanged()
         }
         if (addressList[position].verified) {
@@ -61,6 +61,6 @@ class SavedAddressAdapter(
     }
 
     interface OnAddressSelected {
-        fun onAddressSelected(address: Address)
+        fun onAddressSelected(address: Address, position: Int)
     }
 }

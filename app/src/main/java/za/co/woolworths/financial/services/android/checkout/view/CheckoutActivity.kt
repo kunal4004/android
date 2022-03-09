@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_checkout.*
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.Companion.SAVED_ADDRESS_KEY
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.DELIVERY_TYPE
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.IS_DELIVERY
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.Companion.baseFragBundle
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -19,12 +20,14 @@ import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddre
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.ProvinceSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.SuburbSelectorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.click_and_collect.UnsellableItemsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.REQUEST_CHECKOUT_ON_DESTROY
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment.RESULT_RELOAD_CART
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.OrderConfirmationFragment
 import za.co.woolworths.financial.services.android.util.KeyboardUtils
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.wenum.Delivery
 
 
 /**
@@ -34,6 +37,7 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
 
     private var navHostFrag = NavHostFragment()
     var savedAddressResponse: SavedAddressResponse? = null
+    private var deliveryType: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +45,12 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
         setActionBar()
         intent?.extras?.apply {
             savedAddressResponse = getSerializable(SAVED_ADDRESS_KEY) as? SavedAddressResponse
+            deliveryType = getString(DELIVERY_TYPE, "")
             baseFragBundle = Bundle()
             baseFragBundle?.putString(
                 SAVED_ADDRESS_KEY,
                 Utils.toJson(savedAddressResponse)
             )
-            baseFragBundle?.putBoolean(IS_DELIVERY, if (containsKey(IS_DELIVERY)) getBoolean(IS_DELIVERY) else true)
-            baseFragBundle?.putBoolean(ConfirmAddressFragment.IS_COMING_FROM_CONFIRM_ADDRESS, true)
         }
         loadNavHostFragment()
     }
@@ -115,19 +118,30 @@ class CheckoutActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun loadNavHostFragment() {
+//        KotlinUtils.IS_COMING_FROM_CHECKOUT = true
+//        if (TextUtils.isEmpty(savedAddressResponse?.defaultAddressNickname)) {
+//              KotlinUtils.presentEditDeliveryLocationActivity(
+//                  this,
+//                  CartFragment.REQUEST_PAYMENT_STATUS
+//                  , null)
+//              return
+//          }
         navHostFrag = navHostFragment as NavHostFragment
         val graph =
             navHostFrag.navController.navInflater.inflate(R.navigation.nav_graph_checkout)
 
         graph.startDestination = when {
 
-            baseFragBundle?.containsKey(IS_DELIVERY) == true && baseFragBundle?.getBoolean(IS_DELIVERY) == false -> {
-                R.id.checkoutWhoIsCollectingFragment
+            deliveryType.equals(Delivery.STANDARD.toString()) -> {
+                if (savedAddressResponse?.addresses.isNullOrEmpty()) {
+                    R.id.CheckoutAddAddressNewUserFragment
+                } else {
+                    R.id.CheckoutAddAddressReturningUserFragment
+                }
             }
 
-            baseFragBundle?.containsKey(ConfirmAddressFragment.IS_COMING_FROM_CONFIRM_ADDRESS)==true
-                    && baseFragBundle?.getBoolean(ConfirmAddressFragment.IS_COMING_FROM_CONFIRM_ADDRESS) == true -> {
-                R.id.CheckoutAddAddressNewUserFragment
+            deliveryType.equals(Delivery.CNC.toString()) -> {
+                R.id.checkoutWhoIsCollectingFragment
             }
 
             savedAddressResponse?.addresses.isNullOrEmpty() -> {

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY;
+import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.DELIVERY_TYPE;
 import static za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment.IS_DELIVERY;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
@@ -524,12 +525,21 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private void navigateToCheckout(SavedAddressResponse response) {
         Activity activity = getActivity();
         if (activity != null) {
-            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
-            Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
-            checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
-            checkoutActivityIntent.putExtra(IS_DELIVERY, KotlinUtils.Companion.getPreferredDeliveryType());
-            activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
-            activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
+            KotlinUtils.IS_COMING_FROM_CHECKOUT = true;
+            if (TextUtils.isEmpty(response.getDefaultAddressNickname())) {
+                KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                        requireActivity(),
+                        CartFragment.REQUEST_PAYMENT_STATUS,
+                        null,
+                        null);
+            }
+
+//            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT, getActivity());
+//            Intent checkoutActivityIntent = new Intent(getActivity(), CheckoutActivity.class);
+//            checkoutActivityIntent.putExtra(SAVED_ADDRESS_KEY, response);
+//            checkoutActivityIntent.putExtra(DELIVERY_TYPE, KotlinUtils.Companion.getPreferredDeliveryType().toString());
+//            activity.startActivityForResult(checkoutActivityIntent, REQUEST_PAYMENT_STATUS);
+//            activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left);
         }
     }
 
@@ -624,28 +634,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     private void locationSelectionClicked() {
         Activity activity = getActivity();
-//        if (activity != null) {
-//           KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
-//                   activity,
-//                   REQUEST_SUBURB_CHANGE,
-//                   KotlinUtils.getPreferredDeliveryType(),
-//                   Utils.getPreferredDeliveryLocation()
-//                           .fulfillmentDetails.getStoreId()fulfillmentDetails?.address?.placeId);
-//        }
 
-//        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-//
-//        if (bottomNavigationActivity instanceof BottomNavigationActivity) {
-//            if (Utils.getPreferredDeliveryLocation() != null) {
-//                bottomNavigationActivity.pushFragmentSlideUp(
-//                        DeliveryAddressConfirmationFragment.newInstance(
-//                                Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId(),
-//                                KotlinUtils.Companion.getPreferredDeliveryType()));
-//
-//            } else {
-//                bottomNavigationActivity.pushFragmentSlideUp(ConfirmAddressFragment.Companion.newInstance());
-//            }
-//        }
+        if (activity != null) {
+            String placeId = "";
+            if (Utils.getPreferredDeliveryLocation() != null) {
+                if (Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress() != null) {
+                    placeId = Utils.getPreferredDeliveryLocation().fulfillmentDetails.getAddress().getPlaceId();
+                }
+            }
+            KotlinUtils.Companion.presentEditDeliveryGeoLocationActivity(
+                    activity, REQUEST_SUBURB_CHANGE,
+                    KotlinUtils.Companion.getPreferredDeliveryType(),
+                    placeId
+            );
+        }
     }
 
     public void bindCartData(CartResponse cartResponse) {

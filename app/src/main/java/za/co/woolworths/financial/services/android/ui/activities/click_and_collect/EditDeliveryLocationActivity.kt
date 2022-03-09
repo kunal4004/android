@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.click_and_coll
 
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,6 +13,7 @@ import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.edit_delivery_location_activity.toolbar
 import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.util.*
 
@@ -78,7 +80,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         val navGraph = navController.navInflater.inflate(R.navigation.confirm_location_nav_host)
 
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address == null) {
+            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address == null || KotlinUtils.IS_COMING_FROM_CHECKOUT) {
                 navGraph.startDestination = R.id.confirmDeliveryLocationFragment
                 navController.graph = navGraph
                 navController
@@ -103,6 +105,13 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
             }
         } else {
             ScreenManager.presentSSOSignin(this, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CartFragment.REQUEST_PAYMENT_STATUS){
+            onBackPressed()
         }
     }
 

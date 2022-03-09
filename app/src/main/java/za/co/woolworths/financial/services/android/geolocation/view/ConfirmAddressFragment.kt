@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.geolocation.view
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -13,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -27,22 +27,22 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import za.co.woolworths.financial.services.android.checkout.service.network.Address
 import za.co.woolworths.financial.services.android.checkout.service.network.SavedAddressResponse
-import za.co.woolworths.financial.services.android.checkout.view.CheckoutActivity
 import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressConfirmationFragment
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.checkout.view.CheckoutAddressManagementBaseFragment
+import za.co.woolworths.financial.services.android.checkout.view.adapter.CheckoutAddressConfirmationListAdapter
 import za.co.woolworths.financial.services.android.geolocation.model.MapData
 import za.co.woolworths.financial.services.android.geolocation.network.apihelper.GeoLocationApiHelper
 import za.co.woolworths.financial.services.android.geolocation.view.adapter.SavedAddressAdapter
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.ConfirmAddressViewModel
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLocationViewModelFactory
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment.Companion.DEPARTMENT_LOGIN_REQUEST
 import za.co.woolworths.financial.services.android.util.*
 import java.util.*
 
 class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected,
     View.OnClickListener {
+    private var mPosition: Int = 0
     private var savedAddressResponse: SavedAddressResponse? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var mLastLocation: Location? = null
@@ -50,7 +50,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
 
     companion object {
         fun newInstance() = ConfirmAddressFragment()
-        var IS_COMING_FROM_CONFIRM_ADDRESS = "isComingFromConfirmAddress"
+        var SAVED_ADDRESS_RESPONSE = "SavedAddressResponse"
     }
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
@@ -203,8 +203,9 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         currentLocDiv.visibility = View.GONE
     }
 
-    override fun onAddressSelected(address: Address) {
+    override fun onAddressSelected(address: Address, position: Int) {
         selectedAddress = address
+        mPosition = position
         setButtonUI(true)
         if (address.verified) {
             tvConfirmAddress.text = getString(R.string.confirm)
@@ -220,7 +221,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 if (progressBar.visibility == View.GONE
                     && selectedAddress != null
                     && tvConfirmAddress.text == getString(R.string.update_address)){
-                    savedAddressResponse?.let { navigateToCheckout(it) }
+                    savedAddressResponse?.let { navuageToUpdateAddress(it) }
                     return
                 }
                 if (progressBar.visibility == View.GONE
@@ -229,19 +230,19 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 {
                     selectedAddress.let {
                         if (it.latitude != null && it.longitude != null && it.placesId != null) {
-//
-//                              Navigation.findNavController(
-//                                  requireActivity(),
-//                                  R.id.nav_host_container).navigate(
-//                                  ConfirmAddressFragmentDirections
-//                                      .actionConfirmDeliveryLocationFragmentToConfirmAddressMapFragment2())
 
+                            val bundle = Bundle()
 
-//                            (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-//                                DeliveryAddressConfirmationFragment.newInstance(
-//                                    selectedAddress.latitude.toString()!!,
-//                                    selectedAddress.longitude.toString()!!,
-//                                    selectedAddress.placesId.toString()!!))
+                            bundle.putString(
+                                DeliveryAddressConfirmationFragment.KEY_PLACE_ID, selectedAddress.placesId)
+
+                            bundle.putString(
+                                DeliveryAddressConfirmationFragment.ADDRESS, selectedAddress.address1)
+
+                            findNavController().navigate(
+                                R.id.actionToDeliveryAddressConfirmationFragment,
+                                bundleOf("bundle" to bundle)
+                            )
                         }
                         else
                             return
@@ -250,13 +251,17 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
             }
             R.id.inCurrentLocation -> {
 
-                val getMapData =
-                    getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
-                val directions =
-                    ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
-                        getMapData )
-                findNavController().navigate(directions)
-
+                if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
+                    navigateToAddAddress(savedAddressResponse)
+                } else {
+                    val getMapData =
+                        getDataForMapView(mLastLocation?.latitude, mLastLocation?.longitude, false)
+                    val directions =
+                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                            getMapData
+                        )
+                    findNavController().navigate(directions)
+                }
             }
             R.id.inSavedAddress -> {
                 ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
@@ -265,12 +270,17 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
                 activity?.onBackPressed()
             }
             R.id.enterNewAddress -> {
-                val getMapData =
-                    getDataForMapView(0.0, 0.0, true)
-                val directions =
-                    ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
-                        getMapData)
-                findNavController().navigate(directions)
+                if (KotlinUtils.IS_COMING_FROM_CHECKOUT) {
+                    navigateToAddAddress(savedAddressResponse)
+                } else {
+                    val getMapData =
+                        getDataForMapView(0.0, 0.0, true)
+                    val directions =
+                        ConfirmAddressFragmentDirections.actionToConfirmAddressMapFragment(
+                            getMapData
+                        )
+                    findNavController().navigate(directions)
+                }
             }
         }
     }
@@ -283,29 +293,39 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         )
     }
 
-    private fun navigateToCheckout(response: SavedAddressResponse) {
-        val activity: Activity? = activity
-        if (activity != null) {
-            Utils.triggerFireBaseEvents(
-                FirebaseManagerAnalyticsProperties.CART_BEGIN_CHECKOUT,
-                getActivity()
-            )
-            val checkoutActivityIntent = Intent(getActivity(), CheckoutActivity::class.java)
-            checkoutActivityIntent.putExtra(
-                CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
-                response
-            )
+    private fun navuageToUpdateAddress(savedAddressResponse: SavedAddressResponse) {
+        val bundle = Bundle()
 
-            checkoutActivityIntent.putExtra(
-                IS_COMING_FROM_CONFIRM_ADDRESS,
-                true
-            )
+        bundle.putString(
+            CheckoutAddressConfirmationListAdapter.EDIT_SAVED_ADDRESS_RESPONSE_KEY,
+            Utils.toJson(savedAddressResponse))
 
-            activity.startActivityForResult(
-                checkoutActivityIntent,
-                CartFragment.REQUEST_PAYMENT_STATUS
-            )
-            activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_to_left)
-        }
+        bundle.putInt(
+            CheckoutAddressConfirmationListAdapter.EDIT_ADDRESS_POSITION_KEY,
+            mPosition)
+
+        findNavController().navigate(
+            R.id.action_confirmDeliveryLocationFragment_to_checkoutAddAddressNewUserFragment,
+            bundleOf("bundle" to bundle)
+        )
+    }
+
+
+    private fun navigateToAddAddress(savedAddressResponse: SavedAddressResponse?) {
+        val bundle = Bundle()
+        bundle.putBoolean(CheckoutAddressConfirmationFragment.ADD_NEW_ADDRESS_KEY, true)
+
+        bundle.putString(
+            CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY,
+            Utils.toJson(savedAddressResponse)
+        )
+        CheckoutAddressManagementBaseFragment.baseFragBundle?.putString(
+            CheckoutAddressConfirmationFragment.SAVED_ADDRESS_KEY, Utils.toJson(savedAddressResponse)
+        )
+
+        findNavController()?.navigate(
+            R.id.action_confirmDeliveryLocationFragment_to_checkoutAddAddressNewUserFragment,
+            bundle
+        )
     }
 }

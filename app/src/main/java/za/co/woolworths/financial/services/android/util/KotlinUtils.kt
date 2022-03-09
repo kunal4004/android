@@ -85,6 +85,8 @@ class KotlinUtils {
         const val TREATMENT_PLAN = "treamentPlan"
         const val RESULT_CODE_CLOSE_VIEW = 2203
         var GEO_REQUEST_CODE = -1
+        @JvmField
+        var IS_COMING_FROM_CHECKOUT: Boolean = false
 
         fun highlightTextInDesc(
             context: Context?,
@@ -969,6 +971,7 @@ class KotlinUtils {
                 }
             )
         }
+
     }
 
 }

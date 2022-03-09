@@ -321,24 +321,28 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                             Utils.triggerFireBaseEvents(getAppliedVouchersCount() > 0 ? FirebaseManagerAnalyticsProperties.Cart_ovr_edit : FirebaseManagerAnalyticsProperties.Cart_ovr_view, mContext);
                         }
                 );
-                int activeVouchersCount = voucherDetails.getActiveVouchersCount();
-                if (activeVouchersCount > 0) {
-                    if (getAppliedVouchersCount() > 0) {
-                        String availableVouchersLabel = getAppliedVouchersCount() + mContext.getString(getAppliedVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.applied);
-                        priceHolder.availableVouchersCount.setText(availableVouchersLabel);
-                        priceHolder.viewVouchers.setText(mContext.getString(R.string.edit));
-                        priceHolder.viewVouchers.setEnabled(true);
-                    } else {
-                        String availableVouchersLabel = activeVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.available);
-                        priceHolder.availableVouchersCount.setText(availableVouchersLabel);
-                        priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
-                        priceHolder.viewVouchers.setEnabled(true);
-                    }
-                } else {
-                    priceHolder.availableVouchersCount.setText(mContext.getString(R.string.no_vouchers_available));
-                    priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
-                    priceHolder.viewVouchers.setEnabled(false);
+                if (voucherDetails == null ) {
+                    return ;
                 }
+                    int activeVouchersCount = voucherDetails.getActiveVouchersCount();
+                    if (activeVouchersCount > 0) {
+                        if (getAppliedVouchersCount() > 0) {
+                            String availableVouchersLabel = getAppliedVouchersCount() + mContext.getString(getAppliedVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.applied);
+                            priceHolder.availableVouchersCount.setText(availableVouchersLabel);
+                            priceHolder.viewVouchers.setText(mContext.getString(R.string.edit));
+                            priceHolder.viewVouchers.setEnabled(true);
+                        } else {
+                            String availableVouchersLabel = activeVouchersCount + mContext.getString(voucherDetails.getActiveVouchersCount() == 1 ? R.string.available_voucher_toast_message : R.string.available_vouchers_toast_message) + mContext.getString(R.string.available);
+                            priceHolder.availableVouchersCount.setText(availableVouchersLabel);
+                            priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
+                            priceHolder.viewVouchers.setEnabled(true);
+                        }
+                    } else {
+                        priceHolder.availableVouchersCount.setText(mContext.getString(R.string.no_vouchers_available));
+                        priceHolder.viewVouchers.setText(mContext.getString(R.string.view));
+                        priceHolder.viewVouchers.setEnabled(false);
+                    }
+
                 priceHolder.promoCodeAction.setText(mContext.getString((voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) ? R.string.remove : R.string.enter));
 
                 if (voucherDetails.getPromoCodes() != null && voucherDetails.getPromoCodes().size() > 0) {

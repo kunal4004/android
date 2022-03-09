@@ -96,6 +96,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     private var isAddNewAddress = false
     private var provinceSuburbEnableType: ProvinceSuburbType? = null
 
+    private var bundle: Bundle? = null
+
     companion object {
         const val PROVINCE_SELECTION_BACK_PRESSED = "5645"
         const val SUBURB_SELECTION_BACK_PRESSED = "5465"
@@ -124,7 +126,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
     }
 
     fun handleBundleResponse() {
-        arguments?.apply {
+        bundle = arguments?.getBundle("bundle")
+        bundle?.apply {
             if (containsKey(EDIT_SAVED_ADDRESS_RESPONSE_KEY)) {
                 //Edit new Address from delivery
                 val editSavedAddress = getString(EDIT_SAVED_ADDRESS_RESPONSE_KEY)
@@ -1164,7 +1167,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     fun showSuburbNotDeliverableBottomSheetDialog(errorCode: String?) {
         view?.findNavController()?.navigate(
-            R.id.action_CheckoutAddAddressNewUserFragment_to_suburbNotDeliverableBottomsheetDialogFragment,
+            R.id.action_checkoutAddAddressNewUserFragment_to_errorHandlerBottomSheetDialog,
             bundleOf(
                 ERROR_CODE to errorCode
             )
@@ -1228,8 +1231,8 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             suburbEditText?.text.toString(),
             "",
             false,
-            selectedAddress.savedAddress.latitude?.toDouble(),
-            selectedAddress.savedAddress.longitude?.toDouble(),
+            selectedAddress.savedAddress.latitude,
+            selectedAddress.savedAddress.longitude,
             selectedAddress.savedAddress.placesId ?: "",
             selectedDeliveryAddressType.toString()
         )
@@ -1382,9 +1385,10 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
             ERROR_DESCRIPTION,
             subTitle
         )
+
         bundle.putInt(ERROR_TYPE, type)
         view?.findNavController()?.navigate(
-            R.id.action_CheckoutAddAddressNewUserFragment_to_ErrorHandlerBottomSheetDialog,
+            R.id.action_checkoutAddAddressNewUserFragment_to_errorHandlerBottomSheetDialog,
             bundle
         )
     }
@@ -1406,7 +1410,7 @@ class CheckoutAddAddressNewUserFragment : CheckoutAddressManagementBaseFragment(
 
     private fun navigateToAddressConfirmation() {
         navController?.navigate(
-            R.id.action_CheckoutAddAddressNewUserFragment_to_checkoutAddressConfirmationFragment,
+            R.id.action_checkoutAddAddressNewUserFragment_to_confirmDeliveryLocationFragment,
             baseFragBundle
         )
     }

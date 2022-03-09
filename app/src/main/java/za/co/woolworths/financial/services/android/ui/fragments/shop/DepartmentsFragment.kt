@@ -240,47 +240,22 @@ class DepartmentsFragment : DepartmentExtensionFragment(),
     }
 
     private fun onEditDeliveryLocation() {
-
         if (SessionUtilities.getInstance().isUserAuthenticated) {
+            /* if (Utils.getPreferredDeliveryLocation() != null) {
+                 activity?.apply { KotlinUtils.presentEditDeliveryLocationActivity(this, if (Utils.getPreferredDeliveryLocation().suburb.storePickup) DeliveryType.STORE_PICKUP else DeliveryType.DELIVERY) }
+             } else*/
 
-            KotlinUtils.presentEditDeliveryGeoLocationActivity(
-                requireActivity(),
-                EditDeliveryLocationActivity.REQUEST_CODE,
-                KotlinUtils.getPreferredDeliveryType(),
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
+            activity?.apply {
+                KotlinUtils.presentEditDeliveryGeoLocationActivity(
+                    this,
+                    EditDeliveryLocationActivity.REQUEST_CODE,
+                    KotlinUtils.getPreferredDeliveryType(),
+                    Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.placeId
                 )
-
-//            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address != null) {
-//                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
-//
-//                    KotlinUtils.presentEditDeliveryLocationActivity(
-//                        requireActivity(),
-//                        EditDeliveryLocationActivity.REQUEST_CODE,
-//                        DeliveryType.STORE_PICKUP)
-////
-////                    (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(
-////                        DeliveryAddressConfirmationFragment.newInstance(
-////                            it?.placeId,
-////                            KotlinUtils.getPreferredDeliveryType()
-////                        )
-////                    )
-//                }
-//            } else {
-//                (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(ConfirmAddressFragment.newInstance())
-//            }
+            }
         } else {
             ScreenManager.presentSSOSignin(activity, DEPARTMENT_LOGIN_REQUEST)
         }
-
-//       activity?.apply {
-//            if (!ConfirmAddressDialog.dialogInstance.isVisible)
-//                ConfirmAddressDialog.newInstance().show(
-//                    this@DepartmentsFragment.childFragmentManager,
-//                    ConfirmAddressDialog::class.java.simpleName
-//                )
-//        }
-
-
     }
 
 
