@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
-import static za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity.DEEP_LINK_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.DEEP_LINK_REQUEST_CODE;
 
 import android.app.Notification;
 import android.app.NotificationManager;
