@@ -41,7 +41,6 @@ import za.co.woolworths.financial.services.android.util.*
 import za.co.woolworths.financial.services.android.util.animation.AnimationUtilExtension
 import za.co.woolworths.financial.services.android.util.spannable.WSpannableStringBuilder
 import za.co.woolworths.financial.services.android.util.wenum.LinkType
-import java.util.*
 
 class RemoveBlockOnCollectionFragment : Fragment(), View.OnClickListener {
 

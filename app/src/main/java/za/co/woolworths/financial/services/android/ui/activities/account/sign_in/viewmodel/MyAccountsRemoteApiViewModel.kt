@@ -24,5 +24,4 @@ class MyAccountsRemoteApiViewModel @Inject constructor(private val iTreatmentPla
        }
     }
 
-
 }

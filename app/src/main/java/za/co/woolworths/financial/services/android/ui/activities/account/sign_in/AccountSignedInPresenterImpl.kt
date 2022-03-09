@@ -15,10 +15,10 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountHelpInformation
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
-import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.AccountOfferingState
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.treatmentplan.ProductOfferingStatus
 import za.co.woolworths.financial.services.android.ui.activities.account.sign_in.viewmodel.MyAccountsRemoteApiViewModel
 import za.co.woolworths.financial.services.android.ui.extension.deviceHeight
+import za.co.woolworths.financial.services.android.ui.fragments.account.main.domain.sealing.AccountOfferingState
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -191,7 +191,6 @@ class AccountSignedInPresenterImpl(
         mainView?.showAccountHelp(getCardProductInformation(true))
     }
 
-
     override fun showProductOfferOutstanding(
         state: ApplyNowState,
         myAccountsViewModel: MyAccountsRemoteApiViewModel,
@@ -203,6 +202,7 @@ class AccountSignedInPresenterImpl(
                 state { status ->
                     when (status) {
 
+                        //consumed
                         AccountOfferingState.AccountInGoodStanding -> {
                             //when productOfferingGoodStanding == true
                             hideAccountInArrears(account)

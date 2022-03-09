@@ -5,9 +5,13 @@ import android.util.Base64
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.ColorRes
+import androidx.annotation.NavigationRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
@@ -129,4 +133,52 @@ fun Fragment.updateStatusBarColor(@ColorRes colorId: Int, isStatusBarFontDark: B
             setSystemBarTheme(isStatusBarFontDark)
         }
     }
+}
+
+/**
+ * Accessing graph-scoped ViewModel of child NavHostFragment
+ * using by navGraphViewModels
+ */
+
+inline fun <reified T: ViewModel> NavController.viewModel(@NavigationRes navGraphId: Int): T {
+    val storeOwner = getViewModelStoreOwner(navGraphId)
+    return ViewModelProvider(storeOwner)[T::class.java]
+}
+
+inline fun <T> T?.whenNull(block: T?.() -> Unit): T? {
+    if (this == null) block()
+    return this@whenNull
+}
+
+inline fun <T> T?.whenNonNull(block: T.() -> Unit): T? {
+    this?.block()
+    return this@whenNonNull
+}
+
+
+enum class ApiStatus{
+    SUCCESS,
+    ERROR,
+    LOADING
+}
+
+sealed class AccountApiResult <out T> (val status: ApiStatus, val data: T?, val message:String?) {
+
+    data class Success<out R>(val _data: R?): AccountApiResult<R>(
+        status = ApiStatus.SUCCESS,
+        data = _data,
+        message = null
+    )
+
+    data class Error(val exception: String): AccountApiResult<Nothing>(
+        status = ApiStatus.ERROR,
+        data = null,
+        message = exception
+    )
+
+    data class Loading<out R>(val _data: R?, val isLoading: Boolean): AccountApiResult<R>(
+        status = ApiStatus.LOADING,
+        data = _data,
+        message = null
+    )
 }

@@ -45,7 +45,6 @@ interface ApiInterface {
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
     @GET("wfs/app/v4/user/accounts")
     fun getAccounts(
-
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,

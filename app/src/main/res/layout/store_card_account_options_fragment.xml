@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/accountOptionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/accountOptionTextView"
+            style="@style/accountOptionHeaderStyle"
+            android:paddingStart="@dimen/_24sdp"
+            android:paddingEnd="@dimen/_24sdp"
+            android:text="@string/account_options_label"
+            tools:ignore="UnknownIdInLayout" />
+
+        <View style="@style/accountOptionsDivider" />
+
+        <RelativeLayout
+            android:id="@+id/viewTreatmentPlanLinearLayout"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/viewTreatmentPlanLogoImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:src="@drawable/icon_limit" />
+
+            <TextView
+                android:id="@+id/viewTreatmentPlanTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:text="@string/view_treatment_plan_caption" />
+
+            <ImageView
+                android:id="@+id/viewTreatmentPlanNext"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+
+        </RelativeLayout>
+
+        <View style="@style/accountOptionsDivider" />
+
+        <RelativeLayout
+            android:id="@+id/setupTreatmentPlanView"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/setupTreatmentPlanImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:src="@drawable/icon_limit" />
+
+            <TextView
+                android:id="@+id/setupTreatmentPlanTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_alignTop="@+id/setupTreatmentPlanImageView"
+                android:layout_alignBottom="@+id/setupTreatmentPlanImageView"
+                android:layout_toStartOf="@+id/setupTreatmentPlanRightArrowImageView"
+                android:layout_toEndOf="@+id/setupTreatmentPlanImageView"
+                android:text="@string/set_up_payment_plan_title" />
+
+
+            <ImageView
+                android:id="@+id/setupTreatmentPlanRightArrowImageView"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+        <View style="@style/accountOptionsDivider" />
+
+        <include
+            android:id="@+id/incScPaymentOptions"
+            layout="@layout/include_sc_payment_options" />
+
+        <View style="@style/accountOptionsDivider" />
+
+        <RelativeLayout
+            android:id="@+id/balanceProtectionInsuranceView"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/balanceProtectionInsuranceImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:src="@drawable/payment_options_grey" />
+
+            <TextView
+                android:id="@+id/balanceProtectionInsuranceTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/balanceProtectionInsuranceTag"
+                android:layout_toEndOf="@+id/balanceProtectionInsuranceImageView"
+                android:text="@string/balance_protection_insurance" />
+
+            <include
+                android:id="@+id/balanceProtectionInsuranceTag"
+                layout="@layout/balance_protection_insurance_tag_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+        <View style="@style/accountOptionsDivider" />
+
+        <RelativeLayout
+            android:id="@+id/withdrawCashView"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/withdrawCashImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:alpha="0.3"
+                android:src="@drawable/money" />
+
+            <TextView
+                android:id="@+id/withdrawCashTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_alignTop="@+id/withdrawCashImageView"
+                android:layout_alignBottom="@+id/withdrawCashImageView"
+                android:layout_toStartOf="@+id/withdrawCashArrowImageView"
+                android:layout_toEndOf="@+id/withdrawCashImageView"
+                android:text="@string/instore_withdraw_cash_now" />
+
+            <ImageView
+                android:id="@+id/withdrawCashArrowImageView"
+                style="@style/accountOptionsNextImageViewStyle"
+                android:src="@drawable/ic_caret_black" />
+        </RelativeLayout>
+
+        <View style="@style/accountOptionsDivider" />
+
+        <RelativeLayout
+            android:id="@+id/debitOrderView"
+            style="@style/accountOptionItemsStyle">
+
+            <ImageView
+                android:id="@+id/debitOrderImageView"
+                style="@style/accountOptionsImageviewStyle"
+                android:alpha="0.3"
+                android:src="@drawable/ic_debit_order" />
+
+            <TextView
+                android:id="@+id/debitOrderTextView"
+                style="@style/accountOptionsLabelStyle"
+                android:layout_alignTop="@+id/debitOrderImageView"
+                android:layout_alignBottom="@+id/debitOrderImageView"
+                android:layout_toEndOf="@+id/debitOrderImageView"
+                android:text="@string/debit_orders" />
+
+
+            <TextView
+                android:id="@+id/debitOrderIsActiveTextView"
+                style="@style/accountOptionsTagStyle"
+                android:text="@string/active" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

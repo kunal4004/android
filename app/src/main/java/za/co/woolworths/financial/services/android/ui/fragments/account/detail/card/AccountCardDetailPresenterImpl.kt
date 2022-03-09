@@ -60,7 +60,6 @@ class AccountCardDetailPresenterImpl(private var mainView: IAccountCardDetailsCo
         return getAccount()?.insuranceCovered ?: false
     }
 
-
     override fun getBpiInsuranceApplication(): BpiInsuranceApplication? {
         return getAccount()?.bpiInsuranceApplication
     }

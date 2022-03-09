@@ -11,7 +11,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -31,7 +30,7 @@ import java.net.ConnectException
 import java.util.*
 import javax.annotation.Nullable
 
-class PayMyAccountViewModel : ViewModel() {
+open class PayMyAccountViewModel: ViewModel() {
 
     private var mQueryServicePostPayU: Call<PayUResponse>? = null
     private var mQueryServiceDeletePaymentMethod: Call<DeleteResponse>? = null
