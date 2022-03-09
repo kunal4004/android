@@ -13,7 +13,7 @@ android {
     def major = "8"
     def minor = "8"
     def fix = "0"
-    def jobNumber = 14925
+    def jobNumber = 563
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
@@ -33,6 +33,11 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
     }
 
     flavorDimensions "default"
@@ -92,7 +97,7 @@ android {
             jobNumber = 1
         } else {
             //assume prod
-            jobNumber = 173
+            jobNumber = 176
         }
 
         defaultConfig {
