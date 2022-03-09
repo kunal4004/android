@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.geolocation.view
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,9 +29,8 @@ import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -43,7 +41,7 @@ import za.co.woolworths.financial.services.android.geolocation.viewmodel.GeoLoca
 import za.co.woolworths.financial.services.android.geolocation.viewmodel.StoreLiveData
 
 
-class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
+class ClickAndCollectStoresFragment : DialogFragment(), OnMapReadyCallback,
     StoreListAdapter.OnStoreSelected, View.OnClickListener, TextWatcher {
 
     private lateinit var mapFragment: SupportMapFragment
@@ -60,6 +58,7 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStyle(STYLE_NO_TITLE, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
         super.onCreate(savedInstanceState)
         bundle = arguments?.getBundle("bundle")
         bundle?.apply {
@@ -84,10 +83,8 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViewModel()
-        tvConfirmStore.setOnClickListener(this)
-        ivCross.setOnClickListener {
-            (activity as? BottomNavigationActivity)?.popFragment()
-        }
+        tvConfirmStore?.setOnClickListener(this)
+        ivCross?.setOnClickListener(this)
         etEnterNewAddress.addTextChangedListener(this)
         mapFragment = childFragmentManager
             .findFragmentById(R.id.mapView) as SupportMapFragment
@@ -182,7 +179,10 @@ class ClickAndCollectStoresFragment : Fragment(), OnMapReadyCallback,
         when (v?.id) {
             R.id.tvConfirmStore -> {
                 dataStore?.let { StoreLiveData.value = it }
-                activity?.onBackPressed()
+                dismiss()
+            }
+            R.id.ivCross -> {
+                dismiss()
             }
         }
     }

@@ -71,19 +71,25 @@
             app:enterAnim="@anim/slide_in_from_right"
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
-            app:popExitAnim="@anim/slide_to_right"
-            app:popUpToInclusive="true" />
+            app:popExitAnim="@anim/slide_to_right" />
     </fragment>
 
-    <fragment
+    <dialog
         android:id="@+id/clickAndCollectStoresFragment"
         android:name="za.co.woolworths.financial.services.android.geolocation.view.ClickAndCollectStoresFragment"
         android:label="ClickAndCollectStoresFragment">
 
         <action
-            android:id="@+id/action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment"
-            app:destination="@id/deliveryAddressConfirmationFragment" />
-    </fragment>
+            android:id="@+id/action_clickAndCollectStoresFragment_to_confirmDeliveryLocationFragment"
+            app:destination="@id/confirmDeliveryLocationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"
+            app:popUpToInclusive="true"/>
+
+
+    </dialog>
 
 
 </navigation>

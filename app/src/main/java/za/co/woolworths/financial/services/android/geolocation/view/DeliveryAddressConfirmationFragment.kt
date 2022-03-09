@@ -52,20 +52,13 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
     private var mStoreName: String? = null
     private var mStoreId: String? = null
     private var bundle: Bundle? = null
-    private var fragentView : View? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-
-        if (fragentView == null) {
-            fragentView =
-                inflater.inflate(R.layout.geolocation_deliv_click_collect, container, false)
-        }
-        return fragentView
+        return inflater.inflate(R.layout.geolocation_deliv_click_collect, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -107,7 +100,7 @@ class DeliveryAddressConfirmationFragment : Fragment(), View.OnClickListener {
 
                 if (deliveryType.equals(STANDARD_DELIVERY)) {
                     findNavController().navigate(
-                        R.id.action_clickAndCollectStoresFragment_to_deliveryAddressConfirmationFragment
+                        R.id.action_deliveryAddressConfirmationFragment_to_confirmDeliveryLocationFragment
                     )
                     return
                 }

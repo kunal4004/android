@@ -1,18 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.activities.click_and_collect
 
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.awfs.coordination.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.edit_delivery_location_activity.toolbar
-import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressFragmentDirections
-import za.co.woolworths.financial.services.android.geolocation.view.ConfirmAddressMapFragmentDirections
 import za.co.woolworths.financial.services.android.geolocation.view.DeliveryAddressConfirmationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.util.*
@@ -64,10 +62,10 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-//    override fun onBackPressed() {
-//        setResult(Activity.RESULT_CANCELED)
-//        finish()
-//        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)    }
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED)
+        finish()
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)}
 
     private fun loadNavHostFragment() {
         onEditDeliveryLocation()

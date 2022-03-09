@@ -47,8 +47,6 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var mLastLocation: Location? = null
     private var selectedAddress = Address()
-    private var fragentView : View? = null
-
 
     companion object {
         fun newInstance() = ConfirmAddressFragment()
@@ -74,10 +72,7 @@ class ConfirmAddressFragment : Fragment(), SavedAddressAdapter.OnAddressSelected
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        if (fragentView == null) {
-            fragentView = inflater.inflate(R.layout.confirm_address_bottom_sheet_dialog, container, false)
-        }
-        return fragentView
+        return inflater.inflate(R.layout.confirm_address_bottom_sheet_dialog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

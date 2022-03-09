@@ -45,7 +45,8 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ConfirmAddressMapFragment : Fragment() , OnMapReadyCallback, VtoTryAgainListener {
+class ConfirmAddressMapFragment() :
+    Fragment(R.layout.geolocation_confirm_address), OnMapReadyCallback, VtoTryAgainListener {
 
     private var mMap: GoogleMap? = null
     private var mAddress: String? = null
@@ -62,22 +63,10 @@ class ConfirmAddressMapFragment : Fragment() , OnMapReadyCallback, VtoTryAgainLi
     private var longitude: Double? = null
     private var suburb: String? = null
     private var isAddAddress: Boolean? = false
-    private var fragentView : View? = null
 
     private lateinit var confirmAddressViewModel: ConfirmAddressViewModel
     @Inject
     lateinit var vtoErrorBottomSheetDialog: VtoErrorBottomSheetDialog
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        if (fragentView == null) {
-            fragentView = inflater.inflate(R.layout.geolocation_confirm_address, container, false)
-        }
-        return fragentView
-    }
 
     override fun onViewCreated(
         view: View, savedInstanceState: Bundle?,
