@@ -11,7 +11,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.PMARedirection
 import za.co.absa.openbankingapi.woolworths.integration.dto.PayUResponse
 import za.co.woolworths.financial.services.android.contracts.IGenericAPILoaderView
 import za.co.woolworths.financial.services.android.models.AppConfigSingleton
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.account.AccountsProductGroupCode
 import za.co.woolworths.financial.services.android.models.dto.account.ApplyNowState
@@ -411,13 +410,6 @@ class PayMyAccountViewModel : ViewModel() {
     fun convertRandFormatToInt(item: String?): Int {
         val number: String? = item?.replace("[,.R$ ]".toRegex(), "")
         return if (number.isNullOrEmpty()) 0 else number.toInt()
-    }
-
-    fun getAmountEnteredAfterTextChanged(item: String?): String? {
-        val account = getAccount()
-        val inputAmount = convertRandFormatToInt(item)
-        val enteredAmount = account?.amountOverdue?.minus(inputAmount) ?: 0
-        return Utils.removeNegativeSymbol(CurrencyFormatter.formatAmountToRandAndCent(if (enteredAmount < 0) 0 else enteredAmount))
     }
 
     fun validateAmountEntered(amount: Double, minAmount: () -> Unit, maxAmount: () -> Unit, validAmount: () -> Unit) {

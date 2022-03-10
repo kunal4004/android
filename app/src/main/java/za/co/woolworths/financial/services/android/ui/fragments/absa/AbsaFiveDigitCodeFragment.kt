@@ -21,12 +21,13 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
     companion object {
         private var mCreditCardToken: String? = null
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
-        private const val ALIAS_ID = "ALIAS_ID"
+        const val ALIAS_ID = "ALIAS_ID"
+        const val CREDIT_CARD_TOKEN = "creditCardToken"
 
         fun newInstance(aliasId: String?,creditCardToken:String?) = AbsaFiveDigitCodeFragment().apply {
             arguments = Bundle(3).apply {
                 putString(ALIAS_ID, aliasId)
-                putString("creditCardToken", creditCardToken)
+                putString(CREDIT_CARD_TOKEN, creditCardToken)
             }
         }
     }
@@ -37,7 +38,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         arguments?.apply {
             getString(ALIAS_ID)?.apply { mAliasId = this }
-            mCreditCardToken = getString("creditCardToken") ?: ""
+            mCreditCardToken = getString(CREDIT_CARD_TOKEN) ?: ""
         }
     }
 
