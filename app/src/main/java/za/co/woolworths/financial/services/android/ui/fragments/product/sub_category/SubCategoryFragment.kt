@@ -197,7 +197,7 @@ class SubCategoryFragment :
             brandText = subCategory.categoryName,
             displayName = subCategory.categoryName,
             isBrandLandingPage = true,
-            filterContent = ChanelUtils.isCategoryPresentInConfig(subCategory.categoryName)
+            filterContent = !ChanelUtils.isCategoryPresentInConfig(subCategory.categoryName)
         )
         pushFragment(ProductListingFragment.newInstance(
             ProductsRequestParams.SearchType.NAVIGATE,
