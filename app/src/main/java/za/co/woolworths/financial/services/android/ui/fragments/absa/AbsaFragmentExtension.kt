@@ -51,11 +51,6 @@ open class AbsaFragmentExtension : Fragment() {
         }
     }
 
-    fun cancelVolleyRequest(name: String?) {
-        VolleySingleton.getInstance()?.apply {
-            cancelRequest(name)
-        }
-    }
     fun alwaysShowWindowSoftInputMode() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
