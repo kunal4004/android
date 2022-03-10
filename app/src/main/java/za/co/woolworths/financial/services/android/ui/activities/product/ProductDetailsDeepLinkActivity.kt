@@ -309,7 +309,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
         message: String?,
         cartText: String?,
         productCountMap: ProductCountMap?,
-        noOfItems: Int
+        noOfItems: Int,
     ) {
         if (productCountMap != null && isDeliveryOptionClickAndCollect() && productCountMap.quantityLimit!!.foodLayoutColour != null) {
             showItemsLimitToastOnAddToCart(
@@ -346,14 +346,7 @@ class ProductDetailsDeepLinkActivity : AppCompatActivity(),
                 if (!SessionUtilities.getInstance().isUserAuthenticated) {
                     ScreenManager.presentSSOSignin(this@ProductDetailsDeepLinkActivity)
                 } else {
-                    //TODO: Nav stack change. Cart Activity removed find another way.
-                    /*val openCartActivity =
-                        Intent(this@ProductDetailsDeepLinkActivity, CartActivity::class.java)
-                    startActivityForResult(
-                        openCartActivity,
-                        BottomNavigationActivity.OPEN_CART_REQUEST
-                    )
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)*/
+                    ScreenManager.presentShoppingCart(this)
                 }
             }
         }
