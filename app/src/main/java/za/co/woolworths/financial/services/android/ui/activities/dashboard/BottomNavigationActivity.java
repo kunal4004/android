@@ -14,6 +14,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.TipsAndT
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_OPEN_CART_FROM_TIPS_AND_TRICKS;
 import static za.co.woolworths.financial.services.android.ui.activities.account.MyAccountActivity.RESULT_CODE_MY_ACCOUNT_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_BRAND_HEADER;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_CATEGORY;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragment.STR_PRODUCT_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
@@ -507,6 +508,22 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Bundle bundle = new Bundle();
         bundle.putString(STR_PRODUCT_LIST, strProductList);
         bundle.putString(STR_PRODUCT_CATEGORY, productName);
+        bundle.putString(STR_BRAND_HEADER, productList.brandHeaderDescription);
+        ProductDetailsFragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
+        productDetailsFragmentNew.setArguments(bundle);
+        Utils.updateStatusBarBackground(this);
+        pushFragment(productDetailsFragmentNew);
+    }
+
+    public void openProductDetailFragment(String productName, ProductList productList, String bannerLabel, String bannerImage) {
+        Gson gson = new Gson();
+        String strProductList = gson.toJson(productList);
+        Bundle bundle = new Bundle();
+        bundle.putString(STR_PRODUCT_LIST, strProductList);
+        bundle.putString(STR_PRODUCT_CATEGORY, productName);
+        bundle.putString(STR_BRAND_HEADER, productList.brandHeaderDescription);
+        bundle.putString(ProductListingFragment.CHANEL_BANNER_LABEL, bannerLabel);
+        bundle.putString(ProductListingFragment.CHANEL_BANNER_IMAGE, bannerImage);
         ProductDetailsFragment productDetailsFragmentNew = ProductDetailsFragment.Companion.newInstance();
         productDetailsFragmentNew.setArguments(bundle);
         Utils.updateStatusBarBackground(this);
