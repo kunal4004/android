@@ -558,7 +558,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 Bundle arguments = fragment.getArguments();
                 ProductDetails newProductDetails = (ProductDetails) Utils.jsonStringToObject(arguments.getString(STR_PRODUCT_LIST), ProductDetails.class);
 
-                if (productDetails != null && productDetails.productId.equals(newProductDetails.productId)) {
+                if (productDetails != null && newProductDetails!= null && !TextUtils.isEmpty(productDetails.productId)
+                        && !TextUtils.isEmpty(newProductDetails.productId) && productDetails.productId.equals(newProductDetails.productId)) {
                     // when we open same PDP then instead of new PDP it will close existing PDP and opens up new same PDP.
                     mNavController.popFragment();
                     mNavController.pushFragment(fragment, ft);
@@ -649,10 +650,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     return true;
 
                 case R.id.navigate_to_shop:
-                    replaceAccountIcon(item);
-                    setCurrentSection(R.id.navigate_to_shop);
-                    switchTab(INDEX_PRODUCT);
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
+                    onShopTabSelected(item);
                     return true;
 
                 case R.id.navigate_to_cart:
@@ -698,6 +696,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return false;
         }
     };
+
+    public void onShopTabSelected(MenuItem item) {
+        replaceAccountIcon(item);
+        setCurrentSection(R.id.navigate_to_shop);
+        switchTab(INDEX_PRODUCT);
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU, BottomNavigationActivity.this);
+    }
 
     private void replaceAccountIcon(@NonNull MenuItem item) {
         if (accountNavigationView != null) {

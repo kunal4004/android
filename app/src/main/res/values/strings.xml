@@ -702,7 +702,8 @@
     <string name="no_of_item">\u0020Item</string>
     <string name="toast_added_to_cart">ADDED TO CART</string>
     <string name="deselect">DESELECT</string>
-    <string name="credit_card_statement_unavailable">Oops! Sorry, statements are currently unavailable</string>
+    <string name="credit_card_statement_unavailable_title">Error Loading Statements</string>
+    <string name="credit_card_statement_unavailable_description">Oops! Sorry, statements are currently unavailable</string>
     <string name="check_connection_status">Check your connection and try again.</string>
     <string name="general_error_desc">Oops, There seems to be a problem. Please try again later.</string>
     <string name="crashlytics_materialshowcase_key">materialshowcase_parent</string>
@@ -841,6 +842,8 @@
     <string name="calculation_status_level_paragraph2"> You will be eligible for an upgrade in status level every month of the year. Downgrades only take place once, annually at the beginning of July, and are based on your spend during the previous 12 months.</string>
     <string name="calculation_status_level_paragraph3">We are entitled to adjust the spend thresholds (they are adjusted annually), the number of status levels or the rewards at any stage without notification.</string>
     <string name="absa_common_error_message">Please try again or contact our call centre on 0861 50 20 10.</string>
+    <string name="absa_otp_retry_max_attempt_error">You\'ve exceeded the maximum number of OTP attempts.</string>
+
     <string name="absa_otp_screen_description">Please confirm by entering the OTP sent to your cell phone number at\u0020</string>
     <string name="absa_wrong_otp_entered">Wrong OTP entered. Please try again.</string>
     <string name="absa_otp_screen_title">Enter 8 Digit OTP Number</string>
@@ -1306,9 +1309,7 @@
     <string name="treatment_plan_eligible_charged_off_description_sc">Your account is being managed by our collection partners</string>
     <string name="view_payment_plan_button_label">View payment plan</string>
     <string name="view_payment_plans_button_label">View payment plans</string>
-    <string name="make_payment_button_label">Make a payment</string>
     <string name="make_payment_now_button_label">Make a payment now</string>
-    <string name="view_payment_options_button_label">View payment options</string>
     <string name="view_plan_options_button_label">View plan options</string>
     <string name="cannot_afford_payment_button_label">Can\'t afford this payment?</string>
     <string name="view_other_payment_options_button_label">View other payment options</string>
@@ -2404,6 +2405,8 @@
     <string name="out_of_stock_item">Unfortunately this item is out of stock in %1$s. Try changing your delivery location and try again.</string>
     <string name="absa_statement_error_try_again_later">We\'re unable to retrieve your Statement. Please try again later.</string>
 
+    <string name="security_check_successful_label">Security Check Successful.</string>
+    <string name="lets_set_up_your_passcode_label">Lets set up your passcode.</string>
     <string name="get_payment_plan_title">Get a Payment Plan</string>
     <string name="get_payment_plan_desc">By signing up for a repayment plan, you secure the use of your facility for some point in the future. Once you have successfully completed your repayment plan, you will be able to utilise your facility again.</string>
     <string name="get_a_payment_plan_1">Pay smaller instalments over a chosen period.</string>
@@ -2436,4 +2439,6 @@
     <string name="dash_delivery_title">To view and shop with Woolies Dash,\n we need your address.</string>
     <string name="dash_delivery_msg">Set your address to \n start shopping.</string>
 
+
+    <string name="product_listing_price_from">From</string>
 </resources>
