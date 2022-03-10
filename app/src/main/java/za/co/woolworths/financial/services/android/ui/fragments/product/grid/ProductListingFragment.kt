@@ -13,7 +13,9 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
@@ -156,10 +158,14 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         super.onViewCreated(view, savedInstanceState)
         navigator = this
         (activity as? BottomNavigationActivity)?.apply {
-            showToolbar()
-            showBackNavigationIcon(true)
+
+            hideToolbar()
+            setSupportActionBar(findViewById(R.id.toolbarPLP))
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setHomeButtonEnabled(true)
+            supportActionBar?.setDisplayShowHomeEnabled(true)
+            toolbarPLP?.navigationIcon = ContextCompat.getDrawable(requireContext(), R.drawable.back24)
             showBottomNavigationMenu()
-            setToolbarBackgroundDrawable(R.drawable.appbar_background)
 
             toolbar?.setNavigationOnClickListener { popFragment() }
 
@@ -172,12 +178,23 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             localSuburbId = Utils.getPreferredDeliveryLocation()?.suburb?.id
             localStoreId = Utils.getPreferredDeliveryLocation()?.store?.id
             imgInfo?.setOnClickListener {
-                vtoBottomSheetDialog.showBottomSheetDialog(this@ProductListingFragment,
+                vtoBottomSheetDialog.showBottomSheetDialog(
+                    this@ProductListingFragment,
                     requireActivity(),
-                    true)
+                    true
+                )
 
             }
 
+            // On Back pressed
+            onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        isBackPressed = true
+                    }
+                }
+            )
         }
     }
 
@@ -254,10 +271,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun setTitle() {
-        if ((activity as? BottomNavigationActivity)?.currentFragment !is ProductListingFragment) {
+        if (!isAdded || !isVisible) {
             return
         }
-        (activity as? BottomNavigationActivity)?.setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
+        toolbarPLPTitle.text = if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName
     }
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
@@ -374,8 +391,8 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun getCategoryNameAndSetTitle() {
-        if (!mSubCategoryName.isNullOrEmpty())
-            setTitle()
+//        if (!mSubCategoryName.isNullOrEmpty())
+//            setTitle()
     }
 
     override fun unhandledResponseCode(response: Response) {
@@ -603,8 +620,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         menu.clear()
         inflater.inflate(R.menu.drill_down_category_menu, menu)
         menuActionSearch = menu.findItem(R.id.action_drill_search)
-        menuActionSearch?.isVisible =
-            (activity as? BottomNavigationActivity)?.currentFragment is ProductListingFragment
+        menuActionSearch?.isVisible = isAdded && isVisible
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -636,8 +652,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
                 R.id.refineProducts -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED,
-                        activity)
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED,
+                        activity
+                    )
                     /*val intent = Intent(activity, ProductsRefineActivity::class.java)
                     intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
                     intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(productRequestBody))
@@ -649,8 +667,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                     }
                 }
                 R.id.sortProducts -> {
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED,
-                        activity)
+                    Utils.triggerFireBaseEvents(
+                        FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED,
+                        activity
+                    )
                     productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
                 }
                 else -> return
@@ -665,11 +685,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             when (hidden) {
                 true -> lockDrawerFragment()
                 else -> {
-                    showToolbar()
+                    setSupportActionBar(toolbarPLP)
                     showBottomNavigationMenu()
-                    showBackNavigationIcon(true)
-                    setToolbarBackgroundDrawable(R.drawable.appbar_background)
-                    if (!localProductBody.isEmpty() && isBackPressed) {
+                    if (localProductBody.isNotEmpty() && isBackPressed) {
                         localProductBody.removeLast()
                         isBackPressed = false
                     }
@@ -685,10 +703,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
             invalidateOptionsMenu()
         }
-    }
-
-    fun onBackPressed() {
-        isBackPressed = true
     }
 
     override fun onSortOptionSelected(sortOption: SortOption) {
