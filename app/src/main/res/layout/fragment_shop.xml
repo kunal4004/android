@@ -5,6 +5,70 @@
     android:layout_height="match_parent"
     android:background="@color/color_F3F3F3">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/shopToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imgToolbarStart"
+                android:layout_width="@dimen/thirty_two_dp"
+                android:layout_height="@dimen/thirty_two_dp"
+                android:layout_margin="@dimen/five_dp"
+                android:src="@drawable/ic_delivery_circle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvToolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/eight_dp"
+                android:fontFamily="@font/myriad_pro_regular"
+                android:gravity="top"
+                android:text="@string/standard_delivery"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twelve_sp"
+                app:layout_constraintBottom_toTopOf="@+id/tvToolbarSubtitle"
+                app:layout_constraintStart_toEndOf="@id/imgToolbarStart"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tvToolbarSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/myriad_pro_semi_bold"
+                android:gravity="center"
+                android:text="Default Location"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fourteen_sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tvToolbarTitle"
+                app:layout_constraintTop_toBottomOf="@+id/tvToolbarTitle" />
+
+            <ImageView
+                android:layout_width="@dimen/sixteen_dp"
+                android:layout_height="@dimen/sixteen_dp"
+                android:src="@drawable/vector_drawable_down_arrow"
+                app:layout_constraintBottom_toBottomOf="@id/tvToolbarSubtitle"
+                app:layout_constraintStart_toEndOf="@id/tvToolbarSubtitle"
+                app:layout_constraintTop_toTopOf="@id/tvToolbarSubtitle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_top"
         android:layout_width="match_parent"
@@ -12,32 +76,32 @@
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/shopToolbar">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs_main"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/sixteen_dp"
-            android:layout_marginTop="@dimen/eight_dp"
-            android:layout_marginEnd="@dimen/sixteen_dp"
-            android:layout_marginBottom="@dimen/sixteen_dp"
-            android:elevation="@dimen/zero_dp"
-            android:tabStripEnabled="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tabBackground="@drawable/shop_tab_color_selector"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@null"
-            app:tabIndicatorHeight="0dp"
-            app:tabMode="fixed"
-            app:tabPaddingEnd="@dimen/two_dp"
-            app:tabPaddingStart="@dimen/two_dp"
-            app:tabRippleColor="@null"
-            app:tabSelectedTextColor="@color/black"
-            app:tabTextColor="@color/drawer_color" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:elevation="@dimen/zero_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabBackground="@drawable/shop_tab_color_selector"
+        app:tabGravity="fill"
+        android:tabStripEnabled = "false"
+        app:tabIndicatorHeight="0dp"
+        app:tabIndicatorColor="@null"
+        app:tabMode="fixed"
+        app:tabPaddingEnd="@dimen/two_dp"
+        app:tabPaddingStart="@dimen/two_dp"
+        app:tabRippleColor="@null"
+        app:tabSelectedTextColor="@color/black"
+        app:tabTextColor="@color/drawer_color" />
 
         <TextView
             android:id="@+id/foodOnlyText"
