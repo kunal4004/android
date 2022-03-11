@@ -20,9 +20,9 @@ import za.co.woolworths.financial.services.android.util.*
 @AndroidEntryPoint
 class EditDeliveryLocationActivity : AppCompatActivity() {
 
-   private var bundle: Bundle? = null
-   private var delivery: String? = null
-   private var placeId: String? = null
+    private var bundle: Bundle? = null
+    private var delivery: String? = null
+    private var placeId: String? = null
 
     companion object {
         var REQUEST_CODE = 1515
@@ -38,7 +38,7 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
         bundle = intent.getBundleExtra("bundle")
         bundle?.apply {
             delivery = this.getString(DELIVERY_TYPE, "")
-            placeId =  this.getString(PLACE_ID, "")
+            placeId = this.getString(PLACE_ID, "")
         }
         actionBar()
         loadNavHostFragment()
@@ -78,34 +78,30 @@ class EditDeliveryLocationActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.editAddressNavHost) as NavHostFragment
         val navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.confirm_location_nav_host)
-
-        if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address == null || KotlinUtils.IS_COMING_FROM_CHECKOUT) {
-                navGraph.startDestination = R.id.confirmDeliveryLocationFragment
-                navController.graph = navGraph
-                navController
-                    .setGraph(
-                        navGraph,
-                        bundleOf("bundle" to bundle)
-                    )
-            } else {
-                Utils.getPreferredDeliveryLocation()?.fulfillmentDetails?.address?.let {
-                    navGraph.startDestination = R.id.deliveryAddressConfirmationFragment
-                    navController.graph = navGraph
-                    bundle?.apply {
-                        putString(
-                            DeliveryAddressConfirmationFragment.KEY_PLACE_ID, it.placeId)
-                    }
-                    navController
-                        .setGraph(
-                            navGraph,
-                            bundleOf("bundle" to bundle)
-                        )
-                }
-            }
+        val placeId = bundle?.getString(PLACE_ID, "")
+        if (placeId.isNullOrEmpty()) {
+            navGraph.startDestination = R.id.confirmDeliveryLocationFragment
+            navController.graph = navGraph
+            navController
+                .setGraph(
+                    navGraph,
+                    bundleOf("bundle" to bundle)
+                )
         } else {
-            ScreenManager.presentSSOSignin(this, DepartmentsFragment.DEPARTMENT_LOGIN_REQUEST)
+            navGraph.startDestination = R.id.deliveryAddressConfirmationFragment
+            navController.graph = navGraph
+            bundle?.apply {
+                putString(
+                    DeliveryAddressConfirmationFragment.KEY_PLACE_ID, placeId
+                )
+            }
+            navController
+                .setGraph(
+                    navGraph,
+                    bundleOf("bundle" to bundle)
+                )
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
