@@ -12,11 +12,13 @@ import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -455,9 +457,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         blackToolTipDialog?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.black_tool_tip_layout, null)
+            view.findViewById<ImageButton>(R.id.closeWhiteBtn).setOnClickListener {
+                if (this != null && this.isShowing) {
+                    this.dismiss()
+                }
+            }
+            //ToDo: Remove this hardcoded value in WOP-15382
             view.findViewById<TextView>(R.id.foodItemDateText).text = "Sun, 19 Aug 1pm - 2pm"
-            view.findViewById<TextView>(R.id.fashionItemDateText).text = "Mon, 22 Aug 10:30am - 11:30am"
-
+            view.findViewById<TextView>(R.id.fashionItemDateText).text =
+                "Mon, 22 Aug 10:30am - 11:30am"
+            view.findViewById<TextView>(R.id.productAvailableText).text = "All products available"
+            view.findViewById<TextView>(R.id.deliveryFeeText).text = "R50 Delivery Fee"
 
             setContentView(view)
             window?.apply {
