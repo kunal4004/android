@@ -3,21 +3,20 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
-import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -59,6 +58,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var rootCategories: RootCategories? = null
     private var ordersResponse: OrdersResponse? = null
     private var shoppingListsResponse: ShoppingListsResponse? = null
+    private var blackToolTipDialog: Dialog? = null
     private var user: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,6 +120,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tabs_main?.setupWithViewPager(viewpager_main)
         updateTabIconUI(0)
         showShopFeatureWalkThrough()
+        showStandardDeliveryToolTip()
         setupToolbar(0)
     }
 
@@ -449,6 +450,30 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
+    private fun showStandardDeliveryToolTip() {
+        blackToolTipDialog = activity?.let { activity -> Dialog(activity) }
+        blackToolTipDialog?.apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val view = layoutInflater.inflate(R.layout.black_tool_tip_layout, null)
+            view.findViewById<TextView>(R.id.foodItemDateText).text = "Sun, 19 Aug 1pm - 2pm"
+
+
+            setContentView(view)
+            window?.apply {
+                setLayout(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT
+                )
+                setBackgroundDrawableResource(R.color.transparent)
+                setGravity(Gravity.TOP)
+            }
+
+            setTitle(null)
+            setCancelable(true)
+            show()
+        }
+    }
+
     private fun showShopFeatureWalkThrough() {
         (activity as? BottomNavigationActivity)?.let {
             // Prevent dialog to display in other section when fragment is not visible
@@ -510,7 +535,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             )
             it.walkThroughPromtView =
                 WMaterialShowcaseView.Builder(it, WMaterialShowcaseView.Feature.DELIVERY_DETAILS)
-                    .setTarget(tabs_main?.getTabAt(0)?.customView?.tvTitle)
+                    .setTarget(imgToolbarStart)
                     .setTitle(R.string.walkthrough_delivery_details_title)
                     .setDescription(R.string.walkthrough_delivery_details_desc)
                     .setActionText(R.string.walkthrough_delivery_details_action)
