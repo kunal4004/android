@@ -31,7 +31,7 @@
             android:layout_marginBottom="@dimen/default_margin"
             android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -40,27 +40,32 @@
                     style="@style/futura_medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/five_dp"
                     android:paddingTop="@dimen/five_dp"
                     android:paddingBottom="@dimen/five_dp"
                     android:text="@string/earliest_delivery_dates"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/fourteen_sp" />
+                    android:textSize="@dimen/fourteen_sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageButton
                     android:id="@+id/imClose"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/placeholder"
                     android:padding="@dimen/two_dp"
-                    android:src="@drawable/icon_close_circle" />
-            </LinearLayout>
+                    android:src="@drawable/close_white_icon"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 style="@style/myriad_pro_semi_bold_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/four_dp_"
                 android:text="@string/food_items"
                 android:textColor="@color/white"
                 android:textSize="@dimen/twelve_sp" />
@@ -74,6 +79,32 @@
                 android:paddingBottom="@dimen/two_dp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/twenty_sp" />
+
+            <TextView
+                style="@style/myriad_pro_semi_bold_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/six_dp"
+                android:text="@string/fashion_beauty_home"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twelve_sp" />
+
+            <TextView
+                android:id="@+id/fashionItemDateText"
+                style="@style/futura_semi_bold_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/two_dp"
+                android:paddingBottom="@dimen/two_dp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/twenty_sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_dp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:background="@color/color_666666" />
+
         </LinearLayout>
     </com.daasuu.bl.BubbleLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

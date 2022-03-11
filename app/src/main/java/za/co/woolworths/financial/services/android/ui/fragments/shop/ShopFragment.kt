@@ -456,6 +456,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.black_tool_tip_layout, null)
             view.findViewById<TextView>(R.id.foodItemDateText).text = "Sun, 19 Aug 1pm - 2pm"
+            view.findViewById<TextView>(R.id.fashionItemDateText).text = "Mon, 22 Aug 10:30am - 11:30am"
 
 
             setContentView(view)
