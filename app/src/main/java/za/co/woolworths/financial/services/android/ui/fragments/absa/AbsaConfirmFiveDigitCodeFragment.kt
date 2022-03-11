@@ -10,7 +10,6 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_confirm_five_digit_code_fragment.*
 import androidx.appcompat.app.AppCompatActivity
 import android.view.*
-import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
@@ -177,15 +176,6 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
 
     override fun onAnimationComplete() {
         clearPin()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cancelRequest()
-    }
-
-    private fun cancelRequest() {
-        cancelVolleyRequest(AbsaRegisterCredentialRequest::class.java.simpleName)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
