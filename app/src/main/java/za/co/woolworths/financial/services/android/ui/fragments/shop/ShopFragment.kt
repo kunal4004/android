@@ -14,11 +14,11 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.black_tool_tip_layout.*
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
@@ -62,6 +62,12 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
     private var shoppingListsResponse: ShoppingListsResponse? = null
     private var blackToolTipDialog: Dialog? = null
     private var user: String = ""
+
+    enum class Delivery_Types(val value: String) {
+        STANDARD("standard"),
+        CLICK_AND_COLLECT("click_and_collect"),
+        DASH("dash");
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,14 +113,16 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                             FirebaseManagerAnalyticsProperties.SHOP_CATEGORIES,
                             this
                         )
-                        1 -> Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SHOPMYLISTS,
-                            this
-                        )
-                        2 -> Utils.triggerFireBaseEvents(
-                            FirebaseManagerAnalyticsProperties.SHOPMYORDERS,
-                            this
-                        )
+                        1 -> {
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS,
+                                this)
+                            showBlackToolTip(Delivery_Types.CLICK_AND_COLLECT)
+                        }
+                        2 -> {
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS,
+                                this)
+                            showBlackToolTip(Delivery_Types.DASH)
+                        }
                     }
                 }
             }
@@ -122,7 +130,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         tabs_main?.setupWithViewPager(viewpager_main)
         updateTabIconUI(0)
         showShopFeatureWalkThrough()
-        showStandardDeliveryToolTip()
+        showBlackToolTip(Delivery_Types.STANDARD)
         setupToolbar(0)
     }
 
@@ -452,7 +460,7 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
         }
     }
 
-    private fun showStandardDeliveryToolTip() {
+    private fun showBlackToolTip(deliveryType: Delivery_Types) {
         blackToolTipDialog = activity?.let { activity -> Dialog(activity) }
         blackToolTipDialog?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -462,13 +470,17 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
                     this.dismiss()
                 }
             }
-            //ToDo: Remove this hardcoded value in WOP-15382
-            view.findViewById<TextView>(R.id.foodItemDateText).text = "Sun, 19 Aug 1pm - 2pm"
-            view.findViewById<TextView>(R.id.fashionItemDateText).text =
-                "Mon, 22 Aug 10:30am - 11:30am"
-            view.findViewById<TextView>(R.id.productAvailableText).text = "All products available"
-            view.findViewById<TextView>(R.id.deliveryFeeText).text = "R50 Delivery Fee"
-
+            when (deliveryType) {
+                Delivery_Types.STANDARD -> {
+                    showStandardDeliveryToolTip(view)
+                }
+                Delivery_Types.CLICK_AND_COLLECT -> {
+                    showClickAndCollectToolTip(view)
+                }
+                Delivery_Types.DASH -> {
+                    showDashToolTip(view)
+                }
+            }
             setContentView(view)
             window?.apply {
                 setLayout(
@@ -483,6 +495,55 @@ class ShopFragment : Fragment(R.layout.fragment_shop), PermissionResultCallback,
             setCancelable(true)
             show()
         }
+    }
+
+    private fun showStandardDeliveryToolTip(view: View) {
+        //ToDo: Remove this hardcoded value in WOP-15382
+        view.findViewById<TextView>(R.id.deliveryCollectionTitle).text =
+            getString(R.string.earliest_delivery_dates)
+        view.findViewById<TextView>(R.id.foodItemDateText).text = "Sun, 19 Aug 1pm - 2pm"
+        view.findViewById<TextView>(R.id.fashionItemDateText).text =
+            "Mon, 22 Aug 10:30am - 11:30am"
+        view.findViewById<TextView>(R.id.productAvailableText).text = "All products available"
+        view.findViewById<TextView>(R.id.deliveryFeeText).text = "R50 Delivery Fee"
+    }
+
+    private fun showClickAndCollectToolTip(view: View) {
+        view.findViewById<TextView>(R.id.deliveryCollectionTitle).text =
+            getString(R.string.earliest_collection_Date)
+        view.findViewById<TextView>(R.id.foodItemTitle).visibility = View.GONE
+        view.findViewById<TextView>(R.id.fashionItemDateText).visibility = View.GONE
+        view.findViewById<ConstraintLayout>(R.id.deliveryIconLayout).visibility = View.GONE
+        view.findViewById<TextView>(R.id.fashionItemTitle).visibility = View.VISIBLE
+
+        //ToDo: Remove this hardcoded value in WOP-15382
+        view.findViewById<TextView>(R.id.foodItemDateText).text = "Mon, 22 Aug 10:30am - 11:30am"
+        view.findViewById<TextView>(R.id.fashionItemTitle).text =
+            getString(R.string.all_products_available)
+        view.findViewById<TextView>(R.id.productAvailableText).text = "Free Collection"
+        view.findViewById<com.daasuu.bl.BubbleLayout>(R.id.bubbleLayout).arrowPosition = 640.0F
+        view.findViewById<ImageButton>(R.id.cartIcon)
+            .setImageResource(R.drawable.white_shopping_bag_icon)
+    }
+
+    private fun showDashToolTip(view: View) {
+        view.findViewById<TextView>(R.id.deliveryCollectionTitle).text =
+            getString(R.string.next_dash_delivery_timeslot_text)
+        view.findViewById<TextView>(R.id.foodItemTitle).visibility = View.GONE
+        view.findViewById<TextView>(R.id.fashionItemDateText).visibility = View.GONE
+        view.findViewById<ConstraintLayout>(R.id.deliveryIconLayout).visibility = View.VISIBLE
+        view.findViewById<ConstraintLayout>(R.id.cartIconLayout).visibility = View.VISIBLE
+        view.findViewById<TextView>(R.id.fashionItemTitle).visibility = View.GONE
+
+        //ToDo: Remove this hardcoded value in WOP-15382
+        view.findViewById<TextView>(R.id.foodItemDateText).text = "1pm - 2pm, Today"
+        view.findViewById<ImageButton>(R.id.cartIcon).setImageResource(R.drawable.icon_cart_white)
+        view.findViewById<ImageButton>(R.id.deliveryIcon)
+            .setImageResource(R.drawable.icon_scooter_white)
+        view.findViewById<com.daasuu.bl.BubbleLayout>(R.id.bubbleLayout).arrowPosition = 1060.0F
+        view.findViewById<TextView>(R.id.productAvailableText).text = "42 Item Limit"
+        view.findViewById<TextView>(R.id.deliveryFeeText).text = "Free for orders over R75"
+
     }
 
     private fun showShopFeatureWalkThrough() {
